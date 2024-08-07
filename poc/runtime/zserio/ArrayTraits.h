@@ -1745,7 +1745,7 @@ struct StdTypeArrayTraits
     }*/
     static size_t bitSizeOf(ElementType element)
     {
-        return ::zserio::detail::bitSizeOf(element, static_cast<size_t>(0)); //static_cast needed
+        return ::zserio::detail::bitSizeOf(element, static_cast<size_t>(0)); // static_cast needed
     }
 
     /**
@@ -1797,29 +1797,22 @@ struct ArrayTraitsBase
 
     static constexpr bool IS_BITSIZEOF_CONSTANT = false;
 
-    //static ViewType at(const OwnerType& owner, const ElementType& element, size_t index);
-
-    /* overload these for normal arrays
-
-    static void write(const OwnerType& owner, zserio::BitStreamWriter& out, const ElementType& element, size_t index);
-
-    static void read(const OwnerType& owner, std::vector<ElementType>& array, zserio::BitStreamReader& in, size_t index);
-
-    static size_t bitSizeOf(const OwnerType& owner, size_t endBitPosition, const ElementType& element, size_t index);
-    */
-
     /* and these for packed arrays
     template <typename PACKING_CONTEXT>
-    static void initContext(const OwnerType& owner, PACKING_CONTEXT& packingContext, const ElementType& element, size_t index);
+    static void initContext(const OwnerType& owner, PACKING_CONTEXT& packingContext, const ElementType& element,
+    size_t index);
 
     template <typename PACKING_CONTEXT>
-    static size_t bitSizeOf(const OwnerType& owner, PACKING_CONTEXT& packingContext, size_t bitPosition, const ElementType& element, size_t index);
+    static size_t bitSizeOf(const OwnerType& owner, PACKING_CONTEXT& packingContext, size_t bitPosition, const
+    ElementType& element, size_t index);
 
     template <typename PACKING_CONTEXT>
-    static void read(const OwnerType& owner, std::vector<ElementType>& array, PACKING_CONTEXT& packingContext, BitStreamReader& in, size_t index);
+    static void read(const OwnerType& owner, std::vector<ElementType>& array, PACKING_CONTEXT& packingContext,
+    BitStreamReader& in, size_t index);
 
     template <typename PACKING_CONTEXT>
-    static void write(const OwnerType& owner, PACKING_CONTEXT& packingContext, BitStreamWriter& out, ElementType element, size_t index);
+    static void write(const OwnerType& owner, PACKING_CONTEXT& packingContext, BitStreamWriter& out, ElementType
+    element, size_t index);
     */
 };
 
@@ -1850,8 +1843,8 @@ public:
      *
      * \return Bit size of the array element.
      */
-    static size_t bitSizeOf(const OwnerType& owner, size_t bitPosition,
-            const ElementType& element, size_t index)
+    static size_t bitSizeOf(
+            const OwnerType& owner, size_t bitPosition, const ElementType& element, size_t index)
     {
         return at(owner, element, index).bitSizeOf(bitPosition);
     }
@@ -2186,8 +2179,7 @@ public:
      * \param packingContext Packing context node which keeps the appropriate subtree of contexts.
      */
     template <typename PACKING_CONTEXT>
-    static void initContext(
-            const typename ArrayTraits::OwnerType& owner, PACKING_CONTEXT& packingContext,
+    static void initContext(const typename ArrayTraits::OwnerType& owner, PACKING_CONTEXT& packingContext,
             const ElementType& element, size_t index)
     {
         ArrayTraits::at(owner, element, index).initPackingContext(packingContext);
@@ -2262,8 +2254,7 @@ public:
  * We call back into original ArrayTraits so the user can override
  */
 template <typename ArrayTraits>
-class PackedArrayTraits<ArrayTraits,
-        std::enable_if_t<has_owner_type<ArrayTraits>::value>>
+class PackedArrayTraits<ArrayTraits, std::enable_if_t<has_owner_type<ArrayTraits>::value>>
 {
 public:
     /** Element type. */
@@ -2281,8 +2272,7 @@ public:
      * \param packingContext Packing context node which keeps the appropriate subtree of contexts.
      */
     template <typename PACKING_CONTEXT>
-    static void initContext(
-            const typename ArrayTraits::OwnerType& owner, PACKING_CONTEXT& packingContext,
+    static void initContext(const typename ArrayTraits::OwnerType& owner, PACKING_CONTEXT& packingContext,
             const ElementType& element, size_t index)
     {
         ArrayTraits::initContext(owner, packingContext, element, index);
@@ -2299,7 +2289,7 @@ public:
      */
     template <typename PACKING_CONTEXT>
     static size_t bitSizeOf(const typename ArrayTraits::OwnerType& owner, PACKING_CONTEXT& packingContext,
-        size_t bitPosition, const ElementType& element, size_t index)
+            size_t bitPosition, const ElementType& element, size_t index)
     {
         return ArrayTraits::bitSizeOf(owner, packingContext, bitPosition, element, index);
     }
@@ -2314,8 +2304,8 @@ public:
      * \return Updated bit stream position which points to the first bit after this element.
      */
     template <typename PACKING_CONTEXT>
-    static size_t initializeOffsets(const typename ArrayTraits::OwnerType& owner, PACKING_CONTEXT& packingContext,
-            size_t bitPosition, ElementType& element)
+    static size_t initializeOffsets(const typename ArrayTraits::OwnerType& owner,
+            PACKING_CONTEXT& packingContext, size_t bitPosition, ElementType& element)
     {
         return ArrayTraits::initializeOffsets(owner, packingContext, bitPosition, element);
     }

@@ -12,16 +12,15 @@
     #error Please update your Zserio runtime library to the version 1.0.0.
 #endif
 
-#include <zserio/BitStreamReader.h>
-#include <zserio/BitStreamWriter.h>
-#include <zserio/ArrayTraits.h>
-#include <zserio/View.h>
-#include <zserio/TypeWrappers.h>
-
 #include <CoordShift.h>
 #include <CoordWidth.h>
 #include <DeltaLatitude.h>
 #include <DeltaLongitude.h>
+#include <zserio/ArrayTraits.h>
+#include <zserio/BitStreamReader.h>
+#include <zserio/BitStreamWriter.h>
+#include <zserio/TypeWrappers.h>
+#include <zserio/View.h>
 
 struct PositionOffset2D
 {
@@ -32,10 +31,7 @@ struct PositionOffset2D
 
     explicit PositionOffset2D(const allocator_type&);
 
-    PositionOffset2D(
-        ::zserio::DynInt32 deltaLongitude_,
-        ::zserio::DynInt32 deltaLatitude_
-    );
+    PositionOffset2D(::zserio::DynInt32 deltaLongitude_, ::zserio::DynInt32 deltaLatitude_);
 
     ::zserio::DynInt32 deltaLongitude;
     ::zserio::DynInt32 deltaLatitude;
@@ -55,20 +51,15 @@ template <>
 class View<PositionOffset2D>
 {
 public:
-    View(const PositionOffset2D& data,
-        CoordWidth numBits_,
-        CoordShift shift_) noexcept;
+    View(const PositionOffset2D& data, CoordWidth numBits_, CoordShift shift_) noexcept;
 
     CoordWidth numBits() const;
-
     CoordShift shift() const;
 
     ::zserio::DynInt32 deltaLongitude() const;
-
     ::zserio::DynInt32 deltaLatitude() const;
 
     DeltaLongitude lon() const;
-
     DeltaLatitude lat() const;
 
 private:
@@ -87,19 +78,28 @@ bool operator>=(const View<PositionOffset2D>& lhs, const View<PositionOffset2D>&
 namespace detail
 {
 
+template <>
 void validate(const View<PositionOffset2D>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<PositionOffset2D>& view);
 
-View<PositionOffset2D> read(::zserio::BitStreamReader& reader, PositionOffset2D& data, CoordWidth numBits_,
-    CoordShift shift_, const PositionOffset2D::allocator_type& allocator = {});
+View<PositionOffset2D> readImpl(::zserio::BitStreamReader& reader, PositionOffset2D& data,
+        const PositionOffset2D::allocator_type& allocator, CoordWidth numBits_, CoordShift shift_);
 
+template <typename... ARGS>
+View<PositionOffset2D> read(::zserio::BitStreamReader& reader, PositionOffset2D& data,
+        const PositionOffset2D::allocator_type& allocator, ARGS&&... args)
+{
+    return readImpl(reader, data, allocator, ::std::forward<ARGS>(args)...);
+}
+
+template <>
 size_t bitSizeOf(const View<PositionOffset2D>& view, size_t bitPosition);
 
 } // namespace detail
 
 } // namespace zserio
-
 
 namespace std
 {

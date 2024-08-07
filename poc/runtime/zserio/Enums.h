@@ -3,8 +3,8 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <type_traits>
 #include <cstdint>
+#include <type_traits>
 
 #include "zserio/CppRuntimeException.h"
 #include "zserio/StringView.h"

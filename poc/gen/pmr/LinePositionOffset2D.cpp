@@ -17,10 +17,7 @@ LinePositionOffset2D::LinePositionOffset2D(const allocator_type& allocator) :
 {}
 
 LinePositionOffset2D::LinePositionOffset2D(
-        LinePosition linePosition_,
-        CoordWidth numBits_,
-        PositionOffset2D offset_
-) :
+        LinePosition linePosition_, CoordWidth numBits_, PositionOffset2D offset_) :
         linePosition(::std::move(linePosition_)),
         numBits(::std::move(numBits_)),
         offset(::std::move(offset_))
@@ -28,26 +25,14 @@ LinePositionOffset2D::LinePositionOffset2D(
 
 bool operator==(const LinePositionOffset2D& lhs, const LinePositionOffset2D& rhs)
 {
-    return ::std::tie(
-            lhs.linePosition,
-            lhs.numBits,
-            lhs.offset) ==
-                    ::std::tie(
-                            rhs.linePosition,
-                            rhs.numBits,
-                            rhs.offset);
+    return ::std::tie(lhs.linePosition, lhs.numBits, lhs.offset) ==
+            ::std::tie(rhs.linePosition, rhs.numBits, rhs.offset);
 }
 
 bool operator<(const LinePositionOffset2D& lhs, const LinePositionOffset2D& rhs)
 {
-    return ::std::tie(
-            lhs.linePosition,
-            lhs.numBits,
-            lhs.offset) <
-                    ::std::tie(
-                            rhs.linePosition,
-                            rhs.numBits,
-                            rhs.offset);
+    return ::std::tie(lhs.linePosition, lhs.numBits, lhs.offset) <
+            ::std::tie(rhs.linePosition, rhs.numBits, rhs.offset);
 }
 
 bool operator!=(const LinePositionOffset2D& lhs, const LinePositionOffset2D& rhs)
@@ -75,8 +60,8 @@ bool operator>=(const LinePositionOffset2D& lhs, const LinePositionOffset2D& rhs
 namespace zserio
 {
 
-View<::pmr::LinePositionOffset2D>::View(const ::pmr::LinePositionOffset2D& data,
-    ::pmr::CoordShift shift_) noexcept :
+View<::pmr::LinePositionOffset2D>::View(
+        const ::pmr::LinePositionOffset2D& data, ::pmr::CoordShift shift_) noexcept :
         m_shift_(shift_),
         m_data(data)
 {}
@@ -104,11 +89,8 @@ View<::pmr::PositionOffset2D> View<::pmr::LinePositionOffset2D>::offset() const
 
 bool operator==(const View<::pmr::LinePositionOffset2D>& lhs, const View<::pmr::LinePositionOffset2D>& rhs)
 {
-    return
-            (lhs.shift() == rhs.shift()) &&
-            (lhs.linePosition() == rhs.linePosition()) &&
-            (lhs.numBits() == rhs.numBits()) &&
-            (lhs.offset() == rhs.offset());
+    return (lhs.shift() == rhs.shift()) && (lhs.linePosition() == rhs.linePosition()) &&
+            (lhs.numBits() == rhs.numBits()) && (lhs.offset() == rhs.offset());
 }
 
 bool operator<(const View<::pmr::LinePositionOffset2D>& lhs, const View<::pmr::LinePositionOffset2D>& rhs)
@@ -148,36 +130,40 @@ bool operator>=(const View<::pmr::LinePositionOffset2D>& lhs, const View<::pmr::
 namespace detail
 {
 
+template <>
 void validate(const ::zserio::View<::pmr::LinePositionOffset2D>& view)
 {
-    validate(view.offset());
+    detail::validate(view.offset());
 }
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const ::zserio::View<::pmr::LinePositionOffset2D>& view)
 {
-    write(writer, view.linePosition());
-    write(writer, view.numBits());
-    write(writer, view.offset());
+    detail::write(writer, view.linePosition());
+    detail::write(writer, view.numBits());
+    detail::write(writer, view.offset());
 }
 
-View<::pmr::LinePositionOffset2D> read(::zserio::BitStreamReader& reader, ::pmr::LinePositionOffset2D& data, ::pmr::CoordShift shift_, const ::pmr::LinePositionOffset2D::allocator_type& allocator)
+View<::pmr::LinePositionOffset2D> readImpl(::zserio::BitStreamReader& reader, ::pmr::LinePositionOffset2D& data,
+        const ::pmr::LinePositionOffset2D::allocator_type& allocator, ::pmr::CoordShift shift_)
 {
     View<::pmr::LinePositionOffset2D> view(data, shift_);
 
-    read(reader, data.linePosition);
-    read(reader, data.numBits);
-    read(reader, data.offset, view.numBits(), shift_);
+    detail::read(reader, data.linePosition);
+    detail::read(reader, data.numBits);
+    detail::read(reader, data.offset, allocator, view.numBits(), shift_);
 
     return view;
 }
 
+template <>
 size_t bitSizeOf(const ::zserio::View<::pmr::LinePositionOffset2D>& view, size_t bitPosition)
 {
     size_t endBitPosition = bitPosition;
 
-    endBitPosition += bitSizeOf(view.linePosition(), endBitPosition);
-    endBitPosition += bitSizeOf(view.numBits(), endBitPosition);
-    endBitPosition += bitSizeOf(view.offset(), endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.linePosition(), endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.numBits(), endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.offset(), endBitPosition);
 
     return endBitPosition - bitPosition;
 }
@@ -200,7 +186,8 @@ size_t hash<::pmr::LinePositionOffset2D>::operator()(const ::pmr::LinePositionOf
     return result;
 }
 
-size_t hash<::zserio::View<::pmr::LinePositionOffset2D>>::operator()(const ::zserio::View<::pmr::LinePositionOffset2D>& view) const
+size_t hash<::zserio::View<::pmr::LinePositionOffset2D>>::operator()(
+        const ::zserio::View<::pmr::LinePositionOffset2D>& view) const
 {
     uint32_t result = ::zserio::HASH_SEED;
 

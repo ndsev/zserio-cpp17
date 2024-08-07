@@ -12,23 +12,23 @@
     #error Please update your Zserio runtime library to the version 1.0.1.
 #endif
 
+#include <zserio/ArrayTraits.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
-#include <zserio/ArrayTraits.h>
-#include <zserio/View.h>
-#include <zserio/Variant.h>
 #include <zserio/TypeWrappers.h>
+#include <zserio/Variant.h>
+#include <zserio/View.h>
 
-// It may be a good idea to inherit from zserio::Variant directly
-// so that all useful function members are inherited too. Choice
-// struct doesn't contain other fields anyway. Alternatively we need
-// to generate at least the important members from zserio::Variant here
-// in order for the user to skip typing .objectChoice which is just
-// an implementation detail.
 struct SimpleUnion
 {
     using allocator_type = ::std::allocator<uint8_t>;
     using needs_initialize_offsets = ::std::false_type;
+
+    enum ChoiceTag : size_t
+    {
+        VALUE_A_IDX,
+        VALUE_B_IDX
+    };
 
     SimpleUnion() noexcept;
 
@@ -53,10 +53,8 @@ class View<SimpleUnion>
 public:
     View(const SimpleUnion& data) noexcept;
 
-    size_t index() const;
-
+    SimpleUnion::ChoiceTag index() const;
     ::zserio::String valueA() const;
-
     ::zserio::Int8 valueB() const;
 
 private:
@@ -73,28 +71,33 @@ bool operator>=(const View<SimpleUnion>& lhs, const View<SimpleUnion>& rhs);
 namespace detail
 {
 
+template <>
 void validate(const View<SimpleUnion>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<SimpleUnion>& view);
 
-View<SimpleUnion> read(::zserio::BitStreamReader& reader, SimpleUnion& data, const SimpleUnion::allocator_type& allocator = {});
+template <>
+View<SimpleUnion> read(
+        ::zserio::BitStreamReader& reader, SimpleUnion& data, const SimpleUnion::allocator_type& allocator);
 
+template <>
 size_t bitSizeOf(const View<SimpleUnion>& view, size_t bitPosition);
 
-} // namespace detail
+}; // namespace detail
 
 } // namespace zserio
 
 namespace std
 {
 
-template<>
+template <>
 struct hash<SimpleUnion>
 {
     size_t operator()(const SimpleUnion& data) const;
 };
 
-template<>
+template <>
 struct hash<::zserio::View<SimpleUnion>>
 {
     size_t operator()(const ::zserio::View<SimpleUnion>& view) const;

@@ -2,18 +2,19 @@
 #define ZSERIO_TYPE_WRAPPERS_H_INC
 
 #include <stdint.h>
-#include <zserio/BitStreamWriter.h>
-#include <zserio/BitStreamReader.h>
-#include <zserio/String.h>
-#include <zserio/BitSizeOfCalculator.h>
-#include <zserio/BitFieldUtil.h>
 #include <zserio/AllocatorPropagatingCopy.h>
+#include <zserio/BitFieldUtil.h>
+#include <zserio/BitSizeOfCalculator.h>
+#include <zserio/BitStreamReader.h>
+#include <zserio/BitStreamWriter.h>
+#include <zserio/DeltaContext.h>
+#include <zserio/String.h>
 #include <zserio/pmr/PolymorphicAllocator.h>
-#include <zserio/ArrayTraits.h>
 
 namespace zserio
 {
 
+// forward declaration to avoid circular include
 template <class T>
 struct StdTypeArrayTraits;
 
@@ -24,7 +25,7 @@ enum INTEGERTYPE
     DYNAMIC = -1,
 };
 
-template <typename T, int N = 8*sizeof(T)>
+template <typename T, int N = 8 * sizeof(T)>
 struct Integer
 {
     using value_type = T;
@@ -35,13 +36,12 @@ struct Integer
     // all wrappers can be constructed with allocator even unused
     // so that templated field gets always initialized correctly
     template <class ALLOC, typename = std::enable_if_t<is_allocator<ALLOC>::value>>
-    explicit Integer(const ALLOC &)
-        : m_value_()
-    {
-    }
+    explicit Integer(const ALLOC&) :
+            m_value_()
+    {}
 
-    Integer(T v = {})
-        : m_value_(v)
+    Integer(T v = {}) :
+            m_value_(v)
     {}
 
     T get() const
@@ -54,7 +54,7 @@ struct Integer
         m_value_ = value;
     }
 
-    operator T () const
+    operator T() const
     {
         return m_value_;
     }
@@ -166,9 +166,8 @@ void validate(Integer<T, ::zserio::DYNAMIC> value, int N)
     const int32_t upperBound = static_cast<int32_t>(::zserio::getBitFieldUpperBound(N, std::is_signed_v<T>));
     if (value < lowerBound || value > upperBound)
     {
-        throw ::zserio::CppRuntimeException("Value ") << value.get() <<
-                " exceeds the range of <" <<
-                lowerBound << ".." << upperBound << ">!";
+        throw ::zserio::CppRuntimeException("Value ")
+                << value.get() << " exceeds the range of <" << lowerBound << ".." << upperBound << ">!";
     }
 }
 
@@ -180,7 +179,8 @@ void write(::zserio::BitStreamWriter& out, Integer<T, N> value)
 }
 
 template <typename T, int N>
-void write(::zserio::BitStreamWriter& out, typename Integer<T, N>::ZserioPackingContext& context, Integer<T, N> value)
+void write(::zserio::BitStreamWriter& out, typename Integer<T, N>::ZserioPackingContext& context,
+        Integer<T, N> value)
 {
     static_assert(N != ::zserio::DYNAMIC);
     context.template write<::zserio::StdTypeArrayTraits<Integer<T, N>>>(out, value);
@@ -193,14 +193,16 @@ void write(::zserio::BitStreamWriter& out, Integer<T, ::zserio::DYNAMIC> value, 
 }
 
 template <typename T, int N>
-void read(::zserio::BitStreamReader& in, Integer<T, N>& value, const typename Integer<T, N>::allocator_type & = {})
+void read(
+        ::zserio::BitStreamReader& in, Integer<T, N>& value, const typename Integer<T, N>::allocator_type& = {})
 {
     static_assert(N != ::zserio::DYNAMIC);
     readImpl(in, value, std::is_signed<T>(), std::bool_constant<(N > 32)>());
 }
 
 template <typename T, int N>
-void read(::zserio::BitStreamReader& in, typename Integer<T, N>::ZserioPackingContext& context, Integer<T, N>& value, const typename Integer<T, N>::allocator_type & = {})
+void read(::zserio::BitStreamReader& in, typename Integer<T, N>::ZserioPackingContext& context,
+        Integer<T, N>& value, const typename Integer<T, N>::allocator_type& = {})
 {
     static_assert(N != ::zserio::DYNAMIC);
     value = context.template read<::zserio::StdTypeArrayTraits<Integer<T, N>>>(in);
@@ -282,17 +284,16 @@ struct VarInt
     using needs_initialize_offsets = ::std::false_type;
 
     template <class ALLOC, typename = std::enable_if_t<is_allocator<ALLOC>::value>>
-    explicit VarInt(const ALLOC&)
-        : m_value_()
-    {
-    }
-
-    VarInt(T v = {})
-        : m_value_(v)
+    explicit VarInt(const ALLOC&) :
+            m_value_()
     {}
 
-    VarInt(zserio::PropagateAllocatorT, VarInt a, const allocator_type& allocator)
-        : m_value_(::zserio::allocatorPropagatingCopy(a.m_value_, allocator))
+    VarInt(T v = {}) :
+            m_value_(v)
+    {}
+
+    VarInt(zserio::PropagateAllocatorT, VarInt a, const allocator_type& allocator) :
+            m_value_(::zserio::allocatorPropagatingCopy(a.m_value_, allocator))
     {}
 
     T get() const
@@ -305,7 +306,7 @@ struct VarInt
         m_value_ = value;
     }
 
-    operator T () const
+    operator T() const
     {
         return m_value_;
     }
@@ -376,109 +377,127 @@ size_t bitSizeOfImpl(VarInt<T, N> value, std::true_type, std::integral_constant<
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR>)
 {
     out.writeVarUInt(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR16>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR16>)
 {
     out.writeVarUInt16(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR32>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR32>)
 {
     out.writeVarUInt32(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR64>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VAR64>)
 {
     out.writeVarUInt64(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type, std::integral_constant<int, VARSIZE>)
+void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::false_type,
+        std::integral_constant<int, VARSIZE>)
 {
     out.writeVarSize(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR>)
 {
     out.writeVarInt(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR16>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR16>)
 {
     out.writeVarInt16(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR32>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR32>)
 {
     out.writeVarInt32(value);
 }
 
 template <typename T, VARTYPE N>
-void writeImpl(::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR64>)
+void writeImpl(
+        ::zserio::BitStreamWriter& out, VarInt<T, N> value, std::true_type, std::integral_constant<int, VAR64>)
 {
     out.writeVarInt64(value);
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR>)
 {
     value = in.readVarUInt();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR16>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR16>)
 {
     value = in.readVarUInt16();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR32>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR32>)
 {
     value = in.readVarUInt32();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR64>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VAR64>)
 {
     value = in.readVarUInt64();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type, std::integral_constant<int, VARSIZE>)
+void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::false_type,
+        std::integral_constant<int, VARSIZE>)
 {
     value = in.readVarSize();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR>)
 {
     value = in.readVarInt();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR16>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR16>)
 {
     value = in.readVarInt16();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR32>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR32>)
 {
     value = in.readVarInt32();
 }
 
 template <typename T, VARTYPE N>
-void readImpl(::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR64>)
+void readImpl(
+        ::zserio::BitStreamReader& in, VarInt<T, N>& value, std::true_type, std::integral_constant<int, VAR64>)
 {
     value = in.readVarInt64();
 }
@@ -508,19 +527,21 @@ void write(::zserio::BitStreamWriter& out, VarInt<T, N> value)
 }
 
 template <typename T, VARTYPE N>
-void write(::zserio::BitStreamWriter& out, typename VarInt<T, N>::ZserioPackingContext& context, VarInt<T, N> value)
+void write(::zserio::BitStreamWriter& out, typename VarInt<T, N>::ZserioPackingContext& context,
+        VarInt<T, N> value)
 {
     context.template write<::zserio::StdTypeArrayTraits<VarInt<T, N>>>(out, value);
 }
 
 template <typename T, VARTYPE N>
-void read(::zserio::BitStreamReader& in, VarInt<T, N>& value, const typename VarInt<T, N>::allocator_type & = {})
+void read(::zserio::BitStreamReader& in, VarInt<T, N>& value, const typename VarInt<T, N>::allocator_type& = {})
 {
     readImpl(in, value, std::is_signed<T>(), std::integral_constant<int, N>());
 }
 
 template <typename T, VARTYPE N>
-void read(::zserio::BitStreamReader& in, typename VarInt<T, N>::ZserioPackingContext& context, VarInt<T, N>& value, const typename VarInt<T, N>::allocator_type & = {})
+void read(::zserio::BitStreamReader& in, typename VarInt<T, N>::ZserioPackingContext& context,
+        VarInt<T, N>& value, const typename VarInt<T, N>::allocator_type& = {})
 {
     value = context.template read<::zserio::StdTypeArrayTraits<VarInt<T, N>>>(in);
 }
@@ -547,7 +568,7 @@ struct Float
     using value_type = T;
     using allocator_type = ::std::allocator<uint8_t>;
 
-    //todo
+    // todo
 };
 
 // String
@@ -560,30 +581,28 @@ struct BasicString
     using ZserioPackingContext = ::std::nullptr_t;
     using needs_initialize_offsets = ::std::false_type;
 
-    explicit BasicString(const allocator_type& allocator = {})
-        : m_value_(allocator)
+    explicit BasicString(const allocator_type& allocator = {}) :
+            m_value_(allocator)
     {}
     explicit BasicString(zserio::BitStreamReader& in, const allocator_type& alloc = {})
     {
         read(in, alloc);
     }
-    BasicString(zserio::PropagateAllocatorT, const BasicString& a, const allocator_type& allocator)
-        : m_value_(::zserio::allocatorPropagatingCopy(a.m_value_, allocator))
+    BasicString(zserio::PropagateAllocatorT, const BasicString& a, const allocator_type& allocator) :
+            m_value_(::zserio::allocatorPropagatingCopy(a.m_value_, allocator))
     {}
 
-    BasicString(const char* s)
-        : m_value_(s)
+    BasicString(const char* s) :
+            m_value_(s)
     {}
 
-    BasicString(const value_type& s)
-        : m_value_(s)
-    {
-    }
+    BasicString(const value_type& s) :
+            m_value_(s)
+    {}
 
-    BasicString(value_type&& s)
-        : m_value_(std::move(s))
-    {
-    }
+    BasicString(value_type&& s) :
+            m_value_(std::move(s))
+    {}
 
     const value_type& get() const
     {
@@ -595,7 +614,7 @@ struct BasicString
         return m_value_;
     }
 
-    operator const value_type& () const
+    operator const value_type&() const
     {
         return m_value_;
     }
@@ -610,12 +629,12 @@ struct BasicString
         m_value_ = std::move(value);
     }
 
-    bool operator== (const BasicString& c) const
+    bool operator==(const BasicString& c) const
     {
         return m_value_ == c.m_value_;
     }
 
-    bool operator< (const BasicString& c) const
+    bool operator<(const BasicString& c) const
     {
         return m_value_ < c.m_value_;
     }
@@ -634,14 +653,16 @@ void write(::zserio::BitStreamWriter& out, const BasicString<A>& value)
 }
 
 template <typename A>
-void write(::zserio::BitStreamWriter& out, typename BasicString<A>::ZserioPackingContext&, const BasicString<A>& value)
+void write(::zserio::BitStreamWriter& out, typename BasicString<A>::ZserioPackingContext&,
+        const BasicString<A>& value)
 {
     // string can't be packed
     write(out, value);
 }
 
 template <typename A>
-void read(::zserio::BitStreamReader& in, BasicString<A>& value, const typename BasicString<A>::allocator_type& alloc = {})
+void read(::zserio::BitStreamReader& in, BasicString<A>& value,
+        const typename BasicString<A>::allocator_type& alloc = {})
 {
     value = in.readString(alloc);
 }
@@ -650,15 +671,15 @@ void read(::zserio::BitStreamReader& in, BasicString<A>& value, const typename B
 // PropagatingPolymorphicAllocator<uint8_t>
 // For some reason allocators are slightly different and old zserio is doing type conversion
 // which seems to be unnecessary
-template <typename A, typename ALLOC,
-    typename = std::enable_if_t<!std::is_same_v<A, ALLOC>>>
+template <typename A, typename ALLOC, typename = std::enable_if_t<!std::is_same_v<A, ALLOC>>>
 void read(::zserio::BitStreamReader& in, BasicString<A>& value, const ALLOC& alloc)
 {
     value = in.readString(typename BasicString<A>::allocator_type());
 }
 
 template <typename A, typename ALLOC = A>
-void read(::zserio::BitStreamReader& in, typename BasicString<A>::ZserioPackingContext&, BasicString<A>& value, const ALLOC& alloc = {})
+void read(::zserio::BitStreamReader& in, typename BasicString<A>::ZserioPackingContext&, BasicString<A>& value,
+        const ALLOC& alloc = {})
 {
     // string can't be packed
     read(in, value, alloc);
@@ -671,7 +692,8 @@ size_t bitSizeOf(const BasicString<A>& value, size_t bitPosition)
 }
 
 template <typename A>
-size_t bitSizeOf(const BasicString<A>& value, typename BasicString<A>::ZserioPackingContext&, size_t bitPosition)
+size_t bitSizeOf(
+        const BasicString<A>& value, typename BasicString<A>::ZserioPackingContext&, size_t bitPosition)
 {
     // string can't be packed
     return bitSizeOf(value, bitPosition);
@@ -701,10 +723,10 @@ using String = BasicString<std::allocator<char>>;
 
 namespace pmr
 {
-    using String = zserio::BasicString<PropagatingPolymorphicAllocator<char>>;
+using String = zserio::BasicString<PropagatingPolymorphicAllocator<char>>;
 }
 
-} //zserio
+} // namespace zserio
 
 namespace std
 {
@@ -736,6 +758,6 @@ struct hash<::zserio::BasicString<A>>
     }
 };
 
-} //namespace std
+} // namespace std
 
 #endif

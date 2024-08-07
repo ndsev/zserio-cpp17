@@ -12,37 +12,38 @@
 
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/DataView.h"
 #include "zserio/FileUtil.h"
 #include "zserio/Traits.h"
 #include "zserio/Vector.h"
-#include "zserio/DataView.h"
+#include "zserio/View.h"
 
 namespace zserio
 {
 
-namespace detail
+/*namespace detail
 {
-    struct dummy;
 
-    template<typename T, typename... ARGS>
-    dummy& initializeOffsets(T& data, size_t endBitPosition, ARGS&&... arguments);
+struct dummy;
 
-    template<typename T, typename... ARGS>
-    constexpr bool is_initialize_offsets_defined(T& data, size_t endBitPosition, ARGS&&... arguments)
-    {
-        using returnedType = decltype(initializeOffsets(data, endBitPosition,
-                ::std::forward<ARGS>(arguments)...));
-        return std::is_same<returnedType, size_t>();
-    }
+template <typename T, typename... ARGS>
+dummy& initializeOffsets(T& data, size_t endBitPosition, ARGS&&... arguments);
+
+template <typename T, typename... ARGS>
+constexpr bool is_initialize_offsets_defined(T& data, size_t endBitPosition, ARGS&&... arguments)
+{
+    using returnedType = decltype(IO<T>::initializeOffsets(data, endBitPosition,
+::std::forward<ARGS>(arguments)...)); return std::is_same<returnedType, size_t>();
+}
 } // namespace detail
-
+*/
 template <typename... ARGS>
 struct is_first_alloc : is_first_allocator<::std::decay_t<ARGS>...>
 {};
 
 template <typename T, typename ALLOC, typename... ARGS,
-    typename = ::std::enable_if_t<!::std::is_enum_v<T> && is_allocator<ALLOC>::value &&
-        !T::needs_initialize_offsets::value>>
+        typename = ::std::enable_if_t<!::std::is_enum_v<T> && is_allocator<ALLOC>::value &&
+                !T::needs_initialize_offsets::value>>
 BasicBitBuffer<ALLOC> serialize(const T& data, const ALLOC& allocator, ARGS&&... arguments)
 {
     const View<T> view(data, ::std::forward<ARGS>(arguments)...);
@@ -55,8 +56,8 @@ BasicBitBuffer<ALLOC> serialize(const T& data, const ALLOC& allocator, ARGS&&...
 }
 
 template <typename T, typename ALLOC, typename... ARGS,
-    typename = ::std::enable_if_t<!::std::is_enum_v<T> && is_allocator<ALLOC>::value &&
-        T::needs_initialize_offsets::value>>
+        typename = ::std::enable_if_t<!::std::is_enum_v<T> && is_allocator<ALLOC>::value &&
+                T::needs_initialize_offsets::value>>
 BasicBitBuffer<ALLOC> serialize(T& data, const ALLOC& allocator, ARGS&&... arguments)
 {
     size_t bitSize = detail::initializeOffsets(data, 0, ::std::forward<ARGS>(arguments)...);
@@ -69,7 +70,7 @@ BasicBitBuffer<ALLOC> serialize(T& data, const ALLOC& allocator, ARGS&&... argum
 }
 
 template <typename T, typename... ARGS,
-    typename ::std::enable_if_t<!::std::is_enum_v<T> && !is_first_alloc<ARGS...>::value, int> = 0>
+        typename ::std::enable_if_t<!::std::is_enum_v<T> && !is_first_alloc<ARGS...>::value, int> = 0>
 BasicBitBuffer<typename T::allocator_type> serialize(T& data, ARGS&&... arguments)
 {
     return serialize(data, typename T::allocator_type(), ::std::forward<ARGS>(arguments)...);
@@ -77,22 +78,22 @@ BasicBitBuffer<typename T::allocator_type> serialize(T& data, ARGS&&... argument
 
 // allocator variant is not needed as allocator is already embed in buffer
 template <typename T, typename ALLOC, typename... ARGS,
-    typename ::std::enable_if_t<!::std::is_enum<T>::value, int> = 0>
+        typename ::std::enable_if_t<!::std::is_enum<T>::value, int> = 0>
 typename ::zserio::View<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, T& data, ARGS&&... arguments)
 {
     BitStreamReader reader(buffer);
-    return detail::read(reader, data, ::std::forward<ARGS>(arguments)...);
+    return detail::read(reader, data, buffer.get_allocator(), ::std::forward<ARGS>(arguments)...);
 }
 
 template <typename T, typename ALLOC>
 BasicBitBuffer<ALLOC> serialize(const DataView<T>& dataView, const ALLOC& allocator)
 {
     // there is no need to set offsets or call validation here, DataView is already consistent
-    size_t bitSize = detail::bitSizeOf(dataView, 0);
+    size_t bitSize = detail::bitSizeOf(dataView.view(), 0);
     BasicBitBuffer<ALLOC> buffer(bitSize, allocator);
     BitStreamWriter writer(buffer);
 
-    detail::write(writer, dataView);
+    detail::write(writer, dataView.view());
     return buffer;
 }
 
@@ -103,7 +104,7 @@ BasicBitBuffer<typename T::allocator_type> serialize(const DataView<T>& dataView
 }
 
 template <typename T, typename ALLOC, typename... ARGS,
-    typename = ::std::enable_if_t<!::std::is_enum<T>::value>>
+        typename = ::std::enable_if_t<!::std::is_enum<T>::value>>
 DataView<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, ARGS&&... arguments)
 {
     T data;

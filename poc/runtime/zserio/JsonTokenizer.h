@@ -2,9 +2,9 @@
 #define ZSERIO_JSON_TOKENIZER_H_INC
 
 #include <array>
+#include <cstdint>
 #include <istream>
 #include <memory>
-#include <cstdint>
 
 #include "zserio/AnyHolder.h"
 #include "zserio/CppRuntimeException.h"

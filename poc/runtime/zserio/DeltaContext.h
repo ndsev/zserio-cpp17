@@ -1,8 +1,8 @@
 #ifndef ZSERIO_DELTA_CONTEXT_H_INC
 #define ZSERIO_DELTA_CONTEXT_H_INC
 
-#include <type_traits>
 #include <cstdint>
+#include <type_traits>
 
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"

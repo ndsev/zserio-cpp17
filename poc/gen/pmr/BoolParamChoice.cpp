@@ -13,7 +13,7 @@ BoolParamChoice::BoolParamChoice() noexcept :
 {}
 
 BoolParamChoice::BoolParamChoice(const allocator_type& allocator) noexcept
-    //: objectChoice(allocator)
+//: objectChoice(allocator)
 {}
 
 bool operator==(const BoolParamChoice& lhs, const BoolParamChoice& rhs)
@@ -51,8 +51,7 @@ bool operator>=(const BoolParamChoice& lhs, const BoolParamChoice& rhs)
 namespace zserio
 {
 
-View<::pmr::BoolParamChoice>::View(const ::pmr::BoolParamChoice& data,
-    ::zserio::Boolean tag_) noexcept :
+View<::pmr::BoolParamChoice>::View(const ::pmr::BoolParamChoice& data, ::zserio::Boolean tag_) noexcept :
         m_tag_(tag_),
         m_data(data)
 {}
@@ -62,19 +61,19 @@ View<::pmr::BoolParamChoice>::View(const ::pmr::BoolParamChoice& data,
     return m_tag_;
 }
 
-size_t View<::pmr::BoolParamChoice>::index() const
+::pmr::BoolParamChoice::ChoiceTag View<::pmr::BoolParamChoice>::index() const
 {
-    return m_data.objectChoice.index();
+    return static_cast<::pmr::BoolParamChoice::ChoiceTag>(m_data.objectChoice.index());
 }
 
 ::zserio::Int8 View<::pmr::BoolParamChoice>::valueA() const
 {
-    return ::std::get<::zserio::Int8>(m_data.objectChoice);
+    return m_data.objectChoice.get<::pmr::BoolParamChoice::VALUE_A_IDX>();
 }
 
 ::zserio::Int16 View<::pmr::BoolParamChoice>::valueB() const
 {
-    return ::std::get<::zserio::Int16>(m_data.objectChoice);
+    return m_data.objectChoice.get<::pmr::BoolParamChoice::VALUE_B_IDX>();
 }
 
 bool operator==(const View<::pmr::BoolParamChoice>& lhs, const View<::pmr::BoolParamChoice>& rhs)
@@ -84,7 +83,7 @@ bool operator==(const View<::pmr::BoolParamChoice>& lhs, const View<::pmr::BoolP
 
     switch (lhs.index())
     {
-    case false:
+    case ::pmr::BoolParamChoice::VALUE_A_IDX:
         return lhs.valueA() == rhs.valueA();
     default:
         return lhs.valueB() == rhs.valueB();
@@ -100,7 +99,7 @@ bool operator<(const View<::pmr::BoolParamChoice>& lhs, const View<::pmr::BoolPa
 
     switch (lhs.index())
     {
-    case false:
+    case ::pmr::BoolParamChoice::VALUE_A_IDX:
         return lhs.valueA() < rhs.valueA();
     default:
         return lhs.valueB() < rhs.valueB();
@@ -130,48 +129,62 @@ bool operator>=(const View<::pmr::BoolParamChoice>& lhs, const View<::pmr::BoolP
 namespace detail
 {
 
+template <>
 void validate(const View<::pmr::BoolParamChoice>& view)
 {
-    if (static_cast<size_t>(view.tag()) != view.index())
+    ::pmr::BoolParamChoice::ChoiceTag idx;
+    switch (view.tag())
     {
-        throw ::zserio::CppRuntimeException("Write: Wrong choice variant stored for BoolParamChoice: ") <<
-                static_cast<size_t>(view.tag()) << " != " <<
-                view.index() << "!";
+    case false:
+        idx = ::pmr::BoolParamChoice::VALUE_A_IDX;
+        break;
+    default:
+        idx = ::pmr::BoolParamChoice::VALUE_B_IDX;
+        break;
+    }
+
+    if (idx != view.index())
+    {
+        throw ::zserio::CppRuntimeException("Write: Wrong choice variant stored for ::pmr::BoolParamChoice: ")
+                << static_cast<size_t>(idx) << " != " << static_cast<size_t>(view.index()) << "!";
     }
 }
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<::pmr::BoolParamChoice>& view)
 {
     switch (view.tag())
     {
     case false:
-        write(writer, view.valueA());
+        detail::write(writer, view.valueA());
         break;
     default:
-        write(writer, view.valueB());
+        detail::write(writer, view.valueB());
         break;
     }
 }
 
-View<::pmr::BoolParamChoice> read(::zserio::BitStreamReader& reader, ::pmr::BoolParamChoice& data, ::zserio::Boolean tag_, const ::pmr::BoolParamChoice::allocator_type& allocator)
+View<::pmr::BoolParamChoice> readImpl(::zserio::BitStreamReader& reader, ::pmr::BoolParamChoice& data,
+        const ::pmr::BoolParamChoice::allocator_type& allocator, ::zserio::Boolean tag_)
 {
     View<::pmr::BoolParamChoice> view(data, tag_);
 
     switch (view.tag())
     {
     case false:
-        data.objectChoice = ::zserio::Int8();
-        read(reader, ::std::get<::zserio::Int8>(data.objectChoice));
+        data.objectChoice.emplace<::pmr::BoolParamChoice::VALUE_A_IDX>();
+        detail::read(reader, data.objectChoice.get<::pmr::BoolParamChoice::VALUE_A_IDX>());
         break;
     default:
-        data.objectChoice = ::zserio::Int16();
-        read(reader, ::std::get<::zserio::Int16>(data.objectChoice));
+        data.objectChoice.emplace<::pmr::BoolParamChoice::VALUE_B_IDX>();
+        detail::read(reader, data.objectChoice.get<::pmr::BoolParamChoice::VALUE_B_IDX>());
         break;
     }
 
     return view;
 }
 
+template <>
 size_t bitSizeOf(const View<::pmr::BoolParamChoice>& view, size_t bitPosition)
 {
     size_t endBitPosition = bitPosition;
@@ -179,10 +192,10 @@ size_t bitSizeOf(const View<::pmr::BoolParamChoice>& view, size_t bitPosition)
     switch (view.tag())
     {
     case false:
-        endBitPosition += bitSizeOf(view.valueA(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.valueA(), endBitPosition);
         break;
     default:
-        endBitPosition += bitSizeOf(view.valueB(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.valueB(), endBitPosition);
         break;
     }
 
@@ -203,11 +216,12 @@ size_t hash<::pmr::BoolParamChoice>::operator()(const ::pmr::BoolParamChoice& da
     return result;
 }
 
-size_t hash<::zserio::View<::pmr::BoolParamChoice>>::operator()(const ::zserio::View<::pmr::BoolParamChoice>& view) const
+size_t hash<::zserio::View<::pmr::BoolParamChoice>>::operator()(
+        const ::zserio::View<::pmr::BoolParamChoice>& view) const
 {
     uint32_t result = ::zserio::HASH_SEED;
 
-    result = ::zserio::calcHashCode(result, view.index());
+    result = ::zserio::calcHashCode(result, static_cast<size_t>(view.index()));
 
     switch (view.tag())
     {

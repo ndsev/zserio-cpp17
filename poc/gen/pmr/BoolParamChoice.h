@@ -3,8 +3,8 @@
  * Generator setup: writerCode, pubsubCode, serviceCode, sqlCode, stdAllocator.
  */
 
-#ifndef PMR_BOOL_PARAM_CHOICE_H
-#define PMR_BOOL_PARAM_CHOICE_H
+#ifndef BOOL_PMR_PARAM_CHOICE_H
+#define BOOL_PMR_PARAM_CHOICE_H
 
 #include <zserio/CppRuntimeVersion.h>
 #if CPP_EXTENSION_RUNTIME_VERSION_NUMBER != 1000000
@@ -12,27 +12,26 @@
     #error Please update your Zserio runtime library to the version 1.0.1.
 #endif
 
+#include <zserio/ArrayTraits.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
-#include <zserio/ArrayTraits.h>
-#include <zserio/View.h>
-#include <zserio/Variant.h>
 #include <zserio/TypeWrappers.h>
-#include <zserio/pmr/PolymorphicAllocator.h>
+#include <zserio/Variant.h>
+#include <zserio/View.h>
 
 namespace pmr
 {
 
-// It may be a good idea to inherit from zserio::Variant directly
-// so that all useful function members are inherited too. Choice
-// struct doesn't contain other fields anyway. Alternatively we need
-// to generate at least the important members from zserio::Variant here
-// in order for the user to skip typing .objectChoice which is just
-// an implementation detail.
 struct BoolParamChoice
 {
     using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<>;
     using needs_initialize_offsets = ::std::false_type;
+
+    enum ChoiceTag : size_t
+    {
+        VALUE_A_IDX,
+        VALUE_B_IDX
+    };
 
     BoolParamChoice() noexcept;
 
@@ -57,15 +56,12 @@ template <>
 class View<::pmr::BoolParamChoice>
 {
 public:
-    View(const ::pmr::BoolParamChoice& data,
-        ::zserio::Boolean tag_) noexcept;
+    View(const ::pmr::BoolParamChoice& data, ::zserio::Boolean tag_) noexcept;
 
     ::zserio::Boolean tag() const;
 
-    size_t index() const;
-
+    ::pmr::BoolParamChoice::ChoiceTag index() const;
     ::zserio::Int8 valueA() const;
-
     ::zserio::Int16 valueB() const;
 
 private:
@@ -83,12 +79,23 @@ bool operator>=(const View<::pmr::BoolParamChoice>& lhs, const View<::pmr::BoolP
 namespace detail
 {
 
+template <>
 void validate(const View<::pmr::BoolParamChoice>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<::pmr::BoolParamChoice>& view);
 
-View<::pmr::BoolParamChoice> read(::zserio::BitStreamReader& reader, ::pmr::BoolParamChoice& data, ::zserio::Boolean tag_, const ::pmr::BoolParamChoice::allocator_type& allocator = {});
+View<::pmr::BoolParamChoice> readImpl(::zserio::BitStreamReader& reader, ::pmr::BoolParamChoice& data,
+        const ::pmr::BoolParamChoice::allocator_type& allocator, ::zserio::Boolean tag_);
 
+template <typename... ARGS>
+View<::pmr::BoolParamChoice> read(::zserio::BitStreamReader& reader, ::pmr::BoolParamChoice& data,
+        const ::pmr::BoolParamChoice::allocator_type& allocator, ARGS&&... args)
+{
+    return readImpl(reader, data, allocator, ::std::forward<ARGS>(args)...);
+}
+
+template <>
 size_t bitSizeOf(const View<::pmr::BoolParamChoice>& view, size_t bitPosition);
 
 } // namespace detail
@@ -98,13 +105,13 @@ size_t bitSizeOf(const View<::pmr::BoolParamChoice>& view, size_t bitPosition);
 namespace std
 {
 
-template<>
+template <>
 struct hash<::pmr::BoolParamChoice>
 {
     size_t operator()(const ::pmr::BoolParamChoice& data) const;
 };
 
-template<>
+template <>
 struct hash<::zserio::View<::pmr::BoolParamChoice>>
 {
     size_t operator()(const ::zserio::View<::pmr::BoolParamChoice>& view) const;

@@ -1,10 +1,13 @@
 #include <cassert>
 #include <set>
 
-#include "RouteSegment.h"
-#include "pmr/RouteSegment.h"
 #include "zserio/DataView.h"
 #include "zserio/SerializeUtil.h"
+
+// included after SerializeUtil/DataView to test for out of order declarations
+#include "pmr/RouteSegment.h"
+
+#include "RouteSegment.h"
 
 void TestOperatorLess();
 void TestSerialize(RouteSegment& data);
@@ -13,6 +16,10 @@ void TestSerializeDataView(const RouteSegment& data);
 
 int main()
 {
+    // test variant explicit construction
+    auto var = zserio::Variant<int32_t, uint32_t>::create<1>(4);
+    assert(var.index() == 1);
+
     TestOperatorLess();
 
     {
@@ -23,16 +30,16 @@ int main()
         LinePositionOffset2D lpos;
         lpos.linePosition = 10;
         lpos.numBits = 16;
-        lpos.offset = { 100, 110 };
+        lpos.offset = {100, 110};
         route.endPositionWithOffset = lpos;
-        route.myArray = { 9, 8, 7 };
+        route.myArray = {9, 8, 7};
         route.container.numElements = 1;
         route.container.array.push_back(lpos);
-        route.packedContainer.push_back({ 1, { lpos }, "a" });
-        route.packedContainer.push_back({ 1, { lpos }, "b" });
-        route.packedContainer.push_back({ 1, { lpos }, "c" });
-        route.myChoice.objectChoice = ::zserio::Int16(-3);
-        route.myUnion.objectChoice = ::zserio::String("haha");
+        route.packedContainer.push_back({1, {lpos}, "a"});
+        route.packedContainer.push_back({1, {lpos}, "b"});
+        route.packedContainer.push_back({1, {lpos}, "c"});
+        route.myChoice.objectChoice.emplace<BoolParamChoice::VALUE_B_IDX>(-3);
+        route.myUnion.objectChoice.emplace<SimpleUnion::VALUE_A_IDX>("haha");
 
         TestSerialize(route);
         TestSerializeDataView(route);
@@ -46,16 +53,16 @@ int main()
         pmr::LinePositionOffset2D lpos;
         lpos.linePosition = 10;
         lpos.numBits = 16;
-        lpos.offset = { 100, 110 };
+        lpos.offset = {100, 110};
         route.endPositionWithOffset = lpos;
-        route.myArray = { 9, 8, 7 };
+        route.myArray = {9, 8, 7};
         route.container.numElements = 1;
         route.container.array.push_back(lpos);
-        route.packedContainer.push_back({ 1, { lpos }, "a" });
-        route.packedContainer.push_back({ 1, { lpos }, "b" });
-        route.packedContainer.push_back({ 1, { lpos }, "c" });
-        route.myChoice.objectChoice = ::zserio::Int16(-3);
-        route.myUnion.objectChoice = ::zserio::String("haha");
+        route.packedContainer.push_back({1, {lpos}, "a"});
+        route.packedContainer.push_back({1, {lpos}, "b"});
+        route.packedContainer.push_back({1, {lpos}, "c"});
+        route.myChoice.objectChoice.emplace<BoolParamChoice::VALUE_B_IDX>(-3);
+        route.myUnion.objectChoice.emplace<SimpleUnion::VALUE_A_IDX>("haha");
 
         TestSerialize(route);
     }

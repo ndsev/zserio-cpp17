@@ -2,10 +2,10 @@
 #define ZSERIO_BIT_BUFFER_H_INC
 
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <type_traits>
 #include <vector>
-#include <cstdint>
 
 #include "zserio/CppRuntimeException.h"
 #include "zserio/HashCodeUtil.h"

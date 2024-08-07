@@ -12,20 +12,20 @@
     #error Please update your Zserio runtime library to the version 1.0.0.
 #endif
 
-#include <zserio/BitStreamReader.h>
-#include <zserio/BitStreamWriter.h>
-#include <zserio/OptionalHolder.h>
-#include <zserio/Array.h>
-#include <zserio/ArrayTraits.h>
-#include <zserio/ConstraintException.h>
-#include <zserio/TypeWrappers.h>
-#include <zserio/View.h>
-
+#include <BoolParamChoice.h>
 #include <CoordShift.h>
 #include <LinePositionOffset2D.h>
 #include <PositionContainer.h>
-#include <BoolParamChoice.h>
 #include <SimpleUnion.h>
+#include <zserio/Array.h>
+#include <zserio/ArrayTraits.h>
+#include <zserio/BitStreamReader.h>
+#include <zserio/BitStreamWriter.h>
+#include <zserio/ConstraintException.h>
+#include <zserio/DataView.h>
+#include <zserio/OptionalHolder.h>
+#include <zserio/TypeWrappers.h>
+#include <zserio/View.h>
 
 struct RouteSegment
 {
@@ -36,17 +36,12 @@ struct RouteSegment
 
     explicit RouteSegment(const allocator_type&);
 
-    RouteSegment(
-        ::zserio::Boolean hasEndOffset_,
-        CoordShift shift_,
-        // myOffset is not here because it does not make any sense to set it
-        PositionContainer<LinePositionOffset2D, ::zserio::Int32> container_,
-        ::std::vector<PositionContainer<LinePositionOffset2D, ::zserio::String>> packedContainer_,
-        ::zserio::InplaceOptionalHolder<LinePositionOffset2D> endPositionWithOffset_,
-        ::zserio::vector<::zserio::Int32> myArray_,
-        BoolParamChoice myChoice_,
-        SimpleUnion myUnion_
-    );
+    RouteSegment(::zserio::Boolean hasEndOffset_, CoordShift shift_,
+            // myOffset is not here because it does not make any sense to set it
+            PositionContainer<LinePositionOffset2D, ::zserio::Int32> container_,
+            ::std::vector<PositionContainer<LinePositionOffset2D, ::zserio::String>> packedContainer_,
+            ::zserio::InplaceOptionalHolder<LinePositionOffset2D> endPositionWithOffset_,
+            ::zserio::vector<::zserio::Int32> myArray_, BoolParamChoice myChoice_, SimpleUnion myUnion_);
 
     ::zserio::Boolean hasEndOffset;
     CoordShift shift;
@@ -76,7 +71,7 @@ class View<RouteSegment>
 public:
     // implemented ArrayTraits due to 1) parameters transfer and 2) templated calls
     struct ZserioArrayTraits_packedContainer
-        : ::zserio::ArrayTraitsBase<View, PositionContainer<LinePositionOffset2D, ::zserio::String>>
+            : ::zserio::ArrayTraitsBase<View, PositionContainer<LinePositionOffset2D, ::zserio::String>>
     {
         static ViewType at(const OwnerType& owner, const ElementType& element, size_t index)
         {
@@ -84,49 +79,48 @@ public:
         }
 
         template <typename PACKING_CONTEXT>
-        static void initContext(const OwnerType& owner, PACKING_CONTEXT& packingContext, const ElementType& element, size_t index)
+        static void initContext(const OwnerType& owner, PACKING_CONTEXT& packingContext,
+                const ElementType& element, size_t index)
         {
-            ::zserio::detail::initPackingContext(at(owner, element, index), packingContext);
+            detail::initPackingContext(at(owner, element, index), packingContext);
         }
         template <typename PACKING_CONTEXT>
-        static size_t bitSizeOf(const OwnerType& owner, PACKING_CONTEXT& packingContext, size_t bitPosition, const ElementType& element, size_t index)
+        static size_t bitSizeOf(const OwnerType& owner, PACKING_CONTEXT& packingContext, size_t bitPosition,
+                const ElementType& element, size_t index)
         {
-            return ::zserio::detail::bitSizeOf(at(owner, element, index), packingContext, bitPosition);
+            return detail::bitSizeOf(at(owner, element, index), packingContext, bitPosition);
         }
         template <typename PACKING_CONTEXT>
-        static void read(const OwnerType& owner, ::std::vector<ElementType>& array, PACKING_CONTEXT& packingContext, ::zserio::BitStreamReader& in, size_t index)
+        static void read(const OwnerType& owner, ::std::vector<ElementType>& array,
+                PACKING_CONTEXT& packingContext, ::zserio::BitStreamReader& in, size_t index)
         {
             array.emplace_back(array.get_allocator());
-            ::zserio::detail::read(in, packingContext, array.back(), owner.shift(), array.get_allocator());
+            detail::read(in, packingContext, array.back(), owner.shift(), array.get_allocator());
         }
         template <typename PACKING_CONTEXT>
-        static void write(const OwnerType& owner, PACKING_CONTEXT& packingContext, ::zserio::BitStreamWriter& out, ElementType element, size_t index)
+        static void write(const OwnerType& owner, PACKING_CONTEXT& packingContext,
+                ::zserio::BitStreamWriter& out, ElementType element, size_t index)
         {
-            ::zserio::detail::write(out, packingContext, at(owner, element, index));
+            detail::write(out, packingContext, at(owner, element, index));
         }
     };
 
-    using ZserioArrayType_packedContainer = ::zserio::Array<::zserio::vector<PositionContainer<LinePositionOffset2D, ::zserio::String>>, ZserioArrayTraits_packedContainer, ::zserio::ArrayType::NORMAL>;
-    using ZserioArrayType_myArray = ::zserio::Array<::zserio::vector<::zserio::Int32>, ::zserio::StdTypeArrayTraits<::zserio::Int32>, ::zserio::ArrayType::NORMAL>;
+    using ZserioArrayType_packedContainer =
+            ::zserio::Array<::zserio::vector<PositionContainer<LinePositionOffset2D, ::zserio::String>>,
+                    ZserioArrayTraits_packedContainer, ::zserio::ArrayType::NORMAL>;
+    using ZserioArrayType_myArray = ::zserio::Array<::zserio::vector<::zserio::Int32>,
+            ::zserio::StdTypeArrayTraits<::zserio::Int32>, ::zserio::ArrayType::NORMAL>;
 
     View(const RouteSegment& data) noexcept;
 
     ::zserio::Boolean hasEndOffset() const;
-
     CoordShift shift() const;
-
     uint32_t myOffset() const;
-
     ::zserio::View<PositionContainer<LinePositionOffset2D, ::zserio::Int32>> container() const;
-
     ZserioArrayType_packedContainer packedContainer() const;
-
     ::zserio::InplaceOptionalHolder<View<LinePositionOffset2D>> endPositionWithOffset() const;
-
     ZserioArrayType_myArray myArray() const;
-
     View<BoolParamChoice> myChoice() const;
-
     View<SimpleUnion> myUnion() const;
 
 private:
@@ -143,15 +137,30 @@ bool operator>=(const View<RouteSegment>& lhs, const View<RouteSegment>& rhs);
 namespace detail
 {
 
+template <>
 void validate(const View<RouteSegment>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<RouteSegment>& view);
 
-View<RouteSegment> read(::zserio::BitStreamReader& reader, RouteSegment& data, const RouteSegment::allocator_type& alloc = {});
+template <>
+View<RouteSegment> read(
+        ::zserio::BitStreamReader& reader, RouteSegment& data, const RouteSegment::allocator_type& alloc);
 
+template <>
 size_t bitSizeOf(const View<RouteSegment>& view, size_t bitPosition);
 
+template <>
 size_t initializeOffsets(RouteSegment& data, size_t endBitPosition);
+
+} // namespace detail
+
+namespace detail
+{
+
+template <>
+View<RouteSegment> read(
+        ::zserio::BitStreamReader& reader, RouteSegment& data, const RouteSegment::allocator_type& alloc);
 
 } // namespace detail
 

@@ -9,38 +9,27 @@ namespace pmr
 {
 
 PositionOffset2D::PositionOffset2D() noexcept :
-            PositionOffset2D(allocator_type())
+        PositionOffset2D(allocator_type())
 {}
 
 PositionOffset2D::PositionOffset2D(const allocator_type&)
 {}
 
-PositionOffset2D::PositionOffset2D(
-        ::zserio::DynInt32 deltaLongitude_,
-        ::zserio::DynInt32 deltaLatitude_
-) :
+PositionOffset2D::PositionOffset2D(::zserio::DynInt32 deltaLongitude_, ::zserio::DynInt32 deltaLatitude_) :
         deltaLongitude(::std::move(deltaLongitude_)),
         deltaLatitude(::std::move(deltaLatitude_))
 {}
 
 bool operator==(const PositionOffset2D& lhs, const PositionOffset2D& rhs)
 {
-    return ::std::tie(
-            lhs.deltaLongitude,
-            lhs.deltaLatitude) ==
-                    ::std::tie(
-                            rhs.deltaLongitude,
-                            rhs.deltaLatitude);
+    return ::std::tie(lhs.deltaLongitude, lhs.deltaLatitude) ==
+            ::std::tie(rhs.deltaLongitude, rhs.deltaLatitude);
 }
 
 bool operator<(const PositionOffset2D& lhs, const PositionOffset2D& rhs)
 {
-    return ::std::tie(
-            lhs.deltaLongitude,
-            lhs.deltaLatitude) <
-                    ::std::tie(
-                            rhs.deltaLongitude,
-                            rhs.deltaLatitude);
+    return ::std::tie(lhs.deltaLongitude, lhs.deltaLatitude) <
+            ::std::tie(rhs.deltaLongitude, rhs.deltaLatitude);
 }
 
 bool operator!=(const PositionOffset2D& lhs, const PositionOffset2D& rhs)
@@ -68,9 +57,8 @@ bool operator>=(const PositionOffset2D& lhs, const PositionOffset2D& rhs)
 namespace zserio
 {
 
-View<::pmr::PositionOffset2D>::View(const ::pmr::PositionOffset2D& data,
-        ::pmr::CoordWidth numBits_,
-        ::pmr::CoordShift shift_) noexcept :
+View<::pmr::PositionOffset2D>::View(
+        const ::pmr::PositionOffset2D& data, ::pmr::CoordWidth numBits_, ::pmr::CoordShift shift_) noexcept :
         m_numBits_(numBits_),
         m_shift_(shift_),
         m_data(data)
@@ -110,11 +98,8 @@ bool operator==(const View<::pmr::PositionOffset2D>& lhs, const View<::pmr::Posi
 {
     if (&lhs != &rhs)
     {
-        return
-                (lhs.numBits() == rhs.numBits()) &&
-                (lhs.shift() == rhs.shift()) &&
-                (lhs.deltaLongitude() == rhs.deltaLongitude()) &&
-                (lhs.deltaLatitude() == rhs.deltaLatitude());
+        return (lhs.numBits() == rhs.numBits()) && (lhs.shift() == rhs.shift()) &&
+                (lhs.deltaLongitude() == rhs.deltaLongitude()) && (lhs.deltaLatitude() == rhs.deltaLatitude());
     }
 
     return true;
@@ -154,40 +139,43 @@ bool operator>=(const View<::pmr::PositionOffset2D>& lhs, const View<::pmr::Posi
     return !(lhs < rhs);
 }
 
-
 namespace detail
 {
 
+template <>
 void validate(const View<::pmr::PositionOffset2D>& view)
 {
     // todo: should we pass a field name to construct better error message?
-    validate(view.deltaLongitude(), view.numBits() + 1);
-    validate(view.deltaLatitude(), view.numBits() + 1);
+    detail::validate(view.deltaLongitude(), view.numBits() + 1);
+    detail::validate(view.deltaLatitude(), view.numBits() + 1);
 }
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<::pmr::PositionOffset2D>& view)
 {
-    write(writer, view.deltaLongitude(), view.numBits() + 1);
-    write(writer, view.deltaLatitude(), view.numBits() + 1);
+    detail::write(writer, view.deltaLongitude(), view.numBits() + 1);
+    detail::write(writer, view.deltaLatitude(), view.numBits() + 1);
 }
 
-View<::pmr::PositionOffset2D> read(::zserio::BitStreamReader& reader, ::pmr::PositionOffset2D& data, ::pmr::CoordWidth numBits_,
-        ::pmr::CoordShift shift_, const ::pmr::PositionOffset2D::allocator_type& allocator)
+View<::pmr::PositionOffset2D> readImpl(::zserio::BitStreamReader& reader, ::pmr::PositionOffset2D& data,
+        const ::pmr::PositionOffset2D::allocator_type& allocator, ::pmr::CoordWidth numBits_,
+        ::pmr::CoordShift shift_)
 {
     View<::pmr::PositionOffset2D> view(data, numBits_, shift_);
 
-    read(reader, data.deltaLongitude, view.numBits() + 1);
-    read(reader, data.deltaLatitude, view.numBits() + 1);
+    detail::read(reader, data.deltaLongitude, view.numBits() + 1);
+    detail::read(reader, data.deltaLatitude, view.numBits() + 1);
 
     return view;
 }
 
+template <>
 size_t bitSizeOf(const View<::pmr::PositionOffset2D>& view, size_t bitPosition)
 {
     size_t endBitPosition = bitPosition;
 
-    endBitPosition += bitSizeOf(view.deltaLongitude(), view.numBits() + 1, bitPosition);
-    endBitPosition += bitSizeOf(view.deltaLatitude(), view.numBits() + 1, bitPosition);
+    endBitPosition += detail::bitSizeOf(view.deltaLongitude(), view.numBits() + 1, bitPosition);
+    endBitPosition += detail::bitSizeOf(view.deltaLatitude(), view.numBits() + 1, bitPosition);
 
     return endBitPosition - bitPosition;
 }
@@ -209,7 +197,8 @@ size_t hash<::pmr::PositionOffset2D>::operator()(const ::pmr::PositionOffset2D& 
     return result;
 }
 
-size_t hash<::zserio::View<::pmr::PositionOffset2D>>::operator()(const ::zserio::View<::pmr::PositionOffset2D>& view) const
+size_t hash<::zserio::View<::pmr::PositionOffset2D>>::operator()(
+        const ::zserio::View<::pmr::PositionOffset2D>& view) const
 {
     uint32_t result = ::zserio::HASH_SEED;
 

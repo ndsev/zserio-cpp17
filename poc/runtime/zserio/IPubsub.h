@@ -1,8 +1,8 @@
 #ifndef ZSERIO_IPUBSUB_H_INC
 #define ZSERIO_IPUBSUB_H_INC
 
-#include <memory>
 #include <cstdint>
+#include <memory>
 
 #include "zserio/Span.h"
 #include "zserio/StringView.h"

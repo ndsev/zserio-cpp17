@@ -3,8 +3,8 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 
 #include "zserio/BitBuffer.h"
 #include "zserio/CppRuntimeException.h"

@@ -2,8 +2,8 @@
 #define ZSERIO_BITSIZEOF_CALCULATOR_H_INC
 
 #include <cstddef>
-#include <string>
 #include <cstdint>
+#include <string>
 
 #include "zserio/BitBuffer.h"
 #include "zserio/BitPositionUtil.h"

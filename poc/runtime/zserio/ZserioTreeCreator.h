@@ -2,10 +2,10 @@
 #define ZSERIO_ZSERIO_TREE_CREATOR_H_INC
 
 #include <cerrno>
+#include <cstdint>
 #include <cstdlib>
 #include <limits>
 #include <type_traits>
-#include <cstdint>
 
 #include "zserio/BitBuffer.h"
 #include "zserio/CppRuntimeException.h"

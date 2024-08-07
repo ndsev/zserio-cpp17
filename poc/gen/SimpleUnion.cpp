@@ -10,7 +10,7 @@ SimpleUnion::SimpleUnion() noexcept :
 {}
 
 SimpleUnion::SimpleUnion(const allocator_type& allocator) noexcept
-    //: objectChoice(allocator)
+//: objectChoice(allocator)
 {}
 
 bool operator==(const SimpleUnion& lhs, const SimpleUnion& rhs)
@@ -50,19 +50,19 @@ View<SimpleUnion>::View(const SimpleUnion& data) noexcept :
         m_data(data)
 {}
 
-size_t View<SimpleUnion>::index() const
+SimpleUnion::ChoiceTag View<SimpleUnion>::index() const
 {
-    return m_data.objectChoice.index();
+    return static_cast<SimpleUnion::ChoiceTag>(m_data.objectChoice.index());
 }
 
 ::zserio::String View<SimpleUnion>::valueA() const
 {
-    return ::std::get<::zserio::String>(m_data.objectChoice);
+    return m_data.objectChoice.get<SimpleUnion::VALUE_A_IDX>();
 }
 
 ::zserio::Int8 View<SimpleUnion>::valueB() const
 {
-    return ::std::get<::zserio::Int8>(m_data.objectChoice);
+    return m_data.objectChoice.get<SimpleUnion::VALUE_B_IDX>();
 }
 
 bool operator==(const View<SimpleUnion>& lhs, const View<SimpleUnion>& rhs)
@@ -118,60 +118,65 @@ bool operator>=(const View<SimpleUnion>& lhs, const View<SimpleUnion>& rhs)
 namespace detail
 {
 
+template <>
 void validate(const View<SimpleUnion>& view)
-{
-}
+{}
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<SimpleUnion>& view)
 {
-    write(writer, ::zserio::VarSize(::zserio::convertSizeToUInt32(view.index())));
+    detail::write(writer, ::zserio::VarSize(::zserio::convertSizeToUInt32(view.index())));
 
     switch (view.index())
     {
     case 0:
-        write(writer, view.valueA());
+        detail::write(writer, view.valueA());
         break;
     default:
-        write(writer, view.valueB());
+        detail::write(writer, view.valueB());
         break;
     }
 }
 
-View<SimpleUnion> read(::zserio::BitStreamReader& reader, SimpleUnion& data, const SimpleUnion::allocator_type& allocator)
+template <>
+View<SimpleUnion> read(
+        ::zserio::BitStreamReader& reader, SimpleUnion& data, const SimpleUnion::allocator_type& allocator)
 {
     View<SimpleUnion> view(data);
 
     ::zserio::VarSize index;
-    read(reader, index);
+    detail::read(reader, index);
 
     switch (index)
     {
     case 0:
-        data.objectChoice = ::zserio::String();
-        read(reader, ::std::get<::zserio::String>(data.objectChoice), allocator);
+        data.objectChoice.emplace<SimpleUnion::VALUE_A_IDX>();
+        detail::read(reader, data.objectChoice.get<SimpleUnion::VALUE_A_IDX>(), allocator);
         break;
     default:
-        data.objectChoice = ::zserio::Int8();
-        read(reader, ::std::get<::zserio::Int8>(data.objectChoice));
+        data.objectChoice.emplace<SimpleUnion::VALUE_B_IDX>();
+        detail::read(reader, data.objectChoice.get<SimpleUnion::VALUE_B_IDX>());
         break;
     }
 
     return view;
 }
 
+template <>
 size_t bitSizeOf(const View<SimpleUnion>& view, size_t bitPosition)
 {
     size_t endBitPosition = bitPosition;
 
-    endBitPosition += bitSizeOf(::zserio::VarSize(::zserio::convertSizeToUInt32(view.index())), endBitPosition);
+    endBitPosition +=
+            detail::bitSizeOf(::zserio::VarSize(::zserio::convertSizeToUInt32(view.index())), endBitPosition);
 
     switch (view.index())
     {
     case 0:
-        endBitPosition += bitSizeOf(view.valueA(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.valueA(), endBitPosition);
         break;
     default:
-        endBitPosition += bitSizeOf(view.valueB(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.valueB(), endBitPosition);
         break;
     }
 
@@ -196,7 +201,7 @@ size_t hash<::zserio::View<SimpleUnion>>::operator()(const ::zserio::View<Simple
 {
     uint32_t result = ::zserio::HASH_SEED;
 
-    result = ::zserio::calcHashCode(result, view.index());
+    result = ::zserio::calcHashCode(result, static_cast<size_t>(view.index()));
 
     switch (view.index())
     {

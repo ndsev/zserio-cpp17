@@ -12,16 +12,15 @@
     #error Please update your Zserio runtime library to the version 1.0.0.
 #endif
 
-#include <zserio/BitStreamReader.h>
-#include <zserio/BitStreamWriter.h>
-#include <zserio/ArrayTraits.h>
-#include <zserio/View.h>
-#include <zserio/TypeWrappers.h>
-
 #include <CoordShift.h>
 #include <CoordWidth.h>
 #include <LinePosition.h>
 #include <PositionOffset2D.h>
+#include <zserio/ArrayTraits.h>
+#include <zserio/BitStreamReader.h>
+#include <zserio/BitStreamWriter.h>
+#include <zserio/TypeWrappers.h>
+#include <zserio/View.h>
 
 struct LinePositionOffset2D
 {
@@ -32,11 +31,7 @@ struct LinePositionOffset2D
 
     explicit LinePositionOffset2D(const allocator_type& allocator);
 
-    LinePositionOffset2D(
-        LinePosition linePosition_,
-        CoordWidth numBits_,
-        PositionOffset2D offset_
-    );
+    LinePositionOffset2D(LinePosition linePosition_, CoordWidth numBits_, PositionOffset2D offset_);
 
     LinePosition linePosition;
     CoordWidth numBits;
@@ -62,7 +57,6 @@ public:
     CoordShift shift() const;
 
     LinePosition linePosition() const;
-
     CoordWidth numBits() const;
 
     // we need to generate this code for each compound field to transport parameters correctly
@@ -83,12 +77,23 @@ bool operator>=(const View<LinePositionOffset2D>& lhs, const View<LinePositionOf
 namespace detail
 {
 
+template <>
 void validate(const ::zserio::View<LinePositionOffset2D>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const ::zserio::View<LinePositionOffset2D>& view);
 
-View<LinePositionOffset2D> read(::zserio::BitStreamReader& reader, LinePositionOffset2D& data, CoordShift shift_, const LinePositionOffset2D::allocator_type& allocator = {});
+View<LinePositionOffset2D> readImpl(::zserio::BitStreamReader& reader, LinePositionOffset2D& data,
+        const LinePositionOffset2D::allocator_type& allocator, CoordShift shift_);
 
+template <typename... ARGS>
+View<LinePositionOffset2D> read(::zserio::BitStreamReader& reader, LinePositionOffset2D& data,
+        const LinePositionOffset2D::allocator_type& allocator, ARGS&&... args)
+{
+    return readImpl(reader, data, allocator, ::std::forward<ARGS>(args)...);
+}
+
+template <>
 size_t bitSizeOf(const ::zserio::View<LinePositionOffset2D>& view, size_t bitPosition);
 
 } // namespace detail

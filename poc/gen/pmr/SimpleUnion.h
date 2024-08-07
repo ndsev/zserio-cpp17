@@ -12,26 +12,26 @@
     #error Please update your Zserio runtime library to the version 1.0.1.
 #endif
 
+#include <zserio/ArrayTraits.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
-#include <zserio/ArrayTraits.h>
-#include <zserio/View.h>
-#include <zserio/Variant.h>
 #include <zserio/TypeWrappers.h>
+#include <zserio/Variant.h>
+#include <zserio/View.h>
 
 namespace pmr
 {
 
-// It may be a good idea to inherit from zserio::Variant directly
-// so that all useful function members are inherited too. Choice
-// struct doesn't contain other fields anyway. Alternatively we need
-// to generate at least the important members from zserio::Variant here
-// in order for the user to skip typing .objectChoice which is just
-// an implementation detail.
 struct SimpleUnion
 {
     using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<>;
     using needs_initialize_offsets = ::std::false_type;
+
+    enum ChoiceTag : size_t
+    {
+        VALUE_A_IDX,
+        VALUE_B_IDX
+    };
 
     SimpleUnion() noexcept;
 
@@ -58,10 +58,8 @@ class View<::pmr::SimpleUnion>
 public:
     View(const ::pmr::SimpleUnion& data) noexcept;
 
-    size_t index() const;
-
+    ::pmr::SimpleUnion::ChoiceTag index() const;
     ::zserio::String valueA() const;
-
     ::zserio::Int8 valueB() const;
 
 private:
@@ -78,12 +76,17 @@ bool operator>=(const View<::pmr::SimpleUnion>& lhs, const View<::pmr::SimpleUni
 namespace detail
 {
 
+template <>
 void validate(const View<::pmr::SimpleUnion>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<::pmr::SimpleUnion>& view);
 
-View<::pmr::SimpleUnion> read(::zserio::BitStreamReader& reader, ::pmr::SimpleUnion& data, const ::pmr::SimpleUnion::allocator_type& allocator = {});
+template <>
+View<::pmr::SimpleUnion> read(::zserio::BitStreamReader& reader, ::pmr::SimpleUnion& data,
+        const ::pmr::SimpleUnion::allocator_type& allocator);
 
+template <>
 size_t bitSizeOf(const View<::pmr::SimpleUnion>& view, size_t bitPosition);
 
 } // namespace detail
@@ -93,13 +96,13 @@ size_t bitSizeOf(const View<::pmr::SimpleUnion>& view, size_t bitPosition);
 namespace std
 {
 
-template<>
+template <>
 struct hash<::pmr::SimpleUnion>
 {
     size_t operator()(const ::pmr::SimpleUnion& data) const;
 };
 
-template<>
+template <>
 struct hash<::zserio::View<::pmr::SimpleUnion>>
 {
     size_t operator()(const ::zserio::View<::pmr::SimpleUnion>& view) const;

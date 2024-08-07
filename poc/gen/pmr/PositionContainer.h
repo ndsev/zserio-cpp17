@@ -12,17 +12,17 @@
     #error Please update your Zserio runtime library to the version 1.0.0.
 #endif
 
+#include <pmr/CoordShift.h>
 #include <tuple>
+#include <zserio/AllocatorPropagatingCopy.h>
+#include <zserio/Array.h>
+#include <zserio/ArrayTraits.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
-#include <zserio/AllocatorPropagatingCopy.h>
-#include <zserio/ArrayTraits.h>
-#include <zserio/View.h>
 #include <zserio/TypeWrappers.h>
+#include <zserio/View.h>
 #include <zserio/pmr/PolymorphicAllocator.h>
 #include <zserio/pmr/Vector.h>
-
-#include <pmr/CoordShift.h>
 
 // here we explore a different idea for View as Data<T>::View comes with lots
 // of problems. Compiler is not able to deduce such view so all function calls
@@ -36,10 +36,8 @@ template <typename T, typename U>
 struct PositionContainer
 {
     using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<>;
-        using needs_initialize_offsets = ::std::disjunction<
-        typename U::needs_initialize_offsets,
-        typename T::needs_initialize_offsets
-    >;
+    using needs_initialize_offsets =
+            ::std::disjunction<typename U::needs_initialize_offsets, typename T::needs_initialize_offsets>;
 
     struct ZserioPackingContext
     {
@@ -58,11 +56,7 @@ struct PositionContainer
             field(allocator)
     {}
 
-    PositionContainer(
-            ::zserio::VarSize numElements_,
-            ::zserio::pmr::vector<T> array_,
-            U field_
-    ) :
+    PositionContainer(::zserio::VarSize numElements_, ::zserio::pmr::vector<T> array_, U field_) :
             numElements(::std::move(numElements_)),
             array(::std::move(array_)),
             field(::std::move(field_))
@@ -76,27 +70,15 @@ struct PositionContainer
 template <typename T, typename U>
 bool operator==(const PositionContainer<T, U>& lhs, const PositionContainer<T, U>& rhs)
 {
-    return ::std::tie(
-                lhs.numElements,
-                lhs.array,
-                lhs.field) ==
-            ::std::tie(
-                rhs.numElements,
-                rhs.array,
-                rhs.field);
+    return ::std::tie(lhs.numElements, lhs.array, lhs.field) ==
+            ::std::tie(rhs.numElements, rhs.array, rhs.field);
 }
 
 template <typename T, typename U>
 bool operator<(const PositionContainer<T, U>& lhs, const PositionContainer<T, U>& rhs)
 {
-    return ::std::tie(
-                lhs.numElements,
-                lhs.array,
-                lhs.field) <
-            ::std::tie(
-                rhs.numElements,
-                rhs.array,
-                rhs.field);
+    return ::std::tie(lhs.numElements, lhs.array, lhs.field) <
+            ::std::tie(rhs.numElements, rhs.array, rhs.field);
 }
 
 template <typename T, typename U>
@@ -132,34 +114,38 @@ template <typename T, typename U>
 class View<::pmr::PositionContainer<T, U>>
 {
 public:
-    struct ZserioArrayTraits_array
-        : ::zserio::ArrayTraitsBase<View, T>
+    struct ZserioArrayTraits_array : ::zserio::ArrayTraitsBase<View, T>
     {
         using Base = ::zserio::ArrayTraitsBase<View, T>; // msvc needs this to resolve types
+        using ElementType = typename Base::ElementType;
 
-        static typename Base::ViewType at(const typename Base::OwnerType& owner, const typename Base::ElementType& element, size_t index)
+        static typename Base::ViewType at(
+                const typename Base::OwnerType& owner, const ElementType& element, size_t index)
         {
             return typename Base::ViewType(element, owner.shift());
         }
-        static void read(const typename Base::OwnerType& owner, ::zserio::pmr::vector<typename Base::ElementType>& array, ::zserio::BitStreamReader& in, size_t index)
+        static void read(const typename Base::OwnerType& owner, ::zserio::pmr::vector<ElementType>& array,
+                ::zserio::BitStreamReader& in, size_t index)
         {
             array.emplace_back(array.get_allocator());
-            ::zserio::detail::read(in, array.back(), owner.shift(), array.get_allocator());
+            detail::read(in, array.back(), array.get_allocator(), owner.shift());
         }
-        static void write(const typename Base::OwnerType& owner, ::zserio::BitStreamWriter& out, const typename Base::ElementType& element, size_t index)
+        static void write(const typename Base::OwnerType& owner, ::zserio::BitStreamWriter& out,
+                const ElementType& element, size_t index)
         {
-            ::zserio::detail::write(out, at(owner, element, index));
+            detail::write(out, at(owner, element, index));
         }
-        static size_t bitSizeOf(const typename Base::OwnerType& owner, size_t endBitPosition, const typename Base::ElementType& element, size_t index)
+        static size_t bitSizeOf(const typename Base::OwnerType& owner, size_t endBitPosition,
+                const ElementType& element, size_t index)
         {
-            return ::zserio::detail::bitSizeOf(at(owner, element, index), endBitPosition);
+            return detail::bitSizeOf(at(owner, element, index), endBitPosition);
         }
     };
 
-    using ZserioArrayType_array = ::zserio::Array<::zserio::pmr::vector<T>, ZserioArrayTraits_array, ::zserio::ArrayType::NORMAL>;
+    using ZserioArrayType_array =
+            ::zserio::Array<::zserio::pmr::vector<T>, ZserioArrayTraits_array, ::zserio::ArrayType::NORMAL>;
 
-    View(const ::pmr::PositionContainer<T, U>& data,
-        ::pmr::CoordShift shift_) noexcept :
+    View(const ::pmr::PositionContainer<T, U>& data, ::pmr::CoordShift shift_) noexcept :
             m_shift_(shift_),
             m_data(data)
     {}
@@ -192,20 +178,20 @@ private:
 };
 
 template <typename T, typename U>
-bool operator==(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs, const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
+bool operator==(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs,
+        const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
 {
     if (&lhs != &rhs)
     {
-        return
-            lhs.numElements() == rhs.numElements() &&
-            lhs.array() == rhs.array();
+        return lhs.numElements() == rhs.numElements() && lhs.array() == rhs.array();
     }
 
     return true;
 }
 
 template <typename T, typename U>
-bool operator<(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs, const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
+bool operator<(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs,
+        const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
 {
     if (lhs.numElements() != rhs.numElements())
         return lhs.numElements() < rhs.numElements();
@@ -216,25 +202,29 @@ bool operator<(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs, const 
 }
 
 template <typename T, typename U>
-bool operator!=(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs, const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
+bool operator!=(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs,
+        const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename T, typename U>
-bool operator>(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs, const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
+bool operator>(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs,
+        const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
 {
     return rhs < lhs;
 }
 
 template <typename T, typename U>
-bool operator<=(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs, const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
+bool operator<=(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs,
+        const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
 {
     return !(rhs < lhs);
 }
 
 template <typename T, typename U>
-bool operator>=(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs, const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
+bool operator>=(const ::zserio::View<::pmr::PositionContainer<T, U>>& lhs,
+        const ::zserio::View<::pmr::PositionContainer<T, U>>& rhs)
 {
     return !(lhs < rhs);
 }
@@ -243,104 +233,115 @@ namespace detail
 {
 
 template <typename T, typename U>
-inline void validate(const ::zserio::View<::pmr::PositionContainer<T, U>>& view)
+void validate(const ::zserio::View<::pmr::PositionContainer<T, U>>& view)
 {
     // todo view.array().validate();
-    validate(view.field());
+    detail::validate(view.field());
 }
 
 template <typename T, typename U>
-inline void write(::zserio::BitStreamWriter& writer, const ::zserio::View<::pmr::PositionContainer<T, U>>& view)
+void write(::zserio::BitStreamWriter& writer, const ::zserio::View<::pmr::PositionContainer<T, U>>& view)
 {
-    write(writer, view.numElements());
+    detail::write(writer, view.numElements());
     view.array().write(writer);
-    write(writer, view.field());
+    detail::write(writer, view.field());
 }
 
 template <typename T, typename U>
-inline void write(::zserio::BitStreamWriter& writer, typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context, const ::zserio::View<::pmr::PositionContainer<T, U>>& view)
+void write(::zserio::BitStreamWriter& writer,
+        typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context,
+        const ::zserio::View<::pmr::PositionContainer<T, U>>& view)
 {
-    write(writer, context.numElements, view.numElements());
+    detail::write(writer, context.numElements, view.numElements());
 
     view.array().write(writer);
 
-    write(writer, context.field, view.field());
+    detail::write(writer, context.field, view.field());
 }
 
 template <typename T, typename U>
-inline ::zserio::View<::pmr::PositionContainer<T, U>> read(::zserio::BitStreamReader& reader, ::pmr::PositionContainer<T, U>& data, ::pmr::CoordShift shift_, const typename ::pmr::PositionContainer<T, U>::allocator_type& allocator = {})
+::zserio::View<::pmr::PositionContainer<T, U>> read(::zserio::BitStreamReader& reader,
+        ::pmr::PositionContainer<T, U>& data,
+        const typename ::pmr::PositionContainer<T, U>::allocator_type& allocator, ::pmr::CoordShift shift_)
 {
     typename ::zserio::View<::pmr::PositionContainer<T, U>> view(data, shift_);
 
-    read(reader, data.numElements);
+    detail::read(reader, data.numElements);
 
-    typename ::zserio::View<::pmr::PositionContainer<T, U>>::ZserioArrayType_array(view, data.array, reader, view.numElements());
+    typename ::zserio::View<::pmr::PositionContainer<T, U>>::ZserioArrayType_array(
+            view, data.array, reader, view.numElements());
 
-    read(reader, data.field);
+    detail::read(reader, data.field);
 
     return view;
 }
 
 template <typename T, typename U>
-inline ::zserio::View<::pmr::PositionContainer<T, U>> read(::zserio::BitStreamReader& reader, typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context, ::pmr::PositionContainer<T, U>& data, ::pmr::CoordShift shift_, const typename ::pmr::PositionContainer<T, U>::allocator_type& allocator = {})
+::zserio::View<::pmr::PositionContainer<T, U>> read(::zserio::BitStreamReader& reader,
+        typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context,
+        ::pmr::PositionContainer<T, U>& data,
+        const typename ::pmr::PositionContainer<T, U>::allocator_type& allocator, ::pmr::CoordShift shift_)
 {
     ::zserio::View<::pmr::PositionContainer<T, U>> view(data, shift_);
 
-    read(reader, context.numElements, data.numElements);
+    detail::read(reader, context.numElements, data.numElements);
 
-    typename ::zserio::View<::pmr::PositionContainer<T, U>>::ZserioArrayType_array(view, data.array, reader, view.numElements());
+    typename ::zserio::View<::pmr::PositionContainer<T, U>>::ZserioArrayType_array(
+            view, data.array, reader, view.numElements());
 
-    read(reader, context.field, data.field);
+    detail::read(reader, context.field, data.field, allocator);
 
     return view;
 }
 
 template <typename T, typename U>
-inline size_t bitSizeOf(const ::zserio::View<::pmr::PositionContainer<T, U>>& view, size_t bitPosition)
+size_t bitSizeOf(const ::zserio::View<::pmr::PositionContainer<T, U>>& view, size_t bitPosition)
 {
     size_t endBitPosition = bitPosition;
 
-    endBitPosition += bitSizeOf(view.numElements(), endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.numElements(), endBitPosition);
     endBitPosition += view.array().bitSizeOf(endBitPosition);
-    endBitPosition += bitSizeOf(view.field(), endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.field(), endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
 template <typename T, typename U>
-inline size_t bitSizeOf(const ::zserio::View<::pmr::PositionContainer<T, U>>& view, typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context, size_t bitPosition)
+size_t bitSizeOf(const ::zserio::View<::pmr::PositionContainer<T, U>>& view,
+        typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context, size_t bitPosition)
 {
     size_t endBitPosition = bitPosition;
 
-    endBitPosition += bitSizeOf(view.numElements(), context.numElements, endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.numElements(), context.numElements, endBitPosition);
     endBitPosition += view.array().bitSizeOf(endBitPosition);
-    endBitPosition += bitSizeOf(view.field(), context.field, endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.field(), context.field, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
 template <typename T, typename U,
         typename = ::std::enable_if_t<::pmr::PositionContainer<T, U>::needs_initialize_offsets::value>>
-inline size_t initializeOffsets(::pmr::PositionContainer<T, U>& data, size_t endBitPosition, ::pmr::CoordShift shift)
+size_t initializeOffsets(::pmr::PositionContainer<T, U>& data, size_t endBitPosition, ::pmr::CoordShift shift)
 {
     typename ::zserio::View<::pmr::PositionContainer<T, U>> view(data, shift);
 
-    endBitPosition += bitSizeOf(view.numElements(), endBitPosition);
+    endBitPosition += detail::bitSizeOf(view.numElements(), endBitPosition);
     // todo: endBitPosition = view.array().initializeOffsets(endBitPosition);
     endBitPosition += view.array().bitSizeOf(endBitPosition);
     if constexpr (U::needs_initialize_offsets::value)
-        endBitPosition = initializeOffsets(data.field, endBitPosition);
+        endBitPosition = detail::initializeOffsets(data.field, endBitPosition);
     else
-        endBitPosition += bitSizeOf(view.field(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.field(), endBitPosition);
     return endBitPosition;
 }
 
 template <typename T, typename U>
-inline void initPackingContext(const ::zserio::View<::pmr::PositionContainer<T, U>>& view, typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context)
+void initPackingContext(const ::zserio::View<::pmr::PositionContainer<T, U>>& view,
+        typename ::pmr::PositionContainer<T, U>::ZserioPackingContext& context)
 {
-    initPackingContext(view.numElements(), context.numElements);
+    detail::initPackingContext(view.numElements(), context.numElements);
 
-    initPackingContext(view.field(), context.field);
+    detail::initPackingContext(view.field(), context.field);
 }
 
 } // namespace detail
@@ -350,7 +351,7 @@ inline void initPackingContext(const ::zserio::View<::pmr::PositionContainer<T, 
 namespace std
 {
 
-template<typename T, typename U>
+template <typename T, typename U>
 struct hash<::pmr::PositionContainer<T, U>>
 {
     size_t operator()(const ::pmr::PositionContainer<T, U>& data) const
@@ -365,7 +366,7 @@ struct hash<::pmr::PositionContainer<T, U>>
     }
 };
 
-template<typename T, typename U>
+template <typename T, typename U>
 struct hash<::zserio::View<::pmr::PositionContainer<T, U>>>
 {
     size_t operator()(const ::zserio::View<::pmr::PositionContainer<T, U>>& view) const

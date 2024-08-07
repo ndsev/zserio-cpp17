@@ -1,11 +1,11 @@
 #ifndef ZSERIO_HASH_CODE_UTIL_H_INC
 #define ZSERIO_HASH_CODE_UTIL_H_INC
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <vector>
-#include <cstdint>
 
 #include "zserio/Enums.h"
 #include "zserio/FloatUtil.h"
