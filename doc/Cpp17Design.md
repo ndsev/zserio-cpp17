@@ -168,8 +168,8 @@ There is no way how to modify underlying data through `View` interface.
 Once working with the `View`, the getters also returns `View`s and thus parameters are always available.
 
 Zserio features like `write`, `read`, `bitSizeOf` will be implemented by means of the global non-member
-functions in the `detail` namespace to emphasize that this interface is not part of the user API. These global
-non-member functions will be called by the global functions
+function specializations in the `detail` namespace to emphasize that this interface is not part of the user
+API. These global non-member function specializations will be called by the global functions
 `::zserio::serialize`, `::zserio::deserialize` and `::zserio::bitSizeOf`.
 
 `View` will be implemented as a templated class `View<Data>` instead of an inner class. This is
@@ -251,13 +251,17 @@ bool operator>=(const View<Param>& lhs, const View<Param>& rhs);
 namespace detail
 {
 
+template <>
 void validate(const ::zserio::View<Param>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const ::zserio::View<Param>& view);
 
+template <typename... ARGS>
 View<Param> read(::zserio::BitStreamReader& reader, Param& data, ::zserio::UInt16 parameter_,
         const Param::allocator_type& allocator = {});
 
+template <>
 size_t bitSizeOf(const ::zserio::View<Param>& view, size_t bitPosition);
 
 } // namespace detail
@@ -334,13 +338,17 @@ bool operator>=(const View<ParameterizedParamHolder>& lhs, const View<Parameteri
 namespace zserio
 {
 
+template <>
 void validate(const ::zserio::View<ParameterizedParamHolder>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const ::zserio::View<ParameterizedParamHolder>& view);
 
+template <typename... ARGS>
 View<ParameterizedParamHolder> read(::zserio::BitStreamReader& reader, ParameterizedParamHolder& data,
         const ParameterizedParamHolder::allocator_type& allocator = {});
 
+template <>
 size_t bitSizeOf(const ::zserio::View<ParameterizedParamHolder>& view, size_t bitPosition);
 
 } // namespace detail
@@ -392,10 +400,13 @@ const ::zserio::View<ParameterizedParamHolder> holderView = ::zserio::deserializ
 
 #### Choice And Union Types
 
-The Choice Types will use a dedicated abstraction `::zserio::Variant` with the same interface as
-`std::variant` from C++17 standard.
+The Choice Types will use a dedicated abstraction `::zserio::Variant` with the similar interface as
+`std::variant` from C++17 standard. The main implementation difference will be that there will be no
+way how to construct `::zserio::Variant` without the specification of an index (tag). The index (tag)
+should be an enumeration. In case of the choice which uses enumeration, the index (tag) should use the same
+enumeration as well.
 
-The only implementation difference will be that `::zserio::Variant` will allocate additional dynamic memory
+Another implementation difference will be that `::zserio::Variant` will allocate additional dynamic memory
 for types bigger than some threshold with a default provided one for users that don't need/want to deal with it.
 Thus, allocator must be provided to `::zserio::Variant` during construction.
 
@@ -481,13 +492,17 @@ bool operator>=(const View<ArrayHolder>& lhs, const View<ArrayHolder>& rhs);
 namespace detail
 {
 
+template <>
 void validate(const ::zserio::View<ArrayHolder>& view);
 
+template <>
 void write(::zserio::BitStreamWriter& writer, const ::zserio::View<ArrayHolder>& view);
 
+template <typename... ARGS>
 View<ArrayHolder> read(::zserio::BitStreamReader& reader, ArrayHolder& data,
         const ArrayHolder::allocator_type& allocator = {});
 
+template <>
 size_t bitSizeOf(const ::zserio::View<ArrayHolder>& view, size_t bitPosition);
 
 } // namespace detail
