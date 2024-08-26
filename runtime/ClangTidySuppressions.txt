@@ -1,0 +1,2 @@
+# Intentional tests.
+google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25

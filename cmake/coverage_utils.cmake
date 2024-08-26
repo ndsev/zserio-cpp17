@@ -63,19 +63,19 @@ function(create_coverage_target)
         if (cov_EXCLUDE_SOURCES)
             list(APPEND cov_exclude "--ignore-filename-regex=${cov_EXCLUDE_SOURCES}")
         endif ()
-        set(cov_test_exectable "${ZserioCppRuntimeTest_BINARY_DIR}/ZserioCppRuntimeTest")
+        set(cov_test_executable "${ZserioCpp17RuntimeTest_BINARY_DIR}/ZserioCpp17RuntimeTest")
         set(cov_binary_dir "${PROJECT_BINARY_DIR}/${cov_tgt_name}")
         set(cov_html_clang_dir "${cov_html_dir}/clang")
         add_custom_target(
             ${cov_tgt_name}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${cov_binary_dir}
             # run tests again because ctest runs tests separately (default.profraw contains only the last test)
-            COMMAND bash -c "cd ${ZserioCppRuntimeTest_BINARY_DIR} && ${cov_test_exectable} > /dev/null"
+            COMMAND bash -c "cd ${ZserioCpp17RuntimeTest_BINARY_DIR} && ${cov_test_executable} > /dev/null"
             COMMAND bash -c "rm -rf ${cov_html_clang_dir}"
             COMMAND ${LLVM_PROFDATA_BIN} merge
-                --sparse ${ZserioCppRuntimeTest_BINARY_DIR}/default.profraw
+                --sparse ${ZserioCpp17RuntimeTest_BINARY_DIR}/default.profraw
                 -o ${cov_binary_dir}/runtime.profdata
-            COMMAND ${LLVM_COV_BIN} show ${cov_test_exectable}
+            COMMAND ${LLVM_COV_BIN} show ${cov_test_executable}
                 -show-expansions -show-line-counts -show-regions -use-color
                 -instr-profile=${cov_binary_dir}/runtime.profdata
                 -format=html -show-instantiations=false -output-dir=${cov_html_clang_dir}
@@ -92,17 +92,17 @@ function(create_coverage_target)
                             sed -i \"s|href='\${CSS_PREFIX}|href='|\" {} + && \
                     find ${cov_html_clang_dir}/coverage -type f -exec \
                             sed -i 's|<pre>${PROJECT_SOURCE_DIR}/|<pre>|' {} +"
-            COMMAND ${LLVM_COV_BIN} report ${cov_test_exectable}
+            COMMAND ${LLVM_COV_BIN} report ${cov_test_executable}
                 -instr-profile=${cov_binary_dir}/runtime.profdata
                 ${cov_exclude}
-            COMMAND bash -c "${LLVM_COV_BIN} report ${cov_test_exectable} \
+            COMMAND bash -c "${LLVM_COV_BIN} report ${cov_test_executable} \
                     -instr-profile=${cov_binary_dir}/runtime.profdata ${cov_exclude} \
                     > ${cov_html_clang_dir}/coverage_report.txt"
             COMMAND bash -c "(( $(echo \" \
-                    `${LLVM_COV_BIN} report ${cov_test_exectable} \
+                    `${LLVM_COV_BIN} report ${cov_test_executable} \
                     -instr-profile=${cov_binary_dir}/runtime.profdata ${cov_exclude} | grep TOTAL | \
                     tr -s ' ' | cut -d' ' -f 10 | cut -d% -f 1` ${cov_INCOMPLETE_COVERAGE_FAIL}\" | \
-                    awk '{if ($1 >= $2) print 1;}') \
+                    LC_NUMERIC=C awk '{if ($1 >= $2) print 1;}') \
                     ))"
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             VERBATIM
