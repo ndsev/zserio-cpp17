@@ -1,0 +1,8 @@
+# generated build files
+/build/
+
+# compiled binaries
+/distr/
+
+# local environment setup
+/scripts/build-env.sh
