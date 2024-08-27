@@ -1,0 +1,105 @@
+name: Windows
+
+on:
+  push:
+    branches: [ master, '*-ci' ]
+  pull_request:
+    branches: [ master, '*-ci' ]
+  workflow_dispatch:
+
+jobs:
+  cpp:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - { os: "windows-2022", msvc-toolset: "v142", cxx-standard: "17", build-type: "Release" }
+        - { os: "windows-2022", msvc-toolset: "v142", cxx-standard: "17", build-type: "Debug" }
+
+        - { os: "windows-2022", mingw-version: "9.4.0", cxx-standard: "17", build-type: "Release" }
+        - { os: "windows-2022", mingw-version: "9.4.0", cxx-standard: "17", build-type: "Debug" }
+
+    runs-on: ${{matrix.os}}
+    name: "\
+      ${{matrix.os}}-\
+      ${{ matrix.msvc-toolset && format('msvc-{0}', matrix.msvc-toolset)
+          || format('mingw{0}', matrix.mingw-version) }}-\
+      c++${{matrix.cxx-standard}}-${{matrix.build-type}}"
+
+    steps:
+    - name: "Set up environment"
+      shell: bash
+      run: |
+        if [[ "${{matrix.msvc-toolset}}" != "" ]] ; then
+          echo "MSVC_CMAKE_TOOLSET=${{matrix.msvc-toolset}}" >> ${GITHUB_ENV}
+          echo "PACKAGE=windows64-msvc" >> ${GITHUB_ENV}
+          # v141 toolset is not installed in windows-2022/VS2022 image by default
+          if [[ "${{matrix.msvc-toolset}}" == "v141" ]] ; then
+            echo "MSVC_CMAKE_GENERATOR=Visual Studio 16 2019" >> ${GITHUB_ENV}
+          else
+            echo "MSVC_CMAKE_GENERATOR=Visual Studio 17 2022" >> ${GITHUB_ENV}
+          fi
+        fi
+
+        if [[ "${{matrix.mingw-version}}" != "" ]] ; then
+          echo "MINGW64_TOOLCHAIN_ROOT=/c/ProgramData/chocolatey/lib/mingw/tools/install/mingw64" >> ${GITHUB_ENV}
+          echo "PACKAGE=windows64-mingw" >> ${GITHUB_ENV}
+        fi
+
+        CMAKE_EXTRA_ARGS=("-DCMAKE_BUILD_TYPE=${{matrix.build-type}}"
+                          "-DCMAKE_CXX_STANDARD=${{matrix.cxx-standard}}"
+                          "-DZSERIO_ENABLE_WERROR=1")
+
+        echo "CLANG_FORMAT_BIN=clang-format" >> ${GITHUB_ENV}
+        echo "CMAKE_EXTRA_ARGS=${CMAKE_EXTRA_ARGS[@]}" >> ${GITHUB_ENV}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        choco install wget
+        choco install doxygen.portable
+        choco install graphviz
+        choco install zip
+
+    - name: Install mingw ${{matrix.mingw-version}} compiler
+      shell: bash
+      if: ${{ matrix.mingw-version != '' }}
+      run: |
+        choco install mingw --version ${{matrix.mingw-version}}
+
+    - name: Install clang format
+      shell: bash
+      run: |
+        choco install llvm --version=14.0.0 --allow-downgrade
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build Zserio C++ runtime
+      shell: bash
+      run: |
+        scripts/build.sh cpp_rt-${PACKAGE}
+
+    - name: Archive Zserio C++ runtime artifacts
+      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
+      uses: actions/upload-artifact@v3
+      # we want this artifact only once since it contains only sources
+      if: ${{ matrix.msvc-toolset == 'v141' && matrix.cxx-standard && matrix.build-type == 'Release' }}
+      with:
+        name: "zserio-runtime-cpp"
+        path: distr/runtime_libs/cpp
+
+    - name: Archive Zseiro C++ build artifacts
+      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
+      uses: actions/upload-artifact@v3
+      with:
+        name: "\
+          zserio-build-${{matrix.os}}-\
+          ${{ matrix.msvc-toolset && format('msvc-{0}', matrix.msvc-toolset)
+              || format('mingw{0}', matrix.mingw-version)}}-\
+          cxx${{matrix.cxx-standard}}-${{matrix.build-type}}"
+        path: |
+          build/runtime_libs/cpp/**/runtime/*.a
+          build/runtime_libs/cpp/**/runtime/*.lib

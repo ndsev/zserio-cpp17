@@ -1,0 +1,120 @@
+name: Linux
+
+on:
+  push:
+    branches: [ master, '*-ci' ]
+  pull_request:
+    branches: [ master, '*-ci' ]
+  workflow_dispatch:
+
+jobs:
+  cpp:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - { os: "ubuntu-22.04", platform: "64", clang-version: "14", cxx-standard: "17", build-type: "Release" }
+        - { os: "ubuntu-22.04", platform: "64", clang-version: "14", cxx-standard: "17", build-type: "Debug" }
+        - { os: "ubuntu-22.04", platform: "32", clang-version: "14", cxx-standard: "17", build-type: "Release" }
+        - { os: "ubuntu-22.04", platform: "32", clang-version: "14", cxx-standard: "17", build-type: "Debug" }
+
+    runs-on: ${{matrix.os}}
+    name: "\
+      ${{matrix.os}}-${{matrix.platform}}-\
+      ${{ matrix.gcc-version && format('gcc{0}', matrix.gcc-version)
+          || format('clang{0}', matrix.clang-version) }}-\
+      c++${{matrix.cxx-standard}}-${{matrix.build-type}}"
+
+    steps:
+    - name: "Set up environment"
+      run: |
+        echo "CMAKE_BUILD_OPTIONS=-j$(nproc)" >> ${GITHUB_ENV}
+        if [[ "${{matrix.gcc-version}}" != "" ]] ; then
+          echo "GCC_VERSION_SUFFIX=-${{matrix.gcc-version}}" >> ${GITHUB_ENV}
+          echo "PACKAGE=linux${{matrix.platform}}-gcc" >> ${GITHUB_ENV}
+        elif [[ "${{matrix.clang-version}}" != "" ]] ; then
+          echo "CLANG_VERSION_SUFFIX=-${{matrix.clang-version}}" >> ${GITHUB_ENV}
+          echo "PACKAGE=linux${{matrix.platform}}-clang" >> ${GITHUB_ENV}
+        fi
+
+        if [[ "${{matrix.os}}" == "ubuntu-22.04" ]] ; then
+            echo "CLANG_FORMAT_BIN=clang-format-14" >> ${GITHUB_ENV}
+        fi
+
+        if [[ "${{matrix.build-type}}" == "Debug" ]] ; then
+          if [[ "${{matrix.clang-version}}" == "14" ]] ; then
+            echo "CLANG_TIDY_BIN=clang-tidy-${{matrix.clang-version}}" >> ${GITHUB_ENV}
+          fi
+          if [[ "${{matrix.gcc-version}}" != "" && `gcc --version` == *" ${{matrix.gcc-version}}."* ]] ; then
+            # gcovr works only for default gcc version
+            echo "GCOVR_BIN=gcovr" >> ${GITHUB_ENV}
+          fi
+          if [[ "${{matrix.clang-version}}" != "" ]] ; then
+            echo "LLVM_PROFDATA_BIN=llvm-profdata-${{matrix.clang-version}}" >> ${GITHUB_ENV}
+            echo "LLVM_COV_BIN=llvm-cov-${{matrix.clang-version}}" >> ${GITHUB_ENV}
+          fi
+          if [[ ! ( "${{matrix.platform}}" == "32" && "${{matrix.clang-version}}" != "" ) ]] ; then
+            # sanitizers do not work with clang 32-bit when cross-compiling
+            # https://github.com/ndsev/zserio/issues/473
+            echo "SANITIZERS_ENABLED=1" >> ${GITHUB_ENV}
+          fi
+        fi
+
+        CMAKE_EXTRA_ARGS=("-DZSERIO_ENABLE_WERROR=1"
+                          "-DCMAKE_BUILD_TYPE=${{matrix.build-type}}"
+                          "-DCMAKE_CXX_STANDARD=${{matrix.cxx-standard}}")
+        echo "CMAKE_EXTRA_ARGS=${CMAKE_EXTRA_ARGS[@]}" >> ${GITHUB_ENV}
+
+    - name: Apt update # with workaround for 'Unable to connect to ppa.launchpad.net' failure
+      run: sudo apt-get update --option Acquire::Retries=100 --option Acquire::http::Timeout="300"
+
+    - name: Install dependencies
+      run: sudo apt-get install cmake doxygen graphviz g++-multilib gcovr
+
+    - name: Install gcc ${{matrix.gcc-version}} compiler
+      if: ${{ matrix.gcc-version != '' }}
+      run: |
+        sudo apt-get install gcc-${{matrix.gcc-version}}
+        sudo apt-get install g++-${{matrix.gcc-version}} g++-${{matrix.gcc-version}}-multilib
+
+    - name: Install clang ${{matrix.clang-version}} compiler
+      if: ${{ matrix.clang-version != '' }}
+      run: |
+        sudo apt-get install clang-${{matrix.clang-version}}
+        sudo apt-get install llvm-${{matrix.clang-version}}
+
+    # https://github.com/actions/runner-images/issues/9491 (remove once fixed)
+    - name: Reduce ASLR entropy as a temporary workaround
+      if: ${{ env.SANITIZERS_ENABLED == 1 }}
+      run: |
+        sudo sysctl -w vm.mmap_rnd_bits=28
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build Zserio C++ runtime
+      run: |
+        scripts/build.sh cpp_rt-${PACKAGE}
+
+    - name: Upload Zserio C++ runtime artifacts
+      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
+      uses: actions/upload-artifact@v3
+      # we need to collect this artifact from a build which has both clang coverage and clang-tidy reports
+      if: ${{ matrix.platform == '64' && matrix.clang-version == '14' && matrix.cxx-standard == '17' &&
+              matrix.build-type == 'Debug' }}
+      with:
+        name: "zserio-runtime-cpp"
+        path: distr/runtime_libs/cpp
+
+    - name: Upload Zserio C++ build artifacts
+      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
+      uses: actions/upload-artifact@v3
+      with:
+        name: "\
+          zserio-build-${{matrix.os}}-${{matrix.platform}}-\
+          ${{ matrix.gcc-version && format('gcc{0}', matrix.gcc-version)
+              || format('clang{0}', matrix.clang-version) }}-\
+          cxx${{matrix.cxx-standard}}-${{matrix.build-type}}"
+        path: build/runtime_libs/cpp/**/runtime/*.a
