@@ -21,6 +21,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
     zserio/CppRuntimeVersion.h
+    zserio/Span.h
     zserio/Types.h
 )
 
