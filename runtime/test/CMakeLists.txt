@@ -13,6 +13,7 @@ gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/BuiltInOperatorsTest.cpp
+    zserio/CppRuntimeVersionTest.cpp
 )
 
 add_executable(${PROJECT_NAME} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})

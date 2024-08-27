@@ -1,2 +1,6 @@
+
+# This must be preprocessor define because version is checked during compilation time.
+cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
+
 # Intentional tests.
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25

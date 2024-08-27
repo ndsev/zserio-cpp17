@@ -20,6 +20,7 @@ project(ZserioCpp17Runtime)
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
+    zserio/CppRuntimeVersion.h
     zserio/Types.h
 )
 

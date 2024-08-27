@@ -107,7 +107,28 @@ clang_format_add_custom_target(ZserioCpp17Runtime-clang-format
                              CONFIG_FILE "${ZSERIO_CPP17_PROJECT_ROOT}/.clang-format"
                              WERROR ON)
 
-#install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/zserio_doc DESTINATION cpp)
+# build and install doxygen documentation
+find_package(Doxygen REQUIRED)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/src/zserio/CppRuntimeVersion.h" ZSERIO_CPP17_RUNTIME_VERSION_FILE)
+string(REGEX MATCH "CPP17_EXTENSION_RUNTIME_VERSION_STRING = \"([0-9]+.[0-9]+.[0-9]+(-[A-Za-z0-9]+)?)\""
+        ZSERIO_CPP17_RUNTIME_VERSION_LINE "${ZSERIO_CPP17_RUNTIME_VERSION_FILE}")
+set(ZSERIO_CPP17_RUNTIME_VERSION "${CMAKE_MATCH_1}")
+#file(READ "${CMAKE_CURRENT_SOURCE_DIR}/../src/zserio/extension/cpp/CppExtensionVersion.java"
+#        ZSERIO_CPP17_EXTENSION_VERSION_FILE)
+#string(REGEX MATCH "EXPECTED_ZSERIO_VERSION_STRING = \"([0-9]+.[0-9]+.[0-9]+(-[A-Za-z0-9]+)?)\""
+#        ZSERIO_CPP17_EXTENSION_VERSION_LINE "${ZSERIO_CPP17_EXTENSION_VERSION_FILE}")
+#set(ZSERIO_VERSION "${CMAKE_MATCH_1}")
+set(ZSERIO_VERSION "2.14.1")
+add_custom_target(ZserioCppRuntime-doxygen ALL
+    ${CMAKE_COMMAND} -E env ZSERIO_CPP17_RUNTIME_OUTPUT_DIR="${CMAKE_CURRENT_BINARY_DIR}"
+    ${CMAKE_COMMAND} -E env ZSERIO_CPP17_RUNTIME_VERSION="${ZSERIO_CPP17_RUNTIME_VERSION}"
+    ${CMAKE_COMMAND} -E env ZSERIO_VERSION="${ZSERIO_VERSION}"
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/doc/doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src
+    COMMENT "Generating C++17 runtime HTML documentation"
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/zserio_doc DESTINATION cpp)
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/coverage/clang DESTINATION cpp/zserio_doc/coverage OPTIONAL)
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/coverage/gcc DESTINATION cpp/zserio_doc/coverage OPTIONAL)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/clang-tidy-report.txt DESTINATION cpp/zserio_doc/clang-tidy OPTIONAL)
