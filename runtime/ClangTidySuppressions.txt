@@ -12,6 +12,14 @@ cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 
+# The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
+# would only bring the performance drop.
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:54
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
+
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 google-explicit-constructor:src/zserio/Span.h:112
 google-explicit-constructor:src/zserio/Span.h:125

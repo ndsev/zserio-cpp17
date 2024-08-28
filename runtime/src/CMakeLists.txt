@@ -21,7 +21,10 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
     zserio/CppRuntimeVersion.h
+    zserio/RebindAlloc.h
     zserio/Span.h
+    zserio/String.h
+    zserio/StringConvertUtil.h
     zserio/Types.h
 )
 

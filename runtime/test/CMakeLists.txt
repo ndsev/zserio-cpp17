@@ -15,6 +15,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/BuiltInOperatorsTest.cpp
     zserio/CppRuntimeVersionTest.cpp
     zserio/SpanTest.cpp
+    zserio/StringConvertUtilTest.cpp
 )
 
 add_executable(${PROJECT_NAME} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})
