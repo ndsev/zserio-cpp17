@@ -24,6 +24,9 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
     zserio/RebindAlloc.h
+    zserio/RuntimeArch.h
+    zserio/SizeConvertUtil.cpp
+    zserio/SizeConvertUtil.h
     zserio/Span.h
     zserio/String.h
     zserio/StringConvertUtil.h
