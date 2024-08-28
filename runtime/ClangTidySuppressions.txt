@@ -11,6 +11,8 @@ cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
+# This is necessary for convenient usage of CppRuntimeException
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
 
 # The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
 # would only bring the performance drop.

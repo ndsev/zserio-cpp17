@@ -20,6 +20,8 @@ project(ZserioCpp17Runtime)
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
+    zserio/CppRuntimeException.cpp
+    zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
     zserio/RebindAlloc.h
     zserio/Span.h
