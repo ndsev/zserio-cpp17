@@ -26,6 +26,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/CppRuntimeException.cpp
     zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
+    zserio/ConstraintException.h
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
     zserio/RebindAlloc.h
