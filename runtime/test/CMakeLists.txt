@@ -15,6 +15,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/BuiltInOperatorsTest.cpp
     zserio/CppRuntimeExceptionTest.cpp
     zserio/CppRuntimeVersionTest.cpp
+    zserio/FloatUtilTest.cpp
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
     zserio/StringConvertUtilTest.cpp
