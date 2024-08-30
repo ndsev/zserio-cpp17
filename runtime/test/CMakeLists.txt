@@ -12,6 +12,7 @@ include(gtest_utils)
 gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
+    zserio/BitFieldUtilTest.cpp
     zserio/BuiltInOperatorsTest.cpp
     zserio/CppRuntimeExceptionTest.cpp
     zserio/CppRuntimeVersionTest.cpp

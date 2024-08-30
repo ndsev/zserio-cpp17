@@ -18,6 +18,8 @@ cmake_minimum_required(VERSION 3.15.0)
 project(ZserioCpp17Runtime)
 
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
+    zserio/BitFieldUtil.cpp
+    zserio/BitFieldUtil.h
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
     zserio/CppRuntimeException.cpp
