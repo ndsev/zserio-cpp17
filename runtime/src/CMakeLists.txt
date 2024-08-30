@@ -18,6 +18,7 @@ cmake_minimum_required(VERSION 3.15.0)
 project(ZserioCpp17Runtime)
 
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
+    zserio/BitBuffer.h
     zserio/BitFieldUtil.cpp
     zserio/BitPositionUtil.h
     zserio/BitFieldUtil.h
@@ -37,6 +38,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/String.h
     zserio/StringConvertUtil.h
     zserio/Types.h
+    zserio/Vector.h
 )
 
 add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})

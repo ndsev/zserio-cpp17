@@ -12,6 +12,7 @@ include(gtest_utils)
 gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
+    zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp
     zserio/BitPositionUtilTest.cpp
     zserio/BuiltInOperatorsTest.cpp
@@ -22,6 +23,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
     zserio/StringConvertUtilTest.cpp
+    zserio/TrackingAllocator.h
 )
 
 add_executable(${PROJECT_NAME} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})
