@@ -1,3 +1,10 @@
+# Variant is a generic container and exceptions may be thrown from the element types.
+bugprone-exception-escape:src/zserio/Variant.h:237
+bugprone-exception-escape:src/zserio/Variant.h:264
+
+# Iteration through all variant types is needed for folding expression. m_data active element is moved out but index remains so it's safe to access.
+bugprone-use-after-move:src/zserio/Variant.h:671
+
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:123
@@ -58,6 +65,9 @@ google-explicit-constructor:src/zserio/Types.h:66
 # False positive, this is a template method.
 modernize-use-equals-default:src/zserio/Span.h:80
 
+# Throwing move ctor is needed for the test
+bugprone-exception-escape:test/zserio/VariantTest.cpp:34
+
 # Intentional tests.
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:78
@@ -70,3 +80,9 @@ cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:35
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
+
+# Only throwing move ctor is needed for the test
+cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:31
+
+# Offending code is taken directly from cppreference.com. Fuchsia guiedlines are not relevant to VariantTest
+fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:12

@@ -38,6 +38,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/StringConvertUtilTest.cpp
     zserio/TrackingAllocator.h
     zserio/TypesTest.cpp
+    zserio/VariantTest.cpp
 )
 
 add_executable(${PROJECT_NAME} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})

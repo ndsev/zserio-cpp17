@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <vector>
 
 #include "zserio/FloatUtil.h"
 #include "zserio/Types.h"
@@ -83,6 +84,77 @@ inline uint32_t calcHashCode(uint32_t seedValue, float value)
 inline uint32_t calcHashCode(uint32_t seedValue, double value)
 {
     return calcHashCode(seedValue, convertDoubleToUInt64(value));
+}
+
+/**
+ * Calculates hash code of the given string value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param stringValue Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename ALLOC>
+inline uint32_t calcHashCode(
+        uint32_t seedValue, const std::basic_string<char, std::char_traits<char>, ALLOC>& stringValue)
+{
+    uint32_t result = seedValue;
+    for (auto element : stringValue)
+    {
+        result = calcHashCode(result, element);
+    }
+
+    return result;
+}
+
+/**
+ * Calculates hash code of the given enum item using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param enumValue Enum item for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename ENUM_TYPE>
+inline typename std::enable_if<std::is_enum<ENUM_TYPE>::value, uint32_t>::type calcHashCode(
+        uint32_t seedValue, ENUM_TYPE enumValue)
+{
+    return calcHashCode(seedValue, enumHashCode(enumValue));
+}
+
+/**
+ * Calculates hash code of the given Zserio object (structure, choice, ...) using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param object Object for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename OBJECT>
+inline typename std::enable_if<!std::is_enum<OBJECT>::value && !std::is_integral<OBJECT>::value, uint32_t>::type
+calcHashCode(uint32_t seedValue, const OBJECT& object)
+{
+    return calcHashCode(seedValue, std::hash<OBJECT>()(object));
+}
+
+/**
+ * Calculates hash code of the given Zserio array using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param array Array for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename ARRAY_ELEMENT, typename ALLOC>
+inline uint32_t calcHashCode(uint32_t seedValue, const std::vector<ARRAY_ELEMENT, ALLOC>& array)
+{
+    uint32_t result = seedValue;
+    for (const ARRAY_ELEMENT& element : array)
+    {
+        result = calcHashCode(result, element);
+    }
+
+    return result;
 }
 
 } // namespace zserio
