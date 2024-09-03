@@ -15,6 +15,10 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp
     zserio/BitPositionUtilTest.cpp
+    zserio/BitSizeOfCalculatorTest.cpp
+    zserio/BitStreamReaderTest.cpp
+    zserio/BitStreamTest.cpp
+    zserio/BitStreamWriterTest.cpp
     zserio/BuiltInOperatorsTest.cpp
     zserio/CppRuntimeExceptionTest.cpp
     zserio/CppRuntimeVersionTest.cpp

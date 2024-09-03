@@ -22,6 +22,12 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BitFieldUtil.cpp
     zserio/BitPositionUtil.h
     zserio/BitFieldUtil.h
+    zserio/BitSizeOfCalculator.cpp
+    zserio/BitSizeOfCalculator.h
+    zserio/BitStreamReader.cpp
+    zserio/BitStreamReader.h
+    zserio/BitStreamWriter.cpp
+    zserio/BitStreamWriter.h
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
     zserio/CppRuntimeException.cpp

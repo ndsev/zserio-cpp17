@@ -16,11 +16,29 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeExcepti
 
 # The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
 # would only bring the performance drop.
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:301
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:315
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:357
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:368
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:379
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:380
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:386
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:391
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:392
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:398
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:594
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:662
+
+# The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
+# would only bring the performance drop.
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:54
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
+
+# This is false positive, the member is initialized.
+cppcoreguidelines-pro-type-member-init:src/zserio/BitStreamWriter.h:71
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:18
