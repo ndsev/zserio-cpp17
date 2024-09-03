@@ -1,0 +1,90 @@
+#ifndef ZSERIO_HASH_CODE_UTIL_H_INC
+#define ZSERIO_HASH_CODE_UTIL_H_INC
+
+#include <memory>
+#include <string>
+#include <type_traits>
+
+#include "zserio/FloatUtil.h"
+#include "zserio/Types.h"
+
+namespace zserio
+{
+
+/** Prime number for hash calculation. */
+static const uint32_t HASH_PRIME_NUMBER = 37;
+/** Initial seed for hash calculation. */
+static const uint32_t HASH_SEED = 23;
+
+/**
+ * Gets initial hash code calculated from the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ *
+ * \return Hash code.
+ */
+inline uint32_t calcHashCodeFirstTerm(uint32_t seedValue)
+{
+    return HASH_PRIME_NUMBER * seedValue;
+}
+
+/**
+ * Calculates hash code of the given integral value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename T>
+inline typename std::enable_if<std::is_integral<T>::value && (sizeof(T) <= 4), uint32_t>::type calcHashCode(
+        uint32_t seedValue, T value)
+{
+    return calcHashCodeFirstTerm(seedValue) + static_cast<uint32_t>(value);
+}
+
+/**
+ * Calculates hash code of the given integral value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename T>
+inline typename std::enable_if<std::is_integral<T>::value && (sizeof(T) > 4), uint32_t>::type calcHashCode(
+        uint32_t seedValue, T value)
+{
+    const auto unsignedValue = static_cast<typename std::make_unsigned<T>::type>(value);
+    return calcHashCodeFirstTerm(seedValue) + static_cast<uint32_t>(unsignedValue ^ (unsignedValue >> 32U));
+}
+
+/**
+ * Calculates hash code of the given float value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+inline uint32_t calcHashCode(uint32_t seedValue, float value)
+{
+    return calcHashCode(seedValue, convertFloatToUInt32(value));
+}
+
+/**
+ * Calculates hash code of the given double value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+inline uint32_t calcHashCode(uint32_t seedValue, double value)
+{
+    return calcHashCode(seedValue, convertDoubleToUInt64(value));
+}
+
+} // namespace zserio
+
+#endif // ZSERIO_HASH_CODE_UTIL_H_INC

@@ -22,9 +22,6 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:54
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
 
-# This is necessary for implementation of deprecated constructor which accepts raw pointer. Constructor
-# with raw pointer cannot be removed because of backward compatibility.
-cppcoreguidelines-pro-bounds-pointer-arithmetic:src/zserio/BitBuffer.h:274
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 google-explicit-constructor:src/zserio/Span.h:112
@@ -45,7 +42,7 @@ google-explicit-constructor:test/zserio/TrackingAllocator.h:78
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 
 # Intentional tests.
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:343
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:357
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38

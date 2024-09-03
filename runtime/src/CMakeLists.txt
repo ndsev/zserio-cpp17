@@ -30,6 +30,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ConstraintException.h
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
+    zserio/HashCodeUtil.h
     zserio/RebindAlloc.h
     zserio/RuntimeArch.h
     zserio/SizeConvertUtil.cpp

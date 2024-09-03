@@ -20,6 +20,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/CppRuntimeVersionTest.cpp
     zserio/ConstraintExceptionTest.cpp
     zserio/FloatUtilTest.cpp
+    zserio/HashCodeUtilTest.cpp
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
     zserio/StringConvertUtilTest.cpp

@@ -141,19 +141,6 @@ TEST(BitBufferTest, vectorBitSizeMoveConstructor)
     ASSERT_THROW(BitBuffer(std::vector<uint8_t>(1), outOfRangeBitSize), CppRuntimeException);
 }
 
-TEST(BitBufferTest, rawPointerConstructor)
-{
-    const size_t bitSize = 11;
-    const std::vector<uint8_t> buffer((bitSize + 7) / 8);
-    const BitBuffer bitBuffer(buffer.data(), bitSize);
-    ASSERT_EQ(bitSize, bitBuffer.getBitSize());
-
-    const size_t emptyBitSize = 0;
-    const std::vector<uint8_t> emptyBuffer;
-    const BitBuffer emptyBitBuffer(emptyBuffer.data(), emptyBitSize);
-    ASSERT_EQ(emptyBitSize, emptyBitBuffer.getBitSize());
-}
-
 TEST(BitBufferTest, copyConstructor)
 {
     const size_t bitSize = 11;
@@ -330,6 +317,29 @@ TEST(BitBufferTest, operatorLessThan)
     ASSERT_FALSE(bitBuffer5 < bitBuffer1);
 }
 
+TEST(BitBufferTest, hashCode)
+{
+    const size_t bitSize = 11;
+    const BitBuffer bitBuffer1(std::vector<uint8_t>({0xAB, 0xE0}), bitSize);
+    const BitBuffer bitBuffer2(std::vector<uint8_t>({0xAB, 0xF0}), bitSize);
+    ASSERT_EQ(bitBuffer1.hashCode(), bitBuffer2.hashCode());
+
+    const BitBuffer bitBuffer3(std::vector<uint8_t>({0xAB, 0xFF}), bitSize);
+    ASSERT_EQ(bitBuffer1.hashCode(), bitBuffer3.hashCode());
+
+    const BitBuffer bitBuffer4(std::vector<uint8_t>({0xAB, 0xC0}), bitSize);
+    ASSERT_NE(bitBuffer1.hashCode(), bitBuffer4.hashCode());
+
+    const BitBuffer bitBuffer5(std::vector<uint8_t>({0xBA, 0xE0}), bitSize);
+    ASSERT_NE(bitBuffer1.hashCode(), bitBuffer5.hashCode());
+
+    const BitBuffer bitBuffer6(std::vector<uint8_t>({0xAB}));
+    ASSERT_NE(bitBuffer1.hashCode(), bitBuffer6.hashCode());
+
+    const BitBuffer bitBuffer7;
+    ASSERT_NE(bitBuffer1.hashCode(), bitBuffer7.hashCode());
+}
+
 TEST(BitBufferTest, constGetBuffer)
 {
     const size_t bitSize = 11;
@@ -407,6 +417,31 @@ TEST(BitBufferTest, cppRuntimeExceptionOperator)
 {
     CppRuntimeException exception = CppRuntimeException() << BitBuffer();
     ASSERT_STREQ("BitBuffer([...], 0)", exception.what());
+}
+
+TEST(BitBufferTest, stdHash)
+{
+    const std::hash<BitBuffer> hasher;
+
+    const size_t bitSize = 11;
+    const BitBuffer bitBuffer1(std::vector<uint8_t>({0xAB, 0xE0}), bitSize);
+    const BitBuffer bitBuffer2(std::vector<uint8_t>({0xAB, 0xF0}), bitSize);
+    ASSERT_EQ(hasher(bitBuffer1), hasher(bitBuffer2));
+
+    const BitBuffer bitBuffer3(std::vector<uint8_t>({0xAB, 0xFF}), bitSize);
+    ASSERT_EQ(hasher(bitBuffer1), hasher(bitBuffer3));
+
+    const BitBuffer bitBuffer4(std::vector<uint8_t>({0xAB, 0xC0}), bitSize);
+    ASSERT_NE(hasher(bitBuffer1), hasher(bitBuffer4));
+
+    const BitBuffer bitBuffer5(std::vector<uint8_t>({0xBA, 0xE0}), bitSize);
+    ASSERT_NE(hasher(bitBuffer1), hasher(bitBuffer5));
+
+    const BitBuffer bitBuffer6(std::vector<uint8_t>({0xAB}));
+    ASSERT_NE(hasher(bitBuffer1), hasher(bitBuffer6));
+
+    const BitBuffer bitBuffer7;
+    ASSERT_NE(hasher(bitBuffer1), hasher(bitBuffer7));
 }
 
 } // namespace zserio
