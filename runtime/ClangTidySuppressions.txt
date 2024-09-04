@@ -1,0 +1,69 @@
+# This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
+cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112
+cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:123
+cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:136
+cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:148
+cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:161
+cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:174
+
+# This must be preprocessor define because version is checked during compilation time.
+cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
+
+# This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
+# This is necessary for convenient usage of CppRuntimeException
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
+
+# The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
+# would only bring the performance drop.
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:301
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:315
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:357
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:368
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:379
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:380
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:386
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:391
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:392
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:398
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:594
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:662
+
+# The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
+# would only bring the performance drop.
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:54
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
+
+# This is false positive, the member is initialized.
+cppcoreguidelines-pro-type-member-init:src/zserio/BitStreamWriter.h:71
+
+# This is necessary for implementation of reading and writing to the file.
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:18
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:48
+
+# This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
+google-explicit-constructor:src/zserio/Span.h:112
+google-explicit-constructor:src/zserio/Span.h:125
+google-explicit-constructor:src/zserio/Span.h:138
+google-explicit-constructor:src/zserio/Span.h:150
+google-explicit-constructor:src/zserio/Span.h:163
+google-explicit-constructor:src/zserio/Span.h:176
+
+# False positive, this is a template method.
+modernize-use-equals-default:src/zserio/Span.h:80
+
+# Intentional tests.
+google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
+google-explicit-constructor:test/zserio/TrackingAllocator.h:78
+
+# Intentional tests.
+cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
+
+# Intentional tests.
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38

@@ -1,0 +1,57 @@
+# Zserio C++17 runtime library.
+#
+# This CMake file defines a static library target named ZserioCpp17Runtime that contains the zserio C++ runtime.
+#
+# This CMake file is designed to be included directly without any further dependencies.
+#
+# An example application CMakeLists.txt follows:
+#
+# project(ZserioTestApp)
+#
+# add_subdirectory(runtime_libs/cpp ZserioCpp17Runtime)
+#
+# add_executable(ZserioTestApp HelloWorld.cpp)
+# target_link_libraries(ZserioTestApp ZserioCpp17Runtime)
+
+cmake_minimum_required(VERSION 3.15.0)
+
+project(ZserioCpp17Runtime)
+
+set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
+    zserio/BitBuffer.h
+    zserio/BitFieldUtil.cpp
+    zserio/BitPositionUtil.h
+    zserio/BitFieldUtil.h
+    zserio/BitSizeOfCalculator.cpp
+    zserio/BitSizeOfCalculator.h
+    zserio/BitStreamReader.cpp
+    zserio/BitStreamReader.h
+    zserio/BitStreamWriter.cpp
+    zserio/BitStreamWriter.h
+    zserio/BuiltInOperators.cpp
+    zserio/BuiltInOperators.h
+    zserio/CppRuntimeException.cpp
+    zserio/CppRuntimeException.h
+    zserio/CppRuntimeVersion.h
+    zserio/ConstraintException.h
+    zserio/FileUtil.cpp
+    zserio/FileUtil.h
+    zserio/FloatUtil.cpp
+    zserio/FloatUtil.h
+    zserio/HashCodeUtil.h
+    zserio/RebindAlloc.h
+    zserio/RuntimeArch.h
+    zserio/SizeConvertUtil.cpp
+    zserio/SizeConvertUtil.h
+    zserio/Span.h
+    zserio/String.h
+    zserio/StringConvertUtil.h
+    zserio/Types.h
+    zserio/Vector.h
+)
+
+add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
+
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
