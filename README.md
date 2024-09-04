@@ -1,3 +1,6 @@
+[![](https://github.com/ndsev/zserio/actions/workflows/build_linux.yml/badge.svg)](https://github.com/ndsev/zserio-cpp17/actions/workflows/build_linux.yml)
+[![](https://github.com/ndsev/zserio/actions/workflows/build_windows.yml/badge.svg)](https://github.com/ndsev/zserio-cpp17/actions/workflows/build_windows.yml)
+
 # C++17 Extension
 
 This extension implements a C++17 generator for [Zserio](https://zserio.org).
