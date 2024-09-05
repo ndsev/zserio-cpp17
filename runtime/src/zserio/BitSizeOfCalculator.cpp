@@ -7,7 +7,7 @@
 namespace zserio
 {
 
-static const std::array<uint64_t, 2> VARIN16_MAX_VALUES = {
+static const std::array<uint64_t, 2> VARINT16_MAX_VALUES = {
         (UINT64_C(1) << (6)) - 1,
         (UINT64_C(1) << (6 + 8)) - 1,
 };
@@ -116,7 +116,7 @@ static uint64_t convertToAbsValue(T value)
 
 size_t bitSizeOfVarInt16(int16_t value)
 {
-    return bitSizeOfVarIntImpl(convertToAbsValue(value), VARIN16_MAX_VALUES, "varint16");
+    return bitSizeOfVarIntImpl(convertToAbsValue(value), VARINT16_MAX_VALUES, "varint16");
 }
 
 size_t bitSizeOfVarInt32(int32_t value)

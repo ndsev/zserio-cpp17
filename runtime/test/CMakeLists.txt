@@ -11,6 +11,12 @@ project(ZserioCpp17RuntimeTest)
 include(gtest_utils)
 gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
 
+compiler_set_warnings()
+compiler_set_warnings_as_errors()
+if (SANITIZERS_ENABLED)
+    compiler_set_undefined_sanitizer()
+endif ()
+
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp
@@ -26,10 +32,12 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/FileUtilTest.cpp
     zserio/FloatUtilTest.cpp
     zserio/HashCodeUtilTest.cpp
+    zserio/OutOfRangeExceptionTest.cpp
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
     zserio/StringConvertUtilTest.cpp
     zserio/TrackingAllocator.h
+    zserio/TypesTest.cpp
 )
 
 add_executable(${PROJECT_NAME} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})

@@ -51,6 +51,9 @@ google-explicit-constructor:src/zserio/Span.h:138
 google-explicit-constructor:src/zserio/Span.h:150
 google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
+# This is requirement on type wrappers in Zserio C++17 extension
+google-explicit-constructor:src/zserio/Types.h:59
+google-explicit-constructor:src/zserio/Types.h:66
 
 # False positive, this is a template method.
 modernize-use-equals-default:src/zserio/Span.h:80
