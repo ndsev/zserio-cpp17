@@ -13,10 +13,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
+        - { os: "ubuntu-22.04", platform: "64", gcc-version: "11", cxx-standard: "17", build-type: "Release" }
+        - { os: "ubuntu-22.04", platform: "64", gcc-version: "11", cxx-standard: "17", build-type: "Debug" }
+        - { os: "ubuntu-22.04", platform: "32", gcc-version: "11", cxx-standard: "17", build-type: "Release" }
+        - { os: "ubuntu-22.04", platform: "32", gcc-version: "11", cxx-standard: "17", build-type: "Debug" }
         - { os: "ubuntu-22.04", platform: "64", clang-version: "14", cxx-standard: "17", build-type: "Release" }
         - { os: "ubuntu-22.04", platform: "64", clang-version: "14", cxx-standard: "17", build-type: "Debug" }
         - { os: "ubuntu-22.04", platform: "32", clang-version: "14", cxx-standard: "17", build-type: "Release" }
         - { os: "ubuntu-22.04", platform: "32", clang-version: "14", cxx-standard: "17", build-type: "Debug" }
+
 
     runs-on: ${{matrix.os}}
     name: "\
