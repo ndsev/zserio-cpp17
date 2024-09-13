@@ -215,8 +215,8 @@ main()
         echo "${ACTION_DESCRIPTION} Zserio C++ runtime library."
         echo
         local CMAKELISTS_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/runtime"
-        local CPP_BUILD_DIR="${ZSERIO_BUILD_DIR}/runtime_libs/cpp"
-        local CMAKE_ARGS=(-DCMAKE_INSTALL_PREFIX="${ZSERIO_DISTR_DIR}/runtime_libs")
+        local CPP_BUILD_DIR="${ZSERIO_BUILD_DIR}/runtime_lib"
+        local CMAKE_ARGS=(-DCMAKE_INSTALL_PREFIX="${ZSERIO_DISTR_DIR}/runtime_lib")
         local IS_COVERAGE_ENABLED=0
         if [[ ! -z "${GCOVR_BIN}" && "${PARAM_CPP_TARGET_ARRAY[@]}" == *"gcc"* ]] ; then
             local IS_COVERAGE_ENABLED=1

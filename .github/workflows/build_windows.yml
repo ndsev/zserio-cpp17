@@ -93,7 +93,7 @@ jobs:
       if: ${{ matrix.msvc-toolset == 'v141' && matrix.cxx-standard && matrix.build-type == 'Release' }}
       with:
         name: "zserio-runtime-cpp"
-        path: distr/runtime_libs/cpp
+        path: distr/runtime_lib
 
     - name: Archive Zseiro C++ build artifacts
       # update when https://github.com/actions/upload-artifact/issues/543 is fixed
@@ -105,5 +105,5 @@ jobs:
               || format('mingw{0}', matrix.mingw-version)}}-\
           cxx${{matrix.cxx-standard}}-${{matrix.build-type}}"
         path: |
-          build/runtime_libs/cpp/**/runtime/*.a
-          build/runtime_libs/cpp/**/runtime/*.lib
+          build/runtime_lib/**/runtime/*.a
+          build/runtime_lib/**/runtime/*.lib

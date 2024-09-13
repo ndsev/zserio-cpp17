@@ -111,7 +111,7 @@ jobs:
               matrix.build-type == 'Debug' }}
       with:
         name: "zserio-runtime-cpp"
-        path: distr/runtime_libs/cpp
+        path: distr/runtime_lib
 
     - name: Upload Zserio C++ build artifacts
       # update when https://github.com/actions/upload-artifact/issues/543 is fixed
@@ -122,4 +122,4 @@ jobs:
           ${{ matrix.gcc-version && format('gcc{0}', matrix.gcc-version)
               || format('clang{0}', matrix.clang-version) }}-\
           cxx${{matrix.cxx-standard}}-${{matrix.build-type}}"
-        path: build/runtime_libs/cpp/**/runtime/*.a
+        path: build/runtime_lib/**/runtime/*.a

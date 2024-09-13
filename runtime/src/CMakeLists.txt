@@ -8,7 +8,7 @@
 #
 # project(ZserioTestApp)
 #
-# add_subdirectory(runtime_libs/cpp ZserioCpp17Runtime)
+# add_subdirectory(runtime_lib ZserioCpp17Runtime)
 #
 # add_executable(ZserioTestApp HelloWorld.cpp)
 # target_link_libraries(ZserioTestApp ZserioCpp17Runtime)
