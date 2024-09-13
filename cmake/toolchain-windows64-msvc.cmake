@@ -14,8 +14,11 @@ set(COMPILER_MP_FLAG "/MP${PROCESS_MAX}")
 # set big-obj flag
 set(COMPILER_BIG_OBJ_FLAG "/bigobj")
 
+# set /permissive- mode to enable "Standards conformance"
+set(COMPILER_PERMISSIVE_FLAG "/permissive-")
+
 # set C flags (CMake adds /EHsc by default)
-set(CMAKE_C_FLAGS_INIT "${COMPILER_MP_FLAG} ${COMPILER_BIG_OBJ_FLAG}")
+set(CMAKE_C_FLAGS_INIT "${COMPILER_MP_FLAG} ${COMPILER_BIG_OBJ_FLAG} ${COMPILER_PERMISSIVE_FLAG}")
 
 # set CXX flags (CMake adds /EHsc by default)
-set(CMAKE_CXX_FLAGS_INIT "${COMPILER_MP_FLAG} ${COMPILER_BIG_OBJ_FLAG}")
+set(CMAKE_CXX_FLAGS_INIT "${COMPILER_MP_FLAG} ${COMPILER_BIG_OBJ_FLAG} ${COMPILER_PERMISSIVE_FLAG}")
