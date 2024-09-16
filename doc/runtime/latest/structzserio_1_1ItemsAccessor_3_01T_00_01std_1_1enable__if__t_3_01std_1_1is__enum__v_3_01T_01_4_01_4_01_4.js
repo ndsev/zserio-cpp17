@@ -1,0 +1,4 @@
+var structzserio_1_1ItemsAccessor_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__enum__v_3_01T_01_4_01_4_01_4 =
+[
+    [ "Items", "structzserio_1_1ItemsAccessor_3_01T_00_01std_1_1enable__if__t_3_01std_1_1is__enum__v_3_01T_01_4_01_4_01_4.html#a56e55c883796b6b9bdb8fe47704f93e8", null ]
+];
