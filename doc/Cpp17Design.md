@@ -80,7 +80,7 @@ which automatically checks a range check of the value.
 The following table shows the mapping of all Zserio built-in types into the C++ Zserio type together with
 the C++ native type:
 
-Zserio Type     | C++ Zserio Type                    | C++ Native Type         |
+Zserio Type     | C++ Zserio Type                     | C++ Native Type         |
 ----------------|-------------------------------------|-------------------------|
 uint8           | `zserio::UInt8`                     | `uint8_t`               |
 uint16          | `zserio::UInt16`                    | `uint16_t`              |
@@ -109,9 +109,10 @@ varuint16       | `zserio::VarUInt16`                 | `uint16_t`              
 varuint32       | `zserio::VarUInt32`                 | `uint32_t`              |
 varuint64       | `zserio::VarUInt64`                 | `uint64_t`              |
 varuint         | `zserio::VarUInt`                   | `uint64_t`              |
+varsize         | `zserio::VarSize`                   | `uint32_t`              |
 bool            | `zserio::Bool`                      | `bool`                  |
 string          | `zserio::String`                    | `std::string`           |
-extern          | `zserio::BitBuffer`                 | N/A                      |
+extern          | `zserio::BitBuffer`                 | N/A                     |
 bytes           | `zserio::Bytes`                     | `std::vector<uint8_t>`  |
 
 > Note that the implicit constructors from the C++ native type will break a MISRA 2023 rule 15.1.3
