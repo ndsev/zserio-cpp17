@@ -1,5 +1,7 @@
 [![](https://github.com/ndsev/zserio/actions/workflows/build_linux.yml/badge.svg)](https://github.com/ndsev/zserio-cpp17/actions/workflows/build_linux.yml)
 [![](https://github.com/ndsev/zserio/actions/workflows/build_windows.yml/badge.svg)](https://github.com/ndsev/zserio-cpp17/actions/workflows/build_windows.yml)
+[![](https://img.shields.io/endpoint?url=https://ndsev.github.io/zserio-cpp17/doc/runtime/latest/coverage/clang/coverage_github_badge.json)](https://ndsev.github.io/zserio-cpp17/doc/runtime/latest/coverage/clang)
+[![](https://sonarcloud.io/api/project_badges/measure?project=ndsev_zserio-cpp17&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ndsev_zserio-cpp17)
 
 # C++17 Extension
 
