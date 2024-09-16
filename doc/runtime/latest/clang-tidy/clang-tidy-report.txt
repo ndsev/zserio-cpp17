@@ -1,0 +1,1563 @@
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamReader.cpp:301:29: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        value = ctx.cache & MASK_TABLE[ctx.cacheNumBits];
+                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamReader.cpp:315:81: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+    value |= ((ctx.cache >> static_cast<uint8_t>(ctx.cacheNumBits - numBits)) & MASK_TABLE[numBits]);
+                                                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/FileUtil.cpp:18:23: warning: do not use reinterpret_cast [cppcoreguidelines-pro-type-reinterpret-cast]
+    if (!stream.write(reinterpret_cast<const char*>(buffer), static_cast<std::streamsize>(byteSize)))
+                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/FileUtil.cpp:48:22: warning: do not use reinterpret_cast [cppcoreguidelines-pro-type-reinterpret-cast]
+    if (!stream.read(reinterpret_cast<char*>(bitBuffer.getBuffer()),
+                     ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:357:66: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+    if (numBits == 0 || numBits > sizeof(uint32_t) * 8 || data > MAX_U32_VALUES[numBits])
+                                                                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:368:66: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+    if (numBits == 0 || numBits > sizeof(uint64_t) * 8 || data > MAX_U64_VALUES[numBits])
+                                                                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:379:65: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+    if (numBits == 0 || numBits > sizeof(int32_t) * 8 || data < MIN_I32_VALUES[numBits] ||
+                                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:380:20: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+            data > MAX_I32_VALUES[numBits])
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:386:53: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+    writeUnsignedBits(static_cast<uint32_t>(data) & MAX_U32_VALUES[numBits], numBits);
+                                                    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:391:65: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+    if (numBits == 0 || numBits > sizeof(int64_t) * 8 || data < MIN_I64_VALUES[numBits] ||
+                                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:392:20: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+            data > MAX_I64_VALUES[numBits])
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:398:55: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+    writeUnsignedBits64(static_cast<uint64_t>(data) & MAX_U64_VALUES[numBits], numBits);
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:594:31: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        const uint32_t mask = MAX_U32_VALUES[restNumBits];
+                              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.cpp:662:73: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        const uint8_t add = static_cast<uint8_t>((value >> shiftBits) & bitMasks[numBits - 1U]);
+                                                                        ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/BitStreamWriter.h:71:5: warning: constructor does not initialize these fields: m_bitIndex, m_bufferBitSize [cppcoreguidelines-pro-type-member-init]
+    explicit BitStreamWriter(BasicBitBuffer<ALLOC>& bitBuffer) :
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/BitBufferTest.cpp:353:19: warning: do not use pointer arithmetic [cppcoreguidelines-pro-bounds-pointer-arithmetic]
+        readBuffer++;
+                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/BitBufferTest.cpp:367:19: warning: do not use pointer arithmetic [cppcoreguidelines-pro-bounds-pointer-arithmetic]
+        readBuffer++;
+                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/TrackingAllocator.h:78:5: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    TrackingAllocatorImpl(const TrackingAllocatorImpl<Other>& other) :
+    ^
+    explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/BitStreamWriter.h:71:5: warning: constructor does not initialize these fields: m_bitIndex, m_bufferBitSize [cppcoreguidelines-pro-type-member-init]
+    explicit BitStreamWriter(BasicBitBuffer<ALLOC>& bitBuffer) :
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/BitStreamWriter.h:71:5: warning: constructor does not initialize these fields: m_bitIndex, m_bufferBitSize [cppcoreguidelines-pro-type-member-init]
+    explicit BitStreamWriter(BasicBitBuffer<ALLOC>& bitBuffer) :
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/BuiltInOperatorsTest.cpp:25:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr DummyBitmask(Values value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeVersion.h:8:9: warning: macro 'CPP17_EXTENSION_RUNTIME_VERSION_NUMBER' used to declare a constant; consider using a 'constexpr' constant [cppcoreguidelines-macro-usage]
+#define CPP17_EXTENSION_RUNTIME_VERSION_NUMBER 0001000
+        ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:118:15: warning: constructors that are callable with a single argument must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr BasicOptional(std::nullopt_t, const ALLOC& allocator = {}) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:128:15: warning: constructors that are callable with a single argument must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr BasicOptional(const T& value, const ALLOC& allocator = {}) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:138:15: warning: constructors that are callable with a single argument must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr BasicOptional(T&& value, const ALLOC& allocator = {}) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:212:5: warning: an exception may be thrown in function '~BasicOptional' which should not throw exceptions [bugprone-exception-escape]
+    ~BasicOptional()
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:235:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr BasicOptional(const BasicOptional<ALLOC, U>& other) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:352:5: warning: an exception may be thrown in function 'BasicOptional' which should not throw exceptions [bugprone-exception-escape]
+    BasicOptional(BasicOptional&& other) :
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:379:20: warning: an exception may be thrown in function 'operator=' which should not throw exceptions [bugprone-exception-escape]
+    BasicOptional& operator=(BasicOptional&& other)
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:399:20: warning: an exception may be thrown in function 'has_value' which should not throw exceptions [bugprone-exception-escape]
+    constexpr bool has_value() const noexcept
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:439:24: warning: an exception may be thrown in function 'operator bool' which should not throw exceptions [bugprone-exception-escape]
+    constexpr explicit operator bool() const noexcept
+                       ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:789:46: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    return opt.has_value() && opt.value() == value;
+                                             ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:803:46: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    return opt.has_value() && opt.value() == value;
+                                             ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:929:46: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    return !opt.has_value() || opt.value() < value;
+                                             ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:943:31: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    return opt.has_value() && value < opt.value();
+                              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:1001:45: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    return opt.has_value() && opt.value() > value;
+                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Optional.h:1015:32: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    return !opt.has_value() || value > opt.value();
+                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/OptionalTest.cpp:253:12: warning: an exception may be thrown in function 'Tmp' which should not throw exceptions [bugprone-exception-escape]
+    struct Tmp
+           ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:80:15: warning: use '= default' to define a trivial default constructor [modernize-use-equals-default]
+    constexpr Span() noexcept
+              ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:112:20: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    constexpr Span(element_type (&arr)[N]) noexcept :
+                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:113:23: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+            m_storage(arr, N)
+                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:123:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:125:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:55: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                      ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:136:64: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<const U (*)[], T (*)[]>::value,
+                                                               ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:138:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::array<U, N>& arr) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:84: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:148:93: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+            typename std::enable_if<(ext == dynamic_extent) && std::is_convertible<U (*)[], T (*)[]>::value,
+                                                                                            ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:150:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:74: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:161:83: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                    (ext == dynamic_extent) && std::is_convertible<const U (*)[], T (*)[]>::value, int>::type =
+                                                                                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:163:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const std::vector<U, ALLOC>& vec) :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:49: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:174:58: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+                            std::is_convertible<U (*)[], T (*)[]>::value,
+                                                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Span.h:176:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr Span(const Span<U, N>& span) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/SpanTest.cpp:34:43: warning: do not use pointer arithmetic [cppcoreguidelines-pro-bounds-pointer-arithmetic]
+    Span<int> span(vec.data(), vec.data() + vec.size());
+                                          ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/SpanTest.cpp:38:52: warning: do not use pointer arithmetic [cppcoreguidelines-pro-bounds-pointer-arithmetic]
+    Span<int, 4> spanStatic(vec.data(), vec.data() + vec.size());
+                                                   ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/SpanTest.cpp:45:5: warning: do not declare C-style arrays, use std::array<> instead [cppcoreguidelines-avoid-c-arrays]
+    int arr[] = {0, 13, 42};
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Variant.h:237:5: warning: an exception may be thrown in function 'BasicVariant' which should not throw exceptions [bugprone-exception-escape]
+    BasicVariant(BasicVariant&& other) :
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Variant.h:264:19: warning: an exception may be thrown in function 'operator=' which should not throw exceptions [bugprone-exception-escape]
+    BasicVariant& operator=(BasicVariant&& other)
+                  ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Variant.h:671:28: warning: 'other' used after it was moved [bugprone-use-after-move]
+        (move<I>(std::move(other)), ...);
+                           ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Variant.h:671:10: note: move occurred here
+        (move<I>(std::move(other)), ...);
+         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/VariantTest.cpp:12:1: warning: inheriting multiple classes that aren't pure virtual is discouraged [fuchsia-multiple-inheritance]
+struct overloaded : Ts...
+^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/VariantTest.cpp:31:8: warning: class 'ThrowingMove' defines a move constructor but does not define a destructor, a copy constructor, a copy assignment operator or a move assignment operator [cppcoreguidelines-special-member-functions]
+struct ThrowingMove
+       ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/zserio/VariantTest.cpp:34:5: warning: an exception may be thrown in function 'ThrowingMove' which should not throw exceptions [bugprone-exception-escape]
+    ThrowingMove(ThrowingMove&&)
+    ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/CppRuntimeException.h:193:18: warning: do not implicitly decay an array into a pointer; consider using gsl::array_view or an explicit cast instead [cppcoreguidelines-pro-bounds-array-to-pointer-decay]
+    exception << value;
+                 ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:43:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:44:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:49:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_1[static_cast<unsigned int>(value)];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:54:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index + 1];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/StringConvertUtil.h:55:26: warning: do not use array subscript when the index is not an integer constant expression [cppcoreguidelines-pro-bounds-constant-array-index]
+        *(--bufferEnd) = DIGITS_100_10[index];
+                         ^
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:59:15: warning: single-argument constructors must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr NumericTypeWrapper(value_type value) noexcept :
+              ^
+              explicit 
+/home/mkriz/data/nds/zserio-cpp17/runtime/test/../src/zserio/Types.h:66:15: warning: 'operator type-parameter-0-0' must be marked explicit to avoid unintentional implicit conversions [google-explicit-constructor]
+    constexpr operator value_type() const noexcept
+              ^
+              explicit 

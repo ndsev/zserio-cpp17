@@ -1,0 +1,23 @@
+var NAVTREEINDEX4 =
+{
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html":[2,0,1,6,0],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a063fa70868d9d7502ebf74a729f08056":[2,0,1,6,0,6],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a217494e42b05e4d36bef8f8fe040e5fc":[2,0,1,6,0,9],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a4133937cfff80df92ad0b5d0e50553b1":[2,0,1,6,0,0],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a4923e8fc0629af1839d9e97b478c6207":[2,0,1,6,0,7],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a4b41933962176237884c57d35c6b7247":[2,0,1,6,0,4],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a50838b01dd24313a8564adb9f5340107":[2,0,1,6,0,8],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a52a83270100cb691173bac9709db5f5f":[2,0,1,6,0,3],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#a931f6deaf55182951689bdd085837654":[2,0,1,6,0,5],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#ab1575a7681b173cd5f1a387e1c93979c":[2,0,1,6,0,10],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#ac14bac8e01ff87b7ddccce59068db7d7":[2,0,1,6,0,2],
+"structzserio_1_1BitStreamReader_1_1ReaderContext.html#af117a979b94263bcc7076e2bb48d1217":[2,0,1,6,0,1],
+"structzserio_1_1BitsTag.html":[2,0,1,4],
+"structzserio_1_1NativeArrayTraits.html":[2,0,1,3],
+"structzserio_1_1NumericLimits.html":[2,0,1,18],
+"structzserio_1_1in__place__index__t.html":[2,0,1,20],
+"structzserio_1_1is__allocator.html":[2,0,1,14],
+"structzserio_1_1is__allocator_3_01T_00_01std_1_1void__t_3_01decltype_07std_1_1declval_3_01T_01_4caabdafc035f5ad425fcdcbb86dccbd0.html":[2,0,1,15],
+"structzserio_1_1is__first__allocator.html":[2,0,1,16],
+"structzserio_1_1is__first__allocator_3_01T_00_01ARGS_8_8_8_01_4.html":[2,0,1,17]
+};

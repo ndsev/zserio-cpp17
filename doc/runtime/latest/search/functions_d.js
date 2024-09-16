@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['rbegin_559',['rbegin',['../classzserio_1_1Span.html#a7c8361dec2fccbad69f0ab12b79d0f40',1,'zserio::Span']]],
+  ['readbitbuffer_560',['readBitBuffer',['../classzserio_1_1BitStreamReader.html#a3a073dacc2f1ff29751851505c4227b5',1,'zserio::BitStreamReader']]],
+  ['readbits_561',['readBits',['../classzserio_1_1BitStreamReader.html#a35bace48baa09b1a9db4344377c1f0a5',1,'zserio::BitStreamReader']]],
+  ['readbits64_562',['readBits64',['../classzserio_1_1BitStreamReader.html#a12d14230d95273e35f5ed2420364dfd5',1,'zserio::BitStreamReader']]],
+  ['readbool_563',['readBool',['../classzserio_1_1BitStreamReader.html#a2d04dbffe24ae37d08b241223f0ccb5e',1,'zserio::BitStreamReader']]],
+  ['readbufferfromfile_564',['readBufferFromFile',['../namespacezserio.html#a7c591d651970655b1ca031317bbe79b2',1,'zserio']]],
+  ['readbytes_565',['readBytes',['../classzserio_1_1BitStreamReader.html#a7e8ef2543adc01abdc79f516dc47fb6a',1,'zserio::BitStreamReader']]],
+  ['readercontext_566',['ReaderContext',['../structzserio_1_1BitStreamReader_1_1ReaderContext.html#ac14bac8e01ff87b7ddccce59068db7d7',1,'zserio::BitStreamReader::ReaderContext::ReaderContext(const ReaderContext &amp;)=delete'],['../structzserio_1_1BitStreamReader_1_1ReaderContext.html#a52a83270100cb691173bac9709db5f5f',1,'zserio::BitStreamReader::ReaderContext::ReaderContext(const ReaderContext &amp;&amp;)=delete'],['../structzserio_1_1BitStreamReader_1_1ReaderContext.html#a4133937cfff80df92ad0b5d0e50553b1',1,'zserio::BitStreamReader::ReaderContext::ReaderContext(Span&lt; const uint8_t &gt; readBuffer, size_t readBufferBitSize)']]],
+  ['readfloat16_567',['readFloat16',['../classzserio_1_1BitStreamReader.html#af862f775beb444f9ffe98f82af411b82',1,'zserio::BitStreamReader']]],
+  ['readfloat32_568',['readFloat32',['../classzserio_1_1BitStreamReader.html#a0ed0f25b930f72bae66008ca9e9c19a4',1,'zserio::BitStreamReader']]],
+  ['readfloat64_569',['readFloat64',['../classzserio_1_1BitStreamReader.html#a3d255911031e347d9126b6f62f5c562e',1,'zserio::BitStreamReader']]],
+  ['readsignedbits_570',['readSignedBits',['../classzserio_1_1BitStreamReader.html#a905f5f649f72515214a7c169e622625c',1,'zserio::BitStreamReader']]],
+  ['readsignedbits64_571',['readSignedBits64',['../classzserio_1_1BitStreamReader.html#a908ad410c6033386ce7d7008cbc6b045',1,'zserio::BitStreamReader']]],
+  ['readstring_572',['readString',['../classzserio_1_1BitStreamReader.html#a76c0ec9e2a2d3d3ab146ee27ea7d1f4e',1,'zserio::BitStreamReader']]],
+  ['readvarint_573',['readVarInt',['../classzserio_1_1BitStreamReader.html#ae8fa96996005c4db44bfb794487f576d',1,'zserio::BitStreamReader']]],
+  ['readvarint16_574',['readVarInt16',['../classzserio_1_1BitStreamReader.html#acde71f4f492594aacaa47123961e5a91',1,'zserio::BitStreamReader']]],
+  ['readvarint32_575',['readVarInt32',['../classzserio_1_1BitStreamReader.html#abb6e93e1778cd775dd7f4407853ea3ec',1,'zserio::BitStreamReader']]],
+  ['readvarint64_576',['readVarInt64',['../classzserio_1_1BitStreamReader.html#a526d3b6f1405674e36c05984286ac7bf',1,'zserio::BitStreamReader']]],
+  ['readvarsize_577',['readVarSize',['../classzserio_1_1BitStreamReader.html#a1d229521d3ef8fb934811013725a51a3',1,'zserio::BitStreamReader']]],
+  ['readvaruint_578',['readVarUInt',['../classzserio_1_1BitStreamReader.html#af908e1287803dd6b3efe1f5e1b757011',1,'zserio::BitStreamReader']]],
+  ['readvaruint16_579',['readVarUInt16',['../classzserio_1_1BitStreamReader.html#ab53cc27ff3877ccc0dc93ac7fb63a04f',1,'zserio::BitStreamReader']]],
+  ['readvaruint32_580',['readVarUInt32',['../classzserio_1_1BitStreamReader.html#ab6be88196738dad24277493b03d8de0d',1,'zserio::BitStreamReader']]],
+  ['readvaruint64_581',['readVarUInt64',['../classzserio_1_1BitStreamReader.html#a659e5fea923a42ace3236c29fdbfd0ae',1,'zserio::BitStreamReader']]],
+  ['rend_582',['rend',['../classzserio_1_1Span.html#a901a336da50ab8390716ac58b997a349',1,'zserio::Span']]],
+  ['reset_583',['reset',['../classzserio_1_1BasicOptional.html#aa7be500fca0bfe165099265ece5683cf',1,'zserio::BasicOptional']]]
+];

@@ -1,0 +1,7 @@
+var searchData=
+[
+  ['value_594',['value',['../classzserio_1_1BasicOptional.html#af407fff31f8c76824e496a293a2bbc26',1,'zserio::BasicOptional::value()'],['../classzserio_1_1BasicOptional.html#a3d097b8c84fe2a4e69a8a8b0e1b3cc00',1,'zserio::BasicOptional::value() const']]],
+  ['value_5for_595',['value_or',['../classzserio_1_1BasicOptional.html#a37413aaaa589a1f546ea11e07696e9ee',1,'zserio::BasicOptional::value_or(U &amp;&amp;def)'],['../classzserio_1_1BasicOptional.html#ab04c4c914d371ff9a7ec6a3388ba12f7',1,'zserio::BasicOptional::value_or(U &amp;&amp;def) const']]],
+  ['valueless_5fby_5fexception_596',['valueless_by_exception',['../classzserio_1_1BasicVariant.html#a635dc59589a83bc730f8d06d488e50e2',1,'zserio::BasicVariant']]],
+  ['visit_597',['visit',['../classzserio_1_1BasicVariant.html#ad239d2569cf363cb836bd93e7c009263',1,'zserio::BasicVariant::visit(F &amp;&amp;fun) -&gt; decltype(fun(std::declval&lt; detail::type_at_t&lt; 0, T... &gt;&gt;()))'],['../classzserio_1_1BasicVariant.html#a017679478768b8290030f8347c37ce11',1,'zserio::BasicVariant::visit(F &amp;&amp;fun) const -&gt; decltype(fun(std::declval&lt; detail::type_at_t&lt; 0, T... &gt;&gt;()))'],['../namespacezserio.html#a029294caaeef5c58c3a3d9d0d1c5e789',1,'zserio::visit(F &amp;&amp;fun, BasicVariant&lt; ALLOC, INDEX, T... &gt; &amp;var)'],['../namespacezserio.html#a28ed8da78dea3fafe43bc1506d8d1271',1,'zserio::visit(F &amp;&amp;fun, const BasicVariant&lt; ALLOC, INDEX, T... &gt; &amp;var)']]]
+];
