@@ -66,6 +66,51 @@ parse_arguments()
     return 0
 }
 
+# Create JSON configuration files for all GitHub badges
+create_github_badge_jsons()
+{
+    exit_if_argc_ne $# 2
+    local DEST_RUNTIME_DIR="$1"; shift
+    local ZSERIO_VERSION="$1"; shift
+
+    local CLANG_COVERAGE_DIR="${DEST_RUNTIME_DIR}/${ZSERIO_VERSION}"/coverage/clang
+    local CLANG_LINES_COVERAGE=`cat "${CLANG_COVERAGE_DIR}"/coverage_report.txt | grep TOTAL | \
+            tr -s ' ' | cut -d' ' -f 10`
+    create_github_badge_json "${CLANG_COVERAGE_DIR}"/coverage_github_badge.json \
+            "C++ clang runtime ${ZSERIO_VERSION} coverage" "${CLANG_LINES_COVERAGE}"
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
+
+    return 0
+}
+
+# Create JSON configuration file for GitHub badge
+create_github_badge_json()
+{
+    exit_if_argc_ne $# 3
+    local BADGE_JSON_FILE="$1"; shift
+    local BADGE_LABEL="$1"; shift
+    local BADGE_MESSAGE="$1"; shift
+
+    cat > "${BADGE_JSON_FILE}" << EOF
+{
+    "schemaVersion": 1,
+    "label": "${BADGE_LABEL}",
+    "message": "${BADGE_MESSAGE}",
+    "color": "green"
+}
+EOF
+
+    if [ $? -ne 0 ] ; then
+        stderr_echo "Failed to create badge json file!"
+        echo
+        return 1
+    fi
+
+    return 0
+}
+
 main()
 {
     local ZSERIO_CPP17_PROJECT_ROOT="${SCRIPT_DIR}/.."
@@ -118,8 +163,10 @@ main()
     fi
     echo
 
+    local DEST_RUNTIME_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/doc/runtime"
+
     echo -ne "Removing Zserio runtime libraries latest version..."
-    local DEST_LATEST_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/doc/runtime/latest"
+    local DEST_LATEST_DIR="${DEST_RUNTIME_DIR}/latest"
     rm -rf "${DEST_LATEST_DIR}"
     echo "Done"
 
@@ -127,8 +174,15 @@ main()
     mkdir -p "${DEST_LATEST_DIR}"
     cp -r ${ZSERIO_DISTR_DIR}/runtime_lib/zserio_doc/* ${DEST_LATEST_DIR}
     if [ $? -ne 0 ] ; then
-            return 1
-        fi
+        return 1
+    fi
+    echo "Done"
+
+    echo -ne "Creating Zserio runtime library GitHub badges..."
+    create_github_badge_jsons "${DEST_RUNTIME_DIR}" "latest"
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
     echo "Done"
 
     echo
