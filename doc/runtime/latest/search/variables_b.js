@@ -1,0 +1,6 @@
+var searchData=
+[
+  ['schemaname_1721',['schemaName',['../structzserio_1_1BasicFieldInfo.html#a83c5c14e215325d7344f658de3a30923',1,'zserio::BasicFieldInfo::schemaName()'],['../structzserio_1_1BasicParameterInfo.html#a496e5e80a5b12f11e70a26871312d2ad',1,'zserio::BasicParameterInfo::schemaName()'],['../structzserio_1_1BasicFunctionInfo.html#aa67d61ecda0527fe20c7a80846cae69c',1,'zserio::BasicFunctionInfo::schemaName()'],['../structzserio_1_1ItemInfo.html#a50f44837e6ce78734d3a58737ef5b762',1,'zserio::ItemInfo::schemaName()'],['../structzserio_1_1BasicColumnInfo.html#a121113eaf83fba613ea1bdb0de9e95ef',1,'zserio::BasicColumnInfo::schemaName()'],['../structzserio_1_1BasicTableInfo.html#ab771039b701df787ce09086ef695c98d',1,'zserio::BasicTableInfo::schemaName()'],['../structzserio_1_1BasicMessageInfo.html#a72a10df4422b0cdc976ad354dab42e1f',1,'zserio::BasicMessageInfo::schemaName()'],['../structzserio_1_1BasicMethodInfo.html#a79645ad4fc083b931905d049ef357079',1,'zserio::BasicMethodInfo::schemaName()']]],
+  ['sqlconstraint_1722',['sqlConstraint',['../structzserio_1_1BasicColumnInfo.html#a8e6c05540d08dbf9b2d569aea0f32560',1,'zserio::BasicColumnInfo']]],
+  ['sqltypename_1723',['sqlTypeName',['../structzserio_1_1BasicColumnInfo.html#ad1d6b5258767018a8c36ebe29c8b0212',1,'zserio::BasicColumnInfo']]]
+];

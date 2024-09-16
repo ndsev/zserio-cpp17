@@ -1,0 +1,4 @@
+var structzserio_1_1view__type_3_01T_00_01std_1_1enable__if__t_3_01is__complete__v_3_01View_3_01T_01_4_01_4_01_4_01_4 =
+[
+    [ "type", "structzserio_1_1view__type_3_01T_00_01std_1_1enable__if__t_3_01is__complete__v_3_01View_3_01T_01_4_01_4_01_4_01_4.html#a3cf7f7322456346f65afc5aacfdfa107", null ]
+];
