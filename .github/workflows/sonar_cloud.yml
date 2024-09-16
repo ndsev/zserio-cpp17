@@ -101,7 +101,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
         sonar-scanner \
-            --define sonar.projectKey="ndsev_zserio" \
+            --define sonar.projectKey="ndsev_zserio-cpp17" \
             --define sonar.organization="ndsev" \
             --define sonar.sourceEncoding="UTF-8" \
             --define sonar.sources="runtime/src" \
