@@ -6,24 +6,6 @@
 namespace zserio
 {
 
-namespace detail
-{
-
-// declval is needed because otherwise MSVC 2015 states that std::allocator<int> does NOT have allocate method!
-template <typename T, typename U = decltype(std::declval<T>().allocate(0))>
-struct decltype_allocate
-{
-    using type = U;
-};
-
-template <typename T, typename U = decltype(std::declval<T>().deallocate(nullptr, 0))>
-struct decltype_deallocate
-{
-    using type = U;
-};
-
-} // namespace detail
-
 /**
  * Trait used to check whether the type T is an allocator.
  * \{
@@ -34,9 +16,12 @@ struct is_allocator : std::false_type
 
 template <typename T>
 struct is_allocator<T,
-        std::void_t<typename detail::decltype_allocate<T>::type, typename detail::decltype_deallocate<T>::type>>
-        : std::true_type
+        std::void_t<decltype(std::declval<T>().allocate(0)),
+                decltype(std::declval<T>().deallocate(nullptr, 0))>> : std::true_type
 {};
+
+template <typename T, typename V = void>
+inline constexpr bool is_allocator_v = is_allocator<T, V>::value;
 /** \} */
 
 /**
@@ -50,6 +35,9 @@ struct is_first_allocator : std::false_type
 template <typename T, typename... ARGS>
 struct is_first_allocator<T, ARGS...> : is_allocator<T>
 {};
+
+template <typename T, typename V = void>
+inline constexpr bool is_first_allocator_v = is_first_allocator<T, V>::value;
 /** \} */
 
 } // namespace zserio

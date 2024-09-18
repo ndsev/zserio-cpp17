@@ -19,6 +19,7 @@ project(ZserioCpp17Runtime)
 
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/AllocatorHolder.h
+    zserio/Array.h
     zserio/BitBuffer.h
     zserio/BitFieldUtil.cpp
     zserio/BitPositionUtil.h

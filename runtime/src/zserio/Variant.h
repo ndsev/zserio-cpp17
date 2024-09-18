@@ -118,7 +118,7 @@ public:
      * \throw can throw any exception thrown by T[I]
      */
     template <INDEX I, typename... ARGS, std::enable_if_t<!detail::is_heap_allocated_v<I, T...>>* = nullptr,
-            std::enable_if_t<!is_first_allocator<ARGS...>::value>* = nullptr>
+            std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
     explicit BasicVariant(zserio::in_place_index_t<I>, ARGS&&... args) :
             m_data(std::in_place_index<static_cast<size_t>(I)>, std::forward<ARGS>(args)...)
     {}
@@ -164,7 +164,7 @@ public:
      */
     template <INDEX I, typename... ARGS, typename U = detail::type_at_t<static_cast<size_t>(I), T...>,
             std::enable_if_t<detail::is_heap_allocated_v<I, T...>>* = nullptr,
-            std::enable_if_t<!is_first_allocator<ARGS...>::value>* = nullptr>
+            std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
     explicit BasicVariant(zserio::in_place_index_t<I>, ARGS&&... args) :
             m_data(std::in_place_index<static_cast<size_t>(I)>, allocateValue<U>(std::forward<ARGS>(args)...))
     {}

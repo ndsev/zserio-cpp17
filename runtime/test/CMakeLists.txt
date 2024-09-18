@@ -18,6 +18,7 @@ if (SANITIZERS_ENABLED)
 endif ()
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
+    zserio/ArrayTest.cpp
     zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp
     zserio/BitPositionUtilTest.cpp
@@ -37,6 +38,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/SpanTest.cpp
     zserio/StringConvertUtilTest.cpp
     zserio/TrackingAllocator.h
+    zserio/TraitsTest.cpp
     zserio/TypesTest.cpp
     zserio/VariantTest.cpp
 )
