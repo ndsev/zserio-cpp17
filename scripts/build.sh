@@ -47,15 +47,17 @@ EOF
 # 3 - Environment help switch is present. Arguments after help switch have not been checked.
 parse_arguments()
 {
-    local NUM_OF_ARGS=5
+    local NUM_OF_ARGS=6
     exit_if_argc_lt $# ${NUM_OF_ARGS}
     local PARAM_CPP_OUT="$1"; shift
     local PARAM_CPP_TARGET_ARRAY_OUT="$1"; shift
+    local PARAM_ZSERIO_OUT="$1"; shift
     local PARAM_OUT_DIR_OUT="$1"; shift
     local SWITCH_CLEAN_OUT="$1"; shift
     local SWITCH_PURGE_OUT="$1"; shift
 
     eval ${PARAM_CPP_OUT}=0
+    eval ${PARAM_ZSERIO_OUT}=0
     eval ${SWITCH_CLEAN_OUT}=0
     eval ${SWITCH_PURGE_OUT}=0
 
@@ -120,6 +122,10 @@ parse_arguments()
                 NUM_CPP_TARGETS=$((NUM_CPP_TARGETS + 1))
                 ;;
 
+            "zserio")
+                eval ${PARAM_ZSERIO_OUT}=1
+                ;;
+
             *)
                 stderr_echo "Invalid argument '${PARAM}'!"
                 echo
@@ -129,6 +135,7 @@ parse_arguments()
 
     if [[ ${!PARAM_CPP_OUT} == 0 &&
           ${NUM_CPP_TARGETS} == 0 &&
+          ${PARAM_ZSERIO_OUT} == 0 &&
           ${!SWITCH_PURGE_OUT} == 0 ]] ; then
         stderr_echo "Package to build is not specified!"
         echo
@@ -147,10 +154,11 @@ main()
     # parse command line arguments
     local PARAM_CPP
     local PARAM_CPP_TARGET_ARRAY=()
+    local PARAM_ZSERIO
     local PARAM_OUT_DIR="${ZSERIO_CPP17_PROJECT_ROOT}"
     local SWITCH_CLEAN
     local SWITCH_PURGE
-    parse_arguments PARAM_CPP PARAM_CPP_TARGET_ARRAY \
+    parse_arguments PARAM_CPP PARAM_CPP_TARGET_ARRAY PARAM_ZSERIO \
                     PARAM_OUT_DIR SWITCH_CLEAN SWITCH_PURGE "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
@@ -167,6 +175,14 @@ main()
     set_global_common_variables
     if [ $? -ne 0 ] ; then
         return 1
+    fi
+
+    if [[ ${PARAM_CPP} == 1 ||
+          ${PARAM_ZSERIO} == 1 ]] ; then
+        set_global_java_variables
+        if [ $? -ne 0 ] ; then
+            return 1
+        fi
     fi
 
     if [[ ${#PARAM_CPP_TARGET_ARRAY[@]} -ne 0 ]] ; then
@@ -203,11 +219,20 @@ main()
         local ACTION_DESCRIPTION="Building"
     fi
 
+    local ZSERIO_CPP17_ANT_PROPS=(
+            -Dzserio_cpp17.build_dir="${ZSERIO_BUILD_DIR}/extension"
+            -Dzserio_cpp17.install_dir="${ZSERIO_DISTR_DIR}"
+    )
+
     # build Zserio C++ extension
     if [[ ${PARAM_CPP} == 1 ]] ; then
-        stderr_echo "C++17 extension not yet implemented!"
+        echo "${ACTION_DESCRIPTION} Zserio C++ extension."
         echo
-        return 1
+        compile_java "${ZSERIO_CPP17_PROJECT_ROOT}/extension/build.xml" ZSERIO_CPP17_ANT_PROPS[@] ${JAVA_TARGET}
+        if [ $? -ne 0 ] ; then
+            return 1
+        fi
+        echo
     fi
 
     # build Zserio C++ runtime library
@@ -245,6 +270,20 @@ main()
         fi
         echo
     fi
+
+    # bundle Zserio with C++17 extension
+    if [[ ${PARAM_ZSERIO} == 1 ]] ; then
+        echo "${ACTION_DESCRIPTION} Zserio bundle."
+        echo
+        compile_java "${ZSERIO_CPP17_PROJECT_ROOT}/extension/build.xml" ZSERIO_CPP17_ANT_PROPS[@] \
+                zserio_bundle.${JAVA_TARGET}
+        if [ $? -ne 0 ] ; then
+            return 1
+        fi
+        echo
+    fi
+
+    return 0
 }
 
 # call main function

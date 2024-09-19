@@ -17,6 +17,43 @@ set_global_common_variables()
     fi
 }
 
+# Set and check global variables for Java projects.
+set_global_java_variables()
+{
+    # ANT to use, defaults to "ant" if not set
+    ANT="${ANT:-ant}"
+    if [ ! -f "`which "${ANT}"`" ] ; then
+        stderr_echo "Cannot find Ant! Set ANT environment variable."
+        return 1
+    fi
+
+    # Ant extra arguments are empty by default
+    ANT_EXTRA_ARGS="${ANT_EXTRA_ARGS:-""}"
+
+    # check java binary
+    if [ -n "${JAVA_HOME}" ] ; then
+        JAVA_BIN="${JAVA_HOME}/bin/java"
+    fi
+    JAVA_BIN="${JAVA_BIN:-java}"
+    if [ ! -f "`which "${JAVA_BIN}"`" ] ; then
+        stderr_echo "Cannot find java! Set JAVA_HOME or JAVA_BIN environment variable."
+        return 1
+    fi
+
+    # check javac binary
+    if [ -n "${JAVA_HOME}" ] ; then
+        JAVAC_BIN="${JAVA_HOME}/bin/javac"
+    fi
+    JAVAC_BIN="${JAVAC_BIN:-javac}"
+    if [ ! -f "`which "${JAVAC_BIN}"`" ] ; then
+        stderr_echo "Cannot find java compiler! Set JAVA_HOME or JAVAC_BIN environment variable."
+        return 1
+    fi
+
+    # spotbugs home directory is empty by default
+    SPOTBUGS_HOME="${SPOTBUGS_HOME:-""}"
+}
+
 # Set and check global variables for C++ projects.
 set_global_cpp_variables()
 {
@@ -96,7 +133,28 @@ print_help_env()
 {
     cat << EOF
 Uses the following environment variables for building:
+    ANT                    Ant executable to use. Default is "ant".
+    ANT_EXTRA_ARGS         Extra arguments to Ant. Default is empty string.
+    CLANG_FORMAT_BIN       Name of clang-format binary. If not set, clang-format tool is not called.
+    CLANG_TIDY_BIN         Name of clang-tidy binary. If not set, clang-tidy tool is not called.
+    CLANG_VERSION_SUFFIX   Clang compiler version suffix. Default is empty.
+                           Set e.g. "-8" to use "clang-8" instead of "clang".
     CMAKE                  CMake executable to use. Default is "cmake".
+    CMAKE_BUILD_OPTIONS    Arguments to be passed by CMake to a native build tool.
+    CMAKE_EXTRA_ARGS       Extra arguments to CMake. Default is empty string.
+    CTEST                  Ctest executable to use. Default is "ctest".
+    DOT                    Dot executable to use. Default is "dot".
+    DOXYGEN                Doxygen executable to use. Default is 'doxygen".
+    GCC_VERSION_SUFFIX     Gcc compiler version suffix. Default is empty.
+                           Set e.g. "-11" to use "gcc-11" instead of "gcc".
+    GCOVR_BIN              Gcovr binary to use for coverage report generation (gcc).
+                           Default is empty string.
+    JAVAC_BIN              Java compiler executable to use. Default is "javac".
+    JAVA_BIN               Java executable to use. Default is "java".
+    LLVM_PROFDATA_BIN      llvm-profdata  binary to use for coverage report generation (clang).
+                           Default is empty string.
+    LLVM_COV_BIN           llvm-cov  binary to use for coverage report generation (clang).
+                           Default is empty string.
     MAKE_CMAKE_GENERATOR   CMake generator to use for build using Makefiles. Default is
                            "Unix Makefiles".
     MSVC_CMAKE_GENERATOR   CMake generator to use with MSVC compiler. Default is
@@ -105,23 +163,6 @@ Uses the following environment variables for building:
     MSVC_CMAKE_TOOLSET     MSVC toolset specification for CMake generator.
                            Default is "v141". Note that "v141" is for VS 2017,
                            "v142" is for VS 2019.
-    GCC_VERSION_SUFFIX     Gcc compiler version suffix. Default is empty.
-                           Set e.g. "-11" to use "gcc-11" instead of "gcc".
-    CLANG_VERSION_SUFFIX   Clang compiler version suffix. Default is empty.
-                           Set e.g. "-8" to use "clang-8" instead of "clang".
-    CMAKE_EXTRA_ARGS       Extra arguments to CMake. Default is empty string.
-    CMAKE_BUILD_OPTIONS    Arguments to be passed by CMake to a native build tool.
-    CTEST                  Ctest executable to use. Default is "ctest".
-    DOXYGEN                Doxygen executable to use. Default is 'doxygen".
-    DOT                    Dot executable to use. Default is "dot".
-    CLANG_TIDY_BIN         Name of clang-tidy binary. If not set, clang-tidy tool is not called.
-    CLANG_FORMAT_BIN       Name of clang-format binary. If not set, clang-format tool is not called.
-    GCOVR_BIN              Gcovr binary to use for coverage report generation (gcc).
-                           Default is empty string.
-    LLVM_PROFDATA_BIN      llvm-profdata  binary to use for coverage report generation (clang).
-                           Default is empty string.
-    LLVM_COV_BIN           llvm-cov  binary to use for coverage report generation (clang).
-                           Default is empty string.
     SANITIZERS_ENABLED     Defines whether to use sanitizers. Default is 0 (disabled).
 
     Either set these directly, or create 'scripts/build-env.sh' that sets
@@ -218,6 +259,33 @@ convert_to_absolute_path()
     fi
 
     eval ${ABSOLUTE_PATH_OUT}="${ABSOLUTE_PATH}"
+
+    return 0
+}
+
+# Compile Java by running Ant target.
+compile_java()
+{
+    exit_if_argc_ne $# 3
+    local ANT_BUILD_FILE="$1"; shift
+    local MSYS_WORKAROUND_TEMP=("${!1}"); shift
+    local ANT_PROPS=("${MSYS_WORKAROUND_TEMP[@]}")
+    local ANT_TARGET="$1"; shift
+
+    if [ -n "${CLANG_FORMAT_BIN}" ] ; then
+        ANT_PROPS+=("-Dclang_format.exec_file=${CLANG_FORMAT_BIN}")
+    fi
+
+    if [ -n "${SPOTBUGS_HOME}" ] ; then
+        ANT_PROPS+=("-Dspotbugs.home_dir=${SPOTBUGS_HOME}")
+    fi
+
+    "${ANT}" ${ANT_EXTRA_ARGS} -f "${ANT_BUILD_FILE}" "${ANT_PROPS[@]}" ${ANT_TARGET}
+    local ANT_RESULT=$?
+    if [ ${ANT_RESULT} -ne 0 ] ; then
+        stderr_echo "Running ant failed with return code ${ANT_RESULT}!"
+        return 1
+    fi
 
     return 0
 }

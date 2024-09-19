@@ -1,0 +1,372 @@
+<!--
+
+Ant build.xml for Zserio C++17 Extension.
+
+Zserio C++17 Extension is implemented as Java service which can be dynamically loaded by Zserio core during
+runtime.
+
+The following external properties can be set:
+
+zserio_cpp17.build_dir   - Directory where to put generated files. Default is "build".
+zserio_cpp17.install_dir - Directory where to install Zserio C++17 Extension jar file. Default is "distr".
+zserio.distr_dir         - Zserio distr directory to use. If not set, zserio binaries will be automatically
+                           downloaded from GitHub.
+clang_format.exec_file   - Clang-format executable file. If not set, clang-format is not run.
+spotbugs.home_dir        - Location of the spotbugs tool. If not set, spotbugs is not run.
+
+-->
+<project name="zserio_cpp17" basedir="." default="jar">
+    <dirname property="zserio_cpp17.base_dir" file="${ant.file.zserio_cpp17}"/>
+
+    <property name="zserio_cpp17.build_dir" value="${zserio_cpp17.base_dir}/../build"/>
+    <property name="zserio_cpp17.install_dir" value="${zserio_cpp17.base_dir}/../distr"/>
+
+    <property name="zserio_cpp17.download_dir" value="${zserio_cpp17.build_dir}/download"/>
+
+    <property name="zserio_core.jar_file" value="${zserio_cpp17.download_dir}/zserio_libs/zserio_core.jar"/>
+    <property name="zserio_core.commons_cli_jar_name" value="commons-cli-1.4.jar"/>
+    <property name="zserio_core.commons_cli_jar"
+        value="${zserio_cpp17.download_dir}/zserio_libs/${zserio_core.commons_cli_jar_name}"/>
+    <property name="zserio_core.freemarker_jar_name" value="freemarker-2.3.28.jar"/>
+    <property name="zserio_core.freemarker_jar"
+        value="${zserio_cpp17.download_dir}/zserio_libs/${zserio_core.freemarker_jar_name}"/>
+    <property name="zserio_core.antlr_jar_name" value="antlr-4.7.2-complete.jar"/>
+    <property name="zserio_core.antlr_jar"
+        value="${zserio_cpp17.download_dir}/zserio_libs/${zserio_core.antlr_jar_name}"/>
+
+    <property name="3rdparty.root_dir" value="${zserio_cpp17.base_dir}/../3rdparty"/>
+    <property name="3rdparty.jar_dir" value="${3rdparty.root_dir}/java"/>
+    <property name="3rdparty.junit.jar_file"
+        value="${3rdparty.jar_dir}/junit-platform-console-standalone-1.8.2.jar"/>
+
+    <property name="zserio_cpp17.src_dir" value="${zserio_cpp17.base_dir}/src"/>
+    <property name="zserio_cpp17.classes_dir" value="${zserio_cpp17.build_dir}/classes"/>
+    <property name="zserio_cpp17.javadocs_dir" value="${zserio_cpp17.build_dir}/javadocs"/>
+    <property name="zserio_cpp17.spotbugs.out_dir" value="${zserio_cpp17.build_dir}/spotbugs"/>
+
+    <property name="zserio_cpp17.test.src_dir" location="${zserio_cpp17.base_dir}/test"/>
+    <property name="zserio_cpp17.test.build_dir" value="${zserio_cpp17.build_dir}/test"/>
+    <property name="zserio_cpp17.test.classes_dir" value="${zserio_cpp17.test.build_dir}/classes"/>
+    <property name="zserio_cpp17.test.spotbugs.out_dir" value="${zserio_cpp17.test.build_dir}/spotbugs"/>
+    <property name="zserio_cpp17.test.results_dir" value="${zserio_cpp17.test.build_dir}/results"/>
+
+    <property name="zserio_cpp17.jar_dir" value="${zserio_cpp17.build_dir}/jar"/>
+    <property name="zserio_cpp17.jar_file" value="${zserio_cpp17.jar_dir}/zserio_cpp17.jar"/>
+    <property name="zserio_cpp17.javadocs_jar_file" value="${zserio_cpp17.jar_dir}/zserio_cpp17_javadocs.jar"/>
+    <property name="zserio_cpp17.sources_jar_file" value="${zserio_cpp17.jar_dir}/zserio_cpp17_sources.jar"/>
+
+    <property name="zserio_bundle.build_dir" value="${zserio_cpp17.build_dir}/bundle"/>
+    <property name="zserio_bundle.install_dir" value="${zserio_cpp17.install_dir}"/>
+    <property name="zserio_bundle.jar_dir" value="${zserio_bundle.build_dir}/jar"/>
+    <property name="zserio_bundle.jar_file_name" value="zserio.jar"/>
+    <property name="zserio_bundle.jar_file" value="${zserio_bundle.jar_dir}/${zserio_bundle.jar_file_name}"/>
+
+    <!-- Zserio C++17 extension version. -->
+    <loadfile
+        encoding="UTF-8"
+        property="zserio_cpp17.version"
+        srcFile="${zserio_cpp17.src_dir}/zserio/extension/cpp17/Cpp17ExtensionVersion.java">
+        <filterchain>
+            <striplinebreaks/>
+            <tokenfilter>
+                <replaceregex
+                    pattern='.*EXTENSION_VERSION_STRING\s*=\s*"([0-9]+.[0-9]+.[0-9]+(-[A-Za-z0-9]+)?)".*'
+                    replace="\1"/>
+            </tokenfilter>
+        </filterchain>
+    </loadfile>
+
+    <!-- Zserio core version. -->
+    <loadfile
+        encoding="UTF-8"
+        property="zserio_core.version"
+        srcFile="${zserio_cpp17.src_dir}/zserio/extension/cpp17/Cpp17ExtensionVersion.java">
+        <filterchain>
+            <striplinebreaks/>
+            <tokenfilter>
+                <replaceregex
+                    pattern='.*ZSERIO_VERSION_STRING\s*=\s*"([0-9]+.[0-9]+.[0-9]+(-[A-Za-z0-9]+)?)".*'
+                    replace="\1"/>
+            </tokenfilter>
+        </filterchain>
+    </loadfile>
+
+    <uptodate property="zserio_cpp17.javadocs_up_to_date">
+        <srcfiles dir= "${zserio_cpp17.src_dir}" includes="**/*"/>
+        <srcfiles file="build.xml"/>
+        <mapper type="merge" to="${zserio_cpp17.javadocs_dir}/index.html"/>
+    </uptodate>
+
+    <target name="clean">
+        <delete dir="${zserio_cpp17.build_dir}"/>
+    </target>
+
+    <target name="zserio_copy" if="zserio.distr_dir">
+        <mkdir dir="${zserio_cpp17.download_dir}"/>
+        <copy todir="${zserio_cpp17.download_dir}">
+            <fileset dir="${zserio.distr_dir}"/>
+        </copy>
+    </target>
+
+    <target name="zserio_download" unless="zserio.distr_dir">
+        <mkdir dir="${zserio_cpp17.download_dir}"/>
+        <property name="github_https_download" value="https://github.com/ndsev/zserio/releases/download"/>
+        <property name="zserio_bin_zip_name" value="zserio-${zserio_core.version}-bin.zip"/>
+        <get src="${github_https_download}/v${zserio_core.version}/${zserio_bin_zip_name}"
+            dest="${zserio_cpp17.download_dir}" usetimestamp="true"/>
+        <unzip src="${zserio_cpp17.download_dir}/${zserio_bin_zip_name}" dest="${zserio_cpp17.download_dir}"/>
+    </target>
+
+    <target name="compile" depends="zserio_download, zserio_copy">
+        <mkdir dir="${zserio_cpp17.classes_dir}"/>
+        <depend srcDir="${zserio_cpp17.src_dir}" destDir="${zserio_cpp17.classes_dir}"
+            cache="${zserio_cpp17.build_dir}/depend-cache"/>
+
+        <path id="zserio_cpp17.classpath_zserio_core">
+            <pathelement location="${zserio_core.jar_file}"/>
+        </path>
+
+        <javac srcdir="${zserio_cpp17.src_dir}" destdir="${zserio_cpp17.classes_dir}" debug="on"
+            encoding="utf8" includeAntRuntime="false">
+            <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-Werror"/>
+            <classpath>
+                <path refid="zserio_cpp17.classpath_zserio_core"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="javadocs" unless="zserio_cpp17.javadocs_up_to_date">
+        <tstamp>
+            <format property="timestamp" pattern="yyyy-MM-dd HH:mm:ss"/>
+        </tstamp>
+        <javadoc destdir="${zserio_cpp17.javadocs_dir}" failonerror="true" failonwarning="true">
+            <arg value="-Xdoclint:-missing"/>
+            <fileset dir="${zserio_cpp17.src_dir}"/>
+            <doctitle>
+                <![CDATA[<h1>Zserio C++17 Extension Documentation</h1><h2>Version ${zserio_cpp17.version}</h2]]>
+            </doctitle>
+            <bottom>
+                <![CDATA[<i>Last updated ${timestamp}</i>]]>
+            </bottom>
+            <classpath>
+                <path refid="zserio_cpp17.classpath_zserio_core"/>
+            </classpath>
+        </javadoc>
+    </target>
+
+    <target name="jar" depends="compile, javadocs">
+        <mkdir dir="${zserio_cpp17.jar_dir}"/>
+        <copy todir="${zserio_cpp17.build_dir}/metainf" overwrite="true">
+            <fileset dir="${zserio_cpp17.base_dir}/metainf"/>
+        </copy>
+
+        <jar destfile="${zserio_cpp17.jar_file}">
+            <fileset dir="${zserio_cpp17.classes_dir}">
+                <include name="zserio/**"/>
+            </fileset>
+            <manifest>
+                <attribute name="Implementation-Version" value="${zserio_cpp17.version}"/>
+            </manifest>
+            <metainf dir="${zserio_cpp17.build_dir}/metainf" includes="**/*"/>
+        </jar>
+
+        <jar destfile="${zserio_cpp17.javadocs_jar_file}">
+            <fileset dir="${zserio_cpp17.javadocs_dir}">
+                <include name="**"/>
+            </fileset>
+            <manifest>
+                <attribute name="Implementation-Version" value="${zserio_cpp17.version}"/>
+            </manifest>
+        </jar>
+
+        <jar destfile="${zserio_cpp17.sources_jar_file}">
+            <fileset dir="${zserio_cpp17.src_dir}"/>
+            <manifest>
+                <attribute name="Implementation-Version" value="${zserio_cpp17.version}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="install" depends="jar">
+        <mkdir dir="${zserio_cpp17.install_dir}"/>
+        <copy todir="${zserio_cpp17.install_dir}" overwrite="true">
+            <fileset dir="${zserio_cpp17.jar_dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clang_format" depends="install" if="clang_format.exec_file">
+        <echo>
+Command hints to reformat source manually using clang-format tool (in case of format errors):
+    git clang-format
+    clang-format --style=file -i [SOURCE]
+        </echo>
+        <apply executable="${clang_format.exec_file}" failonerror="true">
+            <arg value="--style=file"/>
+            <arg value="--dry-run"/>
+            <arg value="--Werror"/>
+            <srcfile/>
+            <fileset dir="${zserio_cpp17.src_dir}" includes="**/*.java"/>
+        </apply>
+    </target>
+
+    <target name="spotbugs" depends="clang_format" if="spotbugs.home_dir">
+        <mkdir dir="${zserio_cpp17.spotbugs.out_dir}"/>
+        <taskdef classpath="${spotbugs.home_dir}/lib/spotbugs-ant.jar"
+            resource="edu/umd/cs/findbugs/anttask/tasks.properties"/>
+        <spotbugs home="${spotbugs.home_dir}"
+            output="html"
+            outputFile="${zserio_cpp17.spotbugs.out_dir}/spotbugs.html"
+            reportLevel="low"
+            errorProperty="zserio_cpp17.is_failed"
+            warningsProperty="zserio_cpp17.is_failed">
+            <sourcePath>
+                <dirset dir="${zserio_cpp17.src_dir}"/>
+            </sourcePath>
+            <fileset dir="${zserio_cpp17.classes_dir}"/>
+            <auxClasspath>
+                <path refid="zserio_cpp17.classpath_zserio_core"/>
+            </auxClasspath>
+        </spotbugs>
+        <fail message="SpotBugs found some issues!" if="zserio_cpp17.is_failed"/>
+    </target>
+
+    <target name="test.clean">
+        <delete dir="${zserio_cpp17.test.build_dir}"/>
+    </target>
+
+    <target name="test.compile" depends="jar">
+        <mkdir dir="${zserio_cpp17.test.classes_dir}"/>
+        <depend srcDir="${zserio_cpp17.test.src_dir}" destDir="${zserio_cpp17.test.classes_dir}"
+            cache="${zserio_cpp17.test.build_dir}/depend-cache"/>
+        <javac srcdir="${zserio_cpp17.test.src_dir}" destdir="${zserio_cpp17.test.classes_dir}" debug="on"
+            encoding="utf8" includeAntRuntime="false">
+            <compilerarg value="-Xlint:all"/>
+            <compilerarg value="-Werror"/>
+            <classpath>
+                <pathelement path="${3rdparty.junit.jar_file}"/>
+                <pathelement path="${zserio_cpp17.jar_file}"/>
+                <pathelement path="${zserio_core.jar_file}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="test.clang_format" depends="spotbugs, test.compile" if="clang_format.exec_file">
+        <echo>
+Command hints to reformat source manually using clang-format tool (in case of format errors):
+    git clang-format
+    clang-format --style=file -i [SOURCE]
+        </echo>
+        <apply executable="${clang_format.exec_file}" failonerror="true">
+            <arg value="--style=file"/>
+            <arg value="--dry-run"/>
+            <arg value="--Werror"/>
+            <srcfile/>
+            <fileset dir="${zserio_cpp17.test.src_dir}" includes="**/*.java"/>
+        </apply>
+    </target>
+
+    <target name="test.spotbugs" depends="test.clang_format" if="spotbugs.home_dir">
+        <mkdir dir="${zserio_cpp17.test.spotbugs.out_dir}"/>
+        <taskdef classpath="${spotbugs.home_dir}/lib/spotbugs-ant.jar"
+            resource="edu/umd/cs/findbugs/anttask/tasks.properties"/>
+        <spotbugs home="${spotbugs.home_dir}"
+            output="html"
+            outputFile="${zserio_cpp17.test.spotbugs.out_dir}/spotbugs.html"
+            excludeFilter="${zserio_cpp17.base_dir}/spotbugs_filter.xml"
+            reportLevel="low"
+            errorProperty="zserio_cpp17.spotbugs.is_failed"
+            warningsProperty="zserio_cpp17.spotbugs.is_failed">
+            <sourcePath>
+                <dirset dir="${zserio_cpp17.test.src_dir}"/>
+            </sourcePath>
+            <fileset dir="${zserio_cpp17.test.classes_dir}"/>
+            <class location="${zserio_cpp17.jar_file}"/>
+            <auxClasspath>
+                <path refid="zserio_cpp17.classpath_zserio_core"/>
+                <fileset file="${3rdparty.junit.jar_file}"/>
+            </auxClasspath>
+        </spotbugs>
+        <fail message="SpotBugs found some issues!" if="zserio_cpp17.spotbugs.is_failed"/>
+    </target>
+
+    <target name="test.run" depends="test.spotbugs">
+        <mkdir dir="${zserio_cpp17.test.results_dir}"/>
+        <java classname="org.junit.platform.console.ConsoleLauncher" fork="true" failonerror="true"
+                dir="${zserio_cpp17.test.build_dir}">
+            <classpath>
+                <pathelement path="${3rdparty.junit.jar_file}"/>
+                <pathelement path="${zserio_cpp17.jar_file}"/>
+                <pathelement path="${zserio_core.jar_file}"/>
+                <pathelement path="${zserio_cpp17.test.classes_dir}"/>
+            </classpath>
+            <arg line="--disable-banner"/>
+            <arg line="--scan-classpath"/>
+            <arg line="--fail-if-no-tests"/>
+            <arg line="--details tree"/>
+            <arg line="--exclude-engine junit-vintage"/>
+            <arg line="--reports-dir ${zserio_cpp17.test.results_dir}"/>
+        </java>
+    </target>
+
+    <target name="test" depends="test.run">
+    </target>
+
+    <!-- Bundled Zserio -->
+    <target name="zserio_bundle.clean" depends="clean">
+        <delete dir="${zserio_bundle.build_dir}"/>
+    </target>
+
+    <target name="zserio_bundle.jar" depends="install">
+        <mkdir dir="${zserio_bundle.build_dir}"/>
+        <mkdir dir="${zserio_bundle.jar_dir}"/>
+        <unzip src="${zserio_cpp17.download_dir}/${zserio_bundle.jar_file_name}"
+            dest="${zserio_cpp17.download_dir}">
+            <patternset>
+                <include name="**/zserio.tools.Extension"/>
+            </patternset>
+        </unzip>
+        <concat destfile="${zserio_bundle.build_dir}/metainf/services/zserio.tools.Extension">
+            <fileset dir="${zserio_cpp17.download_dir}" includes="**/zserio.tools.Extension"
+                erroronmissingdir="false"/>
+            <fileset dir="${zserio_cpp17.build_dir}" includes="**/metainf/**/*" erroronmissingdir="false"/>
+        </concat>
+        <jar destfile="${zserio_bundle.jar_file}" duplicate="preserve">
+            <restrict>
+                <not>
+                    <name name="META-INF/*"/>
+                </not>
+                <archives>
+                    <zips>
+                        <fileset dir="${zserio_cpp17.download_dir}/zserio_libs" includes="*.jar"
+                            excludes="${zserio_core.commons_cli_jar_name}
+                                ${zserio_core.freemarker_jar_name} ${zserio_core.antlr_jar_name}"/>
+                        <fileset dir="${zserio_cpp17.jar_dir}" includes="*.jar"/>
+                    </zips>
+                </archives>
+            </restrict>
+            <zipfileset src="${zserio_core.commons_cli_jar}" excludes="META-INF/*"/>
+            <zipfileset src="${zserio_core.commons_cli_jar}" includes="META-INF/LICENSE.txt"
+                fullpath="META-INF/LICENSE_COMMONS_CLI.txt"/>
+            <zipfileset src="${zserio_core.freemarker_jar}" excludes="META-INF/*"/>
+            <zipfileset src="${zserio_core.freemarker_jar}" includes="META-INF/LICENSE"
+                fullpath="META-INF/LICENSE_FREEMARKER.txt"/>
+            <zipfileset src="${zserio_core.antlr_jar}" excludes="META-INF/*"/>
+            <manifest>
+                <attribute name="Main-Class" value="zserio.tools.ZserioTool"/>
+                <attribute name="Implementation-Version" value="${zserio_core.version}"/>
+            </manifest>
+            <metainf dir="${zserio_bundle.build_dir}/metainf" includes="**/*" erroronmissingdir="false"/>
+        </jar>
+    </target>
+
+    <target name="zserio_bundle.install" depends="zserio_bundle.jar">
+        <mkdir dir="${zserio_bundle.install_dir}"/>
+        <copy file="${zserio_bundle.jar_file}" todir="${zserio_bundle.install_dir}" overwrite="true"/>
+    </target>
+
+    <target name="zserio_bundle.test" depends="zserio_bundle.install">
+    </target>
+</project>
