@@ -1,4 +1,4 @@
-name: Linux
+name: Linux C++17
 
 on:
   push:
@@ -99,11 +99,11 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Build Zserio C++ runtime
+    - name: Build Zserio C++17 runtime
       run: |
         scripts/build.sh cpp_rt-${PACKAGE}
 
-    - name: Upload Zserio C++ runtime artifacts
+    - name: Upload Zserio C++17 runtime artifacts
       # update when https://github.com/actions/upload-artifact/issues/543 is fixed
       uses: actions/upload-artifact@v3
       # we need to collect this artifact from a build which has both clang coverage and clang-tidy reports
@@ -113,7 +113,7 @@ jobs:
         name: "zserio-runtime-cpp"
         path: distr/runtime_lib
 
-    - name: Upload Zserio C++ build artifacts
+    - name: Upload Zserio C++17 build artifacts
       # update when https://github.com/actions/upload-artifact/issues/543 is fixed
       uses: actions/upload-artifact@v3
       with:

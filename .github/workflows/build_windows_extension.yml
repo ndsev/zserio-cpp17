@@ -1,0 +1,83 @@
+name: Windows extension
+
+on:
+  push:
+    branches: [ master, '*-ci' ]
+  pull_request:
+    branches: [ master, '*-ci' ]
+  workflow_dispatch:
+
+jobs:
+  zserio:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - { os: "windows-2022", java-version: "8" }
+        - { os: "windows-2022", java-version: "11" }
+        - { os: "windows-2022", java-version: "17" }
+
+    runs-on: ${{matrix.os}}
+    name: ${{matrix.os}}-java${{matrix.java-version}}
+
+    steps:
+    - name: "Set up environment"
+      shell: bash
+      run: |
+        echo "CLANG_FORMAT_BIN=clang-format" >> ${GITHUB_ENV}
+        echo "SPOTBUGS_HOME=${RUNNER_WORKSPACE}/spotbugs-4.8.2" >> ${GITHUB_ENV}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        choco install wget
+        choco install zip
+
+    - name: Set up Java ${{matrix.java-version}}
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{matrix.java-version}}
+
+    - name: Install clang format
+      shell: bash
+      run: |
+        choco install llvm --version=14.0.0 --allow-downgrade
+
+    - name: Install specific version of Java static code analysis tool (spotbugs)
+      shell: bash
+      run: |
+        wget -P "${RUNNER_WORKSPACE}" \
+            https://repo.maven.apache.org/maven2/com/github/spotbugs/spotbugs/4.8.2/spotbugs-4.8.2.zip
+        unzip "${RUNNER_WORKSPACE}\spotbugs-4.8.2.zip" -d "${RUNNER_WORKSPACE}"
+
+    - name: "Convert environment variables to POSIX paths"
+      shell: bash
+      run: |
+        echo "ANT=/${ANT_HOME}/bin/ant" | sed -e 's/\\/\//g' -e 's/://' >> ${GITHUB_ENV}
+        echo "JAVA_HOME=/${JAVA_HOME}" | sed -e 's/\\/\//g' -e 's/://' >> ${GITHUB_ENV}
+        echo "SPOTBUGS_HOME=/${SPOTBUGS_HOME}" | sed -e 's/\\/\//g' -e 's/://' >> ${GITHUB_ENV}
+
+    - name: "Checkout"
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build Zserio C++17 extension and Zserio bundle
+      shell: bash
+      run: |
+        scripts/build.sh cpp zserio
+
+    - name: Upload C++17 extension artifact
+      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
+      uses: actions/upload-artifact@v3
+      with:
+        name: "zserio-cpp17-java${{matrix.java-version}}"
+        path: distr/zserio_cpp17*.jar
+
+    - name: Upload Zserio bundle with C++17 extension
+      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
+      uses: actions/upload-artifact@v3
+      with:
+        name: "zserio-java${{matrix.java-version}}"
+        path: distr/zserio.jar
