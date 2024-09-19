@@ -3,8 +3,8 @@ bugprone-exception-escape:src/zserio/Optional.h:352
 bugprone-exception-escape:src/zserio/Optional.h:379
 # False positives - has_value() is checked before value()
 bugprone-exception-escape:src/zserio/Optional.h:212
-bugprone-exception-escape:src/zserio/Optional.h:397
-bugprone-exception-escape:src/zserio/Optional.h:435
+bugprone-exception-escape:src/zserio/Optional.h:399
+bugprone-exception-escape:src/zserio/Optional.h:439
 # Test needs exceptions
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:206
 # Variant is a generic container and exceptions may be thrown from the element types.
@@ -32,12 +32,12 @@ cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 # This is necessary for convenient usage of CppRuntimeException
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
 # Optional follows std::optional so passing value by const & is correct
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:753
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:765
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:875
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:887
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:939
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:951
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:789
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:803
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:931
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:945
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1005
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1019
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 

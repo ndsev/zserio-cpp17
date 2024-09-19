@@ -347,7 +347,7 @@ public:
      *
      * \param other Optional to move from.
      *
-     * \throw can throw any exception thrown by the active element in other.
+     * \throw can throw any exception thrown by the value in other.
      */
     BasicOptional(BasicOptional&& other) :
             AllocatorHolder<ALLOC>(std::move(other.get_allocator_ref()))
@@ -361,7 +361,7 @@ public:
      * \param other Optional to move from.
      * \param allocator Allocator to be used for dynamic memory allocations.
      *
-     * \throw can throw any exception thrown by the active element in other.
+     * \throw can throw any exception thrown by the value in other.
      */
     BasicOptional(BasicOptional&& other, const ALLOC& allocator) :
             AllocatorHolder<ALLOC>(allocator)
@@ -393,6 +393,8 @@ public:
 
     /**
      * Reports if Optional has stored value.
+     *
+     * \return True if value is set.
      */
     constexpr bool has_value() const noexcept
     {
@@ -431,6 +433,8 @@ public:
 
     /**
      * Reports if Optional has stored value.
+     *
+     * \return True if value is set.
      */
     constexpr explicit operator bool() const noexcept
     {
@@ -440,7 +444,9 @@ public:
     /**
      * Constructs a value in the Optional.
      *
-     * \param args Arguments to be forwarded for element construction.
+     * \param args Arguments to be forwarded for value construction.
+     *
+     * \return Reference to inserted value.
      */
     template <typename... ARGS>
     T& emplace(ARGS&&... args)
@@ -459,6 +465,8 @@ public:
 
     /**
      * Returns contained value.
+     *
+     * \return Reference to stored value.
      *
      * \throws BadOptionalAccess if optional is empty.
      */
@@ -481,6 +489,8 @@ public:
     /**
      * Returns contained value.
      *
+     * \return Reference to stored value.
+     *
      * \throws BadOptionalAccess if optional is empty.
      */
     constexpr const T& value() const
@@ -502,6 +512,8 @@ public:
     /**
      * Returns contained value.
      *
+     * \return Reference to stored value.
+     *
      * \throws BadOptionalAccess if optional is empty.
      */
     T& operator*()
@@ -511,6 +523,8 @@ public:
 
     /**
      * Returns contained value.
+     *
+     * \return Reference to stored value.
      *
      * \throws BadOptionalAccess if optional is empty.
      */
@@ -522,6 +536,8 @@ public:
     /**
      * Returns contained value.
      *
+     * \return Pointer to stored value.
+     *
      * \throws BadOptionalAccess if optional is empty.
      */
     T* operator->()
@@ -532,6 +548,8 @@ public:
     /**
      * Returns contained value.
      *
+     * \return Pointer to stored value.
+     *
      * \throws BadOptionalAccess if optional is empty.
      */
     const T* operator->() const
@@ -541,6 +559,8 @@ public:
 
     /**
      * Returns contained value or default value if optional is empty.
+     *
+     * \return Stored value or argument if empty.
      *
      * \param def default return value.
      */
@@ -556,6 +576,8 @@ public:
 
     /**
      * Returns contained value or default value if optional is empty.
+     *
+     * \return Stored value or argument if empty.
      *
      * \param def default return value.
      */
@@ -669,6 +691,8 @@ using Optional = BasicOptional<std::allocator<uint8_t>, T>;
  *
  * \param seed Initial hash value.
  * \param var Optional to calculate the hash from.
+ *
+ * \return Calculated hash code.
  */
 template <typename ALLOC, typename T>
 uint32_t calcHashCode(uint32_t seed, const BasicOptional<ALLOC, T>& var)
@@ -685,6 +709,8 @@ uint32_t calcHashCode(uint32_t seed, const BasicOptional<ALLOC, T>& var)
  * Calls Optional constructor with value.
  *
  * \param value Value to copy.
+ *
+ * \return Optional with value set.
  */
 template <typename T>
 constexpr auto make_optional(T&& value)
@@ -696,6 +722,8 @@ constexpr auto make_optional(T&& value)
  * Calls Optional<T> constructor with arguments for T.
  *
  * \param args Variadic arguments for T construction.
+ *
+ * \return Optional with value set.
  */
 template <typename T, typename... ARGS>
 constexpr Optional<T> make_optional(ARGS&&... args)
@@ -708,6 +736,8 @@ constexpr Optional<T> make_optional(ARGS&&... args)
  *
  * \param first First optional to compare.
  * \param second Second optional to compare.
+ *
+ * \return first and second are either both empty or having equal value.
  */
 template <typename A1, typename T, typename A2, typename U>
 constexpr bool operator==(const BasicOptional<A1, T>& first, const BasicOptional<A2, U>& second)
@@ -723,6 +753,8 @@ constexpr bool operator==(const BasicOptional<A1, T>& first, const BasicOptional
  * Optional equality test with nullopt.
  *
  * \param opt The optional to compare.
+ *
+ * \return opt is empty.
  */
 template <typename A, typename T>
 constexpr bool operator==(const BasicOptional<A, T>& opt, std::nullopt_t)
@@ -734,6 +766,8 @@ constexpr bool operator==(const BasicOptional<A, T>& opt, std::nullopt_t)
  * Optional equality test with nullopt.
  *
  * \param opt The optional to compare.
+ *
+ * \return opt is empty.
  */
 template <typename A, typename T>
 constexpr bool operator==(std::nullopt_t, const BasicOptional<A, T>& opt)
@@ -746,6 +780,8 @@ constexpr bool operator==(std::nullopt_t, const BasicOptional<A, T>& opt)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return Optional's value equals to value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator==(const BasicOptional<A, T>& opt, const U& value)
@@ -758,6 +794,8 @@ constexpr bool operator==(const BasicOptional<A, T>& opt, const U& value)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return Optional's value equals to value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator==(const U& value, const BasicOptional<A, T>& opt)
@@ -770,6 +808,8 @@ constexpr bool operator==(const U& value, const BasicOptional<A, T>& opt)
  *
  * \param first First optional to compare.
  * \param second Second optional to compare.
+ *
+ * \return first and second are not equal.
  */
 template <typename A1, typename T, typename A2, typename U>
 constexpr bool operator!=(const BasicOptional<A1, T>& first, const BasicOptional<A2, U>& second)
@@ -781,6 +821,8 @@ constexpr bool operator!=(const BasicOptional<A1, T>& first, const BasicOptional
  * Optional inequality test with nullopt.
  *
  * \param opt The optional to compare.
+ *
+ * \return Optional is not empty.
  */
 template <typename A, typename T>
 constexpr bool operator!=(const BasicOptional<A, T>& opt, std::nullopt_t)
@@ -792,6 +834,8 @@ constexpr bool operator!=(const BasicOptional<A, T>& opt, std::nullopt_t)
  * Optional inequality test with nullopt.
  *
  * \param opt The optional to compare.
+ *
+ * \return Optional is not empty.
  */
 template <typename A, typename T>
 constexpr bool operator!=(std::nullopt_t, const BasicOptional<A, T>& opt)
@@ -804,6 +848,8 @@ constexpr bool operator!=(std::nullopt_t, const BasicOptional<A, T>& opt)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt's value is not equal to value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator!=(const BasicOptional<A, T>& opt, const U& value)
@@ -816,6 +862,8 @@ constexpr bool operator!=(const BasicOptional<A, T>& opt, const U& value)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt's value is not equal to value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator!=(const U& value, const BasicOptional<A, T>& opt)
@@ -828,6 +876,8 @@ constexpr bool operator!=(const U& value, const BasicOptional<A, T>& opt)
  *
  * \param first First optional to compare.
  * \param second Second optional to compare.
+ *
+ * \return first is less than second.
  */
 template <typename A1, typename T, typename A2, typename U>
 constexpr bool operator<(const BasicOptional<A1, T>& first, const BasicOptional<A2, U>& second)
@@ -844,6 +894,8 @@ constexpr bool operator<(const BasicOptional<A1, T>& first, const BasicOptional<
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return false.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<(const BasicOptional<A, T>&, std::nullopt_t)
@@ -856,6 +908,8 @@ constexpr bool operator<(const BasicOptional<A, T>&, std::nullopt_t)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return nullopt is less than opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<(std::nullopt_t, const BasicOptional<A, T>& opt)
@@ -868,6 +922,8 @@ constexpr bool operator<(std::nullopt_t, const BasicOptional<A, T>& opt)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt is less than value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<(const BasicOptional<A, T>& opt, const U& value)
@@ -880,6 +936,8 @@ constexpr bool operator<(const BasicOptional<A, T>& opt, const U& value)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return value is less than opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<(const U& value, const BasicOptional<A, T>& opt)
@@ -892,6 +950,8 @@ constexpr bool operator<(const U& value, const BasicOptional<A, T>& opt)
  *
  * \param first First optional to compare.
  * \param second Second optional to compare.
+ *
+ * \return first is greater than second
  */
 template <typename A1, typename T, typename A2, typename U>
 constexpr bool operator>(const BasicOptional<A1, T>& first, const BasicOptional<A2, U>& second)
@@ -908,6 +968,8 @@ constexpr bool operator>(const BasicOptional<A1, T>& first, const BasicOptional<
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt is greater than nullopt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>(const BasicOptional<A, T>& opt, std::nullopt_t)
@@ -920,6 +982,8 @@ constexpr bool operator>(const BasicOptional<A, T>& opt, std::nullopt_t)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return nullopt is greater than opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>(std::nullopt_t, const BasicOptional<A, T>& opt)
@@ -932,6 +996,8 @@ constexpr bool operator>(std::nullopt_t, const BasicOptional<A, T>& opt)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt is greater than value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>(const BasicOptional<A, T>& opt, const U& value)
@@ -944,6 +1010,8 @@ constexpr bool operator>(const BasicOptional<A, T>& opt, const U& value)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return value is greater than opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>(const U& value, const BasicOptional<A, T>& opt)
@@ -956,6 +1024,8 @@ constexpr bool operator>(const U& value, const BasicOptional<A, T>& opt)
  *
  * \param first First optional to compare.
  * \param second Second optional to compare.
+ *
+ * \return first is less or equal to second.
  */
 template <typename A1, typename T, typename A2, typename U>
 constexpr bool operator<=(const BasicOptional<A1, T>& first, const BasicOptional<A2, U>& second)
@@ -968,6 +1038,8 @@ constexpr bool operator<=(const BasicOptional<A1, T>& first, const BasicOptional
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt is less or equal to nullopt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<=(const BasicOptional<A, T>& opt, std::nullopt_t)
@@ -980,6 +1052,8 @@ constexpr bool operator<=(const BasicOptional<A, T>& opt, std::nullopt_t)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return nullopt is less or equal to opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<=(std::nullopt_t, const BasicOptional<A, T>& opt)
@@ -992,6 +1066,8 @@ constexpr bool operator<=(std::nullopt_t, const BasicOptional<A, T>& opt)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt is less or equal to value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<=(const BasicOptional<A, T>& opt, const U& value)
@@ -1004,6 +1080,8 @@ constexpr bool operator<=(const BasicOptional<A, T>& opt, const U& value)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return value is less or equal to opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator<=(const U& value, const BasicOptional<A, T>& opt)
@@ -1016,6 +1094,8 @@ constexpr bool operator<=(const U& value, const BasicOptional<A, T>& opt)
  *
  * \param first First optional to compare.
  * \param second Second optional to compare.
+ *
+ * \return first is greater or equal to second.
  */
 template <typename A1, typename T, typename A2, typename U>
 constexpr bool operator>=(const BasicOptional<A1, T>& first, const BasicOptional<A2, U>& second)
@@ -1028,6 +1108,8 @@ constexpr bool operator>=(const BasicOptional<A1, T>& first, const BasicOptional
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt is greater or equal to nullopt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>=(const BasicOptional<A, T>& opt, std::nullopt_t)
@@ -1040,6 +1122,8 @@ constexpr bool operator>=(const BasicOptional<A, T>& opt, std::nullopt_t)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return nullopt is greater or equal to opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>=(std::nullopt_t, const BasicOptional<A, T>& opt)
@@ -1052,6 +1136,8 @@ constexpr bool operator>=(std::nullopt_t, const BasicOptional<A, T>& opt)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return opt is greater or equal to value.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>=(const BasicOptional<A, T>& opt, const U& value)
@@ -1064,6 +1150,8 @@ constexpr bool operator>=(const BasicOptional<A, T>& opt, const U& value)
  *
  * \param opt The optional to compare.
  * \param value Value to compare.
+ *
+ * \return value is greater or equal to opt.
  */
 template <typename A, typename T, typename U>
 constexpr bool operator>=(const U& value, const BasicOptional<A, T>& opt)
