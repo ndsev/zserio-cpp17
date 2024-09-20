@@ -13,6 +13,8 @@ function(compiler_get_warnings_setup VARNAME)
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.3.0")
             set(WARNINGS_SETUP "${WARNINGS_SETUP} -Wsign-conversion")
         endif ()
+        # gcc doesn't detect this well so it's fired even when used (OptionalTest.cpp)
+        set(WARNINGS_SETUP "${WARNINGS_SETUP} -Wno-unused-local-typedefs")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(WARNINGS_SETUP_LIST "-Weverything"
                 "-Wno-system-headers"

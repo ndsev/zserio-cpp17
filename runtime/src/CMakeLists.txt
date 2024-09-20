@@ -41,6 +41,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
     zserio/HashCodeUtil.h
+    zserio/Optional.h
     zserio/OutOfRangeException.h
     zserio/RebindAlloc.h
     zserio/RuntimeArch.h

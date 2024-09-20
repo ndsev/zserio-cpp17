@@ -34,6 +34,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/FloatUtilTest.cpp
     zserio/HashCodeUtilTest.cpp
     zserio/OutOfRangeExceptionTest.cpp
+    zserio/OptionalTest.cpp
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
     zserio/StringConvertUtilTest.cpp
