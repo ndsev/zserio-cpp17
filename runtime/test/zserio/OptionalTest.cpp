@@ -10,6 +10,17 @@
 namespace zserio
 {
 
+struct ThrowingBig
+{
+    std::array<char, 30> data;
+
+    ThrowingBig() :
+            data()
+    {
+        throw std::runtime_error("oops");
+    }
+};
+
 struct BigObj
 {
     BigObj() :
@@ -46,6 +57,7 @@ public:
     using alloc_type = ALLOC;
 
     using IntOptional = BasicOptional<ALLOC, int>;
+    using ShortOptional = BasicOptional<ALLOC, int16_t>;
     using BigOptional = BasicOptional<ALLOC, BigObj>;
     using StringOptional = BasicOptional<ALLOC, std::string>;
 
@@ -76,6 +88,7 @@ TYPED_TEST(OptionalTest, valueConstructor)
     ASSERT_TRUE(!optn.has_value());
     typename TestFixture::IntOptional opt1 = 12;
     ASSERT_EQ(opt1.value(), 12);
+    ASSERT_EQ(std::as_const(opt1).value(), 12);
     typename TestFixture::IntOptional opt2(std::in_place, 12);
     ASSERT_EQ(opt2.value(), 12);
     typename TestFixture::StringOptional opt3("ccc");
@@ -95,6 +108,12 @@ TYPED_TEST(OptionalTest, copyConstructor)
     ASSERT_EQ(opt3, opt4);
     typename TestFixture::BigOptional opt5(opt4, this->allocator);
     ASSERT_EQ(opt4, opt3);
+
+    typename TestFixture::ShortOptional opts(10);
+    opt1 = typename TestFixture::IntOptional(opts);
+    ASSERT_EQ(opt1, opts);
+    opt1 = typename TestFixture::IntOptional(opts, this->allocator);
+    ASSERT_EQ(opt1, opts);
 }
 
 TYPED_TEST(OptionalTest, copyAssignment)
@@ -112,20 +131,35 @@ TYPED_TEST(OptionalTest, valueAssignment)
     ASSERT_TRUE(opt1.value() == std::string("hey"));
     opt1 = {};
     ASSERT_TRUE(!opt1.has_value());
+    ASSERT_TRUE(!opt1);
     opt1 = std::string("mister");
+    ASSERT_TRUE(opt1.has_value());
+    ASSERT_TRUE(opt1);
     ASSERT_TRUE(opt1.value() == "mister");
+    ASSERT_TRUE(*opt1 == "mister");
+    ASSERT_TRUE(*std::as_const(opt1) == "mister");
     opt1 = std::nullopt;
     ASSERT_TRUE(!opt1.has_value());
+    ASSERT_TRUE(!opt1);
+    // typename TestFixture::StringOptional koko(std::move(opt1));
+    // opt1.has_value();
 
     typename TestFixture::IntOptional opt2;
     opt2 = 11;
+    ASSERT_TRUE(opt2.has_value());
     ASSERT_TRUE(opt2.value() == 11);
+    ASSERT_TRUE(*opt2 == 11);
     opt2 = {};
     ASSERT_TRUE(!opt2.has_value());
+    ASSERT_TRUE(!opt2);
     opt2 = {5};
+    ASSERT_TRUE(opt2.has_value());
+    ASSERT_TRUE(opt2);
     ASSERT_TRUE(opt2.value() == 5);
+    ASSERT_TRUE(*opt2 == 5);
     opt2 = std::nullopt;
     ASSERT_TRUE(!opt2.has_value());
+    ASSERT_TRUE(!opt2);
 }
 
 TYPED_TEST(OptionalTest, moveConstructor)
@@ -191,6 +225,19 @@ TYPED_TEST(OptionalTest, valueComparison)
     ASSERT_TRUE("fun" < opt1);
     ASSERT_TRUE(opt1 >= "fun");
     ASSERT_TRUE("fun" <= opt1);
+
+    ASSERT_FALSE(opt1 == std::nullopt);
+    ASSERT_FALSE(std::nullopt == opt1);
+    ASSERT_TRUE(opt1 != std::nullopt);
+    ASSERT_TRUE(std::nullopt != opt1);
+    ASSERT_FALSE(opt1 < std::nullopt);
+    ASSERT_TRUE(std::nullopt < opt1);
+    ASSERT_FALSE(opt1 <= std::nullopt);
+    ASSERT_TRUE(std::nullopt <= opt1);
+    ASSERT_TRUE(opt1 > std::nullopt);
+    ASSERT_FALSE(std::nullopt > opt1);
+    ASSERT_TRUE(opt1 >= std::nullopt);
+    ASSERT_FALSE(std::nullopt >= opt1);
 }
 
 TYPED_TEST(OptionalTest, makeOptional)
@@ -213,9 +260,19 @@ TYPED_TEST(OptionalTest, recursiveOpt)
     opt1 = Tmp();
     ASSERT_TRUE(opt1.has_value());
     ASSERT_TRUE(!opt1->next.has_value());
+    ASSERT_TRUE(!std::as_const(opt1)->next.has_value());
     opt1->next = Tmp();
     ASSERT_TRUE(opt1->next.has_value());
     ASSERT_TRUE(!opt1->next->next.has_value());
+}
+
+TYPED_TEST(OptionalTest, errors)
+{
+    typename TestFixture::IntOptional opt1;
+    ASSERT_THROW(opt1.value(), BadOptionalAccess);
+    ASSERT_THROW(std::as_const(opt1).value(), BadOptionalAccess);
+    Optional<ThrowingBig> opt2;
+    ASSERT_THROW(opt2.emplace(), std::runtime_error);
 }
 
 } // namespace zserio

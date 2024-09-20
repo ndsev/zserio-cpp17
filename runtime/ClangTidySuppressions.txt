@@ -6,7 +6,7 @@ bugprone-exception-escape:src/zserio/Optional.h:212
 bugprone-exception-escape:src/zserio/Optional.h:399
 bugprone-exception-escape:src/zserio/Optional.h:439
 # Test needs exceptions
-bugprone-exception-escape:test/zserio/OptionalTest.cpp:206
+bugprone-exception-escape:test/zserio/OptionalTest.cpp:253
 # Variant is a generic container and exceptions may be thrown from the element types.
 bugprone-exception-escape:src/zserio/Variant.h:237
 bugprone-exception-escape:src/zserio/Variant.h:264
@@ -34,10 +34,10 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeExcepti
 # Optional follows std::optional so passing value by const & is correct
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:789
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:803
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:931
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:945
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1005
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1019
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:929
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:943
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1001
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1015
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 
