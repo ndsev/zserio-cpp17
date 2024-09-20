@@ -97,11 +97,11 @@ template <typename ALLOC, typename T>
 class BasicOptional : public AllocatorHolder<ALLOC>
 {
     using AllocTraits = std::allocator_traits<ALLOC>;
-    using AllocatorHolder<ALLOC>::get_allocator_ref;
     using AllocatorHolder<ALLOC>::set_allocator;
 
 public:
     using AllocatorHolder<ALLOC>::get_allocator;
+    using AllocatorHolder<ALLOC>::get_allocator_ref;
     using allocator_type = ALLOC;
     using optional_type = std::optional<typename detail::optional_element<T>::type>;
 
@@ -893,11 +893,10 @@ constexpr bool operator<(const BasicOptional<A1, T>& first, const BasicOptional<
  * Optional less-than test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return false.
  */
-template <typename A, typename T, typename U>
+template <typename A, typename T>
 constexpr bool operator<(const BasicOptional<A, T>&, std::nullopt_t)
 {
     return false;
@@ -907,11 +906,10 @@ constexpr bool operator<(const BasicOptional<A, T>&, std::nullopt_t)
  * Optional less-than test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return nullopt is less than opt.
  */
-template <typename A, typename T, typename U>
+template <typename A, typename T>
 constexpr bool operator<(std::nullopt_t, const BasicOptional<A, T>& opt)
 {
     return opt.has_value();
@@ -967,11 +965,10 @@ constexpr bool operator>(const BasicOptional<A1, T>& first, const BasicOptional<
  * Optional greater-than test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return opt is greater than nullopt.
  */
-template <typename A, typename T, typename U>
+template <typename A, typename T>
 constexpr bool operator>(const BasicOptional<A, T>& opt, std::nullopt_t)
 {
     return opt.has_value();
@@ -981,14 +978,13 @@ constexpr bool operator>(const BasicOptional<A, T>& opt, std::nullopt_t)
  * Optional greater-than test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return nullopt is greater than opt.
  */
-template <typename A, typename T, typename U>
-constexpr bool operator>(std::nullopt_t, const BasicOptional<A, T>& opt)
+template <typename A, typename T>
+constexpr bool operator>(std::nullopt_t, const BasicOptional<A, T>&)
 {
-    return opt.has_value();
+    return false;
 }
 
 /**
@@ -1037,11 +1033,10 @@ constexpr bool operator<=(const BasicOptional<A1, T>& first, const BasicOptional
  * Optional less-or-equal test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return opt is less or equal to nullopt.
  */
-template <typename A, typename T, typename U>
+template <typename A, typename T>
 constexpr bool operator<=(const BasicOptional<A, T>& opt, std::nullopt_t)
 {
     return !(opt > std::nullopt);
@@ -1051,11 +1046,10 @@ constexpr bool operator<=(const BasicOptional<A, T>& opt, std::nullopt_t)
  * Optional less-or-equal test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return nullopt is less or equal to opt.
  */
-template <typename A, typename T, typename U>
+template <typename A, typename T>
 constexpr bool operator<=(std::nullopt_t, const BasicOptional<A, T>& opt)
 {
     return !(std::nullopt > opt);
@@ -1107,11 +1101,10 @@ constexpr bool operator>=(const BasicOptional<A1, T>& first, const BasicOptional
  * Optional greater-or-equal test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return opt is greater or equal to nullopt.
  */
-template <typename A, typename T, typename U>
+template <typename A, typename T>
 constexpr bool operator>=(const BasicOptional<A, T>& opt, std::nullopt_t)
 {
     return !(opt < std::nullopt);
@@ -1121,11 +1114,10 @@ constexpr bool operator>=(const BasicOptional<A, T>& opt, std::nullopt_t)
  * Optional greater-or-equal test with nullopt.
  *
  * \param opt The optional to compare.
- * \param value Value to compare.
  *
  * \return nullopt is greater or equal to opt.
  */
-template <typename A, typename T, typename U>
+template <typename A, typename T>
 constexpr bool operator>=(std::nullopt_t, const BasicOptional<A, T>& opt)
 {
     return !(std::nullopt < opt);
