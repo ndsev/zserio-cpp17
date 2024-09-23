@@ -11,7 +11,7 @@ bugprone-exception-escape:test/zserio/OptionalTest.cpp:260
 bugprone-exception-escape:src/zserio/Variant.h:237
 bugprone-exception-escape:src/zserio/Variant.h:264
 # Throwing move ctor is needed for the test
-bugprone-exception-escape:test/zserio/VariantTest.cpp:34
+bugprone-exception-escape:test/zserio/VariantTest.cpp:35
 
 # Iteration through all variant types is needed for folding expression. m_data active element is moved out but index remains so it's safe to access.
 bugprone-use-after-move:src/zserio/Variant.h:671
@@ -79,7 +79,7 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:18
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:48
 
 # Only throwing move ctor is needed for the test
-cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:31
+cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 
 # Optional follows std::optional so the ctors should be implicit
 google-explicit-constructor:src/zserio/Optional.h:118
@@ -104,4 +104,4 @@ google-explicit-constructor:test/zserio/TrackingAllocator.h:78
 modernize-use-equals-default:src/zserio/Span.h:80
 
 # Offending code is taken directly from cppreference.com. Fuchsia guidelines are not relevant to VariantTest
-fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:12
+fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13

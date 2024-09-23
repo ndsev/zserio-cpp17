@@ -301,4 +301,3 @@ TYPED_TEST(OptionalTest, hash)
 }
 
 } // namespace zserio
-

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <memory>
 #include <utility>
 
 #include "gtest/gtest.h"
@@ -65,16 +66,31 @@ struct BigObj
     {
         return data[0] == obj.data[0];
     }
-    bool operator!=(const BigObj& obj) const
-    {
-        return !(*this == obj);
-    }
     bool operator<(const BigObj& obj) const
     {
         return data[0] < obj.data[0];
     }
     std::array<char, 30> data;
 };
+
+} // namespace zserio
+
+namespace std
+{
+
+template <>
+struct hash<zserio::BigObj>
+{
+    size_t operator()(const zserio::BigObj& obj) const
+    {
+        return static_cast<size_t>(obj.data[0]);
+    }
+};
+
+} // namespace std
+
+namespace zserio
+{
 
 template <class ALLOC>
 class VariantTest : public ::testing::Test
@@ -269,21 +285,36 @@ TYPED_TEST(VariantTest, visit)
         ASSERT_TRUE((std::is_same_v<T, std::string>));
     });
 
-    var.visit(overloaded{[](std::string&) {
-                             SUCCEED();
-                         },
-            [](auto&&) {
-                FAIL();
-            }});
-
-    int ret = var.visit(overloaded{
+    // due to coverage tests lambdas are factored out of the visit call
+    // and called twice
+    int ret1 = 12345;
+    auto over1 = overloaded{
+            [&](std::string&) {
+                ret1 = 1;
+            },
+            [&](auto&&) {
+                ret1 = 0;
+            }};
+    auto over2 = overloaded{
             [](std::string&) {
                 return 1;
             },
             [](auto&&) {
                 return 0;
-            }});
-    ASSERT_EQ(ret, 1);
+            }};
+
+    ret1 = 0;
+    var.visit(over1);
+    ASSERT_EQ(ret1, 1);
+    int ret2 = var.visit(over2);
+    ASSERT_EQ(ret2, 1);
+
+    var.template emplace<TestFixture::Idx1::A>();
+    ret1 = 1;
+    var.visit(over1);
+    ASSERT_EQ(ret1, 0);
+    ret2 = var.visit(over2);
+    ASSERT_EQ(ret2, 0);
 }
 
 TYPED_TEST(VariantTest, bigElement)
@@ -337,25 +368,19 @@ TYPED_TEST(VariantTest, exception)
 
 TYPED_TEST(VariantTest, canStoreInMap)
 {
+    typename TestFixture::Variant1 big1(zserio::in_place_index<TestFixture::Idx1::D>, 2);
+    typename TestFixture::Variant1 big2(zserio::in_place_index<TestFixture::Idx1::D>, 7);
     std::set<typename TestFixture::Variant1> vset;
-    vset.insert({});
+    vset.insert(typename TestFixture::Variant1());
+    vset.insert(big1);
+    vset.insert(big2);
+    ASSERT_TRUE(vset.size() == 3);
     std::unordered_map<typename TestFixture::Variant1, int> vmap;
     typename TestFixture::Variant1 var;
-    vmap[{}];
+    vmap[typename TestFixture::Variant1()];
+    vmap[big1];
+    vmap[big2];
+    ASSERT_TRUE(vmap.size() == 3);
 }
 
 } // namespace zserio
-
-namespace std
-{
-
-template <>
-struct hash<zserio::BigObj>
-{
-    size_t operator()(const zserio::BigObj&) const
-    {
-        return 0;
-    }
-};
-
-} // namespace std
