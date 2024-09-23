@@ -39,10 +39,6 @@ struct BigObj
     {
         return data[0] == obj.data[0];
     }
-    bool operator!=(const BigObj& obj) const
-    {
-        return !(*this == obj);
-    }
     bool operator<(const BigObj& obj) const
     {
         return data[0] < obj.data[0];
@@ -93,8 +89,10 @@ TYPED_TEST(OptionalTest, valueConstructor)
     ASSERT_EQ(opt2.value(), 12);
     typename TestFixture::StringOptional opt3("ccc");
     ASSERT_EQ(opt3.value(), "ccc");
-    typename TestFixture::StringOptional opt4(std::in_place, this->allocator, 3, 'c');
+    typename TestFixture::StringOptional opt4(opt3.value());
     ASSERT_EQ(opt4.value(), "ccc");
+    typename TestFixture::StringOptional opt5(std::in_place, this->allocator, 3, 'c');
+    ASSERT_EQ(opt5.value(), "ccc");
 }
 
 TYPED_TEST(OptionalTest, copyConstructor)
@@ -122,6 +120,11 @@ TYPED_TEST(OptionalTest, copyAssignment)
     typename TestFixture::StringOptional opt2;
     opt2 = opt1;
     ASSERT_TRUE(opt2.value() == opt1.value());
+
+    typename TestFixture::IntOptional opti;
+    typename TestFixture::ShortOptional opts(10);
+    opti = opts;
+    ASSERT_EQ(opti, opts);
 }
 
 TYPED_TEST(OptionalTest, valueAssignment)
@@ -129,9 +132,13 @@ TYPED_TEST(OptionalTest, valueAssignment)
     typename TestFixture::StringOptional opt1(this->allocator);
     opt1 = "hey";
     ASSERT_TRUE(opt1.value() == std::string("hey"));
+    ASSERT_TRUE(opt1.value_or("aha") == "hey");
+    ASSERT_TRUE(std::as_const(opt1).value_or("aha") == "hey");
     opt1 = {};
     ASSERT_TRUE(!opt1.has_value());
     ASSERT_TRUE(!opt1);
+    ASSERT_TRUE(opt1.value_or("aha") == "aha");
+    ASSERT_TRUE(std::as_const(opt1).value_or("aha") == "aha");
     opt1 = std::string("mister");
     ASSERT_TRUE(opt1.has_value());
     ASSERT_TRUE(opt1);
@@ -275,18 +282,23 @@ TYPED_TEST(OptionalTest, errors)
     ASSERT_THROW(opt2.emplace(), std::runtime_error);
 }
 
+TYPED_TEST(OptionalTest, swap)
+{
+    typename TestFixture::StringOptional opt1("house", this->allocator);
+    typename TestFixture::StringOptional opt2(this->allocator);
+    ASSERT_EQ(*opt1, "house");
+    ASSERT_TRUE(!opt2);
+    opt1.swap(opt2);
+    ASSERT_TRUE(!opt1);
+    ASSERT_EQ(*opt2, "house");
+}
+
+TYPED_TEST(OptionalTest, hash)
+{
+    typename TestFixture::StringOptional opt("auto");
+    zserio::calcHashCode(100, opt);
+    std::hash<typename TestFixture::StringOptional>()(opt);
+}
+
 } // namespace zserio
 
-namespace std
-{
-
-template <>
-struct hash<zserio::BigObj>
-{
-    size_t operator()(const zserio::BigObj&) const
-    {
-        return 0;
-    }
-};
-
-} // namespace std

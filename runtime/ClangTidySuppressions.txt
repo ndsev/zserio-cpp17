@@ -1,12 +1,12 @@
 # Optional is a generic container and exceptions may be thrown from the value type.
-bugprone-exception-escape:src/zserio/Optional.h:352
-bugprone-exception-escape:src/zserio/Optional.h:379
+bugprone-exception-escape:src/zserio/Optional.h:349
+bugprone-exception-escape:src/zserio/Optional.h:376
 # False positives - has_value() is checked before value()
 bugprone-exception-escape:src/zserio/Optional.h:212
-bugprone-exception-escape:src/zserio/Optional.h:399
-bugprone-exception-escape:src/zserio/Optional.h:439
+bugprone-exception-escape:src/zserio/Optional.h:396
+bugprone-exception-escape:src/zserio/Optional.h:436
 # Test needs exceptions
-bugprone-exception-escape:test/zserio/OptionalTest.cpp:253
+bugprone-exception-escape:test/zserio/OptionalTest.cpp:260
 # Variant is a generic container and exceptions may be thrown from the element types.
 bugprone-exception-escape:src/zserio/Variant.h:237
 bugprone-exception-escape:src/zserio/Variant.h:264
@@ -32,12 +32,14 @@ cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 # This is necessary for convenient usage of CppRuntimeException
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
 # Optional follows std::optional so passing value by const & is correct
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:789
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:803
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:929
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:943
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1001
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1015
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:569
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:586
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:786
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:800
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:926
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:940
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:998
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1012
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 

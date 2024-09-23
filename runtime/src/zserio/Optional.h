@@ -304,15 +304,12 @@ public:
     template <typename A, typename U>
     BasicOptional& operator=(const BasicOptional<A, U>& other)
     {
-        if (this != &other)
+        clear();
+        if constexpr (AllocTraits::propagate_on_container_copy_assignment::value)
         {
-            clear();
-            if constexpr (AllocTraits::propagate_on_container_copy_assignment::value)
-            {
-                set_allocator(other.get_allocator_ref());
-            }
-            copy(other);
+            set_allocator(other.get_allocator_ref());
         }
+        copy(other);
 
         return *this;
     }
