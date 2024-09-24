@@ -73,7 +73,8 @@ create_github_badge_jsons()
     local DEST_RUNTIME_DIR="$1"; shift
     local ZSERIO_VERSION="$1"; shift
 
-    local CLANG_COVERAGE_DIR="${DEST_RUNTIME_DIR}/${ZSERIO_VERSION}"/coverage/clang
+    local CLANG_ROOT="${DEST_RUNTIME_DIR}/${ZSERIO_VERSION}/coverage/"
+    local CLANG_COVERAGE_DIR=`find ${CLANG_ROOT} -maxdepth 1 -name "clang*" | head -1`
     local CLANG_LINES_COVERAGE=`cat "${CLANG_COVERAGE_DIR}"/coverage_report.txt | grep TOTAL | \
             tr -s ' ' | cut -d' ' -f 10`
     create_github_badge_json "${CLANG_COVERAGE_DIR}"/coverage_github_badge.json \

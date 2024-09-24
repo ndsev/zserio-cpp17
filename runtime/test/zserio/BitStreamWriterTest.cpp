@@ -157,7 +157,7 @@ TEST_F(BitStreamWriterTest, writeUnsignedBits32)
     }
 
     // check value out of range
-    for (int i = 1; i < 32; ++i)
+    for (uint32_t i = 1; i < 32; ++i)
     {
         const uint32_t maxUnsigned = static_cast<uint32_t>((UINT64_C(1) << i) - 1);
         m_externalBufferWriter.writeUnsignedBits32(maxUnsigned, static_cast<uint8_t>(i));
@@ -179,7 +179,7 @@ TEST_F(BitStreamWriterTest, writeUnsignedBits64)
     }
 
     // check value out of range
-    for (int i = 1; i < 64; ++i)
+    for (uint32_t i = 1; i < 64; ++i)
     {
         const uint64_t maxUnsigned = (UINT64_C(1) << i) - 1;
         m_externalBufferWriter.writeUnsignedBits64(maxUnsigned, static_cast<uint8_t>(i));

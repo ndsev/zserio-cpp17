@@ -247,8 +247,8 @@ struct needs_range_check<BoolWrapper> : std::false_type
 template <typename VALUE_TYPE, BitSize BIT_SIZE>
 struct needs_range_check<IntWrapper<VALUE_TYPE, BIT_SIZE>>
 {
-    static constexpr bool value = !(sizeof(VALUE_TYPE) * 8 == BIT_SIZE &&
-            (BIT_SIZE == 8 || BIT_SIZE == 16 || BIT_SIZE == 32 || BIT_SIZE == 64));
+    static constexpr bool value = sizeof(VALUE_TYPE) * 8 != BIT_SIZE ||
+            (BIT_SIZE != 8 && BIT_SIZE != 16 && BIT_SIZE != 32 && BIT_SIZE != 64);
 };
 
 template <typename VALUE_TYPE, BitSize BIT_SIZE>
@@ -429,7 +429,7 @@ struct NumericLimits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
         }
         else // VARSIZE
         {
-            return (UINT64_C(1) << (2 + 7 + 7 + 7 + 8)) - 1;
+            return (UINT64_C(1) << (2U + 7U + 7U + 7U + 8U)) - 1;
         }
     }
 

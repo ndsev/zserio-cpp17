@@ -38,8 +38,7 @@ template <auto I, typename... T>
 using type_at_t = typename type_at<static_cast<size_t>(I), T...>::type;
 
 template <auto I, class... T>
-constexpr bool is_heap_allocated_v =
-        variant_element<typename type_at<static_cast<size_t>(I), T...>::type>::is_heap_allocated::value;
+constexpr bool is_heap_allocated_v = variant_element<type_at_t<I, T...>>::is_heap_allocated::value;
 
 } // namespace detail
 

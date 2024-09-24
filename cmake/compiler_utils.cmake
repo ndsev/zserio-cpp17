@@ -31,6 +31,10 @@ function(compiler_get_warnings_setup VARNAME)
                 "-Wno-documentation-html"
                 "-Wno-documentation"
         )
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "18.0.0")
+            set(WARNINGS_SETUP_LIST
+                "${WARNINGS_SETUP_LIST} -Wno-unsafe-buffer-usage")
+        endif ()
         string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP_LIST}")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set(WARNINGS_SETUP "/W3 /wd4800")

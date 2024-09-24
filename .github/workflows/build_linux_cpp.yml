@@ -17,7 +17,10 @@ jobs:
         - { os: "ubuntu-22.04", platform: "64", clang-version: "14", cxx-standard: "17", build-type: "Debug" }
         - { os: "ubuntu-22.04", platform: "32", clang-version: "14", cxx-standard: "17", build-type: "Release" }
         - { os: "ubuntu-22.04", platform: "32", clang-version: "14", cxx-standard: "17", build-type: "Debug" }
-
+        - { os: "ubuntu-24.04", platform: "64", clang-version: "18", cxx-standard: "17", build-type: "Release" }
+        - { os: "ubuntu-24.04", platform: "64", clang-version: "18", cxx-standard: "17", build-type: "Debug" }
+        - { os: "ubuntu-24.04", platform: "32", clang-version: "18", cxx-standard: "17", build-type: "Release" }
+        - { os: "ubuntu-24.04", platform: "32", clang-version: "18", cxx-standard: "17", build-type: "Debug" }
 
     runs-on: ${{matrix.os}}
     name: "\
@@ -38,21 +41,19 @@ jobs:
           echo "PACKAGE=linux${{matrix.platform}}-clang" >> ${GITHUB_ENV}
         fi
 
-        if [[ "${{matrix.os}}" == "ubuntu-22.04" ]] ; then
-            echo "CLANG_FORMAT_BIN=clang-format-14" >> ${GITHUB_ENV}
+        if [[ "${{matrix.os}}" == "ubuntu-24.04" ]] ; then
+            echo "CLANG_FORMAT_BIN=clang-format-18" >> ${GITHUB_ENV}
         fi
 
         if [[ "${{matrix.build-type}}" == "Debug" ]] ; then
-          if [[ "${{matrix.clang-version}}" == "14" ]] ; then
+          if [[ "${{matrix.clang-version}}" == "18" ]] ; then
             echo "CLANG_TIDY_BIN=clang-tidy-${{matrix.clang-version}}" >> ${GITHUB_ENV}
+            echo "LLVM_PROFDATA_BIN=llvm-profdata-${{matrix.clang-version}}" >> ${GITHUB_ENV}
+            echo "LLVM_COV_BIN=llvm-cov-${{matrix.clang-version}}" >> ${GITHUB_ENV}
           fi
           if [[ "${{matrix.gcc-version}}" != "" && `gcc --version` == *" ${{matrix.gcc-version}}."* ]] ; then
             # gcovr works only for default gcc version
             echo "GCOVR_BIN=gcovr" >> ${GITHUB_ENV}
-          fi
-          if [[ "${{matrix.clang-version}}" != "" ]] ; then
-            echo "LLVM_PROFDATA_BIN=llvm-profdata-${{matrix.clang-version}}" >> ${GITHUB_ENV}
-            echo "LLVM_COV_BIN=llvm-cov-${{matrix.clang-version}}" >> ${GITHUB_ENV}
           fi
           if [[ ! ( "${{matrix.platform}}" == "32" && "${{matrix.clang-version}}" != "" ) ]] ; then
             # sanitizers do not work with clang 32-bit when cross-compiling
@@ -103,7 +104,7 @@ jobs:
       # update when https://github.com/actions/upload-artifact/issues/543 is fixed
       uses: actions/upload-artifact@v3
       # we need to collect this artifact from a build which has both clang coverage and clang-tidy reports
-      if: ${{ matrix.platform == '64' && matrix.clang-version == '14' && matrix.cxx-standard == '17' &&
+      if: ${{ matrix.platform == '64' && matrix.clang-version == '18' && matrix.cxx-standard == '17' &&
               matrix.build-type == 'Debug' }}
       with:
         name: "zserio-runtime-cpp"

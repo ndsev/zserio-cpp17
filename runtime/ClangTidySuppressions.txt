@@ -1,20 +1,23 @@
 # Optional is a generic container and exceptions may be thrown from the value type.
 bugprone-exception-escape:src/zserio/Optional.h:348
 bugprone-exception-escape:src/zserio/Optional.h:375
-# False positives - has_value() is checked before value()
+
+# False positives - has_value() is checked before value().
 bugprone-exception-escape:src/zserio/Optional.h:211
 bugprone-exception-escape:src/zserio/Optional.h:395
-bugprone-exception-escape:src/zserio/Optional.h:440
-# Test needs exceptions
-bugprone-exception-escape:test/zserio/OptionalTest.cpp:260
-# Variant is a generic container and exceptions may be thrown from the element types.
-bugprone-exception-escape:src/zserio/Variant.h:237
-bugprone-exception-escape:src/zserio/Variant.h:264
-# Throwing move ctor is needed for the test
-bugprone-exception-escape:test/zserio/VariantTest.cpp:35
 
-# Iteration through all variant types is needed for folding expression. m_data active element is moved out but index remains so it's safe to access.
-bugprone-use-after-move:src/zserio/Variant.h:676
+# Variant is a generic container and exceptions may be thrown from the element types.
+bugprone-exception-escape:src/zserio/Variant.h:236
+bugprone-exception-escape:src/zserio/Variant.h:263
+
+# Iteration through all variant types is needed for folding expression, m_data active element is moved out
+# but index remains so it's safe to access.
+bugprone-use-after-move:src/zserio/Variant.h:675
+
+# Specialization of std::hash is allowed.
+cert-dcl58-cpp:src/zserio/BitBuffer.h:469
+cert-dcl58-cpp:src/zserio/Optional.h:1161
+cert-dcl58-cpp:src/zserio/Variant.h:835
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112
@@ -23,15 +26,14 @@ cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:136
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:148
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:161
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:174
-# Intentional tests.
-cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 
 # This must be preprocessor define because version is checked during compilation time.
 cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 
-# This is necessary for convenient usage of CppRuntimeException
+# This is necessary for convenient usage of CppRuntimeException.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
-# Optional follows std::optional so passing value by const & is correct
+
+# Optional follows std::optional so passing value by const & is correct.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:573
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:590
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:790
@@ -40,6 +42,7 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:930
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:944
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1002
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1016
+
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 
@@ -65,27 +68,16 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:54
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
 
-# Intentional tests.
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
-
-# This is false positive, the member is initialized.
-cppcoreguidelines-pro-type-member-init:src/zserio/BitStreamWriter.h:72
-
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:18
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:48
 
-# Only throwing move ctor is needed for the test
-cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
-
-# Optional follows std::optional so the ctors should be implicit
+# Optional follows std::optional so the ctors should be implicit.
 google-explicit-constructor:src/zserio/Optional.h:117
 google-explicit-constructor:src/zserio/Optional.h:127
 google-explicit-constructor:src/zserio/Optional.h:137
 google-explicit-constructor:src/zserio/Optional.h:234
+
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 google-explicit-constructor:src/zserio/Span.h:112
 google-explicit-constructor:src/zserio/Span.h:125
@@ -93,15 +85,24 @@ google-explicit-constructor:src/zserio/Span.h:138
 google-explicit-constructor:src/zserio/Span.h:150
 google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
-# This is requirement on type wrappers in Zserio C++17 extension
+
+# This is requirement on type wrappers in Zserio C++17 extension.
 google-explicit-constructor:src/zserio/Types.h:60
 google-explicit-constructor:src/zserio/Types.h:67
+
+# There is no C-style casting. Probably tidy doesn't understand template auto parameter.
+google-readability-casting:src/zserio/Variant.h:41
+google-readability-casting:src/zserio/Variant.h:62
+
 # Intentional tests.
+cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
+cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
+bugprone-exception-escape:test/zserio/OptionalTest.cpp:260
+bugprone-exception-escape:test/zserio/VariantTest.cpp:35
+fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:78
-
-# False positive, this is a template method.
-modernize-use-equals-default:src/zserio/Span.h:80
-
-# Offending code is taken directly from cppreference.com. Fuchsia guidelines are not relevant to VariantTest
-fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13

@@ -25,10 +25,6 @@ struct EnumTraits<Color>
     using ZserioType = UInt8;
 };
 
-constexpr std::array<std::string_view, 4> EnumTraits<Color>::names;
-constexpr std::array<Color, 4> EnumTraits<Color>::values;
-constexpr std::string_view EnumTraits<Color>::enumName;
-
 template <>
 inline size_t enumToOrdinal<Color>(Color value)
 {

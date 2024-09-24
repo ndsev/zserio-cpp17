@@ -39,7 +39,7 @@ function(create_coverage_target)
             list(APPEND cov_exclude "--exclude=${cov_EXCLUDE_SOURCES}")
         endif ()
 
-        set(cov_html_gcc_dir "${cov_html_dir}/gcc")
+        set(cov_html_gcc_dir "${cov_html_dir}/gcc$ENV{GCC_VERSION_SUFFIX}")
         add_custom_target(
             ${cov_tgt_name}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${cov_html_gcc_dir}
@@ -65,7 +65,7 @@ function(create_coverage_target)
         endif ()
         set(cov_test_executable "${ZserioCpp17RuntimeTest_BINARY_DIR}/ZserioCpp17RuntimeTest")
         set(cov_binary_dir "${PROJECT_BINARY_DIR}/${cov_tgt_name}")
-        set(cov_html_clang_dir "${cov_html_dir}/clang")
+        set(cov_html_clang_dir "${cov_html_dir}/clang$ENV{CLANG_VERSION_SUFFIX}")
         add_custom_target(
             ${cov_tgt_name}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${cov_binary_dir}

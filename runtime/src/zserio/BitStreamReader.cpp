@@ -432,7 +432,7 @@ int64_t BitStreamReader::readSignedBits64(uint8_t numBits)
     // In that case, the value that comes out the readBits function
     // is already correct.
     const bool needsSignExtension =
-            numBits < 64 && (static_cast<uint64_t>(value) >= (UINT64_C(1) << (numBits - 1)));
+            numBits < 64 && (static_cast<uint64_t>(value) >= (UINT64_C(1) << (numBits - 1U)));
     if (needsSignExtension)
     {
         value = static_cast<int64_t>(static_cast<uint64_t>(value) - (UINT64_C(1) << numBits));
