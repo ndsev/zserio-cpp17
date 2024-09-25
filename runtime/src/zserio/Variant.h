@@ -788,7 +788,7 @@ decltype(auto) get_if(const BasicVariant<ALLOC, INDEX, T...>* var)
 template <typename F, typename ALLOC, typename INDEX, typename... T>
 decltype(auto) visit(F&& fun, BasicVariant<ALLOC, INDEX, T...>& var)
 {
-    return var.template visit(std::forward<F>(fun));
+    return var.visit(std::forward<F>(fun));
 }
 
 /**
@@ -802,7 +802,7 @@ decltype(auto) visit(F&& fun, BasicVariant<ALLOC, INDEX, T...>& var)
 template <typename F, typename ALLOC, typename INDEX, typename... T>
 decltype(auto) visit(F&& fun, const BasicVariant<ALLOC, INDEX, T...>& var)
 {
-    return var.template visit(std::forward<F>(fun));
+    return var.visit(std::forward<F>(fun));
 }
 
 /**
