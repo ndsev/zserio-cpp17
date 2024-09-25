@@ -133,8 +133,11 @@ TYPED_TEST(VariantTest, indexConstructor)
     typename TestFixture::Variant1 var1(zserio::in_place_index<TestFixture::Idx1::A>, 1);
     ASSERT_EQ(var1.index(), TestFixture::Idx1::A);
 
-    typename TestFixture::Variant1 var2(zserio::in_place_index<TestFixture::Idx1::B>, this->allocator, "haha");
-    ASSERT_EQ(var2.index(), TestFixture::Idx1::B);
+    typename TestFixture::Variant1 var2(zserio::in_place_index<TestFixture::Idx1::A>, this->allocator, 1);
+    ASSERT_EQ(var2.index(), TestFixture::Idx1::A);
+
+    typename TestFixture::Variant1 var3(zserio::in_place_index<TestFixture::Idx1::B>, this->allocator, "haha");
+    ASSERT_EQ(var3.index(), TestFixture::Idx1::B);
 }
 
 TYPED_TEST(VariantTest, copyConstructor)
@@ -196,6 +199,10 @@ TYPED_TEST(VariantTest, swap)
     std::swap(var1, var2);
     ASSERT_EQ(zserio::get<TestFixture::Idx1::C>(var1), BigObj(11));
     ASSERT_EQ(zserio::get<TestFixture::Idx1::B>(var2), "yes");
+
+    var1.swap(var2);
+    ASSERT_EQ(zserio::get<TestFixture::Idx1::C>(var2), BigObj(11));
+    ASSERT_EQ(zserio::get<TestFixture::Idx1::B>(var1), "yes");
 
     ASSERT_EQ(this->allocator.numAllocs(), numAllocs);
 }
@@ -311,9 +318,9 @@ TYPED_TEST(VariantTest, visit)
 
     var.template emplace<TestFixture::Idx1::A>();
     ret1 = 1;
-    var.visit(over1);
+    zserio::visit(over1, var);
     ASSERT_EQ(ret1, 0);
-    ret2 = var.visit(over2);
+    ret2 = zserio::visit(over2, std::as_const(var));
     ASSERT_EQ(ret2, 0);
 }
 

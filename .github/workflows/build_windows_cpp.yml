@@ -14,6 +14,7 @@ jobs:
       matrix:
         include:
         # use v143 as v142 leads to a freeze in VariantTest/visit in Debug
+        # msvc bug https://developercommunity.visualstudio.com/t/runtime-stack-corruption-using-stdvisit/346200
         - { os: "windows-2022", msvc-toolset: "v143", cxx-standard: "17", build-type: "Release" }
         - { os: "windows-2022", msvc-toolset: "v143", cxx-standard: "17", build-type: "Debug" }
 
