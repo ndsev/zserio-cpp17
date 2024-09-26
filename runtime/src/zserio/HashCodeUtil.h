@@ -119,7 +119,7 @@ template <typename ENUM_TYPE>
 inline typename std::enable_if<std::is_enum<ENUM_TYPE>::value, uint32_t>::type calcHashCode(
         uint32_t seedValue, ENUM_TYPE enumValue)
 {
-    return calcHashCode(seedValue, enumHashCode(enumValue));
+    return calcHashCode(seedValue, std::hash<ENUM_TYPE>()(enumValue));
 }
 
 /**

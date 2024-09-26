@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstring>
 #include <string>
+#include <type_traits>
 
 #include "zserio/BitBuffer.h"
 #include "zserio/RebindAlloc.h"
@@ -118,7 +119,7 @@ public:
      *
      * \return Read bits.
      */
-    uint32_t readBits(uint8_t numBits = 32);
+    uint32_t readUnsignedBits32(uint8_t numBits = 32);
 
     /**
      * Reads unsigned bits up to 64-bits.
@@ -127,7 +128,7 @@ public:
      *
      * \return Read bits.
      */
-    uint64_t readBits64(uint8_t numBits = 64);
+    uint64_t readUnsignedBits64(uint8_t numBits = 64);
 
     /**
      * Reads signed bits up to 32-bits.
@@ -136,7 +137,7 @@ public:
      *
      * \return Read bits.
      */
-    int32_t readSignedBits(uint8_t numBits = 32);
+    int32_t readSignedBits32(uint8_t numBits = 32);
 
     /**
      * Reads signed bits up to 64-bits.
@@ -148,88 +149,95 @@ public:
     int64_t readSignedBits64(uint8_t numBits = 64);
 
     /**
-     * Reads signed variable integer up to 64 bits.
+     * Reads bool as a single bit.
      *
-     * \return Read varint64.
+     * \return Read bool value.
      */
-    int64_t readVarInt64();
-
-    /**
-     * Reads signed variable integer up to 32 bits.
-     *
-     * \return Read varint32.
-     */
-    int32_t readVarInt32();
+    Bool readBool();
 
     /**
      * Reads signed variable integer up to 16 bits.
      *
      * \return Read varint16.
      */
-    int16_t readVarInt16();
+    VarInt16 readVarInt16();
 
     /**
-     * Read unsigned variable integer up to 64 bits.
+     * Reads signed variable integer up to 32 bits.
      *
-     * \return Read varuint64.
+     * \return Read varint32.
      */
-    uint64_t readVarUInt64();
+    VarInt32 readVarInt32();
 
     /**
-     * Read unsigned variable integer up to 32 bits.
+     * Reads signed variable integer up to 32 bits.
      *
-     * \return Read varuint32.
+     * \return Read VarInt64.
      */
-    uint32_t readVarUInt32();
-
-    /**
-     * Read unsigned variable integer up to 16 bits.
-     *
-     * \return Read varuint16.
-     */
-    uint16_t readVarUInt16();
+    VarInt64 readVarInt64();
 
     /**
      * Reads signed variable integer up to 72 bits.
      *
      * \return Read varint.
      */
-    int64_t readVarInt();
+    VarInt readVarInt();
+
+    /**
+     * Read unsigned variable integer up to 16 bits.
+     *
+     * \return Read varuint16.
+     */
+    VarUInt16 readVarUInt16();
+
+    /**
+     * Read unsigned variable integer up to 32 bits.
+     *
+     * \return Read varuint32.
+     */
+    VarUInt32 readVarUInt32();
+
+    /**
+     * Read unsigned variable integer up to 64 bits.
+     *
+     * \return Read varuint64.
+     */
+    VarUInt64 readVarUInt64();
 
     /**
      * Read unsigned variable integer up to 72 bits.
      *
      * \return Read varuint.
      */
-    uint64_t readVarUInt();
+    VarUInt readVarUInt();
 
     /**
      * Read variable size integer up to 40 bits.
      *
      * \return Read varsize.
      */
-    uint32_t readVarSize();
+    VarSize readVarSize();
 
     /**
      * Reads 16-bit float.
      *
      * \return Read float16.
      */
-    float readFloat16();
+    Float16 readFloat16();
 
     /**
      * Reads 32-bit float.
      *
      * \return Read float32.
      */
-    float readFloat32();
+    Float32 readFloat32();
 
     /**
      * Reads 64-bit float double.
      *
      * \return Read float64.
      */
-    double readFloat64();
+    Float64 readFloat64();
 
     /**
      * Reads bytes.
@@ -299,13 +307,6 @@ public:
     }
 
     /**
-     * Reads bool as a single bit.
-     *
-     * \return Read bool value.
-     */
-    bool readBool();
-
-    /**
      * Reads a bit buffer.
      *
      * \param alloc Allocator to use.
@@ -327,7 +328,7 @@ public:
             // we are not aligned to byte
             for (Span<uint8_t>::iterator it = buffer.begin(); it != itEnd; ++it)
             {
-                *it = static_cast<uint8_t>(readBits(8));
+                *it = static_cast<uint8_t>(readUnsignedBits32(8));
             }
         }
         else
@@ -340,7 +341,7 @@ public:
 
         if (numRestBits > 0)
         {
-            *itEnd = static_cast<uint8_t>(readBits(numRestBits) << (8U - numRestBits));
+            *itEnd = static_cast<uint8_t>(readUnsignedBits32(numRestBits) << (8U - numRestBits));
         }
 
         return bitBuffer;

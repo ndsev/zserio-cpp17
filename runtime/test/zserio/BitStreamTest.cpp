@@ -4,11 +4,12 @@
 #include <string>
 
 #include "gtest/gtest.h"
-#include "zserio/BitStreamReader.h"
-#include "zserio/BitStreamWriter.h"
+#include "zserio/BitBuffer.h"
 #include "zserio/CppRuntimeException.h"
+#include "zserio/Read.h"
 #include "zserio/Types.h"
 #include "zserio/Vector.h"
+#include "zserio/Write.h"
 
 namespace zserio
 {
@@ -27,7 +28,7 @@ public:
 protected:
     template <typename T, size_t N, typename U>
     void testImpl(const std::array<T, N>& values, std::function<void(BitStreamWriter&, U)> writerFunc,
-            std::function<T(BitStreamReader&)> readerFunc, uint8_t maxStartBitPos)
+            std::function<void(BitStreamReader&, T&)> readerFunc, uint8_t maxStartBitPos)
     {
         testBitStreamValues(values, m_externalWriter, writerFunc, readerFunc, maxStartBitPos);
         testBitStreamValues(values, m_dummyWriter, writerFunc, readerFunc, maxStartBitPos);
@@ -35,14 +36,14 @@ protected:
 
     template <typename T, size_t N, typename U>
     void testBitStreamValues(const std::array<T, N>& values, BitStreamWriter& writer,
-            std::function<void(BitStreamWriter&, U)> writerFunc, std::function<T(BitStreamReader&)> readerFunc,
-            uint8_t maxStartBitPos)
+            std::function<void(BitStreamWriter&, U)> writerFunc,
+            std::function<void(BitStreamReader&, T&)> readerFunc, uint8_t maxStartBitPos)
     {
         for (uint8_t bitPos = 0; bitPos < maxStartBitPos; ++bitPos)
         {
             if (bitPos > 0)
             {
-                writer.writeBits64(0, bitPos);
+                writer.writeUnsignedBits64(0, bitPos);
             }
             for (size_t i = 0; i < N; ++i)
             {
@@ -57,11 +58,13 @@ protected:
             BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
             if (bitPos > 0)
             {
-                reader.readBits64(bitPos);
+                reader.readUnsignedBits64(bitPos);
             }
             for (size_t i = 0; i < N; ++i)
             {
-                ASSERT_EQ(readerFunc(reader), values.at(i)) << "[bitPos=" << bitPos << "]";
+                T readValue = T();
+                readerFunc(reader, readValue);
+                ASSERT_EQ(readValue, values.at(i)) << "[bitPos=" << bitPos << "]";
             }
 
             writer.setBitPosition(0);
@@ -69,13 +72,13 @@ protected:
         }
     }
 
-    void testReadBits(BitStreamWriter& writer)
+    void testReadUnsignedBits32(BitStreamWriter& writer)
     {
-        writer.writeBits(1, 1);
-        writer.writeBits(2, 2);
-        writer.writeBits(42, 12);
-        writer.writeBits(15999999, 24);
-        writer.writeBits(7, 3);
+        writer.writeUnsignedBits32(1, 1);
+        writer.writeUnsignedBits32(2, 2);
+        writer.writeUnsignedBits32(42, 12);
+        writer.writeUnsignedBits32(15999999, 24);
+        writer.writeUnsignedBits32(7, 3);
 
         if (!writer.hasWriteBuffer())
         {
@@ -83,18 +86,18 @@ protected:
         }
 
         BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
-        ASSERT_EQ(1, reader.readBits(1));
-        ASSERT_EQ(2, reader.readBits(2));
-        ASSERT_EQ(42, reader.readBits(12));
-        ASSERT_EQ(15999999, reader.readBits(24));
-        ASSERT_EQ(7, reader.readBits(3));
+        ASSERT_EQ(1, reader.readUnsignedBits32(1));
+        ASSERT_EQ(2, reader.readUnsignedBits32(2));
+        ASSERT_EQ(42, reader.readUnsignedBits32(12));
+        ASSERT_EQ(15999999, reader.readUnsignedBits32(24));
+        ASSERT_EQ(7, reader.readUnsignedBits32(3));
     }
 
-    void testReadBits64(BitStreamWriter& writer)
+    void testReadUnsignedBits64(BitStreamWriter& writer)
     {
-        writer.writeBits(1, 1);
-        writer.writeBits64(UINT64_C(42424242424242), 48);
-        writer.writeBits64(UINT64_C(0xFFFFFFFFFFFFFFFE), 64);
+        writer.writeUnsignedBits32(1, 1);
+        writer.writeUnsignedBits64(UINT64_C(42424242424242), 48);
+        writer.writeUnsignedBits64(UINT64_C(0xFFFFFFFFFFFFFFFE), 64);
 
         if (!writer.hasWriteBuffer())
         {
@@ -102,16 +105,16 @@ protected:
         }
 
         BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
-        ASSERT_EQ(1, reader.readBits(1));
-        ASSERT_EQ(UINT64_C(42424242424242), reader.readBits64(48));
-        ASSERT_EQ(UINT64_C(0xFFFFFFFFFFFFFFFE), reader.readBits64(64));
+        ASSERT_EQ(1, reader.readUnsignedBits32(1));
+        ASSERT_EQ(UINT64_C(42424242424242), reader.readUnsignedBits64(48));
+        ASSERT_EQ(UINT64_C(0xFFFFFFFFFFFFFFFE), reader.readUnsignedBits64(64));
     }
 
-    void testReadSignedBits(BitStreamWriter& writer)
+    void testReadSignedBits32(BitStreamWriter& writer)
     {
-        writer.writeSignedBits(-1, 5);
-        writer.writeSignedBits(3, 12);
-        writer.writeSignedBits(-142, 9);
+        writer.writeSignedBits32(-1, 5);
+        writer.writeSignedBits32(3, 12);
+        writer.writeSignedBits32(-142, 9);
 
         if (!writer.hasWriteBuffer())
         {
@@ -119,9 +122,9 @@ protected:
         }
 
         BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
-        ASSERT_EQ(-1, reader.readSignedBits(5));
-        ASSERT_EQ(3, reader.readSignedBits(12));
-        ASSERT_EQ(-142, reader.readSignedBits(9));
+        ASSERT_EQ(-1, reader.readSignedBits32(5));
+        ASSERT_EQ(3, reader.readSignedBits32(12));
+        ASSERT_EQ(-142, reader.readSignedBits32(9));
     }
 
     void testReadSignedBits64(BitStreamWriter& writer)
@@ -137,7 +140,7 @@ protected:
         }
 
         BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
-        ASSERT_EQ(INT64_C(1), reader.readSignedBits(4));
+        ASSERT_EQ(INT64_C(1), reader.readSignedBits32(4));
         ASSERT_EQ(INT64_C(-1), reader.readSignedBits64(48));
         ASSERT_EQ(INT64_C(-42424242), reader.readSignedBits64(61));
         ASSERT_EQ(INT64_C(-820816), reader.readSignedBits64(32));
@@ -146,14 +149,14 @@ protected:
     void testAlignedBytes(BitStreamWriter& writer)
     {
         // reads aligned data directly from buffer, bit cache should remain empty
-        writer.writeBits(UINT8_C(0xCA), 8);
-        writer.writeBits(UINT16_C(0xCAFE), 16);
-        writer.writeBits(UINT32_C(0xCAFEC0), 24);
-        writer.writeBits(UINT32_C(0xCAFEC0DE), 32);
-        writer.writeBits64(UINT64_C(0xCAFEC0DEDE), 40);
-        writer.writeBits64(UINT64_C(0xCAFEC0DEDEAD), 48);
-        writer.writeBits64(UINT64_C(0xCAFEC0DEDEADFA), 56);
-        writer.writeBits64(UINT64_C(0xCAFEC0DEDEADFACE), 64);
+        writer.writeUnsignedBits32(UINT8_C(0xCA), 8);
+        writer.writeUnsignedBits32(UINT16_C(0xCAFE), 16);
+        writer.writeUnsignedBits32(UINT32_C(0xCAFEC0), 24);
+        writer.writeUnsignedBits32(UINT32_C(0xCAFEC0DE), 32);
+        writer.writeUnsignedBits64(UINT64_C(0xCAFEC0DEDE), 40);
+        writer.writeUnsignedBits64(UINT64_C(0xCAFEC0DEDEAD), 48);
+        writer.writeUnsignedBits64(UINT64_C(0xCAFEC0DEDEADFA), 56);
+        writer.writeUnsignedBits64(UINT64_C(0xCAFEC0DEDEADFACE), 64);
 
         if (!writer.hasWriteBuffer())
         {
@@ -161,24 +164,24 @@ protected:
         }
 
         BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
-        ASSERT_EQ(UINT8_C(0xCA), reader.readBits(8));
-        ASSERT_EQ(UINT16_C(0xCAFE), reader.readBits(16));
-        ASSERT_EQ(UINT32_C(0xCAFEC0), reader.readBits(24));
-        ASSERT_EQ(UINT32_C(0xCAFEC0DE), reader.readBits(32));
-        ASSERT_EQ(UINT64_C(0xCAFEC0DEDE), reader.readBits64(40));
-        ASSERT_EQ(UINT64_C(0xCAFEC0DEDEAD), reader.readBits64(48));
-        ASSERT_EQ(UINT64_C(0xCAFEC0DEDEADFA), reader.readBits64(56));
-        ASSERT_EQ(UINT64_C(0xCAFEC0DEDEADFACE), reader.readBits64(64));
+        ASSERT_EQ(UINT8_C(0xCA), reader.readUnsignedBits32(8));
+        ASSERT_EQ(UINT16_C(0xCAFE), reader.readUnsignedBits32(16));
+        ASSERT_EQ(UINT32_C(0xCAFEC0), reader.readUnsignedBits32(24));
+        ASSERT_EQ(UINT32_C(0xCAFEC0DE), reader.readUnsignedBits32(32));
+        ASSERT_EQ(UINT64_C(0xCAFEC0DEDE), reader.readUnsignedBits64(40));
+        ASSERT_EQ(UINT64_C(0xCAFEC0DEDEAD), reader.readUnsignedBits64(48));
+        ASSERT_EQ(UINT64_C(0xCAFEC0DEDEADFA), reader.readUnsignedBits64(56));
+        ASSERT_EQ(UINT64_C(0xCAFEC0DEDEADFACE), reader.readUnsignedBits64(64));
     }
 
     void testSetBitPosition(BitStreamWriter& writer)
     {
         ASSERT_EQ(0, writer.getBitPosition());
-        writer.writeBits(1, 1);
+        writer.writeUnsignedBits32(1, 1);
         ASSERT_EQ(1, writer.getBitPosition());
         writer.alignTo(4);
         ASSERT_EQ(4, writer.getBitPosition());
-        writer.writeBits(5, 5);
+        writer.writeUnsignedBits32(5, 5);
         ASSERT_EQ(9, writer.getBitPosition());
         if (writer.hasWriteBuffer())
         {
@@ -192,7 +195,7 @@ protected:
         }
         writer.setBitPosition(4);
         ASSERT_EQ(4, writer.getBitPosition());
-        writer.writeBits(3, 3);
+        writer.writeUnsignedBits32(3, 3);
         ASSERT_EQ(7, writer.getBitPosition());
 
         if (!writer.hasWriteBuffer())
@@ -202,41 +205,41 @@ protected:
 
         BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
         ASSERT_EQ(0, reader.getBitPosition());
-        ASSERT_EQ(1, reader.readBits(1));
+        ASSERT_EQ(1, reader.readUnsignedBits32(1));
         ASSERT_EQ(1, reader.getBitPosition());
         reader.alignTo(4);
         ASSERT_EQ(4, reader.getBitPosition());
-        ASSERT_EQ(3, reader.readBits(3));
+        ASSERT_EQ(3, reader.readUnsignedBits32(3));
         ASSERT_EQ(7, reader.getBitPosition());
         ASSERT_THROW(reader.setBitPosition(writer.getBitPosition() + 1), CppRuntimeException);
 
         reader.setBitPosition(4);
         ASSERT_EQ(4, reader.getBitPosition());
-        ASSERT_EQ(3, reader.readBits(3));
+        ASSERT_EQ(3, reader.readUnsignedBits32(3));
         ASSERT_EQ(7, reader.getBitPosition());
     }
 
     void testAlignTo(BitStreamWriter& writer)
     {
-        writer.writeBits(1, 1);
+        writer.writeUnsignedBits32(1, 1);
         writer.alignTo(4);
         ASSERT_EQ(4, writer.getBitPosition());
-        writer.writeBits(1, 1);
+        writer.writeUnsignedBits32(1, 1);
         writer.alignTo(4);
         ASSERT_EQ(8, writer.getBitPosition());
-        writer.writeBits(37, 11);
+        writer.writeUnsignedBits32(37, 11);
         writer.alignTo(8);
         ASSERT_EQ(24, writer.getBitPosition());
-        writer.writeBits(1, 1);
+        writer.writeUnsignedBits32(1, 1);
         writer.alignTo(16);
         ASSERT_EQ(32, writer.getBitPosition());
-        writer.writeBits(13, 13);
+        writer.writeUnsignedBits32(13, 13);
         writer.alignTo(32);
         ASSERT_EQ(64, writer.getBitPosition());
-        writer.writeBits(42, 15);
+        writer.writeUnsignedBits32(42, 15);
         writer.alignTo(64);
         ASSERT_EQ(128, writer.getBitPosition());
-        writer.writeBits(99, 9);
+        writer.writeUnsignedBits32(99, 9);
         ASSERT_EQ(137, writer.getBitPosition());
 
         if (!writer.hasWriteBuffer())
@@ -245,19 +248,19 @@ protected:
         }
 
         BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), BitsTag());
-        ASSERT_EQ(1, reader.readBits(1));
+        ASSERT_EQ(1, reader.readUnsignedBits32(1));
         reader.alignTo(4);
-        ASSERT_EQ(1, reader.readBits(1));
+        ASSERT_EQ(1, reader.readUnsignedBits32(1));
         reader.alignTo(4);
-        ASSERT_EQ(37, reader.readBits(11));
+        ASSERT_EQ(37, reader.readUnsignedBits32(11));
         reader.alignTo(8);
-        ASSERT_EQ(1, reader.readBits(1));
+        ASSERT_EQ(1, reader.readUnsignedBits32(1));
         reader.alignTo(16);
-        ASSERT_EQ(13, reader.readBits(13));
+        ASSERT_EQ(13, reader.readUnsignedBits32(13));
         reader.alignTo(32);
-        ASSERT_EQ(42, reader.readBits(15));
+        ASSERT_EQ(42, reader.readUnsignedBits32(15));
         reader.alignTo(64);
-        ASSERT_EQ(99, reader.readBits(9));
+        ASSERT_EQ(99, reader.readUnsignedBits32(9));
         ASSERT_EQ(137, reader.getBitPosition());
     }
 
@@ -266,22 +269,22 @@ protected:
     BitStreamWriter m_dummyWriter;
 };
 
-TEST_F(BitStreamTest, readBits)
+TEST_F(BitStreamTest, readUnsignedBits32)
 {
-    testReadBits(m_externalWriter);
-    testReadBits(m_dummyWriter);
+    testReadUnsignedBits32(m_externalWriter);
+    testReadUnsignedBits32(m_dummyWriter);
 }
 
-TEST_F(BitStreamTest, readBits64)
+TEST_F(BitStreamTest, readUnsignedBits64)
 {
-    testReadBits64(m_externalWriter);
-    testReadBits64(m_dummyWriter);
+    testReadUnsignedBits64(m_externalWriter);
+    testReadUnsignedBits64(m_dummyWriter);
 }
 
-TEST_F(BitStreamTest, readSignedBits)
+TEST_F(BitStreamTest, readSignedBits32)
 {
-    testReadSignedBits(m_externalWriter);
-    testReadSignedBits(m_dummyWriter);
+    testReadSignedBits32(m_externalWriter);
+    testReadSignedBits32(m_dummyWriter);
 }
 
 TEST_F(BitStreamTest, readSignedBits64)
@@ -296,9 +299,199 @@ TEST_F(BitStreamTest, alignedBytes)
     testAlignedBytes(m_dummyWriter);
 }
 
+TEST_F(BitStreamTest, readBool)
+{
+    const std::array<Bool, 2> values = {true, false};
+
+    std::function<void(BitStreamWriter&, Bool)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Bool)>(&detail::write);
+    std::function<void(BitStreamReader&, Bool&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Bool&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 1);
+}
+
+TEST_F(BitStreamTest, readInt1)
+{
+    const std::array<Int1, 2> values = {NumericLimits<Int1>::min(), NumericLimits<Int1>::max()};
+
+    std::function<void(BitStreamWriter&, Int1)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Int1)>(&detail::write);
+    std::function<void(BitStreamReader&, Int1&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Int1&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 1);
+}
+
+TEST_F(BitStreamTest, readInt7)
+{
+    const std::array<Int7, 3> values = {NumericLimits<Int7>::min(), 0, NumericLimits<Int7>::max()};
+
+    std::function<void(BitStreamWriter&, Int7)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Int7)>(&detail::write);
+    std::function<void(BitStreamReader&, Int7&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Int7&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 6);
+}
+
+TEST_F(BitStreamTest, readInt32)
+{
+    const std::array<Int32, 3> values = {NumericLimits<Int32>::min(), 0, NumericLimits<Int32>::max()};
+
+    std::function<void(BitStreamWriter&, Int32)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Int32)>(&detail::write);
+    std::function<void(BitStreamReader&, Int32&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Int32&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 31);
+}
+
+TEST_F(BitStreamTest, readInt33)
+{
+    const std::array<Int33, 3> values = {NumericLimits<Int33>::min(), 0, NumericLimits<Int33>::max()};
+
+    std::function<void(BitStreamWriter&, Int33)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Int33)>(&detail::write);
+    std::function<void(BitStreamReader&, Int33&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Int33&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 32);
+}
+
+TEST_F(BitStreamTest, readInt64)
+{
+    const std::array<Int64, 3> values = {NumericLimits<Int64>::min(), 0, NumericLimits<Int64>::max()};
+
+    std::function<void(BitStreamWriter&, Int64)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Int64)>(&detail::write);
+    std::function<void(BitStreamReader&, Int64&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Int64&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 32);
+}
+
+TEST_F(BitStreamTest, readUInt1)
+{
+    const std::array<UInt1, 2> values = {NumericLimits<UInt1>::min(), NumericLimits<UInt1>::max()};
+
+    std::function<void(BitStreamWriter&, UInt1)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, UInt1)>(&detail::write);
+    std::function<void(BitStreamReader&, UInt1&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, UInt1&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 1);
+}
+
+TEST_F(BitStreamTest, readUInt7)
+{
+    const std::array<UInt7, 2> values = {NumericLimits<UInt7>::min(), NumericLimits<UInt7>::max()};
+
+    std::function<void(BitStreamWriter&, UInt7)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, UInt7)>(&detail::write);
+    std::function<void(BitStreamReader&, UInt7&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, UInt7&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 6);
+}
+
+TEST_F(BitStreamTest, readUInt32)
+{
+    const std::array<UInt32, 2> values = {NumericLimits<UInt32>::min(), NumericLimits<UInt32>::max()};
+
+    std::function<void(BitStreamWriter&, UInt32)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, UInt32)>(&detail::write);
+    std::function<void(BitStreamReader&, UInt32&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, UInt32&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 31);
+}
+
+TEST_F(BitStreamTest, readUInt33)
+{
+    const std::array<UInt33, 2> values = {NumericLimits<UInt33>::min(), NumericLimits<UInt33>::max()};
+
+    std::function<void(BitStreamWriter&, UInt33)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, UInt33)>(&detail::write);
+    std::function<void(BitStreamReader&, UInt33&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, UInt33&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 32);
+}
+
+TEST_F(BitStreamTest, readUInt64)
+{
+    const std::array<UInt64, 2> values = {NumericLimits<UInt64>::min(), NumericLimits<UInt64>::max()};
+
+    std::function<void(BitStreamWriter&, UInt64)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, UInt64)>(&detail::write);
+    std::function<void(BitStreamReader&, UInt64&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, UInt64&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 32);
+}
+
+TEST_F(BitStreamTest, readVarInt16)
+{
+    const std::array<VarInt16, 9> values = {
+            static_cast<int16_t>(0),
+            static_cast<int16_t>(-32),
+            static_cast<int16_t>(32),
+            static_cast<int16_t>(-4096),
+            static_cast<int16_t>(4096),
+
+            static_cast<int16_t>(1U << (0U)),
+            static_cast<int16_t>(1U << (6U)) - 1,
+
+            static_cast<int16_t>(1U << (6U)),
+            static_cast<int16_t>(1U << (6 + 8U)) - 1,
+    };
+
+    std::function<void(BitStreamWriter&, VarInt16)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarInt16)>(&detail::write);
+    std::function<void(BitStreamReader&, VarInt16&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarInt16&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 15);
+}
+
+TEST_F(BitStreamTest, readVarInt32)
+{
+    const std::array<VarInt32, 17> values = {
+            static_cast<int32_t>(0),
+            static_cast<int32_t>(-32),
+            static_cast<int32_t>(32),
+            static_cast<int32_t>(-4096),
+            static_cast<int32_t>(4096),
+            static_cast<int32_t>(-524288),
+            static_cast<int32_t>(524288),
+            static_cast<int32_t>(-67108864),
+            static_cast<int32_t>(67108864),
+
+            static_cast<int32_t>(1U << (0U)),
+            static_cast<int32_t>(1U << (6U)) - 1,
+
+            static_cast<int32_t>(1U << (6U)),
+            static_cast<int32_t>(1U << (6U + 7)) - 1,
+
+            static_cast<int32_t>(1U << (6U + 7)),
+            static_cast<int32_t>(1U << (6U + 7 + 7)) - 1,
+
+            static_cast<int32_t>(1U << (6U + 7 + 7)),
+            static_cast<int32_t>(1U << (6U + 7 + 7 + 8)) - 1,
+    };
+
+    std::function<void(BitStreamWriter&, VarInt32)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarInt32)>(&detail::write);
+    std::function<void(BitStreamReader&, VarInt32&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarInt32&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 31);
+}
+
 TEST_F(BitStreamTest, readVarInt64)
 {
-    const std::array<int64_t, 33> values = {
+    const std::array<VarInt64, 33> values = {
             INT64_C(0),
             INT64_C(-32),
             INT64_C(32),
@@ -342,153 +535,17 @@ TEST_F(BitStreamTest, readVarInt64)
             (INT64_C(1) << (6 + 7 + 7 + 7 + 7 + 7 + 7 + 8)) - 1,
     };
 
-    std::function<void(BitStreamWriter&, int64_t)> writerFunc = &BitStreamWriter::writeVarInt64;
-    std::function<int64_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarInt64;
+    std::function<void(BitStreamWriter&, VarInt64)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarInt64)>(&detail::write);
+    std::function<void(BitStreamReader&, VarInt64&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarInt64&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 63);
-}
-
-TEST_F(BitStreamTest, readVarInt32)
-{
-    const std::array<int32_t, 17> values = {
-            static_cast<int32_t>(0),
-            static_cast<int32_t>(-32),
-            static_cast<int32_t>(32),
-            static_cast<int32_t>(-4096),
-            static_cast<int32_t>(4096),
-            static_cast<int32_t>(-524288),
-            static_cast<int32_t>(524288),
-            static_cast<int32_t>(-67108864),
-            static_cast<int32_t>(67108864),
-
-            static_cast<int32_t>(1U << (0U)),
-            static_cast<int32_t>(1U << (6U)) - 1,
-
-            static_cast<int32_t>(1U << (6U)),
-            static_cast<int32_t>(1U << (6U + 7)) - 1,
-
-            static_cast<int32_t>(1U << (6U + 7)),
-            static_cast<int32_t>(1U << (6U + 7 + 7)) - 1,
-
-            static_cast<int32_t>(1U << (6U + 7 + 7)),
-            static_cast<int32_t>(1U << (6U + 7 + 7 + 8)) - 1,
-    };
-
-    std::function<void(BitStreamWriter&, int32_t)> writerFunc = &BitStreamWriter::writeVarInt32;
-    std::function<int32_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarInt32;
-
-    testImpl(values, writerFunc, readerFunc, 31);
-}
-
-TEST_F(BitStreamTest, readVarInt16)
-{
-    const std::array<int16_t, 9> values = {
-            static_cast<int16_t>(0),
-            static_cast<int16_t>(-32),
-            static_cast<int16_t>(32),
-            static_cast<int16_t>(-4096),
-            static_cast<int16_t>(4096),
-
-            static_cast<int16_t>(1U << (0U)),
-            static_cast<int16_t>(1U << (6U)) - 1,
-
-            static_cast<int16_t>(1U << (6U)),
-            static_cast<int16_t>(1U << (6 + 8U)) - 1,
-    };
-
-    std::function<void(BitStreamWriter&, int16_t)> writerFunc = &BitStreamWriter::writeVarInt16;
-    std::function<int16_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarInt16;
-
-    testImpl(values, writerFunc, readerFunc, 15);
-}
-
-TEST_F(BitStreamTest, readVarUInt64)
-{
-    const std::array<uint64_t, 19> values = {
-            0,
-            262144,
-            524288,
-
-            (UINT64_C(1) << (0U)),
-            (UINT64_C(1) << (7U)) - 1,
-
-            (UINT64_C(1) << (7U)),
-            (UINT64_C(1) << (7U + 7)) - 1,
-
-            (UINT64_C(1) << (7U + 7)),
-            (UINT64_C(1) << (7U + 7 + 7)) - 1,
-
-            (UINT64_C(1) << (7U + 7 + 7)),
-            (UINT64_C(1) << (7U + 7 + 7 + 7)) - 1,
-
-            (UINT64_C(1) << (7U + 7 + 7 + 7)),
-            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7)) - 1,
-
-            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7)),
-            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7)) - 1,
-
-            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7)),
-            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7 + 7)) - 1,
-
-            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7 + 7)),
-            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7 + 7 + 8)) - 1,
-    };
-
-    std::function<void(BitStreamWriter&, uint64_t)> writerFunc = &BitStreamWriter::writeVarUInt64;
-    std::function<uint64_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarUInt64;
-
-    testImpl(values, writerFunc, readerFunc, 63);
-}
-
-TEST_F(BitStreamTest, readVarUInt32)
-{
-    const std::array<uint32_t, 11> values = {
-            0,
-            65536,
-            131072,
-
-            (1U << (0U)),
-            (1U << (7U)) - 1,
-
-            (1U << (7U)),
-            (1U << (7U + 7)) - 1,
-
-            (1U << (7U + 7)),
-            (1U << (7U + 7 + 7)) - 1,
-
-            (1U << (7U + 7 + 7)),
-            (1U << (7U + 7 + 7 + 8)) - 1,
-    };
-
-    std::function<void(BitStreamWriter&, uint32_t)> writerFunc = &BitStreamWriter::writeVarUInt32;
-    std::function<uint32_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarUInt32;
-
-    testImpl(values, writerFunc, readerFunc, 31);
-}
-
-TEST_F(BitStreamTest, readVarUInt16)
-{
-    const std::array<uint16_t, 7> values = {
-            0,
-            8192,
-            16384,
-
-            (1U << (0U)),
-            (1U << (6U)) - 1,
-
-            (1U << (6U)),
-            (1U << (6U + 8)) - 1,
-    };
-
-    std::function<void(BitStreamWriter&, uint16_t)> writerFunc = &BitStreamWriter::writeVarUInt16;
-    std::function<uint16_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarUInt16;
-
-    testImpl(values, writerFunc, readerFunc, 15);
 }
 
 TEST_F(BitStreamTest, readVarInt)
 {
-    const std::array<int64_t, 38> values = {
+    const std::array<VarInt, 38> values = {
             // 1 byte
             0,
             -1,
@@ -540,15 +597,107 @@ TEST_F(BitStreamTest, readVarInt)
             INT64_MIN,
     };
 
-    std::function<void(BitStreamWriter&, int64_t)> writerFunc = &BitStreamWriter::writeVarInt;
-    std::function<int64_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarInt;
+    std::function<void(BitStreamWriter&, VarInt)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarInt)>(&detail::write);
+    std::function<void(BitStreamReader&, VarInt&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarInt&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 63);
+}
+
+TEST_F(BitStreamTest, readVarUInt16)
+{
+    const std::array<VarUInt16, 7> values = {
+            0,
+            8192,
+            16384,
+
+            (1U << (0U)),
+            (1U << (6U)) - 1,
+
+            (1U << (6U)),
+            (1U << (6U + 8)) - 1,
+    };
+
+    std::function<void(BitStreamWriter&, VarUInt16)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarUInt16)>(&detail::write);
+    std::function<void(BitStreamReader&, VarUInt16&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarUInt16&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 15);
+}
+
+TEST_F(BitStreamTest, readVarUInt32)
+{
+    const std::array<VarUInt32, 11> values = {
+            0,
+            65536,
+            131072,
+
+            (1U << (0U)),
+            (1U << (7U)) - 1,
+
+            (1U << (7U)),
+            (1U << (7U + 7)) - 1,
+
+            (1U << (7U + 7)),
+            (1U << (7U + 7 + 7)) - 1,
+
+            (1U << (7U + 7 + 7)),
+            (1U << (7U + 7 + 7 + 8)) - 1,
+    };
+
+    std::function<void(BitStreamWriter&, VarUInt32)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarUInt32)>(&detail::write);
+    std::function<void(BitStreamReader&, VarUInt32&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarUInt32&)>(&detail::read);
+
+    testImpl(values, writerFunc, readerFunc, 31);
+}
+
+TEST_F(BitStreamTest, readVarUInt64)
+{
+    const std::array<VarUInt64, 19> values = {
+            0,
+            262144,
+            524288,
+
+            (UINT64_C(1) << (0U)),
+            (UINT64_C(1) << (7U)) - 1,
+
+            (UINT64_C(1) << (7U)),
+            (UINT64_C(1) << (7U + 7)) - 1,
+
+            (UINT64_C(1) << (7U + 7)),
+            (UINT64_C(1) << (7U + 7 + 7)) - 1,
+
+            (UINT64_C(1) << (7U + 7 + 7)),
+            (UINT64_C(1) << (7U + 7 + 7 + 7)) - 1,
+
+            (UINT64_C(1) << (7U + 7 + 7 + 7)),
+            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7)) - 1,
+
+            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7)),
+            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7)) - 1,
+
+            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7)),
+            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7 + 7)) - 1,
+
+            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7 + 7)),
+            (UINT64_C(1) << (7U + 7 + 7 + 7 + 7 + 7 + 7 + 8)) - 1,
+    };
+
+    std::function<void(BitStreamWriter&, VarUInt64)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarUInt64)>(&detail::write);
+    std::function<void(BitStreamReader&, VarUInt64&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarUInt64&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 63);
 }
 
 TEST_F(BitStreamTest, readVarUInt)
 {
-    const std::array<uint64_t, 19> values = {
+    const std::array<VarUInt, 19> values = {
             // 1 byte
             0,
             1,
@@ -579,15 +728,17 @@ TEST_F(BitStreamTest, readVarUInt)
             UINT64_MAX,
     };
 
-    std::function<void(BitStreamWriter&, uint64_t)> writerFunc = &BitStreamWriter::writeVarUInt;
-    std::function<uint64_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarUInt;
+    std::function<void(BitStreamWriter&, VarUInt)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarUInt)>(&detail::write);
+    std::function<void(BitStreamReader&, VarUInt&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarUInt&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 63);
 }
 
 TEST_F(BitStreamTest, readVarSize)
 {
-    const std::array<uint32_t, 13> values = {
+    const std::array<VarSize, 13> values = {
             0,
             65536,
             131072,
@@ -608,38 +759,46 @@ TEST_F(BitStreamTest, readVarSize)
             (1U << (7U + 7 + 7 + 7 + 3)) - 1,
     };
 
-    std::function<void(BitStreamWriter&, uint32_t)> writerFunc = &BitStreamWriter::writeVarSize;
-    std::function<uint32_t(BitStreamReader&)> readerFunc = &BitStreamReader::readVarSize;
+    std::function<void(BitStreamWriter&, VarSize)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, VarSize)>(&detail::write);
+    std::function<void(BitStreamReader&, VarSize&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, VarSize&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 31);
 }
 
 TEST_F(BitStreamTest, readFloat16)
 {
-    const std::array<float, 6> values = {2.0, -2.0, 0.6171875, 0.875, 9.875, 42.5};
+    const std::array<Float16, 6> values = {2.0, -2.0, 0.6171875, 0.875, 9.875, 42.5};
 
-    std::function<void(BitStreamWriter&, float)> writerFunc = &BitStreamWriter::writeFloat16;
-    std::function<float(BitStreamReader&)> readerFunc = &BitStreamReader::readFloat16;
+    std::function<void(BitStreamWriter&, Float16)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Float16)>(&detail::write);
+    std::function<void(BitStreamReader&, Float16&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Float16&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 15);
 }
 
 TEST_F(BitStreamTest, readFloat32)
 {
-    const std::array<float, 6> values = {2.0, -2.0, 0.6171875, 0.875, 9.875, 42.5};
+    const std::array<Float32, 6> values = {2.0, -2.0, 0.6171875, 0.875, 9.875, 42.5};
 
-    std::function<void(BitStreamWriter&, float)> writerFunc = &BitStreamWriter::writeFloat32;
-    std::function<float(BitStreamReader&)> readerFunc = &BitStreamReader::readFloat32;
+    std::function<void(BitStreamWriter&, Float32)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Float32)>(&detail::write);
+    std::function<void(BitStreamReader&, Float32&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Float32&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 31);
 }
 
 TEST_F(BitStreamTest, readFloat64)
 {
-    const std::array<double, 6> values = {2.0, -2.0, 0.6171875, 0.875, 9.875, 42.5};
+    const std::array<Float64, 6> values = {2.0, -2.0, 0.6171875, 0.875, 9.875, 42.5};
 
-    std::function<void(BitStreamWriter&, double)> writerFunc = &BitStreamWriter::writeFloat64;
-    std::function<double(BitStreamReader&)> readerFunc = &BitStreamReader::readFloat64;
+    std::function<void(BitStreamWriter&, Float64)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, Float64)>(&detail::write);
+    std::function<void(BitStreamReader&, Float64&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, Float64&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 61);
 }
@@ -651,21 +810,11 @@ TEST_F(BitStreamTest, readString)
             "Price: \xE2\x82\xAC 3 what's this? -> \xC2\xA2" /* '€' '¢' */
     };
 
-    std::function<void(BitStreamWriter&, const std::string&)> writerFunc = &BitStreamWriter::writeString;
-    std::function<std::string(BitStreamReader&)> readerFunc = std::bind(
-            &BitStreamReader::readString<std::allocator<char>>, std::placeholders::_1, std::allocator<char>());
-
+    std::function<void(BitStreamWriter&, const std::string&)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, const std::string&)>(&detail::write);
+    std::function<void(BitStreamReader&, std::string&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, std::string&)>(&detail::read);
     testImpl(values, writerFunc, readerFunc, 7);
-}
-
-TEST_F(BitStreamTest, readBool)
-{
-    const std::array<bool, 2> values = {true, false};
-
-    std::function<void(BitStreamWriter&, bool)> writerFunc = &BitStreamWriter::writeBool;
-    std::function<bool(BitStreamReader&)> readerFunc = &BitStreamReader::readBool;
-
-    testImpl(values, writerFunc, readerFunc, 1);
 }
 
 TEST_F(BitStreamTest, readBitBuffer)
@@ -674,10 +823,9 @@ TEST_F(BitStreamTest, readBitBuffer)
             BitBuffer(std::vector<uint8_t>({0xAB, 0xCD, 0xFE}), 23)};
 
     std::function<void(BitStreamWriter&, const BitBuffer&)> writerFunc =
-            &BitStreamWriter::writeBitBuffer<std::allocator<uint8_t>>;
-    std::function<BitBuffer(BitStreamReader&)> readerFunc = std::bind(
-            &BitStreamReader::readBitBuffer<std::allocator<uint8_t>>, std::placeholders::_1,
-            std::allocator<uint8_t>());
+            static_cast<void (*)(BitStreamWriter&, const BitBuffer&)>(&detail::write);
+    std::function<void(BitStreamReader&, BitBuffer&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, BitBuffer&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 7);
 }
@@ -689,10 +837,10 @@ TEST_F(BitStreamTest, readBytes)
             vector<uint8_t>{{1, 127, 128, 254}},
     };
 
-    std::function<void(BitStreamWriter&, const vector<uint8_t>&)> writerFunc = &BitStreamWriter::writeBytes;
-    std::function<vector<uint8_t>(BitStreamReader&)> readerFunc = std::bind(
-            &BitStreamReader::readBytes<std::allocator<uint8_t>>, std::placeholders::_1,
-            std::allocator<uint8_t>());
+    std::function<void(BitStreamWriter&, const std::vector<uint8_t>&)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, const std::vector<uint8_t>&)>(&detail::write);
+    std::function<void(BitStreamReader&, vector<uint8_t>&)> readerFunc =
+            static_cast<void (*)(BitStreamReader&, std::vector<uint8_t>&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 7);
 }

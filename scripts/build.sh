@@ -193,20 +193,20 @@ main()
     fi
 
     # purge if requested and then create build and distr directories
-    local ZSERIO_BUILD_DIR="${PARAM_OUT_DIR}/build"
-    local ZSERIO_DISTR_DIR="${PARAM_OUT_DIR}/distr"
+    local ZSERIO_CPP17_BUILD_DIR="${PARAM_OUT_DIR}/build"
+    local ZSERIO_CPP17_DISTR_DIR="${PARAM_OUT_DIR}/distr"
     if [[ ${SWITCH_PURGE} == 1 ]] ; then
         echo "Purging build and distr directories."
         echo
-        rm -rf "${ZSERIO_BUILD_DIR}/"
-        rm -rf "${ZSERIO_DISTR_DIR}/"
+        rm -rf "${ZSERIO_CPP17_BUILD_DIR}/"
+        rm -rf "${ZSERIO_CPP17_DISTR_DIR}/"
     fi
-    mkdir -p "${ZSERIO_BUILD_DIR}"
-    mkdir -p "${ZSERIO_DISTR_DIR}"
+    mkdir -p "${ZSERIO_CPP17_BUILD_DIR}"
+    mkdir -p "${ZSERIO_CPP17_DISTR_DIR}"
 
     # extensions need absolute paths
-    convert_to_absolute_path "${ZSERIO_BUILD_DIR}" ZSERIO_BUILD_DIR
-    convert_to_absolute_path "${ZSERIO_DISTR_DIR}" ZSERIO_DISTR_DIR
+    convert_to_absolute_path "${ZSERIO_CPP17_BUILD_DIR}" ZSERIO_CPP17_BUILD_DIR
+    convert_to_absolute_path "${ZSERIO_CPP17_DISTR_DIR}" ZSERIO_CPP17_DISTR_DIR
 
     # get action name and description
     if [[ ${SWITCH_CLEAN} == 1 ]] ; then
@@ -220,8 +220,8 @@ main()
     fi
 
     local ZSERIO_CPP17_ANT_PROPS=(
-            -Dzserio_cpp17.build_dir="${ZSERIO_BUILD_DIR}/extension"
-            -Dzserio_cpp17.install_dir="${ZSERIO_DISTR_DIR}"
+            -Dzserio_cpp17.build_dir="${ZSERIO_CPP17_BUILD_DIR}/extension"
+            -Dzserio_cpp17.install_dir="${ZSERIO_CPP17_DISTR_DIR}"
     )
 
     # build Zserio C++ extension
@@ -240,8 +240,8 @@ main()
         echo "${ACTION_DESCRIPTION} Zserio C++ runtime library."
         echo
         local CMAKELISTS_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/runtime"
-        local CPP_BUILD_DIR="${ZSERIO_BUILD_DIR}/runtime_lib"
-        local CMAKE_ARGS=(-DCMAKE_INSTALL_PREFIX="${ZSERIO_DISTR_DIR}/runtime_lib")
+        local CPP_BUILD_DIR="${ZSERIO_CPP17_BUILD_DIR}/runtime_lib"
+        local CMAKE_ARGS=(-DCMAKE_INSTALL_PREFIX="${ZSERIO_CPP17_DISTR_DIR}/runtime_lib")
         local IS_COVERAGE_ENABLED=0
         if [[ ! -z "${GCOVR_BIN}" && "${PARAM_CPP_TARGET_ARRAY[@]}" == *"gcc"* ]] ; then
             local IS_COVERAGE_ENABLED=1

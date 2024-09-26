@@ -9,6 +9,14 @@ fi
 # Set and check global variables for Java projects.
 set_global_common_variables()
 {
+    # bash command find to use, defaults to "/usr/bin/find" if not set
+    # (bash command find makes trouble under MinGW because it clashes with Windows find command)
+    FIND="${FIND:-/usr/bin/find}"
+    if [ ! -f "`which "${FIND}"`" ] ; then
+        stderr_echo "Cannot find bash command find! Set FIND environment variable."
+        return 1
+    fi
+
     # clang-format binary to use for formatting check, by default is empty
     CLANG_FORMAT_BIN="${CLANG_FORMAT_BIN:-""}"
     if [[ (! -z "${CLANG_FORMAT_BIN}" && ! -f "`which "${CLANG_FORMAT_BIN}"`") ]] ; then

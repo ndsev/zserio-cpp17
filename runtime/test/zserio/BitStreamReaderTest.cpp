@@ -30,11 +30,11 @@ TEST_F(BitStreamReaderTest, spanConstructor)
     BitStreamReader reader(span);
 
     ASSERT_EQ(span.size() * 8, reader.getBufferBitSize());
-    ASSERT_EQ(0xAEE, reader.readBits(12));
-    ASSERT_EQ(0xA, reader.readBits(4));
-    ASSERT_EQ(0x80, reader.readBits(8));
+    ASSERT_EQ(0xAEE, reader.readUnsignedBits32(12));
+    ASSERT_EQ(0xA, reader.readUnsignedBits32(4));
+    ASSERT_EQ(0x80, reader.readUnsignedBits32(8));
 
-    ASSERT_THROW(reader.readBits(1), CppRuntimeException);
+    ASSERT_THROW(reader.readUnsignedBits32(1), CppRuntimeException);
 }
 
 TEST_F(BitStreamReaderTest, spanConstructorWithBitSize)
@@ -45,11 +45,11 @@ TEST_F(BitStreamReaderTest, spanConstructorWithBitSize)
     ASSERT_THROW(BitStreamReader wrongReader(span, 25), CppRuntimeException);
 
     ASSERT_EQ(23, reader.getBufferBitSize());
-    ASSERT_EQ(0xAEE, reader.readBits(12));
-    ASSERT_EQ(0xA, reader.readBits(4));
-    ASSERT_EQ(0x40, reader.readBits(7));
+    ASSERT_EQ(0xAEE, reader.readUnsignedBits32(12));
+    ASSERT_EQ(0xA, reader.readUnsignedBits32(4));
+    ASSERT_EQ(0x40, reader.readUnsignedBits32(7));
 
-    ASSERT_THROW(reader.readBits(1), CppRuntimeException);
+    ASSERT_THROW(reader.readUnsignedBits32(1), CppRuntimeException);
 }
 
 TEST_F(BitStreamReaderTest, bitBufferConstructor)
@@ -59,11 +59,11 @@ TEST_F(BitStreamReaderTest, bitBufferConstructor)
     BitStreamReader reader(bitBuffer);
 
     ASSERT_EQ(bitBuffer.getBitSize(), reader.getBufferBitSize());
-    ASSERT_EQ(0xAEE, reader.readBits(12));
-    ASSERT_EQ(0xA, reader.readBits(4));
-    ASSERT_EQ(1, reader.readBits(1));
+    ASSERT_EQ(0xAEE, reader.readUnsignedBits32(12));
+    ASSERT_EQ(0xA, reader.readUnsignedBits32(4));
+    ASSERT_EQ(1, reader.readUnsignedBits32(1));
 
-    ASSERT_THROW(reader.readBits(1), CppRuntimeException);
+    ASSERT_THROW(reader.readUnsignedBits32(1), CppRuntimeException);
 
     ASSERT_THROW(BitStreamReader(nullptr, std::numeric_limits<size_t>::max() / 8), CppRuntimeException);
 }
@@ -75,7 +75,7 @@ TEST_F(BitStreamReaderTest, bitBufferConstructorOverflow)
     BitStreamReader reader(bitBuffer);
 
     ASSERT_EQ(bitBuffer.getBitSize(), reader.getBufferBitSize());
-    ASSERT_THROW(reader.readBits(20), CppRuntimeException);
+    ASSERT_THROW(reader.readUnsignedBits32(20), CppRuntimeException);
 }
 
 TEST_F(BitStreamReaderTest, readUnalignedData)
@@ -101,39 +101,39 @@ TEST_F(BitStreamReaderTest, readUnalignedData)
         // read offset bits
         if (offset > 0)
         {
-            ASSERT_EQ(0, reader.readBits64(offset));
+            ASSERT_EQ(0, reader.readUnsignedBits64(offset));
         }
 
         // read magic number
-        ASSERT_EQ(testValue, reader.readBits(8)) << "Offset: " << offset;
+        ASSERT_EQ(testValue, reader.readUnsignedBits32(8)) << "Offset: " << offset;
 
         // check eof
-        ASSERT_THROW(reader.readBits(1), CppRuntimeException) << "Offset: " << offset;
+        ASSERT_THROW(reader.readUnsignedBits32(1), CppRuntimeException) << "Offset: " << offset;
     }
 }
 
 TEST_F(BitStreamReaderTest, readBits)
 {
     // check invalid bitlength acceptance
-    ASSERT_THROW(m_reader.readBits(255), CppRuntimeException);
-    ASSERT_THROW(m_reader.readBits(0), CppRuntimeException);
-    ASSERT_THROW(m_reader.readBits(33), CppRuntimeException);
+    ASSERT_THROW(m_reader.readUnsignedBits32(255), CppRuntimeException);
+    ASSERT_THROW(m_reader.readUnsignedBits32(0), CppRuntimeException);
+    ASSERT_THROW(m_reader.readUnsignedBits32(33), CppRuntimeException);
 }
 
 TEST_F(BitStreamReaderTest, readBits64)
 {
     // check invalid bit length acceptance
-    ASSERT_THROW(m_reader.readBits64(255), CppRuntimeException);
-    ASSERT_THROW(m_reader.readBits64(0), CppRuntimeException);
-    ASSERT_THROW(m_reader.readBits64(65), CppRuntimeException);
+    ASSERT_THROW(m_reader.readUnsignedBits64(255), CppRuntimeException);
+    ASSERT_THROW(m_reader.readUnsignedBits64(0), CppRuntimeException);
+    ASSERT_THROW(m_reader.readUnsignedBits64(65), CppRuntimeException);
 }
 
-TEST_F(BitStreamReaderTest, readSignedBits)
+TEST_F(BitStreamReaderTest, readSignedBits32)
 {
     // check invalid bit length acceptance
-    ASSERT_THROW(m_reader.readSignedBits(255), CppRuntimeException);
-    ASSERT_THROW(m_reader.readSignedBits(0), CppRuntimeException);
-    ASSERT_THROW(m_reader.readSignedBits(33), CppRuntimeException);
+    ASSERT_THROW(m_reader.readSignedBits32(255), CppRuntimeException);
+    ASSERT_THROW(m_reader.readSignedBits32(0), CppRuntimeException);
+    ASSERT_THROW(m_reader.readSignedBits32(33), CppRuntimeException);
 }
 
 TEST_F(BitStreamReaderTest, readSignedBits64)
@@ -164,7 +164,7 @@ TEST_F(BitStreamReaderTest, readVarSize)
 TEST_F(BitStreamReaderTest, getBitPosition)
 {
     ASSERT_EQ(0, m_reader.getBitPosition());
-    m_reader.readBits(10);
+    m_reader.readUnsignedBits32(10);
     ASSERT_EQ(10, m_reader.getBitPosition());
 }
 

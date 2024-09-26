@@ -55,10 +55,10 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:391
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:392
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:398
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:594
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:662
-# The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
-# would only bring the performance drop.
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:595
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:663
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:83
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:96
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
@@ -72,7 +72,7 @@ cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
 
 # This is false positive, the member is initialized.
-cppcoreguidelines-pro-type-member-init:src/zserio/BitStreamWriter.h:71
+cppcoreguidelines-pro-type-member-init:src/zserio/BitStreamWriter.h:72
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:18
@@ -94,8 +94,8 @@ google-explicit-constructor:src/zserio/Span.h:150
 google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
 # This is requirement on type wrappers in Zserio C++17 extension
-google-explicit-constructor:src/zserio/Types.h:59
-google-explicit-constructor:src/zserio/Types.h:66
+google-explicit-constructor:src/zserio/Types.h:60
+google-explicit-constructor:src/zserio/Types.h:67
 # Intentional tests.
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:78

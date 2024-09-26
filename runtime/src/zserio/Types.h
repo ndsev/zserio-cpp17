@@ -3,15 +3,16 @@
 
 #include <cstdint>
 #include <limits>
+#include <string>
+#include <string_view>
 #include <type_traits>
 
+#include "zserio/BitSize.h"
 #include "zserio/OutOfRangeException.h"
+#include "zserio/Span.h"
 
 namespace zserio
 {
-
-/** Typedef for bit size type used in Zserio. */
-using BitSize = unsigned int;
 
 /**
  * NumericLimits template provides a standardized way to query various properties of
@@ -669,7 +670,7 @@ using Bool = detail::BoolWrapper;
 using Int8 = detail::IntWrapper<int8_t>;
 using Int16 = detail::IntWrapper<int16_t>;
 using Int32 = detail::IntWrapper<int32_t>;
-using Int64 = detail::IntWrapper<int64_t, 64>;
+using Int64 = detail::IntWrapper<int64_t>;
 
 using UInt8 = detail::IntWrapper<uint8_t>;
 using UInt16 = detail::IntWrapper<uint16_t>;

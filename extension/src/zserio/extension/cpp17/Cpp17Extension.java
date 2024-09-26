@@ -11,6 +11,8 @@ import zserio.extension.common.OutputFileManager;
 import zserio.extension.common.PackedTypesCollector;
 import zserio.extension.common.ReservedKeywordsClashChecker;
 import zserio.extension.common.ZserioExtensionException;
+import zserio.extension.cpp17.CppDefaultEmitter;
+import zserio.extension.cpp17.EnumerationEmitter;
 import zserio.tools.Extension;
 import zserio.tools.ExtensionParameters;
 
@@ -28,7 +30,7 @@ public final class Cpp17Extension implements Extension
     @Override
     public String getExtensionVersion()
     {
-        return Cpp17ExtensionVersion.CPP_EXTENSION_VERSION_STRING + " (BIN " +
+        return Cpp17ExtensionVersion.CPP17_EXTENSION_VERSION_STRING + " (BIN " +
                 Cpp17ExtensionVersion.BIN_VERSION_STRING + ", JSON " +
                 Cpp17ExtensionVersion.JSON_VERSION_STRING + ")";
     }
@@ -71,13 +73,18 @@ public final class Cpp17Extension implements Extension
     public void process(Root rootNode, ExtensionParameters parameters) throws ZserioExtensionException
     {
         final OutputFileManager outputFileManager = new OutputFileManager(parameters);
-        // final Cpp17ExtensionParameters cppParameters = new Cpp17ExtensionParameters(parameters);
+        final Cpp17ExtensionParameters cppParameters = new Cpp17ExtensionParameters(parameters);
 
         // collect which types are used within a packed array
-        // final PackedTypesCollector packedTypesCollector = new PackedTypesCollector();
-        // rootNode.accept(packedTypesCollector);
+        final PackedTypesCollector packedTypesCollector = new PackedTypesCollector();
+        rootNode.accept(packedTypesCollector);
 
-        // TODO[Mi-L@]: generator functionality comes here
+        final List<CppDefaultEmitter> emitters = new ArrayList<CppDefaultEmitter>();
+        emitters.add(new EnumerationEmitter(outputFileManager, cppParameters, packedTypesCollector));
+
+        // emit C++ code
+        for (CppDefaultEmitter emitter : emitters)
+            rootNode.walk(emitter);
 
         outputFileManager.printReport();
     }

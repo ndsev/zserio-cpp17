@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstring>
 #include <string_view>
+#include <type_traits>
 
 #include "zserio/BitBuffer.h"
 #include "zserio/CppRuntimeException.h"
@@ -96,7 +97,7 @@ public:
      * \param data Data to write.
      * \param numBits Number of bits to write.
      */
-    void writeBits(uint32_t data, uint8_t numBits = 32);
+    void writeUnsignedBits32(uint32_t data, uint8_t numBits = 32);
 
     /**
      * Writes unsigned bits up to 64 bits.
@@ -104,7 +105,7 @@ public:
      * \param data Data to write.
      * \param numBits Number of bits to write.
      */
-    void writeBits64(uint64_t data, uint8_t numBits = 64);
+    void writeUnsignedBits64(uint64_t data, uint8_t numBits = 64);
 
     /**
      * Writes signed bits up to 32 bits.
@@ -112,7 +113,7 @@ public:
      * \param data Data to write.
      * \param numBits Number of bits to write.
      */
-    void writeSignedBits(int32_t data, uint8_t numBits = 32);
+    void writeSignedBits32(int32_t data, uint8_t numBits = 32);
 
     /**
      * Writes signed bits up to 64 bits.
@@ -123,88 +124,95 @@ public:
     void writeSignedBits64(int64_t data, uint8_t numBits = 64);
 
     /**
-     * Writes signed variable integer up to 64 bits.
+     * Writes bool as a single bit.
      *
-     * \param data Varint64 to write.
+     * \param data Bool to write.
      */
-    void writeVarInt64(int64_t data);
-
-    /**
-     * Writes signed variable integer up to 32 bits.
-     *
-     * \param data Varint32 to write.
-     */
-    void writeVarInt32(int32_t data);
+    void writeBool(Bool data);
 
     /**
      * Writes signed variable integer up to 16 bits.
      *
      * \param data Varint16 to write.
      */
-    void writeVarInt16(int16_t data);
+    void writeVarInt16(VarInt16 data);
 
     /**
-     * Writes unsigned variable integer up to 64 bits.
+     * Writes signed variable integer up to 32 bits.
+     *
+     * \param data Varint32 to write.
+     */
+    void writeVarInt32(VarInt32 data);
+
+    /**
+     * Writes signed variable integer up to 64 bits.
+     *
+     * \param data Varint64 to write.
+     */
+    void writeVarInt64(VarInt64 data);
+
+    /**
+     * Writes signed variable integer up to 72 bits.
      *
      * \param data Varuint64 to write.
      */
-    void writeVarUInt64(uint64_t data);
-
-    /**
-     * Writes unsigned variable integer up to 32 bits.
-     *
-     * \param data Varuint32 to write.
-     */
-    void writeVarUInt32(uint32_t data);
+    void writeVarInt(VarInt data);
 
     /**
      * Writes unsigned variable integer up to 16 bits.
      *
      * \param data Varuint16 to write.
      */
-    void writeVarUInt16(uint16_t data);
+    void writeVarUInt16(VarUInt16 data);
+
+    /**
+     * Writes unsigned variable integer up to 32 bits.
+     *
+     * \param data Varuint32 to write.
+     */
+    void writeVarUInt32(VarUInt32 data);
+
+    /**
+     * Writes unsigned variable integer up to 64 bits.
+     *
+     * \param data Varuint64 to write.
+     */
+    void writeVarUInt64(VarUInt64 data);
 
     /**
      * Writes signed variable integer up to 72 bits.
      *
      * \param data Varuint64 to write.
      */
-    void writeVarInt(int64_t data);
-
-    /**
-     * Writes signed variable integer up to 72 bits.
-     *
-     * \param data Varuint64 to write.
-     */
-    void writeVarUInt(uint64_t data);
+    void writeVarUInt(VarUInt data);
 
     /**
      * Writes variable size integer up to 40 bits.
      *
      * \param data Varsize to write.
      */
-    void writeVarSize(uint32_t data);
+    void writeVarSize(VarSize data);
 
     /**
      * Writes 16-bit float.
      *
      * \param data Float16 to write.
      */
-    void writeFloat16(float data);
+    void writeFloat16(Float16 data);
 
     /**
      * Writes 32-bit float.
      *
      * \param data Float32 to write.
      */
-    void writeFloat32(float data);
+    void writeFloat32(Float32 data);
 
     /**
      * Writes 64-bit float.
      *
      * \param data Float64 to write.
      */
-    void writeFloat64(double data);
+    void writeFloat64(Float64 data);
 
     /**
      * Writes bytes.
@@ -221,13 +229,6 @@ public:
     void writeString(std::string_view data);
 
     /**
-     * Writes bool as a single bit.
-     *
-     * \param data Bool to write.
-     */
-    void writeBool(bool data);
-
-    /**
      * Writes bit buffer.
      *
      * \param bitBuffer Bit buffer to write.
@@ -235,8 +236,8 @@ public:
     template <typename ALLOC>
     void writeBitBuffer(const BasicBitBuffer<ALLOC>& bitBuffer)
     {
-        const size_t bitSize = bitBuffer.getBitSize();
-        writeVarSize(convertSizeToUInt32(bitSize));
+        const VarSize bitSize = fromCheckedValue<VarSize>(convertSizeToUInt32(bitBuffer.getBitSize()));
+        writeVarSize(bitSize);
 
         Span<const uint8_t> buffer = bitBuffer.getData();
         size_t numBytesToWrite = bitSize / 8;
@@ -248,7 +249,7 @@ public:
             // we are not aligned to byte
             for (Span<const uint8_t>::iterator it = buffer.begin(); it != itEnd; ++it)
             {
-                writeUnsignedBits(*it, 8);
+                writeUnsignedBits32Impl(*it, 8);
             }
         }
         else
@@ -264,7 +265,7 @@ public:
 
         if (numRestBits > 0)
         {
-            writeUnsignedBits(static_cast<uint32_t>(*itEnd) >> (8U - numRestBits), numRestBits);
+            writeUnsignedBits32Impl(static_cast<uint32_t>(*itEnd) >> (8U - numRestBits), numRestBits);
         }
     }
 
@@ -327,8 +328,8 @@ public:
     }
 
 private:
-    void writeUnsignedBits(uint32_t data, uint8_t numBits);
-    void writeUnsignedBits64(uint64_t data, uint8_t numBits);
+    void writeUnsignedBits32Impl(uint32_t data, uint8_t numBits);
+    void writeUnsignedBits64Impl(uint64_t data, uint8_t numBits);
     void writeSignedVarNum(int64_t value, size_t maxVarBytes, size_t numVarBytes);
     void writeUnsignedVarNum(uint64_t value, size_t maxVarBytes, size_t numVarBytes);
     void writeVarNum(uint64_t value, bool hasSign, bool isNegative, size_t maxVarBytes, size_t numVarBytes);

@@ -18,7 +18,7 @@ spotbugs.home_dir        - Location of the spotbugs tool. If not set, spotbugs i
 <project name="zserio_cpp17" basedir="." default="jar">
     <dirname property="zserio_cpp17.base_dir" file="${ant.file.zserio_cpp17}"/>
 
-    <property name="zserio_cpp17.build_dir" value="${zserio_cpp17.base_dir}/../build"/>
+    <property name="zserio_cpp17.build_dir" value="${zserio_cpp17.base_dir}/../build/extension"/>
     <property name="zserio_cpp17.install_dir" value="${zserio_cpp17.base_dir}/../distr"/>
 
     <property name="zserio_cpp17.download_dir" value="${zserio_cpp17.build_dir}/download"/>
@@ -165,6 +165,8 @@ spotbugs.home_dir        - Location of the spotbugs tool. If not set, spotbugs i
             <fileset dir="${zserio_cpp17.classes_dir}">
                 <include name="zserio/**"/>
             </fileset>
+            <zipfileset dir="${zserio_cpp17.base_dir}/freemarker" includes="*.ftl"
+                prefix="freemarker/cpp17"/>
             <manifest>
                 <attribute name="Implementation-Version" value="${zserio_cpp17.version}"/>
             </manifest>
@@ -219,6 +221,7 @@ Command hints to reformat source manually using clang-format tool (in case of fo
         <spotbugs home="${spotbugs.home_dir}"
             output="html"
             outputFile="${zserio_cpp17.spotbugs.out_dir}/spotbugs.html"
+            excludeFilter="${zserio_cpp17.base_dir}/spotbugs_filter.xml"
             reportLevel="low"
             errorProperty="zserio_cpp17.is_failed"
             warningsProperty="zserio_cpp17.is_failed">
