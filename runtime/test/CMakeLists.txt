@@ -18,6 +18,7 @@ if (SANITIZERS_ENABLED)
 endif ()
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
+    zserio/AllocatorHolderTest.cpp
     zserio/ArrayTest.cpp
     zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp

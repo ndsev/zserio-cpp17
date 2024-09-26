@@ -303,4 +303,9 @@ TYPED_TEST(OptionalTest, hash)
     std::hash<typename TestFixture::StringOptional>()(opt);
 }
 
+TEST(OptionalTest, compareSizeToStd)
+{
+    ASSERT_EQ(sizeof(Optional<int>), sizeof(std::optional<int>));
+}
+
 } // namespace zserio

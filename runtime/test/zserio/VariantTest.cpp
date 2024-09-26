@@ -390,4 +390,9 @@ TYPED_TEST(VariantTest, canStoreInMap)
     ASSERT_TRUE(vmap.size() == 3);
 }
 
+TEST(VariantTest, compareSizeToStd)
+{
+    ASSERT_EQ(sizeof(Variant<size_t, int>), sizeof(std::variant<int>));
+}
+
 } // namespace zserio
