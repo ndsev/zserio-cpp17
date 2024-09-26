@@ -396,6 +396,11 @@ public:
     void swap(BasicVariant& other)
     {
         m_data.swap(other.m_data);
+        if constexpr (AllocTraits::propagate_on_container_swap::value)
+        {
+            using std::swap;
+            swap(get_allocator_ref(), other.get_allocator_ref());
+        }
     }
 
     /**

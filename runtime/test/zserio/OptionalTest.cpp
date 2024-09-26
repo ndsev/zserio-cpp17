@@ -291,6 +291,9 @@ TYPED_TEST(OptionalTest, swap)
     opt1.swap(opt2);
     ASSERT_TRUE(!opt1);
     ASSERT_EQ(*opt2, "house");
+    std::swap(opt1, opt2);
+    ASSERT_EQ(*opt1, "house");
+    ASSERT_TRUE(!opt2);
 }
 
 TYPED_TEST(OptionalTest, hash)

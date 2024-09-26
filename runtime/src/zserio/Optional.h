@@ -100,7 +100,6 @@ class BasicOptional : public AllocatorHolder<ALLOC>
     using AllocatorHolder<ALLOC>::set_allocator;
 
 public:
-    using AllocatorHolder<ALLOC>::get_allocator;
     using AllocatorHolder<ALLOC>::get_allocator_ref;
     using allocator_type = ALLOC;
     using optional_type = std::optional<typename detail::optional_element<T>::type>;
@@ -426,6 +425,11 @@ public:
     void swap(BasicOptional& other)
     {
         m_data.swap(other.m_data);
+        if constexpr (AllocTraits::propagate_on_container_swap::value)
+        {
+            using std::swap;
+            swap(get_allocator_ref(), other.get_allocator_ref());
+        }
     }
 
     /**
