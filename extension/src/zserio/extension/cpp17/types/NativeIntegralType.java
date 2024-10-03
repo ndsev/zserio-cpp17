@@ -74,7 +74,8 @@ public final class NativeIntegralType extends NativeZserioWrapperType
         if (!isSigned)
             sb.append('U');
         sb.append("INT");
-        sb.append(numBits);
+
+        sb.append(getNativeNumbits(numBits));
         sb.append("_C(");
         sb.append(stringValue);
         sb.append(')');
@@ -100,10 +101,22 @@ public final class NativeIntegralType extends NativeZserioWrapperType
         if (!isSigned)
             buffer.append('u');
         buffer.append("int");
-        buffer.append(numBits);
+        buffer.append(getNativeNumbits(numBits));
         buffer.append("_t");
 
         return buffer.toString();
+    }
+
+    private static int getNativeNumbits(int numBits)
+    {
+        if (numBits <= 8)
+            return 8;
+        else if (numBits <= 16)
+            return 16;
+        else if (numBits <= 32)
+            return 32;
+        else
+            return 64;
     }
 
     private void checkRange(BigInteger value) throws ZserioExtensionException

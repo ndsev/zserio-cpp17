@@ -31,6 +31,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BitStreamReader.h
     zserio/BitStreamWriter.cpp
     zserio/BitStreamWriter.h
+    zserio/Bitmasks.h
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
     zserio/CppRuntimeException.cpp

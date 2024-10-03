@@ -16,7 +16,8 @@ final class TemplateDataContext
     {
         this.packedTypesCollector = packedTypesCollector;
 
-        cppNativeMapper = new CppNativeMapper();
+        typesContext = new TypesContext(cppParameters.getAllocatorDefinition());
+        cppNativeMapper = new CppNativeMapper(typesContext);
 
         withReflectionCode = cppParameters.getWithReflectionCode();
 
@@ -33,6 +34,11 @@ final class TemplateDataContext
     public PackedTypesCollector getPackedTypesCollector()
     {
         return packedTypesCollector;
+    }
+
+    public TypesContext getTypesContext()
+    {
+        return typesContext;
     }
 
     public CppNativeMapper getCppNativeMapper()
@@ -78,6 +84,8 @@ final class TemplateDataContext
     }
 
     private final PackedTypesCollector packedTypesCollector;
+
+    private final TypesContext typesContext;
 
     private final CppNativeMapper cppNativeMapper;
 

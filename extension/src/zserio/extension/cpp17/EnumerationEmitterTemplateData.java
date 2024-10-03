@@ -31,8 +31,6 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
 
         underlyingTypeInfo = new NativeIntegralTypeInfoTemplateData(nativeBaseType, enumTypeInstantiation);
 
-        bitSize = BitSizeTemplateData.create(context, enumTypeInstantiation, this);
-
         final List<EnumItem> enumItems = enumType.getItems();
         items = new ArrayList<EnumItemData>(enumItems.size());
         for (EnumItem enumItem : enumItems)
@@ -47,11 +45,6 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
     public NativeIntegralTypeInfoTemplateData getUnderlyingTypeInfo()
     {
         return underlyingTypeInfo;
-    }
-
-    public BitSizeTemplateData getBitSize()
-    {
-        return bitSize;
     }
 
     public Iterable<EnumItemData> getItems()
@@ -120,6 +113,5 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
 
     private final boolean usedInPackedArray;
     private final NativeIntegralTypeInfoTemplateData underlyingTypeInfo;
-    private final BitSizeTemplateData bitSize;
     private final List<EnumItemData> items;
 }

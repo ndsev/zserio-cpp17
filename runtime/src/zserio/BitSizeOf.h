@@ -3,6 +3,7 @@
 
 #include "zserio/BitBuffer.h"
 #include "zserio/BitSize.h"
+#include "zserio/Traits.h"
 #include "zserio/Types.h"
 
 namespace zserio
@@ -13,7 +14,7 @@ namespace detail
 
 // logic for objects provided via specializations
 template <typename T>
-std::enable_if_t<!std::is_enum_v<T>, BitSize> bitSizeOf(T value);
+std::enable_if_t<!std::is_enum_v<T> && !is_bitmask_v<T>, BitSize> bitSizeOf(T value);
 
 inline BitSize bitSizeOf(BoolWrapper)
 {

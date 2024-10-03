@@ -9,6 +9,35 @@ import zserio.ast.PackageName;
  */
 public final class TypesContext
 {
+    public TypesContext(AllocatorDefinition allocator)
+    {
+        this.allocator = allocator;
+
+        if (allocator.equals(STD_ALLOCATOR))
+        {
+            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", true, false, "zserio/String.h");
+        }
+        else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
+        {
+            string = new NativeTypeDefinition(
+                    ZSERIO_PMR_PACKAGE_NAME, "string", false, false, "zserio/pmr/String.h");
+        }
+        else
+        {
+            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", true, true, "zserio/String.h");
+        }
+    }
+
+    public AllocatorDefinition getAllocatorDefinition()
+    {
+        return allocator;
+    }
+
+    public NativeTypeDefinition getString()
+    {
+        return string;
+    }
+
     public static final class AllocatorDefinition
     {
         public AllocatorDefinition(String allocatorType, String allocatorSystemInclude)
@@ -44,8 +73,59 @@ public final class TypesContext
         private final String allocatorDefaultType;
     }
 
+    public static final class NativeTypeDefinition
+    {
+        public NativeTypeDefinition(PackageName pkg, String name, boolean isTemplate,
+                boolean needsAllocatorArgument, String systemInclude)
+        {
+            this.pkg = pkg;
+            this.name = name;
+            this.isTemplate = isTemplate;
+            this.needsAllocatorArgument = needsAllocatorArgument;
+            this.systemInclude = systemInclude;
+        }
+
+        public PackageName getPackage()
+        {
+            return pkg;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public String getSystemInclude()
+        {
+            return systemInclude;
+        }
+
+        public boolean isTemplate()
+        {
+            return isTemplate;
+        }
+
+        public boolean needsAllocatorArgument()
+        {
+            return needsAllocatorArgument;
+        }
+
+        private final PackageName pkg;
+        private final String name;
+        private final String systemInclude;
+        private final boolean isTemplate;
+        private final boolean needsAllocatorArgument;
+    }
+
+    private final AllocatorDefinition allocator;
+    private final NativeTypeDefinition string;
+
     public static final AllocatorDefinition PROPAGATING_POLYMORPHIC_ALLOCATOR = new AllocatorDefinition(
             "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PolymorphicAllocator.h", "");
     public static final AllocatorDefinition STD_ALLOCATOR =
             new AllocatorDefinition("::std::allocator", "memory");
+
+    private static final PackageName ZSERIO_PACKAGE_NAME = new PackageName.Builder().addId("zserio").get();
+    private static final PackageName ZSERIO_PMR_PACKAGE_NAME =
+            new PackageName.Builder().addId("zserio").addId("pmr").get();
 }

@@ -94,7 +94,7 @@ TEST_F(UInt8EnumTest, read)
     writer.writeUnsignedBits32(zserio::enumToValue(DarkColor::DARK_RED), DARK_COLOR_BITSIZEOF);
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    DarkColor darkColor;
+    DarkColor darkColor{};
     zserio::detail::read(reader, darkColor);
     ASSERT_EQ(DARK_RED_VALUE, zserio::enumToValue(darkColor));
 }

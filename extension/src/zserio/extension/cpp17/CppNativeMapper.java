@@ -33,6 +33,7 @@ import zserio.ast.ZserioType;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.symbols.CppNativeSymbol;
 import zserio.extension.cpp17.types.CppNativeType;
+import zserio.extension.cpp17.types.NativeAllocType;
 import zserio.extension.cpp17.types.NativeIntegralType;
 import zserio.extension.cpp17.types.NativeStringViewType;
 import zserio.extension.cpp17.types.NativeUserType;
@@ -45,9 +46,12 @@ import zserio.extension.cpp17.types.NativeZserioWrapperType;
  */
 public final class CppNativeMapper
 {
-    public CppNativeMapper()
+    public CppNativeMapper(TypesContext typesContext)
     {
+        final TypesContext.AllocatorDefinition allocatorDefinition = typesContext.getAllocatorDefinition();
+
         stringViewType = new NativeStringViewType();
+        stringType = new NativeAllocType(typesContext.getString(), allocatorDefinition, "char");
     }
 
     public CppNativeSymbol getCppSymbol(AstNode symbol) throws ZserioExtensionException
@@ -125,6 +129,11 @@ public final class CppNativeMapper
     public NativeStringViewType getStringViewType()
     {
         return stringViewType;
+    }
+
+    public NativeAllocType getStringType()
+    {
+        return stringType;
     }
 
     private CppNativeType mapArray(ArrayInstantiation instantiation) throws ZserioExtensionException
@@ -540,7 +549,10 @@ public final class CppNativeMapper
         @Override
         public void visitBitmaskType(BitmaskType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            final PackageName packageName = type.getPackage().getPackageName();
+            final String name = type.getName();
+            final String includeFileName = getIncludePath(packageName, name);
+            cppType = new NativeUserType(packageName, name, includeFileName, true);
         }
 
         @Override
@@ -657,6 +669,7 @@ public final class CppNativeMapper
     private final static String HEADER_SUFFIX = ".h";
 
     private final NativeStringViewType stringViewType;
+    private final NativeAllocType stringType;
 
     private final static NativeZserioWrapperType booleanType = new NativeZserioWrapperType("Bool", "bool");
     private final static NativeZserioWrapperType float16Type = new NativeZserioWrapperType("Float16", "float");

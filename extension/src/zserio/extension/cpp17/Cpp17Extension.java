@@ -11,8 +11,6 @@ import zserio.extension.common.OutputFileManager;
 import zserio.extension.common.PackedTypesCollector;
 import zserio.extension.common.ReservedKeywordsClashChecker;
 import zserio.extension.common.ZserioExtensionException;
-import zserio.extension.cpp17.CppDefaultEmitter;
-import zserio.extension.cpp17.EnumerationEmitter;
 import zserio.tools.Extension;
 import zserio.tools.ExtensionParameters;
 
@@ -80,6 +78,7 @@ public final class Cpp17Extension implements Extension
         rootNode.accept(packedTypesCollector);
 
         final List<CppDefaultEmitter> emitters = new ArrayList<CppDefaultEmitter>();
+        emitters.add(new BitmaskEmitter(outputFileManager, cppParameters, packedTypesCollector));
         emitters.add(new EnumerationEmitter(outputFileManager, cppParameters, packedTypesCollector));
 
         // emit C++ code

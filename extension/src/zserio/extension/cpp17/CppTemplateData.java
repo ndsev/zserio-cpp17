@@ -25,6 +25,8 @@ public abstract class CppTemplateData implements IncludeCollector
         headerUserIncludes = new TreeSet<String>();
         cppUserIncludes = new TreeSet<String>();
         cppSystemIncludes = new TreeSet<String>();
+
+        types = new TypesTemplateData(context.getTypesContext(), context.getCppNativeMapper());
     }
 
     public String getGeneratorDescription()
@@ -60,6 +62,11 @@ public abstract class CppTemplateData implements IncludeCollector
     public Iterable<String> getCppSystemIncludes()
     {
         return cppSystemIncludes;
+    }
+
+    public TypesTemplateData getTypes()
+    {
+        return types;
     }
 
     @Override
@@ -147,6 +154,97 @@ public abstract class CppTemplateData implements IncludeCollector
         private final String versionNumber;
     }
 
+    public static final class TypesTemplateData
+    {
+        public TypesTemplateData(TypesContext typesContext, CppNativeMapper nativeMapper)
+        {
+            allocator = new AllocatorTemplateData(typesContext);
+            string = new TypeTemplateData(nativeMapper.getStringType());
+        }
+
+        public AllocatorTemplateData getAllocator()
+        {
+            return allocator;
+        }
+
+        public TypeTemplateData getString()
+        {
+            return string;
+        }
+
+        public static final class AllocatorTemplateData
+        {
+            public AllocatorTemplateData(TypesContext typesContext)
+            {
+                name = typesContext.getAllocatorDefinition().getAllocatorType();
+                defaultType = typesContext.getAllocatorDefinition().getAllocatorDefaultType();
+                systemIncludes.add(typesContext.getAllocatorDefinition().getAllocatorSystemInclude());
+            }
+
+            public String getName()
+            {
+                return name;
+            }
+
+            public String getDefaultType()
+            {
+                return defaultType;
+            }
+
+            public String getDefault()
+            {
+                return name + "<" + defaultType + ">";
+            }
+
+            public Iterable<String> getSystemIncludes()
+            {
+                return systemIncludes;
+            }
+
+            public Iterable<String> getUserIncludes()
+            {
+                return userIncludes;
+            }
+
+            private final String name;
+            private final String defaultType;
+            private final List<String> systemIncludes = new ArrayList<String>();
+            private final List<String> userIncludes = new ArrayList<String>();
+        }
+
+        public static class TypeTemplateData
+        {
+            public TypeTemplateData(CppNativeType type)
+            {
+                name = type.getFullName();
+                systemIncludes = type.getSystemIncludeFiles();
+                userIncludes = type.getUserIncludeFiles();
+            }
+
+            public String getName()
+            {
+                return name;
+            }
+
+            public Iterable<String> getSystemIncludes()
+            {
+                return systemIncludes;
+            }
+
+            public Iterable<String> getUserIncludes()
+            {
+                return userIncludes;
+            }
+
+            private final String name;
+            private final Iterable<String> systemIncludes;
+            private final Iterable<String> userIncludes;
+        }
+
+        private final AllocatorTemplateData allocator;
+        private final TypeTemplateData string;
+    }
+
     private final String generatorDescription;
     private final GeneratorVersionTemplateData generatorVersion;
 
@@ -156,4 +254,5 @@ public abstract class CppTemplateData implements IncludeCollector
     private final TreeSet<String> headerUserIncludes;
     private final TreeSet<String> cppUserIncludes;
     private final TreeSet<String> cppSystemIncludes;
+    private final TypesTemplateData types;
 }

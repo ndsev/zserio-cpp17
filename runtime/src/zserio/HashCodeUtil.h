@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "zserio/FloatUtil.h"
+#include "zserio/Traits.h"
 #include "zserio/Types.h"
 
 namespace zserio
@@ -108,18 +109,18 @@ inline uint32_t calcHashCode(
 }
 
 /**
- * Calculates hash code of the given enum item using the given seed value.
+ * Calculates hash code of the given enum item or bitmask value using the given seed value.
  *
  * \param seedValue Seed value (current hash code).
- * \param enumValue Enum item for which to calculate the hash code.
+ * \param value Enum item or bitmask value for which to calculate the hash code.
  *
  * \return Calculated hash code.
  */
-template <typename ENUM_TYPE>
-inline typename std::enable_if<std::is_enum<ENUM_TYPE>::value, uint32_t>::type calcHashCode(
-        uint32_t seedValue, ENUM_TYPE enumValue)
+template <typename T>
+inline std::enable_if_t<std::is_enum_v<T> || is_bitmask_v<T>, uint32_t> calcHashCode(
+        uint32_t seedValue, T value)
 {
-    return calcHashCode(seedValue, std::hash<ENUM_TYPE>()(enumValue));
+    return calcHashCode(seedValue, std::hash<T>()(value));
 }
 
 /**
@@ -131,7 +132,8 @@ inline typename std::enable_if<std::is_enum<ENUM_TYPE>::value, uint32_t>::type c
  * \return Calculated hash code.
  */
 template <typename OBJECT>
-inline typename std::enable_if<!std::is_enum<OBJECT>::value && !std::is_integral<OBJECT>::value, uint32_t>::type
+inline std::enable_if_t<!std::is_enum_v<OBJECT> && !is_bitmask_v<OBJECT> && !std::is_integral_v<OBJECT>,
+        uint32_t>
 calcHashCode(uint32_t seedValue, const OBJECT& object)
 {
     return calcHashCode(seedValue, std::hash<OBJECT>()(object));

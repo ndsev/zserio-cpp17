@@ -2,6 +2,7 @@
 #define ZSERIO_READ_H_INC
 
 #include "zserio/BitStreamReader.h"
+#include "zserio/Traits.h"
 
 namespace zserio
 {
@@ -11,7 +12,7 @@ namespace detail
 
 // logic for objects provided via specializations
 template <typename T>
-std::enable_if_t<!std::is_enum_v<T>> read(BitStreamReader& reader, T& value);
+std::enable_if_t<!std::is_enum_v<T> && !is_bitmask_v<T>> read(BitStreamReader& reader, T& value);
 
 inline void read(BitStreamReader& reader, Bool& value)
 {

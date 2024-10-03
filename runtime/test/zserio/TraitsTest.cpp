@@ -8,16 +8,38 @@
 namespace zserio
 {
 
+namespace
+{
+
 // wrapper functions to prevent macro confusion with ',' in template parameters
-static void assertTrue(bool value)
+void assertTrue(bool value)
 {
     ASSERT_TRUE(value);
 }
 
-static void assertFalse(bool value)
+void assertFalse(bool value)
 {
     ASSERT_FALSE(value);
 }
+
+class DummyBitmask
+{
+public:
+    using ZserioType = Int8;
+
+    int getValue()
+    {
+        return 0;
+    }
+};
+
+enum class DummyEnum : int8_t
+{
+    ONE,
+    TWO
+};
+
+} // namespace
 
 TEST(TraitsTest, isAllocator)
 {
@@ -41,6 +63,15 @@ TEST(TraitsTest, isFirstAllocator)
     assertFalse(is_first_allocator<std::vector<uint8_t>, std::allocator<uint8_t>>::value);
     assertFalse(is_first_allocator<char, std::allocator<uint8_t>, std::allocator<uint8_t>>::value);
     assertFalse(is_first_allocator<int, std::allocator<uint8_t>, std::allocator<uint8_t>>::value);
+}
+
+TEST(TraitsTest, isBitmask)
+{
+    ASSERT_TRUE(is_bitmask<DummyBitmask>::value);
+    ASSERT_EQ(0, DummyBitmask().getValue()); // prevent warning
+    ASSERT_FALSE(is_bitmask<DummyEnum>::value);
+    ASSERT_FALSE(is_bitmask<std::string>::value);
+    ASSERT_FALSE(is_bitmask<std::vector<uint8_t>>::value);
 }
 
 } // namespace zserio

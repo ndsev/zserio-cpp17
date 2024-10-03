@@ -40,6 +40,25 @@ template <typename T, typename V = void>
 inline constexpr bool is_first_allocator_v = is_first_allocator<T, V>::value;
 /** \} */
 
+/**
+ * Trait used to check whether the type T is a zserio bitmask.
+ * \{
+ */
+template <typename T, typename = void>
+struct is_bitmask : std::false_type
+{};
+
+template <typename T>
+struct is_bitmask<T, std::void_t<decltype(std::declval<T>().getValue()), typename T::ZserioType>>
+        : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool is_bitmask_v = is_bitmask<T, V>::value;
+/**
+ * \}
+ */
+
 } // namespace zserio
 
 #endif // ifndef ZSERIO_TRAITS_H_INC
