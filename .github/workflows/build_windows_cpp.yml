@@ -1,11 +1,7 @@
 name: Windows C++17
 
 on:
-  push:
-    branches: [ master, '*-ci' ]
-  pull_request:
-    branches: [ master, '*-ci' ]
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   cpp:
@@ -109,3 +105,14 @@ jobs:
         path: |
           build/runtime_lib/**/runtime/*.a
           build/runtime_lib/**/runtime/*.lib
+
+    - name: Download Zserio bundle artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: zserio-java8
+        path: distr
+
+    - name: Run Zserio tests
+      shell: bash
+      run: |
+        CMAKE_EXTRA_ARGS="-DZSERIO_USE_BUNDLE=ON" scripts/test.sh cpp-${PACKAGE}

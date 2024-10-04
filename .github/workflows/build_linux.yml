@@ -1,0 +1,16 @@
+name: Linux
+
+on:
+  push:
+    branches: [ master, '*-ci' ]
+  pull_request:
+    branches: [ master, '*-ci' ]
+  workflow_dispatch:
+
+jobs:
+  extension:
+    uses: "./.github/workflows/build_linux_extension.yml"
+
+  cpp:
+    needs: [extension]
+    uses: "./.github/workflows/build_linux_cpp.yml"

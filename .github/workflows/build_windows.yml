@@ -1,0 +1,16 @@
+name: "Windows"
+
+on:
+  push:
+    branches: [ master, '*-ci' ]
+  pull_request:
+    branches: [ master, '*-ci' ]
+  workflow_dispatch:
+
+jobs:
+  extension:
+    uses: "./.github/workflows/build_windows_extension.yml"
+
+  cpp:
+    needs: [extension]
+    uses: "./.github/workflows/build_windows_cpp.yml"

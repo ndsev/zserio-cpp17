@@ -1,14 +1,10 @@
 name: Windows extension
 
 on:
-  push:
-    branches: [ master, '*-ci' ]
-  pull_request:
-    branches: [ master, '*-ci' ]
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  zserio:
+  extension:
     strategy:
       fail-fast: false
       matrix:

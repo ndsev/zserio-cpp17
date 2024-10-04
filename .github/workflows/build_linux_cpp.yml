@@ -1,11 +1,7 @@
 name: Linux C++17
 
 on:
-  push:
-    branches: [ master, '*-ci' ]
-  pull_request:
-    branches: [ master, '*-ci' ]
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   cpp:
@@ -123,3 +119,13 @@ jobs:
               || format('clang{0}', matrix.clang-version) }}-\
           cxx${{matrix.cxx-standard}}-${{matrix.build-type}}"
         path: build/runtime_lib/**/runtime/*.a
+
+    - name: Download Zserio bundle artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: zserio-java8
+        path: distr
+
+    - name: Run Zserio tests
+      run: |
+        CMAKE_EXTRA_ARGS="-DZSERIO_USE_BUNDLE=ON" scripts/test.sh cpp-${PACKAGE}
