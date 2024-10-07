@@ -1,7 +1,7 @@
-add_library(bitmask_types_zs STATIC zs/bitmask_types.zs)
+add_library(bitmask_types_zs STATIC  ${TEST_ZS_ROOT}/bitmask_types.zs)
 zserio_generate_cpp(
     TARGET bitmask_types_zs
-    SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zs
+    SRC_DIR  ${TEST_ZS_ROOT}
     GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/gen
     EXTRA_ARGS ${ZSERIO_EXTRA_ARGS}
     GENERATED_SOURCES_VAR GENERATED_SOURCES
@@ -13,6 +13,10 @@ if (ZSERIO_LOG)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/zserio_log.txt "${ZSERIO_LOG}")
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
+
+list(FILTER GENERATED_SOURCES INCLUDE REGEX
+    ".*/uint64_bitmask/.*|.*/bitfield_bitmask/.*")
+set_target_properties(bitmask_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
 
 add_custom_test(bitmask_types
     DEPENDS
