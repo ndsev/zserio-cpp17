@@ -724,18 +724,32 @@ TEST(TypesTest, unsignedBitFieldTypes)
 
 TEST(TypesTest, signedDynIntTypes)
 {
-    testSignedDynInt<DynInt8>();
-    testSignedDynInt<DynInt16>();
-    testSignedDynInt<DynInt32>();
-    testSignedDynInt<DynInt64>();
+    testSignedDynInt<DynInt8<>>();
+    testSignedDynInt<DynInt16<>>();
+    testSignedDynInt<DynInt32<>>();
+    testSignedDynInt<DynInt64<>>();
+
+    testSignedInt<DynInt8<5>, -16, 15>();
+    testSignedStdInt<DynInt8<8>>();
+
+    ASSERT_TRUE(detail::needs_range_check_v<DynInt8<>>);
+    ASSERT_TRUE(detail::needs_range_check_v<DynInt8<5>>);
+    ASSERT_FALSE(detail::needs_range_check_v<DynInt8<8>>);
 }
 
 TEST(TypesTest, unsignedDynIntTypes)
 {
-    testUnsignedDynInt<DynUInt8>();
-    testUnsignedDynInt<DynUInt16>();
-    testUnsignedDynInt<DynUInt32>();
-    testUnsignedDynInt<DynUInt64>();
+    testUnsignedDynInt<DynUInt8<>>();
+    testUnsignedDynInt<DynUInt16<>>();
+    testUnsignedDynInt<DynUInt32<>>();
+    testUnsignedDynInt<DynUInt64<>>();
+
+    testUnsignedInt<DynUInt8<5>, 31ULL>();
+    testUnsignedStdInt<DynUInt8<8>>();
+
+    ASSERT_TRUE(detail::needs_range_check_v<DynUInt8<>>);
+    ASSERT_TRUE(detail::needs_range_check_v<DynUInt8<5>>);
+    ASSERT_FALSE(detail::needs_range_check_v<DynUInt8<8>>);
 }
 
 TEST(TypesTest, signedVarIntTypes)
@@ -771,7 +785,7 @@ TEST(TypesTest, typeCast)
     }
     {
         Int16 i16;
-        DynInt8 dynI8 = typeCast<DynInt8>(i16);
+        DynInt8<> dynI8 = typeCast<DynInt8<>>(i16);
         i16 = Int16(dynI8);
     }
     {

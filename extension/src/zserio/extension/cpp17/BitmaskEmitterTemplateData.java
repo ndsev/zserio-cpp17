@@ -7,6 +7,7 @@ import java.util.List;
 import zserio.ast.BitmaskType;
 import zserio.ast.BitmaskValue;
 import zserio.ast.TypeInstantiation;
+import zserio.extension.common.ExpressionFormatter;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.NativeIntegralType;
 
@@ -28,7 +29,11 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
         final NativeIntegralType nativeBaseType = cppNativeMapper.getCppIntegralType(bitmaskTypeInstantiation);
         addHeaderIncludesForType(nativeBaseType);
 
-        underlyingTypeInfo = new NativeIntegralTypeInfoTemplateData(nativeBaseType, bitmaskTypeInstantiation);
+        final ExpressionFormatter cppExpressionFormatter =
+                context.getExpressionFormatter(new HeaderIncludeCollectorAdapter(this));
+
+        underlyingTypeInfo = new NativeIntegralTypeInfoTemplateData(
+                cppExpressionFormatter, nativeBaseType, bitmaskTypeInstantiation);
 
         final List<BitmaskValue> bitmaskValues = bitmaskType.getValues();
         values = new ArrayList<BitmaskValueData>(bitmaskValues.size());

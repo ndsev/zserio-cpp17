@@ -5,6 +5,7 @@ import zserio.ast.BitmaskType;
 import zserio.ast.BooleanType;
 import zserio.ast.BytesType;
 import zserio.ast.CompoundType;
+import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.EnumType;
 import zserio.ast.StringType;
 import zserio.ast.TypeInstantiation;
@@ -13,6 +14,7 @@ import zserio.ast.ZserioType;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.CppNativeArrayableType;
 import zserio.extension.cpp17.types.CppNativeType;
+import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
 
 /**
  * FreeMarker template data with info about types.
@@ -82,6 +84,7 @@ public class NativeTypeInfoTemplateData
             TypeInstantiation typeInstantiation, TypeReference typeReference) throws ZserioExtensionException
     {
         typeFullName = cppNativeType.getFullName();
+
         isSimple = cppNativeType.isSimple();
 
         // we suppose that zserio enum, bitmask, etc. are mapped to C++ native enum, bitmask, etc.

@@ -185,8 +185,15 @@ public:
     using NumericTypeWrapper<VALUE_TYPE>::NumericTypeWrapper;
 };
 
+template <typename VALUE_TYPE, BitSize BIT_SIZE = 0>
+class DynIntWrapper : public IntWrapper<VALUE_TYPE, BIT_SIZE>
+{
+public:
+    using IntWrapper<VALUE_TYPE, BIT_SIZE>::IntWrapper;
+};
+
 template <typename VALUE_TYPE>
-class DynIntWrapper : public IntWrapper<VALUE_TYPE>
+class DynIntWrapper<VALUE_TYPE, 0> : public IntWrapper<VALUE_TYPE>
 {
 public:
     using IntWrapper<VALUE_TYPE>::IntWrapper;
@@ -244,8 +251,13 @@ struct needs_range_check<IntWrapper<VALUE_TYPE, BIT_SIZE>>
             (BIT_SIZE == 8 || BIT_SIZE == 16 || BIT_SIZE == 32 || BIT_SIZE == 64));
 };
 
+template <typename VALUE_TYPE, BitSize BIT_SIZE>
+struct needs_range_check<DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
+        : needs_range_check<IntWrapper<VALUE_TYPE, BIT_SIZE>>
+{};
+
 template <typename VALUE_TYPE>
-struct needs_range_check<DynIntWrapper<VALUE_TYPE>> : std::true_type
+struct needs_range_check<DynIntWrapper<VALUE_TYPE, 0>> : std::true_type
 {};
 
 template <typename VALUE_TYPE, VarIntType VAR_TYPE>
@@ -287,24 +299,24 @@ struct RangeChecker
 };
 
 template <typename VALUE_TYPE>
-struct RangeChecker<DynIntWrapper<VALUE_TYPE>>
+struct RangeChecker<DynIntWrapper<VALUE_TYPE, 0>>
 {
     static constexpr void check(VALUE_TYPE value, BitSize numBits)
     {
         if constexpr (std::is_signed_v<VALUE_TYPE>)
         {
-            if (value < NumericLimits<DynIntWrapper<VALUE_TYPE>>::min(numBits) ||
-                    value > NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits))
+            if (value < NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::min(numBits) ||
+                    value > NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits))
             {
                 throw OutOfRangeException("Value '")
                         << value << "' out of range '<"
-                        << NumericLimits<DynIntWrapper<VALUE_TYPE>>::min(numBits) << ", "
-                        << NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits) << ">'!";
+                        << NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::min(numBits) << ", "
+                        << NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits) << ">'!";
             }
         }
         else
         {
-            if (value > NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits))
+            if (value > NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits))
             {
                 throw OutOfRangeException("Value '")
                         << value << "' out of bounds '"
@@ -426,12 +438,20 @@ private:
 };
 
 /**
- * Specialization of NumericLimits template for dynamic length integral types wrapper.
+ * Specialization of NumericLimits template for dynamic length integral types wrapper which has known bit size.
+ */
+template <typename VALUE_TYPE, BitSize BIT_SIZE>
+struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
+        : NumericLimits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
+{};
+
+/**
+ * Specialization of NumericLimits template for dynamic length integral types wrapper with unknown bit size.
  */
 template <typename VALUE_TYPE>
-struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE>>
+struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE, 0>>
 {
-    static constexpr detail::DynIntWrapper<VALUE_TYPE> min(BitSize numBits)
+    static constexpr detail::DynIntWrapper<VALUE_TYPE, 0> min(BitSize numBits)
     {
         if constexpr (std::is_signed_v<VALUE_TYPE>)
         {
@@ -445,7 +465,7 @@ struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE>>
         }
     }
 
-    static constexpr detail::DynIntWrapper<VALUE_TYPE> max(BitSize numBits)
+    static constexpr detail::DynIntWrapper<VALUE_TYPE, 0> max(BitSize numBits)
     {
         checkNumBits(numBits);
 
@@ -799,15 +819,23 @@ using UInt61 = detail::IntWrapper<uint64_t, 61>;
 using UInt62 = detail::IntWrapper<uint64_t, 62>;
 using UInt63 = detail::IntWrapper<uint64_t, 63>;
 
-using DynInt8 = detail::DynIntWrapper<int8_t>;
-using DynInt16 = detail::DynIntWrapper<int16_t>;
-using DynInt32 = detail::DynIntWrapper<int32_t>;
-using DynInt64 = detail::DynIntWrapper<int64_t>;
+template <BitSize BIT_SIZE = 0>
+using DynInt8 = detail::DynIntWrapper<int8_t, BIT_SIZE>;
+template <BitSize BIT_SIZE = 0>
+using DynInt16 = detail::DynIntWrapper<int16_t, BIT_SIZE>;
+template <BitSize BIT_SIZE = 0>
+using DynInt32 = detail::DynIntWrapper<int32_t, BIT_SIZE>;
+template <BitSize BIT_SIZE = 0>
+using DynInt64 = detail::DynIntWrapper<int64_t, BIT_SIZE>;
 
-using DynUInt8 = detail::DynIntWrapper<uint8_t>;
-using DynUInt16 = detail::DynIntWrapper<uint16_t>;
-using DynUInt32 = detail::DynIntWrapper<uint32_t>;
-using DynUInt64 = detail::DynIntWrapper<uint64_t>;
+template <BitSize BIT_SIZE = 0>
+using DynUInt8 = detail::DynIntWrapper<uint8_t, BIT_SIZE>;
+template <BitSize BIT_SIZE = 0>
+using DynUInt16 = detail::DynIntWrapper<uint16_t, BIT_SIZE>;
+template <BitSize BIT_SIZE = 0>
+using DynUInt32 = detail::DynIntWrapper<uint32_t, BIT_SIZE>;
+template <BitSize BIT_SIZE = 0>
+using DynUInt64 = detail::DynIntWrapper<uint64_t, BIT_SIZE>;
 
 using VarInt16 = detail::VarIntWrapper<int16_t, detail::VarIntType::VAR16>;
 using VarInt32 = detail::VarIntWrapper<int32_t, detail::VarIntType::VAR32>;

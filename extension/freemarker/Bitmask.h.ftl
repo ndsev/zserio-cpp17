@@ -19,7 +19,7 @@ class ${name}
 public:
     /** Definition for bitmask zserio type. */
     using ZserioType = ${underlyingTypeInfo.typeFullName};
-    
+
     /** Definition for underlying type of bitmask values. */
     using underlying_type = ZserioType::value_type;
 

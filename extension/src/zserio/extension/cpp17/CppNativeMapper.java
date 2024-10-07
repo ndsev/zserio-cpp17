@@ -34,6 +34,7 @@ import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.symbols.CppNativeSymbol;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeAllocType;
+import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
 import zserio.extension.cpp17.types.NativeIntegralType;
 import zserio.extension.cpp17.types.NativeStringViewType;
 import zserio.extension.cpp17.types.NativeUserType;
@@ -149,6 +150,7 @@ public final class CppNativeMapper
     {
         final boolean isSigned = instantiation.getBaseType().isSigned();
         final int maxBitSize = instantiation.getMaxBitSize();
+
         return mapDynamicBitFieldType(isSigned, maxBitSize);
     }
 
@@ -806,15 +808,23 @@ public final class CppNativeMapper
     private final static NativeIntegralType uint63Type = new NativeIntegralType(63, false);
     private final static NativeIntegralType uint64Type = new NativeIntegralType(64, false);
 
-    private final static NativeIntegralType dynInt8Type = new NativeIntegralType("DynInt8", 8, true);
-    private final static NativeIntegralType dynInt16Type = new NativeIntegralType("DynInt16", 16, true);
-    private final static NativeIntegralType dynInt32Type = new NativeIntegralType("DynInt32", 32, true);
-    private final static NativeIntegralType dynInt64Type = new NativeIntegralType("DynInt64", 64, true);
+    private final static NativeDynamicBitFieldType dynInt8Type =
+            new NativeDynamicBitFieldType("DynInt8", 8, true);
+    private final static NativeDynamicBitFieldType dynInt16Type =
+            new NativeDynamicBitFieldType("DynInt16", 16, true);
+    private final static NativeDynamicBitFieldType dynInt32Type =
+            new NativeDynamicBitFieldType("DynInt32", 32, true);
+    private final static NativeDynamicBitFieldType dynInt64Type =
+            new NativeDynamicBitFieldType("DynInt64", 64, true);
 
-    private final static NativeIntegralType dynUInt8Type = new NativeIntegralType("DynUInt8", 8, false);
-    private final static NativeIntegralType dynUInt16Type = new NativeIntegralType("DynUInt16", 16, false);
-    private final static NativeIntegralType dynUInt32Type = new NativeIntegralType("DynUInt32", 32, false);
-    private final static NativeIntegralType dynUInt64Type = new NativeIntegralType("DynUInt64", 64, false);
+    private final static NativeDynamicBitFieldType dynUInt8Type =
+            new NativeDynamicBitFieldType("DynUInt8", 8, false);
+    private final static NativeDynamicBitFieldType dynUInt16Type =
+            new NativeDynamicBitFieldType("DynUInt16", 16, false);
+    private final static NativeDynamicBitFieldType dynUInt32Type =
+            new NativeDynamicBitFieldType("DynUInt32", 32, false);
+    private final static NativeDynamicBitFieldType dynUInt64Type =
+            new NativeDynamicBitFieldType("DynUInt64", 64, false);
 
     private final static NativeIntegralType varInt16Type = new NativeIntegralType("VarInt16", 16, true);
     private final static NativeIntegralType varInt32Type = new NativeIntegralType("VarInt32", 32, true);
