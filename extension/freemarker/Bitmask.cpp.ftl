@@ -33,7 +33,6 @@ ${types.string.name} ${name}::toString(const ${types.string.name}::allocator_typ
             static_cast<underlying_type>(m_value), allocator) + "[" + result + "]";
 }
 <@namespace_end package.path/>
-
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}& value) const

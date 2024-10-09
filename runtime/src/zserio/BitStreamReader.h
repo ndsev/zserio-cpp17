@@ -279,14 +279,14 @@ public:
      * \return Read string.
      */
     template <typename ALLOC = std::allocator<char>>
-    string<ALLOC> readString(const ALLOC& alloc = ALLOC())
+    basic_string<ALLOC> readString(const ALLOC& alloc = ALLOC())
     {
         const size_t len = static_cast<size_t>(readVarSize());
         const BitPosType beginBitPosition = getBitPosition();
         if ((beginBitPosition & 0x07U) != 0)
         {
             // we are not aligned to byte
-            string<ALLOC> value{alloc};
+            basic_string<ALLOC> value{alloc};
             value.reserve(len);
             for (size_t i = 0; i < len; ++i)
             {
@@ -302,7 +302,7 @@ public:
             // we are aligned to byte
             setBitPosition(beginBitPosition + len * 8);
             Span<const uint8_t>::iterator beginIt = m_context.buffer.begin() + beginBitPosition / 8;
-            return string<ALLOC>(beginIt, beginIt + len, alloc);
+            return basic_string<ALLOC>(beginIt, beginIt + len, alloc);
         }
     }
 

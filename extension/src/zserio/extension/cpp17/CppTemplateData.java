@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import zserio.ast.PackageName;
 import zserio.extension.cpp17.types.CppNativeType;
+import zserio.extension.cpp17.types.NativeAllocType;
 
 /**
  * Base class for all C++ template data for FreeMarker.
@@ -159,7 +160,10 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypesTemplateData(TypesContext typesContext, CppNativeMapper nativeMapper)
         {
             allocator = new AllocatorTemplateData(typesContext);
-            string = new TypeTemplateData(nativeMapper.getStringType());
+            string = new TypeTemplateData(
+                    nativeMapper.getStringType(), nativeMapper.getStringType().needsAllocatorArgument());
+            vector = new TypeTemplateData(
+                    nativeMapper.getVectorType(), nativeMapper.getVectorType().needsAllocatorArgument());
         }
 
         public AllocatorTemplateData getAllocator()
@@ -170,6 +174,11 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getString()
         {
             return string;
+        }
+
+        public TypeTemplateData getVector()
+        {
+            return vector;
         }
 
         public static final class AllocatorTemplateData
@@ -216,14 +225,22 @@ public abstract class CppTemplateData implements IncludeCollector
         {
             public TypeTemplateData(CppNativeType type)
             {
-                name = type.getFullName();
-                systemIncludes = type.getSystemIncludeFiles();
-                userIncludes = type.getUserIncludeFiles();
+                this(type, false);
+            }
+
+            public TypeTemplateData(NativeAllocType type)
+            {
+                this(type, type.needsAllocatorArgument());
             }
 
             public String getName()
             {
                 return name;
+            }
+
+            public boolean getNeedsAllocatorArgument()
+            {
+                return needsAllocatorArgument;
             }
 
             public Iterable<String> getSystemIncludes()
@@ -236,13 +253,23 @@ public abstract class CppTemplateData implements IncludeCollector
                 return userIncludes;
             }
 
+            private TypeTemplateData(CppNativeType type, boolean needsAllocatorArgument)
+            {
+                name = type.getFullName();
+                this.needsAllocatorArgument = needsAllocatorArgument;
+                systemIncludes = type.getSystemIncludeFiles();
+                userIncludes = type.getUserIncludeFiles();
+            }
+
             private final String name;
+            private final boolean needsAllocatorArgument;
             private final Iterable<String> systemIncludes;
             private final Iterable<String> userIncludes;
         }
 
         private final AllocatorTemplateData allocator;
         private final TypeTemplateData string;
+        private final TypeTemplateData vector;
     }
 
     private final String generatorDescription;

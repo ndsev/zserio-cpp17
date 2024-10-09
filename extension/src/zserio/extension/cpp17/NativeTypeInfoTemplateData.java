@@ -1,20 +1,15 @@
 package zserio.extension.cpp17;
 
-import zserio.ast.ArrayType;
 import zserio.ast.BitmaskType;
 import zserio.ast.BooleanType;
 import zserio.ast.BytesType;
-import zserio.ast.CompoundType;
-import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.EnumType;
 import zserio.ast.StringType;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
 import zserio.ast.ZserioType;
 import zserio.extension.common.ZserioExtensionException;
-import zserio.extension.cpp17.types.CppNativeArrayableType;
 import zserio.extension.cpp17.types.CppNativeType;
-import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
 
 /**
  * FreeMarker template data with info about types.
@@ -75,11 +70,6 @@ public class NativeTypeInfoTemplateData
         return isBytes;
     }
 
-    public ArrayTraitsTemplateData getArrayTraits()
-    {
-        return arrayTraits;
-    }
-
     private NativeTypeInfoTemplateData(CppNativeType cppNativeType, ZserioType baseType,
             TypeInstantiation typeInstantiation, TypeReference typeReference) throws ZserioExtensionException
     {
@@ -94,11 +84,6 @@ public class NativeTypeInfoTemplateData
         isBoolean = baseType instanceof BooleanType;
         isString = baseType instanceof StringType;
         isBytes = baseType instanceof BytesType;
-
-        if (cppNativeType instanceof CppNativeArrayableType)
-            arrayTraits = new ArrayTraitsTemplateData(((CppNativeArrayableType)cppNativeType).getArrayTraits());
-        else
-            arrayTraits = null;
     }
 
     private final String typeFullName;
@@ -108,5 +93,4 @@ public class NativeTypeInfoTemplateData
     private final boolean isBoolean;
     private final boolean isString;
     private final boolean isBytes;
-    private final ArrayTraitsTemplateData arrayTraits;
 }

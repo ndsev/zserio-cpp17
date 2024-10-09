@@ -288,7 +288,6 @@ inline ${name} operator^=(${name}& lhs, const ${name}& rhs)
     return lhs;
 }
 <@namespace_end package.path/>
-
 <@namespace_begin ["std"]/>
 
 template <>

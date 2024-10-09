@@ -77,27 +77,7 @@ namespace ${namespace}
     </#if>
 </#macro>
 
-<#macro heap_optional_type_name typeName>
-    ${types.heapOptionalHolder.name}<${typeName}<#t>
-            <#if types.heapOptionalHolder.needsAllocatorArgument>, ${types.allocator.name}<${typeName}></#if>><#t>
-</#macro>
-
-<#macro unique_ptr_type_name typeName>
-    ${types.uniquePtr.name}<${typeName}<#t>
-            <#if types.uniquePtr.needsAllocatorArgument>, ${types.allocator.name}<${typeName}></#if>><#t>
-</#macro>
-
 <#macro vector_type_name typeName>
     ${types.vector.name}<${typeName}<#t>
             <#if types.vector.needsAllocatorArgument>, ${types.allocator.name}<${typeName}></#if>><#t>
-</#macro>
-
-<#macro map_type_name keyTypeName valueTypeName>
-    ${types.map.name}<${keyTypeName}, ${valueTypeName}<#t>
-            <#if types.map.needsAllocatorArgument>, ${types.allocator.name}<${typeName}></#if>><#t>
-</#macro>
-
-<#macro set_type_name typeName>
-    ${types.set.name}<${typeName}<#t>
-            <#if types.set.needsAllocatorArgument>, ${types.allocator.name}<${typeName}></#if>><#t>
 </#macro>

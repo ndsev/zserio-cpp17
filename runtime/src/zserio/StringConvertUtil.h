@@ -162,10 +162,10 @@ inline const char* convertBoolToString(bool value)
  * \return String representation of the given integral value.
  */
 template <typename ALLOC, typename T>
-string<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
+basic_string<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
 {
     std::array<char, 24> buffer = {};
-    return string<ALLOC>(convertIntToString(buffer, value), allocator);
+    return basic_string<ALLOC>(convertIntToString(buffer, value), allocator);
 }
 
 /**
@@ -178,9 +178,9 @@ string<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
  * \param allocator Allocator to use for the string allocation.
  */
 template <typename ALLOC>
-string<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
+basic_string<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
 {
-    return string<ALLOC>(convertBoolToString(value), allocator);
+    return basic_string<ALLOC>(convertBoolToString(value), allocator);
 }
 
 /**
@@ -190,9 +190,9 @@ string<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
  * \param allocator Allocator to use for the string allocation.
  */
 template <typename ALLOC>
-string<ALLOC> toString(std::string_view value, const ALLOC& allocator = ALLOC())
+basic_string<ALLOC> toString(std::string_view value, const ALLOC& allocator = ALLOC())
 {
-    return string<ALLOC>(value, allocator);
+    return basic_string<ALLOC>(value, allocator);
 }
 
 /**
@@ -203,7 +203,7 @@ string<ALLOC> toString(std::string_view value, const ALLOC& allocator = ALLOC())
  * \return String representation of the given value.
  */
 template <typename T>
-string<std::allocator<char>> toString(T value)
+basic_string<std::allocator<char>> toString(T value)
 {
     return toString<std::allocator<char>>(value);
 }

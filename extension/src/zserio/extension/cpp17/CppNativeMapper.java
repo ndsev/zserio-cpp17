@@ -34,6 +34,8 @@ import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.symbols.CppNativeSymbol;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeAllocType;
+import zserio.extension.cpp17.types.NativeArrayType;
+import zserio.extension.cpp17.types.NativeCompoundType;
 import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
 import zserio.extension.cpp17.types.NativeIntegralType;
 import zserio.extension.cpp17.types.NativeStringViewType;
@@ -52,7 +54,9 @@ public final class CppNativeMapper
         final TypesContext.AllocatorDefinition allocatorDefinition = typesContext.getAllocatorDefinition();
 
         stringViewType = new NativeStringViewType();
+        bitBufferType = new NativeAllocType(typesContext.getBitBuffer(), allocatorDefinition, "uint8_t");
         stringType = new NativeAllocType(typesContext.getString(), allocatorDefinition, "char");
+        vectorType = new NativeAllocType(typesContext.getVector(), allocatorDefinition);
     }
 
     public CppNativeSymbol getCppSymbol(AstNode symbol) throws ZserioExtensionException
@@ -137,12 +141,17 @@ public final class CppNativeMapper
         return stringType;
     }
 
+    public NativeAllocType getVectorType()
+    {
+        return vectorType;
+    }
+
     private CppNativeType mapArray(ArrayInstantiation instantiation) throws ZserioExtensionException
     {
         final TypeInstantiation elementInstantiation = instantiation.getElementTypeInstantiation();
 
-        throw new ZserioExtensionException("Unhandled arrayable type '" +
-                elementInstantiation.getClass().getName() + "' in CppNativeMapper!");
+        final CppNativeType nativeType = getCppType(elementInstantiation);
+        return new NativeArrayType(nativeType, vectorType);
     }
 
     private static CppNativeType mapDynamicBitFieldInstantiation(DynamicBitFieldInstantiation instantiation)
@@ -582,7 +591,7 @@ public final class CppNativeMapper
         @Override
         public void visitExternType(ExternType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            cppType = bitBufferType;
         }
 
         @Override
@@ -612,7 +621,7 @@ public final class CppNativeMapper
         @Override
         public void visitStringType(StringType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            cppType = stringType;
         }
 
         @Override
@@ -654,7 +663,10 @@ public final class CppNativeMapper
 
         private void mapCompoundType(CompoundType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            final PackageName packageName = type.getPackage().getPackageName();
+            final String name = type.getName();
+            final String includeFileName = getIncludePath(packageName, name);
+            cppType = new NativeCompoundType(packageName, name, includeFileName);
         }
 
         private void mapAliasType(ZserioType aliasType, TypeReference referencedType)
@@ -671,7 +683,9 @@ public final class CppNativeMapper
     private final static String HEADER_SUFFIX = ".h";
 
     private final NativeStringViewType stringViewType;
+    private final NativeAllocType bitBufferType;
     private final NativeAllocType stringType;
+    private final NativeAllocType vectorType;
 
     private final static NativeZserioWrapperType booleanType = new NativeZserioWrapperType("Bool", "bool");
     private final static NativeZserioWrapperType float16Type = new NativeZserioWrapperType("Float16", "float");

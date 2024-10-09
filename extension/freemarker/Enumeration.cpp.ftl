@@ -1,9 +1,9 @@
 <#include "FileHeader.inc.ftl">
 <@file_header generatorDescription/>
 
-#include <zserio/StringConvertUtil.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/StringConvertUtil.h>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -44,7 +44,6 @@ ${fullName} valueToEnum(${underlyingTypeInfo.typeFullName} rawValue)
     }
 }
 <@namespace_end ["zserio"]/>
-
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}& value) const

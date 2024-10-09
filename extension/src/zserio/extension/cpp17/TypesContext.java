@@ -15,16 +15,26 @@ public final class TypesContext
 
         if (allocator.equals(STD_ALLOCATOR))
         {
-            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", true, false, "zserio/String.h");
+            bitBuffer = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "BitBuffer", false, false, "zserio/BitBuffer.h");
+            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", false, false, "zserio/String.h");
+            vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "vector", true, false, "zserio/Vector.h");
         }
         else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
         {
+            bitBuffer = new NativeTypeDefinition(
+                    ZSERIO_PMR_PACKAGE_NAME, "BitBuffer", false, false, "zserio/pmr/BitBuffer.h");
             string = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "string", false, false, "zserio/pmr/String.h");
+            vector = new NativeTypeDefinition(
+                    ZSERIO_PMR_PACKAGE_NAME, "vector", true, false, "zserio/pmr/Vector.h");
         }
         else
         {
+            bitBuffer = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "BasicBitBuffer", true, true, "zserio/BitBuffer.h");
             string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", true, true, "zserio/String.h");
+            vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "vector", true, true, "zserio/Vector.h");
         }
     }
 
@@ -33,9 +43,19 @@ public final class TypesContext
         return allocator;
     }
 
+    public NativeTypeDefinition getBitBuffer()
+    {
+        return bitBuffer;
+    }
+
     public NativeTypeDefinition getString()
     {
         return string;
+    }
+
+    public NativeTypeDefinition getVector()
+    {
+        return vector;
     }
 
     public static final class AllocatorDefinition
@@ -118,7 +138,9 @@ public final class TypesContext
     }
 
     private final AllocatorDefinition allocator;
+    private final NativeTypeDefinition bitBuffer;
     private final NativeTypeDefinition string;
+    private final NativeTypeDefinition vector;
 
     public static final AllocatorDefinition PROPAGATING_POLYMORPHIC_ALLOCATOR = new AllocatorDefinition(
             "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PolymorphicAllocator.h", "");

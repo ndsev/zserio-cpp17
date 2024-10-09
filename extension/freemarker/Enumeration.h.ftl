@@ -68,7 +68,6 @@ size_t enumToOrdinal<${fullName}>(${fullName} value);
 template <>
 ${fullName} valueToEnum<${fullName}>(${underlyingTypeInfo.typeFullName} rawValue);
 <@namespace_end ["zserio"]/>
-
 <@namespace_begin ["std"]/>
 
 template <>

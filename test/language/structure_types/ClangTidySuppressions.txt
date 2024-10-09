@@ -1,0 +1,7 @@
+# false positive
+cert-dcl58-cpp:gen/structure_types/empty_structure/EmptyStructure.cpp
+cert-dcl58-cpp:gen/structure_types/simple_structure/SimpleStructure.cpp
+cert-dcl58-cpp:gen/structure_types/one_string_structure/OneStringStructure.cpp
+
+performance-move-const-arg:cpp/EmptyStructureTest.cpp
+performance-move-const-arg:cpp/SimpleStructureTest.cpp
