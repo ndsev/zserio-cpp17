@@ -1,7 +1,3 @@
-# false positive
-cert-dcl58-cpp:gen/bitmask_types/bitfield_bitmask/Permission.cpp
-cert-dcl58-cpp:gen/bitmask_types/uint64_bitmask/Permission.cpp
-
 google-explicit-constructor:gen/bitmask_types/bitfield_bitmask/Permission.h
 google-explicit-constructor:gen/bitmask_types/uint64_bitmask/Permission.h
 

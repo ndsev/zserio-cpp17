@@ -1,2 +1,0 @@
-# TODO[Mi-L@]: verify that overriding std::hash for custom enumerations types is ok!
-cert-dcl58-cpp:gen/enumeration_types/uint8_enum/DarkColor.cpp

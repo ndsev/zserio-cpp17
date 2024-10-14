@@ -1,0 +1,3 @@
+bugprone-exception-escape:gen/union_types/simple_union/SimpleUnion.h
+
+performance-move-const-arg:cpp/EmptyUnionTest.cpp

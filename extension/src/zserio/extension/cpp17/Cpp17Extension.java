@@ -81,6 +81,7 @@ public final class Cpp17Extension implements Extension
         emitters.add(new BitmaskEmitter(outputFileManager, cppParameters, packedTypesCollector));
         emitters.add(new EnumerationEmitter(outputFileManager, cppParameters, packedTypesCollector));
         emitters.add(new StructureEmitter(outputFileManager, cppParameters, packedTypesCollector));
+        emitters.add(new UnionEmitter(outputFileManager, cppParameters, packedTypesCollector));
 
         // emit C++ code
         for (CppDefaultEmitter emitter : emitters)

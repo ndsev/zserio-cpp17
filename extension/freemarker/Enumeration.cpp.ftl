@@ -10,11 +10,6 @@
 <@user_includes cppUserIncludes, false/>
 <@namespace_begin ["zserio"]/>
 
-// This is full specialization of enumeration traits and methods for ${name} enumeration.
-constexpr ::std::array<::std::string_view, ${items?size}> EnumTraits<${fullName}>::names;
-constexpr ::std::array<${fullName}, ${items?size}> EnumTraits<${fullName}>::values;
-constexpr ::std::string_view EnumTraits<${fullName}>::enumName;
-
 template <>
 size_t enumToOrdinal(${fullName} value)
 {

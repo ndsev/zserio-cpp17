@@ -8,6 +8,7 @@
 <@runtime_version_check generatorVersion/>
 
 #include <memory>
+#include <zserio/Variant.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>
@@ -23,14 +24,21 @@ struct ${name}
     explicit ${name}(const allocator_type& allocator) noexcept;
 <#list fieldList>
 
-    explicit ${name}(
+    enum ChoiceTag : size_t
+    {
+        UNDEFINED_CHOICE,
     <#items as field>
-        <@field_data_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept;</#if>
+        <@choice_tag_name field/><#sep>,</#sep>
     </#items>
+    };
 </#list>
+<#list fieldList>
 
-<#list fieldList as field>
-    <@field_data_type_name field/> ${field.name};
+    ::zserio::Variant<ChoiceTag,
+            ::std::monostate,
+    <#items as field>
+            <@field_data_type_name field/><#if field?has_next>,<#else>> variant;</#if>
+    </#items>
 </#list>
 };
 

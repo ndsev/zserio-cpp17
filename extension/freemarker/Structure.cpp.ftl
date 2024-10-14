@@ -13,7 +13,7 @@ ${name}::${name}() noexcept :
         ${name}(allocator_type{})
 {}
 
-${name}::${name}(const allocator_type& allocator) noexcept<#rt>
+${name}::${name}(const allocator_type&<#if needs_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
         <#lt> :
         <#items as field>
@@ -22,9 +22,7 @@ ${name}::${name}(const allocator_type& allocator) noexcept<#rt>
 <#else>
 
 </#list>
-{
-    (void)allocator;
-}
+{}
 <#if fieldList?has_content>
 
 ${name}::${name}(
