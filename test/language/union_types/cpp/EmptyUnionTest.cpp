@@ -12,12 +12,15 @@ TEST(EmptyUnionDataTest, emptyConstructor)
 {
     {
         EmptyUnion emptyUnion;
+        (void)emptyUnion;
     }
     {
         EmptyUnion emptyUnion = {};
+        (void)emptyUnion;
     }
     {
         EmptyUnion emptyUnion(allocator_type{});
+        (void)emptyUnion;
     }
 }
 

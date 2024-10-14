@@ -12,12 +12,15 @@ TEST(EmptyStructureDataTest, emptyConstructor)
 {
     {
         EmptyStructure emptyStructure;
+        (void)emptyStructure;
     }
     {
         EmptyStructure emptyStructure = {};
+        (void)emptyStructure;
     }
     {
         EmptyStructure emptyStructure(allocator_type{});
+        (void)emptyStructure;
     }
 }
 
