@@ -62,7 +62,8 @@ jobs:
           fi
         fi
 
-        CMAKE_EXTRA_ARGS=("-DZSERIO_ENABLE_WERROR=1"
+        CMAKE_EXTRA_ARGS=("-DZSERIO_ENABLE_WERROR=ON"
+                          "-DZSERIO_USE_BUNDLE=ON"
                           "-DCMAKE_BUILD_TYPE=${{matrix.build-type}}"
                           "-DCMAKE_CXX_STANDARD=${{matrix.cxx-standard}}")
         echo "CMAKE_EXTRA_ARGS=${CMAKE_EXTRA_ARGS[@]}" >> ${GITHUB_ENV}
@@ -129,4 +130,4 @@ jobs:
 
     - name: Run Zserio tests
       run: |
-        CMAKE_EXTRA_ARGS="-DZSERIO_USE_BUNDLE=ON" scripts/test.sh cpp-${PACKAGE}
+        scripts/test.sh cpp-${PACKAGE}

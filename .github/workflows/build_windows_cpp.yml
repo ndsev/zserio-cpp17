@@ -48,9 +48,10 @@ jobs:
           echo "PACKAGE=windows64-mingw" >> ${GITHUB_ENV}
         fi
 
-        CMAKE_EXTRA_ARGS=("-DCMAKE_BUILD_TYPE=${{matrix.build-type}}"
-                          "-DCMAKE_CXX_STANDARD=${{matrix.cxx-standard}}"
-                          "-DZSERIO_ENABLE_WERROR=1")
+        CMAKE_EXTRA_ARGS=("-DZSERIO_ENABLE_WERROR=ON"
+                          "-DZSERIO_USE_BUNDLE=ON"
+                          "-DCMAKE_BUILD_TYPE=${{matrix.build-type}}"
+                          "-DCMAKE_CXX_STANDARD=${{matrix.cxx-standard}}")
 
         echo "CLANG_FORMAT_BIN=clang-format" >> ${GITHUB_ENV}
         echo "CMAKE_EXTRA_ARGS=${CMAKE_EXTRA_ARGS[@]}" >> ${GITHUB_ENV}
@@ -115,4 +116,4 @@ jobs:
     - name: Run Zserio tests
       shell: bash
       run: |
-        CMAKE_EXTRA_ARGS="-DZSERIO_USE_BUNDLE=ON" scripts/test.sh cpp-${PACKAGE}
+        scripts/test.sh cpp-${PACKAGE}
