@@ -57,6 +57,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/Types.h
     zserio/Variant.h
     zserio/Vector.h
+    zserio/View.h
     zserio/Write.h
 )
 
