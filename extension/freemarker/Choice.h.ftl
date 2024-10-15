@@ -55,6 +55,12 @@ struct ${name} : ::zserio::Variant<::zserio::detail::ChoiceTag<${name}>::Tag,
     using Base::BasicVariant;
 };
 
+bool operator==(const ${fullName}& lhs, const ${fullName}& rhs);
+bool operator<(const ${fullName}& lhs, const ${fullName}& rhs);
+bool operator!=(const ${fullName}& lhs, const ${fullName}& rhs);
+bool operator>(const ${fullName}& lhs, const ${fullName}& rhs);
+bool operator<=(const ${fullName}& lhs, const ${fullName}& rhs);
+bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs);
 <@namespace_end package.path/>
 <@namespace_begin ["std"]/>
 

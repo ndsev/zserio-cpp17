@@ -1,0 +1,2 @@
+bugprone-exception-escape:gen/choice_types/empty_choice/EmptyChoice.h
+bugprone-exception-escape:gen/choice_types/uint64_param_choice/UInt64ParamChoice.h

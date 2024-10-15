@@ -545,7 +545,7 @@ public final class CppNativeMapper
         @Override
         public void visitChoiceType(ChoiceType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            mapCompoundType(type);
         }
 
         @Override

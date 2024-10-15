@@ -12,15 +12,15 @@ TEST(EmptyUnionDataTest, emptyConstructor)
 {
     {
         EmptyUnion emptyUnion;
-        (void)emptyUnion;
+        ASSERT_EQ(EmptyUnion::ChoiceTag::UNDEFINED_CHOICE, emptyUnion.index());
     }
     {
         EmptyUnion emptyUnion = {};
-        (void)emptyUnion;
+        ASSERT_EQ(EmptyUnion::ChoiceTag::UNDEFINED_CHOICE, emptyUnion.index());
     }
     {
         EmptyUnion emptyUnion(allocator_type{});
-        (void)emptyUnion;
+        ASSERT_EQ(EmptyUnion::ChoiceTag::UNDEFINED_CHOICE, emptyUnion.index());
     }
 }
 
