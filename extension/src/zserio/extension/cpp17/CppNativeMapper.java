@@ -671,8 +671,19 @@ public final class CppNativeMapper
 
         private void mapAliasType(ZserioType aliasType, TypeReference referencedType)
         {
-            thrownException =
-                    new ZserioExtensionException("TODO Unhandled type '" + aliasType.getClass().getName());
+            try
+            {
+                final CppNativeType nativeReferencedType = CppNativeMapper.this.getCppType(referencedType);
+                final PackageName packageName = aliasType.getPackage().getPackageName();
+                final String name = aliasType.getName();
+                final String includeFileName = getIncludePath(packageName, name);
+                cppType =
+                        new NativeUserType(packageName, name, includeFileName, nativeReferencedType.isSimple());
+            }
+            catch (ZserioExtensionException exception)
+            {
+                thrownException = exception;
+            }
         }
 
         private CppNativeType cppType = null;
