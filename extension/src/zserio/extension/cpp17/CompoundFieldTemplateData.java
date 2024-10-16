@@ -44,6 +44,7 @@ public final class CompoundFieldTemplateData
 
         name = field.getName();
 
+        // TODO[Mi-L@]: use type info template data creator to correctly create integral type info template data
         typeInfo = new NativeTypeInfoTemplateData(fieldNativeType, fieldTypeInstantiation);
 
         getterName = AccessorNameFormatter.getGetterName(field);

@@ -10,6 +10,7 @@ import zserio.ast.TypeReference;
 import zserio.ast.ZserioType;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.CppNativeType;
+import zserio.extension.cpp17.types.NativeNumericWrapperType;
 
 /**
  * FreeMarker template data with info about types.
@@ -55,6 +56,11 @@ public class NativeTypeInfoTemplateData
         return isBitmask;
     }
 
+    public boolean getIsNumeric()
+    {
+        return isNumeric;
+    }
+
     public boolean getIsBoolean()
     {
         return isBoolean;
@@ -77,6 +83,8 @@ public class NativeTypeInfoTemplateData
 
         isSimple = cppNativeType.isSimple();
 
+        isNumeric = cppNativeType instanceof NativeNumericWrapperType;
+
         // we suppose that zserio enum, bitmask, etc. are mapped to C++ native enum, bitmask, etc.
         // normally, we should consult native type here (in this case we should solve subtypes as well)
         isEnum = baseType instanceof EnumType;
@@ -88,6 +96,7 @@ public class NativeTypeInfoTemplateData
 
     private final String typeFullName;
     private final boolean isSimple;
+    private final boolean isNumeric;
     private final boolean isEnum;
     private final boolean isBitmask;
     private final boolean isBoolean;

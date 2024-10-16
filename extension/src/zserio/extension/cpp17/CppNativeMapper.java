@@ -38,9 +38,9 @@ import zserio.extension.cpp17.types.NativeArrayType;
 import zserio.extension.cpp17.types.NativeCompoundType;
 import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
 import zserio.extension.cpp17.types.NativeIntegralType;
+import zserio.extension.cpp17.types.NativeNumericWrapperType;
 import zserio.extension.cpp17.types.NativeStringViewType;
 import zserio.extension.cpp17.types.NativeUserType;
-import zserio.extension.cpp17.types.NativeZserioWrapperType;
 
 /**
  * C++ native mapper.
@@ -698,10 +698,13 @@ public final class CppNativeMapper
     private final NativeAllocType stringType;
     private final NativeAllocType vectorType;
 
-    private final static NativeZserioWrapperType booleanType = new NativeZserioWrapperType("Bool", "bool");
-    private final static NativeZserioWrapperType float16Type = new NativeZserioWrapperType("Float16", "float");
-    private final static NativeZserioWrapperType float32Type = new NativeZserioWrapperType("Float32", "float");
-    private final static NativeZserioWrapperType float64Type = new NativeZserioWrapperType("Float64", "double");
+    private final static NativeNumericWrapperType booleanType = new NativeNumericWrapperType("Bool", "bool");
+    private final static NativeNumericWrapperType float16Type =
+            new NativeNumericWrapperType("Float16", "float");
+    private final static NativeNumericWrapperType float32Type =
+            new NativeNumericWrapperType("Float32", "float");
+    private final static NativeNumericWrapperType float64Type =
+            new NativeNumericWrapperType("Float64", "double");
 
     private final static NativeIntegralType int1Type = new NativeIntegralType(1, true);
     private final static NativeIntegralType int2Type = new NativeIntegralType(2, true);

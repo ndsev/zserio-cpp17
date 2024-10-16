@@ -16,7 +16,7 @@ public final class NativeStringViewType extends NativeStdType
 
     public String formatLiteral(String value)
     {
-        return CppFullNameFormatter.getFullName(getPackageName(), "::std::string_view") + "{" +
+        return CppFullNameFormatter.getFullName(getPackageName(), "string_view") + "{" +
                 CppLiteralFormatter.formatStringLiteral(value) + "}";
     }
 }

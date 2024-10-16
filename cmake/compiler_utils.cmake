@@ -31,6 +31,10 @@ function(compiler_get_warnings_setup VARNAME)
                 "-Wno-documentation-html"
                 "-Wno-documentation"
         )
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "15.0.0")
+            set(WARNINGS_SETUP_LIST
+                "${WARNINGS_SETUP_LIST} -Wno-unreachable-code-return")
+        endif ()
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "18.0.0")
             set(WARNINGS_SETUP_LIST
                 "${WARNINGS_SETUP_LIST} -Wno-unsafe-buffer-usage")

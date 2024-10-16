@@ -78,6 +78,7 @@ public final class Cpp17Extension implements Extension
         rootNode.accept(packedTypesCollector);
 
         final List<CppDefaultEmitter> emitters = new ArrayList<CppDefaultEmitter>();
+        emitters.add(new ConstEmitter(outputFileManager, cppParameters, packedTypesCollector));
         emitters.add(new BitmaskEmitter(outputFileManager, cppParameters, packedTypesCollector));
         emitters.add(new EnumerationEmitter(outputFileManager, cppParameters, packedTypesCollector));
         emitters.add(new StructureEmitter(outputFileManager, cppParameters, packedTypesCollector));

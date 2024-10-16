@@ -7,7 +7,7 @@ import zserio.extension.common.ZserioExtensionException;
 /**
  * Native C++ integral type mapping.
  */
-public class NativeIntegralType extends NativeZserioWrapperType
+public class NativeIntegralType extends NativeNumericWrapperType
 {
     public NativeIntegralType(int numBits, boolean isSigned)
     {
