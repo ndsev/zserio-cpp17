@@ -677,7 +677,7 @@ template <typename R, typename T,
         std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::value_type>, T> &&
                         std::is_base_of_v<detail::NumericTypeWrapper<typename R::value_type>, R>,
                 int> = 0>
-R typeCast(T wrapper)
+constexpr R typeCast(T wrapper)
 {
     return static_cast<typename R::value_type>(wrapper);
 }

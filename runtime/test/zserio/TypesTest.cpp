@@ -245,6 +245,10 @@ void testSignedStdInt()
 
     static_assert(NumericLimits<T>::min() == std::numeric_limits<value_type>::min(), "shall be constexpr");
     static_assert(NumericLimits<T>::max() == std::numeric_limits<value_type>::max(), "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max()) == std::numeric_limits<value_type>::max(),
+            "shall be constexpr");
+    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(std::numeric_limits<value_type>::max()),
+            "shall be constexpr");
 
     static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
     static_assert(noexcept(fromCheckedValue<T>(std::declval<value_type>())), "shall be noexcept");
@@ -280,6 +284,10 @@ void testUnsignedStdInt()
 
     static_assert(NumericLimits<T>::min() == std::numeric_limits<value_type>::min(), "shall be constexpr");
     static_assert(NumericLimits<T>::max() == std::numeric_limits<value_type>::max(), "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max()) == std::numeric_limits<value_type>::max(),
+            "shall be constexpr");
+    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(std::numeric_limits<value_type>::max()),
+            "shall be constexpr");
 
     static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
     static_assert(noexcept(fromCheckedValue<T>(std::declval<value_type>())), "shall be noexcept");
@@ -316,6 +324,8 @@ void testSignedInt()
 
     static_assert(NumericLimits<T>::min() == MIN_VALUE, "shall be constexpr");
     static_assert(NumericLimits<T>::max() == MAX_VALUE, "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max()) == MAX_VALUE, "shall be constexpr");
+    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(MAX_VALUE), "shall be constexpr");
 
     static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
     static_assert(
@@ -361,6 +371,8 @@ void testUnsignedInt()
 
     static_assert(NumericLimits<T>::min() == 0, "shall be constexpr");
     static_assert(NumericLimits<T>::max() == MAX_VALUE, "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max()) == MAX_VALUE, "shall be constexpr");
+    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(MAX_VALUE), "shall be constexpr");
 
     static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
     static_assert(
@@ -403,6 +415,8 @@ void testSignedDynInt()
 
     static_assert(NumericLimits<T>::min(8) == -128, "shall be constexpr");
     static_assert(NumericLimits<T>::max(8) == 127, "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max(8), 8) == 127, "shall be constexpr");
+    static_assert(NumericLimits<T>::max(8) == fromCheckedValue<T>(127, 8), "shall be constexpr");
 
     static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
     static_assert(!noexcept(fromCheckedValue<T>(std::declval<value_type>(), std::declval<BitSize>())),
@@ -456,6 +470,8 @@ void testUnsignedDynInt()
 
     static_assert(NumericLimits<T>::min(8) == 0, "shall be constexpr");
     static_assert(NumericLimits<T>::max(8) == 255, "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max(8), 8) == 255, "shall be constexpr");
+    static_assert(NumericLimits<T>::max(8) == fromCheckedValue<T>(255, 8), "shall be constexpr");
 
     static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
     static_assert(!noexcept(fromCheckedValue<T>(std::declval<value_type>(), std::declval<BitSize>())),
@@ -508,6 +524,8 @@ constexpr void testFloat()
         // cannot compare floating point numbers directly
         static_assert(NumericLimits<T>::min() > 0.F, "shall be constexpr");
         static_assert(NumericLimits<T>::max() > 0.F, "shall be constexpr");
+        static_assert(toCheckedValue(NumericLimits<T>::max()) > 0.F, "shall be constexpr");
+        static_assert(NumericLimits<T>::max() > fromCheckedValue<T>(0.F), "shall be constexpr");
 
         ASSERT_FLOAT_EQ(NumericLimits<T>::min(), 6.103515625e-05F);
         ASSERT_FLOAT_EQ(NumericLimits<T>::max(), 65504.F);
@@ -793,6 +811,9 @@ TEST(TypesTest, typeCast)
         Int16 i16 = typeCast<Int16>(f16);
         f16 = typeCast<Float16>(i16);
     }
+
+    constexpr Int16 i16 = 1;
+    static_assert(typeCast<Float16>(i16) > 0.F, "shall be constexpr");
 }
 
 } // namespace zserio
