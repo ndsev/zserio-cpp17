@@ -2,6 +2,7 @@
 #define ZSERIO_ALLOCATOR_HOLDER_H_INC
 
 #include <type_traits>
+#include <utility>
 
 namespace zserio
 {

@@ -15,7 +15,7 @@ bugprone-exception-escape:src/zserio/Variant.h:263
 bugprone-use-after-move:src/zserio/Variant.h:675
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:485
+cert-dcl58-cpp:src/zserio/BitBuffer.h:482
 cert-dcl58-cpp:src/zserio/Optional.h:1161
 cert-dcl58-cpp:src/zserio/Variant.h:835
 
@@ -50,16 +50,16 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 # would only bring the performance drop.
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:301
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:315
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:356
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:367
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:349
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:360
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:371
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:372
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:378
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:379
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:385
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:383
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:384
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:390
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:391
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:397
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:594
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:662
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:587
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:655
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:82
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:95
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43

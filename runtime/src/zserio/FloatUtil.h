@@ -1,7 +1,7 @@
 #ifndef ZSERIO_FLOAT_UTIL_H_INC
 #define ZSERIO_FLOAT_UTIL_H_INC
 
-#include "zserio/Types.h"
+#include <cstdint>
 
 /**
  * \file

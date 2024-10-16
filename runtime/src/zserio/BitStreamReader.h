@@ -3,16 +3,13 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <cstring>
-#include <string>
 #include <type_traits>
 
 #include "zserio/BitBuffer.h"
+#include "zserio/Bytes.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/Span.h"
 #include "zserio/String.h"
 #include "zserio/Types.h"
-#include "zserio/Vector.h"
 
 namespace zserio
 {

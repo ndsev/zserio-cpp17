@@ -1,7 +1,7 @@
 #ifndef ZSERIO_RUNTIME_ARCH_H_INC
 #define ZSERIO_RUNTIME_ARCH_H_INC
 
-#include "zserio/Types.h"
+#include <cstdint>
 
 #if UINTPTR_MAX == UINT64_MAX
     #define ZSERIO_RUNTIME_64BIT

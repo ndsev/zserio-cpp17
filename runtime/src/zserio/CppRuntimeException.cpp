@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <cstring>
 
 #include "zserio/CppRuntimeException.h"

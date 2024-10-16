@@ -10,6 +10,8 @@
 #ifndef ZSERIO_FILE_UTIL_H_INC
 #define ZSERIO_FILE_UTIL_H_INC
 
+#include <string>
+
 #include "zserio/BitBuffer.h"
 
 namespace zserio

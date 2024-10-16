@@ -1,6 +1,8 @@
 #ifndef ZSERIO_BYTES_H_INC
 #define ZSERIO_BYTES_H_INC
 
+#include <cstdint>
+
 #include "zserio/BitSize.h"
 #include "zserio/Span.h"
 

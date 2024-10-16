@@ -2,8 +2,7 @@
 #define ZSERIO_BITFIELD_UTIL_H_INC
 
 #include <cstddef>
-
-#include "zserio/Types.h"
+#include <cstdint>
 
 namespace zserio
 {

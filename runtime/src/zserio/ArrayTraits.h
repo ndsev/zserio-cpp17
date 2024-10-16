@@ -1,6 +1,9 @@
 #ifndef ZSERIO_ARRAY_TRAIT_H_INC
 #define ZSERIO_ARRAY_TRAIT_H_INC
 
+#include <cstddef>
+#include <type_traits>
+
 #include "zserio/Types.h"
 
 namespace zserio

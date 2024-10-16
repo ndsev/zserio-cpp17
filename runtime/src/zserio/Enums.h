@@ -2,12 +2,12 @@
 #define ZSERIO_ENUMS_H_INC
 
 #include <algorithm>
+#include <cstddef>
 #include <string_view>
 #include <type_traits>
 
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
-#include "zserio/Types.h"
 
 namespace zserio
 {

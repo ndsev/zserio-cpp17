@@ -1,7 +1,7 @@
 #ifndef ZSERIO_BUILTIN_BUILT_IN_OPERATORS_H_INC
 #define ZSERIO_BUILTIN_BUILT_IN_OPERATORS_H_INC
 
-#include "zserio/Types.h"
+#include <cstdint>
 
 namespace zserio
 {

@@ -1,11 +1,4 @@
-#include <algorithm>
-#include <array>
-#include <cstring>
-#include <fstream>
-#include <string>
-
 #include "zserio/BitStreamWriter.h"
-#include "zserio/CppRuntimeException.h"
 #include "zserio/FloatUtil.h"
 
 namespace zserio

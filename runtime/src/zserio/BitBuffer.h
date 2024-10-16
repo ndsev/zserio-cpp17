@@ -2,16 +2,13 @@
 #define ZSERIO_BIT_BUFFER_H_INC
 
 #include <cstddef>
-#include <cstring>
 #include <type_traits>
-#include <vector>
 
 #include "zserio/BitSize.h"
 #include "zserio/CppRuntimeException.h"
 #include "zserio/HashCodeUtil.h"
 #include "zserio/SizeConvertUtil.h"
 #include "zserio/Span.h"
-#include "zserio/Types.h"
 #include "zserio/Vector.h"
 
 namespace zserio
