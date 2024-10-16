@@ -30,6 +30,7 @@ Package can be the combination of:
     cpp_rt-linux64-clang     Zserio ASIL C++ extension runtime library for native linux64 (Clang).
     cpp_rt-windows64-mingw   Zserio C++ extension runtime library for windows64 target (MinGW64).
     cpp_rt-windows64-msvc    Zserio C++ extension runtime library for windows64 target (MSVC).
+    zserio                   Zserio bundle (Zserio Core packed together with already built C++17 extension).
 
 Examples:
     $0 cpp cpp_rt-linux64-gcc
