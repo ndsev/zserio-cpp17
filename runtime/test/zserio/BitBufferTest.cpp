@@ -444,4 +444,15 @@ TEST(BitBufferTest, stdHash)
     ASSERT_NE(hasher(bitBuffer1), hasher(bitBuffer7));
 }
 
+TEST(BitBufferTest, bitSizeOf)
+{
+    EXPECT_EQ(8 + 8, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xC0}), 8)));
+    EXPECT_EQ(8 + 11, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xC0}), 11)));
+    EXPECT_EQ(8 + 16, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xCD}), 16)));
+    EXPECT_EQ(8 + 16, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xCD}))));
+
+    EXPECT_EQ(8 + 15 * 8 + 7, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>(16), 127)));
+    EXPECT_EQ(16 + 16 * 8, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>(16), 128)));
+}
+
 } // namespace zserio

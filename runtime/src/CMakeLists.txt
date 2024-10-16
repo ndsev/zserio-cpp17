@@ -25,8 +25,6 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BitPositionUtil.h
     zserio/BitFieldUtil.h
     zserio/BitSize.h
-    zserio/BitSizeOf.cpp
-    zserio/BitSizeOf.h
     zserio/BitStreamReader.cpp
     zserio/BitStreamReader.h
     zserio/BitStreamWriter.cpp
@@ -34,6 +32,8 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/Bitmasks.h
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
+    zserio/Bytes.cpp
+    zserio/Bytes.h
     zserio/CppRuntimeException.cpp
     zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
@@ -46,20 +46,20 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/HashCodeUtil.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
-    zserio/Read.h
     zserio/RebindAlloc.h
     zserio/RuntimeArch.h
     zserio/SizeConvertUtil.cpp
     zserio/SizeConvertUtil.h
     zserio/Span.h
+    zserio/String.cpp
     zserio/String.h
     zserio/StringConvertUtil.h
     zserio/Traits.h
+    zserio/Types.cpp
     zserio/Types.h
     zserio/Variant.h
     zserio/Vector.h
     zserio/View.h
-    zserio/Write.h
 )
 
 add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})

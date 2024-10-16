@@ -1,10 +1,9 @@
 #ifndef ZSERIO_BITMASKS_H_INC
 #define ZSERIO_BITMASKS_H_INC
 
-#include "zserio/BitSizeOf.h"
-#include "zserio/Read.h"
+#include "zserio/BitStreamReader.h"
+#include "zserio/BitStreamWriter.h"
 #include "zserio/Types.h"
-#include "zserio/Write.h"
 
 namespace zserio
 {

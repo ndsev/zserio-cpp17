@@ -1,5 +1,6 @@
-#include "zserio/BitSizeOf.h"
-#include "zserio/SizeConvertUtil.h"
+#include <array>
+
+#include "zserio/Types.h"
 
 namespace zserio
 {
@@ -162,23 +163,6 @@ BitSize bitSizeOf(VarUInt value)
 BitSize bitSizeOf(VarSize value)
 {
     return bitSizeOfVarIntImpl(value, VARSIZE_MAX_VALUES, "varsize");
-}
-
-template <>
-BitSize bitSizeOf(Span<const uint8_t> value)
-{
-    const VarSize bytesSize = fromCheckedValue<VarSize>(convertSizeToUInt32(value.size()));
-
-    // the bytes consists of varsize for size followed by the bytes
-    return bitSizeOf(bytesSize) + bytesSize * 8;
-}
-
-BitSize bitSizeOf(std::string_view stringValue)
-{
-    const VarSize stringSize = fromCheckedValue<VarSize>(convertSizeToUInt32(stringValue.size()));
-
-    // the string consists of varsize for size followed by the UTF-8 encoded string
-    return bitSizeOf(stringSize) + stringSize * 8;
 }
 
 } // namespace detail

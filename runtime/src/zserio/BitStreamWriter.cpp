@@ -4,7 +4,6 @@
 #include <fstream>
 #include <string>
 
-#include "zserio/BitSizeOf.h"
 #include "zserio/BitStreamWriter.h"
 #include "zserio/CppRuntimeException.h"
 #include "zserio/FloatUtil.h"

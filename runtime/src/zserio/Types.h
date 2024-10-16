@@ -3,13 +3,10 @@
 
 #include <cstdint>
 #include <limits>
-#include <string>
-#include <string_view>
 #include <type_traits>
 
 #include "zserio/BitSize.h"
 #include "zserio/OutOfRangeException.h"
-#include "zserio/Span.h"
 
 namespace zserio
 {
@@ -868,6 +865,55 @@ CppRuntimeException& operator<<(CppRuntimeException& exception, detail::NumericT
 {
     return exception << static_cast<VALUE_TYPE>(value);
 }
+
+namespace detail
+{
+
+inline BitSize bitSizeOf(BoolWrapper)
+{
+    return 1;
+}
+
+template <typename T, BitSize BIT_SIZE>
+BitSize bitSizeOf(IntWrapper<T, BIT_SIZE>)
+{
+    return BIT_SIZE;
+}
+
+BitSize bitSizeOf(VarInt16 value);
+
+BitSize bitSizeOf(VarInt32 value);
+
+BitSize bitSizeOf(VarInt64 value);
+
+BitSize bitSizeOf(VarUInt16 value);
+
+BitSize bitSizeOf(VarUInt32 value);
+
+BitSize bitSizeOf(VarUInt64 value);
+
+BitSize bitSizeOf(VarInt value);
+
+BitSize bitSizeOf(VarUInt value);
+
+BitSize bitSizeOf(VarSize value);
+
+inline BitSize bitSizeOf(Float16)
+{
+    return 16;
+}
+
+inline BitSize bitSizeOf(Float32)
+{
+    return 32;
+}
+
+inline BitSize bitSizeOf(Float64)
+{
+    return 64;
+}
+
+} // namespace detail
 
 } // namespace zserio
 

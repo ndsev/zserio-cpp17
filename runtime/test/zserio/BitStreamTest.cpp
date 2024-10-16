@@ -5,11 +5,11 @@
 
 #include "gtest/gtest.h"
 #include "zserio/BitBuffer.h"
+#include "zserio/BitStreamReader.h"
+#include "zserio/BitStreamWriter.h"
 #include "zserio/CppRuntimeException.h"
-#include "zserio/Read.h"
 #include "zserio/Types.h"
 #include "zserio/Vector.h"
-#include "zserio/Write.h"
 
 namespace zserio
 {

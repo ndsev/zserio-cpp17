@@ -15,7 +15,7 @@ bugprone-exception-escape:src/zserio/Variant.h:263
 bugprone-use-after-move:src/zserio/Variant.h:675
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:469
+cert-dcl58-cpp:src/zserio/BitBuffer.h:485
 cert-dcl58-cpp:src/zserio/Optional.h:1161
 cert-dcl58-cpp:src/zserio/Variant.h:835
 
@@ -50,18 +50,18 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 # would only bring the performance drop.
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:301
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:315
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:357
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:368
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:356
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:367
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:378
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:379
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:380
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:386
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:385
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:390
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:391
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:392
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:398
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:595
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:663
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:83
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:96
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:397
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:594
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:662
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:82
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:95
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
@@ -87,8 +87,8 @@ google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
 
 # This is requirement on type wrappers in Zserio C++17 extension.
-google-explicit-constructor:src/zserio/Types.h:60
-google-explicit-constructor:src/zserio/Types.h:67
+google-explicit-constructor:src/zserio/Types.h:57
+google-explicit-constructor:src/zserio/Types.h:64
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
 google-readability-casting:src/zserio/Variant.h:41

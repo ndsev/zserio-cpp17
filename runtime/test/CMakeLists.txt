@@ -23,11 +23,11 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp
     zserio/BitPositionUtilTest.cpp
-    zserio/BitSizeOfTest.cpp
     zserio/BitStreamReaderTest.cpp
     zserio/BitStreamTest.cpp
     zserio/BitStreamWriterTest.cpp
     zserio/BuiltInOperatorsTest.cpp
+    zserio/BytesTest.cpp
     zserio/CppRuntimeExceptionTest.cpp
     zserio/CppRuntimeVersionTest.cpp
     zserio/ConstraintExceptionTest.cpp
@@ -40,6 +40,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
     zserio/StringConvertUtilTest.cpp
+    zserio/StringTest.cpp
     zserio/TrackingAllocator.h
     zserio/TraitsTest.cpp
     zserio/TypesTest.cpp

@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "zserio/BitSize.h"
 #include "zserio/CppRuntimeException.h"
 #include "zserio/HashCodeUtil.h"
 #include "zserio/SizeConvertUtil.h"
@@ -456,6 +457,21 @@ uint32_t calcHashCode(uint32_t seedValue, const BasicBitBuffer<ALLOC>& value)
 {
     return calcHashCode(seedValue, std::hash<BasicBitBuffer<ALLOC>>{}(value));
 }
+
+namespace detail
+{
+
+template <typename ALLOC>
+BitSize bitSizeOf(const BasicBitBuffer<ALLOC>& bitBuffer)
+{
+    const VarSize bitBufferSize =
+            fromCheckedValue<::zserio::VarSize>(convertSizeToUInt32(bitBuffer.getBitSize()));
+
+    // bit buffer consists of varsize for bit size followed by the bits
+    return bitSizeOf(bitBufferSize) + bitBufferSize;
+}
+
+} // namespace detail
 
 } // namespace zserio
 
