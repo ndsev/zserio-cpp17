@@ -39,5 +39,44 @@ The following two main features of a C++17 generator offer significant advantage
 
 ## Current State
 
-This repository currently contains only a [Design Document](doc/Cpp17Design.md) and a [PoC](poc/)
-of the generated code using a [schema sample](poc/test.zs).
+The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator
+design and is updated regularly.
+
+Current state (17.10.2024):
+
+- The class for optional members have been implemented in the runtime library header
+  [Optional.h](https://github.com/ndsev/zserio-cpp17/blob/master/runtime/src/zserio/Optional.h)
+- The class for choice members have been implemented in the runtime library header
+  [Variant.h](https://github.com/ndsev/zserio-cpp17/blob/master/runtime/src/zserio/Variant.h)
+- The classes for all Zserio types have been implemented in the runtime library header
+  [Types.h](https://github.com/ndsev/zserio-cpp17/blob/master/runtime/src/zserio/Types.h)
+- The generator partially supports the following Zserio types:
+  - Enumeration types
+  - Bitmask types
+  - Constants
+  - Structure types (only Data)
+  - Choice types (only Data)
+  - Union types (only Data)
+
+### How to Get the C++17 Generator
+
+Download the latest Zserio bundle jar (together with Zserio runtime library) from the GitHub action artifacts
+using the following steps:
+
+- Go to the [Actions](https://github.com/ndsev/zserio-cpp17/actions) page
+- Click on the latest Linux workflow
+- Scroll down to the Artifacts
+- Download `zserio-java8` artifact for Zserio bundle jar
+- Alternatively, download `zserio-runtime-cpp` artifact for Zserio runtime library
+
+For example, the Zserio bundle jar (17.10.2024) can be downloaded from
+[here](https://github.com/ndsev/zserio-cpp17/actions/runs/11382401787/artifacts/2068022014) and Zserio runtime
+library (17.10.2024) can be downloaded from
+[here](https://github.com/ndsev/zserio-cpp17/actions/runs/11382401787/artifacts/2068022016).
+
+### How to Run the C++17 Generator
+
+Run the Zserio C++17 generator using the following steps:
+
+- Unzip `zserio-java8` to get `zserio.jar` binary
+- Run the command `java -jar zserio.jar schema_name.zs -cpp17 output_directory_name`

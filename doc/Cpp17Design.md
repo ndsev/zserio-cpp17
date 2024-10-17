@@ -74,8 +74,16 @@ These classes will provide
 Implicit constructors from the C++ native types and implicit conversion to the C++ native type is convenient to
 keep integral expressions as simple as possible.
 
-Beside of that, dedicated C++ Zserio type classes will implement explicit conversion to the C++ native type
-which automatically checks a range check of the value.
+C++ Zserio type classes will support `zserio::NumericLimits<>` template to get minimum and maximum
+values.
+
+The `zserio::toCheckedValue` function will allow to obtain C++ native type value, automatically performing
+range checks to ensure the value falls within the expected range.
+
+Beside that, C++ Zserio type classes will be possible to create from C++ native type value by
+`zserio::fromCheckedValue` function which automatically checks range check of the value.
+
+Explicit conversions between C++ Zserio types will be possible by `zserio::typeCast` function.
 
 The following table shows the mapping of all Zserio built-in types into the C++ Zserio type together with
 the C++ native type:
