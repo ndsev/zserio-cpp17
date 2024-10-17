@@ -76,4 +76,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: "zserio-java${{matrix.java-version}}"
-        path: distr/zserio.jar
+        path: distr/zserio*.jar
