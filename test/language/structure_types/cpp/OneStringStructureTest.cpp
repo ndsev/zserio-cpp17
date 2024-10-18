@@ -1,4 +1,5 @@
 #include <cstring>
+#include <string_view>
 
 #include "gtest/gtest.h"
 #include "structure_types/one_string_structure/OneStringStructure.h"
@@ -14,10 +15,8 @@ using string_type = zserio::basic_string<allocator_type>;
 class OneStringStructureDataTest : public ::testing::Test
 {
 protected:
-    static const char* const ONE_STRING;
+    static constexpr std::string_view ONE_STRING = "This is a string!";
 };
-
-const char* const OneStringStructureDataTest::ONE_STRING = "This is a string!";
 
 TEST_F(OneStringStructureDataTest, emptyConstructor)
 {
@@ -149,6 +148,25 @@ TEST_F(OneStringStructureDataTest, stdHash)
 
     oneStringStructure2.oneString = ONE_STRING;
     ASSERT_EQ(hasher(oneStringStructure1), hasher(oneStringStructure2));
+}
+
+class OneStringStructureViewTest : public OneStringStructureDataTest
+{};
+
+TEST_F(OneStringStructureViewTest, bitSizeOf)
+{
+    using namespace std::literals;
+
+    OneStringStructure oneStringStructure;
+    zserio::View<OneStringStructure> view(oneStringStructure);
+
+    ASSERT_EQ(zserio::detail::bitSizeOf(""sv), zserio::detail::bitSizeOf(view, 0));
+
+    oneStringStructure.oneString = ONE_STRING;
+
+    ASSERT_EQ(zserio::detail::bitSizeOf(ONE_STRING), zserio::detail::bitSizeOf(view, 0));
+    ASSERT_EQ(zserio::detail::bitSizeOf(ONE_STRING), zserio::detail::bitSizeOf(view, 1));
+    ASSERT_EQ(zserio::detail::bitSizeOf(ONE_STRING), zserio::detail::bitSizeOf(view, 100));
 }
 
 } // namespace one_string_structure

@@ -459,7 +459,7 @@ namespace detail
 {
 
 template <typename ALLOC>
-BitSize bitSizeOf(const BasicBitBuffer<ALLOC>& bitBuffer)
+BitSize bitSizeOf(const BasicBitBuffer<ALLOC>& bitBuffer, BitSize = 0)
 {
     const VarSize bitBufferSize =
             fromCheckedValue<::zserio::VarSize>(convertSizeToUInt32(bitBuffer.getBitSize()));

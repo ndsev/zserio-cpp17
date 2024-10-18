@@ -53,6 +53,9 @@ struct RouteSegment
     ::zserio::vector<::zserio::Int32> myArray;
     BoolParamChoice myChoice;
     SimpleUnion myUnion;
+
+private:
+    mutable uint32_t myOffset = 0;
 };
 
 bool operator==(const RouteSegment& lhs, const RouteSegment& rhs);
