@@ -17,6 +17,7 @@ public final class TypesContext
         {
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BitBuffer", false, false, "zserio/BitBuffer.h");
+            bytes = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Bytes", false, false, "zserio/Bytes.h");
             string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", false, false, "zserio/String.h");
             vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "vector", true, false, "zserio/Vector.h");
         }
@@ -24,6 +25,8 @@ public final class TypesContext
         {
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "BitBuffer", false, false, "zserio/pmr/BitBuffer.h");
+            bytes = new NativeTypeDefinition(
+                    ZSERIO_PMR_PACKAGE_NAME, "Bytes", false, false, "zserio/pmr/Bytes.h");
             string = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "string", false, false, "zserio/pmr/String.h");
             vector = new NativeTypeDefinition(
@@ -33,6 +36,7 @@ public final class TypesContext
         {
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BasicBitBuffer", true, true, "zserio/BitBuffer.h");
+            bytes = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "BasicBytes", true, true, "zserio/Bytes.h");
             string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", true, true, "zserio/String.h");
             vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "vector", true, true, "zserio/Vector.h");
         }
@@ -46,6 +50,11 @@ public final class TypesContext
     public NativeTypeDefinition getBitBuffer()
     {
         return bitBuffer;
+    }
+
+    public NativeTypeDefinition getBytes()
+    {
+        return bytes;
     }
 
     public NativeTypeDefinition getString()
@@ -139,6 +148,7 @@ public final class TypesContext
 
     private final AllocatorDefinition allocator;
     private final NativeTypeDefinition bitBuffer;
+    private final NativeTypeDefinition bytes;
     private final NativeTypeDefinition string;
     private final NativeTypeDefinition vector;
 

@@ -115,37 +115,37 @@ static uint64_t convertToAbsValue(typename T::value_type value)
     return static_cast<uint64_t>((value < 0) ? -value : value);
 }
 
-BitSize bitSizeOf(VarInt16 value)
+BitSize bitSizeOf(VarInt16 value, BitSize)
 {
     return bitSizeOfVarIntImpl(convertToAbsValue<VarInt16>(value), VARINT16_MAX_VALUES, "varint16");
 }
 
-BitSize bitSizeOf(VarInt32 value)
+BitSize bitSizeOf(VarInt32 value, BitSize)
 {
     return bitSizeOfVarIntImpl(convertToAbsValue<VarInt32>(value), VARINT32_MAX_VALUES, "varint32");
 }
 
-BitSize bitSizeOf(VarInt64 value)
+BitSize bitSizeOf(VarInt64 value, BitSize)
 {
     return bitSizeOfVarIntImpl(convertToAbsValue<VarInt64>(value), VARINT64_MAX_VALUES, "varint64");
 }
 
-BitSize bitSizeOf(VarUInt16 value)
+BitSize bitSizeOf(VarUInt16 value, BitSize)
 {
     return bitSizeOfVarIntImpl(value, VARUINT16_MAX_VALUES, "varuint16");
 }
 
-BitSize bitSizeOf(VarUInt32 value)
+BitSize bitSizeOf(VarUInt32 value, BitSize)
 {
     return bitSizeOfVarIntImpl(value, VARUINT32_MAX_VALUES, "varuint32");
 }
 
-BitSize bitSizeOf(VarUInt64 value)
+BitSize bitSizeOf(VarUInt64 value, BitSize)
 {
     return bitSizeOfVarIntImpl(value, VARUINT64_MAX_VALUES, "varuint64");
 }
 
-BitSize bitSizeOf(VarInt value)
+BitSize bitSizeOf(VarInt value, BitSize)
 {
     if (value == INT64_MIN)
     {
@@ -155,12 +155,12 @@ BitSize bitSizeOf(VarInt value)
     return bitSizeOfVarIntImpl(convertToAbsValue<VarInt>(value), VARINT_MAX_VALUES, "varint");
 }
 
-BitSize bitSizeOf(VarUInt value)
+BitSize bitSizeOf(VarUInt value, BitSize)
 {
     return bitSizeOfVarIntImpl(value, VARUINT_MAX_VALUES, "varuint");
 }
 
-BitSize bitSizeOf(VarSize value)
+BitSize bitSizeOf(VarSize value, BitSize)
 {
     return bitSizeOfVarIntImpl(value, VARSIZE_MAX_VALUES, "varsize");
 }

@@ -81,5 +81,73 @@ TEST(EmptyStructureDataTest, stdHash)
     ASSERT_EQ(23, hasher(emptyStructure1));
 }
 
+TEST(EmptyStructureViewTest, operatorEquality)
+{
+    EmptyStructure emptyStructure1;
+    EmptyStructure emptyStructure2;
+
+    zserio::View<EmptyStructure> view1(emptyStructure1);
+    zserio::View<EmptyStructure> view2(emptyStructure2);
+    ASSERT_TRUE(view1 == view2);
+}
+
+TEST(EmptyStructureViewTest, operatorLessThan)
+{
+    EmptyStructure emptyStructure1;
+    EmptyStructure emptyStructure2;
+
+    zserio::View<EmptyStructure> view1(emptyStructure1);
+    zserio::View<EmptyStructure> view2(emptyStructure2);
+    ASSERT_FALSE(view1 < view2);
+    ASSERT_FALSE(view2 < view1);
+}
+
+TEST(EmptyStructureViewTest, stdHash)
+{
+    std::hash<zserio::View<EmptyStructure>> hasher;
+
+    EmptyStructure emptyStructure1;
+    EmptyStructure emptyStructure2;
+
+    zserio::View<EmptyStructure> view1(emptyStructure1);
+    zserio::View<EmptyStructure> view2(emptyStructure2);
+    ASSERT_EQ(hasher(view1), hasher(view2));
+
+    // use hardcoded values to check that the hash code is stable
+    ASSERT_EQ(23, hasher(view1));
+}
+
+TEST(EmptyStructureViewTest, read)
+{
+    zserio::BitStreamReader reader(zserio::Span<const uint8_t>{});
+    EmptyStructure emptyStructure{allocator_type()};
+    zserio::View<EmptyStructure> readView = zserio::detail::read(reader, emptyStructure);
+    (void)readView;
+}
+
+TEST(EmptyStructureViewTest, writeRead)
+{
+    EmptyStructure emptyStructure{allocator_type()};
+    zserio::View<EmptyStructure> view(emptyStructure);
+
+    zserio::BitBuffer bitBuffer(0);
+    zserio::BitStreamWriter writer(bitBuffer);
+    zserio::detail::write(writer, view);
+
+    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
+    EmptyStructure readEmptyStructure{allocator_type()};
+    zserio::View<EmptyStructure> readView = zserio::detail::read(reader, readEmptyStructure);
+    ASSERT_EQ(view, readView);
+}
+
+TEST(EmptyStructureViewTest, bitSizeOf)
+{
+    EmptyStructure emptyStructure;
+    zserio::View<EmptyStructure> view(emptyStructure);
+    ASSERT_EQ(0, zserio::detail::bitSizeOf(view, 0));
+    ASSERT_EQ(0, zserio::detail::bitSizeOf(view, 1));
+    ASSERT_EQ(0, zserio::detail::bitSizeOf(view, 100));
+}
+
 } // namespace empty_structure
 } // namespace structure_types

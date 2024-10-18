@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import zserio.ast.CompoundType;
+import zserio.ast.DocComment;
 import zserio.ast.Field;
+import zserio.ast.Function;
+import zserio.ast.Parameter;
 import zserio.extension.common.ZserioExtensionException;
 
 /**
@@ -19,18 +22,9 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
 
         usedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(compoundType);
 
-        final List<Field> fieldTypeList = compoundType.getFields();
-        fieldList = new ArrayList<CompoundFieldTemplateData>(fieldTypeList.size());
-        for (Field fieldType : fieldTypeList)
-        {
-            final CompoundFieldTemplateData data =
-                    new CompoundFieldTemplateData(context, compoundType, fieldType, this);
-
-            fieldList.add(data);
-        }
-
-        compoundParametersData = new CompoundParameterTemplateData(context, compoundType, this);
-        compoundFunctionsData = new CompoundFunctionTemplateData(context, compoundType, this);
+        fieldList = createFieldList(context, compoundType, this);
+        parameterList = createParameterList(context, compoundType, this);
+        functionList = createFunctionList(context, compoundType, this);
 
         isPackable = compoundType.isPackable();
 
@@ -47,14 +41,14 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         return fieldList;
     }
 
-    public CompoundParameterTemplateData getCompoundParametersData()
+    public Iterable<CompoundParameterTemplateData> getParameterList()
     {
-        return compoundParametersData;
+        return parameterList;
     }
 
-    public CompoundFunctionTemplateData getCompoundFunctionsData()
+    public Iterable<CompoundFunctionTemplateData> getFunctionList()
     {
-        return compoundFunctionsData;
+        return functionList;
     }
 
     public boolean getIsPackable()
@@ -67,11 +61,56 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         return templateInstantiation;
     }
 
+    private static List<CompoundFieldTemplateData> createFieldList(TemplateDataContext context,
+            CompoundType compoundType, IncludeCollector includeCollector) throws ZserioExtensionException
+    {
+        final List<Field> fieldTypeList = compoundType.getFields();
+        final List<CompoundFieldTemplateData> fieldList =
+                new ArrayList<CompoundFieldTemplateData>(fieldTypeList.size());
+        for (Field fieldType : fieldTypeList)
+        {
+            final CompoundFieldTemplateData data =
+                    new CompoundFieldTemplateData(context, compoundType, fieldType, includeCollector);
+
+            fieldList.add(data);
+        }
+        return fieldList;
+    }
+
+    static List<CompoundParameterTemplateData> createParameterList(TemplateDataContext context,
+            CompoundType compoundType, IncludeCollector includeCollector) throws ZserioExtensionException
+    {
+        final List<Parameter> parameterTypeList = compoundType.getTypeParameters();
+        final List<CompoundParameterTemplateData> parameterList =
+                new ArrayList<CompoundParameterTemplateData>(parameterTypeList.size());
+        final List<DocComment> compoundDocComments = compoundType.getDocComments();
+        for (Parameter parameterType : parameterTypeList)
+        {
+            final CompoundParameterTemplateData parameter = new CompoundParameterTemplateData(
+                    context, parameterType, includeCollector, compoundDocComments);
+            parameterList.add(parameter);
+        }
+        return parameterList;
+    }
+
+    private static List<CompoundFunctionTemplateData> createFunctionList(TemplateDataContext context,
+            CompoundType compoundType, IncludeCollector includeCollector) throws ZserioExtensionException
+    {
+        final List<CompoundFunctionTemplateData> functionList = new ArrayList<CompoundFunctionTemplateData>();
+        final Iterable<Function> functionTypeList = compoundType.getFunctions();
+        for (Function functionType : functionTypeList)
+        {
+            functionList.add(new CompoundFunctionTemplateData(context, functionType, includeCollector));
+        }
+
+        return functionList;
+    }
+
     private final boolean usedInPackedArray;
 
     private final List<CompoundFieldTemplateData> fieldList;
-    private final CompoundParameterTemplateData compoundParametersData;
-    private final CompoundFunctionTemplateData compoundFunctionsData;
+    private final List<CompoundParameterTemplateData> parameterList;
+    private final List<CompoundFunctionTemplateData> functionList;
 
     private final boolean isPackable;
 

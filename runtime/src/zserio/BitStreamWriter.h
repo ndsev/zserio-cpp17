@@ -442,8 +442,7 @@ inline void write(BitStreamWriter& writer, const std::vector<uint8_t, ALLOC>& va
     writer.writeBytes(value);
 }
 
-template <typename ALLOC>
-inline void write(BitStreamWriter& writer, const std::basic_string<char, std::char_traits<char>, ALLOC>& value)
+inline void write(BitStreamWriter& writer, std::string_view value)
 {
     writer.writeString(value);
 }

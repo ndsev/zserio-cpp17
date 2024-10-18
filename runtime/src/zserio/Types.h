@@ -869,46 +869,46 @@ CppRuntimeException& operator<<(CppRuntimeException& exception, detail::NumericT
 namespace detail
 {
 
-inline BitSize bitSizeOf(BoolWrapper)
+inline BitSize bitSizeOf(BoolWrapper, BitSize = 0)
 {
     return 1;
 }
 
 template <typename T, BitSize BIT_SIZE>
-BitSize bitSizeOf(IntWrapper<T, BIT_SIZE>)
+BitSize bitSizeOf(IntWrapper<T, BIT_SIZE>, BitSize = 0)
 {
     return BIT_SIZE;
 }
 
-BitSize bitSizeOf(VarInt16 value);
+BitSize bitSizeOf(VarInt16 value, BitSize = 0);
 
-BitSize bitSizeOf(VarInt32 value);
+BitSize bitSizeOf(VarInt32 value, BitSize = 0);
 
-BitSize bitSizeOf(VarInt64 value);
+BitSize bitSizeOf(VarInt64 value, BitSize = 0);
 
-BitSize bitSizeOf(VarUInt16 value);
+BitSize bitSizeOf(VarUInt16 value, BitSize = 0);
 
-BitSize bitSizeOf(VarUInt32 value);
+BitSize bitSizeOf(VarUInt32 value, BitSize = 0);
 
-BitSize bitSizeOf(VarUInt64 value);
+BitSize bitSizeOf(VarUInt64 value, BitSize = 0);
 
-BitSize bitSizeOf(VarInt value);
+BitSize bitSizeOf(VarInt value, BitSize = 0);
 
-BitSize bitSizeOf(VarUInt value);
+BitSize bitSizeOf(VarUInt value, BitSize = 0);
 
-BitSize bitSizeOf(VarSize value);
+BitSize bitSizeOf(VarSize value, BitSize = 0);
 
-inline BitSize bitSizeOf(Float16)
+inline BitSize bitSizeOf(Float16, BitSize = 0)
 {
     return 16;
 }
 
-inline BitSize bitSizeOf(Float32)
+inline BitSize bitSizeOf(Float32, BitSize = 0)
 {
     return 32;
 }
 
-inline BitSize bitSizeOf(Float64)
+inline BitSize bitSizeOf(Float64, BitSize = 0)
 {
     return 64;
 }

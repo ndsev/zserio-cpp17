@@ -4,6 +4,9 @@
 #include <type_traits>
 
 #include "zserio/ArrayTraits.h"
+#include "zserio/BitPositionUtil.h"
+#include "zserio/BitStreamReader.h"
+#include "zserio/BitStreamWriter.h"
 
 namespace zserio
 {
@@ -156,6 +159,7 @@ public:
     /**
      * Returns element view at the given index.
      *
+     * \param index Element index.
      * \return View to the specified element.
      */
     decltype(auto) at(size_t index) const
@@ -163,10 +167,128 @@ public:
         return Traits::at(m_owner, m_rawArray.at(index), index);
     }
 
+    /**
+     * Returns element view at the given index.
+     * Like STL vector's operator[] this is does not check the array size.
+     *
+     * \param index Element index.
+     * \return View to the specified element.
+     */
+    decltype(auto) operator[](size_t index) const
+    {
+        return Traits::at(m_owner, m_rawArray[index], index);
+    }
+
 private:
     OwnerType m_owner; // view to owner type, parameters are copied by value and that is ok
     const RawArray& m_rawArray;
 };
+
+namespace detail
+{
+
+template <typename ARRAY>
+size_t readArrayLength(BitStreamReader& reader, size_t arrayLength)
+{
+    if constexpr (ARRAY::TYPE != ArrayType::AUTO && ARRAY::TYPE != ArrayType::ALIGNED_AUTO &&
+            ARRAY::TYPE != ArrayType::IMPLICIT)
+    {
+        return arrayLength;
+    }
+    else if constexpr (ARRAY::TYPE == ArrayType::AUTO || ARRAY::TYPE == ArrayType::ALIGNED_AUTO)
+    {
+        return reader.readVarSize();
+    }
+    else
+    {
+        using ArrayTraits = typename ARRAY::Traits;
+
+        const size_t remainingBits = reader.getBufferBitSize() - reader.getBitPosition();
+        return remainingBits / ArrayTraits::bitSizeOf();
+    }
+}
+
+template <typename ARRAY>
+void read(BitStreamReader& reader, typename ARRAY::OwnerType& owner, typename ARRAY::RawArray& rawArray,
+        size_t arrayLength = 0)
+{
+    using ArrayTraits = typename ARRAY::Traits;
+
+    const size_t readLength = readArrayLength<ARRAY>(reader, arrayLength);
+    rawArray.clear();
+    rawArray.reserve(readLength);
+    for (size_t i = 0; i < readLength; ++i)
+    {
+        if constexpr (ARRAY::TYPE == ArrayType::ALIGNED || ARRAY::TYPE == ArrayType::ALIGNED_AUTO)
+        {
+            reader.alignTo(8);
+        }
+        ArrayTraits::read(reader, owner, rawArray, i);
+    }
+}
+
+template <typename ARRAY, std::enable_if_t<is_dummy_v<typename ARRAY::OwnerType>, int> = 0>
+void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, size_t arrayLength = 0)
+{
+    DummyArrayOwner owner;
+    read<ARRAY>(reader, owner, rawArray, arrayLength);
+}
+
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
+void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array)
+{
+    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    {
+        write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
+    }
+
+    for (size_t i = 0; i < array.size(); ++i)
+    {
+        if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+        {
+            writer.alignTo(8);
+        }
+
+        write(writer, array.at(i));
+    }
+}
+
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
+BitSize bitSizeOf(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+{
+    BitSize endBitPosition = bitPosition;
+
+    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    {
+        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
+    }
+
+    for (size_t i = 0; i < array.size(); ++i)
+    {
+        if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+        {
+            endBitPosition = alignTo(8, endBitPosition);
+        }
+
+        endBitPosition += bitSizeOf(array.at(i), endBitPosition);
+    }
+
+    return endBitPosition - bitPosition;
+}
+
+} // namespace detail
+
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
+uint32_t calcHashCode(uint32_t seedValue, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array)
+{
+    uint32_t result = seedValue;
+    for (size_t i = 0; i < array.size(); ++i)
+    {
+        result = calcHashCode(result, array.at(i));
+    }
+
+    return result;
+}
 
 } // namespace zserio
 

@@ -810,8 +810,8 @@ TEST_F(BitStreamTest, readString)
             "Price: \xE2\x82\xAC 3 what's this? -> \xC2\xA2" /* '€' '¢' */
     };
 
-    std::function<void(BitStreamWriter&, const std::string&)> writerFunc =
-            static_cast<void (*)(BitStreamWriter&, const std::string&)>(&detail::write);
+    std::function<void(BitStreamWriter&, std::string_view)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, std::string_view)>(&detail::write);
     std::function<void(BitStreamReader&, std::string&)> readerFunc =
             static_cast<void (*)(BitStreamReader&, std::string&)>(&detail::read);
     testImpl(values, writerFunc, readerFunc, 7);

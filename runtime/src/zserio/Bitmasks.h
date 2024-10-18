@@ -13,9 +13,9 @@ namespace detail
 {
 
 template <typename T>
-std::enable_if_t<is_bitmask_v<T>, BitSize> bitSizeOf(T value)
+std::enable_if_t<is_bitmask_v<T>, BitSize> bitSizeOf(T value, BitSize bitPosition = 0)
 {
-    return bitSizeOf(value.getValue());
+    return bitSizeOf(value.getValue(), bitPosition);
 }
 
 template <typename T>

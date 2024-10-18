@@ -1,0 +1,4 @@
+bugprone-exception-escape:gen/optional_members/optional_recursion/Block.cpp
+bugprone-exception-escape:gen/optional_members/optional_recursion/Block.h
+
+misc-no-recursion # reports also tested_release

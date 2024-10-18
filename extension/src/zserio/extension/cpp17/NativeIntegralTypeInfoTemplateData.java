@@ -12,8 +12,8 @@ import zserio.extension.cpp17.types.NativeIntegralType;
  */
 public final class NativeIntegralTypeInfoTemplateData extends NativeTypeInfoTemplateData
 {
-    public NativeIntegralTypeInfoTemplateData(ExpressionFormatter expressionFormatter,
-            NativeIntegralType nativeBaseType, TypeInstantiation typeInstantiation)
+    public NativeIntegralTypeInfoTemplateData(NativeIntegralType nativeBaseType,
+            TypeInstantiation typeInstantiation, ExpressionFormatter expressionFormatter)
             throws ZserioExtensionException
     {
         super(nativeBaseType, typeInstantiation);

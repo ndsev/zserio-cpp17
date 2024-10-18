@@ -55,6 +55,7 @@ public final class CppNativeMapper
 
         stringViewType = new NativeStringViewType();
         bitBufferType = new NativeAllocType(typesContext.getBitBuffer(), allocatorDefinition, "uint8_t");
+        bytesType = new NativeAllocType(typesContext.getBytes(), allocatorDefinition);
         stringType = new NativeAllocType(typesContext.getString(), allocatorDefinition, "char");
         vectorType = new NativeAllocType(typesContext.getVector(), allocatorDefinition);
     }
@@ -134,6 +135,16 @@ public final class CppNativeMapper
     public NativeStringViewType getStringViewType()
     {
         return stringViewType;
+    }
+
+    public NativeAllocType getBitBufferType()
+    {
+        return bitBufferType;
+    }
+
+    public NativeAllocType getBytesType()
+    {
+        return bytesType;
     }
 
     public NativeAllocType getStringType()
@@ -539,7 +550,7 @@ public final class CppNativeMapper
         @Override
         public void visitBytesType(BytesType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            cppType = bytesType;
         }
 
         @Override
@@ -695,6 +706,7 @@ public final class CppNativeMapper
 
     private final NativeStringViewType stringViewType;
     private final NativeAllocType bitBufferType;
+    private final NativeAllocType bytesType;
     private final NativeAllocType stringType;
     private final NativeAllocType vectorType;
 

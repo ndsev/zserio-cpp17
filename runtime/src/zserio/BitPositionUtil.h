@@ -3,6 +3,8 @@
 
 #include <cstddef>
 
+#include "zserio/BitSize.h"
+
 namespace zserio
 {
 
@@ -14,7 +16,7 @@ namespace zserio
  *
  * \return Aligned bit position.
  */
-inline size_t alignTo(size_t alignmentValue, size_t bitPosition)
+inline BitSize alignTo(BitSize alignmentValue, BitSize bitPosition)
 {
     return (bitPosition > 0 && alignmentValue != 0)
             ? (((bitPosition - 1) / alignmentValue) + 1) * alignmentValue
