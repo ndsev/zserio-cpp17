@@ -2,6 +2,7 @@ package zserio.extension.cpp17;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.List;
 
 import zserio.ast.ArrayInstantiation;
 import zserio.ast.ChoiceType;
@@ -48,11 +49,8 @@ public final class CompoundFieldTemplateData
         typeInfo = new NativeTypeInfoTemplateData(fieldNativeType, fieldTypeInstantiation);
 
         getterName = AccessorNameFormatter.getGetterName(field);
-        setterName = AccessorNameFormatter.getSetterName(field);
-        readerName = AccessorNameFormatter.getReaderName(field);
 
         isExtended = field.isExtended();
-        isPresentIndicatorName = AccessorNameFormatter.getIsPresentIndicatorName(field);
         isPackable = field.isPackable();
 
         integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
@@ -96,24 +94,9 @@ public final class CompoundFieldTemplateData
         return getterName;
     }
 
-    public String getSetterName()
-    {
-        return setterName;
-    }
-
-    public String getReaderName()
-    {
-        return readerName;
-    }
-
     public boolean getIsExtended()
     {
         return isExtended;
-    }
-
-    public String getIsPresentIndicatorName()
-    {
-        return isPresentIndicatorName;
     }
 
     public boolean getIsPackable()
@@ -181,9 +164,6 @@ public final class CompoundFieldTemplateData
             clause = (optionalClauseExpression == null)
                     ? null
                     : cppExpressionFormatter.formatGetter(optionalClauseExpression);
-            isUsedIndicatorName = AccessorNameFormatter.getIsUsedIndicatorName(field);
-            isSetIndicatorName = AccessorNameFormatter.getIsSetIndicatorName(field);
-            resetterName = AccessorNameFormatter.getResetterName(field);
             this.isRecursive = isRecursive;
         }
 
@@ -192,30 +172,12 @@ public final class CompoundFieldTemplateData
             return clause;
         }
 
-        public String getIsUsedIndicatorName()
-        {
-            return isUsedIndicatorName;
-        }
-
-        public String getIsSetIndicatorName()
-        {
-            return isSetIndicatorName;
-        }
-
-        public String getResetterName()
-        {
-            return resetterName;
-        }
-
         public boolean getIsRecursive()
         {
             return isRecursive;
         }
 
         private final String clause;
-        private final String isUsedIndicatorName;
-        private final String isSetIndicatorName;
-        private final String resetterName;
         private final boolean isRecursive;
     }
 
@@ -237,7 +199,7 @@ public final class CompoundFieldTemplateData
                 IncludeCollector includeCollector) throws ZserioExtensionException
         {
             instantiatedParameters = new ArrayList<InstantiatedParameterData>();
-            parameters = new CompoundParameterTemplateData(context, compoundType, includeCollector);
+            parameters = CompoundTypeTemplateData.createParameterList(context, compoundType, includeCollector);
             needsChildrenInitialization = compoundType.needsChildrenInitialization();
         }
 
@@ -246,7 +208,7 @@ public final class CompoundFieldTemplateData
             return instantiatedParameters;
         }
 
-        public CompoundParameterTemplateData getParameters()
+        public Iterable<CompoundParameterTemplateData> getParameters()
         {
             return parameters;
         }
@@ -310,8 +272,8 @@ public final class CompoundFieldTemplateData
             private final NativeTypeInfoTemplateData typeInfo;
         }
 
-        private final ArrayList<InstantiatedParameterData> instantiatedParameters;
-        private final CompoundParameterTemplateData parameters;
+        private final List<InstantiatedParameterData> instantiatedParameters;
+        private final List<CompoundParameterTemplateData> parameters;
         private final boolean needsChildrenInitialization;
     }
 
@@ -669,10 +631,7 @@ public final class CompoundFieldTemplateData
     private final String name;
     private final NativeTypeInfoTemplateData typeInfo;
     private final String getterName;
-    private final String setterName;
-    private final String readerName;
     private final boolean isExtended;
-    private final String isPresentIndicatorName;
     private final boolean isPackable;
     private final IntegerRange integerRange;
     private final String alignmentValue;

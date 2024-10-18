@@ -338,14 +338,15 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     }
 
     private void formatFieldAccessor(StringBuilder result, boolean isMostLeftId, Field field, boolean isSetter)
+            throws ZserioExtensionException
     {
         if (isMostLeftId)
             result.append(getAccessPrefix());
 
         if (isSetter)
         {
-            result.append(AccessorNameFormatter.getSetterName(field));
-            result.append(CPP_SETTER_FUNCTION_CALL);
+            // TODO[Mi-L@]: Not implemented
+            throw new ZserioExtensionException("CppExpressionFormattingPolicy: Setters are not implemented!");
         }
         else
         {
@@ -418,7 +419,6 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     private final IncludeCollector includeCollector;
 
     private final static String CPP_GETTER_FUNCTION_CALL = "()";
-    private final static String CPP_SETTER_FUNCTION_CALL = "(value)";
 
     private final static List<String> BUILT_IN_OPERATORS_INCLUDE = Arrays.asList("zserio/BuiltInOperators.h");
 

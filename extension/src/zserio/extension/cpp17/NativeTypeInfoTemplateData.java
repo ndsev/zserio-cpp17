@@ -4,6 +4,7 @@ import zserio.ast.BitmaskType;
 import zserio.ast.BooleanType;
 import zserio.ast.BytesType;
 import zserio.ast.EnumType;
+import zserio.ast.ExternType;
 import zserio.ast.StringType;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
@@ -71,6 +72,11 @@ public class NativeTypeInfoTemplateData
         return isString;
     }
 
+    public boolean getIsExtern()
+    {
+        return isExtern;
+    }
+
     public boolean getIsBytes()
     {
         return isBytes;
@@ -91,6 +97,7 @@ public class NativeTypeInfoTemplateData
         isBitmask = baseType instanceof BitmaskType;
         isBoolean = baseType instanceof BooleanType;
         isString = baseType instanceof StringType;
+        isExtern = baseType instanceof ExternType;
         isBytes = baseType instanceof BytesType;
     }
 
@@ -101,5 +108,6 @@ public class NativeTypeInfoTemplateData
     private final boolean isBitmask;
     private final boolean isBoolean;
     private final boolean isString;
+    private final boolean isExtern;
     private final boolean isBytes;
 }

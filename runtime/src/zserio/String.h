@@ -26,7 +26,7 @@ using string = basic_string<std::allocator<char>>;
 namespace detail
 {
 
-BitSize bitSizeOf(std::string_view stringValue);
+BitSize bitSizeOf(std::string_view stringValue, BitSize = 0);
 
 } // namespace detail
 

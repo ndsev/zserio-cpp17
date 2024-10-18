@@ -160,6 +160,8 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypesTemplateData(TypesContext typesContext, CppNativeMapper nativeMapper)
         {
             allocator = new AllocatorTemplateData(typesContext);
+            bitBuffer = new TypeTemplateData(
+                    nativeMapper.getBitBufferType(), nativeMapper.getBitBufferType().needsAllocatorArgument());
             string = new TypeTemplateData(
                     nativeMapper.getStringType(), nativeMapper.getStringType().needsAllocatorArgument());
             vector = new TypeTemplateData(
@@ -169,6 +171,11 @@ public abstract class CppTemplateData implements IncludeCollector
         public AllocatorTemplateData getAllocator()
         {
             return allocator;
+        }
+
+        public TypeTemplateData getBitBuffer()
+        {
+            return bitBuffer;
         }
 
         public TypeTemplateData getString()
@@ -268,6 +275,7 @@ public abstract class CppTemplateData implements IncludeCollector
         }
 
         private final AllocatorTemplateData allocator;
+        private final TypeTemplateData bitBuffer;
         private final TypeTemplateData string;
         private final TypeTemplateData vector;
     }

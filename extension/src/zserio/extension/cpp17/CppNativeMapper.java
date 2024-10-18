@@ -136,6 +136,11 @@ public final class CppNativeMapper
         return stringViewType;
     }
 
+    public NativeAllocType getBitBufferType()
+    {
+        return bitBufferType;
+    }
+
     public NativeAllocType getStringType()
     {
         return stringType;
