@@ -97,7 +97,7 @@ View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data);
 template <typename... ARGS>
 View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data, ARGS&&... args)
 {
-    read(reader, data, std::forward<ARGS>(args)...);
+    return read(reader, data, std::forward<ARGS>(args)...);
 }
 
 template <>
