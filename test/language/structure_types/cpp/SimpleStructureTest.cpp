@@ -196,5 +196,24 @@ TEST_F(SimpleStructureDataTest, stdHash)
     ASSERT_EQ(hasher(simpleStructure1), hasher(simpleStructure2));
 }
 
+class SimpleStructureViewTest : public SimpleStructureDataTest
+{
+protected:
+    static constexpr size_t SIMPLE_STRUCTURE_BIT_SIZE = 18;
+};
+
+TEST_F(SimpleStructureViewTest, bitSizeOf)
+{
+    const uint8_t numberA = 0x04;
+    const uint8_t numberB = 0xCD;
+    const uint8_t numberC = 0x57;
+
+    SimpleStructure simpleStructure(numberA, numberB, numberC);
+    zserio::View<SimpleStructure> view(simpleStructure);
+    ASSERT_EQ(SIMPLE_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 0));
+    ASSERT_EQ(SIMPLE_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 1));
+    ASSERT_EQ(SIMPLE_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 100));
+}
+
 } // namespace simple_structure
 } // namespace structure_types

@@ -161,9 +161,14 @@ public final class CompoundFieldTemplateData
         {
             final Expression optionalClauseExpression = field.getOptionalClauseExpr();
             final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
+            final ExpressionFormatter viewIndirectExpressionFormatter =
+                    context.getIndirectExpressionFormatter(includeCollector, "view");
             clause = (optionalClauseExpression == null)
                     ? null
                     : cppExpressionFormatter.formatGetter(optionalClauseExpression);
+            viewIndirectClause = (optionalClauseExpression == null)
+                    ? null
+                    : viewIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
             this.isRecursive = isRecursive;
         }
 
@@ -172,12 +177,18 @@ public final class CompoundFieldTemplateData
             return clause;
         }
 
+        public String getViewIndirectClause()
+        {
+            return viewIndirectClause;
+        }
+
         public boolean getIsRecursive()
         {
             return isRecursive;
         }
 
         private final String clause;
+        private final String viewIndirectClause;
         private final boolean isRecursive;
     }
 

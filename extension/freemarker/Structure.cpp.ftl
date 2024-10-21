@@ -289,13 +289,28 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
 
-size_t hash<${fullName}>::operator()(const ${fullName}& value) const
+size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> data</#if>) const
 {
     uint32_t result = ::zserio::HASH_SEED;
 <#list fieldList as field>
-    result = ::zserio::calcHashCode(result, value.${field.name});
-<#else>
-    (void)value;
+    result = ::zserio::calcHashCode(result, data.${field.name});
+</#list>
+    return static_cast<size_t>(result);
+}
+
+size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
+        <#lt>const ::zserio::View<${fullName}>&<#if fieldList?has_content> view</#if>) const
+{
+    uint32_t result = ::zserio::HASH_SEED;
+<#list fieldList as field>
+    <#if field.optional??>
+    if (${field.optional.viewIndirectClause})
+    {
+        result = ::zserio::calcHashCode(result, view.${field.getterName}());
+    }
+    <#else>
+    result = ::zserio::calcHashCode(result, view.${field.getterName}());
+    </#if> 
 </#list>
     return static_cast<size_t>(result);
 }

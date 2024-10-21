@@ -106,7 +106,13 @@ BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
 template <>
 struct hash<${fullName}>
 {
-    size_t operator()(const ${fullName}& value) const;
+    size_t operator()(const ${fullName}& data) const;
+};
+
+template <>
+struct hash<::zserio::View<${fullName}>>
+{
+    size_t operator()(const ::zserio::View<${fullName}>& view) const;
 };
 <@namespace_end ["std"]/>
 

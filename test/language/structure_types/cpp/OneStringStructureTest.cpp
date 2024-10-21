@@ -153,6 +153,70 @@ TEST_F(OneStringStructureDataTest, stdHash)
 class OneStringStructureViewTest : public OneStringStructureDataTest
 {};
 
+TEST_F(OneStringStructureViewTest, operatorEquality)
+{
+    OneStringStructure oneStringStructure1;
+    OneStringStructure oneStringStructure2;
+
+    zserio::View<OneStringStructure> view1(oneStringStructure1);
+    zserio::View<OneStringStructure> view2(oneStringStructure2);
+
+    ASSERT_TRUE(view1 == view2);
+
+    oneStringStructure1.oneString = ONE_STRING;
+    ASSERT_FALSE(view1 == view2);
+
+    oneStringStructure2.oneString = ONE_STRING;
+    ASSERT_TRUE(view1 == view2);
+}
+
+TEST_F(OneStringStructureViewTest, operatorLessThan)
+{
+    OneStringStructure oneStringStructure1;
+    OneStringStructure oneStringStructure2;
+
+    zserio::View<OneStringStructure> view1(oneStringStructure1);
+    zserio::View<OneStringStructure> view2(oneStringStructure2);
+
+    ASSERT_FALSE(view1 < view2);
+
+    oneStringStructure1.oneString = ONE_STRING;
+    ASSERT_FALSE(view1 < view2);
+    ASSERT_TRUE(view2 < view1);
+
+    oneStringStructure2.oneString = ONE_STRING;
+    ASSERT_FALSE(view1 < view2);
+    ASSERT_FALSE(view2 < view1);
+
+    oneStringStructure1.oneString = "A string";
+    ASSERT_TRUE(view1 < view2);
+    ASSERT_FALSE(view2 < view1);
+}
+
+TEST_F(OneStringStructureViewTest, stdHash)
+{
+    OneStringStructure oneStringStructure1;
+    OneStringStructure oneStringStructure2;
+
+    zserio::View<OneStringStructure> view1(oneStringStructure1);
+    zserio::View<OneStringStructure> view2(oneStringStructure2);
+
+    std::hash<zserio::View<OneStringStructure>> hasher;
+
+    ASSERT_EQ(hasher(view1), hasher(view2));
+
+    oneStringStructure1.oneString = ONE_STRING;
+    ASSERT_NE(hasher(view1), hasher(view2));
+
+    // TODO[Mi-L@]: View returns string_view which goes through different calcHashCode calls then string
+    // use hardcoded values to check that the hash code is stable
+    // ASSERT_EQ(1773897624, hasher(view1));
+    // ASSERT_EQ(23, hasher(view2));
+
+    oneStringStructure2.oneString = ONE_STRING;
+    ASSERT_EQ(hasher(view1), hasher(view2));
+}
+
 TEST_F(OneStringStructureViewTest, bitSizeOf)
 {
     using namespace std::literals;
