@@ -3,6 +3,8 @@
 <#include "CompoundParameter.inc.ftl">
 <@file_header generatorDescription/>
 
+#include <zserio/BitStreamReader.h>
+#include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 <@system_includes cppSystemIncludes/>
 
@@ -234,21 +236,61 @@ void validate(const View<${fullName}>&)
     // TODO:
 }
 
+<#macro structure_view_write field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.alignmentValue??>
+${I}writer.alignTo(${field.alignmentValue});
+    </#if>
+    <#if field.offset?? && !field.offset.containsIndex>
+${I}writer.alignTo(8);
+    </#if>
+${I}::zserio::detail::write(writer, <#if field.optional??>*</#if>view.${field.getterName}());
+</#macro>
 template <>
 void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
-    // TODO:
 <#list fieldList as field>
+    <#if field.optional??>
+    if (${field.optional.viewIndirectClause})
+    {
+        <@structure_view_write field, 2/>
+    }
+    <#else>
+    <@structure_view_write field, 1/>
+    </#if>
 </#list>
 }
 
+<#macro structure_view_read field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.alignmentValue??>
+${I}in.alignTo(${field.alignmentValue});
+    </#if>
+    <#if field.offset?? && !field.offset.containsIndex>
+${I}in.alignTo(8);
+    </#if>
+    <#local compoundArguments><@field_view_parameters field/></#local>
+${I}(void)::zserio::detail::read(reader, data.<@field_data_member_name field/><#rt>
+        <#lt><#if compoundArguments?has_content>, ${compoundArguments}</#if>);
+</#macro>
 View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
-        <#lt>${fullName}&<#if fieldList?has_content> data</#if>)
+        <#lt>${fullName}& data)
 {
-    // TODO:
+    View<${fullName}> view(data);
 <#list fieldList as field>
+    <#if field.optional??>
+    if (${field.optional.viewIndirectClause})
+    {
+        data.<@field_data_member_name field/> = <@field_data_type_name field/>(<#rt>
+                <#lt><#if field.typeInfo.needsAllocator>data.<@field_data_member_name field/>.get_allocator()</#if>);
+        <@structure_view_read field, 2/>
+    }
+    <#else>
+    <@structure_view_read field, 1/>
+    </#if>
 </#list>
+    return view;
 }
 
 <#macro structure_view_bitsizeof field indent>
@@ -271,7 +313,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 
     <#list fieldList as field>
         <#if field.optional??>
-    if (${field.optional.clause})
+    if (${field.optional.viewIndirectClause})
     {
         <@structure_view_bitsizeof field, 2/>
     }
@@ -310,7 +352,7 @@ size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
     }
     <#else>
     result = ::zserio::calcHashCode(result, view.${field.getterName}());
-    </#if> 
+    </#if>
 </#list>
     return static_cast<size_t>(result);
 }

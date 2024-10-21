@@ -40,6 +40,14 @@
     get${field.name?cap_first}<#t>
 </#macro>
 
+<#macro field_view_parameters field>
+    <#if field.compound??>
+        <#list field.compound.instantiatedParameters as instantiatedParameter>
+            ${instantiatedParameter.viewIndirectExpression}<#if instantiatedParameter?has_next>, </#if><#t>
+        </#list>
+    </#if>
+</#macro>
+
 <#macro choice_tag_name field>
     CHOICE_${field.name}<#t>
 </#macro>

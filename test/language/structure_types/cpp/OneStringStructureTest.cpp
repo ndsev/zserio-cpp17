@@ -151,7 +151,19 @@ TEST_F(OneStringStructureDataTest, stdHash)
 }
 
 class OneStringStructureViewTest : public OneStringStructureDataTest
-{};
+{
+protected:
+    void writeOneStringStructure(zserio::BitStreamWriter& writer, std::string_view oneString)
+    {
+        writer.writeString(oneString);
+    }
+
+    static constexpr std::string_view BLOB_NAME = "language/structure_types/one_string_structure.blob";
+    static constexpr std::string_view ONE_STRING = "This is a string!";
+    static constexpr size_t ONE_STRING_STRUCTURE_BIT_SIZE = (1 + ONE_STRING.length()) * 8;
+
+    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
+};
 
 TEST_F(OneStringStructureViewTest, operatorEquality)
 {
@@ -215,6 +227,33 @@ TEST_F(OneStringStructureViewTest, stdHash)
 
     oneStringStructure2.oneString = ONE_STRING;
     ASSERT_EQ(hasher(view1), hasher(view2));
+}
+
+TEST_F(OneStringStructureViewTest, read)
+{
+    zserio::BitStreamWriter writer(bitBuffer);
+    writeOneStringStructure(writer, ONE_STRING);
+
+    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
+    OneStringStructure oneStringStructure{allocator_type()};
+    zserio::View<OneStringStructure> readView = zserio::detail::read(reader, oneStringStructure);
+    ASSERT_EQ(ONE_STRING, readView.oneString());
+}
+
+TEST_F(OneStringStructureViewTest, writeRead)
+{
+    OneStringStructure oneStringStructure{string_type(ONE_STRING)};
+    zserio::View<OneStringStructure> view(oneStringStructure);
+
+    zserio::BitStreamWriter writer(bitBuffer);
+    zserio::detail::write(writer, view);
+
+    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
+
+    OneStringStructure readOneStringStructure{allocator_type()};
+    zserio::View<OneStringStructure> readView = zserio::detail::read(reader, readOneStringStructure);
+    ASSERT_EQ(ONE_STRING, readView.oneString());
+    ASSERT_EQ(view, readView);
 }
 
 TEST_F(OneStringStructureViewTest, bitSizeOf)

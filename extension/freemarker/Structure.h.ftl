@@ -49,7 +49,7 @@ template <>
 class View<${fullName}>
 {
 public:
-    View(const ${fullName}& data<#rt>
+    explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>

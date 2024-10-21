@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import zserio.ast.ArrayInstantiation;
-import zserio.ast.ChoiceType;
 import zserio.ast.CompoundType;
 import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.Expression;
@@ -15,7 +14,6 @@ import zserio.ast.ParameterizedTypeInstantiation;
 import zserio.ast.ParameterizedTypeInstantiation.InstantiatedParameter;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
-import zserio.ast.UnionType;
 import zserio.ast.ZserioType;
 import zserio.extension.common.ExpressionFormatter;
 import zserio.extension.common.ZserioExtensionException;
@@ -58,15 +56,12 @@ public final class CompoundFieldTemplateData
         alignmentValue = createAlignmentValue(context, field, includeCollector);
         initializer = createInitializer(context, field, includeCollector);
 
-        usesAnyHolder = (parentType instanceof ChoiceType) || (parentType instanceof UnionType);
-
-        needsAllocator = !typeInfo.getIsSimple();
-        holderNeedsAllocator = usesAnyHolder || (optional != null && optional.getIsRecursive());
-
         constraint = createConstraint(context, field, includeCollector);
         offset = createOffset(context, field, includeCollector);
         array = createArray(context, fieldNativeType, fieldTypeInstantiation, parentType, includeCollector);
         docComments = DocCommentsDataCreator.createData(context, field);
+
+        needsAllocator = typeInfo.getNeedsAllocator() || optional != null || array != null;
     }
 
     public Optional getOptional()
@@ -119,21 +114,6 @@ public final class CompoundFieldTemplateData
         return initializer;
     }
 
-    public boolean getUsesAnyHolder()
-    {
-        return usesAnyHolder;
-    }
-
-    public boolean getNeedsAllocator()
-    {
-        return needsAllocator;
-    }
-
-    public boolean getHolderNeedsAllocator()
-    {
-        return holderNeedsAllocator;
-    }
-
     public Constraint getConstraint()
     {
         return constraint;
@@ -152,6 +132,11 @@ public final class CompoundFieldTemplateData
     public DocCommentsTemplateData getDocComments()
     {
         return docComments;
+    }
+
+    public boolean getNeedsAllocator()
+    {
+        return needsAllocator;
     }
 
     public static final class Optional
@@ -211,7 +196,6 @@ public final class CompoundFieldTemplateData
         {
             instantiatedParameters = new ArrayList<InstantiatedParameterData>();
             parameters = CompoundTypeTemplateData.createParameterList(context, compoundType, includeCollector);
-            needsChildrenInitialization = compoundType.needsChildrenInitialization();
         }
 
         public Iterable<InstantiatedParameterData> getInstantiatedParameters()
@@ -224,11 +208,6 @@ public final class CompoundFieldTemplateData
             return parameters;
         }
 
-        public boolean getNeedsChildrenInitialization()
-        {
-            return needsChildrenInitialization;
-        }
-
         public static final class InstantiatedParameterData
         {
             public InstantiatedParameterData(TemplateDataContext context,
@@ -239,9 +218,9 @@ public final class CompoundFieldTemplateData
                 final ExpressionFormatter cppExpressionFormatter =
                         context.getExpressionFormatter(includeCollector);
                 expression = cppExpressionFormatter.formatGetter(argumentExpression);
-                final ExpressionFormatter cppOwnerIndirectExpressionFormatter =
-                        context.getIndirectExpressionFormatter(includeCollector, "owner");
-                indirectExpression = cppOwnerIndirectExpressionFormatter.formatGetter(argumentExpression);
+                final ExpressionFormatter viewIndirectExpressionFormatter =
+                        context.getIndirectExpressionFormatter(includeCollector, "view");
+                viewIndirectExpression = viewIndirectExpressionFormatter.formatGetter(argumentExpression);
                 needsOwner = argumentExpression.requiresOwnerContext();
                 needsIndex = argumentExpression.containsIndex();
                 final TypeReference parameterTypeReference =
@@ -256,9 +235,9 @@ public final class CompoundFieldTemplateData
                 return expression;
             }
 
-            public String getIndirectExpression()
+            public String getViewIndirectExpression()
             {
-                return indirectExpression;
+                return viewIndirectExpression;
             }
 
             public boolean getNeedsOwner()
@@ -277,7 +256,7 @@ public final class CompoundFieldTemplateData
             }
 
             private final String expression;
-            private final String indirectExpression;
+            private final String viewIndirectExpression;
             private final boolean needsOwner;
             private final boolean needsIndex;
             private final NativeTypeInfoTemplateData typeInfo;
@@ -285,7 +264,6 @@ public final class CompoundFieldTemplateData
 
         private final List<InstantiatedParameterData> instantiatedParameters;
         private final List<CompoundParameterTemplateData> parameters;
-        private final boolean needsChildrenInitialization;
     }
 
     public static final class Constraint
@@ -647,11 +625,9 @@ public final class CompoundFieldTemplateData
     private final IntegerRange integerRange;
     private final String alignmentValue;
     private final String initializer;
-    private final boolean usesAnyHolder;
-    private final boolean needsAllocator;
-    private final boolean holderNeedsAllocator;
     private final Constraint constraint;
     private final Offset offset;
     private final Array array;
     private final DocCommentsTemplateData docComments;
+    private final boolean needsAllocator;
 }

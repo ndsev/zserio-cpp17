@@ -82,6 +82,11 @@ public class NativeTypeInfoTemplateData
         return isBytes;
     }
 
+    public boolean getNeedsAllocator()
+    {
+        return needsAllocator;
+    }
+
     private NativeTypeInfoTemplateData(CppNativeType cppNativeType, ZserioType baseType,
             TypeInstantiation typeInstantiation, TypeReference typeReference) throws ZserioExtensionException
     {
@@ -99,6 +104,7 @@ public class NativeTypeInfoTemplateData
         isString = baseType instanceof StringType;
         isExtern = baseType instanceof ExternType;
         isBytes = baseType instanceof BytesType;
+        needsAllocator = isString || isExtern || isBytes || !isSimple;
     }
 
     private final String typeFullName;
@@ -110,4 +116,5 @@ public class NativeTypeInfoTemplateData
     private final boolean isString;
     private final boolean isExtern;
     private final boolean isBytes;
+    private final boolean needsAllocator;
 }

@@ -117,6 +117,29 @@ TEST(EmptyStructureViewTest, stdHash)
     ASSERT_EQ(23, hasher(view1));
 }
 
+TEST(EmptyStructureViewTest, read)
+{
+    zserio::BitStreamReader reader(zserio::Span<const uint8_t>{});
+    EmptyStructure emptyStructure{allocator_type()};
+    zserio::View<EmptyStructure> readView = zserio::detail::read(reader, emptyStructure);
+    (void)readView;
+}
+
+TEST(EmptyStructureViewTest, writeRead)
+{
+    EmptyStructure emptyStructure{allocator_type()};
+    zserio::View<EmptyStructure> view(emptyStructure);
+
+    zserio::BitBuffer bitBuffer(0);
+    zserio::BitStreamWriter writer(bitBuffer);
+    zserio::detail::write(writer, view);
+
+    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
+    EmptyStructure readEmptyStructure{allocator_type()};
+    zserio::View<EmptyStructure> readView = zserio::detail::read(reader, readEmptyStructure);
+    ASSERT_EQ(view, readView);
+}
+
 TEST(EmptyStructureViewTest, bitSizeOf)
 {
     EmptyStructure emptyStructure;
