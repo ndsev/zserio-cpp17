@@ -101,6 +101,33 @@ inline uint32_t calcHashCode(uint32_t seedValue, detail::IntWrapper<VALUE_TYPE, 
     return calcHashCode(seedValue, static_cast<VALUE_TYPE>(value));
 }
 
+/**
+ * Calculates hash code of the given bool wrapper value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+inline uint32_t calcHashCode(uint32_t seedValue, Bool value)
+{
+    return calcHashCode(seedValue, static_cast<Bool::value_type>(value));
+}
+
+/**
+ * Calculates hash code of the given floating-point wrapper value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename VALUE_TYPE, detail::FloatType FLOAT_TYPE>
+inline uint32_t calcHashCode(uint32_t seedValue, detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE> value)
+{
+    return calcHashCode(seedValue, static_cast<VALUE_TYPE>(value));
+}
+
 // TODO[Mi-L@]: support all zserio wrappers
 
 /**

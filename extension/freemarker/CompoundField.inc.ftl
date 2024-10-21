@@ -6,6 +6,14 @@
     </#if>
 </#macro>
 
+<#macro field_data_member_type_name field>
+    <#if field.optional??>
+        ::zserio::Optional<<@field_data_type_name field/>><#t>
+    <#else>
+        <@field_data_type_name field/><#t>
+    </#if>
+</#macro>
+
 <#macro field_data_arg_name field>
     ${field.name}_<#t>
 </#macro>
@@ -14,25 +22,24 @@
     ${field.name}<#t>
 </#macro>
 
-<#macro field_view_type_name field>
-    <#if field.typeInfo.isSimple>
-        ${field.typeInfo.typeFullName}<#t>
-    <#elseif field.typeInfo.isString>
-        ::std::string_view<#t>
-    <#elseif field.typeInfo.isExtern>
-        const ${types.bitBuffer.name}&<#t>
-    <#elseif field.typeInfo.isBytes>
-        ::zserio::Span<const uint8_t><#t>
-    <#else>
-        View<${field.typeInfo.typeFullName}><#t>
-    </#if>
-</#macro>
-
 <#macro field_view_getter_type_name field>
+    <#local typeName>
+        <#if field.typeInfo.isSimple>
+            ${field.typeInfo.typeFullName}<#t>
+        <#elseif field.typeInfo.isString>
+            ::std::string_view<#t>
+        <#elseif field.typeInfo.isExtern>
+            const ${types.bitBuffer.name}&<#t>
+        <#elseif field.typeInfo.isBytes>
+            ::zserio::Span<const uint8_t><#t>
+        <#else>
+            View<${field.typeInfo.typeFullName}><#t>
+        </#if>
+    </#local>
     <#if field.optional??>
-    ::zserio::Optional<<@field_view_type_name field/>><#t>
+        ::zserio::Optional<${typeName}><#t>
     <#else>
-    <@field_view_type_name field/><#t>
+        ${typeName}<#t>
     </#if>
 </#macro>
 
@@ -51,6 +58,15 @@
 <#macro choice_tag_name field>
     CHOICE_${field.name}<#t>
 </#macro>
+
+<#function has_optional_field fieldList>
+    <#list fieldList as field>
+        <#if field.optional??>
+            <#return true>
+        </#if>
+    </#list>
+    <#return false>
+</#function>
 
 <#function needs_allocator fieldList>
     <#list fieldList as field>

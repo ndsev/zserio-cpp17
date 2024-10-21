@@ -10,6 +10,9 @@
 
 #include <memory>
 #include <zserio/View.h>
+<#if has_optional_field(fieldList)>
+#include <zserio/Optional.h>
+</#if>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>
@@ -32,7 +35,7 @@ struct ${name}
 </#list>
 
 <#list fieldList as field>
-    <@field_data_type_name field/> <@field_data_member_name field/>;
+    <@field_data_member_type_name field/> <@field_data_member_name field/>;
 </#list>
 };
 

@@ -99,9 +99,9 @@ namespace detail
 {
 
 template <typename T>
-inline std::enable_if_t<std::is_enum_v<T>, BitSize> bitSizeOf(T value)
+inline std::enable_if_t<std::is_enum_v<T>, BitSize> bitSizeOf(T value, BitSize bitPosition = 0)
 {
-    return bitSizeOf(enumToValue(value));
+    return bitSizeOf(enumToValue(value), bitPosition);
 }
 
 template <typename T>

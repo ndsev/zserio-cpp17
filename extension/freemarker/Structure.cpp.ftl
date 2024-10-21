@@ -19,9 +19,13 @@ ${name}::${name}() noexcept :
 ${name}::${name}(const allocator_type&<#if needs_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
         <#lt> :
-        <#items as field>
+    <#items as field>
+        <#if field.initializer??>
+        ${field.name}(${field.initializer}<#if field.needsAllocator>, allocator</#if>)<#sep>,</#sep>
+        <#else>
         ${field.name}(<#if field.needsAllocator>allocator</#if>)<#sep>,</#sep>
-        </#items>
+        </#if>
+    </#items>
 <#else>
 
 </#list>
@@ -169,28 +173,32 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 </#if>
 }
 
-<#macro structure_view_field_less_than lhs rhs indent>
+<#macro structure_view_field_less_than field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}if (${lhs} != ${rhs})
+${I}if (<#if field.optional??>*</#if>lhs.${field.getterName}() != <#if field.optional??>*</#if>rhs.${field.getterName}())
 ${I}{
-${I}    return ${lhs} < ${rhs};
+    <#if field.typeInfo.isBoolean>
+        <#-- TODO[Mi-L@]: Remove once operator< for zserio::Bool is implemented in runtime! -->
+${I}    return static_cast<int>(<#if field.optional??>*</#if>lhs.${field.getterName}()) < <#rt>
+        <#lt>static_cast<int>(<#if field.optional??>*</#if>rhs.${field.getterName}());
+    <#else>
+${I}    return <#if field.optional??>*</#if>lhs.${field.getterName}() < <#if field.optional??>*</#if>rhs.${field.getterName}();
+    </#if>
 ${I}}
 </#macro>
 <#macro structure_view_field_less_than_optional field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.optional??>
-${I}if (${field.getterName}() && other.${field.getterName}())
+${I}if (lhs.${field.getterName}() && rhs.${field.getterName}())
 ${I}{
-        <@structure_view_field_less_than "*lhs." + field.getterName + "()", "*rhs." + field.getterName + "()",
-                indent+1/>
+        <@structure_view_field_less_than field, indent+1/>
 ${I}}
-${I}else if (${field.getterName}() != other.${field.getterName}())
+${I}else if (lhs.${field.getterName}() != rhs.${field.getterName}())
 ${I}{
-${I}    return !${field.getterName}();
+${I}    return !lhs.${field.getterName}();
 ${I}}
     <#else>
-    <@structure_view_field_less_than "lhs." + field.getterName + "()", "rhs." + field.getterName + "()",
-            indent/>
+    <@structure_view_field_less_than field indent/>
     </#if>
 </#macro>
 bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
@@ -271,7 +279,7 @@ ${I}in.alignTo(${field.alignmentValue});
 ${I}in.alignTo(8);
     </#if>
     <#local compoundArguments><@field_view_parameters field/></#local>
-${I}(void)::zserio::detail::read(reader, data.<@field_data_member_name field/><#rt>
+${I}(void)::zserio::detail::read(reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#rt>
         <#lt><#if compoundArguments?has_content>, ${compoundArguments}</#if>);
 </#macro>
 View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
