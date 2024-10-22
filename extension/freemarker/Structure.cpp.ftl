@@ -34,11 +34,12 @@ ${name}::${name}(const allocator_type&<#if needs_allocator(fieldList)> allocator
 
 ${name}::${name}(
     <#list fieldList as field>
-        <@field_data_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept :</#if>
+        <@structure_field_data_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept :</#if>
     </#list>
     <#list fieldList as field>
-        ${field.name}(<#if !field.typeInfo.isSimple>::std::move(</#if><@field_data_arg_name field/>)<#rt>
-                <#lt><#if !field.typeInfo.isSimple>)</#if><#sep>,</#sep>
+        ${field.name}(<#if field.array?? || field.optional?? || !field.typeInfo.isSimple>::std::move(</#if><#rt>
+                <@field_data_arg_name field/>)<#t>
+                <#lt><#if field.array?? || field.optional?? || !field.typeInfo.isSimple>)</#if><#sep>,</#sep>
     </#list>
 {}
 </#if>
@@ -123,10 +124,10 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 </#list>
 <#list fieldList as field>
 
-<@field_view_getter_type_name field/> View<${fullName}>::${field.getterName}() const
+<@structure_field_view_type_name field/> View<${fullName}>::${field.getterName}() const
 {
-    <#if field.optional??>
-    if (!(${field.optional.clause}))
+    <#if field.optional??> 
+    if (<#if field.optional.clause??>!(${field.optional.clause})<#else>!m_data.<@field_data_member_name field/></#if>)
     {
         return {};
     }
@@ -260,10 +261,23 @@ void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <
 {
 <#list fieldList as field>
     <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
     if (${field.optional.viewIndirectClause})
+        <#else>
+    if (view.${field.getterName}())
+        </#if>
     {
+        <#if !field.optional.viewIndirectClause??>
+        writer.writeBool(true);
+        </#if>
         <@structure_view_write field, 2/>
     }
+        <#if !field.optional.viewIndirectClause??>
+    else
+    {
+        writer.writeBool(false);
+    }
+        </#if>
     <#else>
     <@structure_view_write field, 1/>
     </#if>
@@ -288,7 +302,11 @@ View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> rea
     View<${fullName}> view(data);
 <#list fieldList as field>
     <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
     if (${field.optional.viewIndirectClause})
+        <#else>
+    if (reader.readBool())
+        </#if>
     {
         data.<@field_data_member_name field/> = <@field_data_type_name field/>(<#rt>
                 <#lt><#if field.typeInfo.needsAllocator>data.<@field_data_member_name field/>.get_allocator()</#if>);
@@ -321,7 +339,12 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 
     <#list fieldList as field>
         <#if field.optional??>
+            <#if field.optional.viewIndirectClause??>
     if (${field.optional.viewIndirectClause})
+            <#else>
+    endBitPosition += 1;
+    if (view.${field.getterName}())
+            </#if>
     {
         <@structure_view_bitsizeof field, 2/>
     }
@@ -354,7 +377,11 @@ size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
     uint32_t result = ::zserio::HASH_SEED;
 <#list fieldList as field>
     <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
     if (${field.optional.viewIndirectClause})
+        <#else>
+    if (view.${field.getterName}())
+        </#if>
     {
         result = ::zserio::calcHashCode(result, view.${field.getterName}());
     }

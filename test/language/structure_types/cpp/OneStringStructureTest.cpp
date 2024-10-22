@@ -18,6 +18,21 @@ protected:
     static constexpr std::string_view ONE_STRING = "This is a string!";
 };
 
+class OneStringStructureViewTest : public OneStringStructureDataTest
+{
+protected:
+    void writeOneStringStructure(zserio::BitStreamWriter& writer, std::string_view oneString)
+    {
+        writer.writeString(oneString);
+    }
+
+    static constexpr std::string_view BLOB_NAME = "language/structure_types/one_string_structure.blob";
+    static constexpr std::string_view ONE_STRING = "This is a string!";
+    static constexpr size_t ONE_STRING_STRUCTURE_BIT_SIZE = (1 + ONE_STRING.length()) * 8;
+
+    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
+};
+
 TEST_F(OneStringStructureDataTest, emptyConstructor)
 {
     {
@@ -149,21 +164,6 @@ TEST_F(OneStringStructureDataTest, stdHash)
     oneStringStructure2.oneString = ONE_STRING;
     ASSERT_EQ(hasher(oneStringStructure1), hasher(oneStringStructure2));
 }
-
-class OneStringStructureViewTest : public OneStringStructureDataTest
-{
-protected:
-    void writeOneStringStructure(zserio::BitStreamWriter& writer, std::string_view oneString)
-    {
-        writer.writeString(oneString);
-    }
-
-    static constexpr std::string_view BLOB_NAME = "language/structure_types/one_string_structure.blob";
-    static constexpr std::string_view ONE_STRING = "This is a string!";
-    static constexpr size_t ONE_STRING_STRUCTURE_BIT_SIZE = (1 + ONE_STRING.length()) * 8;
-
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
-};
 
 TEST_F(OneStringStructureViewTest, operatorEquality)
 {

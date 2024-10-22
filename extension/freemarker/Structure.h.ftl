@@ -30,12 +30,12 @@ struct ${name}
 
     explicit ${name}(
     <#items as field>
-        <@field_data_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept;</#if>
+        <@structure_field_data_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept;</#if>
     </#items>
 </#list>
 
 <#list fieldList as field>
-    <@field_data_member_type_name field/> <@field_data_member_name field/>;
+    <@structure_field_data_type_name field/> <@field_data_member_name field/>;
 </#list>
 };
 
@@ -67,7 +67,7 @@ public:
 <#list fieldList>
 
     <#items as field>
-    <@field_view_getter_type_name field/> ${field.getterName}() const;
+    <@structure_field_view_type_name field/> ${field.getterName}() const;
     </#items>
 </#list>
 

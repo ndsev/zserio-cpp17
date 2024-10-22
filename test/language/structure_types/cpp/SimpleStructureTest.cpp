@@ -13,6 +13,21 @@ class SimpleStructureDataTest : public ::testing::Test
 protected:
 };
 
+class SimpleStructureViewTest : public SimpleStructureDataTest
+{
+protected:
+    void writeSimpleStructure(
+            zserio::BitStreamWriter& writer, uint8_t numberA, uint8_t numberB, uint8_t numberC)
+    {
+        zserio::detail::write(writer, zserio::UInt3(numberA));
+        zserio::detail::write(writer, zserio::UInt8(numberB));
+        zserio::detail::write(writer, zserio::UInt7(numberC));
+    }
+
+    static constexpr size_t SIMPLE_STRUCTURE_BIT_SIZE = 18;
+    zserio::BitBuffer bitBuffer = zserio::BitBuffer(SIMPLE_STRUCTURE_BIT_SIZE);
+};
+
 TEST_F(SimpleStructureDataTest, emptyConstructor)
 {
     {
@@ -195,21 +210,6 @@ TEST_F(SimpleStructureDataTest, stdHash)
     simpleStructure2.numberB = numberB;
     ASSERT_EQ(hasher(simpleStructure1), hasher(simpleStructure2));
 }
-
-class SimpleStructureViewTest : public SimpleStructureDataTest
-{
-protected:
-    void writeSimpleStructure(
-            zserio::BitStreamWriter& writer, uint8_t numberA, uint8_t numberB, uint8_t numberC)
-    {
-        zserio::detail::write(writer, zserio::UInt3(numberA));
-        zserio::detail::write(writer, zserio::UInt8(numberB));
-        zserio::detail::write(writer, zserio::UInt7(numberC));
-    }
-
-    static constexpr size_t SIMPLE_STRUCTURE_BIT_SIZE = 18;
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(SIMPLE_STRUCTURE_BIT_SIZE);
-};
 
 TEST_F(SimpleStructureViewTest, operatorEquality)
 {

@@ -6,7 +6,7 @@
     </#if>
 </#macro>
 
-<#macro field_data_member_type_name field>
+<#macro structure_field_data_type_name field>
     <#if field.optional??>
         ::zserio::Optional<<@field_data_type_name field/>><#t>
     <#else>
@@ -22,24 +22,25 @@
     ${field.name}<#t>
 </#macro>
 
-<#macro field_view_getter_type_name field>
-    <#local typeName>
-        <#if field.typeInfo.isSimple>
-            ${field.typeInfo.typeFullName}<#t>
-        <#elseif field.typeInfo.isString>
-            ::std::string_view<#t>
-        <#elseif field.typeInfo.isExtern>
-            const ${types.bitBuffer.name}&<#t>
-        <#elseif field.typeInfo.isBytes>
-            ::zserio::Span<const uint8_t><#t>
-        <#else>
-            View<${field.typeInfo.typeFullName}><#t>
-        </#if>
-    </#local>
-    <#if field.optional??>
-        ::zserio::Optional<${typeName}><#t>
+<#macro field_view_type_name field>
+    <#if field.typeInfo.isSimple>
+        ${field.typeInfo.typeFullName}<#t>
+    <#elseif field.typeInfo.isString>
+        ::std::string_view<#t>
+    <#elseif field.typeInfo.isExtern>
+        const ${types.bitBuffer.name}&<#t>
+    <#elseif field.typeInfo.isBytes>
+        ::zserio::Span<const uint8_t><#t>
     <#else>
-        ${typeName}<#t>
+        View<${field.typeInfo.typeFullName}><#t>
+    </#if>
+</#macro>
+
+<#macro structure_field_view_type_name field>
+    <#if field.optional??>
+        ::zserio::Optional<<@field_view_type_name field/>><#t>
+    <#else>
+        <@field_view_type_name field/><#t>
     </#if>
 </#macro>
 
