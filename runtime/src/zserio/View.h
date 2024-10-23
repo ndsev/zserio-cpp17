@@ -50,16 +50,14 @@ void write(::zserio::BitStreamWriter& writer, const View<T>& view);
  *
  * \param read Bit stream reader to read from.
  * \param data Zserio Data to fill with read data.
- * \param alloc Allocator to use.
- * \param args All parameters in case of Zserio parameterized type.
+ * \param arguments All parameters in case of Zserio parameterized type.
  *
  * \return View with read data.
  *
  * \throw CppRuntimeException In case of any read error.
  */
 template <typename T, typename... ARGS>
-View<T> read(
-        ::zserio::BitStreamReader& reader, T& data, const typename T::allocator_type& alloc, ARGS&&... args);
+View<T> read(::zserio::BitStreamReader& reader, T& data, ARGS...);
 
 /**
  * Global function for bit size provided via specialization.
@@ -70,19 +68,19 @@ View<T> read(
  * \return Bit size of the Zserio object.
  */
 template <typename T>
-BitSize bitSizeOf(const View<T>& view, BitSize bitPosition);
+BitSize bitSizeOf(const View<T>& view, BitSize bitPosition = 0);
 
 /**
  * Global function for offsets initialization provided via specialization.
  *
  * \param data Zserio Data to use for initialization.
  * \param bitPosition Bit position to use.
- * \param args All parameters in case of Zserio parameterized type.
+ * \param arguments All parameters in case of Zserio parameterized type.
  *
  * \return End bit position.
  */
 template <typename T, typename... ARGS>
-BitSize initializeOffsets(T& data, BitSize bitPosition, ARGS&&... args);
+BitSize initializeOffsets(T& data, BitSize bitPosition, ARGS...);
 
 } // namespace detail
 

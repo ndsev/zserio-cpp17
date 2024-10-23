@@ -33,6 +33,7 @@ include(cmake_utils)
 # setup compiler
 include(compiler_utils)
 compiler_set_static_clibs()
+compiler_reset_debug_iterators()
 if (SANITIZERS_ENABLED)
     compiler_set_address_sanitizer()
 endif ()

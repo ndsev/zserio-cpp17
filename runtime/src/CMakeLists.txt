@@ -48,6 +48,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/OutOfRangeException.h
     zserio/RebindAlloc.h
     zserio/RuntimeArch.h
+    zserio/SerializeUtil.h
     zserio/SizeConvertUtil.cpp
     zserio/SizeConvertUtil.h
     zserio/Span.h

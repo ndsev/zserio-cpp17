@@ -27,15 +27,18 @@ public:
     AllocationTracker(AllocationTracker&&) = default;
     AllocationTracker& operator=(AllocationTracker&&) = default;
 
-    void allocated(void* ptr)
+    void allocated(void* ptr, std::size_t size)
     {
         m_allocations.insert(ptr);
+        m_totalAllocatedSize += size;
     }
 
-    void deallocated(void* ptr)
+    void deallocated(void* ptr, std::size_t size)
     {
         EXPECT_TRUE(m_allocations.count(ptr) > 0);
         m_allocations.erase(ptr);
+        EXPECT_TRUE(m_totalAllocatedSize >= size);
+        m_totalAllocatedSize -= size;
     }
 
     size_t numAllocs() const
@@ -43,8 +46,14 @@ public:
         return m_allocations.size();
     }
 
+    size_t totalAllocatedSize() const
+    {
+        return m_totalAllocatedSize;
+    }
+
 private:
     std::set<void*> m_allocations;
+    std::size_t m_totalAllocatedSize = 0;
 };
 
 } // namespace detail
@@ -83,13 +92,13 @@ public:
     value_type* allocate(std::size_t size)
     {
         const auto ptr = m_allocator.allocate(size);
-        m_tracker->allocated(ptr);
+        m_tracker->allocated(ptr, size);
         return ptr;
     }
 
     void deallocate(value_type* memory, std::size_t size) noexcept
     {
-        m_tracker->deallocated(memory);
+        m_tracker->deallocated(memory, size);
         m_allocator.deallocate(memory, size);
     }
 
@@ -106,6 +115,11 @@ public:
     size_t numAllocs() const
     {
         return m_tracker->numAllocs();
+    }
+
+    size_t totalAllocatedSize() const
+    {
+        return m_tracker->totalAllocatedSize();
     }
 
     template <typename U>

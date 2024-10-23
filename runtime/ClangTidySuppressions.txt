@@ -105,4 +105,4 @@ bugprone-exception-escape:test/zserio/OptionalTest.cpp:260
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
-google-explicit-constructor:test/zserio/TrackingAllocator.h:78
+google-explicit-constructor:test/zserio/TrackingAllocator.h:87
