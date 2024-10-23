@@ -1,7 +1,6 @@
 <#include "FileHeader.inc.ftl">
 <#include "DocComment.inc.ftl">
-<#include "CompoundField.inc.ftl">
-<#include "CompoundParameter.inc.ftl">
+<#include "Structure.inc.ftl">
 <@file_header generatorDescription/>
 
 <@include_guard_begin package.path, name/>
@@ -10,7 +9,7 @@
 
 #include <memory>
 #include <zserio/View.h>
-<#if has_optional_field(fieldList)>
+<#if structure_has_optional_field(fieldList)>
 #include <zserio/Optional.h>
 </#if>
 <@system_includes headerSystemIncludes/>
@@ -23,6 +22,9 @@
 struct ${name}
 {
     using allocator_type = ${types.allocator.default};
+<#if structure_has_recursive_optional_field(fieldList)>
+    using IS_RECURSIVE = void;
+</#if>
 
     ${name}() noexcept;
     explicit ${name}(const allocator_type& allocator) noexcept;

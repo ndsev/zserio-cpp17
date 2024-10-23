@@ -1,16 +1,8 @@
 <#macro field_data_type_name field>
     <#if field.array??>
-        <@vector_type_name field.array.elementTypeInfo.typeFullName/><#t>
+        <@vector_type_name field.typeInfo.typeFullName/><#t>
     <#else>
         ${field.typeInfo.typeFullName}<#t>
-    </#if>
-</#macro>
-
-<#macro structure_field_data_type_name field>
-    <#if field.optional??>
-        ::zserio::Optional<<@field_data_type_name field/>><#t>
-    <#else>
-        <@field_data_type_name field/><#t>
     </#if>
 </#macro>
 
@@ -68,18 +60,13 @@
     CHOICE_${field.name}<#t>
 </#macro>
 
-<#function has_optional_field fieldList>
-    <#list fieldList as field>
-        <#if field.optional??>
-            <#return true>
-        </#if>
-    </#list>
-    <#return false>
+<#function field_needs_allocator field>
+    <#return field.typeInfo.needsAllocator || field.optional?? || field.array??>
 </#function>
 
-<#function needs_allocator fieldList>
+<#function fields_need_allocator fieldList>
     <#list fieldList as field>
-        <#if field.needsAllocator>
+        <#if field_needs_allocator(field)>
             <#return true>
         </#if>
     </#list>

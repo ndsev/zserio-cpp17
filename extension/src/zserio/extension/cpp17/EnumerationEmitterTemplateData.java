@@ -30,10 +30,8 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
         final NativeIntegralType nativeBaseType = cppNativeMapper.getCppIntegralType(enumTypeInstantiation);
         addHeaderIncludesForType(nativeBaseType);
 
-        final ExpressionFormatter expressionFormatter = context.getExpressionFormatter(this);
-
-        underlyingTypeInfo = new NativeIntegralTypeInfoTemplateData(
-                expressionFormatter, nativeBaseType, enumTypeInstantiation);
+        underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.createIntegral(
+                nativeBaseType, enumTypeInstantiation, context.getExpressionFormatter(this));
 
         final List<EnumItem> enumItems = enumType.getItems();
         items = new ArrayList<EnumItemData>(enumItems.size());

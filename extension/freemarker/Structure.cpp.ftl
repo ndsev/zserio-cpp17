@@ -1,6 +1,5 @@
 <#include "FileHeader.inc.ftl">
-<#include "CompoundField.inc.ftl">
-<#include "CompoundParameter.inc.ftl">
+<#include "Structure.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/BitStreamReader.h>
@@ -16,14 +15,14 @@ ${name}::${name}() noexcept :
         ${name}(allocator_type{})
 {}
 
-${name}::${name}(const allocator_type&<#if needs_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+${name}::${name}(const allocator_type&<#if fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
         <#lt> :
     <#items as field>
         <#if field.initializer??>
-        ${field.name}(${field.initializer}<#if field.needsAllocator>, allocator</#if>)<#sep>,</#sep>
+        ${field.name}(${field.initializer}<#if field_needs_allocator(field)>, allocator</#if>)<#sep>,</#sep>
         <#else>
-        ${field.name}(<#if field.needsAllocator>allocator</#if>)<#sep>,</#sep>
+        ${field.name}(<#if field_needs_allocator(field)>allocator</#if>)<#sep>,</#sep>
         </#if>
     </#items>
 <#else>

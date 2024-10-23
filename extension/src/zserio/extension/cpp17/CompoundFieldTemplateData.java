@@ -36,32 +36,23 @@ public final class CompoundFieldTemplateData
         final CppNativeType fieldNativeType = cppNativeMapper.getCppType(fieldTypeInstantiation);
         includeCollector.addHeaderIncludesForType(fieldNativeType);
 
-        optional = (field.isOptional())
-                ? createOptional(context, field, fieldBaseType, parentType, includeCollector)
-                : null;
-        compound = createCompound(context, fieldTypeInstantiation, includeCollector);
-
         name = field.getName();
-
-        // TODO[Mi-L@]: use type info template data creator to correctly create integral type info template data
-        typeInfo = new NativeTypeInfoTemplateData(fieldNativeType, fieldTypeInstantiation);
-
         getterName = AccessorNameFormatter.getGetterName(field);
 
         isExtended = field.isExtended();
         isPackable = field.isPackable();
 
-        integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
-
         alignmentValue = createAlignmentValue(context, field, includeCollector);
         initializer = createInitializer(context, field, includeCollector);
-
         constraint = createConstraint(context, field, includeCollector);
         offset = createOffset(context, field, includeCollector);
+
+        optional = createOptional(context, field, fieldBaseType, parentType, includeCollector);
+        typeInfo = createTypeInfo(context, fieldNativeType, fieldTypeInstantiation, includeCollector);
+        compound = createCompound(context, fieldTypeInstantiation, includeCollector);
+        integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
         array = createArray(context, fieldNativeType, fieldTypeInstantiation, parentType, includeCollector);
         docComments = DocCommentsDataCreator.createData(context, field);
-
-        needsAllocator = typeInfo.getNeedsAllocator() || optional != null || array != null;
     }
 
     public Optional getOptional()
@@ -134,16 +125,12 @@ public final class CompoundFieldTemplateData
         return docComments;
     }
 
-    public boolean getNeedsAllocator()
-    {
-        return needsAllocator;
-    }
-
     public static final class Optional
     {
-        public Optional(TemplateDataContext context, Field field, IncludeCollector includeCollector)
-                throws ZserioExtensionException
+        public Optional(TemplateDataContext context, Field field, boolean isRecursive,
+                IncludeCollector includeCollector) throws ZserioExtensionException
         {
+            this.isRecursive = isRecursive;
             final Expression optionalClauseExpression = field.getOptionalClauseExpr();
             final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
             final ExpressionFormatter viewIndirectExpressionFormatter =
@@ -166,6 +153,11 @@ public final class CompoundFieldTemplateData
                     : rhsIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
         }
 
+        public boolean getIsRecursive()
+        {
+            return isRecursive;
+        }
+
         public String getClause()
         {
             return clause;
@@ -186,6 +178,7 @@ public final class CompoundFieldTemplateData
             return rhsIndirectClause;
         }
 
+        private final boolean isRecursive;
         private final String clause;
         private final String viewIndirectClause;
         private final String lhsIndirectClause;
@@ -418,13 +411,10 @@ public final class CompoundFieldTemplateData
             isPacked = arrayInstantiation.isPacked();
             final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
             length = createLength(arrayInstantiation, cppExpressionFormatter);
+            isRecursive = elementTypeInstantiation.getBaseType() == parentType;
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType elementNativeType = cppNativeMapper.getCppType(elementTypeInstantiation);
             includeCollector.addHeaderIncludesForType(elementNativeType);
-            elementCompound = createCompound(context, elementTypeInstantiation, includeCollector);
-            elementIntegerRange = createIntegerRange(context, elementTypeInstantiation, includeCollector);
-            elementIsRecursive = elementTypeInstantiation.getBaseType() == parentType;
-            elementTypeInfo = new NativeTypeInfoTemplateData(elementNativeType, elementTypeInstantiation);
             elementUsedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(
                     elementTypeInstantiation.getBaseType());
         }
@@ -444,24 +434,9 @@ public final class CompoundFieldTemplateData
             return length;
         }
 
-        public Compound getElementCompound()
+        public boolean getIsRecursive()
         {
-            return elementCompound;
-        }
-
-        public IntegerRange getElementIntegerRange()
-        {
-            return elementIntegerRange;
-        }
-
-        public boolean getElementIsRecursive()
-        {
-            return elementIsRecursive;
-        }
-
-        public NativeTypeInfoTemplateData getElementTypeInfo()
-        {
-            return elementTypeInfo;
+            return isRecursive;
         }
 
         public boolean getElementUsedInPackedArray()
@@ -482,55 +457,8 @@ public final class CompoundFieldTemplateData
         private final boolean isImplicit;
         private final boolean isPacked;
         private final String length;
-        private final Compound elementCompound;
-        private final IntegerRange elementIntegerRange;
-        private final boolean elementIsRecursive;
-        private final NativeTypeInfoTemplateData elementTypeInfo;
+        private final boolean isRecursive;
         private final boolean elementUsedInPackedArray;
-    }
-
-    private static Optional createOptional(TemplateDataContext context, Field field, ZserioType baseFieldType,
-            CompoundType parentType, IncludeCollector includeCollector) throws ZserioExtensionException
-    {
-        return new Optional(context, field, includeCollector);
-    }
-
-    private static IntegerRange createIntegerRange(
-            TemplateDataContext context, TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
-            throws ZserioExtensionException
-    {
-        if (!(typeInstantiation.getBaseType() instanceof IntegerType))
-            return null;
-
-        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
-        final String bitFieldLength = getDynamicBitFieldLength(typeInstantiation, cppExpressionFormatter);
-        final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
-        final NativeIntegralType nativeType = cppNativeMapper.getCppIntegralType(typeInstantiation);
-        final IntegerType typeToCheck = (IntegerType)typeInstantiation.getBaseType();
-
-        final BigInteger zserioLowerBound = typeToCheck.getLowerBound(typeInstantiation);
-        final BigInteger zserioUpperBound = typeToCheck.getUpperBound(typeInstantiation);
-        boolean checkLowerBound = true;
-        boolean checkUpperBound = true;
-
-        if (bitFieldLength == null)
-        {
-            final BigInteger nativeLowerBound = nativeType.getLowerBound();
-            checkLowerBound = nativeLowerBound.compareTo(zserioLowerBound) < 0;
-
-            final BigInteger nativeUpperBound = nativeType.getUpperBound();
-            checkUpperBound = nativeUpperBound.compareTo(zserioUpperBound) > 0;
-            final boolean hasFullRange = !checkLowerBound && !checkUpperBound;
-            if (hasFullRange)
-                return null;
-        }
-
-        final String lowerBound = nativeType.formatLiteral(zserioLowerBound);
-        final String upperBound = nativeType.formatLiteral(zserioUpperBound);
-        final NativeIntegralTypeInfoTemplateData typeInfo =
-                new NativeIntegralTypeInfoTemplateData(cppExpressionFormatter, nativeType, typeInstantiation);
-
-        return new IntegerRange(checkLowerBound, lowerBound, upperBound, typeInfo, bitFieldLength);
     }
 
     private static String getDynamicBitFieldLength(TypeInstantiation instantiation,
@@ -593,6 +521,69 @@ public final class CompoundFieldTemplateData
         return new Offset(context, offsetExpression, includeCollector);
     }
 
+    public static NativeTypeInfoTemplateData createTypeInfo(TemplateDataContext context,
+            CppNativeType nativeType, TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
+            throws ZserioExtensionException
+    {
+        if (typeInstantiation instanceof ArrayInstantiation)
+        {
+            final TypeInstantiation elementTypeInstantiation =
+                    ((ArrayInstantiation)typeInstantiation).getElementTypeInstantiation();
+            final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
+            final CppNativeType elementNativeType = cppNativeMapper.getCppType(elementTypeInstantiation);
+
+            return NativeTypeInfoTemplateDataCreator.create(
+                    context, elementNativeType, elementTypeInstantiation, includeCollector);
+        }
+        else
+        {
+            return NativeTypeInfoTemplateDataCreator.create(
+                    context, nativeType, typeInstantiation, includeCollector);
+        }
+    }
+
+    private static Optional createOptional(TemplateDataContext context, Field field, ZserioType baseFieldType,
+            CompoundType parentType, IncludeCollector includeCollector) throws ZserioExtensionException
+    {
+        if (!field.isOptional())
+            return null;
+
+        final boolean isRecursive = baseFieldType == parentType;
+        return new Optional(context, field, isRecursive, includeCollector);
+    }
+
+    private static Compound createCompound(TemplateDataContext context, TypeInstantiation typeInstantiation,
+            IncludeCollector includeCollector) throws ZserioExtensionException
+    {
+        if (typeInstantiation instanceof ArrayInstantiation)
+        {
+            final TypeInstantiation elementTypeInstantiation =
+                    ((ArrayInstantiation)typeInstantiation).getElementTypeInstantiation();
+            return createCompoundImpl(context, elementTypeInstantiation, includeCollector);
+        }
+        else
+        {
+            return createCompoundImpl(context, typeInstantiation, includeCollector);
+        }
+    }
+
+    private static Compound createCompoundImpl(TemplateDataContext context, TypeInstantiation typeInstantiation,
+            IncludeCollector includeCollector) throws ZserioExtensionException
+    {
+        if (typeInstantiation instanceof ParameterizedTypeInstantiation)
+        {
+            return new Compound(context, (ParameterizedTypeInstantiation)typeInstantiation, includeCollector);
+        }
+        if (typeInstantiation.getBaseType() instanceof CompoundType)
+        {
+            return new Compound(context, (CompoundType)typeInstantiation.getBaseType(), includeCollector);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     private static Array createArray(TemplateDataContext context, CppNativeType cppNativeType,
             TypeInstantiation typeInstantiation, CompoundType parentType, IncludeCollector includeCollector)
             throws ZserioExtensionException
@@ -611,36 +602,56 @@ public final class CompoundFieldTemplateData
                 parentType, includeCollector);
     }
 
-    private static Compound createCompound(TemplateDataContext context, TypeInstantiation typeInstantiation,
-            IncludeCollector includeCollector) throws ZserioExtensionException
+    private static IntegerRange createIntegerRange(
+            TemplateDataContext context, TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
+            throws ZserioExtensionException
     {
-        if (typeInstantiation instanceof ParameterizedTypeInstantiation)
-        {
-            return new Compound(context, (ParameterizedTypeInstantiation)typeInstantiation, includeCollector);
-        }
-        if (typeInstantiation.getBaseType() instanceof CompoundType)
-        {
-            return new Compound(context, (CompoundType)typeInstantiation.getBaseType(), includeCollector);
-        }
-        else
-        {
+        if (!(typeInstantiation.getBaseType() instanceof IntegerType))
             return null;
+
+        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
+        final String bitFieldLength = getDynamicBitFieldLength(typeInstantiation, cppExpressionFormatter);
+        final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
+        final NativeIntegralType nativeType = cppNativeMapper.getCppIntegralType(typeInstantiation);
+        final IntegerType typeToCheck = (IntegerType)typeInstantiation.getBaseType();
+
+        final BigInteger zserioLowerBound = typeToCheck.getLowerBound(typeInstantiation);
+        final BigInteger zserioUpperBound = typeToCheck.getUpperBound(typeInstantiation);
+        boolean checkLowerBound = true;
+        boolean checkUpperBound = true;
+
+        if (bitFieldLength == null)
+        {
+            final BigInteger nativeLowerBound = nativeType.getLowerBound();
+            checkLowerBound = nativeLowerBound.compareTo(zserioLowerBound) < 0;
+
+            final BigInteger nativeUpperBound = nativeType.getUpperBound();
+            checkUpperBound = nativeUpperBound.compareTo(zserioUpperBound) > 0;
+            final boolean hasFullRange = !checkLowerBound && !checkUpperBound;
+            if (hasFullRange)
+                return null;
         }
+
+        final String lowerBound = nativeType.formatLiteral(zserioLowerBound);
+        final String upperBound = nativeType.formatLiteral(zserioUpperBound);
+        final NativeIntegralTypeInfoTemplateData typeInfo = NativeTypeInfoTemplateDataCreator.createIntegral(
+                nativeType, typeInstantiation, cppExpressionFormatter);
+
+        return new IntegerRange(checkLowerBound, lowerBound, upperBound, typeInfo, bitFieldLength);
     }
 
     private final Optional optional;
-    private final Compound compound;
     private final String name;
-    private final NativeTypeInfoTemplateData typeInfo;
     private final String getterName;
     private final boolean isExtended;
     private final boolean isPackable;
-    private final IntegerRange integerRange;
     private final String alignmentValue;
     private final String initializer;
     private final Constraint constraint;
     private final Offset offset;
+    private final NativeTypeInfoTemplateData typeInfo;
+    private final Compound compound;
     private final Array array;
+    private final IntegerRange integerRange;
     private final DocCommentsTemplateData docComments;
-    private final boolean needsAllocator;
 }
