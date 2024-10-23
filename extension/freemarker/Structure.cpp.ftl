@@ -117,7 +117,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 {}
 <#list parameterList as parameter>
 
-<@parameter_view_type_name parameter/> View<${fullName}::${parameter.getterName}() const
+<@parameter_view_type_name parameter/> View<${fullName}>::${parameter.getterName}() const
 {
     return <@parameter_view_member_name parameter/>;
 }
@@ -126,15 +126,22 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 
 <@structure_field_view_type_name field/> View<${fullName}>::${field.getterName}() const
 {
-    <#if field.optional??> 
+    <#-- simple or auto optional simle -->
+    <#if field.typeInfo.isSimple && !(field.optional?? && field.optional.clause??)>
+    return m_data.<@field_data_member_name field/>;
+    <#else>
+        <#if field.optional??>
     if (<#if field.optional.clause??>!(${field.optional.clause})<#else>!m_data.<@field_data_member_name field/></#if>)
     {
         return {};
     }
 
-    return *m_data.<@field_data_member_name field/>;
-    <#else>
-    return m_data.<@field_data_member_name field/>;
+    return <@field_view_type_name field/>{*m_data.<@field_data_member_name field/><#rt>
+            <#lt><@field_view_parameters field/>};
+        <#else>
+    return <@field_view_type_name field/>{m_data.<@field_data_member_name field/><#rt>
+            <#lt><@field_view_parameters field/>};
+        </#if>
     </#if>
 }
 </#list>
@@ -161,8 +168,8 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
             <#lt> &&
             <#nt><#rt>
         </#if>
-        <#if field.optional??>
-            (lhs.${field.getterName}() ? !rhs.${field.getterName}() : <#t>
+        <#if field.optional?? && field.optional.lhsIndirectClause??>
+            (!(${field.optional.lhsIndirectClause}) ? !(${field.optional.rhsIndirectClause}) : <#t>
                     *lhs.${field.getterName}() == *rhs.${field.getterName}())<#t>
         <#else>
             lhs.${field.getterName}() == rhs.${field.getterName}()<#t>
@@ -175,32 +182,18 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 }
 
 <#macro structure_view_field_less_than field indent>
+    <#local resolveOptional=field.optional?? && field.optional.lhsIndirectClause??/>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}if (<#if field.optional??>*</#if>lhs.${field.getterName}() != <#if field.optional??>*</#if>rhs.${field.getterName}())
+${I}if (<#if resolveOptional>*</#if>lhs.${field.getterName}() != <#if resolveOptional>*</#if>rhs.${field.getterName}())
 ${I}{
     <#if field.typeInfo.isBoolean>
         <#-- TODO[Mi-L@]: Remove once operator< for zserio::Bool is implemented in runtime! -->
-${I}    return static_cast<int>(<#if field.optional??>*</#if>lhs.${field.getterName}()) < <#rt>
-        <#lt>static_cast<int>(<#if field.optional??>*</#if>rhs.${field.getterName}());
+${I}    return static_cast<int>(<#if resolveOptional>*</#if>lhs.${field.getterName}()) < <#rt>
+        <#lt>static_cast<int>(<#if resolveOptional>*</#if>rhs.${field.getterName}());
     <#else>
-${I}    return <#if field.optional??>*</#if>lhs.${field.getterName}() < <#if field.optional??>*</#if>rhs.${field.getterName}();
+${I}    return <#if resolveOptional>*</#if>lhs.${field.getterName}() < <#if resolveOptional>*</#if>rhs.${field.getterName}();
     </#if>
 ${I}}
-</#macro>
-<#macro structure_view_field_less_than_optional field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.optional??>
-${I}if (lhs.${field.getterName}() && rhs.${field.getterName}())
-${I}{
-        <@structure_view_field_less_than field, indent+1/>
-${I}}
-${I}else if (lhs.${field.getterName}() != rhs.${field.getterName}())
-${I}{
-${I}    return !lhs.${field.getterName}();
-${I}}
-    <#else>
-    <@structure_view_field_less_than field indent/>
-    </#if>
 </#macro>
 bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
@@ -212,7 +205,18 @@ bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterLi
     }
 </#list>
 <#list fieldList as field>
-    <@structure_view_field_less_than_optional field, 1/>
+    <#if field.optional?? && field.optional.lhsIndirectClause??>
+    if ((${field.optional.lhsIndirectClause}) && (${field.optional.rhsIndirectClause}))
+    {
+        <@structure_view_field_less_than field, 2/>
+    }
+    else if ((${field.optional.lhsIndirectClause}) != (${field.optional.rhsIndirectClause}))
+    {
+        return !(${field.optional.lhsIndirectClause});
+    }
+    <#else>
+    <@structure_view_field_less_than field, 1/>
+    </#if>
 </#list>
 
     return false;
@@ -292,14 +296,23 @@ ${I}in.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}in.alignTo(8);
     </#if>
-    <#local compoundArguments><@field_view_parameters field/></#local>
 ${I}(void)::zserio::detail::read(reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#rt>
-        <#lt><#if compoundArguments?has_content>, ${compoundArguments}</#if>);
+        <#lt><@field_view_indirect_parameters field/>);
 </#macro>
-View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
-        <#lt>${fullName}& data)
+template <>
+View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+<#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+</#list>
+        <#lt>)
 {
-    View<${fullName}> view(data);
+    View<${fullName}> view(data<#rt>
+<#list parameterList as parameter>
+            <#lt>,
+            <#nt><@parameter_view_arg_name parameter/><#rt>
+</#list>
+            <#lt>);
 <#list fieldList as field>
     <#if field.optional??>
         <#if field.optional.viewIndirectClause??>

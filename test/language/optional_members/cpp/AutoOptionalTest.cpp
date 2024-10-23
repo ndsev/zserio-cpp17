@@ -124,7 +124,7 @@ TEST_F(AutoOptionalDataTest, operatorLessThan)
     ASSERT_FALSE(container2 < container1);
 }
 
-TEST_F(AutoOptionalDataTest, hashCode)
+TEST_F(AutoOptionalDataTest, stdHash)
 {
     std::hash<Container> hasher;
 
@@ -145,6 +145,78 @@ TEST_F(AutoOptionalDataTest, hashCode)
     // use hardcoded values to check that the hash code is stable
     ASSERT_EQ(3735937536, hasher(container1));
     ASSERT_EQ(3994118383, hasher(container2));
+}
+
+TEST_F(AutoOptionalViewTest, operatorEquality)
+{
+    Container container1;
+    Container container2;
+
+    zserio::View<Container> view1(container1);
+    zserio::View<Container> view2(container2);
+
+    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    ASSERT_FALSE(view1 == view2);
+
+    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    ASSERT_TRUE(view1 == view2);
+
+    container1.autoOptionalInt = {};
+    ASSERT_FALSE(view1 == view2);
+}
+
+TEST_F(AutoOptionalViewTest, operatorLessThan)
+{
+    Container container1;
+    Container container2;
+
+    zserio::View<Container> view1(container1);
+    zserio::View<Container> view2(container2);
+
+    ASSERT_FALSE(view1 < view2);
+    ASSERT_FALSE(view2 < view1);
+
+    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    ASSERT_FALSE(view1 < view2);
+    ASSERT_TRUE(view2 < view1);
+
+    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    ASSERT_FALSE(view1 < view2);
+    ASSERT_FALSE(view2 < view1);
+
+    container1.autoOptionalInt = {};
+    ASSERT_TRUE(view1 < view2);
+    ASSERT_FALSE(view2 < view1);
+}
+
+TEST_F(AutoOptionalViewTest, stdHash)
+{
+    std::hash<zserio::View<Container>> hasher;
+
+    Container container1;
+    Container container2;
+
+    zserio::View<Container> view1(container1);
+    zserio::View<Container> view2(container2);
+
+    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    ASSERT_NE(hasher(view1), hasher(view2));
+
+    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    ASSERT_EQ(hasher(view1), hasher(view2));
+
+    container1.autoOptionalInt = {};
+    ASSERT_NE(hasher(view1), hasher(view2));
+
+    // use hardcoded values to check that the hash code is stable
+    ASSERT_EQ(3735937536, hasher(view1));
+    ASSERT_EQ(3994118383, hasher(view2));
 }
 
 TEST_F(AutoOptionalViewTest, bitSizeOf)

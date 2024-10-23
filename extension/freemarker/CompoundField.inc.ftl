@@ -51,7 +51,15 @@
 <#macro field_view_parameters field>
     <#if field.compound??>
         <#list field.compound.instantiatedParameters as instantiatedParameter>
-            ${instantiatedParameter.viewIndirectExpression}<#if instantiatedParameter?has_next>, </#if><#t>
+            , ${instantiatedParameter.expression}<#t>
+        </#list>
+    </#if>
+</#macro>
+
+<#macro field_view_indirect_parameters field>
+    <#if field.compound??>
+        <#list field.compound.instantiatedParameters as instantiatedParameter>
+            , ${instantiatedParameter.viewIndirectExpression}<#t>
         </#list>
     </#if>
 </#macro>

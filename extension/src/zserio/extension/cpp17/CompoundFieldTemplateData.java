@@ -141,20 +141,29 @@ public final class CompoundFieldTemplateData
 
     public static final class Optional
     {
-        public Optional(TemplateDataContext context, Field field, boolean isRecursive,
-                IncludeCollector includeCollector) throws ZserioExtensionException
+        public Optional(TemplateDataContext context, Field field, IncludeCollector includeCollector)
+                throws ZserioExtensionException
         {
             final Expression optionalClauseExpression = field.getOptionalClauseExpr();
             final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
             final ExpressionFormatter viewIndirectExpressionFormatter =
                     context.getIndirectExpressionFormatter(includeCollector, "view");
+            final ExpressionFormatter lhsIndirectExpressionFormatter =
+                    context.getIndirectExpressionFormatter(includeCollector, "lhs");
+            final ExpressionFormatter rhsIndirectExpressionFormatter =
+                    context.getIndirectExpressionFormatter(includeCollector, "rhs");
             clause = (optionalClauseExpression == null)
                     ? null
                     : cppExpressionFormatter.formatGetter(optionalClauseExpression);
             viewIndirectClause = (optionalClauseExpression == null)
                     ? null
                     : viewIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
-            this.isRecursive = isRecursive;
+            lhsIndirectClause = (optionalClauseExpression == null)
+                    ? null
+                    : lhsIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
+            rhsIndirectClause = (optionalClauseExpression == null)
+                    ? null
+                    : rhsIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
         }
 
         public String getClause()
@@ -167,14 +176,20 @@ public final class CompoundFieldTemplateData
             return viewIndirectClause;
         }
 
-        public boolean getIsRecursive()
+        public String getlhsIndirectClause()
         {
-            return isRecursive;
+            return lhsIndirectClause;
+        }
+
+        public String getRhsIndirectClause()
+        {
+            return rhsIndirectClause;
         }
 
         private final String clause;
         private final String viewIndirectClause;
-        private final boolean isRecursive;
+        private final String lhsIndirectClause;
+        private final String rhsIndirectClause;
     }
 
     public static final class Compound
@@ -477,9 +492,7 @@ public final class CompoundFieldTemplateData
     private static Optional createOptional(TemplateDataContext context, Field field, ZserioType baseFieldType,
             CompoundType parentType, IncludeCollector includeCollector) throws ZserioExtensionException
     {
-        final boolean isRecursive = baseFieldType == parentType;
-
-        return new Optional(context, field, isRecursive, includeCollector);
+        return new Optional(context, field, includeCollector);
     }
 
     private static IntegerRange createIntegerRange(

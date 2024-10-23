@@ -92,13 +92,13 @@ void validate(const View<${fullName}>& view);
 template <>
 void write(::zserio::BitStreamWriter& writer, const View<${fullName}>& view);
 
-View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data);
-
-template <typename... ARGS>
-View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data, ARGS&&... args)
-{
-    return read(reader, data, std::forward<ARGS>(args)...);
-}
+template <>
+View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data<#rt>
+<#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+</#list>
+        <#lt>);
 
 template <>
 BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
