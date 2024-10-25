@@ -45,6 +45,9 @@ if (SANITIZERS_ENABLED)
     compiler_set_undefined_sanitizer()
 endif ()
 
+# add test utility library
+add_subdirectory(test_utils test_utils)
+
 # add gtest library
 include(gtest_utils)
 gtest_add_library(${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest)
@@ -152,7 +155,7 @@ endif ()
 
 # add_executable requieres at least a single source file
 add_executable(${PROJECT_NAME} ${TEST_SOURCES_LIST})
-target_link_libraries(${PROJECT_NAME} ${TEST_DEPENDENCIES_LIST} gtest_main ZserioCpp17Runtime
+target_link_libraries(${PROJECT_NAME} ${TEST_DEPENDENCIES_LIST} gtest_main ZserioCppTestUtils ZserioCpp17Runtime
         ${SQLITE_LIBRARY})
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SQLITE_INCDIR})
 

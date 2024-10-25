@@ -6,7 +6,7 @@ import zserio.extension.common.PackedTypesCollector;
 import zserio.extension.common.ZserioExtensionException;
 
 /**
- * Union emitter.
+ * Choice emitter.
  */
 public final class ChoiceEmitter extends CppDefaultEmitter
 {

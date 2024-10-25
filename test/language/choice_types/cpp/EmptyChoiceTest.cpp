@@ -1,6 +1,9 @@
 #include "choice_types/empty_choice/EmptyChoice.h"
 #include "gtest/gtest.h"
-#include "zserio/CppRuntimeException.h"
+#include "test_utils/ComparisonOperatorsTest.h"
+#include "test_utils/ReadTest.h"
+#include "test_utils/WriteReadFileTest.h"
+#include "test_utils/WriteReadTest.h"
 
 namespace choice_types
 {
@@ -8,86 +11,93 @@ namespace empty_choice
 {
 
 using allocator_type = EmptyChoice::allocator_type;
+using ChoiceTag = EmptyChoice::ChoiceTag;
 
-TEST(EmptyChoiceDataTest, emptyConstructor)
+TEST(EmptyChoiceTest, constructors)
 {
     {
-        EmptyChoice emptyChoice;
-        ASSERT_EQ(EmptyChoice::ChoiceTag::UNDEFINED_CHOICE, emptyChoice.index());
+        EmptyChoice data;
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyChoice emptyChoice = {};
-        ASSERT_EQ(EmptyChoice::ChoiceTag::UNDEFINED_CHOICE, emptyChoice.index());
+        EmptyChoice data = {};
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
-
     {
-        EmptyChoice emptyChoice(allocator_type{});
-        ASSERT_EQ(EmptyChoice::ChoiceTag::UNDEFINED_CHOICE, emptyChoice.index());
+        EmptyChoice data(allocator_type{});
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+    }
+    {
+        EmptyChoice data;
+        zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
     }
 }
 
-TEST(EmptyChoiceDataTest, copyConstructor)
+TEST(EmptyChoiceTest, selector)
 {
-    EmptyChoice emptyChoice;
-    const EmptyChoice emptyChoiceCopy(emptyChoice);
-    ASSERT_EQ(emptyChoice, emptyChoiceCopy);
+    EmptyChoice data;
+    zserio::View<EmptyChoice> viewA(data, static_cast<zserio::UInt8>(0));
+    ASSERT_EQ(0, viewA.selector());
 }
 
-TEST(EmptyChoiceDataTest, assignmentOperator)
+TEST(EmptyChoiceTest, zserioChoiceTag)
 {
-    EmptyChoice emptyChoice;
-    EmptyChoice emptyChoiceCopy;
-    emptyChoiceCopy = emptyChoice;
-    ASSERT_EQ(emptyChoice, emptyChoiceCopy);
+    EmptyChoice data;
+    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
 }
 
-TEST(EmptyChoiceDataTest, moveConstructor)
+TEST(EmptyChoiceTest, comparisonOperators)
 {
-    EmptyChoice emptyChoice;
-    const EmptyChoice emptyChoiceMoved(std::move(emptyChoice));
-    (void)emptyChoiceMoved;
+    EmptyChoice data;
+    EmptyChoice equalData;
+    ASSERT_TRUE(data == equalData);
+    ASSERT_FALSE(data < equalData);
+
+    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(1));
+    zserio::View<EmptyChoice> equalView(equalData, static_cast<zserio::UInt8>(1));
+    zserio::View<EmptyChoice> lessThenView(equalData, static_cast<zserio::UInt8>(0));
+    test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 }
 
-TEST(EmptyChoiceDataTest, moveAssignmentOperator)
+TEST(EmptyChoiceTest, validate)
 {
-    EmptyChoice emptyChoice;
-    EmptyChoice emptyChoiceMoved;
-    emptyChoiceMoved = std::move(emptyChoice);
-    (void)emptyChoiceMoved;
+    // TODO
 }
 
-TEST(EmptyChoiceDataTest, index)
+TEST(EmptyChoiceTest, writeRead)
 {
-    EmptyChoice emptyChoice;
-    ASSERT_EQ(EmptyChoice::ChoiceTag::UNDEFINED_CHOICE, emptyChoice.index());
+    EmptyChoice data;
+    test_utils::writeReadTest(data, static_cast<zserio::UInt8>(0));
 }
 
-TEST(EmptyChoiceDataTest, operatorEquality)
+TEST(EmptyChoiceTest, read)
 {
-    EmptyChoice emptyChoice1;
-    EmptyChoice emptyChoice2;
-    ASSERT_TRUE(emptyChoice1 == emptyChoice2);
+    zserio::BitBuffer bitBuffer;
+    zserio::BitStreamWriter writer(bitBuffer);
+    EmptyChoice expectedReadData;
+    test_utils::readTest(writer, expectedReadData, static_cast<zserio::UInt8>(0));
 }
 
-TEST(EmptyChoiceDataTest, operatorLessThan)
+TEST(EmptyChoiceTest, bitSizeOf)
 {
-    EmptyChoice emptyChoice1;
-    EmptyChoice emptyChoice2;
-    ASSERT_FALSE(emptyChoice1 < emptyChoice2);
-    ASSERT_FALSE(emptyChoice2 < emptyChoice1);
+    EmptyChoice data;
+    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    ASSERT_EQ(0, zserio::detail::bitSizeOf(view));
 }
 
-TEST(EmptyChoiceDataTest, stdHash)
+TEST(EmptyChoiceTest, stdHash)
 {
-    std::hash<EmptyChoice> hasher;
+    std::hash<EmptyChoice> dataHasher;
+    EmptyChoice data;
+    const size_t dataHash = 23; // hardcoded value to check that the hash code is stable
+    ASSERT_EQ(dataHash, dataHasher(data));
 
-    EmptyChoice emptyChoice1;
-    EmptyChoice emptyChoice2;
-    ASSERT_EQ(hasher(emptyChoice1), hasher(emptyChoice2));
-
-    // TODO[Mi-L@]: hashCode not stable across extensions!
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(23, hasher(emptyChoice1));
+    std::hash<zserio::View<EmptyChoice>> viewHasher;
+    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    const size_t viewHash = dataHash;
+    ASSERT_EQ(viewHash, viewHasher(view));
 }
 
 } // namespace empty_choice
