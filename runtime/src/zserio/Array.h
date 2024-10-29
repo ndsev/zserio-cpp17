@@ -96,10 +96,25 @@ public:
      */
     bool operator==(const Array& other) const
     {
-        if constexpr (detail::has_equal_method_v<Traits>)
+        if constexpr (std::is_same_v<zserio::View<ValueType>,
+                              std::invoke_result_t<decltype(&Array::at), Array, size_t>>)
         {
-            return std::equal(m_rawArray.begin(), m_rawArray.end(), other.m_rawArray.begin(),
-                    other.m_rawArray.end(), Traits::equal);
+            const size_t thisSize = size();
+            const size_t otherSize = other.size();
+            if (thisSize != otherSize)
+            {
+                return false;
+            }
+
+            for (size_t i = 0; i < thisSize; ++i)
+            {
+                if ((*this)[i] != other[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
         else
         {
@@ -108,42 +123,87 @@ public:
     }
 
     /**
-     * Operator inequality.
-     *
-     * \param other Array to compare.
-     *
-     * \return True when the underlying raw arrays have different contents, false otherwise.
-     */
-    bool operator!=(const Array& other) const
-    {
-        if constexpr (detail::has_equal_method_v<Traits>)
-        {
-            return !operator==(other);
-        }
-        else
-        {
-            return m_rawArray != other.m_rawArray;
-        }
-    }
-
-    /**
      * Operator less than.
      *
      * \param other Array to compare.
      *
-     * \return True when the underlying raw array is less than the other underlying raw array.
+     * \return True when this array is less than the other array, false otherwise.
      */
     bool operator<(const Array& other) const
     {
-        if constexpr (detail::has_equal_method_v<Traits>)
+        if constexpr (std::is_same_v<zserio::View<ValueType>,
+                              std::invoke_result_t<decltype(&Array::at), Array, size_t>>)
         {
-            return std::lexicographical_compare(m_rawArray.begin(), m_rawArray.end(), other.m_rawArray.begin(),
-                    other.m_rawArray.end(), Traits::lessThan);
+            const size_t thisSize = size();
+            const size_t otherSize = other.size();
+            const size_t maxSize = std::max(thisSize, otherSize);
+
+            for (size_t i = 0; i < maxSize; ++i)
+            {
+                if ((*this)[i] < other[i])
+                {
+                    return true;
+                }
+                if (other[i] < (*this)[i])
+                {
+                    return false;
+                }
+            }
+
+            return thisSize < otherSize;
         }
         else
         {
             return m_rawArray < other.m_rawArray;
         }
+    }
+
+    /**
+     * Operator inequality.
+     *
+     * \param other Array to compare.
+     *
+     * \return True when the arrays have different contents, false otherwise.
+     */
+    bool operator!=(const Array& other) const
+    {
+        return !operator==(other);
+    }
+
+    /**
+     * Operator greater than.
+     *
+     * \param other Array to compare.
+     *
+     * \return True when this arrays is greater than the other array, false otherwise.
+     */
+    bool operator>(const Array& other) const
+    {
+        return other.operator<(*this);
+    }
+
+    /**
+     * Operator less than or equal.
+     *
+     * \param other Array to compare.
+     *
+     * \return True when this arrays is less than or equal to the other array, false otherwise.
+     */
+    bool operator<=(const Array& other) const
+    {
+        return !other.operator<(*this);
+    }
+
+    /**
+     * Operator greater than or equal.
+     *
+     * \param other Array to compare.
+     *
+     * \return True when this arrays is greater than or equal to the other array, false otherwise.
+     */
+    bool operator>=(const Array& other) const
+    {
+        return !operator<(other);
     }
 
     /**
@@ -223,7 +283,8 @@ void read(BitStreamReader& reader, typename ARRAY::OwnerType& owner, typename AR
         {
             reader.alignTo(8);
         }
-        ArrayTraits::read(reader, owner, rawArray, i);
+        rawArray.push_back(typename ARRAY::ValueType{});
+        ArrayTraits::read(reader, owner, rawArray.back(), i);
     }
 }
 

@@ -17,7 +17,7 @@ namespace zserio
  *
  * This information is provided via specializations of the ArrayTraits strucure.
  */
-template <typename VALUE_TYPE, typename = void>
+template <typename T, typename = void>
 struct ArrayTraits;
 
 namespace detail
@@ -77,50 +77,62 @@ inline constexpr bool has_view_type_v = has_view_type<T, V>::value;
 
 } // namespace detail
 
-template <typename T>
-struct NativeArrayTraits
+template <typename T, typename>
+struct ArrayTraits
 {
-    static constexpr T at(detail::DummyArrayOwner, T element, size_t)
-    {
-        return element;
-    }
-};
-
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-struct ArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
-        : NativeArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
-{
-    using ElementType = detail::IntWrapper<VALUE_TYPE, BIT_SIZE>;
-
-    template <typename RAW_ARRAY>
-    static void read(zserio::BitStreamReader& reader, detail::DummyArrayOwner&, RAW_ARRAY& rawArray, size_t)
-    {
-        rawArray.push_back(ElementType{});
-        detail::read(reader, rawArray.back());
-    }
-
-    static BitSize bitSizeOf()
-    {
-        return BIT_SIZE;
-    }
-};
-
-// TODO: for generated types only?
-template <typename T>
-struct ArrayTraits<T>
-{
-    static View<T> at(detail::DummyArrayOwner, const T& element, size_t)
+    static View<T> at(const detail::DummyArrayOwner&, const T& element, size_t)
     {
         return View<T>(element);
     }
 
-    template <typename RAW_ARRAY>
-    static void read(zserio::BitStreamReader& reader, detail::DummyArrayOwner&, RAW_ARRAY& rawArray, size_t)
+    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
-        rawArray.push_back(T{});
-        (void)detail::read(reader, rawArray.back());
+        (void)detail::read(reader, element);
     }
 };
+
+template <typename T>
+struct NativeArrayTraits
+{
+    static constexpr T at(const detail::DummyArrayOwner&, T element, size_t)
+    {
+        return element;
+    }
+
+    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    {
+        detail::read(reader, element);
+    }
+
+    static BitSize bitSizeOf()
+    {
+        return detail::bitSizeOf(T{});
+    }
+};
+
+template <>
+struct ArrayTraits<detail::BoolWrapper> : NativeArrayTraits<detail::BoolWrapper>
+{};
+
+template <typename VALUE_TYPE, BitSize BIT_SIZE>
+struct ArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
+        : NativeArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
+{};
+
+template <typename VALUE_TYPE, BitSize BIT_SIZE>
+struct ArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>, std::enable_if_t<(BIT_SIZE > 0)>>
+        : NativeArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
+{};
+
+template <typename VALUE_TYPE, typename detail::VarIntType VAR_TYPE>
+struct ArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
+        : NativeArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
+{};
+
+template <typename VALUE_TYPE, detail::FloatType FLOAT_TYPE>
+struct ArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
+        : NativeArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
+{};
 
 } // namespace zserio
 
