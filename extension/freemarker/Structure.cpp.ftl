@@ -121,9 +121,10 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 </#list>
 <#list fieldList as field>
 
-<@structure_field_view_type_name field/> View<${fullName}>::${field.getterName}() const
+<@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
-    <#if !field.array?? && field.typeInfo.isSimple && !(field.optional?? && field.optional.clause??)>
+    <#if !field.array?? && !field.dynamicBitLength?? && field.typeInfo.isSimple &&
+            !(field.optional?? && field.optional.clause??)>
     <#-- simple or auto optional simple -->
     return m_data.<@field_data_member_name field/>;
     <#else>
@@ -134,10 +135,10 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
     }
 
     return <@field_view_type_name field/>{<#if array_needs_owner(field)>*this, </#if><#rt>
-            <#lt>*m_data.<@field_data_member_name field/><@field_view_parameters field/>};
+            <#lt>*m_data.<@field_data_member_name field/><#if !field.array??><@field_view_parameters field/></#if>};
         <#else>
     return <@field_view_type_name field/>{<#if array_needs_owner(field)>*this, </#if><#rt>
-            <#lt>m_data.<@field_data_member_name field/><@field_view_parameters field/>};
+            <#lt>m_data.<@field_data_member_name field/><#if !field.array??><@field_view_parameters field/></#if>};
         </#if>
     </#if>
 }
@@ -246,6 +247,46 @@ void validate(const View<${fullName}>&)
     // TODO:
 }
 
+<#macro structure_view_bitsizeof field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.alignmentValue??>
+${I}endBitPosition = ::zserio::alignTo(${field.alignmentValue}, endBitPosition);
+    </#if>
+    <#if field.offset?? && !field.offset.containsIndex>
+${I}endBitPosition = ::zserio::alignTo(8, endBitPosition);
+    </#if>
+${I}endBitPosition += ::zserio::detail::bitSizeOf(<#if field.optional??>*</#if>view.${field.getterName}(), <#rt>
+        <#lt>endBitPosition);
+</#macro>
+template <>
+BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+<#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+
+    <#list fieldList as field>
+        <#if field.optional??>
+            <#if field.optional.viewIndirectClause??>
+    if (${field.optional.viewIndirectClause})
+            <#else>
+    endBitPosition += 1;
+    if (view.${field.getterName}())
+            </#if>
+    {
+        <@structure_view_bitsizeof field, 2/>
+    }
+        <#else>
+    <@structure_view_bitsizeof field, 1/>
+        </#if>
+    </#list>
+
+    return endBitPosition - bitPosition;
+<#else>
+    return 0;
+</#if>
+}
+
 <#macro structure_view_write field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
@@ -285,7 +326,7 @@ void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <
 </#list>
 }
 
-<#macro structure_view_read field indent>
+<#macro structure_view_read compoundName field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
 ${I}in.alignTo(${field.alignmentValue});
@@ -293,14 +334,14 @@ ${I}in.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}in.alignTo(8);
     </#if>
-${I}<#if field.compound??>(void)</#if>::zserio::detail::read<#if field.array??><<@array_type_name field/>></#if>(<#rt>
-        reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
+${I}<#if field.compound??>(void)</#if>::zserio::detail::read<#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#rt>
+        reader<#if array_needs_owner(field)>, view</#if>, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
     <#if field.array??>
         <#if field.array.viewIndirectLength??>
         , ${field.array.viewIndirectLength}<#t>
         </#if>
     <#else>
-        <@field_view_indirect_parameters field/><#t>
+        <@field_view_view_indirect_parameters field/><#t>
     </#if>
         <#lt>);
 </#macro>
@@ -328,53 +369,13 @@ View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> rea
     {
         data.<@field_data_member_name field/> = <@field_data_type_name field/>(<#rt>
                 <#lt><#if field.typeInfo.needsAllocator>data.<@field_data_member_name field/>.get_allocator()</#if>);
-        <@structure_view_read field, 2/>
+        <@structure_view_read fullName, field, 2/>
     }
     <#else>
-    <@structure_view_read field, 1/>
+    <@structure_view_read fullName, field, 1/>
     </#if>
 </#list>
     return view;
-}
-
-<#macro structure_view_bitsizeof field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.alignmentValue??>
-${I}endBitPosition = ::zserio::alignTo(${field.alignmentValue}, endBitPosition);
-    </#if>
-    <#if field.offset?? && !field.offset.containsIndex>
-${I}endBitPosition = ::zserio::alignTo(8, endBitPosition);
-    </#if>
-${I}endBitPosition += ::zserio::detail::bitSizeOf(<#if field.optional??>*</#if>view.${field.getterName}(), <#rt>
-        <#lt>endBitPosition);
-</#macro>
-template <>
-BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
-        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
-{
-<#if fieldList?has_content>
-    BitSize endBitPosition = bitPosition;
-
-    <#list fieldList as field>
-        <#if field.optional??>
-            <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-            <#else>
-    endBitPosition += 1;
-    if (view.${field.getterName}())
-            </#if>
-    {
-        <@structure_view_bitsizeof field, 2/>
-    }
-        <#else>
-    <@structure_view_bitsizeof field, 1/>
-        </#if>
-    </#list>
-
-    return endBitPosition - bitPosition;
-<#else>
-    return 0;
-</#if>
 }
 <@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>

@@ -2,6 +2,7 @@
 #define ZSERIO_BIT_BUFFER_H_INC
 
 #include <cstddef>
+#include <cstring>
 #include <type_traits>
 
 #include "zserio/BitSize.h"
@@ -287,7 +288,7 @@ bool BasicBitBuffer<ALLOC>::operator==(const BasicBitBuffer<ALLOC>& other) const
         {
             if (byteSize > 1)
             {
-                if (memcmp(getBuffer(), other.getBuffer(), byteSize - 1) != 0)
+                if (std::memcmp(getBuffer(), other.getBuffer(), byteSize - 1) != 0)
                 {
                     return false;
                 }

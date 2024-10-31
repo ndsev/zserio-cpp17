@@ -23,6 +23,14 @@ struct TestObject
     }
 };
 
+struct VarDynInt16Owner
+{
+    const uint8_t numBits = 10;
+};
+
+struct VarDynInt16Tag
+{};
+
 } // namespace
 
 template <>
@@ -57,13 +65,21 @@ private:
     const TestObject& m_data;
 };
 
-template <>
-struct ArrayTraits<TestObject>
+struct DynInt16ArrayTraits
 {
-    static zserio::View<TestObject> at(detail::DummyArrayOwner, const TestObject& element, size_t)
+    using OwnerType = VarDynInt16Owner;
+
+    static View<DynInt16<>> at(const VarDynInt16Owner& owner, const DynInt16<>& element, size_t)
     {
-        return zserio::View<TestObject>{element};
+        return View<DynInt16<>>(element, owner.numBits);
     }
+
+    // TODO[Mi-L@]: Will be needed once reading test is implemented!
+    // static void read(
+    //         zserio::BitStreamReader& reader, const VarDynInt16Owner& owner, DynInt16<>& element, size_t)
+    // {
+    //     detail::read(reader, element, owner.numBits);
+    // }
 };
 
 TEST(ArrayTest, boolArray)
@@ -111,6 +127,23 @@ TEST(ArrayTest, fixedDynInt16Array)
     ASSERT_LT(array1, array2);
 }
 
+TEST(ArrayTest, variableDynInt16Array)
+{
+    std::vector<DynInt16<>> rawArray1{-2, 13};
+    std::vector<DynInt16<>> rawArray2{-2, 42};
+
+    VarDynInt16Owner owner;
+
+    Array<std::vector<DynInt16<>>, ArrayType::NORMAL, DynInt16ArrayTraits> array1(owner, rawArray1);
+    ASSERT_EQ(rawArray1.at(0), array1.at(0).value());
+    ASSERT_EQ(rawArray1.at(1), array1.at(1).value());
+
+    Array<std::vector<DynInt16<>>, ArrayType::NORMAL, DynInt16ArrayTraits> array2(owner, rawArray2);
+    ASSERT_FALSE(array1 == array2);
+    ASSERT_TRUE(array1 != array2);
+    ASSERT_LT(array1, array2);
+}
+
 TEST(ArrayTest, varUInt16Array)
 {
     std::vector<VarUInt16> rawArray1{0, 13};
@@ -138,6 +171,45 @@ TEST(ArrayTest, float16Array)
 
     ASSERT_LT(array1, array2);
     ASSERT_GT(array2, array1);
+}
+
+TEST(ArrayTest, bytesArray)
+{
+    std::vector<Bytes> rawArray1{{{{1, 255}}, {{127, 128}}}};
+    std::vector<Bytes> rawArray2{{{{1, 255}}, {{127, 129}}}};
+
+    Array<std::vector<Bytes>, ArrayType::NORMAL> array1(rawArray1);
+    Array<std::vector<Bytes>, ArrayType::NORMAL> array2(rawArray2);
+
+    constexpr bool isSpan = std::is_same_v<Span<const uint8_t>, decltype(array1.at(0))>;
+    ASSERT_TRUE(isSpan);
+
+    ASSERT_TRUE(std::equal(
+            rawArray1.at(0).begin(), rawArray1.at(0).end(), array1.at(0).begin(), array1.at(0).end()));
+    ASSERT_TRUE(std::equal(
+            rawArray1.at(1).begin(), rawArray1.at(1).end(), array1.at(1).begin(), array1.at(1).end()));
+
+    ASSERT_NE(array1, array2);
+    ASSERT_LT(array1, array2);
+}
+
+TEST(ArrayTest, stringArray)
+{
+    std::vector<std::string> rawArray1 = {"String0", "String1", "String2"};
+    std::vector<std::string> rawArray2 = {"String0", "String1", "String3"};
+
+    Array<std::vector<std::string>, ArrayType::NORMAL> array1(rawArray1);
+    Array<std::vector<std::string>, ArrayType::NORMAL> array2(rawArray2);
+
+    constexpr bool isStringView = std::is_same_v<std::string_view, decltype(array1.at(0))>;
+    ASSERT_TRUE(isStringView);
+
+    ASSERT_EQ(rawArray1.at(0), array1.at(0));
+    ASSERT_EQ(rawArray1.at(1), array1.at(1));
+    ASSERT_EQ(rawArray1.at(2), array1.at(2));
+
+    ASSERT_NE(array1, array2);
+    ASSERT_LT(array1, array2);
 }
 
 TEST(ArrayTest, testObjectArray)

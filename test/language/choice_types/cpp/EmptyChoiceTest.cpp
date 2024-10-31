@@ -66,6 +66,13 @@ TEST(EmptyChoiceTest, validate)
     // TODO
 }
 
+TEST(EmptyChoiceTest, bitSizeOf)
+{
+    EmptyChoice data;
+    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    ASSERT_EQ(0, zserio::detail::bitSizeOf(view));
+}
+
 TEST(EmptyChoiceTest, writeRead)
 {
     EmptyChoice data;
@@ -78,13 +85,6 @@ TEST(EmptyChoiceTest, read)
     zserio::BitStreamWriter writer(bitBuffer);
     EmptyChoice expectedReadData;
     test_utils::readTest(writer, expectedReadData, static_cast<zserio::UInt8>(0));
-}
-
-TEST(EmptyChoiceTest, bitSizeOf)
-{
-    EmptyChoice data;
-    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
-    ASSERT_EQ(0, zserio::detail::bitSizeOf(view));
 }
 
 TEST(EmptyChoiceTest, stdHash)

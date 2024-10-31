@@ -26,16 +26,16 @@ namespace detail
 struct DummyArrayOwner
 {};
 
-template <typename T, typename = void>
+template <typename ARRAY_TRAITS, typename = void>
 struct array_owner_type
 {
     using type = DummyArrayOwner;
 };
 
-template <typename T>
-struct array_owner_type<T, std::void_t<typename ArrayTraits<T>::OwnerType>>
+template <typename ARRAY_TRAITS>
+struct array_owner_type<ARRAY_TRAITS, std::void_t<typename ARRAY_TRAITS::OwnerType>>
 {
-    using type = typename ArrayTraits<T>::OwnerType;
+    using type = typename ARRAY_TRAITS::OwnerType;
 };
 
 template <typename T, typename V = void>
@@ -63,6 +63,7 @@ inline constexpr bool has_equal_method_v = has_equal_method<T, V>::value;
  * Trait used to check whether the type has an OwnerType.
  * \{
  */
+// TODO[Mi-L@]: Remove if not needed.
 template <typename T, typename = void>
 struct has_view_type : std::false_type
 {};
@@ -133,6 +134,36 @@ template <typename VALUE_TYPE, detail::FloatType FLOAT_TYPE>
 struct ArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
         : NativeArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
 {};
+
+template <>
+struct ArrayTraits<Bytes>
+{
+    static constexpr Span<const uint8_t> at(const detail::DummyArrayOwner&, const Bytes& element, size_t)
+    {
+        return element;
+    }
+
+    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&, Bytes& element, size_t)
+    {
+        detail::read(reader, element);
+    }
+};
+
+template <typename ALLOC>
+struct ArrayTraits<std::basic_string<char, std::char_traits<char>, ALLOC>>
+{
+    static constexpr std::string_view at(
+            const detail::DummyArrayOwner&, const basic_string<ALLOC>& element, size_t)
+    {
+        return element;
+    }
+
+    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&,
+            basic_string<ALLOC>& element, size_t)
+    {
+        detail::read(reader, element);
+    }
+};
 
 } // namespace zserio
 

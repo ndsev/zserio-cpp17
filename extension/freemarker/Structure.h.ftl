@@ -54,6 +54,31 @@ template <>
 class View<${fullName}>
 {
 public:
+<#list fieldList as field>
+    <#if array_needs_custom_traits(field)>
+    struct <@array_traits_name field/>
+    {
+        <#if array_needs_owner(field)>
+        using OwnerType = View<${fullName}>;
+
+        </#if>
+        static ::zserio::View<${field.typeInfo.typeFullName}> at(<#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>::zseiro::detail::DummyArrayOwner&</#if>,
+                const ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        {
+            return ::zserio::View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
+        }
+
+        static void read(::zserio::BitStreamReader& reader,
+                const <#if array_needs_owner(field)>OwnerType& owner<#else>::zseiro::detail::DummyArrayOwner&</#if>, <#rt>
+                <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        {
+            (void)zserio::detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
+        }
+    };
+
+    </#if>
+</#list>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
@@ -92,6 +117,9 @@ template <>
 void validate(const View<${fullName}>& view);
 
 template <>
+BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
+
+template <>
 void write(::zserio::BitStreamWriter& writer, const View<${fullName}>& view);
 
 template <>
@@ -101,9 +129,6 @@ View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data<#rt>
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
         <#lt>);
-
-template <>
-BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
 <@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>

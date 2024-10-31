@@ -15,17 +15,19 @@ if (ZSERIO_LOG)
 endif ()
 
 list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/auto_array_struct_recursion/.*|.*/auto_array_uint8/.*|.*/fixed_array_uint8/.*|.*/variable_array_subtyped_struct/.*")
+    ".*/auto_array_bitfield_param/.*|.*/auto_array_struct_recursion/.*|.*/auto_array_uint8/.*|.*/fixed_array_uint8/.*|.*/variable_array_subtyped_struct/.*|.*/variable_array_ternary_operator/.*")
 set_target_properties(array_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
 
 add_custom_test(array_types
     DEPENDS
         array_types_zs
     SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoArrayBitfieldParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoArrayStructRecursionTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoArrayUInt8Test.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FixedArrayUInt8Test.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/VariableArraySubtypedStructTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/VariableArrayTernaryOperatorTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

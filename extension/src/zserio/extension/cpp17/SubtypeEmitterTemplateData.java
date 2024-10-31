@@ -21,7 +21,7 @@ public final class SubtypeEmitterTemplateData extends UserTypeTemplateData
         final CppNativeType targetNativeType = cppNativeMapper.getCppType(subtypeTypeReference);
         addHeaderIncludesForType(targetNativeType);
 
-        targetTypeInfo = new NativeTypeInfoTemplateData(targetNativeType, subtypeTypeReference);
+        targetTypeInfo = NativeTypeInfoTemplateDataCreator.create(targetNativeType, subtypeTypeReference);
     }
 
     public NativeTypeInfoTemplateData getTargetTypeInfo()

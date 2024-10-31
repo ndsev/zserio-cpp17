@@ -15,9 +15,10 @@ bugprone-exception-escape:src/zserio/Variant.h:263
 bugprone-use-after-move:src/zserio/Variant.h:675
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:482
+cert-dcl58-cpp:src/zserio/BitBuffer.h:483
 cert-dcl58-cpp:src/zserio/Optional.h:1161
 cert-dcl58-cpp:src/zserio/Variant.h:835
+cert-dcl58-cpp:src/zserio/View.h:185
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112

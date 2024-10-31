@@ -349,9 +349,11 @@ inline void write(BitStreamWriter& writer, Bool value)
     writer.writeBool(value);
 }
 
-template <typename T, BitSize BIT_SIZE>
-void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
+template <BitSize BIT_SIZE, typename WRAPPER_TYPE>
+void writeFixedInt(BitStreamWriter& writer, WRAPPER_TYPE value)
 {
+    using T = typename WRAPPER_TYPE::value_type;
+
     if constexpr (sizeof(T) <= 4)
     {
         if constexpr (std::is_signed_v<T>)
@@ -372,6 +374,46 @@ void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
         else
         {
             writer.writeUnsignedBits64(value, BIT_SIZE);
+        }
+    }
+}
+
+template <typename T, BitSize BIT_SIZE>
+void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
+{
+    writeFixedInt<BIT_SIZE>(writer, value);
+}
+
+template <typename T, BitSize BIT_SIZE>
+void write(BitStreamWriter& writer, DynIntWrapper<T, BIT_SIZE> value)
+{
+    static_assert(BIT_SIZE != 0, "Must be called with numBits!");
+    writeFixedInt<BIT_SIZE>(writer, value);
+}
+
+template <typename T>
+void write(BitStreamWriter& writer, DynIntWrapper<T, 0> value, uint8_t numBits)
+{
+    if constexpr (sizeof(T) <= 4)
+    {
+        if constexpr (std::is_signed_v<T>)
+        {
+            writer.writeSignedBits32(value, numBits);
+        }
+        else
+        {
+            writer.writeUnsignedBits32(value, numBits);
+        }
+    }
+    else
+    {
+        if constexpr (std::is_signed_v<T>)
+        {
+            writer.writeSignedBits64(value, numBits);
+        }
+        else
+        {
+            writer.writeUnsignedBits64(value, numBits);
         }
     }
 }

@@ -30,8 +30,8 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
         final NativeIntegralType nativeBaseType = cppNativeMapper.getCppIntegralType(enumTypeInstantiation);
         addHeaderIncludesForType(nativeBaseType);
 
-        underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.createIntegral(
-                nativeBaseType, enumTypeInstantiation, context.getExpressionFormatter(this));
+        underlyingTypeInfo =
+                NativeTypeInfoTemplateDataCreator.create(context, nativeBaseType, enumTypeInstantiation, this);
 
         final List<EnumItem> enumItems = enumType.getItems();
         items = new ArrayList<EnumItemData>(enumItems.size());
@@ -44,7 +44,7 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
         return usedInPackedArray;
     }
 
-    public NativeIntegralTypeInfoTemplateData getUnderlyingTypeInfo()
+    public NativeTypeInfoTemplateData getUnderlyingTypeInfo()
     {
         return underlyingTypeInfo;
     }
@@ -114,6 +114,6 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
     };
 
     private final boolean usedInPackedArray;
-    private final NativeIntegralTypeInfoTemplateData underlyingTypeInfo;
+    private final NativeTypeInfoTemplateData underlyingTypeInfo;
     private final List<EnumItemData> items;
 }

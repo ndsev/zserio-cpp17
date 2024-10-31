@@ -1,40 +1,24 @@
 package zserio.extension.cpp17;
 
-import zserio.ast.BitmaskType;
-import zserio.ast.BooleanType;
-import zserio.ast.BytesType;
-import zserio.ast.EnumType;
-import zserio.ast.ExternType;
-import zserio.ast.StringType;
-import zserio.ast.TypeInstantiation;
-import zserio.ast.TypeReference;
-import zserio.ast.ZserioType;
-import zserio.extension.common.ZserioExtensionException;
-import zserio.extension.cpp17.types.CppNativeType;
-import zserio.extension.cpp17.types.NativeNumericWrapperType;
-
 /**
  * FreeMarker template data with info about types.
  */
 public class NativeTypeInfoTemplateData
 {
-    public NativeTypeInfoTemplateData(CppNativeType cppNativeType, TypeInstantiation typeInstantiation)
-            throws ZserioExtensionException
+    public NativeTypeInfoTemplateData(String typeFullName, boolean isSimple, boolean isNumeric, boolean isEnum,
+            boolean isBitmask, boolean isBoolean, boolean isString, boolean isExtern, boolean isBytes,
+            boolean needsAllocator)
     {
-        this(cppNativeType, typeInstantiation.getTypeReference().getBaseTypeReference().getType(),
-                typeInstantiation, null);
-    }
-
-    public NativeTypeInfoTemplateData(CppNativeType cppNativeType, TypeReference typeReference)
-            throws ZserioExtensionException
-    {
-        this(cppNativeType, typeReference.getBaseTypeReference().getType(), null, typeReference);
-    }
-
-    public NativeTypeInfoTemplateData(CppNativeType cppNativeType, ZserioType baseType)
-            throws ZserioExtensionException
-    {
-        this(cppNativeType, baseType, null, null);
+        this.typeFullName = typeFullName;
+        this.isSimple = isSimple;
+        this.isNumeric = isNumeric;
+        this.isEnum = isEnum;
+        this.isBitmask = isBitmask;
+        this.isBoolean = isBoolean;
+        this.isString = isString;
+        this.isExtern = isExtern;
+        this.isBytes = isBytes;
+        this.needsAllocator = needsAllocator;
     }
 
     public String getTypeFullName()
@@ -47,6 +31,11 @@ public class NativeTypeInfoTemplateData
         return isSimple;
     }
 
+    public boolean getIsNumeric()
+    {
+        return isNumeric;
+    }
+
     public boolean getIsEnum()
     {
         return isEnum;
@@ -55,11 +44,6 @@ public class NativeTypeInfoTemplateData
     public boolean getIsBitmask()
     {
         return isBitmask;
-    }
-
-    public boolean getIsNumeric()
-    {
-        return isNumeric;
     }
 
     public boolean getIsBoolean()
@@ -85,26 +69,6 @@ public class NativeTypeInfoTemplateData
     public boolean getNeedsAllocator()
     {
         return needsAllocator;
-    }
-
-    private NativeTypeInfoTemplateData(CppNativeType cppNativeType, ZserioType baseType,
-            TypeInstantiation typeInstantiation, TypeReference typeReference) throws ZserioExtensionException
-    {
-        typeFullName = cppNativeType.getFullName();
-
-        isSimple = cppNativeType.isSimple();
-
-        isNumeric = cppNativeType instanceof NativeNumericWrapperType;
-
-        // we suppose that zserio enum, bitmask, etc. are mapped to C++ native enum, bitmask, etc.
-        // normally, we should consult native type here (in this case we should solve subtypes as well)
-        isEnum = baseType instanceof EnumType;
-        isBitmask = baseType instanceof BitmaskType;
-        isBoolean = baseType instanceof BooleanType;
-        isString = baseType instanceof StringType;
-        isExtern = baseType instanceof ExternType;
-        isBytes = baseType instanceof BytesType;
-        needsAllocator = isString || isExtern || isBytes || !isSimple;
     }
 
     private final String typeFullName;

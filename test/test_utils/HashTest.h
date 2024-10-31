@@ -13,10 +13,10 @@ void hashTest(const T& value, size_t hashValue, const T& equalValue, const T& di
 {
     std::hash<T> hasher;
 
-    ASSERT_NE(hashValue, diffHashValue);
-    ASSERT_EQ(hashValue, hasher(value));
-    ASSERT_EQ(hashValue, hasher(equalValue));
-    ASSERT_EQ(diffHashValue, hasher(diffValue));
+    EXPECT_NE(hashValue, diffHashValue);
+    EXPECT_EQ(hashValue, hasher(value));
+    EXPECT_EQ(hashValue, hasher(equalValue));
+    EXPECT_EQ(diffHashValue, hasher(diffValue));
 }
 
 } // namespace test_utils

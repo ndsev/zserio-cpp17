@@ -102,6 +102,20 @@ inline uint32_t calcHashCode(uint32_t seedValue, detail::IntWrapper<VALUE_TYPE, 
 }
 
 /**
+ * Calculates hash code of the given dynamic int wrapper value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+template <typename VALUE_TYPE, BitSize BIT_SIZE>
+inline uint32_t calcHashCode(uint32_t seedValue, detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE> value)
+{
+    return calcHashCode(seedValue, static_cast<VALUE_TYPE>(value));
+}
+
+/**
  * Calculates hash code of the given bool wrapper value using the given seed value.
  *
  * \param seedValue Seed value (current hash code).

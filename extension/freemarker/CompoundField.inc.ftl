@@ -18,7 +18,7 @@
     <#if field.array??>
         <@array_type_name field/><#t>
     <#else>
-        <#if field.typeInfo.isSimple>
+        <#if field.typeInfo.isSimple && !field.dynamicBitLength??>
             ${field.typeInfo.typeFullName}<#t>
         <#elseif field.typeInfo.isString>
             ::std::string_view<#t>
@@ -32,6 +32,14 @@
     </#if>
 </#macro>
 
+<#macro field_view_type_full_name compoundName field>
+    <#if field.array??>
+        <@array_type_full_name compoundName, field/><#t>
+    <#else>
+        <@field_view_type_name field/><#t>
+    </#if>
+</#macro>
+
 <#macro field_view_getter_name field>
     get${field.name?cap_first}<#t>
 </#macro>
@@ -41,14 +49,28 @@
         <#list field.compound.instantiatedParameters as instantiatedParameter>
             , ${instantiatedParameter.expression}<#t>
         </#list>
+    <#elseif field.dynamicBitLength??>
+        , static_cast<uint8_t>(${field.dynamicBitLength.expression})<#t>
     </#if>
 </#macro>
 
-<#macro field_view_indirect_parameters field>
+<#macro field_view_view_indirect_parameters field>
     <#if field.compound??>
         <#list field.compound.instantiatedParameters as instantiatedParameter>
             , ${instantiatedParameter.viewIndirectExpression}<#t>
         </#list>
+    <#elseif field.dynamicBitLength??>
+        , static_cast<uint8_t>(${field.dynamicBitLength.viewIndirectExpression})<#t>
+    </#if>
+</#macro>
+
+<#macro field_view_owner_indirect_parameters field>
+    <#if field.compound??>
+        <#list field.compound.instantiatedParameters as instantiatedParameter>
+            , ${instantiatedParameter.ownerIndirectExpression}<#t>
+        </#list>
+    <#elseif field.dynamicBitLength??>
+        , static_cast<uint8_t>(${field.dynamicBitLength.ownerIndirectExpression})<#t>
     </#if>
 </#macro>
 
@@ -56,8 +78,18 @@
     CHOICE_${field.name}<#t>
 </#macro>
 
+<#macro array_traits_name field>
+    Zserio${field.name?cap_first}ArrayTraits<#t>
+</#macro>
+
 <#macro array_type_name field>
-    ::zserio::Array<<@field_data_type_name field/>, <@array_type_enum field/>><#t>
+    ::zserio::Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
+            <#if array_needs_custom_traits(field)>, <@array_traits_name field/></#if>><#t>
+</#macro>
+
+<#macro array_type_full_name compoundName field>
+    ::zserio::Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
+            <#if array_needs_custom_traits(field)>, View<${compoundName}>::<@array_traits_name field/></#if>><#t>
 </#macro>
 
 <#macro array_type_enum field>
@@ -79,8 +111,39 @@
     ${arrayType}<#t>
 </#macro>
 
+<#function array_needs_custom_traits field>
+    <#return field.array?? && ((field.compound?? && field.compound.parameters?has_content) ||
+            field.dynamicBitLength??)>
+</#function>
+
 <#function array_needs_owner field>
-    <#return field.array?? && field.compound?? && field.compound.parameters?has_content>
+    <#if field.array??>
+        <#if field.compound??>
+            <#list field.compound.instantiatedParameters as instantiatedParameter>
+                <#if instantiatedParameter.needsOwner>
+                    <#return true>
+                </#if>
+            </#list>
+        <#elseif field.dynamicBitLength??>
+            <#return field.dynamicBitLength.needsOwner>
+        </#if>
+    </#if>
+    <#return false>
+</#function>
+
+<#function array_needs_index field>
+    <#if field.array??>
+        <#if field.compound??>
+            <#list field.compound.instantiatedParameters as instantiatedParameter>
+                <#if instantiatedParameter.needsIndex>
+                    <#return true>
+                </#if>
+            </#list>
+        <#elseif field.dynamicBitLength??>
+            <#return field.dynamicBitLength.needsIndex>
+        </#if>
+    </#if>
+    <#return false>
 </#function>
 
 <#function field_needs_allocator field>

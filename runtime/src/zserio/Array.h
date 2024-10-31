@@ -49,7 +49,7 @@ public:
      * Owner type is needed for proper expressions evaluation. If no owner is needed for expressions evaluation,
      * detail::DummyArrayOwner is used.
      */
-    using OwnerType = detail::array_owner_type_t<ValueType>;
+    using OwnerType = detail::array_owner_type_t<Traits>;
 
     /**
      * Constructor from l-value raw array.
@@ -310,7 +310,7 @@ void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRA
             writer.alignTo(8);
         }
 
-        write(writer, array.at(i));
+        write(writer, array[i]);
     }
 }
 
@@ -331,7 +331,7 @@ BitSize bitSizeOf(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSi
             endBitPosition = alignTo(8, endBitPosition);
         }
 
-        endBitPosition += bitSizeOf(array.at(i), endBitPosition);
+        endBitPosition += bitSizeOf(array[i], endBitPosition);
     }
 
     return endBitPosition - bitPosition;
@@ -345,7 +345,7 @@ uint32_t calcHashCode(uint32_t seedValue, const Array<RAW_ARRAY, ARRAY_TYPE, ARR
     uint32_t result = seedValue;
     for (size_t i = 0; i < array.size(); ++i)
     {
-        result = calcHashCode(result, array.at(i));
+        result = calcHashCode(result, array[i]);
     }
 
     return result;

@@ -142,6 +142,30 @@ TEST_F(UInt64ParamChoiceTest, validate)
     // TODO
 }
 
+TEST_F(UInt64ParamChoiceTest, bitSizeOf)
+{
+    {
+        UInt64ParamChoice data;
+        const VariantA value = 99;
+        data.emplace<ChoiceTag::CHOICE_valueA>(value);
+        zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
+        ASSERT_EQ(8, zserio::detail::bitSizeOf(view));
+    }
+    {
+        const VariantB value = 234;
+        UInt64ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        zserio::View<UInt64ParamChoice> view(data, VARIANT_B_SELECTOR);
+        ASSERT_EQ(16, zserio::detail::bitSizeOf(view));
+    }
+    {
+        UInt64ParamChoice data;
+        const VariantC value = 23456;
+        data.emplace<ChoiceTag::CHOICE_valueC>(value);
+        zserio::View<UInt64ParamChoice> view(data, VARIANT_C_SELECTOR);
+        ASSERT_EQ(32, zserio::detail::bitSizeOf(view));
+    }
+}
+
 TEST_F(UInt64ParamChoiceTest, writeRead)
 {
     {
@@ -180,30 +204,6 @@ TEST_F(UInt64ParamChoiceTest, read)
 
     UInt64ParamChoice expectedReadData(zserio::in_place_index<ChoiceTag::CHOICE_valueC>, valueC);
     test_utils::readTest(writer, expectedReadData, VARIANT_C_SELECTOR);
-}
-
-TEST_F(UInt64ParamChoiceTest, bitSizeOf)
-{
-    {
-        UInt64ParamChoice data;
-        const VariantA value = 99;
-        data.emplace<ChoiceTag::CHOICE_valueA>(value);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
-        ASSERT_EQ(8, zserio::detail::bitSizeOf(view));
-    }
-    {
-        const VariantB value = 234;
-        UInt64ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_B_SELECTOR);
-        ASSERT_EQ(16, zserio::detail::bitSizeOf(view));
-    }
-    {
-        UInt64ParamChoice data;
-        const VariantC value = 23456;
-        data.emplace<ChoiceTag::CHOICE_valueC>(value);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_C_SELECTOR);
-        ASSERT_EQ(32, zserio::detail::bitSizeOf(view));
-    }
 }
 
 TEST_F(UInt64ParamChoiceTest, stdHash)

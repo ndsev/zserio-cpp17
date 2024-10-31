@@ -392,9 +392,11 @@ inline void read(BitStreamReader& reader, Bool& value)
     value = reader.readBool();
 }
 
-template <typename T, BitSize BIT_SIZE>
-void read(BitStreamReader& reader, IntWrapper<T, BIT_SIZE>& value)
+template <BitSize BIT_SIZE, typename WRAPPER_TYPE>
+void readFixedInt(BitStreamReader& reader, WRAPPER_TYPE& value)
 {
+    using T = typename WRAPPER_TYPE::value_type;
+
     // TODO[Mi-L@]: implement on the reader to get rid of the numBits check
     if constexpr (sizeof(T) <= 4)
     {
@@ -416,6 +418,46 @@ void read(BitStreamReader& reader, IntWrapper<T, BIT_SIZE>& value)
         else
         {
             value = static_cast<T>(reader.readUnsignedBits64(BIT_SIZE));
+        }
+    }
+}
+
+template <typename T, BitSize BIT_SIZE>
+void read(BitStreamReader& reader, IntWrapper<T, BIT_SIZE>& value)
+{
+    readFixedInt<BIT_SIZE>(reader, value);
+}
+
+template <typename T, BitSize BIT_SIZE>
+void read(BitStreamReader& reader, DynIntWrapper<T, BIT_SIZE>& value)
+{
+    static_assert(BIT_SIZE != 0, "Must be called with numBits!");
+    readFixedInt<BIT_SIZE>(reader, value);
+}
+
+template <typename T>
+void read(BitStreamReader& reader, DynIntWrapper<T, 0>& value, uint8_t numBits)
+{
+    if constexpr (sizeof(T) <= 4)
+    {
+        if constexpr (std::is_signed_v<T>)
+        {
+            value = static_cast<T>(reader.readSignedBits32(numBits));
+        }
+        else
+        {
+            value = static_cast<T>(reader.readUnsignedBits32(numBits));
+        }
+    }
+    else
+    {
+        if constexpr (std::is_signed_v<T>)
+        {
+            value = static_cast<T>(reader.readSignedBits64(numBits));
+        }
+        else
+        {
+            value = static_cast<T>(reader.readUnsignedBits64(numBits));
         }
     }
 }

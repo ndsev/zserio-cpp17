@@ -33,3 +33,11 @@
         <@field_view_type_name field/><#t>
     </#if>
 </#macro>
+
+<#macro structure_field_view_type_full_name compoundName field>
+    <#if field.optional??>
+        ::zserio::Optional<<@field_view_type_full_name compoundName, field/>><#t>
+    <#else>
+        <@field_view_type_full_name compoundName, field/><#t>
+    </#if>
+</#macro>
