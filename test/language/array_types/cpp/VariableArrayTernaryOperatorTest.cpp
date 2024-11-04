@@ -50,7 +50,7 @@ protected:
         fillVariableArray(data, isFirstSizeUsed);
         zserio::View<VariableArray> view(data);
 
-        const std::string blobName = std::string((isFirstSizeUsed) ? BLOB_NAME_FIRST : BLOB_NAME_SECOND);
+        const std::string_view blobName = (isFirstSizeUsed) ? BLOB_NAME_FIRST : BLOB_NAME_SECOND;
         zserio::serializeToFile(view, blobName);
 
         VariableArray readData;

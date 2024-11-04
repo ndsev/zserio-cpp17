@@ -148,11 +148,11 @@ TEST_F(AutoArrayBitfieldParamTest, writeReadFile)
     fillParameterizedBitfieldLength(parameterizedBitfieldLength);
     zserio::View<ParameterizedBitfieldLength> view(parameterizedBitfieldLength, NUM_BITS_PARAM);
 
-    zserio::serializeToFile(view, std::string(BLOB_NAME));
+    zserio::serializeToFile(view, BLOB_NAME);
 
     ParameterizedBitfieldLength readParameterizedBitfieldLength;
-    const auto readView = zserio::deserializeFromFile(
-            std::string(BLOB_NAME), readParameterizedBitfieldLength, NUM_BITS_PARAM);
+    const auto readView =
+            zserio::deserializeFromFile(BLOB_NAME, readParameterizedBitfieldLength, NUM_BITS_PARAM);
     ASSERT_EQ(parameterizedBitfieldLength, readParameterizedBitfieldLength);
     ASSERT_EQ(view, readView);
 }

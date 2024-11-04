@@ -118,7 +118,7 @@ TEST_F(ArrayElementParamWithOptionalTest, writeReadFile)
     Holder data;
     fillData(data);
 
-    test_utils::writeReadFileTest(std::string(BLOB_NAME), data);
+    test_utils::writeReadFileTest(BLOB_NAME, data);
 }
 
 TEST_F(ArrayElementParamWithOptionalTest, read)

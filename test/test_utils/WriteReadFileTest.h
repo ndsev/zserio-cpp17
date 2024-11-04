@@ -12,7 +12,7 @@ namespace test_utils
 {
 
 template <typename T, typename... ARGS>
-void writeReadFileTest(const std::string& fileName, T& data, ARGS&&... arguments)
+void writeReadFileTest(std::string_view fileName, T& data, ARGS&&... arguments)
 {
     zserio::View<T> view(data, ::std::forward<ARGS>(arguments)...);
     zserio::serializeToFile(view, fileName);
