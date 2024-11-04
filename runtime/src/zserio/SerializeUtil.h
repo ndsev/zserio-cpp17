@@ -8,6 +8,7 @@
 #ifndef ZSERIO_SERIALIZE_UTIL_H_INC
 #define ZSERIO_SERIALIZE_UTIL_H_INC
 
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -198,7 +199,7 @@ typename ::zserio::View<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, T& d
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T>
-void serializeToFile(const View<T>& view, const std::string& fileName)
+void serializeToFile(const View<T>& view, std::string_view fileName)
 {
     const auto bitBuffer = serialize(view);
     writeBufferToFile(bitBuffer, fileName);
@@ -222,7 +223,7 @@ void serializeToFile(const View<T>& view, const std::string& fileName)
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T, typename... ARGS>
-void serializeToFile(const T& data, const std::string& fileName, ARGS&&... arguments)
+void serializeToFile(const T& data, std::string_view fileName, ARGS&&... arguments)
 {
     const View<T> view(data, ::std::forward<ARGS>(arguments)...);
     serializeToFile(view, fileName);
@@ -235,7 +236,7 @@ void serializeToFile(const T& data, const std::string& fileName, ARGS&&... argum
  * \code{.cpp}
  *     #include <zserio/SerializeUtil.h>
  *
- *     const std::string fileName = "FileName.bin";
+ *     std::string_view fileName("FileName.bin");
  *     SomeZserioObject objectData;
  *     zserio::serializeToFile(objectData, fileName);
  *     zserio::View<SomeZserioObject> objectView = zserio::deserializeFromFile(fileName, objectData);
@@ -251,7 +252,7 @@ void serializeToFile(const T& data, const std::string& fileName, ARGS&&... argum
  * \throw CppRuntimeException When deserialization fails.
  */
 template <typename T, typename... ARGS>
-::zserio::View<T> deserializeFromFile(const std::string& fileName, T& data, ARGS&&... arguments)
+::zserio::View<T> deserializeFromFile(std::string_view fileName, T& data, ARGS&&... arguments)
 {
     const BitBuffer bitBuffer = readBufferFromFile(fileName);
     return deserialize(bitBuffer, data, std::forward<ARGS>(arguments)...);

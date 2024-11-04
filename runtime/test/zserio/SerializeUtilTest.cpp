@@ -1,6 +1,6 @@
 #include <fstream>
 #include <iterator>
-#include <string>
+#include <string_view>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -272,10 +272,10 @@ TEST(SerializeUtilTest, deserializeData)
 TEST(SerializeUtilTest, serializeDataToFile)
 {
     const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
-    const std::string fileName = "SerializationTest.bin";
+    std::string_view fileName("SerializationTest.bin");
     serializeToFile(simpleStructure, fileName);
 
-    std::ifstream file(fileName.c_str(), std::ios::binary);
+    std::ifstream file(fileName.data(), std::ios::binary);
     const std::vector<uint8_t> readData(
             (std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
     ASSERT_EQ(3, readData.size());
@@ -287,11 +287,11 @@ TEST(SerializeUtilTest, serializeDataToFile)
 TEST(SerializeUtilTest, serializeViewToFile)
 {
     const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
-    const std::string fileName = "SerializeViewToFile.bin";
+    std::string_view fileName("SerializeViewToFile.bin");
     const View<SimpleStructure> view(simpleStructure);
     serializeToFile(simpleStructure, fileName);
 
-    std::ifstream file(fileName.c_str(), std::ios::binary);
+    std::ifstream file(fileName.data(), std::ios::binary);
     const std::vector<uint8_t> readData(
             (std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
     file.close();
@@ -303,10 +303,10 @@ TEST(SerializeUtilTest, serializeViewToFile)
 
 TEST(SerializeUtilTest, deserializeDataFromFile)
 {
-    const std::string fileName = "DeserializeDataFromFile.bin";
+    std::string_view fileName("DeserializeDataFromFile.bin");
     const std::vector<char> data({static_cast<char>(0xE0), static_cast<char>(0xFF), static_cast<char>(0xC0)});
     std::ofstream file;
-    file.open(fileName.c_str(), std::ios::out | std::ios::binary);
+    file.open(fileName.data(), std::ios::out | std::ios::binary);
     file.write(&data[0], static_cast<std::streamsize>(data.size()));
     file.close();
 

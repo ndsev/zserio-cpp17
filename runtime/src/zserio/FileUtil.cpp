@@ -6,9 +6,9 @@
 namespace zserio
 {
 
-void writeBufferToFile(const uint8_t* buffer, size_t bitSize, BitsTag, const std::string& fileName)
+void writeBufferToFile(const uint8_t* buffer, size_t bitSize, BitsTag, std::string_view fileName)
 {
-    std::ofstream stream(fileName.c_str(), std::ofstream::binary | std::ofstream::trunc);
+    std::ofstream stream(fileName.data(), std::ofstream::binary | std::ofstream::trunc);
     if (!stream)
     {
         throw CppRuntimeException("writeBufferToFile: Failed to open '") << fileName << "' for writing!";
@@ -21,9 +21,9 @@ void writeBufferToFile(const uint8_t* buffer, size_t bitSize, BitsTag, const std
     }
 }
 
-BitBuffer readBufferFromFile(const std::string& fileName)
+BitBuffer readBufferFromFile(std::string_view fileName)
 {
-    std::ifstream stream(fileName.c_str(), std::ifstream::binary);
+    std::ifstream stream(fileName.data(), std::ifstream::binary);
     if (!stream)
     {
         throw CppRuntimeException("readBufferFromFile: Cannot open '") << fileName << "' for reading!";

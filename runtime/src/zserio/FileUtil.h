@@ -10,7 +10,7 @@
 #ifndef ZSERIO_FILE_UTIL_H_INC
 #define ZSERIO_FILE_UTIL_H_INC
 
-#include <string>
+#include <string_view>
 
 #include "zserio/BitBuffer.h"
 
@@ -26,7 +26,7 @@ namespace zserio
  *
  * \throw CppRuntimeException When reading fails.
  */
-BitBuffer readBufferFromFile(const std::string& fileName);
+BitBuffer readBufferFromFile(std::string_view fileName);
 
 /**
  * Writes given buffer to file.
@@ -37,7 +37,7 @@ BitBuffer readBufferFromFile(const std::string& fileName);
  *
  * \throw CppRuntimeException When writing fails.
  */
-void writeBufferToFile(const uint8_t* buffer, size_t bitSize, BitsTag, const std::string& fileName);
+void writeBufferToFile(const uint8_t* buffer, size_t bitSize, BitsTag, std::string_view fileName);
 
 /**
  * Writes given buffer to file.
@@ -50,7 +50,7 @@ void writeBufferToFile(const uint8_t* buffer, size_t bitSize, BitsTag, const std
  *
  * \throw CppRuntimeException When writing fails.
  */
-inline void writeBufferToFile(const uint8_t* buffer, size_t byteSize, const std::string& fileName)
+inline void writeBufferToFile(const uint8_t* buffer, size_t byteSize, std::string_view fileName)
 {
     writeBufferToFile(buffer, byteSize * 8, BitsTag(), fileName);
 }
@@ -66,7 +66,7 @@ inline void writeBufferToFile(const uint8_t* buffer, size_t byteSize, const std:
  * \throw CppRuntimeException When writing fails.
  */
 template <typename ALLOC>
-inline void writeBufferToFile(const BasicBitBuffer<ALLOC>& bitBuffer, const std::string& fileName)
+inline void writeBufferToFile(const BasicBitBuffer<ALLOC>& bitBuffer, std::string_view fileName)
 {
     writeBufferToFile(bitBuffer.getBuffer(), bitBuffer.getBitSize(), BitsTag(), fileName);
 }
