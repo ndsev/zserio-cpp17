@@ -24,7 +24,7 @@ protected:
         data.values = {{value}};
     }
 
-    void writeHolder(zserio::BitStreamWriter& writer)
+    void writeToStream(zserio::BitStreamWriter& writer)
     {
         zserio::detail::write(writer, HAS_EXTRA);
         zserio::detail::write(writer, EXTRA_PARAM);
@@ -125,7 +125,7 @@ TEST_F(ArrayElementParamWithOptionalTest, read)
 {
 
     zserio::BitStreamWriter writer(bitBuffer);
-    writeHolder(writer);
+    writeToStream(writer);
 
     Holder expectedData;
     fillData(expectedData);

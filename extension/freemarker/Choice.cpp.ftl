@@ -150,7 +150,14 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 
 <@field_view_type_name field/> View<${fullName}>::${field.getterName}() const
 {
+    <#if !field.array?? && !field.typeInfo.isDynamic && field.typeInfo.isSimple>
+    <#-- field which does not need View -->
     return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data);
+    <#else>
+    <#-- field which needs -->
+    return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data)<#rt>
+            <#lt><@field_view_parameters field/>};
+    </#if>
 }
 </#list>
 
@@ -243,6 +250,28 @@ void validate(const View<${fullName}>&)
     // TODO:
 }
 
+<#macro choice_bitsizeof_member member indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if member.field??>
+${I}endBitPosition += ::zserio::detail::bitSizeOf(view.${member.field.getterName}(), endBitPosition);
+    <#else>
+${I}// empty
+    </#if>
+</#macro>
+template <>
+BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+<#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+    <@choice_switch "choice_bitsizeof_member", "choice_no_match", viewIndirectSelectorExpression, true, 1/>
+
+    return endBitPosition - bitPosition;
+<#else>
+    return 0;
+</#if>
+}
+
 <#macro choice_write_member member indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
@@ -264,7 +293,10 @@ void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>();
-${I}(void)::zserio::detail::read(reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>());
+${I}<#if member.field.compound??>(void)</#if>::zserio::detail::read<#rt>
+        <#if member.field.array??><<@array_type_full_name fullName, member.field/>></#if>(<#t>
+        reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>()<#t>
+        <#lt><@field_view_view_indirect_parameters member.field/>);
     <#else>
 ${I}// empty
     </#if>
@@ -288,28 +320,6 @@ View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> rea
 </#if>
 
     return view;
-}
-
-<#macro choice_bitsizeof_member member indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}endBitPosition += ::zserio::detail::bitSizeOf(view.${member.field.getterName}(), endBitPosition);
-    <#else>
-${I}// empty
-    </#if>
-</#macro>
-template <>
-BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
-        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
-{
-<#if fieldList?has_content>
-    BitSize endBitPosition = bitPosition;
-    <@choice_switch "choice_bitsizeof_member", "choice_no_match", viewIndirectSelectorExpression, true, 1/>
-
-    return endBitPosition - bitPosition;
-<#else>
-    return 0;
-</#if>
 }
 <@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>

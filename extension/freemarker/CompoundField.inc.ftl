@@ -18,7 +18,7 @@
     <#if field.array??>
         <@array_type_name field/><#t>
     <#else>
-        <#if field.typeInfo.isSimple && !field.dynamicBitLength??>
+        <#if field.typeInfo.isSimple && !field.typeInfo.isDynamic>
             ${field.typeInfo.typeFullName}<#t>
         <#elseif field.typeInfo.isString>
             ::std::string_view<#t>
@@ -45,31 +45,94 @@
 </#macro>
 
 <#macro field_view_parameters field>
-    <#if field.compound??>
-        <#list field.compound.instantiatedParameters as instantiatedParameter>
-            , ${instantiatedParameter.expression}<#t>
-        </#list>
-    <#elseif field.dynamicBitLength??>
-        , static_cast<uint8_t>(${field.dynamicBitLength.expression})<#t>
+    <#if field.array??>
+        <#if array_needs_owner(field)>
+            , *this<#t>
+        </#if>
+    <#else>
+        <#if field.compound??>
+            <#list field.compound.instantiatedParameters as instantiatedParameter>
+                , <#t>
+                <#if instantiatedParameter.typeInfo.isNumeric>
+                    <#if instantiatedParameter.typeInfo.isDynamic>
+                        View<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                                typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                    <#else>
+                        typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                    </#if>
+                </#if>
+                ${instantiatedParameter.expression}<#t>
+                <#if instantiatedParameter.typeInfo.isNumeric>
+                    <#if instantiatedParameter.typeInfo.isDynamic>
+                        ), 64)<#t>
+                    <#else>
+                        )<#t>
+                    </#if>
+                </#if>
+            </#list>
+        <#elseif field.typeInfo.isDynamic>
+            , static_cast<uint8_t>(${field.dynamicBitLength.expression})<#t>
+        </#if>
     </#if>
 </#macro>
 
 <#macro field_view_view_indirect_parameters field>
-    <#if field.compound??>
-        <#list field.compound.instantiatedParameters as instantiatedParameter>
-            , ${instantiatedParameter.viewIndirectExpression}<#t>
-        </#list>
-    <#elseif field.dynamicBitLength??>
-        , static_cast<uint8_t>(${field.dynamicBitLength.viewIndirectExpression})<#t>
+    <#if field.array??>
+        <#if array_needs_owner(field)>
+            , view<#t>
+        </#if>
+        <#if field.array.viewIndirectLength??>
+            , ${field.array.viewIndirectLength}<#t>
+        </#if>
+    <#else>
+        <#if field.compound??>
+            <#list field.compound.instantiatedParameters as instantiatedParameter>
+                , <#t>
+                <#if instantiatedParameter.typeInfo.isNumeric>
+                    <#if instantiatedParameter.typeInfo.isDynamic>
+                        View<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                                typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                    <#else>
+                        typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                    </#if>
+                </#if>
+                ${instantiatedParameter.viewIndirectExpression}<#t>
+                <#if instantiatedParameter.typeInfo.isNumeric>
+                    <#if instantiatedParameter.typeInfo.isDynamic>
+                        ), 64)<#t>
+                    <#else>
+                        )<#t>
+                    </#if>
+                </#if>
+            </#list>
+        <#elseif field.typeInfo.isDynamic>
+            , static_cast<uint8_t>(${field.dynamicBitLength.viewIndirectExpression})<#t>
+        </#if>
     </#if>
 </#macro>
 
 <#macro field_view_owner_indirect_parameters field>
     <#if field.compound??>
         <#list field.compound.instantiatedParameters as instantiatedParameter>
-            , ${instantiatedParameter.ownerIndirectExpression}<#t>
+            , <#t>
+            <#if instantiatedParameter.typeInfo.isNumeric>
+                <#if instantiatedParameter.typeInfo.isDynamic>
+                    View<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                            typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                <#else>
+                    typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                </#if>
+            </#if>
+            ${instantiatedParameter.ownerIndirectExpression}<#t>
+            <#if instantiatedParameter.typeInfo.isNumeric>
+                <#if instantiatedParameter.typeInfo.isDynamic>
+                    ), 64)<#t>
+                <#else>
+                    )<#t>
+                </#if>
+            </#if>
         </#list>
-    <#elseif field.dynamicBitLength??>
+    <#elseif field.typeInfo.isDynamic>
         , static_cast<uint8_t>(${field.dynamicBitLength.ownerIndirectExpression})<#t>
     </#if>
 </#macro>
@@ -113,7 +176,7 @@
 
 <#function array_needs_custom_traits field>
     <#return field.array?? && ((field.compound?? && field.compound.parameters?has_content) ||
-            field.dynamicBitLength??)>
+            field.typeInfo.isDynamic)>
 </#function>
 
 <#function array_needs_owner field>
@@ -124,7 +187,7 @@
                     <#return true>
                 </#if>
             </#list>
-        <#elseif field.dynamicBitLength??>
+        <#elseif field.typeInfo.isDynamic>
             <#return field.dynamicBitLength.needsOwner>
         </#if>
     </#if>
@@ -139,7 +202,7 @@
                     <#return true>
                 </#if>
             </#list>
-        <#elseif field.dynamicBitLength??>
+        <#elseif field.typeInfo.isDynamic>
             <#return field.dynamicBitLength.needsIndex>
         </#if>
     </#if>

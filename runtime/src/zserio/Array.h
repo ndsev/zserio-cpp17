@@ -58,9 +58,9 @@ public:
      * \param rawArray Raw array.
      */
     template <typename OWNER_TYPE_ = OwnerType, std::enable_if_t<!detail::is_dummy_v<OWNER_TYPE_>, int> = 0>
-    explicit Array(const OwnerType& owner, const RawArray& rawArray) :
-            m_owner(owner),
-            m_rawArray(rawArray)
+    explicit Array(const RawArray& rawArray, const OwnerType& owner) :
+            m_rawArray(rawArray),
+            m_owner(owner)
     {}
 
     /**
@@ -240,8 +240,8 @@ public:
     }
 
 private:
-    OwnerType m_owner; // view to owner type, parameters are copied by value and that is ok
     const RawArray& m_rawArray;
+    OwnerType m_owner; // view to owner type, parameters are copied by value and that is ok
 };
 
 namespace detail
@@ -269,7 +269,7 @@ size_t readArrayLength(BitStreamReader& reader, size_t arrayLength)
 }
 
 template <typename ARRAY>
-void read(BitStreamReader& reader, typename ARRAY::OwnerType& owner, typename ARRAY::RawArray& rawArray,
+void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typename ARRAY::OwnerType& owner,
         size_t arrayLength = 0)
 {
     using ArrayTraits = typename ARRAY::Traits;
@@ -292,7 +292,7 @@ template <typename ARRAY, std::enable_if_t<is_dummy_v<typename ARRAY::OwnerType>
 void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, size_t arrayLength = 0)
 {
     DummyArrayOwner owner;
-    read<ARRAY>(reader, owner, rawArray, arrayLength);
+    read<ARRAY>(reader, rawArray, owner, arrayLength);
 }
 
 template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>

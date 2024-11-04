@@ -134,11 +134,11 @@ TEST(ArrayTest, variableDynInt16Array)
 
     VarDynInt16Owner owner;
 
-    Array<std::vector<DynInt16<>>, ArrayType::NORMAL, DynInt16ArrayTraits> array1(owner, rawArray1);
+    Array<std::vector<DynInt16<>>, ArrayType::NORMAL, DynInt16ArrayTraits> array1(rawArray1, owner);
     ASSERT_EQ(rawArray1.at(0), array1.at(0).value());
     ASSERT_EQ(rawArray1.at(1), array1.at(1).value());
 
-    Array<std::vector<DynInt16<>>, ArrayType::NORMAL, DynInt16ArrayTraits> array2(owner, rawArray2);
+    Array<std::vector<DynInt16<>>, ArrayType::NORMAL, DynInt16ArrayTraits> array2(rawArray2, owner);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);

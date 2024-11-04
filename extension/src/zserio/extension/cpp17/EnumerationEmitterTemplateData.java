@@ -6,7 +6,6 @@ import java.util.List;
 import zserio.ast.EnumItem;
 import zserio.ast.EnumType;
 import zserio.ast.TypeInstantiation;
-import zserio.extension.common.ExpressionFormatter;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeIntegralType;

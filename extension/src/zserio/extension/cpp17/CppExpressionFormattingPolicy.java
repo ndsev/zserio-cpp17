@@ -9,6 +9,8 @@ import zserio.ast.AstNode;
 import zserio.ast.BitmaskType;
 import zserio.ast.BitmaskValue;
 import zserio.ast.Constant;
+import zserio.ast.DynamicBitFieldInstantiation;
+import zserio.ast.DynamicBitFieldType;
 import zserio.ast.EnumItem;
 import zserio.ast.EnumType;
 import zserio.ast.Expression;
@@ -16,6 +18,7 @@ import zserio.ast.Field;
 import zserio.ast.Function;
 import zserio.ast.Package;
 import zserio.ast.Parameter;
+import zserio.ast.TypeInstantiation;
 import zserio.ast.ZserioType;
 import zserio.extension.common.DefaultExpressionFormattingPolicy;
 import zserio.extension.common.StringEscapeConverter;
@@ -253,6 +256,16 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         result.append(CPP_GETTER_FUNCTION_CALL);
         if (field.isOptional())
             result.append(CPP_GETTER_OPTIONAL_VALUE);
+        final TypeInstantiation typeInstantiation = field.getTypeInstantiation();
+        if (typeInstantiation instanceof DynamicBitFieldInstantiation)
+        {
+            final DynamicBitFieldInstantiation dynamicBitFieldInstantiation =
+                    (DynamicBitFieldInstantiation)typeInstantiation;
+            if (dynamicBitFieldInstantiation.getLengthExpression().getIntegerValue() == null)
+            {
+                result.append(CPP_GETTER_DYNAMIC_BITFIELD_VALUE);
+            }
+        }
     }
 
     private void formatTypeIdentifier(StringBuilder result, ZserioType resolvedType)
@@ -337,6 +350,10 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
         result.append(AccessorNameFormatter.getGetterName(param));
         result.append(CPP_GETTER_FUNCTION_CALL);
+        if (param.getTypeReference().getBaseTypeReference().getType() instanceof DynamicBitFieldType)
+        {
+            result.append(CPP_GETTER_DYNAMIC_BITFIELD_VALUE);
+        }
     }
 
     private void formatFieldAccessor(StringBuilder result, boolean isMostLeftId, Field field, boolean isSetter)
@@ -422,6 +439,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
     private final static String CPP_GETTER_FUNCTION_CALL = "()";
     private final static String CPP_GETTER_OPTIONAL_VALUE = ".value()";
+    private final static String CPP_GETTER_DYNAMIC_BITFIELD_VALUE = ".value()";
 
     private final static List<String> BUILT_IN_OPERATORS_INCLUDE = Arrays.asList("zserio/BuiltInOperators.h");
 

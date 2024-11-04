@@ -1,9 +1,5 @@
 package zserio.extension.cpp17;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import zserio.ast.CompoundType;
 import zserio.ast.Function;
 import zserio.ast.StringType;
 import zserio.ast.TypeReference;

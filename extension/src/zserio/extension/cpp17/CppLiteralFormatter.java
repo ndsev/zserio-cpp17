@@ -4,7 +4,6 @@ import java.math.BigInteger;
 
 import zserio.extension.common.StringEscapeConverter;
 import zserio.extension.common.ZserioExtensionException;
-import zserio.extension.cpp17.types.NativeArrayTraits;
 import zserio.extension.cpp17.types.NativeIntegralType;
 
 /**

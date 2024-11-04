@@ -1,14 +1,12 @@
 package zserio.extension.cpp17;
 
 import zserio.ast.Constant;
-import zserio.ast.IntegerType;
 import zserio.ast.StringType;
 import zserio.ast.TypeInstantiation;
 import zserio.extension.common.ExpressionFormatter;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.symbols.CppNativeSymbol;
 import zserio.extension.cpp17.types.CppNativeType;
-import zserio.extension.cpp17.types.NativeIntegralType;
 import zserio.extension.cpp17.types.NativeStringViewType;
 
 /**

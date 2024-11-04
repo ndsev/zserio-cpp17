@@ -1,5 +1,5 @@
 <#macro parameter_view_type_name parameter>
-    <#if parameter.typeInfo.isSimple>
+    <#if parameter.typeInfo.isSimple && !parameter.typeInfo.isDynamic>
         ${parameter.typeInfo.typeFullName}<#t>
     <#elseif parameter.typeInfo.isString>
         ::std::string_view<#t>

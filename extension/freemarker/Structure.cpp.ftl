@@ -123,7 +123,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 
 <@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
-    <#if !field.array?? && !field.dynamicBitLength?? && field.typeInfo.isSimple &&
+    <#if !field.array?? && !field.typeInfo.isDynamic && field.typeInfo.isSimple &&
             !(field.optional?? && field.optional.clause??)>
     <#-- simple or auto optional simple -->
     return m_data.<@field_data_member_name field/>;
@@ -134,11 +134,9 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
         return {};
     }
 
-    return <@field_view_type_name field/>{<#if array_needs_owner(field)>*this, </#if><#rt>
-            <#lt>*m_data.<@field_data_member_name field/><#if !field.array??><@field_view_parameters field/></#if>};
+    return <@field_view_type_name field/>{*m_data.<@field_data_member_name field/><@field_view_parameters field/>};
         <#else>
-    return <@field_view_type_name field/>{<#if array_needs_owner(field)>*this, </#if><#rt>
-            <#lt>m_data.<@field_data_member_name field/><#if !field.array??><@field_view_parameters field/></#if>};
+    return <@field_view_type_name field/>{m_data.<@field_data_member_name field/><@field_view_parameters field/>};
         </#if>
     </#if>
 }
@@ -335,15 +333,8 @@ ${I}in.alignTo(${field.alignmentValue});
 ${I}in.alignTo(8);
     </#if>
 ${I}<#if field.compound??>(void)</#if>::zserio::detail::read<#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#rt>
-        reader<#if array_needs_owner(field)>, view</#if>, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
-    <#if field.array??>
-        <#if field.array.viewIndirectLength??>
-        , ${field.array.viewIndirectLength}<#t>
-        </#if>
-    <#else>
-        <@field_view_view_indirect_parameters field/><#t>
-    </#if>
-        <#lt>);
+        reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
+        <#lt><@field_view_view_indirect_parameters field/>);
 </#macro>
 template <>
 View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>

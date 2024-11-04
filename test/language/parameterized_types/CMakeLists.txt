@@ -19,6 +19,7 @@ add_custom_test(parameterized_types
         parameterized_types_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ArrayElementParamWithOptionalTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DynamicBitfieldParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SimpleParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterizedParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParamWithOptionalTest.cpp

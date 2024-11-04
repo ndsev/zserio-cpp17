@@ -7,7 +7,6 @@ import java.util.List;
 import zserio.ast.BitmaskType;
 import zserio.ast.BitmaskValue;
 import zserio.ast.TypeInstantiation;
-import zserio.extension.common.ExpressionFormatter;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.NativeIntegralType;
 
