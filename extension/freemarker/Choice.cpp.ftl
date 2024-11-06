@@ -3,6 +3,7 @@
 <#include "CompoundParameter.inc.ftl">
 <@file_header generatorDescription/>
 
+#include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 <@system_includes cppSystemIncludes/>
 
@@ -13,21 +14,21 @@
 bool operator==(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
         <#lt>const ${fullName}&<#if fieldList?has_content> rhs</#if>)
 {
-    <#if fieldList?has_content>
+<#if fieldList?has_content>
     return static_cast<const ${fullName}::Base&>(lhs) == static_cast<const ${fullName}::Base&>(rhs);
-    <#else>
+<#else>
     return true;
-    </#if>
+</#if>
 }
 
 bool operator<(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
         <#lt>const ${fullName}&<#if fieldList?has_content>  rhs</#if>)
 {
-    <#if fieldList?has_content>
+<#if fieldList?has_content>
     return static_cast<const ${fullName}::Base&>(lhs) < static_cast<const ${fullName}::Base&>(rhs);
-    <#else>
+<#else>
     return false;
-    </#if>
+</#if>
 }
 
 bool operator!=(const ${fullName}& lhs, const ${fullName}& rhs)
@@ -73,7 +74,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 }
 </#list>
 
-<#macro choice_switch memberActionMacroName noMatchMacroName switchExpression breakAfterMemberAction indent>
+<#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if !isSelectorBoolean>
 ${I}switch (${switchExpression})
@@ -82,16 +83,18 @@ ${I}{
             <#list caseMember.expressionList as expression>
 ${I}case ${expression}:
             </#list>
-        <@.vars[memberActionMacroName] caseMember, indent+1/>
-            <#if breakAfterMemberAction>
+            <#assign caseCode><@.vars[memberActionMacroName] caseMember, indent+1/></#assign>
+        ${caseCode}<#t>
+            <#if !caseCode?contains("return")>
 ${I}    break;
             </#if>
         </#list>
         <#if !isDefaultUnreachable>
 ${I}default:
             <#if defaultMember??>
-        <@.vars[memberActionMacroName] defaultMember, indent+1/>
-                <#if breakAfterMemberAction>
+                <#assign defaultCode><@.vars[memberActionMacroName] defaultMember, indent+1/></#assign>
+        ${defaultCode}<#t>
+                <#if !defaultCode?contains("return")>
 ${I}    break;
                 </#if>
             <#else>
@@ -141,7 +144,7 @@ ${I}return ${fullName}::ChoiceTag::UNDEFINED_CHOICE;
 ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 {
 <#if fieldList?has_content>
-    <@choice_switch "choice_tag_member", "choice_tag_no_match", selectorExpression, false, 1/>
+    <@choice_switch "choice_tag_member", "choice_tag_no_match", selectorExpression/>
 <#else>
     return ${fullName}::ChoiceTag::UNDEFINED_CHOICE;
 </#if>
@@ -154,7 +157,7 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
     <#-- field which does not need View -->
     return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data);
     <#else>
-    <#-- field which needs -->
+    <#-- field which needs View -->
     return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data)<#rt>
             <#lt><@field_view_parameters field/>};
     </#if>
@@ -171,24 +174,20 @@ ${I}return true; // empty
 </#macro>
 <#macro choice_no_match name indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw ::zserio::CppRuntimeException("No match in choice ${name}!");
+${I}throw ::zserio::CppRuntimeException("No match in choice ${fullName}!");
 </#macro>
-bool operator==(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
+bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
-    if (&lhs == &rhs)
-    {
-        return true;
-    }
 <#list parameterList as parameter>
-
     if (lhs.${parameter.getterName}() != rhs.${parameter.getterName}())
     {
         return false;
     }
-</#list>
 
+</#list>
 <#if fieldList?has_content>
-    <@choice_switch "choice_compare_member", "choice_no_match", lhsIndirectSelectorExpression, false, 1/>
+    <@choice_switch "choice_compare_member", "choice_no_match", lhsIndirectSelectorExpression/>
 <#else>
     return true;
 </#if>
@@ -202,22 +201,18 @@ ${I}return (lhs.${member.field.getterName}() < rhs.${member.field.getterName}())
 ${I}return false; // empty
     </#if>
 </#macro>
-bool operator<(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
+bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
-    if (&lhs == &rhs)
-    {
-        return false;
-    }
 <#list parameterList as parameter>
-
     if (lhs.${parameter.getterName}() != rhs.${parameter.getterName}())
     {
         return lhs.${parameter.getterName}() < rhs.${parameter.getterName}();
     }
-</#list>
 
+</#list>
 <#if fieldList?has_content>
-    <@choice_switch "choice_less_than_member", "choice_no_match", lhsIndirectSelectorExpression, false, 1/>
+    <@choice_switch "choice_less_than_member", "choice_no_match", lhsIndirectSelectorExpression/>
 <#else>
     return false;
 </#if>
@@ -264,7 +259,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 {
 <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    <@choice_switch "choice_bitsizeof_member", "choice_no_match", viewIndirectSelectorExpression, true, 1/>
+    <@choice_switch "choice_bitsizeof_member", "choice_no_match", viewIndirectSelectorExpression/>
 
     return endBitPosition - bitPosition;
 <#else>
@@ -285,7 +280,7 @@ void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    <@choice_switch "choice_write_member", "choice_no_match", viewIndirectSelectorExpression, true, 1/>
+    <@choice_switch "choice_write_member", "choice_no_match", viewIndirectSelectorExpression/>
 </#if>
 }
 
@@ -316,7 +311,7 @@ View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> rea
 </#list>
             <#lt>);
 <#if fieldList?has_content>
-    <@choice_switch "choice_read_member", "choice_no_match", viewIndirectSelectorExpression, true, 1/>
+    <@choice_switch "choice_read_member", "choice_no_match", viewIndirectSelectorExpression/>
 </#if>
 
     return view;
@@ -347,7 +342,7 @@ size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
 {
     uint32_t result = ::zserio::HASH_SEED;
 <#if fieldList?has_content>
-    <@choice_switch "choice_hash_member", "choice_no_match", viewIndirectSelectorExpression, true, 1/>
+    <@choice_switch "choice_hash_member", "choice_no_match", viewIndirectSelectorExpression/>
 
 </#if>
     return static_cast<size_t>(result);
