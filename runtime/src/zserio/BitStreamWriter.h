@@ -349,11 +349,10 @@ inline void write(BitStreamWriter& writer, Bool value)
     writer.writeBool(value);
 }
 
-template <BitSize BIT_SIZE, typename WRAPPER_TYPE>
-void writeFixedInt(BitStreamWriter& writer, WRAPPER_TYPE value)
+template <typename T, BitSize BIT_SIZE>
+void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
 {
-    using T = typename WRAPPER_TYPE::value_type;
-
+    static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     if constexpr (sizeof(T) <= 4)
     {
         if constexpr (std::is_signed_v<T>)
@@ -376,19 +375,6 @@ void writeFixedInt(BitStreamWriter& writer, WRAPPER_TYPE value)
             writer.writeUnsignedBits64(value, BIT_SIZE);
         }
     }
-}
-
-template <typename T, BitSize BIT_SIZE>
-void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
-{
-    writeFixedInt<BIT_SIZE>(writer, value);
-}
-
-template <typename T, BitSize BIT_SIZE>
-void write(BitStreamWriter& writer, DynIntWrapper<T, BIT_SIZE> value)
-{
-    static_assert(BIT_SIZE != 0, "Must be called with numBits!");
-    writeFixedInt<BIT_SIZE>(writer, value);
 }
 
 template <typename T>
@@ -478,8 +464,7 @@ inline void write(BitStreamWriter& writer, Float64 value)
     writer.writeFloat64(value);
 }
 
-template <typename ALLOC>
-inline void write(BitStreamWriter& writer, const std::vector<uint8_t, ALLOC>& value)
+inline void write(BitStreamWriter& writer, BytesView value)
 {
     writer.writeBytes(value);
 }

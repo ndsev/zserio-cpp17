@@ -41,6 +41,22 @@ inline constexpr bool is_first_allocator_v = is_first_allocator<T, V>::value;
 /** \} */
 
 /**
+ * Trait used to check whether the type has an allocator_type.
+ * \{
+ */
+template <typename T, typename = void>
+struct has_allocator : std::false_type
+{};
+
+template <typename T>
+struct has_allocator<T, std::void_t<typename T::allocator_type>> : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool has_allocator_v = has_allocator<T, V>::value;
+/** \} */
+
+/**
  * Trait used to check whether the type T is a zserio bitmask.
  * \{
  */
@@ -58,6 +74,22 @@ inline constexpr bool is_bitmask_v = is_bitmask<T, V>::value;
 /**
  * \}
  */
+
+/**
+ * Trait used to check whether the type has an ZserioPackingContext.
+ * \{
+ */
+template <typename T, typename = void>
+struct has_zserio_packing_context : std::false_type
+{};
+
+template <typename T>
+struct has_zserio_packing_context<T, std::void_t<typename T::ZserioPackingContext>> : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool has_zserio_packing_context_v = has_zserio_packing_context<T, V>::value;
+/** \} */
 
 } // namespace zserio
 

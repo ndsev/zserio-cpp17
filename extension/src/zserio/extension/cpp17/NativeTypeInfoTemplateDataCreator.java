@@ -26,7 +26,7 @@ public final class NativeTypeInfoTemplateDataCreator
     {
         final ZserioType baseType = typeInstantiation.getBaseType();
 
-        boolean isDynamic = false;
+        boolean isDynamicBitField = false;
         final StringBuilder typeTemplateArgBuilder = new StringBuilder();
         if (nativeBaseType instanceof NativeIntegralType)
         {
@@ -44,14 +44,14 @@ public final class NativeTypeInfoTemplateDataCreator
                 }
                 else
                 {
-                    isDynamic = true;
+                    isDynamicBitField = true;
                 }
                 typeTemplateArgBuilder.append('>');
             }
         }
 
         final String typeFullName = nativeBaseType.getFullName() + typeTemplateArgBuilder.toString();
-        return create(typeFullName, nativeBaseType, baseType, isDynamic);
+        return create(typeFullName, nativeBaseType, baseType, isDynamicBitField);
     }
 
     public static NativeTypeInfoTemplateData create(CppNativeType nativeBaseType, TypeReference typeReference)
@@ -62,21 +62,21 @@ public final class NativeTypeInfoTemplateDataCreator
 
     public static NativeTypeInfoTemplateData create(CppNativeType nativeBaseType, ZserioType baseType)
     {
-        boolean isDynamic = false;
+        boolean isDynamicBitLength = false;
         final StringBuilder typeTemplateArgBuilder = new StringBuilder();
         if (baseType instanceof DynamicBitFieldType)
         {
             // when no type instantiation is available, we always get dynamic bit field (w/o the known length)
             typeTemplateArgBuilder.append("<>");
-            isDynamic = true;
+            isDynamicBitLength = true;
         }
 
         final String typeFullName = nativeBaseType.getFullName() + typeTemplateArgBuilder.toString();
-        return create(typeFullName, nativeBaseType, baseType, isDynamic);
+        return create(typeFullName, nativeBaseType, baseType, isDynamicBitLength);
     }
 
     private static NativeTypeInfoTemplateData create(
-            String typeFullName, CppNativeType nativeBaseType, ZserioType baseType, boolean isDynamic)
+            String typeFullName, CppNativeType nativeBaseType, ZserioType baseType, boolean isDynamicBitField)
     {
         final boolean isSimple = nativeBaseType.isSimple();
         final boolean isNumeric = nativeBaseType instanceof NativeNumericWrapperType;
@@ -91,7 +91,7 @@ public final class NativeTypeInfoTemplateDataCreator
         final boolean isBytes = baseType instanceof BytesType;
         final boolean needsAllocator = isString || isExtern || isBytes || !isSimple;
 
-        return new NativeTypeInfoTemplateData(typeFullName, isSimple, isNumeric, isDynamic, isEnum, isBitmask,
-                isBoolean, isString, isExtern, isBytes, needsAllocator);
+        return new NativeTypeInfoTemplateData(typeFullName, isSimple, isNumeric, isDynamicBitField, isEnum,
+                isBitmask, isBoolean, isString, isExtern, isBytes, needsAllocator);
     }
 };

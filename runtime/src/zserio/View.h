@@ -88,6 +88,8 @@ template <typename VALUE_TYPE>
 class View<detail::DynIntWrapper<VALUE_TYPE, 0>>
 {
 public:
+    using value_type = VALUE_TYPE;
+
     View(detail::DynIntWrapper<VALUE_TYPE, 0> value, uint8_t numBits) :
             m_value(value),
             m_numBits(numBits)
@@ -99,6 +101,11 @@ public:
     }
 
     detail::DynIntWrapper<VALUE_TYPE, 0> value() const
+    {
+        return m_value;
+    }
+
+    operator VALUE_TYPE() const
     {
         return m_value;
     }

@@ -465,7 +465,7 @@ void BitStreamWriter::writeFloat64(Float64 data)
     writeUnsignedBits64(doublePrecisionFloat, 64);
 }
 
-void BitStreamWriter::writeBytes(Span<const uint8_t> data)
+void BitStreamWriter::writeBytes(BytesView data)
 {
     const VarSize len = fromCheckedValue<VarSize>(convertSizeToUInt32(data.size()));
     writeVarSize(len);

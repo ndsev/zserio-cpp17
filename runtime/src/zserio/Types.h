@@ -877,6 +877,7 @@ inline BitSize bitSizeOf(BoolWrapper, BitSize = 0)
 template <typename T, BitSize BIT_SIZE>
 BitSize bitSizeOf(IntWrapper<T, BIT_SIZE>, BitSize = 0)
 {
+    static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     return BIT_SIZE;
 }
 

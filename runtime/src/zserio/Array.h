@@ -247,6 +247,29 @@ private:
 namespace detail
 {
 
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
+BitSize bitSizeOf(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+{
+    BitSize endBitPosition = bitPosition;
+
+    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    {
+        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
+    }
+
+    for (size_t i = 0; i < array.size(); ++i)
+    {
+        if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+        {
+            endBitPosition = alignTo(8, endBitPosition);
+        }
+
+        endBitPosition += bitSizeOf(array[i], endBitPosition);
+    }
+
+    return endBitPosition - bitPosition;
+}
+
 template <typename ARRAY>
 size_t readArrayLength(BitStreamReader& reader, size_t arrayLength)
 {
@@ -283,7 +306,15 @@ void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typename 
         {
             reader.alignTo(8);
         }
-        rawArray.push_back(typename ARRAY::ValueType{});
+
+        if constexpr (has_allocator_v<typename ARRAY::ValueType>)
+        {
+            rawArray.emplace_back(rawArray.get_allocator());
+        }
+        else
+        {
+            rawArray.emplace_back();
+        }
         ArrayTraits::read(reader, owner, rawArray.back(), i);
     }
 }
@@ -315,26 +346,113 @@ void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRA
 }
 
 template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-BitSize bitSizeOf(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+BitSize bitSizeOfPacked(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
+    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
+
     BitSize endBitPosition = bitPosition;
 
+    const size_t arrayLength = array.size();
     if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
     {
-        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
+        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(arrayLength)));
     }
 
-    for (size_t i = 0; i < array.size(); ++i)
+    if (arrayLength > 0)
     {
-        if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+        detail::packing_context_type_t<typename RAW_ARRAY::value_type> context;
+
+        for (size_t i = 0; i < arrayLength; ++i)
         {
-            endBitPosition = alignTo(8, endBitPosition);
+            initContext(context, array[i]);
         }
 
-        endBitPosition += bitSizeOf(array[i], endBitPosition);
+        for (size_t i = 0; i < arrayLength; ++i)
+        {
+            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+            {
+                endBitPosition = alignTo(8, endBitPosition);
+            }
+
+            endBitPosition += bitSizeOf(context, array[i], endBitPosition);
+        }
     }
 
     return endBitPosition - bitPosition;
+}
+
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
+void writePacked(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array)
+{
+    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
+
+    const size_t arrayLength = array.size();
+    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    {
+        write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
+    }
+
+    if (arrayLength > 0)
+    {
+        detail::packing_context_type_t<typename RAW_ARRAY::value_type> context;
+
+        for (size_t i = 0; i < arrayLength; ++i)
+        {
+            initContext(context, array[i]);
+        }
+
+        for (size_t i = 0; i < arrayLength; ++i)
+        {
+            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+            {
+                writer.alignTo(8);
+            }
+
+            write(context, writer, array[i]);
+        }
+    }
+}
+
+template <typename ARRAY>
+void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typename ARRAY::OwnerType& owner,
+        size_t arrayLength = 0)
+{
+    using ArrayTraits = typename ARRAY::Traits;
+
+    const size_t readLength = readArrayLength<ARRAY>(reader, arrayLength);
+    rawArray.clear();
+
+    if (readLength > 0)
+    {
+        rawArray.reserve(readLength);
+
+        detail::packing_context_type_t<typename ARRAY::ValueType> context;
+
+        for (size_t i = 0; i < readLength; ++i)
+        {
+            if constexpr (ARRAY::TYPE == ArrayType::ALIGNED || ARRAY::TYPE == ArrayType::ALIGNED_AUTO)
+            {
+                reader.alignTo(8);
+            }
+
+            if constexpr (has_allocator_v<typename ARRAY::ValueType>)
+            {
+                rawArray.emplace_back(rawArray.get_allocator());
+            }
+            else
+            {
+                rawArray.emplace_back();
+            }
+            ArrayTraits::read(context, reader, owner, rawArray.back(), i);
+        }
+    }
+}
+
+template <typename ARRAY, std::enable_if_t<is_dummy_v<typename ARRAY::OwnerType>, int> = 0>
+void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, size_t arrayLength = 0)
+{
+    DummyArrayOwner owner;
+    readPacked<ARRAY>(reader, rawArray, owner, arrayLength);
 }
 
 } // namespace detail

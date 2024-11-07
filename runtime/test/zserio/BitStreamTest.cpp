@@ -837,10 +837,10 @@ TEST_F(BitStreamTest, readBytes)
             vector<uint8_t>{{1, 127, 128, 254}},
     };
 
-    std::function<void(BitStreamWriter&, const std::vector<uint8_t>&)> writerFunc =
-            static_cast<void (*)(BitStreamWriter&, const std::vector<uint8_t>&)>(&detail::write);
+    std::function<void(BitStreamWriter&, BytesView)> writerFunc =
+            static_cast<void (*)(BitStreamWriter&, BytesView)>(&detail::write);
     std::function<void(BitStreamReader&, vector<uint8_t>&)> readerFunc =
-            static_cast<void (*)(BitStreamReader&, std::vector<uint8_t>&)>(&detail::read);
+            static_cast<void (*)(BitStreamReader&, Bytes&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 7);
 }

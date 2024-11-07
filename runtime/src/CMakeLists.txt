@@ -39,6 +39,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/CppRuntimeVersion.h
     zserio/ChoiceTag.h
     zserio/ConstraintException.h
+    zserio/DeltaContext.h
     zserio/FileUtil.cpp
     zserio/FileUtil.h
     zserio/FloatUtil.cpp

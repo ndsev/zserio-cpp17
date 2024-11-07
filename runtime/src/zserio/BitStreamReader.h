@@ -244,7 +244,7 @@ public:
      * \return Read bytes as a vector.
      */
     template <typename ALLOC = std::allocator<uint8_t>>
-    vector<uint8_t, ALLOC> readBytes(const ALLOC& alloc = ALLOC())
+    BasicBytes<ALLOC> readBytes(const ALLOC& alloc = ALLOC())
     {
         const size_t len = static_cast<size_t>(readVarSize());
         const BitPosType beginBitPosition = getBitPosition();
@@ -264,7 +264,7 @@ public:
             // we are aligned to byte
             setBitPosition(beginBitPosition + len * 8);
             Span<const uint8_t>::iterator beginIt = m_context.buffer.begin() + beginBitPosition / 8;
-            return vector<uint8_t, ALLOC>(beginIt, beginIt + len, alloc);
+            return BasicBytes<ALLOC>(beginIt, beginIt + len, alloc);
         }
     }
 
@@ -431,7 +431,7 @@ void read(BitStreamReader& reader, IntWrapper<T, BIT_SIZE>& value)
 template <typename T, BitSize BIT_SIZE>
 void read(BitStreamReader& reader, DynIntWrapper<T, BIT_SIZE>& value)
 {
-    static_assert(BIT_SIZE != 0, "Must be called with numBits!");
+    static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     readFixedInt<BIT_SIZE>(reader, value);
 }
 
@@ -523,7 +523,7 @@ inline void read(BitStreamReader& reader, Float64& value)
 }
 
 template <typename ALLOC>
-inline void read(BitStreamReader& reader, std::vector<uint8_t, ALLOC>& value)
+inline void read(BitStreamReader& reader, BasicBytes<ALLOC>& value)
 {
     value = reader.readBytes(value.get_allocator());
 }

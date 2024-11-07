@@ -6,13 +6,13 @@ package zserio.extension.cpp17;
 public class NativeTypeInfoTemplateData
 {
     public NativeTypeInfoTemplateData(String typeFullName, boolean isSimple, boolean isNumeric,
-            boolean isDynamic, boolean isEnum, boolean isBitmask, boolean isBoolean, boolean isString,
+            boolean isDynamicBitField, boolean isEnum, boolean isBitmask, boolean isBoolean, boolean isString,
             boolean isExtern, boolean isBytes, boolean needsAllocator)
     {
         this.typeFullName = typeFullName;
         this.isSimple = isSimple;
         this.isNumeric = isNumeric;
-        this.isDynamic = isDynamic;
+        this.isDynamicBitField = isDynamicBitField;
         this.isEnum = isEnum;
         this.isBitmask = isBitmask;
         this.isBoolean = isBoolean;
@@ -37,9 +37,9 @@ public class NativeTypeInfoTemplateData
         return isNumeric;
     }
 
-    public boolean getIsDynamic()
+    public boolean getIsDynamicBitField()
     {
-        return isDynamic;
+        return isDynamicBitField;
     }
 
     public boolean getIsEnum()
@@ -80,7 +80,7 @@ public class NativeTypeInfoTemplateData
     private final String typeFullName;
     private final boolean isSimple;
     private final boolean isNumeric;
-    private final boolean isDynamic;
+    private final boolean isDynamicBitField;
     private final boolean isEnum;
     private final boolean isBitmask;
     private final boolean isBoolean;

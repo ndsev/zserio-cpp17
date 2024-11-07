@@ -28,7 +28,7 @@ using BytesView = zserio::Span<const uint8_t>;
 namespace detail
 {
 
-BitSize bitSizeOf(BytesView bytesValue);
+BitSize bitSizeOf(BytesView bytesValue, BitSize bitPosition = 0);
 
 } // namespace detail
 

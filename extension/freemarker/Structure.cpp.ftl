@@ -123,7 +123,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 
 <@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
-    <#if !field.array?? && !field.typeInfo.isDynamic && field.typeInfo.isSimple &&
+    <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple &&
             !(field.optional?? && field.optional.clause??)>
     <#-- simple or auto optional simple -->
     return m_data.<@field_data_member_name field/>;
@@ -146,11 +146,6 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
 <#if fieldList?has_content || parameterList?has_content>
-    if (&lhs == &rhs)
-    {
-        return true;
-    }
-
     return <#rt>
     <#list parameterList as parameter>
         <#if !parameter?is_first>

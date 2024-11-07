@@ -83,7 +83,7 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 
 <@field_view_type_name field/> View<${fullName}>::${field.getterName}() const
 {
-    <#if !field.array?? && !field.dynamicBitLength?? && field.typeInfo.isSimple>
+    <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
     <#-- field which does not need View -->
     return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data);
     <#else>

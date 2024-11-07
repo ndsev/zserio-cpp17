@@ -8,7 +8,7 @@ namespace zserio
 namespace detail
 {
 
-BitSize bitSizeOf(Span<const uint8_t> bytesValue)
+BitSize bitSizeOf(BytesView bytesValue, BitSize)
 {
     const VarSize bytesSize = fromCheckedValue<VarSize>(convertSizeToUInt32(bytesValue.size()));
 

@@ -6,6 +6,7 @@
 
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/DeltaContext.h"
 #include "zserio/Types.h"
 #include "zserio/View.h"
 
@@ -19,6 +20,14 @@ namespace zserio
  */
 template <typename T, typename = void>
 struct ArrayTraits;
+
+/**
+ * Packed array traits provides packing related functionality for all zserio and user generated types.
+ *
+ * This information is provided via specializations of the PackedArrayTraits strucure.
+ */
+template <typename ARRAY_TRAITS, typename = void>
+struct PackedArrayTraits;
 
 namespace detail
 {
@@ -48,52 +57,49 @@ struct is_dummy : std::is_same<T, DummyArrayOwner>
 template <typename T>
 inline constexpr bool is_dummy_v = is_dummy<T>::value;
 
+// helper trait to choose packing context type for an array from an element type T
 template <typename T, typename = void>
-struct has_equal_method : std::false_type
-{};
+struct packing_context_type
+{
+    using type = DeltaContext;
+};
 
 template <typename T>
-struct has_equal_method<T, std::void_t<decltype(&T::equal)>> : std::true_type
-{};
+struct packing_context_type<T, typename std::enable_if<has_zserio_packing_context<View<T>>::value>::type>
+{
+    using type = typename View<T>::ZserioPackingContext;
+};
 
 template <typename T, typename V = void>
-inline constexpr bool has_equal_method_v = has_equal_method<T, V>::value;
-
-/**
- * Trait used to check whether the type has an OwnerType.
- * \{
- */
-// TODO[Mi-L@]: Remove if not needed.
-template <typename T, typename = void>
-struct has_view_type : std::false_type
-{};
-
-template <typename T>
-struct has_view_type<T, std::void_t<typename T::ViewType>> : std::true_type
-{};
-
-template <typename T, typename V = void>
-inline constexpr bool has_view_type_v = has_view_type<T, V>::value;
-/** \} */
+using packing_context_type_t = typename packing_context_type<T, V>::type;
 
 } // namespace detail
 
-template <typename T, typename>
+// for all generated objects which don't need an owner
+template <typename OBJECT, typename>
 struct ArrayTraits
 {
-    static View<T> at(const detail::DummyArrayOwner&, const T& element, size_t)
+    static View<OBJECT> at(const detail::DummyArrayOwner&, const OBJECT& element, size_t)
     {
-        return View<T>(element);
+        return View<OBJECT>(element);
     }
 
-    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, OBJECT& element, size_t)
     {
         (void)detail::read(reader, element);
+    }
+
+    template <typename OBJECT_ = OBJECT>
+    static std::enable_if_t<has_zserio_packing_context_v<View<OBJECT_>>> read(
+            typename View<OBJECT_>::ZserioPackingContext& packingContext, BitStreamReader& reader,
+            const detail::DummyArrayOwner&, OBJECT& element, size_t)
+    {
+        detail::read(packingContext, reader, element);
     }
 };
 
 template <typename T>
-struct NativeArrayTraits
+struct NumericArrayTraits
 {
     static constexpr T at(const detail::DummyArrayOwner&, T element, size_t)
     {
@@ -111,28 +117,40 @@ struct NativeArrayTraits
     }
 };
 
+template <typename T>
+struct IntegralArrayTraits : NumericArrayTraits<T>
+{
+    using NumericArrayTraits<T>::read;
+
+    static void read(DeltaContext& context, zserio::BitStreamReader& reader, const detail::DummyArrayOwner&,
+            T& element, size_t)
+    {
+        detail::read(context, reader, element);
+    }
+};
+
 template <>
-struct ArrayTraits<detail::BoolWrapper> : NativeArrayTraits<detail::BoolWrapper>
+struct ArrayTraits<detail::BoolWrapper> : IntegralArrayTraits<detail::BoolWrapper>
 {};
 
 template <typename VALUE_TYPE, BitSize BIT_SIZE>
 struct ArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
-        : NativeArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
+        : IntegralArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
 {};
 
 template <typename VALUE_TYPE, BitSize BIT_SIZE>
 struct ArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>, std::enable_if_t<(BIT_SIZE > 0)>>
-        : NativeArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
+        : IntegralArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
 {};
 
 template <typename VALUE_TYPE, typename detail::VarIntType VAR_TYPE>
 struct ArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
-        : NativeArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
+        : IntegralArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
 {};
 
 template <typename VALUE_TYPE, detail::FloatType FLOAT_TYPE>
 struct ArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
-        : NativeArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
+        : NumericArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
 {};
 
 template <>
