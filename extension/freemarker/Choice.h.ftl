@@ -114,10 +114,10 @@ template <>
 BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
 
 template <>
-void write(::zserio::BitStreamWriter& writer, const View<${fullName}>& view);
+void write(BitStreamWriter& writer, const View<${fullName}>& view);
 
 template <>
-View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data<#rt>
+View<${fullName}> read(BitStreamReader& reader, ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>

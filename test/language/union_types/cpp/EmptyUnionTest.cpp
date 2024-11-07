@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "test_utils/TestUtility.h"
 #include "union_types/empty_union/EmptyUnion.h"
 
 namespace union_types
@@ -7,79 +8,86 @@ namespace empty_union
 {
 
 using allocator_type = EmptyUnion::allocator_type;
+using ChoiceTag = EmptyUnion::ChoiceTag;
 
-TEST(EmptyUnionDataTest, emptyConstructor)
+TEST(EmptyUnionTest, emptyConstructor)
 {
     {
-        EmptyUnion emptyUnion;
-        ASSERT_EQ(EmptyUnion::ChoiceTag::UNDEFINED_CHOICE, emptyUnion.index());
+        EmptyUnion data;
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyUnion emptyUnion = {};
-        ASSERT_EQ(EmptyUnion::ChoiceTag::UNDEFINED_CHOICE, emptyUnion.index());
+        EmptyUnion data = {};
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyUnion emptyUnion(allocator_type{});
-        ASSERT_EQ(EmptyUnion::ChoiceTag::UNDEFINED_CHOICE, emptyUnion.index());
+        EmptyUnion data(allocator_type{});
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+    }
+    {
+        EmptyUnion data;
+        zserio::View<EmptyUnion> view(data);
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
     }
 }
 
-TEST(EmptyUnionDataTest, copyConstructor)
+TEST(EmptyUnionTest, zserioChoiceTag)
 {
-    EmptyUnion emptyUnion;
-    EmptyUnion emptyUnionCopy(emptyUnion);
-    ASSERT_EQ(emptyUnion, emptyUnionCopy);
+    EmptyUnion data;
+    zserio::View<EmptyUnion> view(data);
+    ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
 }
 
-TEST(EmptyUnionDataTest, assignmentOperator)
+TEST(EmptyUnionTest, comparisonOperators)
 {
-    EmptyUnion emptyUnion;
-    EmptyUnion emptyUnionCopy;
-    emptyUnionCopy = emptyUnion;
-    ASSERT_EQ(emptyUnion, emptyUnionCopy);
+    EmptyUnion data;
+    EmptyUnion equalData;
+    ASSERT_TRUE(data == equalData);
+    ASSERT_FALSE(data < equalData);
+
+    zserio::View<EmptyUnion> view(data);
+    zserio::View<EmptyUnion> equalView(equalData);
+    ASSERT_TRUE(view == equalView);
+    ASSERT_FALSE(view < equalView);
 }
 
-TEST(EmptyUnionDataTest, moveConstructor)
+TEST(EmptyUnionTest, validate)
 {
-    EmptyUnion emptyUnion;
-    EmptyUnion emptyUnionMoved(std::move(emptyUnion));
-    (void)emptyUnionMoved;
+    // TODO
 }
 
-TEST(EmptyUnionDataTest, moveAssignmentOperator)
+TEST(EmptyUnionTest, bitSizeOf)
 {
-    EmptyUnion emptyUnion;
-    EmptyUnion emptyUnionMoved;
-    emptyUnionMoved = std::move(emptyUnion);
-    (void)emptyUnionMoved;
+    EmptyUnion data;
+    zserio::View<EmptyUnion> view(data);
+    ASSERT_EQ(0, zserio::detail::bitSizeOf(view));
 }
 
-TEST(EmptyUnionDataTest, operatorEquality)
+TEST(EmptyUnionTest, writeRead)
 {
-    EmptyUnion emptyUnion1;
-    EmptyUnion emptyUnion2;
-    ASSERT_TRUE(emptyUnion1 == emptyUnion2);
+    EmptyUnion data;
+    test_utils::writeReadTest(data);
 }
 
-TEST(EmptyUnionDataTest, operatorLessThan)
+TEST(EmptyUnionTest, read)
 {
-    EmptyUnion emptyUnion1;
-    EmptyUnion emptyUnion2;
-    ASSERT_FALSE(emptyUnion1 < emptyUnion2);
-    ASSERT_FALSE(emptyUnion2 < emptyUnion1);
+    zserio::BitBuffer bitBuffer;
+    zserio::BitStreamWriter writer(bitBuffer);
+    EmptyUnion expectedReadData;
+    test_utils::readTest(writer, expectedReadData);
 }
 
-TEST(EmptyUnionDataTest, stdHash)
+TEST(EmptyUnionTest, stdHash)
 {
-    std::hash<EmptyUnion> hasher;
+    std::hash<EmptyUnion> dataHasher;
+    EmptyUnion data;
+    const size_t dataHash = 23; // hardcoded value to check that the hash code is stable
+    ASSERT_EQ(dataHash, dataHasher(data));
 
-    EmptyUnion emptyUnion1;
-    EmptyUnion emptyUnion2;
-    ASSERT_EQ(hasher(emptyUnion1), hasher(emptyUnion2));
-
-    // TODO[Mi-L@]: hashCode not stable across extensions!
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(23, hasher(emptyUnion1));
+    std::hash<zserio::View<EmptyUnion>> viewHasher;
+    zserio::View<EmptyUnion> view(data);
+    const size_t viewHash = dataHash;
+    ASSERT_EQ(viewHash, viewHasher(view));
 }
 
 } // namespace empty_union

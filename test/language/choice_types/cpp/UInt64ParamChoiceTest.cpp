@@ -58,16 +58,24 @@ TEST_F(UInt64ParamChoiceTest, selector)
 
 TEST_F(UInt64ParamChoiceTest, zserioChoiceTag)
 {
-    UInt64ParamChoice data;
-    data.emplace<ChoiceTag::CHOICE_valueA>(0);
-    zserio::View<UInt64ParamChoice> viewA(data, VARIANT_A_SELECTOR);
-    ASSERT_EQ(ChoiceTag::CHOICE_valueA, viewA.zserioChoiceTag());
-
-    zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
-    ASSERT_EQ(ChoiceTag::CHOICE_valueB, viewB.zserioChoiceTag());
-
-    zserio::View<UInt64ParamChoice> viewC(data, EMPTY_SELECTOR);
-    ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, viewC.zserioChoiceTag());
+    {
+        UInt64ParamChoice data;
+        data.emplace<ChoiceTag::CHOICE_valueA>(0);
+        zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
+        ASSERT_EQ(ChoiceTag::CHOICE_valueA, view.zserioChoiceTag());
+    }
+    {
+        UInt64ParamChoice data;
+        data.emplace<ChoiceTag::CHOICE_valueB>(0);
+        zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
+        ASSERT_EQ(ChoiceTag::CHOICE_valueB, viewB.zserioChoiceTag());
+    }
+    {
+        UInt64ParamChoice data;
+        data.emplace<ChoiceTag::CHOICE_valueC>(0);
+        zserio::View<UInt64ParamChoice> viewC(data, EMPTY_SELECTOR);
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, viewC.zserioChoiceTag());
+    }
 }
 
 TEST_F(UInt64ParamChoiceTest, valueA)
@@ -118,19 +126,23 @@ TEST_F(UInt64ParamChoiceTest, comparisonOperators)
 {
     UInt64ParamChoice data;
     data.emplace<ChoiceTag::CHOICE_valueB>(2);
-
     UInt64ParamChoice equalData;
     equalData.emplace<ChoiceTag::CHOICE_valueB>(2);
-
     UInt64ParamChoice lessThenData;
     lessThenData.emplace<ChoiceTag::CHOICE_valueA>(2);
-
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
     zserio::View<UInt64ParamChoice> view(data, VARIANT_B_SELECTOR);
     zserio::View<UInt64ParamChoice> equalView(equalData, VARIANT_B_SELECTOR);
     zserio::View<UInt64ParamChoice> lessThenView(lessThenData, VARIANT_A_SELECTOR);
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
+
+    UInt64ParamChoice anotherLessThenData;
+    anotherLessThenData.emplace<ChoiceTag::CHOICE_valueB>(1);
+    test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
+
+    zserio::View<UInt64ParamChoice> anotherLessThenView(anotherLessThenData, VARIANT_A_SELECTOR);
+    test_utils::comparisonOperatorsTest(view, equalView, anotherLessThenView);
 }
 
 TEST_F(UInt64ParamChoiceTest, validate)

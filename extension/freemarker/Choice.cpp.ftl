@@ -248,7 +248,7 @@ void validate(const View<${fullName}>&)
 <#macro choice_bitsizeof_member member indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}endBitPosition += ::zserio::detail::bitSizeOf(view.${member.field.getterName}(), endBitPosition);
+${I}endBitPosition += bitSizeOf(view.${member.field.getterName}(), endBitPosition);
     <#else>
 ${I}// empty
     </#if>
@@ -270,13 +270,13 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 <#macro choice_write_member member indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}::zserio::detail::write(writer, view.${member.field.getterName}());
+${I}write(writer, view.${member.field.getterName}());
     <#else>
 ${I}// empty
     </#if>
 </#macro>
 template <>
-void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
+void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
@@ -288,7 +288,7 @@ void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>();
-${I}<#if member.field.compound??>(void)</#if>::zserio::detail::read<#rt>
+${I}<#if member.field.compound??>(void)</#if>read<#rt>
         <#if member.field.array??><<@array_type_full_name fullName, member.field/>></#if>(<#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters member.field/>);
@@ -297,7 +297,7 @@ ${I}// empty
     </#if>
 </#macro>
 template <>
-View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>

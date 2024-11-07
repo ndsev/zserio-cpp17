@@ -125,6 +125,11 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 
 </#list>
 <#if fieldList?has_content>
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
+    {
+        return false;
+    }
+
     <@union_switch "union_compare_field", "lhs.zserioChoiceTag()"/>
 <#else>
     return true;
@@ -146,6 +151,11 @@ bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterLi
 
 </#list>
 <#if fieldList?has_content>
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
+    {
+        return lhs.zserioChoiceTag() < rhs.zserioChoiceTag();
+    }
+
     <@union_switch "union_less_than_field", "lhs.zserioChoiceTag()"/>
 <#else>
     return false;
@@ -181,7 +191,7 @@ void validate(const View<${fullName}>&)
 
 <#macro union_bitsizeof_field field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += ::zserio::detail::bitSizeOf(view.${field.getterName}(), endBitPosition);
+${I}endBitPosition += bitSizeOf(view.${field.getterName}(), endBitPosition);
 </#macro>
 template <>
 BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
@@ -189,6 +199,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 {
 <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
+    endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
     <@union_switch "union_bitsizeof_field", "view.zserioChoiceTag()"/>
 
     return endBitPosition - bitPosition;
@@ -199,15 +210,14 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 
 <#macro union_write_field field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}::zserio::detail::write(writer, view.${field.getterName}());
+${I}write(writer, view.${field.getterName}());
 </#macro>
 template <>
-void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
+void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    const ${fullName}::ChoiceTag choiceTag = view.zserioChoiceTag();
-    ::zserio::detail::write(writer, static_cast<::zserio::VarSize>(::zserio::convertSizeToUInt32(choiceTag)));
+    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
     <@union_switch "union_write_field", "view.zserioChoiceTag()"/>
 </#if>
 }
@@ -215,13 +225,13 @@ void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <
 <#macro union_read_field field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>();
-${I}<#if field.compound??>(void)</#if>::zserio::detail::read<#rt>
+${I}<#if field.compound??>(void)</#if>read<#rt>
         <#if field.array??><<@array_type_full_name fullName, field/>></#if>(<#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters field/>);
 </#macro>
 template <>
-View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -236,8 +246,8 @@ View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> rea
             <#lt>);
 <#if fieldList?has_content>
 
-    ::zserio::VarSize choiceTag;
-    ::zserio::detail::read(reader, choiceTag);
+    VarSize choiceTag;
+    read(reader, choiceTag);
     <@union_switch "union_read_field", "choiceTag"/>
 </#if>
 

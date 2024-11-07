@@ -1,4 +1,7 @@
+#include <string>
+
 #include "gtest/gtest.h"
+#include "test_utils/TestUtility.h"
 #include "union_types/simple_union/SimpleUnion.h"
 
 namespace union_types
@@ -8,10 +11,9 @@ namespace simple_union
 
 using allocator_type = SimpleUnion::allocator_type;
 using string_type = zserio::basic_string<allocator_type>;
-
 using ChoiceTag = SimpleUnion::ChoiceTag;
 
-class SimpleUnionDataTest : public ::testing::Test
+class SimpleUnionTest : public ::testing::Test
 {
 protected:
     static constexpr int8_t CASE1_FIELD = 13;
@@ -20,215 +22,240 @@ protected:
     static constexpr int8_t CASE4_FIELD = 42;
 };
 
-TEST_F(SimpleUnionDataTest, emptyConstructor)
+TEST_F(SimpleUnionTest, constructors)
 {
     {
-        SimpleUnion simpleUnion;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, simpleUnion.index());
+        SimpleUnion data;
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        SimpleUnion simpleUnion = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, simpleUnion.index());
+        SimpleUnion data = {};
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        SimpleUnion simpleUnion(allocator_type{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, simpleUnion.index());
+        SimpleUnion data(allocator_type{});
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+    }
+    {
+        SimpleUnion data;
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
     }
 }
 
-TEST_F(SimpleUnionDataTest, copyConstructor)
+TEST_F(SimpleUnionTest, zserioChoiceTag)
 {
-    SimpleUnion simpleUnion;
-    simpleUnion.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-    ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(simpleUnion));
-
-    SimpleUnion simpleUnionCopy(simpleUnion);
-    ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(simpleUnion));
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(ChoiceTag::CHOICE_case1Field, view.zserioChoiceTag());
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(ChoiceTag::CHOICE_case2Field, view.zserioChoiceTag());
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(ChoiceTag::CHOICE_case3Field, view.zserioChoiceTag());
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(ChoiceTag::CHOICE_case4Field, view.zserioChoiceTag());
+    }
 }
 
-TEST_F(SimpleUnionDataTest, assignmentOperator)
+TEST_F(SimpleUnionTest, case1Field)
 {
-    SimpleUnion simpleUnion;
-    simpleUnion.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
-    ASSERT_EQ(CASE2_FIELD, zserio::get<ChoiceTag::CHOICE_case2Field>(simpleUnion));
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case2Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case3Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(data));
 
-    SimpleUnion simpleUnionCopy;
-    simpleUnionCopy = simpleUnion;
-    ASSERT_EQ(CASE2_FIELD, zserio::get<ChoiceTag::CHOICE_case2Field>(simpleUnionCopy));
+    zserio::View<SimpleUnion> view(data);
+    ASSERT_THROW(view.case2Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case3Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case4Field(), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE1_FIELD, view.case1Field());
 }
 
-TEST_F(SimpleUnionDataTest, moveConstructor)
+TEST_F(SimpleUnionTest, case2Field)
 {
-    SimpleUnion simpleUnion;
-    simpleUnion.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
-    ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion));
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case1Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case3Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE2_FIELD, zserio::get<ChoiceTag::CHOICE_case2Field>(data));
 
-    SimpleUnion simpleUnionMoved(std::move(simpleUnion));
-    ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnionMoved));
+    zserio::View<SimpleUnion> view(data);
+    ASSERT_THROW(view.case1Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case3Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case4Field(), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE2_FIELD, view.case2Field());
 }
 
-TEST_F(SimpleUnionDataTest, moveAssignmentOperator)
+TEST_F(SimpleUnionTest, case3Field)
 {
-    SimpleUnion simpleUnion;
-    simpleUnion.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
-    ASSERT_EQ(CASE4_FIELD, zserio::get<ChoiceTag::CHOICE_case4Field>(simpleUnion));
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case1Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case2Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(data));
 
-    SimpleUnion simpleUnionMoved;
-    simpleUnionMoved = std::move(simpleUnion);
-    ASSERT_EQ(CASE4_FIELD, zserio::get<ChoiceTag::CHOICE_case4Field>(simpleUnionMoved));
-}
-
-TEST_F(SimpleUnionDataTest, index)
-{
-    SimpleUnion simpleUnion;
-    ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, simpleUnion.index());
-    simpleUnion.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-    ASSERT_EQ(ChoiceTag::CHOICE_case1Field, simpleUnion.index());
-    simpleUnion.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
-    ASSERT_EQ(ChoiceTag::CHOICE_case2Field, simpleUnion.index());
-    simpleUnion.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
-    ASSERT_EQ(ChoiceTag::CHOICE_case3Field, simpleUnion.index());
-    simpleUnion.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
-    ASSERT_EQ(ChoiceTag::CHOICE_case4Field, simpleUnion.index());
-}
-
-TEST_F(SimpleUnionDataTest, getCase1Field)
-{
-    SimpleUnion simpleUnion;
-    simpleUnion.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case2Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(simpleUnion), zserio::BadVariantAccess);
-
-    ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(simpleUnion));
-}
-
-TEST_F(SimpleUnionDataTest, getCase2Field)
-{
-    SimpleUnion simpleUnion(zserio::in_place_index<ChoiceTag::CHOICE_case2Field>, CASE2_FIELD);
-
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case1Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(simpleUnion), zserio::BadVariantAccess);
-
-    ASSERT_EQ(CASE2_FIELD, zserio::get<ChoiceTag::CHOICE_case2Field>(simpleUnion));
-}
-
-TEST_F(SimpleUnionDataTest, getCase3Field)
-{
-    SimpleUnion simpleUnion;
-    simpleUnion.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
-
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case1Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case2Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(simpleUnion), zserio::BadVariantAccess);
-
-    ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion));
+    zserio::View<SimpleUnion> view(data);
+    ASSERT_THROW(view.case1Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case2Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case4Field(), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE3_FIELD, view.case3Field());
 
     string_type movedString(1000, 'a'); // long enough to prevent small string optimization
     const void* ptr = movedString.data();
-    simpleUnion.emplace<ChoiceTag::CHOICE_case3Field>(std::move(movedString));
-    const void* movedPtr = zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion).data();
+    data.emplace<ChoiceTag::CHOICE_case3Field>(std::move(movedString));
+    const void* movedPtr = zserio::get<ChoiceTag::CHOICE_case3Field>(data).data();
     ASSERT_EQ(ptr, movedPtr);
-    string_type& case3 = zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion);
+    string_type& case3 = zserio::get<ChoiceTag::CHOICE_case3Field>(data);
     case3 = CASE3_FIELD;
-    ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion));
+    ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(data));
 }
 
-TEST_F(SimpleUnionDataTest, getCase4Field)
+TEST_F(SimpleUnionTest, case4Field)
 {
-    SimpleUnion simpleUnion;
-    simpleUnion.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case1Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case2Field>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case3Field>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE4_FIELD, zserio::get<ChoiceTag::CHOICE_case4Field>(data));
 
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case1Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case2Field>(simpleUnion), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case3Field>(simpleUnion), zserio::BadVariantAccess);
-
-    ASSERT_EQ(CASE4_FIELD, zserio::get<ChoiceTag::CHOICE_case4Field>(simpleUnion));
+    zserio::View<SimpleUnion> view(data);
+    ASSERT_THROW(view.case1Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case2Field(), zserio::BadVariantAccess);
+    ASSERT_THROW(view.case3Field(), zserio::BadVariantAccess);
+    ASSERT_EQ(CASE4_FIELD, view.case4Field());
 }
 
-TEST_F(SimpleUnionDataTest, operatorEquality)
+TEST_F(SimpleUnionTest, comparisonOperators)
 {
-    SimpleUnion simpleUnion11;
-    SimpleUnion simpleUnion12;
-    SimpleUnion simpleUnion13;
-    ASSERT_TRUE(simpleUnion11 == simpleUnion11);
-    ASSERT_TRUE(simpleUnion11 == simpleUnion12);
-    simpleUnion11.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-    simpleUnion12.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-    simpleUnion13.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD + 1);
-    ASSERT_TRUE(simpleUnion11 == simpleUnion11);
-    ASSERT_TRUE(simpleUnion11 == simpleUnion12);
-    ASSERT_FALSE(simpleUnion11 == simpleUnion13);
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
+    SimpleUnion equalData;
+    equalData.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
+    SimpleUnion lessThenData;
+    lessThenData.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+    test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
-    SimpleUnion simpleUnion21;
-    SimpleUnion simpleUnion22;
-    SimpleUnion simpleUnion23;
-    simpleUnion21.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
-    simpleUnion22.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
-    simpleUnion23.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD - 1);
-    ASSERT_TRUE(simpleUnion21 == simpleUnion21);
-    ASSERT_TRUE(simpleUnion21 == simpleUnion22);
-    ASSERT_FALSE(simpleUnion21 == simpleUnion23);
-    ASSERT_FALSE(simpleUnion21 == simpleUnion11);
+    zserio::View<SimpleUnion> view(data);
+    zserio::View<SimpleUnion> equalView(equalData);
+    zserio::View<SimpleUnion> lessThenView(lessThenData);
+    test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
-    SimpleUnion simpleUnion4;
-    // same value as simpleUnion11, but different choice
-    simpleUnion4.emplace<ChoiceTag::CHOICE_case4Field>(CASE1_FIELD);
-    ASSERT_FALSE(simpleUnion11 == simpleUnion4);
+    SimpleUnion anotherLessThenData;
+    anotherLessThenData.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD - 1);
+    test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
+
+    zserio::View<SimpleUnion> anotherLessThenView(anotherLessThenData);
+    test_utils::comparisonOperatorsTest(view, equalView, anotherLessThenView);
 }
 
-TEST_F(SimpleUnionDataTest, operatorLessThan)
+TEST_F(SimpleUnionTest, validate)
 {
-    SimpleUnion simpleUnion1;
-    SimpleUnion simpleUnion2;
-    ASSERT_FALSE(simpleUnion1 < simpleUnion2);
-    ASSERT_FALSE(simpleUnion2 < simpleUnion1);
-
-    simpleUnion1.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-    ASSERT_FALSE(simpleUnion1 < simpleUnion2);
-    ASSERT_TRUE(simpleUnion2 < simpleUnion1);
-
-    simpleUnion2.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-    ASSERT_FALSE(simpleUnion1 < simpleUnion2);
-    ASSERT_FALSE(simpleUnion2 < simpleUnion1);
-
-    simpleUnion2.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD + 1);
-    ASSERT_TRUE(simpleUnion1 < simpleUnion2);
-    ASSERT_FALSE(simpleUnion2 < simpleUnion1);
-
-    simpleUnion2.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
-    ASSERT_TRUE(simpleUnion1 < simpleUnion2);
-    ASSERT_FALSE(simpleUnion2 < simpleUnion1);
-
-    // same value as simpleUnion11, but different choice
-    simpleUnion2.emplace<ChoiceTag::CHOICE_case4Field>(CASE1_FIELD);
-    ASSERT_TRUE(simpleUnion1 < simpleUnion2);
-    ASSERT_FALSE(simpleUnion2 < simpleUnion1);
+    // TODO
 }
 
-TEST_F(SimpleUnionDataTest, stdHash)
+TEST_F(SimpleUnionTest, bitSizeOf)
 {
-    std::hash<SimpleUnion> hasher;
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(8 + 8, zserio::detail::bitSizeOf(view));
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(8 + 16, zserio::detail::bitSizeOf(view));
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(8 + CASE3_FIELD.length() * 8 + 8, zserio::detail::bitSizeOf(view));
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
+        zserio::View<SimpleUnion> view(data);
+        ASSERT_EQ(8 + 8, zserio::detail::bitSizeOf(view));
+    }
+}
 
-    SimpleUnion simpleUnion1;
-    SimpleUnion simpleUnion2;
-    ASSERT_EQ(hasher(simpleUnion1), hasher(simpleUnion2));
-    simpleUnion1.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-    ASSERT_NE(hasher(simpleUnion1), hasher(simpleUnion2));
-    simpleUnion2.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
-    ASSERT_NE(hasher(simpleUnion1), hasher(simpleUnion2));
+TEST_F(SimpleUnionTest, writeRead)
+{
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+        test_utils::writeReadTest(data);
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
+        test_utils::writeReadTest(data);
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
+        test_utils::writeReadTest(data);
+    }
+    {
+        SimpleUnion data;
+        data.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
+        test_utils::writeReadTest(data);
+    }
+}
 
-    // TODO[Mi-L@]: hashCode not stable across extensions!
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(31537, hasher(simpleUnion1));
-    ASSERT_EQ(31677, hasher(simpleUnion2));
+TEST_F(SimpleUnionTest, read)
+{
+    zserio::BitBuffer bitBuffer = zserio::BitBuffer(8 + CASE3_FIELD.length() * 8 + 8);
+    zserio::BitStreamWriter writer(bitBuffer);
+    zserio::detail::write(writer, ::zserio::VarSize(ChoiceTag::CHOICE_case3Field));
+    zserio::detail::write(writer, CASE3_FIELD);
 
-    simpleUnion2.emplace<ChoiceTag::CHOICE_case4Field>(CASE1_FIELD); // same value as simpleUnion1
-    ASSERT_NE(hasher(simpleUnion1), hasher(simpleUnion2));
-    simpleUnion1.emplace<ChoiceTag::CHOICE_case4Field>(CASE1_FIELD); // same value as simpleUnion2
-    ASSERT_EQ(hasher(simpleUnion1), hasher(simpleUnion2));
+    SimpleUnion expectedReadData(zserio::in_place_index<ChoiceTag::CHOICE_case3Field>, CASE3_FIELD);
+    test_utils::readTest(writer, expectedReadData);
+}
+
+TEST_F(SimpleUnionTest, stdHash)
+{
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+    const size_t dataHash = 31537; // hardcoded value to check that the hash code is stable
+
+    SimpleUnion equalData;
+    equalData.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+
+    SimpleUnion diffData;
+    diffData.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
+    const size_t diffDataHash = 31677; // hardcoded value to check that the hash code is stable
+
+    test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
+
+    zserio::View<SimpleUnion> view(data);
+    const size_t viewHash = 864; // hardcoded value to check that the hash code is stable
+    zserio::View<SimpleUnion> equalView(equalData);
+    zserio::View<SimpleUnion> diffView(diffData);
+    const size_t diffHash = 893; // hardcoded value to check that the hash code is stable
+    test_utils::hashTest(view, viewHash, equalView, diffView, diffHash);
 }
 
 } // namespace simple_union
