@@ -794,26 +794,23 @@ TEST(TypesTest, floatTypes)
     testFloat<Float64>();
 }
 
-TEST(TypesTest, typeCast)
+TEST(TypesTest, staticCastNoWarning)
 {
     {
         Int32 i32;
-        Int16 i16 = typeCast<Int16>(i32);
+        Int16 i16 = static_cast<Int16::ValueType>(i32);
         i32 = Int32(i16);
     }
     {
         Int16 i16;
-        DynInt8<> dynI8 = typeCast<DynInt8<>>(i16);
+        DynInt8<> dynI8 = static_cast<DynInt8<>::ValueType>(i16);
         i16 = Int16(dynI8);
     }
     {
         Float16 f16;
-        Int16 i16 = typeCast<Int16>(f16);
-        f16 = typeCast<Float16>(i16);
+        Int16 i16 = static_cast<Int16::ValueType>(f16);
+        f16 = static_cast<Float16::ValueType>(i16);
     }
-
-    constexpr Int16 i16 = 1;
-    static_assert(typeCast<Float16>(i16) > 0.F, "shall be constexpr");
 }
 
 TEST(TypesTest, bitSizeOfBool)

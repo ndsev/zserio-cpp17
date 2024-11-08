@@ -56,17 +56,19 @@
                 <#if instantiatedParameter.typeInfo.isNumeric>
                     <#if instantiatedParameter.typeInfo.isDynamicBitField>
                         View<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
-                                typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                                ${instantiatedParameter.typeInfo.typeFullName}(<#t>
+                                        static_cast<${instantiatedParameter.typeInfo.typeFullName}::ValueType>(<#t>
                     <#else>
-                        typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                        ${instantiatedParameter.typeInfo.typeFullName}(<#t>
+                                static_cast<${instantiatedParameter.typeInfo.typeFullName}::ValueType>(<#t>
                     </#if>
                 </#if>
                 ${instantiatedParameter.expression}<#t>
                 <#if instantiatedParameter.typeInfo.isNumeric>
                     <#if instantiatedParameter.typeInfo.isDynamicBitField>
-                        ), 64)<#t>
+                        )), 64)<#t>
                     <#else>
-                        )<#t>
+                        ))<#t>
                     </#if>
                 </#if>
             </#list>
@@ -91,17 +93,19 @@
                 <#if instantiatedParameter.typeInfo.isNumeric>
                     <#if instantiatedParameter.typeInfo.isDynamicBitField>
                         View<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
-                                typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                                ${instantiatedParameter.typeInfo.typeFullName}(<#t>
+                                        static_cast<${instantiatedParameter.typeInfo.typeFullName}::ValueType>(<#t>
                     <#else>
-                        typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                        ${instantiatedParameter.typeInfo.typeFullName}(<#t>
+                                static_cast<${instantiatedParameter.typeInfo.typeFullName}::ValueType>(<#t>
                     </#if>
                 </#if>
                 ${instantiatedParameter.viewIndirectExpression}<#t>
                 <#if instantiatedParameter.typeInfo.isNumeric>
                     <#if instantiatedParameter.typeInfo.isDynamicBitField>
-                        ), 64)<#t>
+                        )), 64)<#t>
                     <#else>
-                        )<#t>
+                        ))<#t>
                     </#if>
                 </#if>
             </#list>
@@ -118,17 +122,19 @@
             <#if instantiatedParameter.typeInfo.isNumeric>
                 <#if instantiatedParameter.typeInfo.isDynamicBitField>
                     View<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
-                            typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                            ${instantiatedParameter.typeInfo.typeFullName}(<#t>
+                                    static_cast<${instantiatedParameter.typeInfo.typeFullName}::ValueType>(<#t>
                 <#else>
-                    typeCast<${instantiatedParameter.typeInfo.typeFullName}>(<#t>
+                    ${instantiatedParameter.typeInfo.typeFullName}(<#t>
+                            static_cast<${instantiatedParameter.typeInfo.typeFullName}::ValueType>(<#t>
                 </#if>
             </#if>
             ${instantiatedParameter.ownerIndirectExpression}<#t>
             <#if instantiatedParameter.typeInfo.isNumeric>
                 <#if instantiatedParameter.typeInfo.isDynamicBitField>
-                    ), 64)<#t>
+                    )), 64)<#t>
                 <#else>
-                    )<#t>
+                    ))<#t>
                 </#if>
             </#if>
         </#list>

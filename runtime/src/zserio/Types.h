@@ -663,22 +663,6 @@ constexpr typename T::ValueType toCheckedValue(T wrapper, BitSize numBits)
     return wrapper;
 }
 
-/**
- * Utility function which ensures that static_cast is called on underlying types during casting of wrappers.
- *
- * \param wrapper Numeric type wrapper of type T to be converted.
- *
- * \return Numeric type wrapper of type R.
- */
-template <typename R, typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T> &&
-                        std::is_base_of_v<detail::NumericTypeWrapper<typename R::ValueType>, R>,
-                int> = 0>
-constexpr R typeCast(T wrapper)
-{
-    return static_cast<typename R::ValueType>(wrapper);
-}
-
 /** Typedef for a zserio type. */
 /** \{ */
 
