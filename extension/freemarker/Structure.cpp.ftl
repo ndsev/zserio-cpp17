@@ -243,13 +243,13 @@ void validate(const View<${fullName}>&)
 <#macro structure_view_bitsizeof field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}endBitPosition = ::zserio::alignTo(${field.alignmentValue}, endBitPosition);
+${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
-${I}endBitPosition = ::zserio::alignTo(8, endBitPosition);
+${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
-${I}endBitPosition += ::zserio::detail::bitSizeOf(<#if field.optional??>*</#if>view.${field.getterName}(), <#rt>
-        <#lt>endBitPosition);
+${I}endBitPosition += detail::bitSizeOf<@array_packed_suffix field/>(<#rt>
+        <#lt><#if field.optional??>*</#if>view.${field.getterName}(), endBitPosition);
 </#macro>
 template <>
 BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
@@ -288,10 +288,11 @@ ${I}writer.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}writer.alignTo(8);
     </#if>
-${I}::zserio::detail::write(writer, <#if field.optional??>*</#if>view.${field.getterName}());
+${I}detail::write<@array_packed_suffix field/>(<#rt>
+        <#lt>writer, <#if field.optional??>*</#if>view.${field.getterName}());
 </#macro>
 template <>
-void write(::zserio::BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
+void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#list fieldList as field>
@@ -327,12 +328,13 @@ ${I}in.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}in.alignTo(8);
     </#if>
-${I}<#if field.compound??>(void)</#if>::zserio::detail::read<#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#rt>
+${I}<#if field.compound??>(void)</#if>detail::read<@array_packed_suffix field/><#rt>
+        <#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#t>
         reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
         <#lt><@field_view_view_indirect_parameters field/>);
 </#macro>
 template <>
-View<${fullName}> read(::zserio::BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>

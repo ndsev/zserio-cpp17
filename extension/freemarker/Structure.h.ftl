@@ -62,19 +62,27 @@ public:
         using OwnerType = View<${fullName}>;
 
         </#if>
-        static ::zserio::View<${field.typeInfo.typeFullName}> at(<#rt>
-                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>::zseiro::detail::DummyArrayOwner&</#if>,
+        static View<${field.typeInfo.typeFullName}> at(<#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
                 const ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
         {
-            return ::zserio::View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
+            return View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
         }
 
-        static void read(::zserio::BitStreamReader& reader,
-                const <#if array_needs_owner(field)>OwnerType& owner<#else>::zseiro::detail::DummyArrayOwner&</#if>, <#rt>
+        static void read(BitStreamReader& reader,
+                const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
                 <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
         {
-            (void)zserio::detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
+            (void)detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
         }
+        <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
+        static void read(DeltaContext& context, BitStreamReader& reader,
+                const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
+                <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        {
+            detail::read(context, reader, element<@field_view_owner_indirect_parameters field/>);
+        }
+        </#if>
     };
 
     </#if>
@@ -120,10 +128,10 @@ template <>
 BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
 
 template <>
-void write(::zserio::BitStreamWriter& writer, const View<${fullName}>& view);
+void write(BitStreamWriter& writer, const View<${fullName}>& view);
 
 template <>
-View<${fullName}> read(::zserio::BitStreamReader& reader, ${fullName}& data<#rt>
+View<${fullName}> read(BitStreamReader& reader, ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>

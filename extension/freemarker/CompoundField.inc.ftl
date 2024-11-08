@@ -25,7 +25,7 @@
         <#elseif field.typeInfo.isExtern>
             const ${types.bitBuffer.name}&<#t>
         <#elseif field.typeInfo.isBytes>
-            ::zserio::BytesView<#t>
+            BytesView<#t>
         <#else>
             View<${field.typeInfo.typeFullName}><#t>
         </#if>
@@ -152,17 +152,17 @@
 </#macro>
 
 <#macro array_type_name field>
-    ::zserio::Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
+    Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
             <#if array_needs_custom_traits(field)>, <@array_traits_name field/></#if>><#t>
 </#macro>
 
 <#macro array_type_full_name compoundName field>
-    ::zserio::Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
+    Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
             <#if array_needs_custom_traits(field)>, View<${compoundName}>::<@array_traits_name field/></#if>><#t>
 </#macro>
 
 <#macro array_type_enum field>
-    ::zserio::ArrayType::<#t>
+    ArrayType::<#t>
     <#local arrayType="">
     <#if field.offset?? && field.offset.containsIndex>
         <#local arrayType="ALIGNED">
@@ -178,6 +178,12 @@
         <#local arrayType="NORMAL">
     </#if>
     ${arrayType}<#t>
+</#macro>
+
+<#macro array_packed_suffix field packed=false>
+    <#if field.array?? && field.isPackable && (packed || field.array.isPacked)>
+        Packed<#t>
+    </#if>
 </#macro>
 
 <#function array_needs_custom_traits field>
