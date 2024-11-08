@@ -263,7 +263,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
             <#if field.optional.viewIndirectClause??>
     if (${field.optional.viewIndirectClause})
             <#else>
-    endBitPosition += 1;
+    endBitPosition += detail::bitSizeOf(Bool());
     if (view.${field.getterName}())
             </#if>
     {
