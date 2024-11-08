@@ -287,9 +287,8 @@ public:
             value.reserve(len);
             for (size_t i = 0; i < len; ++i)
             {
-                using char_traits = std::char_traits<char>;
-                const char readCharacter =
-                        char_traits::to_char_type(static_cast<char_traits::int_type>(readByte()));
+                const char readCharacter = ::std::char_traits<char>::to_char_type(
+                        static_cast<::std::char_traits<char>::int_type>(readByte()));
                 value.push_back(readCharacter);
             }
             return value;
@@ -395,7 +394,7 @@ inline void read(BitStreamReader& reader, Bool& value)
 template <BitSize BIT_SIZE, typename WRAPPER_TYPE>
 void readFixedInt(BitStreamReader& reader, WRAPPER_TYPE& value)
 {
-    using T = typename WRAPPER_TYPE::value_type;
+    using T = typename WRAPPER_TYPE::ValueType;
 
     // TODO[Mi-L@]: implement on the reader to get rid of the numBits check
     if constexpr (sizeof(T) <= 4)

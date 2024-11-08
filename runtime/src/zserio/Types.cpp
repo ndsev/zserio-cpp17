@@ -110,7 +110,7 @@ static BitSize bitSizeOfVarIntImpl(
 }
 
 template <typename T>
-static uint64_t convertToAbsValue(typename T::value_type value)
+static uint64_t convertToAbsValue(typename T::ValueType value)
 {
     return static_cast<uint64_t>((value < 0) ? -value : value);
 }

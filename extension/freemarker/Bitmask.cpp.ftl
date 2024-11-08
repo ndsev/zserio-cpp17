@@ -30,7 +30,7 @@ ${types.string.name} ${name}::toString(const ${types.string.name}::allocator_typ
 </#if>
 
     return ::zserio::toString<${types.string.name}::allocator_type>(
-            static_cast<underlying_type>(m_value), allocator) + "[" + result + "]";
+            static_cast<UnderlyingType>(m_value), allocator) + "[" + result + "]";
 }
 <@namespace_end package.path/>
 <@namespace_begin ["std"]/>
@@ -39,7 +39,7 @@ size_t hash<${fullName}>::operator()(const ${fullName}& value) const
 {
     uint32_t result = ::zserio::HASH_SEED;
     result = ::zserio::calcHashCode(result,
-            static_cast<${fullName}::underlying_type>(value.getValue()));
+            static_cast<${fullName}::UnderlyingType>(value.getValue()));
     return static_cast<size_t>(result);
 }
 <@namespace_end ["std"]/>

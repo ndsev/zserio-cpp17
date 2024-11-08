@@ -33,7 +33,7 @@ static void testBoolOperators()
 }
 
 template <typename T>
-void testIntOperators(typename T::value_type minValue = NumericLimits<T>::min())
+void testIntOperators(typename T::ValueType minValue = NumericLimits<T>::min())
 {
     T value0;
     T valueMin = minValue;
@@ -98,7 +98,7 @@ void testIntOperators(typename T::value_type minValue = NumericLimits<T>::min())
 }
 
 template <typename T>
-void testUIntOperators(typename T::value_type minValue = NumericLimits<T>::min())
+void testUIntOperators(typename T::ValueType minValue = NumericLimits<T>::min())
 {
     T value0;
     T valueMin = minValue;
@@ -177,32 +177,32 @@ void testUIntOperators(typename T::value_type minValue = NumericLimits<T>::min()
 template <typename T>
 struct FloatTypeHelper
 {
-    using type = Float32;
+    using Type = Float32;
 };
 
 template <>
 struct FloatTypeHelper<Float64>
 {
-    using type = Float64;
+    using Type = Float64;
 };
 
 template <typename T>
 void testFloatOperators()
 {
-    using float_wrapper = typename FloatTypeHelper<T>::type;
+    using FloatWrapper = typename FloatTypeHelper<T>::Type;
 
     T value0;
     T valueMin = NumericLimits<T>::min();
-    float_wrapper valueMax = NumericLimits<float_wrapper>::max();
+    FloatWrapper valueMax = NumericLimits<FloatWrapper>::max();
 
     // constructor
-    float_wrapper copy(valueMin);
-    float_wrapper copy2 = float_wrapper(valueMin);
+    FloatWrapper copy(valueMin);
+    FloatWrapper copy2 = FloatWrapper(valueMin);
     (void)copy;
     (void)copy2;
 
     // arithmetic
-    float_wrapper value = +valueMin;
+    FloatWrapper value = +valueMin;
     value = -valueMin;
     value = valueMin + valueMax;
     value = valueMin - valueMax;
@@ -222,14 +222,14 @@ void testFloatOperators()
     ASSERT_FALSE(valueMin >= valueMax);
 
     // assignment
-    value = float_wrapper(valueMin);
+    value = FloatWrapper(valueMin);
     value += valueMin;
     value -= valueMin;
     value *= valueMin;
     value /= valueMin;
 
     // ternary
-    value = float_wrapper(valueMin < 0 ? valueMin : value0);
+    value = FloatWrapper(valueMin < 0 ? valueMin : value0);
     value = (valueMin < 0 ? +(valueMin) : +(valueMax));
     value = (valueMin < 0 ? +(valueMin + value0) : +(valueMax + value0));
     value = (valueMin < 0 ? valueMin + value0 : valueMax + value0);
@@ -241,17 +241,17 @@ void testFloatOperators()
 template <typename T>
 void testSignedStdInt()
 {
-    using value_type = typename T::value_type;
+    using ValueType = typename T::ValueType;
 
-    static_assert(NumericLimits<T>::min() == std::numeric_limits<value_type>::min(), "shall be constexpr");
-    static_assert(NumericLimits<T>::max() == std::numeric_limits<value_type>::max(), "shall be constexpr");
-    static_assert(toCheckedValue(NumericLimits<T>::max()) == std::numeric_limits<value_type>::max(),
+    static_assert(NumericLimits<T>::min() == std::numeric_limits<ValueType>::min(), "shall be constexpr");
+    static_assert(NumericLimits<T>::max() == std::numeric_limits<ValueType>::max(), "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max()) == std::numeric_limits<ValueType>::max(),
             "shall be constexpr");
-    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(std::numeric_limits<value_type>::max()),
+    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(std::numeric_limits<ValueType>::max()),
             "shall be constexpr");
 
-    static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
-    static_assert(noexcept(fromCheckedValue<T>(std::declval<value_type>())), "shall be noexcept");
+    static_assert(std::is_nothrow_constructible_v<T, ValueType>, "shall be noexcept");
+    static_assert(noexcept(fromCheckedValue<T>(std::declval<ValueType>())), "shall be noexcept");
     static_assert(noexcept(toCheckedValue(std::declval<T>())), "shall be noexcept");
 
     const T minValue(NumericLimits<T>::min());
@@ -267,11 +267,11 @@ void testSignedStdInt()
     ASSERT_EQ(NumericLimits<T>::max(), toCheckedValue(checkedMax));
 
     T value;
-    value = static_cast<value_type>(0);
+    value = static_cast<ValueType>(0);
     ASSERT_EQ(0, value);
-    value = static_cast<value_type>(1);
+    value = static_cast<ValueType>(1);
     ASSERT_EQ(1, value);
-    value = static_cast<value_type>(-1);
+    value = static_cast<ValueType>(-1);
     ASSERT_EQ(-1, value);
 
     testIntOperators<T>();
@@ -280,17 +280,17 @@ void testSignedStdInt()
 template <typename T>
 void testUnsignedStdInt()
 {
-    using value_type = typename T::value_type;
+    using ValueType = typename T::ValueType;
 
-    static_assert(NumericLimits<T>::min() == std::numeric_limits<value_type>::min(), "shall be constexpr");
-    static_assert(NumericLimits<T>::max() == std::numeric_limits<value_type>::max(), "shall be constexpr");
-    static_assert(toCheckedValue(NumericLimits<T>::max()) == std::numeric_limits<value_type>::max(),
+    static_assert(NumericLimits<T>::min() == std::numeric_limits<ValueType>::min(), "shall be constexpr");
+    static_assert(NumericLimits<T>::max() == std::numeric_limits<ValueType>::max(), "shall be constexpr");
+    static_assert(toCheckedValue(NumericLimits<T>::max()) == std::numeric_limits<ValueType>::max(),
             "shall be constexpr");
-    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(std::numeric_limits<value_type>::max()),
+    static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(std::numeric_limits<ValueType>::max()),
             "shall be constexpr");
 
-    static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
-    static_assert(noexcept(fromCheckedValue<T>(std::declval<value_type>())), "shall be noexcept");
+    static_assert(std::is_nothrow_constructible_v<T, ValueType>, "shall be noexcept");
+    static_assert(noexcept(fromCheckedValue<T>(std::declval<ValueType>())), "shall be noexcept");
     static_assert(noexcept(toCheckedValue(std::declval<T>())), "shall be noexcept");
 
     const T minValue(NumericLimits<T>::min());
@@ -306,30 +306,30 @@ void testUnsignedStdInt()
     ASSERT_EQ(NumericLimits<T>::max(), toCheckedValue(checkedMax));
 
     T value;
-    value = static_cast<value_type>(0);
+    value = static_cast<ValueType>(0);
     ASSERT_EQ(0, value);
-    value = static_cast<value_type>(1);
+    value = static_cast<ValueType>(1);
     ASSERT_EQ(1, value);
-    value = static_cast<value_type>(2);
+    value = static_cast<ValueType>(2);
     ASSERT_EQ(2, value);
 
     testUIntOperators<T>();
 }
 
-template <typename T, typename T::value_type MIN_VALUE, typename T::value_type MAX_VALUE,
+template <typename T, typename T::ValueType MIN_VALUE, typename T::ValueType MAX_VALUE,
         bool IS_NOEXCEPT = false>
 void testSignedInt()
 {
-    using value_type = typename T::value_type;
+    using ValueType = typename T::ValueType;
 
     static_assert(NumericLimits<T>::min() == MIN_VALUE, "shall be constexpr");
     static_assert(NumericLimits<T>::max() == MAX_VALUE, "shall be constexpr");
     static_assert(toCheckedValue(NumericLimits<T>::max()) == MAX_VALUE, "shall be constexpr");
     static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(MAX_VALUE), "shall be constexpr");
 
-    static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
+    static_assert(std::is_nothrow_constructible_v<T, ValueType>, "shall be noexcept");
     static_assert(
-            IS_NOEXCEPT == noexcept(fromCheckedValue<T>(std::declval<value_type>())), "unexpected noexcept");
+            IS_NOEXCEPT == noexcept(fromCheckedValue<T>(std::declval<ValueType>())), "unexpected noexcept");
     static_assert(IS_NOEXCEPT == noexcept(toCheckedValue(std::declval<T>())), "unexpected noexcept");
 
     const T minValue(NumericLimits<T>::min());
@@ -364,19 +364,19 @@ void testSignedInt()
     testIntOperators<T>();
 }
 
-template <typename T, typename T::value_type MAX_VALUE, bool IS_NOEXCEPT = false>
+template <typename T, typename T::ValueType MAX_VALUE, bool IS_NOEXCEPT = false>
 void testUnsignedInt()
 {
-    using value_type = typename T::value_type;
+    using ValueType = typename T::ValueType;
 
     static_assert(NumericLimits<T>::min() == 0, "shall be constexpr");
     static_assert(NumericLimits<T>::max() == MAX_VALUE, "shall be constexpr");
     static_assert(toCheckedValue(NumericLimits<T>::max()) == MAX_VALUE, "shall be constexpr");
     static_assert(NumericLimits<T>::max() == fromCheckedValue<T>(MAX_VALUE), "shall be constexpr");
 
-    static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
+    static_assert(std::is_nothrow_constructible_v<T, ValueType>, "shall be noexcept");
     static_assert(
-            IS_NOEXCEPT == noexcept(fromCheckedValue<T>(std::declval<value_type>())), "unexpected noexcept");
+            IS_NOEXCEPT == noexcept(fromCheckedValue<T>(std::declval<ValueType>())), "unexpected noexcept");
     static_assert(IS_NOEXCEPT == noexcept(toCheckedValue(std::declval<T>())), "unexpected noexcept");
 
     const T minValue(NumericLimits<T>::min());
@@ -411,23 +411,23 @@ void testUnsignedInt()
 template <typename T>
 void testSignedDynInt()
 {
-    using value_type = typename T::value_type;
+    using ValueType = typename T::ValueType;
 
     static_assert(NumericLimits<T>::min(8) == -128, "shall be constexpr");
     static_assert(NumericLimits<T>::max(8) == 127, "shall be constexpr");
     static_assert(toCheckedValue(NumericLimits<T>::max(8), 8) == 127, "shall be constexpr");
     static_assert(NumericLimits<T>::max(8) == fromCheckedValue<T>(127, 8), "shall be constexpr");
 
-    static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
-    static_assert(!noexcept(fromCheckedValue<T>(std::declval<value_type>(), std::declval<BitSize>())),
+    static_assert(std::is_nothrow_constructible_v<T, ValueType>, "shall be noexcept");
+    static_assert(!noexcept(fromCheckedValue<T>(std::declval<ValueType>(), std::declval<BitSize>())),
             "shall not be noexcept");
     static_assert(
             !noexcept(toCheckedValue(std::declval<T>(), std::declval<BitSize>())), "shall not be noexcept");
 
     ASSERT_THROW(fromCheckedValue<T>(0, 0), OutOfRangeException);
-    ASSERT_THROW(fromCheckedValue<T>(0, sizeof(value_type) * 8 + 1), OutOfRangeException);
+    ASSERT_THROW(fromCheckedValue<T>(0, sizeof(ValueType) * 8 + 1), OutOfRangeException);
 
-    for (BitSize numBits = 1; numBits <= sizeof(value_type) * 8; ++numBits)
+    for (BitSize numBits = 1; numBits <= sizeof(ValueType) * 8; ++numBits)
     {
         const T minValue(NumericLimits<T>::min(numBits));
         ASSERT_EQ(NumericLimits<T>::min(numBits), minValue);
@@ -448,7 +448,7 @@ void testSignedDynInt()
         value = 0;
         ASSERT_EQ(0, value);
 
-        if (numBits < sizeof(value_type) * 8)
+        if (numBits < sizeof(ValueType) * 8)
         {
             ASSERT_THROW(fromCheckedValue<T>(NumericLimits<T>::min(numBits) - 1, numBits), OutOfRangeException)
                     << numBits;
@@ -466,23 +466,23 @@ void testSignedDynInt()
 template <typename T>
 void testUnsignedDynInt()
 {
-    using value_type = typename T::value_type;
+    using ValueType = typename T::ValueType;
 
     static_assert(NumericLimits<T>::min(8) == 0, "shall be constexpr");
     static_assert(NumericLimits<T>::max(8) == 255, "shall be constexpr");
     static_assert(toCheckedValue(NumericLimits<T>::max(8), 8) == 255, "shall be constexpr");
     static_assert(NumericLimits<T>::max(8) == fromCheckedValue<T>(255, 8), "shall be constexpr");
 
-    static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
-    static_assert(!noexcept(fromCheckedValue<T>(std::declval<value_type>(), std::declval<BitSize>())),
+    static_assert(std::is_nothrow_constructible_v<T, ValueType>, "shall be noexcept");
+    static_assert(!noexcept(fromCheckedValue<T>(std::declval<ValueType>(), std::declval<BitSize>())),
             "shall not be noexcept");
     static_assert(
             !noexcept(toCheckedValue(std::declval<T>(), std::declval<BitSize>())), "shall not be noexcept");
 
     ASSERT_THROW(fromCheckedValue<T>(0, 0), OutOfRangeException);
-    ASSERT_THROW(fromCheckedValue<T>(0, sizeof(value_type) * 8 + 1), OutOfRangeException);
+    ASSERT_THROW(fromCheckedValue<T>(0, sizeof(ValueType) * 8 + 1), OutOfRangeException);
 
-    for (BitSize numBits = 1; numBits <= sizeof(value_type) * 8; ++numBits)
+    for (BitSize numBits = 1; numBits <= sizeof(ValueType) * 8; ++numBits)
     {
         const T minValue(NumericLimits<T>::min(numBits));
         ASSERT_EQ(NumericLimits<T>::min(numBits), minValue);
@@ -503,7 +503,7 @@ void testUnsignedDynInt()
         value = NumericLimits<T>::max(numBits) - 1;
         ASSERT_EQ(NumericLimits<T>::max(numBits) - 1, value);
 
-        if (numBits < sizeof(value_type) * 8)
+        if (numBits < sizeof(ValueType) * 8)
         {
             ASSERT_THROW(fromCheckedValue<T>(NumericLimits<T>::max(numBits) + 1, numBits), OutOfRangeException);
             const T overMax = maxValue + 1;
@@ -517,7 +517,7 @@ void testUnsignedDynInt()
 template <typename T>
 constexpr void testFloat()
 {
-    using value_type = typename T::value_type;
+    using ValueType = typename T::ValueType;
 
     if constexpr (std::is_same_v<T, Float16>)
     {
@@ -533,14 +533,14 @@ constexpr void testFloat()
     else
     {
         // cannot compare floating point numbers directly
-        static_assert(NumericLimits<T>::min() > static_cast<value_type>(0.), "shall be constexpr");
-        static_assert(NumericLimits<T>::max() > static_cast<value_type>(0.), "shall be constexpr");
+        static_assert(NumericLimits<T>::min() > static_cast<ValueType>(0.), "shall be constexpr");
+        static_assert(NumericLimits<T>::max() > static_cast<ValueType>(0.), "shall be constexpr");
 
-        ASSERT_DOUBLE_EQ(NumericLimits<T>::min(), std::numeric_limits<value_type>::min());
+        ASSERT_DOUBLE_EQ(NumericLimits<T>::min(), std::numeric_limits<ValueType>::min());
     }
 
-    static_assert(std::is_nothrow_constructible_v<T, value_type>, "shall be noexcept");
-    static_assert(noexcept(fromCheckedValue<T>(std::declval<value_type>())), "shall be noexcept");
+    static_assert(std::is_nothrow_constructible_v<T, ValueType>, "shall be noexcept");
+    static_assert(noexcept(fromCheckedValue<T>(std::declval<ValueType>())), "shall be noexcept");
     static_assert(noexcept(toCheckedValue(std::declval<T>())), "shall be noexcept");
 
     const T minValue(NumericLimits<T>::min());
@@ -556,14 +556,14 @@ constexpr void testFloat()
     ASSERT_DOUBLE_EQ(NumericLimits<T>::max(), toCheckedValue(checkedMax));
 
     T value;
-    ASSERT_DOUBLE_EQ(static_cast<value_type>(0.0), value);
-    value = static_cast<value_type>(1.0);
-    ASSERT_DOUBLE_EQ(static_cast<value_type>(1.0), value);
-    value = static_cast<value_type>(0.0);
-    ASSERT_DOUBLE_EQ(static_cast<value_type>(0.0), value);
+    ASSERT_DOUBLE_EQ(static_cast<ValueType>(0.0), value);
+    value = static_cast<ValueType>(1.0);
+    ASSERT_DOUBLE_EQ(static_cast<ValueType>(1.0), value);
+    value = static_cast<ValueType>(0.0);
+    ASSERT_DOUBLE_EQ(static_cast<ValueType>(0.0), value);
 
-    T checked_value = fromCheckedValue<T>(static_cast<value_type>(1.0));
-    ASSERT_DOUBLE_EQ(static_cast<value_type>(1.0), toCheckedValue(checked_value));
+    T checked_value = fromCheckedValue<T>(static_cast<ValueType>(1.0));
+    ASSERT_DOUBLE_EQ(static_cast<ValueType>(1.0), toCheckedValue(checked_value));
 
     testFloatOperators<T>();
 }

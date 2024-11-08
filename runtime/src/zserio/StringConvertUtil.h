@@ -94,12 +94,12 @@ const char* convertIntToString(std::array<char, 24>& buffer, T value)
 template <typename T, typename std::enable_if<std::is_signed<T>::value, int>::type = 0>
 const char* convertIntToString(std::array<char, 24>& buffer, T value)
 {
-    using unsigned_type = typename std::make_unsigned<T>::type;
-    unsigned_type absValue = static_cast<unsigned_type>(value);
+    using UnsignedType = typename ::std::make_unsigned<T>::type;
+    UnsignedType absValue = static_cast<UnsignedType>(value);
     const bool isNegative = value < 0;
     if (isNegative)
     {
-        absValue = static_cast<unsigned_type>(0 - absValue);
+        absValue = static_cast<UnsignedType>(0 - absValue);
     }
 
     return detail::convertIntToString(buffer, absValue, isNegative);

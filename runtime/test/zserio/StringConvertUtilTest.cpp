@@ -11,8 +11,8 @@ using allocator_type = std::allocator<uint8_t>;
 
 TEST(StringConvertUtilTest, convertInt8)
 {
-    using type = int8_t;
-    const type value = std::numeric_limits<type>::min();
+    using Type = int8_t;
+    const Type value = std::numeric_limits<Type>::min();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);
@@ -22,8 +22,8 @@ TEST(StringConvertUtilTest, convertInt8)
 
 TEST(StringConvertUtilTest, convertUInt8)
 {
-    using type = uint8_t;
-    const type value = std::numeric_limits<type>::max();
+    using Type = uint8_t;
+    const Type value = std::numeric_limits<Type>::max();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);
@@ -33,8 +33,8 @@ TEST(StringConvertUtilTest, convertUInt8)
 
 TEST(StringConvertUtilTest, convertInt16)
 {
-    using type = int16_t;
-    const type value = std::numeric_limits<type>::min();
+    using Type = int16_t;
+    const Type value = std::numeric_limits<Type>::min();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);
@@ -44,8 +44,8 @@ TEST(StringConvertUtilTest, convertInt16)
 
 TEST(StringConvertUtilTest, convertUInt16)
 {
-    using type = uint16_t;
-    const type value = std::numeric_limits<type>::max();
+    using Type = uint16_t;
+    const Type value = std::numeric_limits<Type>::max();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);
@@ -55,8 +55,8 @@ TEST(StringConvertUtilTest, convertUInt16)
 
 TEST(StringConvertUtilTest, convertInt32)
 {
-    using type = int32_t;
-    const type value = std::numeric_limits<type>::min();
+    using Type = int32_t;
+    const Type value = std::numeric_limits<Type>::min();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);
@@ -66,8 +66,8 @@ TEST(StringConvertUtilTest, convertInt32)
 
 TEST(StringConvertUtilTest, convertUInt32)
 {
-    using type = uint32_t;
-    const type value = std::numeric_limits<type>::max();
+    using Type = uint32_t;
+    const Type value = std::numeric_limits<Type>::max();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);
@@ -77,8 +77,8 @@ TEST(StringConvertUtilTest, convertUInt32)
 
 TEST(StringConvertUtilTest, convertInt64)
 {
-    using type = int64_t;
-    const type value = std::numeric_limits<type>::min();
+    using Type = int64_t;
+    const Type value = std::numeric_limits<Type>::min();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);
@@ -88,8 +88,8 @@ TEST(StringConvertUtilTest, convertInt64)
 
 TEST(StringConvertUtilTest, convertUInt64)
 {
-    using type = uint64_t;
-    const type value = std::numeric_limits<type>::max();
+    using Type = uint64_t;
+    const Type value = std::numeric_limits<Type>::max();
     std::array<char, 24> buffer = {};
     const char* valueInString = convertIntToString(buffer, value);
     EXPECT_EQ(std::to_string(value), valueInString);

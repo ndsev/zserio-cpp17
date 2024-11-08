@@ -125,7 +125,7 @@ inline uint32_t calcHashCode(uint32_t seedValue, detail::DynIntWrapper<VALUE_TYP
  */
 inline uint32_t calcHashCode(uint32_t seedValue, Bool value)
 {
-    return calcHashCode(seedValue, static_cast<Bool::value_type>(value));
+    return calcHashCode(seedValue, static_cast<Bool::ValueType>(value));
 }
 
 /**

@@ -16,18 +16,18 @@ class BitfieldBitmaskTest : public ::testing::Test
 protected:
     static const size_t PERMISSION_BITSIZEOF;
 
-    static const Permission::underlying_type NONE_VALUE;
-    static const Permission::underlying_type READ_VALUE;
-    static const Permission::underlying_type WRITE_VALUE;
+    static const Permission::UnderlyingType NONE_VALUE;
+    static const Permission::UnderlyingType READ_VALUE;
+    static const Permission::UnderlyingType WRITE_VALUE;
 
     zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
 
 const size_t BitfieldBitmaskTest::PERMISSION_BITSIZEOF = 3;
 
-const Permission::underlying_type BitfieldBitmaskTest::NONE_VALUE = 0;
-const Permission::underlying_type BitfieldBitmaskTest::READ_VALUE = 2;
-const Permission::underlying_type BitfieldBitmaskTest::WRITE_VALUE = 4;
+const Permission::UnderlyingType BitfieldBitmaskTest::NONE_VALUE = 0;
+const Permission::UnderlyingType BitfieldBitmaskTest::READ_VALUE = 2;
+const Permission::UnderlyingType BitfieldBitmaskTest::WRITE_VALUE = 4;
 
 TEST_F(BitfieldBitmaskTest, emptyConstructor)
 {

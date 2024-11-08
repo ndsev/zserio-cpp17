@@ -16,18 +16,18 @@ class Uint64BitmaskTest : public ::testing::Test
 protected:
     static const size_t PERMISSION_BITSIZEOF;
 
-    static const Permission::underlying_type NONE_PERMISSION_VALUE;
-    static const Permission::underlying_type READ_PERMISSION_VALUE;
-    static const Permission::underlying_type WRITE_PERMISSION_VALUE;
+    static const Permission::UnderlyingType NONE_PERMISSION_VALUE;
+    static const Permission::UnderlyingType READ_PERMISSION_VALUE;
+    static const Permission::UnderlyingType WRITE_PERMISSION_VALUE;
 
     zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
 
 const size_t Uint64BitmaskTest::PERMISSION_BITSIZEOF = 64;
 
-const Permission::underlying_type Uint64BitmaskTest::NONE_PERMISSION_VALUE = 0;
-const Permission::underlying_type Uint64BitmaskTest::READ_PERMISSION_VALUE = 2;
-const Permission::underlying_type Uint64BitmaskTest::WRITE_PERMISSION_VALUE = 4;
+const Permission::UnderlyingType Uint64BitmaskTest::NONE_PERMISSION_VALUE = 0;
+const Permission::UnderlyingType Uint64BitmaskTest::READ_PERMISSION_VALUE = 2;
+const Permission::UnderlyingType Uint64BitmaskTest::WRITE_PERMISSION_VALUE = 4;
 
 TEST_F(Uint64BitmaskTest, emptyConstructor)
 {

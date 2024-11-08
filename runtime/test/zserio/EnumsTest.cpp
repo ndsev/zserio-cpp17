@@ -8,7 +8,7 @@
 namespace zserio
 {
 
-enum class Color : UInt8::value_type
+enum class Color : UInt8::ValueType
 {
     NONE = UINT8_C(0),
     RED = UINT8_C(2),

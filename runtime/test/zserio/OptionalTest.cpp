@@ -50,8 +50,6 @@ template <class ALLOC>
 class OptionalTest : public ::testing::Test
 {
 public:
-    using alloc_type = ALLOC;
-
     using IntOptional = BasicOptional<ALLOC, int>;
     using ShortOptional = BasicOptional<ALLOC, int16_t>;
     using BigOptional = BasicOptional<ALLOC, BigObj>;

@@ -27,7 +27,7 @@
 <#if docComments??>
 <@doc_comments docComments/>
 </#if>
-enum class ${name} : ${underlyingTypeInfo.typeFullName}::value_type
+enum class ${name} : ${underlyingTypeInfo.typeFullName}::ValueType
 {
 <#list items as item>
     <#if item.docComments??>

@@ -13,9 +13,9 @@ namespace
 class DummyBitmask
 {
 public:
-    using underlying_type = uint8_t;
+    using UnderlyingType = uint8_t;
 
-    enum class Values : underlying_type
+    enum class Values : UnderlyingType
     {
         READ = 1U,
         WRITE = 2U,
@@ -23,20 +23,20 @@ public:
     };
 
     constexpr DummyBitmask(Values value) noexcept :
-            m_value(static_cast<underlying_type>(value))
+            m_value(static_cast<UnderlyingType>(value))
     {}
 
-    constexpr explicit DummyBitmask(underlying_type value) noexcept :
+    constexpr explicit DummyBitmask(UnderlyingType value) noexcept :
             m_value(value)
     {}
 
-    constexpr underlying_type getValue() const
+    constexpr UnderlyingType getValue() const
     {
         return m_value;
     }
 
 private:
-    underlying_type m_value;
+    UnderlyingType m_value;
 };
 
 inline bool operator==(const DummyBitmask& lhs, const DummyBitmask& rhs)
@@ -47,13 +47,13 @@ inline bool operator==(const DummyBitmask& lhs, const DummyBitmask& rhs)
 inline DummyBitmask operator|(DummyBitmask::Values lhs, DummyBitmask::Values rhs)
 {
     return DummyBitmask(
-            static_cast<DummyBitmask::underlying_type>(lhs) | static_cast<DummyBitmask::underlying_type>(rhs));
+            static_cast<DummyBitmask::UnderlyingType>(lhs) | static_cast<DummyBitmask::UnderlyingType>(rhs));
 }
 
 inline DummyBitmask operator&(DummyBitmask::Values lhs, DummyBitmask::Values rhs)
 {
     return DummyBitmask(
-            static_cast<DummyBitmask::underlying_type>(lhs) & static_cast<DummyBitmask::underlying_type>(rhs));
+            static_cast<DummyBitmask::UnderlyingType>(lhs) & static_cast<DummyBitmask::UnderlyingType>(rhs));
 }
 
 inline DummyBitmask operator&(const DummyBitmask& lhs, const DummyBitmask& rhs)

@@ -40,7 +40,7 @@ class NumericTypeWrapper
 {
 public:
     /** Typedef for the underlying value type. */
-    using value_type = VALUE_TYPE;
+    using ValueType = VALUE_TYPE;
 
     /**
      * Empty constructor.
@@ -54,14 +54,14 @@ public:
      *
      * \param value Value to construct from.
      */
-    constexpr NumericTypeWrapper(value_type value) noexcept :
+    constexpr NumericTypeWrapper(ValueType value) noexcept :
             m_value(value)
     {}
 
     /**
      * Implicit conversion to underlying value type.
      */
-    constexpr operator value_type() const noexcept
+    constexpr operator ValueType() const noexcept
     {
         return m_value;
     }
@@ -70,7 +70,7 @@ public:
      * Operator overload needed to allow to use particular type wrappers in all expressions as if they
      * were built-in types.
      *
-     * Note that overload of operator value_type&() could be used instead, but it fires a warning on gcc.
+     * Note that overload of operator ValueType&() could be used instead, but it fires a warning on gcc.
      */
     /** \{ */
 
@@ -100,61 +100,61 @@ public:
         return old;
     }
 
-    constexpr NumericTypeWrapper& operator+=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator+=(ValueType value) noexcept
     {
         m_value += value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator-=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator-=(ValueType value) noexcept
     {
         m_value -= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator*=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator*=(ValueType value) noexcept
     {
         m_value *= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator/=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator/=(ValueType value) noexcept
     {
         m_value /= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator%=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator%=(ValueType value) noexcept
     {
         m_value %= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator&=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator&=(ValueType value) noexcept
     {
         m_value &= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator|=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator|=(ValueType value) noexcept
     {
         m_value |= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator^=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator^=(ValueType value) noexcept
     {
         m_value ^= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator<<=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator<<=(ValueType value) noexcept
     {
         m_value <<= value;
         return *this;
     }
 
-    constexpr NumericTypeWrapper& operator>>=(value_type value) noexcept
+    constexpr NumericTypeWrapper& operator>>=(ValueType value) noexcept
     {
         m_value >>= value;
         return *this;
@@ -163,7 +163,7 @@ public:
     /** \} */
 
 private:
-    value_type m_value;
+    ValueType m_value;
 };
 
 class BoolWrapper : public NumericTypeWrapper<bool>
@@ -273,9 +273,9 @@ struct needs_range_check<FloatWrapper<VALUE_TYPE, FLOAT_TYPE>> : std::false_type
 template <typename T>
 struct RangeChecker
 {
-    static constexpr void check(typename T::value_type value)
+    static constexpr void check(typename T::ValueType value)
     {
-        if constexpr (std::is_signed_v<typename T::value_type>)
+        if constexpr (std::is_signed_v<typename T::ValueType>)
         {
             if (value < NumericLimits<T>::min() || value > NumericLimits<T>::max())
             {
@@ -589,8 +589,8 @@ struct NumericLimits<detail::FloatWrapper<double, detail::FloatType::FLOAT64>>
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
 template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::value_type>, T>, int> = 0>
-constexpr T fromCheckedValue(typename T::value_type value) noexcept(!detail::needs_range_check_v<T>)
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+constexpr T fromCheckedValue(typename T::ValueType value) noexcept(!detail::needs_range_check_v<T>)
 {
     if constexpr (detail::needs_range_check_v<T>)
     {
@@ -613,8 +613,8 @@ constexpr T fromCheckedValue(typename T::value_type value) noexcept(!detail::nee
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
 template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::value_type>, T>, int> = 0>
-constexpr T fromCheckedValue(typename T::value_type value, BitSize numBits)
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+constexpr T fromCheckedValue(typename T::ValueType value, BitSize numBits)
 {
     detail::RangeChecker<T>::check(value, numBits);
 
@@ -631,8 +631,8 @@ constexpr T fromCheckedValue(typename T::value_type value, BitSize numBits)
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
 template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::value_type>, T>, int> = 0>
-constexpr typename T::value_type toCheckedValue(T wrapper) noexcept(!detail::needs_range_check_v<T>)
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+constexpr typename T::ValueType toCheckedValue(T wrapper) noexcept(!detail::needs_range_check_v<T>)
 {
     if constexpr (detail::needs_range_check_v<T>)
     {
@@ -655,8 +655,8 @@ constexpr typename T::value_type toCheckedValue(T wrapper) noexcept(!detail::nee
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
 template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::value_type>, T>, int> = 0>
-constexpr typename T::value_type toCheckedValue(T wrapper, BitSize numBits)
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+constexpr typename T::ValueType toCheckedValue(T wrapper, BitSize numBits)
 {
     detail::RangeChecker<T>::check(wrapper, numBits);
 
@@ -671,12 +671,12 @@ constexpr typename T::value_type toCheckedValue(T wrapper, BitSize numBits)
  * \return Numeric type wrapper of type R.
  */
 template <typename R, typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::value_type>, T> &&
-                        std::is_base_of_v<detail::NumericTypeWrapper<typename R::value_type>, R>,
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T> &&
+                        std::is_base_of_v<detail::NumericTypeWrapper<typename R::ValueType>, R>,
                 int> = 0>
 constexpr R typeCast(T wrapper)
 {
-    return static_cast<typename R::value_type>(wrapper);
+    return static_cast<typename R::ValueType>(wrapper);
 }
 
 /** Typedef for a zserio type. */

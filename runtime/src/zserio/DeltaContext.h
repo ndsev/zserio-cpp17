@@ -97,9 +97,9 @@ public:
             if (m_maxBitNumber <= MAX_BIT_NUMBER_LIMIT)
             {
                 setFlag(IS_PACKED_FLAG);
-                const auto previousElement = static_cast<typename T::value_type>(m_previousElement);
+                const auto previousElement = static_cast<typename T::ValueType>(m_previousElement);
                 const uint8_t maxBitNumber =
-                        detail::calcBitLength(static_cast<typename T::value_type>(element), previousElement);
+                        detail::calcBitLength(static_cast<typename T::ValueType>(element), previousElement);
                 if (maxBitNumber > m_maxBitNumber)
                 {
                     m_maxBitNumber = maxBitNumber;
@@ -167,11 +167,11 @@ public:
             {
                 const int64_t delta = reader.readSignedBits64(m_maxBitNumber + 1);
                 const T readElement =
-                        static_cast<typename T::value_type>(m_previousElement + static_cast<uint64_t>(delta));
+                        static_cast<typename T::ValueType>(m_previousElement + static_cast<uint64_t>(delta));
                 m_previousElement = static_cast<uint64_t>(readElement);
             }
 
-            element = static_cast<typename T::value_type>(m_previousElement);
+            element = static_cast<typename T::ValueType>(m_previousElement);
         }
     }
 
@@ -202,7 +202,7 @@ public:
             {
                 // it's already checked in the init phase that the delta will fit into int64_t
                 const int64_t delta = detail::calcUncheckedDelta(
-                        static_cast<typename T::value_type>(element), m_previousElement);
+                        static_cast<typename T::ValueType>(element), m_previousElement);
                 writer.writeSignedBits64(delta, m_maxBitNumber + 1);
                 m_previousElement = static_cast<uint64_t>(element);
             }

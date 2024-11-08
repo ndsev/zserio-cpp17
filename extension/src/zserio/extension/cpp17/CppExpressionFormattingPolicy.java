@@ -197,7 +197,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
             final BitmaskType bitmaskType = (BitmaskType)expr.op1().getExprZserioType();
             final CppNativeType bitmaskNativeType = cppNativeMapper.getCppType(bitmaskType);
             return new UnaryExpressionFormatting(
-                    "static_cast<" + bitmaskNativeType.getFullName() + "::underlying_type>(", ")");
+                    "static_cast<" + bitmaskNativeType.getFullName() + "::UnderlyingType>(", ")");
         }
         else
         {

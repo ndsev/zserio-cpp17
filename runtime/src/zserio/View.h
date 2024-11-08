@@ -88,7 +88,7 @@ template <typename VALUE_TYPE>
 class View<detail::DynIntWrapper<VALUE_TYPE, 0>>
 {
 public:
-    using value_type = VALUE_TYPE;
+    using ValueType = VALUE_TYPE;
 
     View(detail::DynIntWrapper<VALUE_TYPE, 0> value, uint8_t numBits) :
             m_value(value),
