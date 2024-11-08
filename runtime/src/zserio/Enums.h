@@ -105,13 +105,13 @@ inline std::enable_if_t<std::is_enum_v<T>, BitSize> bitSizeOf(T value, BitSize b
 }
 
 template <typename T>
-std::enable_if_t<std::is_enum_v<T>> write(::zserio::BitStreamWriter& writer, T value)
+std::enable_if_t<std::is_enum_v<T>> write(BitStreamWriter& writer, T value)
 {
     write(writer, enumToValue(value));
 }
 
 template <typename T>
-std::enable_if_t<std::is_enum_v<T>> read(::zserio::BitStreamReader& reader, T& value)
+std::enable_if_t<std::is_enum_v<T>> read(zserio::BitStreamReader& reader, T& value)
 {
     typename EnumTraits<T>::ZserioType rawValue;
     read(reader, rawValue);

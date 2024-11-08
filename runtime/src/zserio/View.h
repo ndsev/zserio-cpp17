@@ -66,7 +66,7 @@ BitSize initializeOffsets(T& data, BitSize bitPosition, ARGS...);
  * \throw CppRuntimeException In case of any write error.
  */
 template <typename T>
-void write(::zserio::BitStreamWriter& writer, const View<T>& view);
+void write(BitStreamWriter& writer, const View<T>& view);
 
 /**
  * Global function for reading provided via specialization.
@@ -80,7 +80,7 @@ void write(::zserio::BitStreamWriter& writer, const View<T>& view);
  * \throw CppRuntimeException In case of any read error.
  */
 template <typename T, typename... ARGS>
-View<T> read(::zserio::BitStreamReader& reader, T& data, ARGS...);
+View<T> read(BitStreamReader& reader, T& data, ARGS...);
 
 } // namespace detail
 

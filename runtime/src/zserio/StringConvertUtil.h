@@ -94,7 +94,7 @@ const char* convertIntToString(std::array<char, 24>& buffer, T value)
 template <typename T, typename std::enable_if<std::is_signed<T>::value, int>::type = 0>
 const char* convertIntToString(std::array<char, 24>& buffer, T value)
 {
-    using UnsignedType = typename ::std::make_unsigned<T>::type;
+    using UnsignedType = typename std::make_unsigned<T>::type;
     UnsignedType absValue = static_cast<UnsignedType>(value);
     const bool isNegative = value < 0;
     if (isNegative)
@@ -162,10 +162,10 @@ inline const char* convertBoolToString(bool value)
  * \return String representation of the given integral value.
  */
 template <typename ALLOC, typename T>
-basic_string<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
+BasicString<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
 {
     std::array<char, 24> buffer = {};
-    return basic_string<ALLOC>(convertIntToString(buffer, value), allocator);
+    return BasicString<ALLOC>(convertIntToString(buffer, value), allocator);
 }
 
 /**
@@ -178,9 +178,9 @@ basic_string<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
  * \param allocator Allocator to use for the string allocation.
  */
 template <typename ALLOC>
-basic_string<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
+BasicString<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
 {
-    return basic_string<ALLOC>(convertBoolToString(value), allocator);
+    return BasicString<ALLOC>(convertBoolToString(value), allocator);
 }
 
 /**
@@ -190,9 +190,9 @@ basic_string<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
  * \param allocator Allocator to use for the string allocation.
  */
 template <typename ALLOC>
-basic_string<ALLOC> toString(std::string_view value, const ALLOC& allocator = ALLOC())
+BasicString<ALLOC> toString(std::string_view value, const ALLOC& allocator = ALLOC())
 {
-    return basic_string<ALLOC>(value, allocator);
+    return BasicString<ALLOC>(value, allocator);
 }
 
 /**
@@ -203,7 +203,7 @@ basic_string<ALLOC> toString(std::string_view value, const ALLOC& allocator = AL
  * \return String representation of the given value.
  */
 template <typename T>
-basic_string<std::allocator<char>> toString(T value)
+BasicString<std::allocator<char>> toString(T value)
 {
     return toString<std::allocator<char>>(value);
 }

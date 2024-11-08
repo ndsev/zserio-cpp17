@@ -14,13 +14,13 @@ template <typename ALLOC, bool EMPTY = std::is_empty<ALLOC>::value>
 class AllocatorHolder
 {
 public:
-    using allocator_type = ALLOC;
+    using AllocatorType = ALLOC;
 
     /**
      * Empty constructor.
      */
     AllocatorHolder() :
-            m_allocator(allocator_type())
+            m_allocator(AllocatorType())
     {}
 
     /**
@@ -28,7 +28,7 @@ public:
      *
      * \param allocator Allocator to be stored.
      */
-    explicit AllocatorHolder(const allocator_type& allocator) :
+    explicit AllocatorHolder(const AllocatorType& allocator) :
             m_allocator(allocator)
     {}
 
@@ -37,7 +37,7 @@ public:
      *
      * \param allocator Allocator to be stored.
      */
-    explicit AllocatorHolder(allocator_type&& allocator) :
+    explicit AllocatorHolder(AllocatorType&& allocator) :
             m_allocator(std::move(allocator))
     {}
 
@@ -61,7 +61,7 @@ public:
      *
      * \return Copy of the stored allocator.
      */
-    allocator_type get_allocator() const
+    AllocatorType get_allocator() const
     {
         return get_allocator_ref();
     }
@@ -72,7 +72,7 @@ protected:
      *
      * \param allocator Allocator to be copy-assigned to the stored allocator.
      */
-    void set_allocator(const allocator_type& allocator)
+    void set_allocator(const AllocatorType& allocator)
     {
         m_allocator = allocator;
     }
@@ -82,7 +82,7 @@ protected:
      *
      * \param allocator Allocator to be move-assigned to the stored allocator.
      */
-    void set_allocator(allocator_type&& allocator)
+    void set_allocator(AllocatorType&& allocator)
     {
         m_allocator = std::move(allocator);
     }
@@ -92,7 +92,7 @@ protected:
      *
      * \return Reference to the stored allocator.
      */
-    allocator_type& get_allocator_ref()
+    AllocatorType& get_allocator_ref()
     {
         return m_allocator;
     }
@@ -102,7 +102,7 @@ protected:
      *
      * \return Reference to the stored allocator.
      */
-    const allocator_type& get_allocator_ref() const
+    const AllocatorType& get_allocator_ref() const
     {
         return m_allocator;
     }
@@ -119,14 +119,14 @@ template <typename ALLOC>
 class AllocatorHolder<ALLOC, true>
 {
 public:
-    using allocator_type = ALLOC;
+    using AllocatorType = ALLOC;
 
     /**
      * Constructor from given allocator.
      *
      * \param allocator Allocator to be stored.
      */
-    explicit AllocatorHolder(const allocator_type&)
+    explicit AllocatorHolder(const AllocatorType&)
     {}
 
     /**
@@ -150,7 +150,7 @@ public:
      *
      * \return Copy of the stored allocator.
      */
-    allocator_type get_allocator() const
+    AllocatorType get_allocator() const
     {
         return {};
     }
@@ -161,7 +161,7 @@ protected:
      *
      * \param allocator Allocator to be copy-assigned to the stored allocator.
      */
-    void set_allocator(const allocator_type&)
+    void set_allocator(const AllocatorType&)
     {}
 
     /**
@@ -169,7 +169,7 @@ protected:
      *
      * \param allocator Allocator to be move-assigned to the stored allocator.
      */
-    void set_allocator(allocator_type&&)
+    void set_allocator(AllocatorType&&)
     {}
 
     /**
@@ -177,7 +177,7 @@ protected:
      *
      * \return Reference to the stored allocator.
      */
-    allocator_type get_allocator_ref() const
+    AllocatorType get_allocator_ref() const
     {
         return {};
     }

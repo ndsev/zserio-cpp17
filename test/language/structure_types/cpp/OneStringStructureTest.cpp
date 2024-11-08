@@ -9,8 +9,8 @@ namespace structure_types
 namespace one_string_structure
 {
 
-using allocator_type = OneStringStructure::allocator_type;
-using string_type = zserio::basic_string<allocator_type>;
+using AllocatorType = OneStringStructure::AllocatorType;
+using StringType = zserio::BasicString<AllocatorType>;
 
 class OneStringStructureDataTest : public ::testing::Test
 {
@@ -44,7 +44,7 @@ TEST_F(OneStringStructureDataTest, emptyConstructor)
         ASSERT_EQ("", oneStringStructure.oneString);
     }
     {
-        OneStringStructure oneStringStructure(allocator_type{});
+        OneStringStructure oneStringStructure(AllocatorType{});
         ASSERT_EQ("", oneStringStructure.oneString);
     }
 }
@@ -57,7 +57,7 @@ TEST_F(OneStringStructureDataTest, fieldConstructor)
         ASSERT_EQ(str, oneStringStructure.oneString);
     }
     {
-        string_type movedString(1000, 'a'); // long enough to prevent small string optimization
+        StringType movedString(1000, 'a'); // long enough to prevent small string optimization
         const void* ptr = movedString.data();
         OneStringStructure oneStringStructure(std::move(movedString));
         const void* movedPtr = oneStringStructure.oneString.data();
@@ -65,7 +65,7 @@ TEST_F(OneStringStructureDataTest, fieldConstructor)
     }
     {
         // cannot use just '{}' since ctor would be ambiguous (ambiguity with move/copy ctors)
-        OneStringStructure oneStringStructure(string_type{});
+        OneStringStructure oneStringStructure(StringType{});
         ASSERT_TRUE(oneStringStructure.oneString.empty());
     }
 }
@@ -94,24 +94,24 @@ TEST_F(OneStringStructureDataTest, copyAssignmentOperator)
 // we shall test also generated 'default' methods!
 TEST_F(OneStringStructureDataTest, moveConstructor)
 {
-    OneStringStructure oneStringStructure(string_type(1000, 'a'));
+    OneStringStructure oneStringStructure(StringType(1000, 'a'));
     const void* ptr = oneStringStructure.oneString.data();
     OneStringStructure movedOneStringStructure(std::move(oneStringStructure));
     const void* movedPtr = movedOneStringStructure.oneString.data();
     ASSERT_EQ(ptr, movedPtr);
-    ASSERT_EQ(string_type(1000, 'a'), movedOneStringStructure.oneString);
+    ASSERT_EQ(StringType(1000, 'a'), movedOneStringStructure.oneString);
 }
 
 // we shall test also generated 'default' methods!
 TEST_F(OneStringStructureDataTest, moveAssignmentOperator)
 {
-    OneStringStructure oneStringStructure(string_type(1000, 'a'));
+    OneStringStructure oneStringStructure(StringType(1000, 'a'));
     const void* ptr = oneStringStructure.oneString.data();
     OneStringStructure movedOneStringStructure;
     movedOneStringStructure = std::move(oneStringStructure);
     const void* movedPtr = movedOneStringStructure.oneString.data();
     ASSERT_EQ(ptr, movedPtr);
-    ASSERT_EQ(string_type(1000, 'a'), movedOneStringStructure.oneString);
+    ASSERT_EQ(StringType(1000, 'a'), movedOneStringStructure.oneString);
 }
 
 TEST_F(OneStringStructureDataTest, operatorEquality)
@@ -235,14 +235,14 @@ TEST_F(OneStringStructureViewTest, read)
     writeOneStringStructure(writer, ONE_STRING);
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    OneStringStructure oneStringStructure{allocator_type()};
+    OneStringStructure oneStringStructure{AllocatorType()};
     zserio::View<OneStringStructure> readView = zserio::detail::read(reader, oneStringStructure);
     ASSERT_EQ(ONE_STRING, readView.oneString());
 }
 
 TEST_F(OneStringStructureViewTest, writeRead)
 {
-    OneStringStructure oneStringStructure{string_type(ONE_STRING)};
+    OneStringStructure oneStringStructure{StringType(ONE_STRING)};
     zserio::View<OneStringStructure> view(oneStringStructure);
 
     zserio::BitStreamWriter writer(bitBuffer);
@@ -250,7 +250,7 @@ TEST_F(OneStringStructureViewTest, writeRead)
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
 
-    OneStringStructure readOneStringStructure{allocator_type()};
+    OneStringStructure readOneStringStructure{AllocatorType()};
     zserio::View<OneStringStructure> readView = zserio::detail::read(reader, readOneStringStructure);
     ASSERT_EQ(ONE_STRING, readView.oneString());
     ASSERT_EQ(view, readView);

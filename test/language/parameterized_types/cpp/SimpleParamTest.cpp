@@ -10,7 +10,7 @@ namespace parameterized_types
 namespace simple_param
 {
 
-using allocator_type = Item::allocator_type;
+using AllocatorType = Item::AllocatorType;
 
 class SimpleParamDataTest : public ::testing::Test
 {
@@ -66,7 +66,7 @@ TEST_F(SimpleParamDataTest, emptyConstructor)
     }
 
     {
-        Item item{allocator_type()};
+        Item item{AllocatorType()};
         ASSERT_EQ(0, item.param);
         ASSERT_FALSE(item.extraParam);
     }

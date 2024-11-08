@@ -832,14 +832,14 @@ TEST_F(BitStreamTest, readBitBuffer)
 
 TEST_F(BitStreamTest, readBytes)
 {
-    const std::array<vector<uint8_t>, 2> values = {
-            vector<uint8_t>{{0, 255}},
-            vector<uint8_t>{{1, 127, 128, 254}},
+    const std::array<Vector<uint8_t>, 2> values = {
+            Vector<uint8_t>{{0, 255}},
+            Vector<uint8_t>{{1, 127, 128, 254}},
     };
 
     std::function<void(BitStreamWriter&, BytesView)> writerFunc =
             static_cast<void (*)(BitStreamWriter&, BytesView)>(&detail::write);
-    std::function<void(BitStreamReader&, vector<uint8_t>&)> readerFunc =
+    std::function<void(BitStreamReader&, Vector<uint8_t>&)> readerFunc =
             static_cast<void (*)(BitStreamReader&, Bytes&)>(&detail::read);
 
     testImpl(values, writerFunc, readerFunc, 7);

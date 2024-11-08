@@ -12,10 +12,10 @@
 <@namespace_begin package.path/>
 
 ${name}::${name}() noexcept :
-        ${name}(allocator_type{})
+        ${name}(AllocatorType{})
 {}
 
-${name}::${name}(const allocator_type&<#if fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+${name}::${name}(const AllocatorType&<#if fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
         <#lt> :
     <#items as field>

@@ -6,7 +6,7 @@ namespace structure_types
 namespace empty_structure
 {
 
-using allocator_type = EmptyStructure::allocator_type;
+using AllocatorType = EmptyStructure::AllocatorType;
 
 TEST(EmptyStructureDataTest, emptyConstructor)
 {
@@ -19,7 +19,7 @@ TEST(EmptyStructureDataTest, emptyConstructor)
         (void)emptyStructure;
     }
     {
-        EmptyStructure emptyStructure(allocator_type{});
+        EmptyStructure emptyStructure(AllocatorType{});
         (void)emptyStructure;
     }
 }
@@ -120,14 +120,14 @@ TEST(EmptyStructureViewTest, stdHash)
 TEST(EmptyStructureViewTest, read)
 {
     zserio::BitStreamReader reader(zserio::Span<const uint8_t>{});
-    EmptyStructure emptyStructure{allocator_type()};
+    EmptyStructure emptyStructure{AllocatorType()};
     zserio::View<EmptyStructure> readView = zserio::detail::read(reader, emptyStructure);
     (void)readView;
 }
 
 TEST(EmptyStructureViewTest, writeRead)
 {
-    EmptyStructure emptyStructure{allocator_type()};
+    EmptyStructure emptyStructure{AllocatorType()};
     zserio::View<EmptyStructure> view(emptyStructure);
 
     zserio::BitBuffer bitBuffer(0);
@@ -135,7 +135,7 @@ TEST(EmptyStructureViewTest, writeRead)
     zserio::detail::write(writer, view);
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    EmptyStructure readEmptyStructure{allocator_type()};
+    EmptyStructure readEmptyStructure{AllocatorType()};
     zserio::View<EmptyStructure> readView = zserio::detail::read(reader, readEmptyStructure);
     ASSERT_EQ(view, readView);
 }

@@ -45,11 +45,29 @@ inline constexpr bool is_first_allocator_v = is_first_allocator<T, V>::value;
  * \{
  */
 template <typename T, typename = void>
-struct has_allocator : std::false_type
+struct has_std_allocator : std::false_type
 {};
 
 template <typename T>
-struct has_allocator<T, std::void_t<typename T::allocator_type>> : std::true_type
+struct has_std_allocator<T, std::void_t<typename T::allocator_type>> : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool has_std_allocator_v = has_std_allocator<T, V>::value;
+
+template <typename T, typename = void>
+struct has_zs_allocator : std::false_type
+{};
+
+template <typename T>
+struct has_zs_allocator<T, std::void_t<typename T::AllocatorType>> : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool has_zs_allocator_v = has_zs_allocator<T, V>::value;
+
+template <typename T, typename V = void>
+struct has_allocator : std::disjunction<has_std_allocator<T, V>, has_zs_allocator<T, V>>
 {};
 
 template <typename T, typename V = void>

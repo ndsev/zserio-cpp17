@@ -11,13 +11,13 @@
 
 struct SimpleStructure
 {
-    using allocator_type = ::std::allocator<uint8_t>;
+    using AllocatorType = std::allocator<uint8_t>;
 
     SimpleStructure() noexcept :
-            SimpleStructure(allocator_type{})
+            SimpleStructure(AllocatorType{})
     {}
 
-    explicit SimpleStructure(const allocator_type&) noexcept :
+    explicit SimpleStructure(const AllocatorType&) noexcept :
             numberA(),
             numberB(),
             numberC()
@@ -37,13 +37,13 @@ struct SimpleStructure
 
 struct SimpleParameterizedStructure
 {
-    using allocator_type = ::std::allocator<uint8_t>;
+    using AllocatorType = std::allocator<uint8_t>;
 
     SimpleParameterizedStructure() noexcept :
-            SimpleParameterizedStructure(allocator_type{})
+            SimpleParameterizedStructure(AllocatorType{})
     {}
 
-    explicit SimpleParameterizedStructure(const allocator_type&) noexcept :
+    explicit SimpleParameterizedStructure(const AllocatorType&) noexcept :
             numberA(),
             numberB(),
             numberC(),
@@ -323,7 +323,7 @@ TEST(SerializeUtilTest, deserializeDataFromFile)
 TEST(SerializeUtilTest, serializeParameterizedData)
 {
     const SimpleParameterizedStructure simpleParameterizedStructure{0x07, 0x07, 0x7F, 0x01};
-    const BitBuffer bitBuffer = serialize(simpleParameterizedStructure, static_cast<::zserio::UInt6>(0x0F));
+    const BitBuffer bitBuffer = serialize(simpleParameterizedStructure, static_cast<UInt6>(0x0F));
     ASSERT_EQ(24, bitBuffer.getBitSize());
     ASSERT_EQ(0xE0, bitBuffer.getData()[0]);
     ASSERT_EQ(0xFF, bitBuffer.getData()[1]);

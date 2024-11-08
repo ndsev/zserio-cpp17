@@ -72,7 +72,7 @@ struct hash<::zserio::Color>
         uint32_t result = ::zserio::HASH_SEED;
         // TODO[Mi-L@]: Should calcHashCode work with wrapper types?
         result = ::zserio::calcHashCode(
-                result, static_cast<::std::underlying_type_t<::zserio::Color>>(::zserio::enumToValue(value)));
+                result, static_cast<std::underlying_type_t<::zserio::Color>>(::zserio::enumToValue(value)));
         return static_cast<size_t>(result);
     }
 };

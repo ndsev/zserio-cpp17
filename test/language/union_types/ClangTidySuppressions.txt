@@ -1,2 +1,0 @@
-bugprone-exception-escape:gen/union_types/empty_union/EmptyUnion.h
-bugprone-exception-escape:gen/union_types/simple_union/SimpleUnion.h

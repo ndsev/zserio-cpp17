@@ -8,9 +8,9 @@ namespace array_types
 namespace fixed_array_uint8
 {
 
-using allocator_type = FixedArray::allocator_type;
+using AllocatorType = FixedArray::AllocatorType;
 template <typename T>
-using vector_type = zserio::vector<T, allocator_type>;
+using VectorType = zserio::Vector<T, AllocatorType>;
 
 class FixedArrayUInt8Test : public ::testing::Test
 {
@@ -30,7 +30,7 @@ protected:
 
 TEST_F(FixedArrayUInt8Test, bitSizeOf)
 {
-    vector_type<zserio::UInt8> uint8Array;
+    VectorType<zserio::UInt8> uint8Array;
     uint8Array.reserve(FIXED_ARRAY_LENGTH);
     for (size_t i = 0; i < FIXED_ARRAY_LENGTH; ++i)
     {
@@ -63,7 +63,7 @@ TEST_F(FixedArrayUInt8Test, read)
 
 TEST_F(FixedArrayUInt8Test, writeRead)
 {
-    vector_type<zserio::UInt8> uint8Array;
+    VectorType<zserio::UInt8> uint8Array;
     uint8Array.reserve(FIXED_ARRAY_LENGTH);
     for (size_t i = 0; i < FIXED_ARRAY_LENGTH; ++i)
     {
@@ -89,7 +89,7 @@ TEST_F(FixedArrayUInt8Test, writeRead)
 /*
 TEST_F(FixedArrayUInt8Test, writeReadFile)
 {
-    vector_type<uint8_t> uint8Array;
+    VectorType<uint8_t> uint8Array;
     uint8Array.reserve(FIXED_ARRAY_LENGTH);
     for (size_t i = 0; i < FIXED_ARRAY_LENGTH; ++i)
     {
@@ -101,7 +101,7 @@ TEST_F(FixedArrayUInt8Test, writeReadFile)
     zserio::serializeToFile(fixedArray, BLOB_NAME);
 
     FixedArray readFixedArray = zserio::deserializeFromFile<FixedArray>(BLOB_NAME);
-    const vector_type<uint8_t>& readUint8Array = readFixedArray.getUint8Array();
+    const VectorType<uint8_t>& readUint8Array = readFixedArray.getUint8Array();
     const size_t numElements = FIXED_ARRAY_LENGTH;
     ASSERT_EQ(numElements, readUint8Array.size());
     for (size_t i = 0; i < numElements; ++i)
@@ -112,7 +112,7 @@ TEST_F(FixedArrayUInt8Test, writeReadFile)
 
 TEST_F(FixedArrayUInt8Test, writeWrongArray)
 {
-    vector_type<uint8_t> uint8Array;
+    VectorType<uint8_t> uint8Array;
     const size_t wrongArrayLength = FIXED_ARRAY_LENGTH + 1;
     uint8Array.reserve(wrongArrayLength);
     for (size_t i = 0; i < wrongArrayLength; ++i)

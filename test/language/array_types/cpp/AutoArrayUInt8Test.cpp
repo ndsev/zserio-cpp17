@@ -8,9 +8,9 @@ namespace array_types
 namespace auto_array_uint8
 {
 
-using allocator_type = AutoArray::allocator_type;
+using AllocatorType = AutoArray::AllocatorType;
 template <typename T>
-using vector_type = zserio::vector<T, allocator_type>;
+using VectorType = zserio::Vector<T, AllocatorType>;
 
 class AutoArrayUInt8Test : public ::testing::Test
 {
@@ -26,7 +26,7 @@ protected:
 
     void checkBitSizeOf(size_t numElements)
     {
-        vector_type<zserio::UInt8> uint8Array;
+        VectorType<zserio::UInt8> uint8Array;
         uint8Array.reserve(numElements);
         for (size_t i = 0; i < numElements; ++i)
         {
@@ -59,7 +59,7 @@ protected:
 
     void checkWriteRead(size_t numElements)
     {
-        vector_type<zserio::UInt8> uint8Array;
+        VectorType<zserio::UInt8> uint8Array;
         uint8Array.reserve(numElements);
         for (size_t i = 0; i < numElements; ++i)
         {
@@ -88,7 +88,7 @@ protected:
     /*
     void checkWriteReadFile(size_t numElements)
     {
-        vector_type<uint8_t> uint8Array;
+        VectorType<uint8_t> uint8Array;
         uint8Array.reserve(numElements);
         for (size_t i = 0; i < numElements; ++i)
         {
@@ -101,7 +101,7 @@ protected:
         zserio::serializeToFile(autoArray, fileName);
 
         AutoArray readAutoArray = zserio::deserializeFromFile<AutoArray>(fileName);
-        const vector_type<uint8_t>& readUint8Array = readAutoArray.getUint8Array();
+        const VectorType<uint8_t>& readUint8Array = readAutoArray.getUint8Array();
         ASSERT_EQ(numElements, readUint8Array.size());
         for (size_t i = 0; i < numElements; ++i)
         {

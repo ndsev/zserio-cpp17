@@ -9,10 +9,10 @@ namespace array_types
 namespace variable_array_subtyped_struct
 {
 
-using allocator_type = VariableArray::allocator_type;
-using string_type = zserio::basic_string<allocator_type>;
+using AllocatorType = VariableArray::AllocatorType;
+using StringType = zserio::BasicString<AllocatorType>;
 template <typename T>
-using vector_type = zserio::vector<T, allocator_type>;
+using VectorType = zserio::Vector<T, AllocatorType>;
 
 class VariableArraySubtypedStructTest : public ::testing::Test
 {
@@ -34,12 +34,12 @@ protected:
 TEST_F(VariableArraySubtypedStructTest, bitSizeOf)
 {
     const size_t numElements = 33;
-    vector_type<ArrayElement> compoundArray;
+    VectorType<ArrayElement> compoundArray;
     compoundArray.reserve(numElements);
     for (size_t i = 0; i < numElements; ++i)
     {
         const ArrayElement arrayElement(
-                static_cast<uint32_t>(i), string_type("Name") + zserio::toString<allocator_type>(i));
+                static_cast<uint32_t>(i), StringType("Name") + zserio::toString<AllocatorType>(i));
         compoundArray.push_back(arrayElement);
     }
     VariableArray variableArray(static_cast<uint8_t>(numElements), compoundArray);
@@ -73,12 +73,12 @@ TEST_F(VariableArraySubtypedStructTest, read)
 TEST_F(VariableArraySubtypedStructTest, writeRead)
 {
     const size_t numElements = 33;
-    vector_type<ArrayElement> compoundArray;
+    VectorType<ArrayElement> compoundArray;
     compoundArray.reserve(numElements);
     for (size_t i = 0; i < numElements; ++i)
     {
         const ArrayElement arrayElement(
-                static_cast<uint32_t>(i), string_type("Name") + zserio::toString<allocator_type>(i));
+                static_cast<uint32_t>(i), StringType("Name") + zserio::toString<AllocatorType>(i));
         compoundArray.push_back(arrayElement);
     }
     VariableArray variableArray(static_cast<uint8_t>(numElements), compoundArray);
@@ -104,12 +104,12 @@ TEST_F(VariableArraySubtypedStructTest, writeRead)
 TEST_F(VariableArraySubtypedStructTest, writeReadFile)
 {
     const size_t numElements = 33;
-    vector_type<ArrayElement> compoundArray;
+    VectorType<ArrayElement> compoundArray;
     compoundArray.reserve(numElements);
     for (size_t i = 0; i < numElements; ++i)
     {
         const ArrayElement arrayElement(
-                static_cast<uint32_t>(i), string_type("Name") + zserio::toString<allocator_type>(i));
+                static_cast<uint32_t>(i), StringType("Name") + zserio::toString<AllocatorType>(i));
         compoundArray.push_back(arrayElement);
     }
     VariableArray variableArray;
@@ -119,7 +119,7 @@ TEST_F(VariableArraySubtypedStructTest, writeReadFile)
     zserio::serializeToFile(variableArray, BLOB_NAME);
 
     VariableArray readVariableArray = zserio::deserializeFromFile<VariableArray>(BLOB_NAME);
-    const vector_type<ArrayElement>& readCompoundArray = readVariableArray.getCompoundArray();
+    const VectorType<ArrayElement>& readCompoundArray = readVariableArray.getCompoundArray();
     ASSERT_EQ(numElements, readCompoundArray.size());
     for (size_t i = 0; i < numElements; ++i)
     {
@@ -131,12 +131,12 @@ TEST_F(VariableArraySubtypedStructTest, writeReadFile)
 TEST_F(VariableArraySubtypedStructTest, writeWrongArray)
 {
     const size_t numElements = 33;
-    vector_type<ArrayElement> compoundArray;
+    VectorType<ArrayElement> compoundArray;
     compoundArray.reserve(numElements);
     for (size_t i = 0; i < numElements; ++i)
     {
         const ArrayElement arrayElement(
-                static_cast<uint32_t>(i), string_type("Name") + zserio::toString<allocator_type>(i));
+                static_cast<uint32_t>(i), StringType("Name") + zserio::toString<AllocatorType>(i));
         compoundArray.push_back(arrayElement);
     }
     VariableArray variableArray;

@@ -24,7 +24,7 @@ namespace zserio
 {
 
 template <typename... ARGS>
-struct is_first_alloc : is_first_allocator<::std::decay_t<ARGS>...>
+struct is_first_alloc : is_first_allocator<std::decay_t<ARGS>...>
 {};
 
 /**
@@ -86,9 +86,9 @@ BasicBitBuffer<ALLOC> serialize(const View<T>& view, const ALLOC& allocator)
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T>
-BasicBitBuffer<typename T::allocator_type> serialize(const View<T>& view)
+BasicBitBuffer<typename T::AllocatorType> serialize(const View<T>& view)
 {
-    return serialize(view, typename T::allocator_type());
+    return serialize(view, typename T::AllocatorType());
 }
 
 /**
@@ -115,11 +115,10 @@ BasicBitBuffer<typename T::allocator_type> serialize(const View<T>& view)
  *
  * \throw CppRuntimeException When serialization fails.
  */
-template <typename T, typename ALLOC, typename... ARGS,
-        typename = ::std::enable_if_t<is_allocator<ALLOC>::value>>
+template <typename T, typename ALLOC, typename... ARGS, typename = std::enable_if_t<is_allocator<ALLOC>::value>>
 BasicBitBuffer<ALLOC> serialize(const T& data, const ALLOC& allocator, ARGS&&... arguments)
 {
-    const View<T> view(data, ::std::forward<ARGS>(arguments)...);
+    const View<T> view(data, std::forward<ARGS>(arguments)...);
 
     return serialize(view, allocator);
 }
@@ -146,10 +145,10 @@ BasicBitBuffer<ALLOC> serialize(const T& data, const ALLOC& allocator, ARGS&&...
  *
  * \throw CppRuntimeException When serialization fails.
  */
-template <typename T, typename... ARGS, typename ::std::enable_if_t<!is_first_alloc<ARGS...>::value, int> = 0>
-BasicBitBuffer<typename T::allocator_type> serialize(const T& data, ARGS&&... arguments)
+template <typename T, typename... ARGS, typename std::enable_if_t<!is_first_alloc<ARGS...>::value, int> = 0>
+BasicBitBuffer<typename T::AllocatorType> serialize(const T& data, ARGS&&... arguments)
 {
-    return serialize(data, typename T::allocator_type(), ::std::forward<ARGS>(arguments)...);
+    return serialize(data, typename T::AllocatorType(), std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -173,12 +172,12 @@ BasicBitBuffer<typename T::allocator_type> serialize(const T& data, ARGS&&... ar
  * \throw CppRuntimeException When deserialization fails.
  */
 template <typename T, typename ALLOC, typename... ARGS,
-        typename ::std::enable_if_t<!is_first_alloc<ARGS...>::value, int> = 0>
-typename ::zserio::View<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, T& data, ARGS&&... arguments)
+        typename std::enable_if_t<!is_first_alloc<ARGS...>::value, int> = 0>
+View<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, T& data, ARGS&&... arguments)
 {
     BitStreamReader reader(buffer);
 
-    return detail::read(reader, data, ::std::forward<ARGS>(arguments)...);
+    return detail::read(reader, data, std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -225,7 +224,7 @@ void serializeToFile(const View<T>& view, std::string_view fileName)
 template <typename T, typename... ARGS>
 void serializeToFile(const T& data, std::string_view fileName, ARGS&&... arguments)
 {
-    const View<T> view(data, ::std::forward<ARGS>(arguments)...);
+    const View<T> view(data, std::forward<ARGS>(arguments)...);
     serializeToFile(view, fileName);
 }
 
@@ -252,7 +251,7 @@ void serializeToFile(const T& data, std::string_view fileName, ARGS&&... argumen
  * \throw CppRuntimeException When deserialization fails.
  */
 template <typename T, typename... ARGS>
-::zserio::View<T> deserializeFromFile(std::string_view fileName, T& data, ARGS&&... arguments)
+View<T> deserializeFromFile(std::string_view fileName, T& data, ARGS&&... arguments)
 {
     const BitBuffer bitBuffer = readBufferFromFile(fileName);
     return deserialize(bitBuffer, data, std::forward<ARGS>(arguments)...);

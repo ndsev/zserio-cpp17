@@ -6,7 +6,7 @@ namespace structure_types
 namespace simple_structure
 {
 
-using allocator_type = SimpleStructure::allocator_type;
+using AllocatorType = SimpleStructure::AllocatorType;
 
 class SimpleStructureDataTest : public ::testing::Test
 {
@@ -43,7 +43,7 @@ TEST_F(SimpleStructureDataTest, emptyConstructor)
         ASSERT_EQ(0, simpleStructure.numberC);
     }
     {
-        SimpleStructure simpleStructure(allocator_type{});
+        SimpleStructure simpleStructure(AllocatorType{});
         ASSERT_EQ(0, simpleStructure.numberA);
         ASSERT_EQ(0, simpleStructure.numberB);
         ASSERT_EQ(0, simpleStructure.numberC);
@@ -295,7 +295,7 @@ TEST_F(SimpleStructureViewTest, read)
     writeSimpleStructure(writer, numberA, numberB, numberC);
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    SimpleStructure simpleStructure{allocator_type()};
+    SimpleStructure simpleStructure{AllocatorType()};
     zserio::View<SimpleStructure> readView = zserio::detail::read(reader, simpleStructure);
     ASSERT_EQ(numberA, readView.numberA());
     ASSERT_EQ(numberB, readView.numberB());

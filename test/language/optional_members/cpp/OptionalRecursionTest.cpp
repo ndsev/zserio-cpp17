@@ -11,9 +11,9 @@ namespace optional_members
 namespace optional_recursion
 {
 
-using allocator_type = Block::allocator_type;
+using AllocatorType = Block::AllocatorType;
 template <typename T>
-using vector_type = zserio::vector<T, allocator_type>;
+using VectorType = zserio::Vector<T, AllocatorType>;
 
 class OptionalRecursionTest : public ::testing::Test
 {
@@ -21,7 +21,7 @@ protected:
     template <size_t SIZE>
     void fillBlock(Block& block, const std::array<zserio::UInt8, SIZE>& blockData)
     {
-        vector_type<zserio::UInt8> dataBytes;
+        VectorType<zserio::UInt8> dataBytes;
         dataBytes.reserve(blockData.size());
         dataBytes.assign(blockData.begin(), blockData.end());
         block.dataBytes = dataBytes;
@@ -36,7 +36,7 @@ protected:
         Block block2;
         fillBlock(block2, block2Data);
 
-        vector_type<zserio::UInt8> dataBytes;
+        VectorType<zserio::UInt8> dataBytes;
         dataBytes.reserve(block1Data.size());
         dataBytes.assign(block1Data.begin(), block1Data.end());
         block1.dataBytes = dataBytes;

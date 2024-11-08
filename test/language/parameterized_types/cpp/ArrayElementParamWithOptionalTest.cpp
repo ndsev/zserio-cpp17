@@ -9,9 +9,9 @@ namespace parameterized_types
 namespace array_element_param_with_optional
 {
 
-using allocator_type = Holder::allocator_type;
+using AllocatorType = Holder::AllocatorType;
 template <typename T>
-using vector_type = zserio::vector<T, allocator_type>;
+using VectorType = zserio::Vector<T, AllocatorType>;
 
 class ArrayElementParamWithOptionalTest : public ::testing::Test
 {
@@ -60,7 +60,7 @@ TEST_F(ArrayElementParamWithOptionalTest, constructors)
     }
 
     {
-        Holder data(allocator_type{});
+        Holder data(AllocatorType{});
         ASSERT_FALSE(data.param.hasExtra);
         ASSERT_FALSE(data.param.extraParam);
         ASSERT_EQ(0, data.values.size());

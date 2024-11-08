@@ -321,8 +321,7 @@ void write(
         typename View<T>::ZserioPackingContext& packingContext, BitStreamWriter& writer, const View<T>& view);
 
 template <typename T, typename... ARGS>
-void read(typename View<T>::ZserioPackingContext& packingContext, ::zserio::BitStreamReader& reader, T& data,
-        ARGS...);
+void read(typename View<T>::ZserioPackingContext& packingContext, BitStreamReader& reader, T& data, ARGS...);
 
 inline void initContext(DeltaContext& deltaContext, Bool value)
 {

@@ -8,7 +8,7 @@ namespace optional_members
 namespace auto_optional
 {
 
-using allocator_type = Container::allocator_type;
+using AllocatorType = Container::AllocatorType;
 
 class AutoOptionalDataTest : public ::testing::Test
 {
@@ -53,7 +53,7 @@ TEST_F(AutoOptionalDataTest, emptyConstructor)
         ASSERT_FALSE(container.autoOptionalInt);
     }
     {
-        const Container container{allocator_type()};
+        const Container container{AllocatorType()};
         ASSERT_FALSE(container.autoOptionalInt);
     }
 }

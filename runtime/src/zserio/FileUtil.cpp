@@ -44,7 +44,7 @@ BitBuffer readBufferFromFile(std::string_view fileName)
         throw CppRuntimeException("readBufferFromFile: File size exceeds limit '") << sizeLimit << "'!";
     }
 
-    zserio::BitBuffer bitBuffer(static_cast<size_t>(fileSize) * 8);
+    BitBuffer bitBuffer(static_cast<size_t>(fileSize) * 8);
     if (!stream.read(reinterpret_cast<char*>(bitBuffer.getBuffer()),
                 static_cast<std::streamsize>(bitBuffer.getByteSize())))
     {

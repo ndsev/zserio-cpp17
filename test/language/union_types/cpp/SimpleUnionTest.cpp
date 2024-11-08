@@ -9,8 +9,8 @@ namespace union_types
 namespace simple_union
 {
 
-using allocator_type = SimpleUnion::allocator_type;
-using string_type = zserio::basic_string<allocator_type>;
+using AllocatorType = SimpleUnion::AllocatorType;
+using StringType = zserio::BasicString<AllocatorType>;
 using ChoiceTag = SimpleUnion::ChoiceTag;
 
 class SimpleUnionTest : public ::testing::Test
@@ -33,7 +33,7 @@ TEST_F(SimpleUnionTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        SimpleUnion data(allocator_type{});
+        SimpleUnion data(AllocatorType{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
@@ -118,12 +118,12 @@ TEST_F(SimpleUnionTest, case3Field)
     ASSERT_THROW(view.case4Field(), zserio::BadVariantAccess);
     ASSERT_EQ(CASE3_FIELD, view.case3Field());
 
-    string_type movedString(1000, 'a'); // long enough to prevent small string optimization
+    StringType movedString(1000, 'a'); // long enough to prevent small string optimization
     const void* ptr = movedString.data();
     data.emplace<ChoiceTag::CHOICE_case3Field>(std::move(movedString));
     const void* movedPtr = zserio::get<ChoiceTag::CHOICE_case3Field>(data).data();
     ASSERT_EQ(ptr, movedPtr);
-    string_type& case3 = zserio::get<ChoiceTag::CHOICE_case3Field>(data);
+    StringType& case3 = zserio::get<ChoiceTag::CHOICE_case3Field>(data);
     case3 = CASE3_FIELD;
     ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(data));
 }

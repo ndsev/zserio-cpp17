@@ -149,14 +149,14 @@ TEST_F(BitStreamReaderTest, readVarSize)
     {
         // overflow, 2^32 - 1 is too much ({ 0x83, 0xFF, 0xFF, 0xFF, 0xFF } is the maximum)
         const std::array<uint8_t, 5> buffer = {0x87, 0xFF, 0xFF, 0xFF, 0xFF};
-        zserio::BitStreamReader reader(buffer.data(), buffer.size());
+        BitStreamReader reader(buffer.data(), buffer.size());
         ASSERT_THROW(reader.readVarSize(), CppRuntimeException);
     }
 
     {
         // overflow, 2^36 - 1 is too much ({ 0x83, 0xFF, 0xFF, 0xFF, 0xFF } is the maximum)
         const std::array<uint8_t, 5> buffer = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-        zserio::BitStreamReader reader(buffer.data(), buffer.size());
+        BitStreamReader reader(buffer.data(), buffer.size());
         ASSERT_THROW(reader.readVarSize(), CppRuntimeException);
     }
 }

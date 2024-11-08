@@ -7,7 +7,7 @@ namespace choice_types
 namespace uint64_param_choice
 {
 
-using allocator_type = UInt64ParamChoice::allocator_type;
+using AllocatorType = UInt64ParamChoice::AllocatorType;
 using ChoiceTag = UInt64ParamChoice::ChoiceTag;
 
 class UInt64ParamChoiceTest : public ::testing::Test
@@ -30,7 +30,7 @@ TEST_F(UInt64ParamChoiceTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        UInt64ParamChoice data(allocator_type{});
+        UInt64ParamChoice data(AllocatorType{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

@@ -11,7 +11,7 @@ namespace parameterized_types
 namespace param_with_optional
 {
 
-using allocator_type = Holder::allocator_type;
+using AllocatorType = Holder::AllocatorType;
 
 class ParamWithOptionalTest : public ::testing::Test
 {

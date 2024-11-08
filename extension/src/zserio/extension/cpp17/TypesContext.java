@@ -18,8 +18,8 @@ public final class TypesContext
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BitBuffer", false, false, "zserio/BitBuffer.h");
             bytes = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Bytes", false, false, "zserio/Bytes.h");
-            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", false, false, "zserio/String.h");
-            vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "vector", true, false, "zserio/Vector.h");
+            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "String", false, false, "zserio/String.h");
+            vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Vector", true, false, "zserio/Vector.h");
         }
         else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
         {
@@ -28,17 +28,17 @@ public final class TypesContext
             bytes = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "Bytes", false, false, "zserio/pmr/Bytes.h");
             string = new NativeTypeDefinition(
-                    ZSERIO_PMR_PACKAGE_NAME, "string", false, false, "zserio/pmr/String.h");
+                    ZSERIO_PMR_PACKAGE_NAME, "String", false, false, "zserio/pmr/String.h");
             vector = new NativeTypeDefinition(
-                    ZSERIO_PMR_PACKAGE_NAME, "vector", true, false, "zserio/pmr/Vector.h");
+                    ZSERIO_PMR_PACKAGE_NAME, "Vector", true, false, "zserio/pmr/Vector.h");
         }
         else
         {
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BasicBitBuffer", true, true, "zserio/BitBuffer.h");
             bytes = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "BasicBytes", true, true, "zserio/Bytes.h");
-            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "string", true, true, "zserio/String.h");
-            vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "vector", true, true, "zserio/Vector.h");
+            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "String", true, true, "zserio/String.h");
+            vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Vector", true, true, "zserio/Vector.h");
         }
     }
 

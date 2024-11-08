@@ -23,7 +23,7 @@ using Bytes = BasicBytes<>;
 /**
  * Typedef for View on Zserio Byte s type.
  */
-using BytesView = zserio::Span<const uint8_t>;
+using BytesView = Span<const uint8_t>;
 
 namespace detail
 {

@@ -247,9 +247,9 @@ TYPED_TEST(OptionalTest, valueComparison)
 
 TYPED_TEST(OptionalTest, makeOptional)
 {
-    auto opt1 = ::zserio::make_optional(2.5);
+    auto opt1 = make_optional(2.5);
     ASSERT_TRUE((std::is_same_v<decltype(opt1), Optional<double>>));
-    auto opt2 = ::zserio::make_optional<BigObj>('x');
+    auto opt2 = make_optional<BigObj>('x');
     ASSERT_TRUE((std::is_same_v<decltype(opt2), Optional<BigObj>>));
 }
 
@@ -297,7 +297,7 @@ TYPED_TEST(OptionalTest, swap)
 TYPED_TEST(OptionalTest, hash)
 {
     typename TestFixture::StringOptional opt("auto");
-    zserio::calcHashCode(100, opt);
+    calcHashCode(100, opt);
     std::hash<typename TestFixture::StringOptional>()(opt);
 }
 

@@ -8,9 +8,9 @@ namespace array_types
 namespace variable_array_ternary_operator
 {
 
-using allocator_type = VariableArray::allocator_type;
+using AllocatorType = VariableArray::AllocatorType;
 template <typename T>
-using vector_type = zserio::vector<T, allocator_type>;
+using VectorType = zserio::Vector<T, AllocatorType>;
 
 class VariableArrayTernaryOperator : public ::testing::Test
 {
@@ -19,7 +19,7 @@ protected:
     {
         data.isFirstSizeUsed = isFirstSizeUsed;
         const zserio::UInt6 currentSize = (isFirstSizeUsed) ? data.firstSize : data.secondSize;
-        vector_type<VariableArrayElement>& array = data.array;
+        VectorType<VariableArrayElement>& array = data.array;
         array.clear();
         const size_t arraySize = static_cast<size_t>(currentSize) * static_cast<size_t>(currentSize);
         for (size_t i = 0; i < arraySize; ++i)

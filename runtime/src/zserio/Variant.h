@@ -81,9 +81,9 @@ class BasicVariant : public AllocatorHolder<ALLOC>
 
 public:
     using AllocatorHolder<ALLOC>::get_allocator;
-    using allocator_type = ALLOC;
-    using index_type = INDEX;
-    using variant_type = std::variant<typename detail::variant_element<T>::type...>;
+    using AllocatorType = ALLOC;
+    using IndexType = INDEX;
+    using VariantType = std::variant<typename detail::variant_element<T>::type...>;
 
     /**
      * Empty constructor.
@@ -118,7 +118,7 @@ public:
      */
     template <INDEX I, typename... ARGS, std::enable_if_t<!detail::is_heap_allocated_v<I, T...>>* = nullptr,
             std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
-    explicit BasicVariant(zserio::in_place_index_t<I>, ARGS&&... args) :
+    explicit BasicVariant(in_place_index_t<I>, ARGS&&... args) :
             m_data(std::in_place_index<static_cast<size_t>(I)>, std::forward<ARGS>(args)...)
     {}
 
@@ -132,7 +132,7 @@ public:
      * \throw can throw any exception thrown by T[I]
      */
     template <INDEX I, typename... ARGS, std::enable_if_t<!detail::is_heap_allocated_v<I, T...>>* = nullptr>
-    BasicVariant(zserio::in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
+    BasicVariant(in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
             AllocatorHolder<ALLOC>(allocator),
             m_data(std::in_place_index<static_cast<size_t>(I)>, std::forward<ARGS>(args)...)
     {}
@@ -148,7 +148,7 @@ public:
      */
     template <INDEX I, typename... ARGS, typename U = detail::type_at_t<static_cast<size_t>(I), T...>,
             std::enable_if_t<detail::is_heap_allocated_v<I, T...>>* = nullptr>
-    BasicVariant(zserio::in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
+    BasicVariant(in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
             AllocatorHolder<ALLOC>(allocator),
             m_data(std::in_place_index<static_cast<size_t>(I)>, allocateValue<U>(std::forward<ARGS>(args)...))
     {}
@@ -164,7 +164,7 @@ public:
     template <INDEX I, typename... ARGS, typename U = detail::type_at_t<static_cast<size_t>(I), T...>,
             std::enable_if_t<detail::is_heap_allocated_v<I, T...>>* = nullptr,
             std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
-    explicit BasicVariant(zserio::in_place_index_t<I>, ARGS&&... args) :
+    explicit BasicVariant(in_place_index_t<I>, ARGS&&... args) :
             m_data(std::in_place_index<static_cast<size_t>(I)>, allocateValue<U>(std::forward<ARGS>(args)...))
     {}
 
@@ -721,7 +721,7 @@ private:
         }
     }
 
-    variant_type m_data;
+    VariantType m_data;
 };
 
 // Using declarations
@@ -819,9 +819,9 @@ template <typename ALLOC, typename INDEX, typename... T>
 uint32_t calcHashCode(uint32_t seed, const BasicVariant<ALLOC, INDEX, T...>& var)
 {
     uint32_t result = seed;
-    result = zserio::calcHashCode(result, static_cast<size_t>(var.index()));
+    result = calcHashCode(result, static_cast<size_t>(var.index()));
     var.visit([&result](const auto& value) {
-        result = zserio::calcHashCode(result, value);
+        result = calcHashCode(result, value);
     });
     return result;
 }

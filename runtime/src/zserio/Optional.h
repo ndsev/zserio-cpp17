@@ -101,8 +101,8 @@ class BasicOptional : public AllocatorHolder<ALLOC>
 
 public:
     using AllocatorHolder<ALLOC>::get_allocator_ref;
-    using allocator_type = ALLOC;
-    using optional_type = std::optional<typename detail::optional_element<T>::type>;
+    using AllocatorType = ALLOC;
+    using OptionalType = std::optional<typename detail::optional_element<T>::type>;
 
     /**
      * Default constructor.
@@ -679,7 +679,7 @@ private:
         }
     }
 
-    optional_type m_data;
+    OptionalType m_data;
 };
 
 // Using declarations
@@ -701,7 +701,7 @@ uint32_t calcHashCode(uint32_t seed, const BasicOptional<ALLOC, T>& var)
     uint32_t result = seed;
     if (var)
     {
-        result = zserio::calcHashCode(result, *var);
+        result = calcHashCode(result, *var);
     }
     return result;
 }

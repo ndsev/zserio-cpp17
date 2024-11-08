@@ -106,7 +106,7 @@ struct NumericArrayTraits
         return element;
     }
 
-    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(reader, element);
     }
@@ -122,8 +122,8 @@ struct IntegralArrayTraits : NumericArrayTraits<T>
 {
     using NumericArrayTraits<T>::read;
 
-    static void read(DeltaContext& context, zserio::BitStreamReader& reader, const detail::DummyArrayOwner&,
-            T& element, size_t)
+    static void read(
+            DeltaContext& context, BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(context, reader, element);
     }
@@ -161,7 +161,7 @@ struct ArrayTraits<Bytes>
         return element;
     }
 
-    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&, Bytes& element, size_t)
+    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, Bytes& element, size_t)
     {
         detail::read(reader, element);
     }
@@ -171,13 +171,13 @@ template <typename ALLOC>
 struct ArrayTraits<std::basic_string<char, std::char_traits<char>, ALLOC>>
 {
     static constexpr std::string_view at(
-            const detail::DummyArrayOwner&, const basic_string<ALLOC>& element, size_t)
+            const detail::DummyArrayOwner&, const BasicString<ALLOC>& element, size_t)
     {
         return element;
     }
 
-    static void read(zserio::BitStreamReader& reader, const detail::DummyArrayOwner&,
-            basic_string<ALLOC>& element, size_t)
+    static void read(
+            BitStreamReader& reader, const detail::DummyArrayOwner&, BasicString<ALLOC>& element, size_t)
     {
         detail::read(reader, element);
     }

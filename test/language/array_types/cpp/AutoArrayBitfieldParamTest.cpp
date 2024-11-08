@@ -9,16 +9,16 @@ namespace array_types
 namespace auto_array_bitfield_param
 {
 
-using allocator_type = ParameterizedBitfieldLength::allocator_type;
+using AllocatorType = ParameterizedBitfieldLength::AllocatorType;
 template <typename T>
-using vector_type = zserio::vector<T, allocator_type>;
+using VectorType = zserio::Vector<T, AllocatorType>;
 
 class AutoArrayBitfieldParamTest : public ::testing::Test
 {
 protected:
     void fillParameterizedBitfieldLength(ParameterizedBitfieldLength& parameterizedBitfieldLength)
     {
-        vector_type<zserio::DynUInt16<>>& dynamicBitfieldArray =
+        VectorType<zserio::DynUInt16<>>& dynamicBitfieldArray =
                 parameterizedBitfieldLength.dynamicBitfieldArray;
         for (uint16_t i = 0; i < DYNAMIC_BITFIELD_ARRAY_SIZE; ++i)
         {

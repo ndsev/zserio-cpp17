@@ -39,6 +39,19 @@ enum class DummyEnum : int8_t
     TWO
 };
 
+class DummyObjectWithAllocatorType
+{
+public:
+    using AllocatorType = std::allocator<uint8_t>;
+};
+
+class DummyObjectWithBothAllocatorTypes
+{
+public:
+    using AllocatorType = std::allocator<uint8_t>;
+    using allocator_type = std::allocator<uint8_t>;
+};
+
 } // namespace
 
 TEST(TraitsTest, isAllocator)
@@ -63,6 +76,27 @@ TEST(TraitsTest, isFirstAllocator)
     assertFalse(is_first_allocator<std::vector<uint8_t>, std::allocator<uint8_t>>::value);
     assertFalse(is_first_allocator<char, std::allocator<uint8_t>, std::allocator<uint8_t>>::value);
     assertFalse(is_first_allocator<int, std::allocator<uint8_t>, std::allocator<uint8_t>>::value);
+}
+
+TEST(TraitsTest, hasStdAllocator)
+{
+    assertTrue(has_std_allocator<std::string>::value);
+    assertFalse(has_std_allocator<DummyObjectWithAllocatorType>::value);
+    assertTrue(has_std_allocator<DummyObjectWithBothAllocatorTypes>::value);
+}
+
+TEST(TraitsTest, hasZsAllocator)
+{
+    assertFalse(has_zs_allocator<std::string>::value);
+    assertTrue(has_zs_allocator<DummyObjectWithAllocatorType>::value);
+    assertTrue(has_zs_allocator<DummyObjectWithBothAllocatorTypes>::value);
+}
+
+TEST(TraitsTest, hasAllocator)
+{
+    assertTrue(has_allocator<std::string>::value);
+    assertTrue(has_allocator<DummyObjectWithAllocatorType>::value);
+    assertTrue(has_allocator<DummyObjectWithBothAllocatorTypes>::value);
 }
 
 TEST(TraitsTest, isBitmask)

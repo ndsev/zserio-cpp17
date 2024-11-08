@@ -21,13 +21,13 @@
 </#if>
 struct ${name}
 {
-    using allocator_type = ${types.allocator.default};
+    using AllocatorType = ${types.allocator.default};
 <#if structure_has_recursive_optional_field(fieldList)>
     using IS_RECURSIVE = void;
 </#if>
 
     ${name}() noexcept;
-    explicit ${name}(const allocator_type& allocator) noexcept;
+    explicit ${name}(const AllocatorType& allocator) noexcept;
 <#list fieldList>
 
     explicit ${name}(

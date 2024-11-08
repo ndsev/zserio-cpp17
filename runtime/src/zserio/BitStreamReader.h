@@ -251,7 +251,7 @@ public:
         if ((beginBitPosition & 0x07U) != 0)
         {
             // we are not aligned to byte
-            vector<uint8_t, ALLOC> value{alloc};
+            Vector<uint8_t, ALLOC> value{alloc};
             value.reserve(len);
             for (size_t i = 0; i < len; ++i)
             {
@@ -276,19 +276,19 @@ public:
      * \return Read string.
      */
     template <typename ALLOC = std::allocator<char>>
-    basic_string<ALLOC> readString(const ALLOC& alloc = ALLOC())
+    BasicString<ALLOC> readString(const ALLOC& alloc = ALLOC())
     {
         const size_t len = static_cast<size_t>(readVarSize());
         const BitPosType beginBitPosition = getBitPosition();
         if ((beginBitPosition & 0x07U) != 0)
         {
             // we are not aligned to byte
-            basic_string<ALLOC> value{alloc};
+            BasicString<ALLOC> value{alloc};
             value.reserve(len);
             for (size_t i = 0; i < len; ++i)
             {
-                const char readCharacter = ::std::char_traits<char>::to_char_type(
-                        static_cast<::std::char_traits<char>::int_type>(readByte()));
+                const char readCharacter = std::char_traits<char>::to_char_type(
+                        static_cast<std::char_traits<char>::int_type>(readByte()));
                 value.push_back(readCharacter);
             }
             return value;
@@ -298,7 +298,7 @@ public:
             // we are aligned to byte
             setBitPosition(beginBitPosition + len * 8);
             Span<const uint8_t>::iterator beginIt = m_context.buffer.begin() + beginBitPosition / 8;
-            return basic_string<ALLOC>(beginIt, beginIt + len, alloc);
+            return BasicString<ALLOC>(beginIt, beginIt + len, alloc);
         }
     }
 

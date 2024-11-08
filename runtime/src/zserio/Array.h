@@ -38,7 +38,7 @@ public:
     using ValueType = typename RawArray::value_type;
 
     /** Typedef for allocator type. */
-    using allocator_type = typename RawArray::allocator_type;
+    using AllocatorType = typename RawArray::allocator_type;
 
     /** Typedef for the array traits. */
     using Traits = ARRAY_TRAITS;
@@ -96,7 +96,7 @@ public:
      */
     bool operator==(const Array& other) const
     {
-        if constexpr (std::is_same_v<zserio::View<ValueType>,
+        if constexpr (std::is_same_v<View<ValueType>,
                               std::invoke_result_t<decltype(&Array::at), Array, size_t>>)
         {
             const size_t thisSize = size();
@@ -131,7 +131,7 @@ public:
      */
     bool operator<(const Array& other) const
     {
-        if constexpr (std::is_same_v<zserio::View<ValueType>,
+        if constexpr (std::is_same_v<View<ValueType>,
                               std::invoke_result_t<decltype(&Array::at), Array, size_t>>)
         {
             const size_t thisSize = size();

@@ -16,12 +16,12 @@ namespace zserio
  * Automatically rebinds the given allocator.
  */
 template <typename ALLOC>
-using basic_string = std::basic_string<char, std::char_traits<char>, RebindAlloc<ALLOC, char>>;
+using BasicString = std::basic_string<char, std::char_traits<char>, RebindAlloc<ALLOC, char>>;
 
 /**
  * Typedef to std::string provided for convenience - using std::allocator<uint8_t>.
  */
-using string = basic_string<std::allocator<char>>;
+using String = BasicString<std::allocator<char>>;
 
 namespace detail
 {
