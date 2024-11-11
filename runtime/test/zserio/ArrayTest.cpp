@@ -34,11 +34,6 @@ template <>
 class View<TestObject>
 {
 public:
-    struct ZserioPackingContext
-    {
-        DeltaContext field;
-    };
-
     explicit View(const TestObject& data) :
             m_data(data)
     {}
@@ -71,6 +66,12 @@ namespace detail
 {
 
 template <>
+struct PackingContext<TestObject>
+{
+    DeltaContext field;
+};
+
+template <>
 BitSize bitSizeOf(const View<TestObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
@@ -93,14 +94,13 @@ View<TestObject> read(BitStreamReader& reader, TestObject& data)
 }
 
 template <>
-void initContext(typename View<TestObject>::ZserioPackingContext& packingContext, const View<TestObject>& view)
+void initContext(PackingContext<TestObject>& packingContext, const View<TestObject>& view)
 {
     initContext(packingContext.field, view.field());
 }
 
 template <>
-BitSize bitSizeOf(typename View<TestObject>::ZserioPackingContext& packingContext, const View<TestObject>& view,
-        BitSize bitPosition)
+BitSize bitSizeOf(PackingContext<TestObject>& packingContext, const View<TestObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
     endBitPosition += bitSizeOf(packingContext.field, view.field(), endBitPosition);
@@ -108,15 +108,13 @@ BitSize bitSizeOf(typename View<TestObject>::ZserioPackingContext& packingContex
 }
 
 template <>
-void write(typename View<TestObject>::ZserioPackingContext& packingContext, BitStreamWriter& writer,
-        const View<TestObject>& view)
+void write(PackingContext<TestObject>& packingContext, BitStreamWriter& writer, const View<TestObject>& view)
 {
     write(packingContext.field, writer, view.field());
 }
 
 template <>
-void read(typename View<TestObject>::ZserioPackingContext& packingContext, BitStreamReader& reader,
-        TestObject& data)
+void read(PackingContext<TestObject>& packingContext, BitStreamReader& reader, TestObject& data)
 {
 
     read(packingContext.field, reader, data.field);

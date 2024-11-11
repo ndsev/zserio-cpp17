@@ -21,14 +21,6 @@ namespace zserio
 template <typename T, typename = void>
 struct ArrayTraits;
 
-/**
- * Packed array traits provides packing related functionality for all zserio and user generated types.
- *
- * This information is provided via specializations of the PackedArrayTraits strucure.
- */
-template <typename ARRAY_TRAITS, typename = void>
-struct PackedArrayTraits;
-
 namespace detail
 {
 
@@ -51,7 +43,7 @@ template <typename T, typename V = void>
 using array_owner_type_t = typename array_owner_type<T, V>::type;
 
 template <typename T>
-struct is_dummy : std::is_same<T, DummyArrayOwner>
+struct is_dummy : std::is_same<DummyArrayOwner, T>
 {};
 
 template <typename T>
@@ -65,13 +57,20 @@ struct packing_context_type
 };
 
 template <typename T>
-struct packing_context_type<T, typename std::enable_if<has_zserio_packing_context<View<T>>::value>::type>
+struct packing_context_type<T, std::void_t<decltype(PackingContext<T>{})>>
 {
-    using type = typename View<T>::ZserioPackingContext;
+    using type = PackingContext<T>;
 };
 
 template <typename T, typename V = void>
 using packing_context_type_t = typename packing_context_type<T, V>::type;
+
+template <typename T>
+struct is_delta : std::is_same<DeltaContext, T>
+{};
+
+template <typename T>
+inline constexpr bool is_delta_v = is_delta<T>::value;
 
 } // namespace detail
 
@@ -90,8 +89,8 @@ struct ArrayTraits
     }
 
     template <typename OBJECT_ = OBJECT>
-    static std::enable_if_t<has_zserio_packing_context_v<View<OBJECT_>>> read(
-            typename View<OBJECT_>::ZserioPackingContext& packingContext, BitStreamReader& reader,
+    static std::enable_if_t<!detail::is_delta_v<detail::packing_context_type_t<OBJECT_>>> read(
+            typename detail::PackingContext<OBJECT_>& packingContext, BitStreamReader& reader,
             const detail::DummyArrayOwner&, OBJECT& element, size_t)
     {
         detail::read(packingContext, reader, element);

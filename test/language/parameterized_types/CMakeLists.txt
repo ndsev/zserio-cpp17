@@ -21,7 +21,7 @@ add_custom_test(parameterized_types
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ArrayElementParamWithOptionalTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DynamicBitfieldParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterizedParamTest.cpp
-        #${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterizedNestedInArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterizedNestedInArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParamWithOptionalTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SimpleParamTest.cpp
     GENERATED_SOURCES

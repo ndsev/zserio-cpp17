@@ -1,1 +1,4 @@
+bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion/Block.h
+bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion/Block.cpp
+
 misc-no-recursion # reports also runtime

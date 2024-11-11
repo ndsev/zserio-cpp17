@@ -8,10 +8,13 @@
 <@runtime_version_check generatorVersion/>
 
 #include <memory>
-#include <zserio/View.h>
+<#if isPackable && usedInPackedArray>
+#include <zserio/DeltaContext.h>
+</#if>
 <#if structure_has_optional_field(fieldList)>
 #include <zserio/Optional.h>
 </#if>
+#include <zserio/View.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>
@@ -76,11 +79,11 @@ public:
             (void)detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
         }
         <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
-        static void read(DeltaContext& context, BitStreamReader& reader,
+        static void read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
                 const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
                 <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
         {
-            detail::read(context, reader, element<@field_view_owner_indirect_parameters field/>);
+            detail::read(packingContext, reader, element<@field_view_owner_indirect_parameters field/>);
         }
         </#if>
     };
@@ -137,6 +140,36 @@ View<${fullName}> read(BitStreamReader& reader, ${fullName}& data<#rt>
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
         <#lt>);
+<#if isPackable && usedInPackedArray>
+
+template <>
+struct PackingContext<${fullName}>
+{
+<#list fieldList as field>
+    <#if field_needs_packing_context(field) && !(field.optional?? && field.optional.isRecursive)>
+    <@packing_context_type_name field/> <@packing_context_member_name field/>;
+    </#if>
+</#list>
+};
+
+template <>
+void initContext(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view);
+
+template <>
+BitSize bitSizeOf(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view,
+        BitSize bitPosition);
+
+template <>
+void write(PackingContext<${fullName}>& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
+
+template <>
+void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
+    <#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+        <#lt>);
+</#if>
 <@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>

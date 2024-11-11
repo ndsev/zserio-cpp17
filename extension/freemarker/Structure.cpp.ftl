@@ -240,7 +240,7 @@ void validate(const View<${fullName}>&)
     // TODO:
 }
 
-<#macro structure_view_bitsizeof field indent>
+<#macro structure_view_bitsizeof field indent packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
 ${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
@@ -249,6 +249,7 @@ ${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
 ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
 ${I}endBitPosition += detail::bitSizeOf<@array_packed_suffix field/>(<#rt>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt><#if field.optional??>*</#if>view.${field.getterName}(), endBitPosition);
 </#macro>
 template <>
@@ -280,7 +281,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 </#if>
 }
 
-<#macro structure_view_write field indent>
+<#macro structure_view_write field indent packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
 ${I}writer.alignTo(${field.alignmentValue});
@@ -289,6 +290,7 @@ ${I}writer.alignTo(${field.alignmentValue});
 ${I}writer.alignTo(8);
     </#if>
 ${I}detail::write<@array_packed_suffix field/>(<#rt>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, <#if field.optional??>*</#if>view.${field.getterName}());
 </#macro>
 template <>
@@ -320,7 +322,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 </#list>
 }
 
-<#macro structure_view_read compoundName field indent>
+<#macro structure_view_read compoundName field indent packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
 ${I}in.alignTo(${field.alignmentValue});
@@ -330,6 +332,7 @@ ${I}in.alignTo(8);
     </#if>
 ${I}<#if field.compound??>(void)</#if>detail::read<@array_packed_suffix field/><#rt>
         <#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#t>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
         <#lt><@field_view_view_indirect_parameters field/>);
 </#macro>
@@ -365,6 +368,124 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 </#list>
     return view;
 }
+<#if isPackable && usedInPackedArray>
+
+template <>
+void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        <#lt>const View<${fullName}>&<#if needs_packing_context(fieldList)> view</#if>)
+{
+    <#list fieldList as field>
+        <#if field_needs_packing_context(field)>
+            <#if field.optional??>
+                <#if field.optional.viewIndirectClause??>
+    if (${field.optional.viewIndirectClause})
+                <#else>
+    if (view.${field.getterName}())
+                </#if>
+    {
+        initContext(<@packing_context field/>, *view.${field.getterName}());
+    }
+            <#else>
+    initContext(<@packing_context field/>, view.${field.getterName}());
+            </#if>
+        </#if>
+    </#list>
+}
+
+template <>
+BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+    <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+
+        <#list fieldList as field>
+            <#if field.optional??>
+                <#if field.optional.viewIndirectClause??>
+    if (${field.optional.viewIndirectClause})
+                <#else>
+    endBitPosition += detail::bitSizeOf(Bool());
+    if (view.${field.getterName}())
+                </#if>
+    {
+        <@structure_view_bitsizeof field, 2, true/>
+    }
+            <#else>
+    <@structure_view_bitsizeof field, 1, true/>
+            </#if>
+        </#list>
+
+    return endBitPosition - bitPosition;
+    <#else>
+    return 0;
+    </#if>
+}
+
+template <>
+void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
+{
+<#list fieldList as field>
+    <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
+    if (${field.optional.viewIndirectClause})
+        <#else>
+    if (view.${field.getterName}())
+        </#if>
+    {
+        <#if !field.optional.viewIndirectClause??>
+        writer.writeBool(true);
+        </#if>
+        <@structure_view_write field, 2, true/>
+    }
+        <#if !field.optional.viewIndirectClause??>
+    else
+    {
+        writer.writeBool(false);
+    }
+        </#if>
+    <#else>
+    <@structure_view_write field, 1, true/>
+    </#if>
+</#list>
+}
+
+template <>
+void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+    <#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+        <#lt>)
+{
+    View<${fullName}> view(data<#rt>
+<#list parameterList as parameter>
+            <#lt>,
+            <#nt><@parameter_view_arg_name parameter/><#rt>
+</#list>
+            <#lt>);
+<#list fieldList as field>
+    <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
+    if (${field.optional.viewIndirectClause})
+        <#else>
+    if (reader.readBool())
+        </#if>
+    {
+        data.<@field_data_member_name field/> = <@field_data_type_name field/>(<#rt>
+                <#lt><#if field.typeInfo.needsAllocator>data.<@field_data_member_name field/>.get_allocator()</#if>);
+        <@structure_view_read fullName, field, 2, true/>
+    }
+    <#else>
+    <@structure_view_read fullName, field, 1, true/>
+    </#if>
+</#list>
+    (void)view;
+}
+</#if>
 <@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>

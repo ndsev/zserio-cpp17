@@ -186,6 +186,42 @@
     </#if>
 </#macro>
 
+<#macro packing_context_member_name field>
+    ${field.name}<#t>
+</#macro>
+
+<#macro packing_context_type_name field needsNamespace=false>
+    <#if field.compound??>
+        <#if needsNamespace>detail::</#if>PackingContext<${field.typeInfo.typeFullName}><#t>
+    <#else>
+        DeltaContext<#t>
+    </#if>
+</#macro>
+
+<#macro packing_context field>
+    <#if field.optional?? && field.optional.isRecursive>
+    packingContext<#t>
+    <#else>
+    packingContext.<@packing_context_member_name field/><#t>
+    </#if>
+</#macro>
+
+<#function field_needs_packing_context field>
+    <#if field.isPackable && !field.array??>
+        <#return true>
+    </#if>
+    <#return false>
+</#function>
+
+<#function needs_packing_context fieldList>
+    <#list fieldList as field>
+        <#if field_needs_packing_context(field)>
+            <#return true>
+        </#if>
+    </#list>
+    <#return false>
+</#function>
+
 <#function array_needs_custom_traits field>
     <#return field.array?? && ((field.compound?? && field.compound.parameters?has_content) ||
             field.typeInfo.isDynamicBitField)>

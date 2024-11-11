@@ -88,6 +88,19 @@ inline uint32_t calcHashCode(uint32_t seedValue, double value)
 }
 
 /**
+ * Calculates hash code of the given bool wrapper value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param value Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+inline uint32_t calcHashCode(uint32_t seedValue, Bool value)
+{
+    return calcHashCode(seedValue, static_cast<Bool::ValueType>(value));
+}
+
+/**
  * Calculates hash code of the given int wrapper value using the given seed value.
  *
  * \param seedValue Seed value (current hash code).
@@ -116,16 +129,17 @@ inline uint32_t calcHashCode(uint32_t seedValue, detail::DynIntWrapper<VALUE_TYP
 }
 
 /**
- * Calculates hash code of the given bool wrapper value using the given seed value.
+ * Calculates hash code of the given variable int wrapper value using the given seed value.
  *
  * \param seedValue Seed value (current hash code).
  * \param value Value for which to calculate the hash code.
  *
  * \return Calculated hash code.
  */
-inline uint32_t calcHashCode(uint32_t seedValue, Bool value)
+template <typename VALUE_TYPE, detail::VarIntType VAR_TYPE>
+inline uint32_t calcHashCode(uint32_t seedValue, detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE> value)
 {
-    return calcHashCode(seedValue, static_cast<Bool::ValueType>(value));
+    return calcHashCode(seedValue, static_cast<VALUE_TYPE>(value));
 }
 
 /**

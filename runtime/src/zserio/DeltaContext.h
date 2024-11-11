@@ -308,20 +308,21 @@ private:
 namespace detail
 {
 
+template <typename T>
+struct PackingContext;
+
 // TODO[Mi-L@]: comments?!
 template <typename T>
-void initContext(typename View<T>::ZserioPackingContext& packingContext, const View<T>& view);
+void initContext(PackingContext<T>& packingContext, const View<T>& view);
 
 template <typename T>
-BitSize bitSizeOf(
-        typename View<T>::ZserioPackingContext& packingContext, const View<T>& view, BitSize bitPosition);
+BitSize bitSizeOf(PackingContext<T>& packingContext, const View<T>& view, BitSize bitPosition);
 
 template <typename T>
-void write(
-        typename View<T>::ZserioPackingContext& packingContext, BitStreamWriter& writer, const View<T>& view);
+void write(PackingContext<T>& packingContext, BitStreamWriter& writer, const View<T>& view);
 
 template <typename T, typename... ARGS>
-void read(typename View<T>::ZserioPackingContext& packingContext, BitStreamReader& reader, T& data, ARGS...);
+void read(PackingContext<T>& packingContext, BitStreamReader& reader, T& data, ARGS...);
 
 inline void initContext(DeltaContext& deltaContext, Bool value)
 {
