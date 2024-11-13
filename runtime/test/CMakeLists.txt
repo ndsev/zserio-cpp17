@@ -19,6 +19,7 @@ endif ()
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/AllocatorHolderTest.cpp
+    zserio/ArrayLengthExceptionTest.cpp
     zserio/ArrayTest.cpp
     zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp
@@ -28,6 +29,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/BitStreamWriterTest.cpp
     zserio/BuiltInOperatorsTest.cpp
     zserio/BytesTest.cpp
+    zserio/ChoiceCaseExceptionTest.cpp
     zserio/CppRuntimeExceptionTest.cpp
     zserio/CppRuntimeVersionTest.cpp
     zserio/ConstraintExceptionTest.cpp
@@ -36,6 +38,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/FloatUtilTest.cpp
     zserio/HashCodeUtilTest.cpp
     zserio/OutOfRangeExceptionTest.cpp
+    zserio/MissedOptionalExceptionTest.cpp
     zserio/OptionalTest.cpp
     zserio/SerializeUtilTest.cpp
     zserio/SizeConvertUtilTest.cpp
@@ -45,6 +48,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/TrackingAllocator.h
     zserio/TraitsTest.cpp
     zserio/TypesTest.cpp
+    zserio/UnionCaseExceptionTest.cpp
     zserio/VariantTest.cpp
 )
 

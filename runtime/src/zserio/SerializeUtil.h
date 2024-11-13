@@ -49,15 +49,15 @@ struct is_first_alloc : is_first_allocator<std::decay_t<ARGS>...>
  *
  * \return Bit buffer containing the serialized object.
  *
- * \throw CppRuntimeException When serialization fails.
+ * \throw CppRuntimeException When validation or serialization fails.
  */
 template <typename T, typename ALLOC>
 BasicBitBuffer<ALLOC> serialize(const View<T>& view, const ALLOC& allocator)
 {
+    detail::validate(view);
     const BitSize bitSize = detail::bitSizeOf(view, 0);
     BasicBitBuffer<ALLOC> buffer(bitSize, allocator);
     BitStreamWriter writer(buffer);
-    detail::validate(view);
     detail::write(writer, view);
 
     return buffer;

@@ -3,6 +3,7 @@
 <#include "CompoundParameter.inc.ftl">
 <@file_header generatorDescription/>
 
+#include <zserio/ChoiceCaseException.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 <@system_includes cppSystemIncludes/>
@@ -174,7 +175,7 @@ ${I}return true; // empty
 </#macro>
 <#macro choice_no_match name indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw ::zserio::CppRuntimeException("No match in choice ${fullName}!");
+${I}throw CppRuntimeException("No match in choice ${fullName}!");
 </#macro>
 bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
@@ -239,10 +240,38 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
+<#macro choice_validate_member member indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if member.field??>
+${I}// check choice case
+${I}if (view.zserioChoiceTag() != ${fullName}::ChoiceTag::<@choice_tag_name member.field/>)
+${I}{
+${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
+${I}            " != " << static_cast<size_t>(${fullName}::ChoiceTag::<@choice_tag_name member.field/>) << ")!";
+${I}}
+        <#if member.field.array?? && member.field.array.viewIndirectLength??>
+${I}// check array length
+${I}validate(view.${member.field.getterName}(), static_cast<size_t>(${member.field.array.viewIndirectLength}),
+${I}        "'${name}.${member.field.name}'");
+        </#if>
+        <#if !member.field.array?? && member.field.typeInfo.isNumeric>
+${I}// check range
+${I}validate(<#if member.field.optional??>*</#if>view.${member.field.getterName}(), "'${name}.${member.field.name}'");
+        </#if>
+    <#else>
+${I}// empty
+    </#if>
+</#macro>
+<#macro choice_validate_no_match name indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}throw ChoiceCaseException("No match in choice ${fullName}!");
+</#macro>
 template <>
-void validate(const View<${fullName}>&)
+void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
-    // TODO:
+<#if fieldList?has_content>
+    <@choice_switch "choice_validate_member", "choice_validate_no_match", viewIndirectSelectorExpression/>
+</#if>
 }
 
 <#macro choice_bitsizeof_member member indent>
@@ -337,12 +366,16 @@ ${I}result = ::zserio::calcHashCode(result, view.${member.field.getterName}());
 ${I}// empty
     </#if>
 </#macro>
+<#macro choice_hash_no_match name indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}throw ::zserio::CppRuntimeException("No match in choice ${fullName}!");
+</#macro>
 size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
         <#lt>const ::zserio::View<${fullName}>&<#if fieldList?has_content> view</#if>) const
 {
     uint32_t result = ::zserio::HASH_SEED;
 <#if fieldList?has_content>
-    <@choice_switch "choice_hash_member", "choice_no_match", viewIndirectSelectorExpression/>
+    <@choice_switch "choice_hash_member", "choice_hash_no_match", viewIndirectSelectorExpression/>
 
 </#if>
     return static_cast<size_t>(result);

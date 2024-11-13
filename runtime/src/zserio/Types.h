@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <string_view>
 #include <type_traits>
 
 #include "zserio/BitSize.h"
@@ -273,15 +274,16 @@ struct needs_range_check<FloatWrapper<VALUE_TYPE, FLOAT_TYPE>> : std::false_type
 template <typename T>
 struct RangeChecker
 {
-    static constexpr void check(typename T::ValueType value)
+    static constexpr void check(typename T::ValueType value, std::string_view fieldName = "")
     {
+        std::string_view fieldNamePrefix = (fieldName.empty()) ? "" : " for field ";
         if constexpr (std::is_signed_v<typename T::ValueType>)
         {
             if (value < NumericLimits<T>::min() || value > NumericLimits<T>::max())
             {
                 throw OutOfRangeException("Value '")
                         << value << "' out of range '<" << NumericLimits<T>::min() << ", "
-                        << NumericLimits<T>::max() << ">'!";
+                        << NumericLimits<T>::max() << ">'" << fieldNamePrefix << fieldName << "!";
             }
         }
         else
@@ -289,7 +291,8 @@ struct RangeChecker
             if (value > NumericLimits<T>::max())
             {
                 throw OutOfRangeException("Value '")
-                        << value << "' out of bounds '" << NumericLimits<T>::max() << "'!";
+                        << value << "' out of bounds '" << NumericLimits<T>::max() << "'" << fieldNamePrefix
+                        << fieldName << "!";
             }
         }
     }
@@ -298,8 +301,9 @@ struct RangeChecker
 template <typename VALUE_TYPE>
 struct RangeChecker<DynIntWrapper<VALUE_TYPE, 0>>
 {
-    static constexpr void check(VALUE_TYPE value, BitSize numBits)
+    static constexpr void check(VALUE_TYPE value, BitSize numBits, std::string_view fieldName = "")
     {
+        std::string_view fieldNamePrefix = (fieldName.empty()) ? "" : " for field ";
         if constexpr (std::is_signed_v<VALUE_TYPE>)
         {
             if (value < NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::min(numBits) ||
@@ -308,7 +312,8 @@ struct RangeChecker<DynIntWrapper<VALUE_TYPE, 0>>
                 throw OutOfRangeException("Value '")
                         << value << "' out of range '<"
                         << NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::min(numBits) << ", "
-                        << NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits) << ">'!";
+                        << NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits) << ">'" << fieldNamePrefix
+                        << fieldName << "!";
             }
         }
         else
@@ -317,7 +322,8 @@ struct RangeChecker<DynIntWrapper<VALUE_TYPE, 0>>
             {
                 throw OutOfRangeException("Value '")
                         << value << "' out of bounds '"
-                        << NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits) << "'!";
+                        << NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits) << "'" << fieldNamePrefix
+                        << fieldName << "!";
             }
         }
     }
@@ -852,6 +858,23 @@ CppRuntimeException& operator<<(CppRuntimeException& exception, detail::NumericT
 
 namespace detail
 {
+
+template <typename T,
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+void validate(T wrapper, std::string_view fieldName)
+{
+    if constexpr (detail::needs_range_check_v<T>)
+    {
+        detail::RangeChecker<T>::check(wrapper, fieldName);
+    }
+}
+
+template <typename T,
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+void validate(T wrapper, BitSize numBits, std::string_view fieldName)
+{
+    detail::RangeChecker<T>::check(wrapper, numBits, fieldName);
+}
 
 inline BitSize bitSizeOf(BoolWrapper, BitSize = 0)
 {

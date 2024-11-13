@@ -6,6 +6,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
+#include <zserio/UnionCaseException.h>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -94,7 +95,7 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 }
 </#list>
 
-<#macro union_switch fieldActionMacroName switchExpression indent=1>
+<#macro union_switch fieldActionMacroName noMatchMacroName switchExpression indent=1>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}switch (${switchExpression})
 ${I}{
@@ -107,8 +108,12 @@ ${I}    break;
         </#if>
     </#list>
 ${I}default:
-        throw ::zserio::CppRuntimeException("No match in union ${fullName}!");
+        <@.vars[noMatchMacroName] name, indent+1/>
 ${I}}
+</#macro>
+<#macro union_no_match name indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}throw CppRuntimeException("No case set in union ${fullName}!");
 </#macro>
 <#macro union_compare_field field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
@@ -130,7 +135,7 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
         return false;
     }
 
-    <@union_switch "union_compare_field", "lhs.zserioChoiceTag()"/>
+    <@union_switch "union_compare_field", "union_no_match", "lhs.zserioChoiceTag()"/>
 <#else>
     return true;
 </#if>
@@ -156,7 +161,7 @@ bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterLi
         return lhs.zserioChoiceTag() < rhs.zserioChoiceTag();
     }
 
-    <@union_switch "union_less_than_field", "lhs.zserioChoiceTag()"/>
+    <@union_switch "union_less_than_field", "union_no_match", "lhs.zserioChoiceTag()"/>
 <#else>
     return false;
 </#if>
@@ -183,10 +188,28 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
+<#macro union_validate_field field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.array?? && field.array.viewIndirectLength??>
+${I}// check array length
+${I}validate(view.${field.getterName}(), static_cast<size_t>(${field.array.viewIndirectLength})
+${I}        "'${name}.${field.name}'");
+    </#if>
+    <#if !field.array?? && field.typeInfo.isNumeric>
+${I}// check range
+${I}validate(<#if field.optional??>*</#if>view.${field.getterName}(), "'${name}.${field.name}'");
+    </#if>
+</#macro>
+<#macro union_validate_no_match name indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}throw UnionCaseException("No case set in union '${name}'!");
+</#macro>
 template <>
-void validate(const View<${fullName}>&)
+void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
-    // TODO:
+<#if fieldList?has_content>
+    <@union_switch "union_validate_field", "union_validate_no_match", "view.zserioChoiceTag()"/>
+</#if>
 }
 
 <#macro union_bitsizeof_field field indent>
@@ -200,7 +223,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
     endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
-    <@union_switch "union_bitsizeof_field", "view.zserioChoiceTag()"/>
+    <@union_switch "union_bitsizeof_field", "union_no_match", "view.zserioChoiceTag()"/>
 
     return endBitPosition - bitPosition;
 <#else>
@@ -218,7 +241,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 {
 <#if fieldList?has_content>
     write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
-    <@union_switch "union_write_field", "view.zserioChoiceTag()"/>
+    <@union_switch "union_write_field", "union_no_match", "view.zserioChoiceTag()"/>
 </#if>
 }
 
@@ -248,7 +271,7 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 
     VarSize choiceTag;
     read(reader, choiceTag);
-    <@union_switch "union_read_field", "choiceTag"/>
+    <@union_switch "union_read_field", "union_no_match", "choiceTag"/>
 </#if>
 
     return view;
@@ -270,12 +293,16 @@ size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_conten
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}result = ::zserio::calcHashCode(result, view.${field.getterName}());
 </#macro>
+<#macro union_hash_no_match name indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}throw ::zserio::CppRuntimeException("No case set in union ${fullName}!");
+</#macro>
 size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
         <#lt>const ::zserio::View<${fullName}>&<#if fieldList?has_content> view</#if>) const
 {
     uint32_t result = ::zserio::HASH_SEED;
 <#if fieldList?has_content>
-    <@union_switch "union_hash_field", "view.zserioChoiceTag()"/>
+    <@union_switch "union_hash_field", "union_hash_no_match", "view.zserioChoiceTag()"/>
 
 </#if>
     return static_cast<size_t>(result);

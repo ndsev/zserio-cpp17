@@ -27,7 +27,7 @@ bugprone-use-after-move:src/zserio/Variant.h:675
 cert-dcl58-cpp:src/zserio/BitBuffer.h:535
 cert-dcl58-cpp:src/zserio/Optional.h:1161
 cert-dcl58-cpp:src/zserio/Variant.h:835
-cert-dcl58-cpp:src/zserio/View.h:192
+cert-dcl58-cpp:src/zserio/View.h:200
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112
@@ -79,8 +79,8 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
 
 # This is necessary for implementation of reading and writing to the file.
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:18
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:48
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:49
 
 # Optional follows std::optional so the ctors should be implicit.
 google-explicit-constructor:src/zserio/Optional.h:117
@@ -97,15 +97,15 @@ google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
 
 # This is requirement on type wrappers in Zserio C++17 extension.
-google-explicit-constructor:src/zserio/Types.h:57
-google-explicit-constructor:src/zserio/Types.h:64
+google-explicit-constructor:src/zserio/Types.h:58
+google-explicit-constructor:src/zserio/Types.h:65
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
 google-readability-casting:src/zserio/Variant.h:41
 google-readability-casting:src/zserio/Variant.h:62
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
-google-explicit-constructor:src/zserio/View.h:108
+google-explicit-constructor:src/zserio/View.h:110
 
 # Intentional tests.
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45

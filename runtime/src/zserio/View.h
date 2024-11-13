@@ -1,6 +1,8 @@
 #ifndef ZSERIO_VIEW_H_INC
 #define ZSERIO_VIEW_H_INC
 
+#include <string_view>
+
 #include "zserio/BitSize.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
@@ -168,6 +170,12 @@ bool operator>=(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
 
 namespace detail
 {
+
+template <typename VALUE_TYPE>
+void validate(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& view, std::string_view fieldName)
+{
+    return validate(view.value(), view.numBits(), fieldName);
+}
 
 template <typename VALUE_TYPE>
 BitSize bitSizeOf(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& view, BitSize = 0)

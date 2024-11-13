@@ -129,7 +129,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
     return m_data.<@field_data_member_name field/>;
     <#else>
         <#if field.optional??>
-    if (<#if field.optional.clause??>!(${field.optional.clause})<#else>!m_data.<@field_data_member_name field/></#if>)
+    if (!m_data.<@field_data_member_name field/>)
     {
         return {};
     }
@@ -248,10 +248,56 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
+<#macro structure_check_constraint field indent=1>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.constraint??>
+${I}// check constraint
+${I}if (!(${field.constraint.viewIndirectExpression}))
+${I}{
+${I}    throw ConstraintException("Constraint violated at '${name}.${field.name}'!");
+${I}}
+    </#if>
+</#macro>
+<#function needs_validate_view>
+    <#list fieldList as field>
+        <#if field.constraint?? ||
+                (field.optional?? && field.optional.viewIndirectClause??) ||
+                (field.array?? && field.array.viewIndirectLength??) ||
+                (!field.array?? && field.typeInfo.isNumeric)>
+            <#return true>
+        </#if>
+    </#list>
+    <#return false>
+</#function>
 template <>
-void validate(const View<${fullName}>&)
+void validate(const View<${fullName}>&<#if needs_validate_view()> view</#if>)
 {
-    // TODO:
+<#list fieldList as field>
+    <@structure_check_constraint field/>
+    <#if field.optional?? && field.optional.viewIndirectClause??>
+    // check non-auto optional
+    if (${field.optional.viewIndirectClause} && !view.${field.getterName}())
+    {
+        throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
+    }
+    </#if>
+    <#if field.array?? && field.array.viewIndirectLength??>
+    // check array length
+    validate(view.${field.getterName}(), static_cast<size_t>(${field.array.viewIndirectLength}),
+            "'${name}.${field.name}'");
+    </#if>
+    <#if !field.array?? && field.typeInfo.isNumeric>
+    // check range
+        <#if field.optional??>
+    if (view.${field.getterName}())
+    {
+        validate(*view.${field.getterName}(), "'${name}.${field.name}'");
+    }
+        <#else>
+    validate(view.${field.getterName}(), "'${name}.${field.name}'");
+        </#if>
+    </#if>
+</#list>
 }
 
 <#macro structure_view_bitsizeof field indent packed=false>
@@ -379,6 +425,7 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
     <#else>
     <@structure_view_read fullName, field, 1/>
     </#if>
+    <@structure_check_constraint field/>
 </#list>
     return view;
 }

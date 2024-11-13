@@ -2,6 +2,7 @@ package zserio.extension.cpp17;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import zserio.ast.ArrayInstantiation;
@@ -50,15 +51,15 @@ public final class CompoundFieldTemplateData
 
         typeInfo = createTypeInfo(context, fieldNativeType, fieldTypeInstantiation, includeCollector);
         compound = createCompound(context, fieldTypeInstantiation, includeCollector);
-        dynamicBitLength = createDynamicBitLength(context, fieldTypeInstantiation, includeCollector);
+        dynamicBitFieldLength = createDynamicBitFieldLength(context, fieldTypeInstantiation, includeCollector);
         integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
         array = createArray(context, fieldNativeType, fieldTypeInstantiation, parentType, includeCollector);
         docComments = DocCommentsDataCreator.createData(context, field);
     }
 
-    public DynamicBitLength getDynamicBitLength()
+    public DynamicBitLength getDynamicBitFieldLength()
     {
-        return dynamicBitLength;
+        return dynamicBitFieldLength;
     }
 
     public String getName()
@@ -138,25 +139,29 @@ public final class CompoundFieldTemplateData
         {
             this.isRecursive = isRecursive;
             final Expression optionalClauseExpression = field.getOptionalClauseExpr();
-            final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
-            final ExpressionFormatter viewIndirectExpressionFormatter =
-                    context.getIndirectExpressionFormatter(includeCollector, "view");
-            final ExpressionFormatter lhsIndirectExpressionFormatter =
-                    context.getIndirectExpressionFormatter(includeCollector, "lhs");
-            final ExpressionFormatter rhsIndirectExpressionFormatter =
-                    context.getIndirectExpressionFormatter(includeCollector, "rhs");
-            clause = (optionalClauseExpression == null)
-                    ? null
-                    : cppExpressionFormatter.formatGetter(optionalClauseExpression);
-            viewIndirectClause = (optionalClauseExpression == null)
-                    ? null
-                    : viewIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
-            lhsIndirectClause = (optionalClauseExpression == null)
-                    ? null
-                    : lhsIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
-            rhsIndirectClause = (optionalClauseExpression == null)
-                    ? null
-                    : rhsIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
+            if (optionalClauseExpression == null)
+            {
+                clause = null;
+                viewIndirectClause = null;
+                lhsIndirectClause = null;
+                rhsIndirectClause = null;
+            }
+            else
+            {
+                includeCollector.addCppUserIncludes(Arrays.asList("zserio/MissedOptionalException.h"));
+                final ExpressionFormatter cppExpressionFormatter =
+                        context.getExpressionFormatter(includeCollector);
+                clause = cppExpressionFormatter.formatGetter(optionalClauseExpression);
+                final ExpressionFormatter viewIndirectExpressionFormatter =
+                        context.getIndirectExpressionFormatter(includeCollector, "view");
+                viewIndirectClause = viewIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
+                final ExpressionFormatter lhsIndirectExpressionFormatter =
+                        context.getIndirectExpressionFormatter(includeCollector, "lhs");
+                lhsIndirectClause = lhsIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
+                final ExpressionFormatter rhsIndirectExpressionFormatter =
+                        context.getIndirectExpressionFormatter(includeCollector, "rhs");
+                rhsIndirectClause = rhsIndirectExpressionFormatter.formatGetter(optionalClauseExpression);
+            }
         }
 
         public boolean getIsRecursive()
@@ -193,25 +198,18 @@ public final class CompoundFieldTemplateData
 
     public static final class Constraint
     {
-        public Constraint(Expression constraintExpression, ExpressionFormatter cppExpressionFormatter,
-                ExpressionFormatter cppConstraintExpressionFormatter) throws ZserioExtensionException
+        public Constraint(Expression constraintExpression, ExpressionFormatter viewIndirectExpressionFormatter)
+                throws ZserioExtensionException
         {
-            writeConstraint = cppExpressionFormatter.formatGetter(constraintExpression);
-            readConstraint = cppConstraintExpressionFormatter.formatGetter(constraintExpression);
+            viewIndirectExpression = viewIndirectExpressionFormatter.formatGetter(constraintExpression);
         }
 
-        public String getWriteConstraint()
+        public String getViewIndirectExpression()
         {
-            return writeConstraint;
+            return viewIndirectExpression;
         }
 
-        public String getReadConstraint()
-        {
-            return readConstraint;
-        }
-
-        private final String writeConstraint;
-        private final String readConstraint;
+        private final String viewIndirectExpression;
     }
 
     public static final class Offset
@@ -587,14 +585,10 @@ public final class CompoundFieldTemplateData
         if (constraintExpression == null)
             return null;
 
-        final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
-        final CppConstraintExpressionFormattingPolicy expressionFormattingPolicy =
-                new CppConstraintExpressionFormattingPolicy(cppNativeMapper, includeCollector, field);
-        final ExpressionFormatter cppConstaintExpressionFormatter =
-                new ExpressionFormatter(expressionFormattingPolicy);
-
-        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
-        return new Constraint(constraintExpression, cppExpressionFormatter, cppConstaintExpressionFormatter);
+        includeCollector.addCppUserIncludes(Arrays.asList("zserio/ConstraintException.h"));
+        final ExpressionFormatter viewIndirectExpressionFormatter =
+                context.getIndirectExpressionFormatter(includeCollector, "view");
+        return new Constraint(constraintExpression, viewIndirectExpressionFormatter);
     }
 
     private static Offset createOffset(TemplateDataContext context, Field field,
@@ -660,7 +654,7 @@ public final class CompoundFieldTemplateData
         }
     }
 
-    private static DynamicBitLength createDynamicBitLength(
+    private static DynamicBitLength createDynamicBitFieldLength(
             TemplateDataContext context, TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
             throws ZserioExtensionException
     {
@@ -760,7 +754,7 @@ public final class CompoundFieldTemplateData
     private final Constraint constraint;
     private final NativeTypeInfoTemplateData typeInfo;
     private final Compound compound;
-    private final DynamicBitLength dynamicBitLength;
+    private final DynamicBitLength dynamicBitFieldLength;
     private final Array array;
     private final IntegerRange integerRange;
     private final DocCommentsTemplateData docComments;

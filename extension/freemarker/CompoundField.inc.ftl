@@ -73,7 +73,7 @@
                 </#if>
             </#list>
         <#elseif field.typeInfo.isDynamicBitField>
-            , static_cast<uint8_t>(${field.dynamicBitLength.expression})<#t>
+            , static_cast<uint8_t>(${field.dynamicBitFieldLength.expression})<#t>
         </#if>
     </#if>
 </#macro>
@@ -110,7 +110,7 @@
                 </#if>
             </#list>
         <#elseif field.typeInfo.isDynamicBitField>
-            , static_cast<uint8_t>(${field.dynamicBitLength.viewIndirectExpression})<#t>
+            , static_cast<uint8_t>(${field.dynamicBitFieldLength.viewIndirectExpression})<#t>
         </#if>
     </#if>
 </#macro>
@@ -139,7 +139,7 @@
             </#if>
         </#list>
     <#elseif field.typeInfo.isDynamicBitField>
-        , static_cast<uint8_t>(${field.dynamicBitLength.ownerIndirectExpression})<#t>
+        , static_cast<uint8_t>(${field.dynamicBitFieldLength.ownerIndirectExpression})<#t>
     </#if>
 </#macro>
 
@@ -236,7 +236,7 @@
                 </#if>
             </#list>
         <#elseif field.typeInfo.isDynamicBitField>
-            <#return field.dynamicBitLength.needsOwner>
+            <#return field.dynamicBitFieldLength.needsOwner>
         </#if>
     </#if>
     <#return false>
@@ -251,7 +251,7 @@
                 </#if>
             </#list>
         <#elseif field.typeInfo.isDynamicBitField>
-            <#return field.dynamicBitLength.needsIndex>
+            <#return field.dynamicBitFieldLength.needsIndex>
         </#if>
     </#if>
     <#return false>

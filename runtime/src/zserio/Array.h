@@ -1,8 +1,10 @@
 #ifndef ZSERIO_ARRAY_H_INC
 #define ZSERIO_ARRAY_H_INC
 
+#include <string_view>
 #include <type_traits>
 
+#include "zserio/ArrayLengthException.h"
 #include "zserio/ArrayTraits.h"
 #include "zserio/BitPositionUtil.h"
 #include "zserio/BitStreamReader.h"
@@ -246,6 +248,17 @@ private:
 
 namespace detail
 {
+
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
+void validate(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, size_t expectedSize,
+        std::string_view fieldName)
+{
+    if (array.size() != expectedSize)
+    {
+        throw ArrayLengthException("Wrong array length for field ")
+                << fieldName << " (" << array.size() << " != " << expectedSize << ")!";
+    }
+}
 
 template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
 BitSize bitSizeOf(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)

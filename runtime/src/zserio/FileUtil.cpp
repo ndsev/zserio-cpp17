@@ -1,4 +1,5 @@
 #include <fstream>
+#include <string_view>
 
 #include "zserio/CppRuntimeException.h"
 #include "zserio/FileUtil.h"

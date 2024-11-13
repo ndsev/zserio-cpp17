@@ -20,6 +20,7 @@ project(ZserioCpp17Runtime)
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/AllocatorHolder.h
     zserio/Array.h
+    zserio/ArrayLengthException.h
     zserio/BitBuffer.h
     zserio/BitFieldUtil.cpp
     zserio/BitPositionUtil.h
@@ -34,6 +35,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BuiltInOperators.h
     zserio/Bytes.cpp
     zserio/Bytes.h
+    zserio/ChoiceCaseException.h
     zserio/CppRuntimeException.cpp
     zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
@@ -45,6 +47,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
     zserio/HashCodeUtil.h
+    zserio/MissedOptionalException.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
     zserio/RebindAlloc.h
@@ -59,6 +62,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/Traits.h
     zserio/Types.cpp
     zserio/Types.h
+    zserio/UnionCaseException.h
     zserio/Variant.h
     zserio/Vector.h
     zserio/View.h
