@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "zserio/Bytes.h"
 #include "zserio/FloatUtil.h"
 #include "zserio/Traits.h"
 #include "zserio/Types.h"
@@ -208,6 +209,26 @@ inline std::enable_if_t<!std::is_enum_v<OBJECT> && !is_bitmask_v<OBJECT> && !std
 calcHashCode(uint32_t seedValue, const OBJECT& object)
 {
     return calcHashCode(seedValue, std::hash<OBJECT>()(object));
+}
+
+// TODO[Mi-L@]: implement for a generic span?
+/**
+ * Calculates hash code of the given BytesView type using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param array Array for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+inline uint32_t calcHashCode(uint32_t seedValue, const BytesView& bytes)
+{
+    uint32_t result = seedValue;
+    for (auto byte : bytes)
+    {
+        result = calcHashCode(result, byte);
+    }
+
+    return result;
 }
 
 /**

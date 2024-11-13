@@ -132,6 +132,18 @@ public:
     bool operator==(const BasicBitBuffer<ALLOC>& other) const;
 
     /**
+     * Non-equal operator.
+     *
+     * \param other The another instance of bit buffer to which compare this bit buffer.
+     *
+     * \return True when the bit buffers have different contents, false otherwise.
+     */
+    bool operator!=(const BasicBitBuffer<ALLOC>& other) const
+    {
+        return !(*this == other);
+    }
+
+    /**
      * Operator less than.
      *
      * \param other The another instance of bit buffer to which compare this bit buffer.
@@ -139,6 +151,42 @@ public:
      * \return True when this bit buffer is less than the other (using lexicographical compare).
      */
     bool operator<(const BasicBitBuffer<ALLOC>& other) const;
+
+    /**
+     * Operator greater than.
+     *
+     * \param other The another instance of bit buffer to which compare this bit buffer.
+     *
+     * \return True when this bit buffer is greater than the other (using lexicographical compare).
+     */
+    bool operator>(const BasicBitBuffer<ALLOC>& other) const
+    {
+        return other < *this;
+    }
+
+    /**
+     * Operator less than or equal.
+     *
+     * \param other The another instance of bit buffer to which compare this bit buffer.
+     *
+     * \return True when this bit buffer is less than or equal to the other (using lexicographical compare).
+     */
+    bool operator<=(const BasicBitBuffer<ALLOC>& other) const
+    {
+        return !(other < *this);
+    }
+
+    /**
+     * Operator greater than or equal.
+     *
+     * \param other The another instance of bit buffer to which compare this bit buffer.
+     *
+     * \return True when this bit buffer is greater than or equal the other (using lexicographical compare).
+     */
+    bool operator>=(const BasicBitBuffer<ALLOC>& other) const
+    {
+        return !(*this < other);
+    }
 
     /**
      * Calculates hash code of the bit buffer.
@@ -427,6 +475,11 @@ uint8_t BasicBitBuffer<ALLOC>::getMaskedLastByte() const
 
 /** Typedef to BitBuffer provided for convenience - using std::allocator<uint8_t>. */
 using BitBuffer = BasicBitBuffer<>;
+
+template <typename ALLOC>
+using BasicBitBufferView = const BasicBitBuffer<ALLOC>&;
+
+using BitBufferView = const BitBuffer&;
 
 /**
  * Allows to append BitBuffer to CppRuntimeException.

@@ -8,6 +8,7 @@
 
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/DeltaContext.h"
 
 namespace zserio
 {
@@ -99,7 +100,7 @@ namespace detail
 {
 
 template <typename T>
-inline std::enable_if_t<std::is_enum_v<T>, BitSize> bitSizeOf(T value, BitSize bitPosition = 0)
+std::enable_if_t<std::is_enum_v<T>, BitSize> bitSizeOf(T value, BitSize bitPosition = 0)
 {
     return bitSizeOf(enumToValue(value), bitPosition);
 }
@@ -118,6 +119,32 @@ std::enable_if_t<std::is_enum_v<T>> read(zserio::BitStreamReader& reader, T& val
     value = valueToEnum<T>(rawValue);
 }
 
+template <typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+inline void initContext(DeltaContext& deltaContext, T value)
+{
+    deltaContext.init(enumToValue(value));
+}
+
+template <typename T>
+std::enable_if_t<std::is_enum_v<T>, BitSize> bitSizeOf(DeltaContext& deltaContext, T value, BitSize = 0)
+{
+    return deltaContext.bitSizeOf(enumToValue(value));
+}
+
+template <typename T>
+std::enable_if_t<std::is_enum_v<T>> write(DeltaContext& deltaContext, BitStreamWriter& writer, T value)
+{
+    deltaContext.write(writer, enumToValue(value));
+}
+
+template <typename T>
+std::enable_if_t<std::is_enum_v<T>> read(DeltaContext& deltaContext, BitStreamReader& reader, T& value)
+{
+    typename EnumTraits<T>::ZserioType rawValue;
+    deltaContext.read(reader, rawValue);
+    value = valueToEnum<T>(rawValue);
+}
+
 } // namespace detail
 
 /**
@@ -128,7 +155,7 @@ std::enable_if_t<std::is_enum_v<T>> read(zserio::BitStreamReader& reader, T& val
  *
  * \return Reference to the exception to allow operator chaining.
  */
-template <typename T, typename std::enable_if_t<std::is_enum_v<T>, int> = 0>
+template <typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
 CppRuntimeException& operator<<(CppRuntimeException& exception, T value)
 {
     exception << enumToString(value);

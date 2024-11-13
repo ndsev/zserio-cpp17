@@ -1,5 +1,6 @@
 <#include "CompoundField.inc.ftl">
 <#include "CompoundParameter.inc.ftl">
+<#include "CompoundFunction.inc.ftl">
 <#function structure_has_optional_field fieldList>
     <#list fieldList as field>
         <#if field.optional??>

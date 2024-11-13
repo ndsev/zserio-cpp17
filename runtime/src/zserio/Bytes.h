@@ -1,6 +1,7 @@
 #ifndef ZSERIO_BYTES_H_INC
 #define ZSERIO_BYTES_H_INC
 
+#include <algorithm>
 #include <cstdint>
 
 #include "zserio/BitSize.h"
@@ -24,6 +25,36 @@ using Bytes = BasicBytes<>;
  * Typedef for View on Zserio Byte s type.
  */
 using BytesView = Span<const uint8_t>;
+
+inline bool operator==(const BytesView& lhs, const BytesView& rhs)
+{
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+inline bool operator!=(const BytesView& lhs, const BytesView& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator<(const BytesView& lhs, const BytesView& rhs)
+{
+    return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+inline bool operator>(const BytesView& lhs, const BytesView& rhs)
+{
+    return rhs < lhs;
+}
+
+inline bool operator<=(const BytesView& lhs, const BytesView& rhs)
+{
+    return !(rhs < lhs);
+}
+
+inline bool operator>=(const BytesView& lhs, const BytesView& rhs)
+{
+    return !(lhs < rhs);
+}
 
 namespace detail
 {

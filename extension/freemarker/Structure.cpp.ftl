@@ -133,12 +133,18 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
     {
         return {};
     }
-
     return <@field_view_type_name field/>{*m_data.<@field_data_member_name field/><@field_view_parameters field/>};
         <#else>
     return <@field_view_type_name field/>{m_data.<@field_data_member_name field/><@field_view_parameters field/>};
         </#if>
     </#if>
+}
+</#list>
+<#list functionList as function>
+
+<@function_return_type_name function/> View<${fullName}>::${function.name}() const
+{
+    return ${function.resultExpression};
 }
 </#list>
 
@@ -177,7 +183,7 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}if (<#if resolveOptional>*</#if>lhs.${field.getterName}() != <#if resolveOptional>*</#if>rhs.${field.getterName}())
 ${I}{
-    <#if field.typeInfo.isBoolean>
+    <#if !field.array?? && field.typeInfo.isBoolean>
         <#-- TODO[Mi-L@]: Remove once operator< for zserio::Bool is implemented in runtime! -->
 ${I}    return static_cast<int>(<#if resolveOptional>*</#if>lhs.${field.getterName}()) < <#rt>
         <#lt>static_cast<int>(<#if resolveOptional>*</#if>rhs.${field.getterName}());

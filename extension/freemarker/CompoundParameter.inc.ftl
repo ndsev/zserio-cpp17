@@ -1,8 +1,12 @@
 <#macro parameter_view_type_name parameter>
-    <#if parameter.typeInfo.isSimple && !parameter.typeInfo.isDynamicBitField>
+    <#if (parameter.typeInfo.isSimple || parameter.typeInfo.isEnum || parameter.typeInfo.isBitmask) && !parameter.typeInfo.isDynamicBitField>
         ${parameter.typeInfo.typeFullName}<#t>
     <#elseif parameter.typeInfo.isString>
         ::std::string_view<#t>
+    <#elseif parameter.typeInfo.isExtern>
+        ${types.bitBufferView.name}<#t>
+    <#elseif parameter.typeInfo.isBytes>
+        BytesView<#t>
     <#else>
         View<${parameter.typeInfo.typeFullName}><#t>
     </#if>

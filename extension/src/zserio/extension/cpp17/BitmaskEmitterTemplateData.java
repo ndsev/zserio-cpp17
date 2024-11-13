@@ -29,7 +29,7 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
         addHeaderIncludesForType(nativeBaseType);
 
         underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.create(
-                context, nativeBaseType, bitmaskTypeInstantiation, this);
+                context, nativeBaseType, bitmaskTypeInstantiation, new HeaderIncludeCollectorAdapter(this));
 
         final List<BitmaskValue> bitmaskValues = bitmaskType.getValues();
         values = new ArrayList<BitmaskValueData>(bitmaskValues.size());

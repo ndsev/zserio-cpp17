@@ -24,7 +24,7 @@ bugprone-exception-escape:src/zserio/Variant.h:263
 bugprone-use-after-move:src/zserio/Variant.h:675
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:482
+cert-dcl58-cpp:src/zserio/BitBuffer.h:535
 cert-dcl58-cpp:src/zserio/Optional.h:1161
 cert-dcl58-cpp:src/zserio/Variant.h:835
 cert-dcl58-cpp:src/zserio/View.h:192
@@ -70,8 +70,8 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:390
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:587
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:655
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:82
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:95
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:83
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:96
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49

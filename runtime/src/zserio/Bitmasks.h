@@ -3,12 +3,13 @@
 
 #include <type_traits>
 
-#include "zserio/BitSize.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/DeltaContext.h"
 
 namespace zserio
 {
+
 namespace detail
 {
 
@@ -32,7 +33,34 @@ std::enable_if_t<is_bitmask_v<T>> read(BitStreamReader& reader, T& value)
     value = T(rawValue);
 }
 
+template <typename T>
+std::enable_if_t<zserio::is_bitmask_v<T>> initContext(DeltaContext& deltaContext, T value)
+{
+    deltaContext.init(value.getValue());
+}
+
+template <typename T>
+std::enable_if_t<zserio::is_bitmask_v<T>, BitSize> bitSizeOf(DeltaContext& deltaContext, T value, BitSize = 0)
+{
+    return deltaContext.bitSizeOf(value.getValue());
+}
+
+template <typename T>
+std::enable_if_t<zserio::is_bitmask_v<T>> write(DeltaContext& deltaContext, BitStreamWriter& writer, T value)
+{
+    deltaContext.write(writer, value.getValue());
+}
+
+template <typename T>
+std::enable_if_t<zserio::is_bitmask_v<T>> read(DeltaContext& deltaContext, BitStreamReader& reader, T& value)
+{
+    typename T::ZserioType rawValue;
+    deltaContext.read(reader, rawValue);
+    value = T(rawValue);
+}
+
 } // namespace detail
+
 } // namespace zserio
 
 #endif // ZSERIO_BITMASKS_H_INC

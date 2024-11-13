@@ -55,6 +55,8 @@ public final class CppNativeMapper
 
         stringViewType = new NativeStringViewType();
         bitBufferType = new NativeAllocType(typesContext.getBitBuffer(), allocatorDefinition, "uint8_t");
+        bitBufferViewType =
+                new NativeAllocType(typesContext.getBitBufferView(), allocatorDefinition, "uint8_t");
         bytesType = new NativeAllocType(typesContext.getBytes(), allocatorDefinition);
         stringType = new NativeAllocType(typesContext.getString(), allocatorDefinition, "char");
         vectorType = new NativeAllocType(typesContext.getVector(), allocatorDefinition);
@@ -140,6 +142,11 @@ public final class CppNativeMapper
     public NativeAllocType getBitBufferType()
     {
         return bitBufferType;
+    }
+
+    public NativeAllocType getBitBufferViewType()
+    {
+        return bitBufferViewType;
     }
 
     public NativeAllocType getBytesType()
@@ -706,6 +713,7 @@ public final class CppNativeMapper
 
     private final NativeStringViewType stringViewType;
     private final NativeAllocType bitBufferType;
+    private final NativeAllocType bitBufferViewType;
     private final NativeAllocType bytesType;
     private final NativeAllocType stringType;
     private final NativeAllocType vectorType;

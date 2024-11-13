@@ -6,7 +6,9 @@
 
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/Bitmasks.h"
 #include "zserio/DeltaContext.h"
+#include "zserio/Enums.h"
 #include "zserio/Types.h"
 #include "zserio/View.h"
 
@@ -155,12 +157,28 @@ struct ArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
 template <>
 struct ArrayTraits<Bytes>
 {
-    static constexpr Span<const uint8_t> at(const detail::DummyArrayOwner&, const Bytes& element, size_t)
+    static constexpr BytesView at(const detail::DummyArrayOwner&, const Bytes& element, size_t)
     {
         return element;
     }
 
     static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, Bytes& element, size_t)
+    {
+        detail::read(reader, element);
+    }
+};
+
+template <typename ALLOC>
+struct ArrayTraits<BasicBitBuffer<ALLOC>>
+{
+    static constexpr BasicBitBufferView<ALLOC> at(
+            const detail::DummyArrayOwner&, const BasicBitBuffer<ALLOC>& element, size_t)
+    {
+        return element;
+    }
+
+    static void read(
+            BitStreamReader& reader, const detail::DummyArrayOwner&, BasicBitBuffer<ALLOC>& element, size_t)
     {
         detail::read(reader, element);
     }
@@ -179,6 +197,46 @@ struct ArrayTraits<std::basic_string<char, std::char_traits<char>, ALLOC>>
             BitStreamReader& reader, const detail::DummyArrayOwner&, BasicString<ALLOC>& element, size_t)
     {
         detail::read(reader, element);
+    }
+};
+
+template <typename T>
+struct ArrayTraits<T, std::enable_if_t<std::is_enum_v<T>>>
+{
+    static constexpr T at(const detail::DummyArrayOwner&, T element, size_t)
+    {
+        return element;
+    }
+
+    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    {
+        detail::read(reader, element);
+    }
+
+    static void read(
+            DeltaContext& context, BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    {
+        detail::read(context, reader, element);
+    }
+};
+
+template <typename T>
+struct ArrayTraits<T, std::enable_if_t<zserio::is_bitmask_v<T>>>
+{
+    static constexpr T at(const detail::DummyArrayOwner&, T element, size_t)
+    {
+        return element;
+    }
+
+    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    {
+        detail::read(reader, element);
+    }
+
+    static void read(
+            DeltaContext& context, BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    {
+        detail::read(context, reader, element);
     }
 };
 
