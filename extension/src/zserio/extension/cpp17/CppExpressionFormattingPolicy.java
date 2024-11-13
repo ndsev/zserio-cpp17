@@ -14,6 +14,7 @@ import zserio.ast.DynamicBitFieldType;
 import zserio.ast.EnumItem;
 import zserio.ast.EnumType;
 import zserio.ast.Expression;
+import zserio.ast.Expression.ExpressionType;
 import zserio.ast.Field;
 import zserio.ast.Function;
 import zserio.ast.Package;
@@ -21,6 +22,7 @@ import zserio.ast.Parameter;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.ZserioType;
 import zserio.extension.common.DefaultExpressionFormattingPolicy;
+import zserio.extension.common.ExpressionFormattingPolicy.TernaryExpressionFormatting;
 import zserio.extension.common.StringEscapeConverter;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.symbols.CppNativeSymbol;
@@ -243,6 +245,18 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         includeCollector.addCppSystemIncludes(BUILT_IN_OPERATORS_INCLUDE);
 
         return new BinaryExpressionFormatting("::zserio::builtin::isSet(", ", ", ")");
+    }
+
+    @Override
+    public TernaryExpressionFormatting getQuestionMark(Expression expr)
+    {
+        if (expr.getExprType() == ExpressionType.INTEGER || expr.getExprType() == ExpressionType.FLOAT)
+        {
+            // add unary plus to convert zserio wrappers to the native value types
+            return new TernaryExpressionFormatting(expr, "(", ") ? +(", ") : +(", ")");
+        }
+
+        return super.getQuestionMark(expr);
     }
 
     protected String getAccessPrefixForCompoundType()

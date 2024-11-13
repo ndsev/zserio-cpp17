@@ -1,0 +1,7 @@
+cert-err58-cpp:cpp/StructureBytesTest.cpp
+cert-err58-cpp:cpp/StructureExternTest.cpp
+
+performance-move-const-arg:gen/functions/structure_array_param/ParentStructure.cpp
+performance-move-const-arg:gen/functions/structure_optional/ValueConsumerCreator.cpp
+performance-move-const-arg:gen/functions/structure_param/MetresConverterCaller.cpp
+performance-move-const-arg:gen/functions/structure_parent_child_value/ParentValue.cpp
