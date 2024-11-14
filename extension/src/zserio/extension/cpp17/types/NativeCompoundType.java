@@ -9,6 +9,6 @@ public final class NativeCompoundType extends NativeUserType
 {
     public NativeCompoundType(PackageName packageName, String name, String includeFileName)
     {
-        super(packageName, name, includeFileName, false);
+        super(packageName, name, includeFileName);
     }
 }

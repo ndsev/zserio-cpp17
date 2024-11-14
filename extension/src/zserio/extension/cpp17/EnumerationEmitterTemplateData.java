@@ -26,16 +26,16 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
         final CppNativeType nativeEnumType = cppNativeMapper.getCppType(enumType);
 
         final TypeInstantiation enumTypeInstantiation = enumType.getTypeInstantiation();
-        final NativeIntegralType nativeBaseType = cppNativeMapper.getCppIntegralType(enumTypeInstantiation);
-        addHeaderIncludesForType(nativeBaseType);
+        final NativeIntegralType nativeType = cppNativeMapper.getCppIntegralType(enumTypeInstantiation);
+        addHeaderIncludesForType(nativeType);
 
         underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.create(
-                context, nativeBaseType, enumTypeInstantiation, new HeaderIncludeCollectorAdapter(this));
+                context, nativeType, enumTypeInstantiation, new HeaderIncludeCollectorAdapter(this));
 
         final List<EnumItem> enumItems = enumType.getItems();
         items = new ArrayList<EnumItemData>(enumItems.size());
         for (EnumItem enumItem : enumItems)
-            items.add(new EnumItemData(context, nativeBaseType, nativeEnumType, enumItem));
+            items.add(new EnumItemData(context, nativeType, nativeEnumType, enumItem));
     }
 
     public boolean getUsedInPackedArray()
@@ -55,14 +55,14 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
 
     public static final class EnumItemData
     {
-        public EnumItemData(TemplateDataContext context, NativeIntegralType nativeBaseType,
+        public EnumItemData(TemplateDataContext context, NativeIntegralType nativeType,
                 CppNativeType nativeEnumType, EnumItem enumItem) throws ZserioExtensionException
         {
             schemaName = enumItem.getName();
             name = AccessorNameFormatter.getEnumeratorName(enumItem);
             fullName = CppFullNameFormatter.getFullName(
                     nativeEnumType.getPackageName(), nativeEnumType.getName(), name);
-            value = nativeBaseType.formatLiteral(enumItem.getValue());
+            value = nativeType.formatLiteral(enumItem.getValue());
             isDeprecated = enumItem.isDeprecated();
             isRemoved = enumItem.isRemoved();
             docComments = DocCommentsDataCreator.createData(context, enumItem);

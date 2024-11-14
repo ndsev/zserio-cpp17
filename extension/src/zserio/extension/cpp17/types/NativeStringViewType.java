@@ -10,8 +10,7 @@ public final class NativeStringViewType extends NativeStdType
 {
     public NativeStringViewType()
     {
-        // note that we use StringView for constant strings and thus it's a simple type
-        super("string_view", "string_view", true);
+        super("string_view", "string_view");
     }
 
     public String formatLiteral(String value)

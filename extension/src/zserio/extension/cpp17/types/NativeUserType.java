@@ -7,9 +7,9 @@ import zserio.ast.PackageName;
  */
 public class NativeUserType extends NativeType
 {
-    public NativeUserType(PackageName packageName, String name, String includeFileName, boolean isSimpleType)
+    public NativeUserType(PackageName packageName, String name, String includeFileName)
     {
-        super(packageName, name, isSimpleType);
+        super(packageName, name);
         addUserIncludeFile(includeFileName);
     }
 }

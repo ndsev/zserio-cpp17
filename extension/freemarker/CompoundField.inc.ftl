@@ -18,7 +18,7 @@
     <#if field.array??>
         <@array_type_name field/><#t>
     <#else>
-        <#if (field.typeInfo.isSimple || field.typeInfo.isEnum || field.typeInfo.isBitmask) && !field.typeInfo.isDynamicBitField>
+        <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
             ${field.typeInfo.typeFullName}<#t>
         <#elseif field.typeInfo.isString>
             ::std::string_view<#t>

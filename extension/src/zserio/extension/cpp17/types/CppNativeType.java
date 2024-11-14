@@ -15,8 +15,6 @@ public interface CppNativeType
 
     public PackageName getPackageName();
 
-    public boolean isSimple();
-
     public SortedSet<String> getSystemIncludeFiles();
 
     public SortedSet<String> getUserIncludeFiles();

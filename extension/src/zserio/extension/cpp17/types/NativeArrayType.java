@@ -7,7 +7,7 @@ public final class NativeArrayType extends NativeZserioType
 {
     public NativeArrayType(CppNativeType elementType, NativeAllocType nativeVectorType)
     {
-        super("Array", false);
+        super("Array");
         this.elementType = elementType;
 
         addSystemIncludeFile("zserio/Array.h");

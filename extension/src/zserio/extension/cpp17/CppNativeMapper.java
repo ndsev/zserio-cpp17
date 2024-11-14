@@ -572,7 +572,7 @@ public final class CppNativeMapper
             final PackageName packageName = type.getPackage().getPackageName();
             final String name = type.getName();
             final String includeFileName = getIncludePath(packageName, name);
-            cppType = new NativeUserType(packageName, name, includeFileName, true);
+            cppType = new NativeUserType(packageName, name, includeFileName);
         }
 
         @Override
@@ -581,7 +581,7 @@ public final class CppNativeMapper
             final PackageName packageName = type.getPackage().getPackageName();
             final String name = type.getName();
             final String includeFileName = getIncludePath(packageName, name);
-            cppType = new NativeUserType(packageName, name, includeFileName, true);
+            cppType = new NativeUserType(packageName, name, includeFileName);
         }
 
         @Override
@@ -689,19 +689,10 @@ public final class CppNativeMapper
 
         private void mapAliasType(ZserioType aliasType, TypeReference referencedType)
         {
-            try
-            {
-                final CppNativeType nativeReferencedType = CppNativeMapper.this.getCppType(referencedType);
-                final PackageName packageName = aliasType.getPackage().getPackageName();
-                final String name = aliasType.getName();
-                final String includeFileName = getIncludePath(packageName, name);
-                cppType =
-                        new NativeUserType(packageName, name, includeFileName, nativeReferencedType.isSimple());
-            }
-            catch (ZserioExtensionException exception)
-            {
-                thrownException = exception;
-            }
+            final PackageName packageName = aliasType.getPackage().getPackageName();
+            final String name = aliasType.getName();
+            final String includeFileName = getIncludePath(packageName, name);
+            cppType = new NativeUserType(packageName, name, includeFileName);
         }
 
         private CppNativeType cppType = null;

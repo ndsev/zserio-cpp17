@@ -7,7 +7,7 @@ public class NativeNumericWrapperType extends NativeZserioType
 {
     public NativeNumericWrapperType(String name, String nativeTypeName)
     {
-        super(name, true);
+        super(name);
         this.nativeTypeName = nativeTypeName;
         addSystemIncludeFile("zserio/Types.h");
     }

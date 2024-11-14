@@ -1,5 +1,5 @@
 <#macro parameter_view_type_name parameter>
-    <#if (parameter.typeInfo.isSimple || parameter.typeInfo.isEnum || parameter.typeInfo.isBitmask) && !parameter.typeInfo.isDynamicBitField>
+    <#if parameter.typeInfo.isSimple && !parameter.typeInfo.isDynamicBitField>
         ${parameter.typeInfo.typeFullName}<#t>
     <#elseif parameter.typeInfo.isString>
         ::std::string_view<#t>

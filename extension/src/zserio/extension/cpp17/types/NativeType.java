@@ -14,16 +14,10 @@ public class NativeType implements CppNativeType
 {
     public NativeType(PackageName packageName, String name)
     {
-        this(packageName, name, packageName.isEmpty());
-    }
-
-    public NativeType(PackageName packageName, String name, boolean isSimple)
-    {
         this.packageName = packageName;
         this.name = name;
         this.systemIncludeFiles = new TreeSet<String>();
         this.userIncludeFiles = new TreeSet<String>();
-        this.isSimple = isSimple;
     }
 
     @Override
@@ -42,12 +36,6 @@ public class NativeType implements CppNativeType
     public PackageName getPackageName()
     {
         return packageName;
-    }
-
-    @Override
-    public boolean isSimple()
-    {
-        return isSimple;
     }
 
     @Override
@@ -91,5 +79,4 @@ public class NativeType implements CppNativeType
     private final String name;
     private final SortedSet<String> systemIncludeFiles;
     private final SortedSet<String> userIncludeFiles;
-    private final boolean isSimple;
 }

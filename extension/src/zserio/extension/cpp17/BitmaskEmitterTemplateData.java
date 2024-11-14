@@ -25,16 +25,16 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
         final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
 
         final TypeInstantiation bitmaskTypeInstantiation = bitmaskType.getTypeInstantiation();
-        final NativeIntegralType nativeBaseType = cppNativeMapper.getCppIntegralType(bitmaskTypeInstantiation);
-        addHeaderIncludesForType(nativeBaseType);
+        final NativeIntegralType nativeType = cppNativeMapper.getCppIntegralType(bitmaskTypeInstantiation);
+        addHeaderIncludesForType(nativeType);
 
         underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.create(
-                context, nativeBaseType, bitmaskTypeInstantiation, new HeaderIncludeCollectorAdapter(this));
+                context, nativeType, bitmaskTypeInstantiation, new HeaderIncludeCollectorAdapter(this));
 
         final List<BitmaskValue> bitmaskValues = bitmaskType.getValues();
         values = new ArrayList<BitmaskValueData>(bitmaskValues.size());
         for (BitmaskValue bitmaskValue : bitmaskValues)
-            values.add(new BitmaskValueData(context, nativeBaseType, bitmaskValue));
+            values.add(new BitmaskValueData(context, nativeType, bitmaskValue));
     }
 
     public boolean getUsedInPackedArray()
@@ -54,12 +54,12 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
 
     public static final class BitmaskValueData
     {
-        public BitmaskValueData(TemplateDataContext context, NativeIntegralType nativeBaseType,
+        public BitmaskValueData(TemplateDataContext context, NativeIntegralType nativeType,
                 BitmaskValue bitmaskValue) throws ZserioExtensionException
         {
             schemaName = bitmaskValue.getName();
             name = bitmaskValue.getName();
-            value = nativeBaseType.formatLiteral(bitmaskValue.getValue());
+            value = nativeType.formatLiteral(bitmaskValue.getValue());
             isZero = bitmaskValue.getValue().equals(BigInteger.ZERO);
             docComments = DocCommentsDataCreator.createData(context, bitmaskValue);
         }

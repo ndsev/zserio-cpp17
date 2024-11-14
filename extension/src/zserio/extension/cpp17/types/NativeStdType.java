@@ -14,22 +14,12 @@ public class NativeStdType extends NativeType
 
     public NativeStdType(String name, String systemIncludeFile)
     {
-        this(name, systemIncludeFile, false);
-    }
-
-    public NativeStdType(String name, String systemIncludeFile, boolean isSimple)
-    {
-        this(STD_PACKAGE_NAME, name, systemIncludeFile, isSimple);
+        this(STD_PACKAGE_NAME, name, systemIncludeFile);
     }
 
     public NativeStdType(PackageName packageName, String name, String systemIncludeFile)
     {
-        this(packageName, name, systemIncludeFile, false);
-    }
-
-    public NativeStdType(PackageName packageName, String name, String systemIncludeFile, boolean isSimple)
-    {
-        super(packageName, name, isSimple);
+        super(packageName, name);
 
         addSystemIncludeFile(systemIncludeFile);
     }
