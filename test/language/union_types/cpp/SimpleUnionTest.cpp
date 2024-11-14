@@ -228,7 +228,7 @@ TEST_F(SimpleUnionTest, read)
 {
     zserio::BitBuffer bitBuffer = zserio::BitBuffer(8 + CASE3_FIELD.length() * 8 + 8);
     zserio::BitStreamWriter writer(bitBuffer);
-    zserio::detail::write(writer, ::zserio::VarSize(ChoiceTag::CHOICE_case3Field));
+    zserio::detail::write(writer, ::zserio::VarSize(2)); // CASE3_FIELD index stored in the bit stream
     zserio::detail::write(writer, CASE3_FIELD);
 
     SimpleUnion expectedReadData(zserio::in_place_index<ChoiceTag::CHOICE_case3Field>, CASE3_FIELD);

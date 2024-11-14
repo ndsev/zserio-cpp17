@@ -248,7 +248,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
+    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_write_field", "union_no_match", "view.zserioChoiceTag()"/>
 </#if>
 }
@@ -279,7 +279,7 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 
     VarSize choiceTag;
     read(reader, choiceTag);
-    <@union_switch "union_read_field", "union_no_match", "choiceTag"/>
+    <@union_switch "union_read_field", "union_no_match", "static_cast<${fullName}::ChoiceTag>(choiceTag + 1)"/>
 </#if>
 
     return view;
