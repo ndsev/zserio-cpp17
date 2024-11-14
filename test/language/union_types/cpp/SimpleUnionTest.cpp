@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
 #include "union_types/simple_union/SimpleUnion.h"
+#include "zserio/UnionCaseException.h"
 
 namespace union_types
 {
@@ -169,7 +170,9 @@ TEST_F(SimpleUnionTest, comparisonOperators)
 
 TEST_F(SimpleUnionTest, validate)
 {
-    // TODO
+    SimpleUnion data;
+    zserio::View<SimpleUnion> view(data);
+    ASSERT_THROW(zserio::detail::validate(view), zserio::UnionCaseException);
 }
 
 TEST_F(SimpleUnionTest, bitSizeOf)

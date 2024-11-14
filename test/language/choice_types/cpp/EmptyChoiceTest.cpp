@@ -60,7 +60,9 @@ TEST(EmptyChoiceTest, comparisonOperators)
 
 TEST(EmptyChoiceTest, validate)
 {
-    // TODO
+    EmptyChoice data;
+    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    EXPECT_NO_THROW(zserio::detail::validate(view));
 }
 
 TEST(EmptyChoiceTest, bitSizeOf)

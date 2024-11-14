@@ -1,6 +1,7 @@
 #include "choice_types/uint64_param_choice/UInt64ParamChoice.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/ChoiceCaseException.h"
 
 namespace choice_types
 {
@@ -74,7 +75,7 @@ TEST_F(UInt64ParamChoiceTest, zserioChoiceTag)
         UInt64ParamChoice data;
         data.emplace<ChoiceTag::CHOICE_valueC>(0);
         zserio::View<UInt64ParamChoice> viewC(data, EMPTY_SELECTOR);
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, viewC.zserioChoiceTag());
+        ASSERT_EQ(ChoiceTag::CHOICE_valueC, viewC.zserioChoiceTag());
     }
 }
 
@@ -147,7 +148,32 @@ TEST_F(UInt64ParamChoiceTest, comparisonOperators)
 
 TEST_F(UInt64ParamChoiceTest, validate)
 {
-    // TODO
+    {
+        UInt64ParamChoice data;
+        const VariantA value = 99;
+        data.emplace<ChoiceTag::CHOICE_valueA>(value);
+        zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
+        zserio::View<UInt64ParamChoice> viewC(data, VARIANT_C_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewC), zserio::ChoiceCaseException);
+    }
+    {
+        const VariantB value = 234;
+        UInt64ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        zserio::View<UInt64ParamChoice> viewA(data, VARIANT_A_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
+        zserio::View<UInt64ParamChoice> viewC(data, VARIANT_C_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewC), zserio::ChoiceCaseException);
+    }
+    {
+        UInt64ParamChoice data;
+        const VariantC value = 23456;
+        data.emplace<ChoiceTag::CHOICE_valueC>(value);
+        zserio::View<UInt64ParamChoice> viewA(data, VARIANT_A_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
+        zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
+    }
 }
 
 TEST_F(UInt64ParamChoiceTest, bitSizeOf)

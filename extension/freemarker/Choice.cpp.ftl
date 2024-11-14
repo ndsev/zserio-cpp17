@@ -76,6 +76,32 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 }
 </#list>
 
+${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
+{
+    return m_data.index();
+}
+<#list fieldList as field>
+
+<@field_view_type_name field/> View<${fullName}>::${field.getterName}() const
+{
+    <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
+    <#-- field which does not need View -->
+    return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data);
+    <#else>
+    <#-- field which needs View -->
+    return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data)<#rt>
+            <#lt><@field_view_parameters field/>};
+    </#if>
+}
+</#list>
+<#list functionList as function>
+
+<@function_return_type_name function/> View<${fullName}>::${function.name}() const
+{
+    return ${function.resultExpression};
+}
+</#list>
+
 <#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if !isSelectorBoolean>
@@ -131,48 +157,6 @@ ${I}}
         </#if>
     </#if>
 </#macro>
-<#macro choice_tag_member member indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}return ${fullName}::ChoiceTag::<@choice_tag_name member.field/>;
-    <#else>
-${I}return ${fullName}::ChoiceTag::UNDEFINED_CHOICE; // empty
-    </#if>
-</#macro>
-<#macro choice_tag_no_match name indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}return ${fullName}::ChoiceTag::UNDEFINED_CHOICE;
-</#macro>
-${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
-{
-<#if fieldList?has_content>
-    <@choice_switch "choice_tag_member", "choice_tag_no_match", selectorExpression/>
-<#else>
-    return ${fullName}::ChoiceTag::UNDEFINED_CHOICE;
-</#if>
-}
-<#list fieldList as field>
-
-<@field_view_type_name field/> View<${fullName}>::${field.getterName}() const
-{
-    <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
-    <#-- field which does not need View -->
-    return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data);
-    <#else>
-    <#-- field which needs View -->
-    return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data)<#rt>
-            <#lt><@field_view_parameters field/>};
-    </#if>
-}
-</#list>
-<#list functionList as function>
-
-<@function_return_type_name function/> View<${fullName}>::${function.name}() const
-{
-    return ${function.resultExpression};
-}
-</#list>
-
 <#macro choice_compare_member member indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>

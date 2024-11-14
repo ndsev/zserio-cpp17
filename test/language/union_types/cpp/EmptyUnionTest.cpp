@@ -53,7 +53,9 @@ TEST(EmptyUnionTest, comparisonOperators)
 
 TEST(EmptyUnionTest, validate)
 {
-    // TODO
+    EmptyUnion data;
+    zserio::View<EmptyUnion> view(data);
+    EXPECT_NO_THROW(zserio::detail::validate(view));
 }
 
 TEST(EmptyUnionTest, bitSizeOf)
