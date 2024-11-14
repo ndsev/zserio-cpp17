@@ -4,6 +4,7 @@
 #include "functions/structure_value/CustomVarList.h"
 #include "gtest/gtest.h"
 #include "test_utils/ReadTest.h"
+#include "test_utils/WriteReadTest.h"
 #include "zserio/BitStreamWriter.h"
 
 namespace functions
@@ -64,6 +65,7 @@ protected:
         writeData(expectedWriter, value);
 
         test_utils::readTest(expectedWriter, data);
+        test_utils::writeReadTest(data);
     }
 
     static constexpr uint32_t MAX_ONE_BYTE_VALUE = 253;

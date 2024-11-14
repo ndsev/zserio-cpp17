@@ -823,7 +823,7 @@ TEST_F(BitStreamTest, readBitBuffer)
             BitBuffer(std::vector<uint8_t>({0xAB, 0xCD, 0xFE}), 23)};
 
     std::function<void(BitStreamWriter&, const BitBuffer&)> writerFunc =
-            static_cast<void (*)(BitStreamWriter&, const BitBuffer&)>(&detail::write);
+            static_cast<void (*)(BitStreamWriter&, const BitBufferView&)>(&detail::write);
     std::function<void(BitStreamReader&, BitBuffer&)> readerFunc =
             static_cast<void (*)(BitStreamReader&, BitBuffer&)>(&detail::read);
 

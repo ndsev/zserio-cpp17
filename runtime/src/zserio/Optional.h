@@ -34,21 +34,21 @@ struct is_recursive<T, std::void_t<typename T::IS_RECURSIVE>> : std::true_type
 {};
 
 template <typename T, bool = is_recursive<T>::value>
-struct is_heap_allocated_impl : is_big<T>::type
+struct is_optional_heap_allocated_impl : is_big<T>::type
 {};
 
 template <typename T>
-struct is_heap_allocated_impl<T, true> : std::true_type
+struct is_optional_heap_allocated_impl<T, true> : std::true_type
 {};
 
 template <typename T>
-struct is_heap_allocated : is_heap_allocated_impl<T>
+struct is_optional_heap_allocated : is_optional_heap_allocated_impl<T>
 {};
 
 template <typename T>
-constexpr bool is_heap_allocated_v = is_heap_allocated<T>::value;
+constexpr bool is_optional_heap_allocated_v = is_optional_heap_allocated<T>::value;
 
-template <typename T, bool heap = is_heap_allocated_v<T>>
+template <typename T, bool heap = is_optional_heap_allocated_v<T>>
 struct optional_element
 {
     using type = T;
@@ -155,7 +155,8 @@ public:
      *
      * \throw can throw any exception thrown by T.
      */
-    template <typename... ARGS, typename TT = T, std::enable_if_t<!detail::is_heap_allocated_v<TT>>* = nullptr,
+    template <typename... ARGS, typename TT = T,
+            std::enable_if_t<!detail::is_optional_heap_allocated_v<TT>>* = nullptr,
             std::enable_if_t<!is_first_allocator<ARGS...>::value>* = nullptr>
     explicit constexpr BasicOptional(std::in_place_t, ARGS&&... args) :
             m_data(std::in_place, std::forward<ARGS>(args)...)
@@ -170,7 +171,8 @@ public:
      *
      * \throw can throw any exception thrown by T.
      */
-    template <typename... ARGS, typename TT = T, std::enable_if_t<!detail::is_heap_allocated_v<TT>>* = nullptr>
+    template <typename... ARGS, typename TT = T,
+            std::enable_if_t<!detail::is_optional_heap_allocated_v<TT>>* = nullptr>
     constexpr BasicOptional(std::in_place_t, const ALLOC& allocator, ARGS&&... args) :
             AllocatorHolder<ALLOC>(allocator),
             m_data(std::in_place, std::forward<ARGS>(args)...)
@@ -185,7 +187,8 @@ public:
      *
      * \throw can throw any exception thrown by T.
      */
-    template <typename... ARGS, typename TT = T, std::enable_if_t<detail::is_heap_allocated_v<TT>>* = nullptr>
+    template <typename... ARGS, typename TT = T,
+            std::enable_if_t<detail::is_optional_heap_allocated_v<TT>>* = nullptr>
     constexpr BasicOptional(std::in_place_t, const ALLOC& allocator, ARGS&&... args) :
             AllocatorHolder<ALLOC>(allocator),
             m_data(std::in_place, allocateValue(std::forward<ARGS>(args)...))
@@ -199,7 +202,8 @@ public:
      *
      * \throw can throw any exception thrown by T.
      */
-    template <typename... ARGS, typename TT = T, std::enable_if_t<detail::is_heap_allocated_v<TT>>* = nullptr,
+    template <typename... ARGS, typename TT = T,
+            std::enable_if_t<detail::is_optional_heap_allocated_v<TT>>* = nullptr,
             std::enable_if_t<!is_first_allocator<ARGS...>::value>* = nullptr>
     explicit constexpr BasicOptional(std::in_place_t, ARGS&&... args) :
             m_data(std::in_place, allocateValue(std::forward<ARGS>(args)...))
@@ -398,7 +402,7 @@ public:
         {
             return false;
         }
-        if constexpr (detail::is_heap_allocated_v<T>)
+        if constexpr (detail::is_optional_heap_allocated_v<T>)
         {
             if (!m_data.value())
             {
@@ -453,7 +457,7 @@ public:
     T& emplace(ARGS&&... args)
     {
         clear();
-        if constexpr (detail::is_heap_allocated_v<T>)
+        if constexpr (detail::is_optional_heap_allocated_v<T>)
         {
             T* ptr = allocateValue(std::forward<ARGS>(args)...);
             return *m_data.emplace(ptr);
@@ -477,7 +481,7 @@ public:
         {
             throw BadOptionalAccess("Optional is empty");
         }
-        if constexpr (detail::is_heap_allocated_v<T>)
+        if constexpr (detail::is_optional_heap_allocated_v<T>)
         {
             return *m_data.value();
         }
@@ -500,7 +504,7 @@ public:
         {
             throw BadOptionalAccess("Optional is empty");
         }
-        if constexpr (detail::is_heap_allocated_v<T>)
+        if constexpr (detail::is_optional_heap_allocated_v<T>)
         {
             return *m_data.value();
         }
@@ -651,7 +655,7 @@ private:
         }
         else
         {
-            if constexpr (detail::is_heap_allocated_v<T>)
+            if constexpr (detail::is_optional_heap_allocated_v<T>)
             {
                 auto& ptr = other.m_data.value();
                 m_data.emplace(ptr);
@@ -671,7 +675,7 @@ private:
         {
             return;
         }
-        if constexpr (detail::is_heap_allocated_v<T>)
+        if constexpr (detail::is_optional_heap_allocated_v<T>)
         {
             auto& ptr = m_data.value();
             destroyValue(ptr);

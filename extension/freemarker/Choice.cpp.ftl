@@ -1,5 +1,6 @@
 <#include "FileHeader.inc.ftl">
 <#include "CompoundField.inc.ftl">
+<#include "CompoundFunction.inc.ftl">
 <#include "CompoundParameter.inc.ftl">
 <@file_header generatorDescription/>
 
@@ -162,6 +163,13 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
     return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data)<#rt>
             <#lt><@field_view_parameters field/>};
     </#if>
+}
+</#list>
+<#list functionList as function>
+
+<@function_return_type_name function/> View<${fullName}>::${function.name}() const
+{
+    return ${function.resultExpression};
 }
 </#list>
 

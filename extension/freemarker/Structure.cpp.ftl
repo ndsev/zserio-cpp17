@@ -123,9 +123,8 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 
 <@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
-    <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple &&
-            !(field.optional?? && field.optional.clause??)>
-    <#-- simple or auto optional simple -->
+    <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
+    <#-- simple or optional simple -->
     return m_data.<@field_data_member_name field/>;
     <#else>
         <#if field.optional??>
@@ -133,17 +132,10 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
     {
         return {};
     }
-            <#if !field.array?? && field.typeInfo.isExtern>
-    return *m_data.<@field_data_member_name field/>;
-            <#else>
+
     return <@field_view_type_name field/>{*m_data.<@field_data_member_name field/><@field_view_parameters field/>};
-            </#if>
         <#else>
-            <#if !field.array?? && field.typeInfo.isExtern>
-    return m_data.<@field_data_member_name field/>;
-            <#else>
     return <@field_view_type_name field/>{m_data.<@field_data_member_name field/><@field_view_parameters field/>};
-            </#if>
         </#if>
     </#if>
 }

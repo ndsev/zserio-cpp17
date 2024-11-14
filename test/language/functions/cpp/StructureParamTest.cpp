@@ -4,6 +4,7 @@
 #include "functions/structure_param/MetresConverterCaller.h"
 #include "gtest/gtest.h"
 #include "test_utils/ReadTest.h"
+#include "test_utils/WriteReadTest.h"
 #include "zserio/BitStreamWriter.h"
 
 namespace functions
@@ -47,6 +48,7 @@ TEST_F(StructureParamTest, checkMetresConverterCaller)
     writeData(expectedWriter);
 
     test_utils::readTest(expectedWriter, data);
+    test_utils::writeReadTest(data);
 }
 
 } // namespace structure_param

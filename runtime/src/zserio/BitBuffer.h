@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <functional>
 #include <type_traits>
 
 #include "zserio/BitSize.h"
@@ -476,10 +477,53 @@ uint8_t BasicBitBuffer<ALLOC>::getMaskedLastByte() const
 /** Typedef to BitBuffer provided for convenience - using std::allocator<uint8_t>. */
 using BitBuffer = BasicBitBuffer<>;
 
+/** BitBufferView which is just a reference_wrapper for simplicity. */
 template <typename ALLOC>
-using BasicBitBufferView = const BasicBitBuffer<ALLOC>&;
+using BasicBitBufferView = std::reference_wrapper<const BasicBitBuffer<ALLOC>>;
 
-using BitBufferView = const BitBuffer&;
+/** Typedef to BitBufferView provided for convenience - using std::allocator<uint8_t>. */
+using BitBufferView = std::reference_wrapper<const BitBuffer>;
+
+/** Comparison operator for BitBufferView. */
+/** \{ */
+
+template <typename ALLOC>
+bool operator==(const BasicBitBufferView<ALLOC>& lhs, const BasicBitBufferView<ALLOC>& rhs)
+{
+    return lhs.get() == rhs.get();
+}
+
+template <typename ALLOC>
+bool operator!=(const BasicBitBufferView<ALLOC>& lhs, const BasicBitBufferView<ALLOC>& rhs)
+{
+    return lhs.get() != rhs.get();
+}
+
+template <typename ALLOC>
+bool operator<(const BasicBitBufferView<ALLOC>& lhs, const BasicBitBufferView<ALLOC>& rhs)
+{
+    return lhs.get() < rhs.get();
+}
+
+template <typename ALLOC>
+bool operator>(const BasicBitBufferView<ALLOC>& lhs, const BasicBitBufferView<ALLOC>& rhs)
+{
+    return lhs.get() > rhs.get();
+}
+
+template <typename ALLOC>
+bool operator<=(const BasicBitBufferView<ALLOC>& lhs, const BasicBitBufferView<ALLOC>& rhs)
+{
+    return lhs.get() <= rhs.get();
+}
+
+template <typename ALLOC>
+bool operator>=(const BasicBitBufferView<ALLOC>& lhs, const BasicBitBufferView<ALLOC>& rhs)
+{
+    return lhs.get() >= rhs.get();
+}
+
+/** \} */
 
 /**
  * Allows to append BitBuffer to CppRuntimeException.
@@ -513,8 +557,9 @@ namespace detail
 {
 
 template <typename ALLOC>
-BitSize bitSizeOf(const BasicBitBuffer<ALLOC>& bitBuffer, BitSize = 0)
+BitSize bitSizeOf(const BasicBitBufferView<ALLOC>& bitBufferView, BitSize = 0)
 {
+    const BasicBitBuffer<ALLOC>& bitBuffer = bitBufferView.get();
     const VarSize bitBufferSize = fromCheckedValue<VarSize>(convertSizeToUInt32(bitBuffer.getBitSize()));
 
     // bit buffer consists of varsize for bit size followed by the bits
@@ -537,6 +582,18 @@ struct hash<::zserio::BasicBitBuffer<ALLOC>>
     size_t operator()(const ::zserio::BasicBitBuffer<ALLOC>& bitBuffer) const
     {
         return static_cast<size_t>(bitBuffer.hashCode());
+    }
+};
+
+/**
+ * Specialization of std::hash.
+ */
+template <typename ALLOC>
+struct hash<::zserio::BasicBitBufferView<ALLOC>>
+{
+    size_t operator()(const ::zserio::BasicBitBufferView<ALLOC>& bitBuffer) const
+    {
+        return static_cast<size_t>(bitBuffer.get().hashCode());
     }
 };
 

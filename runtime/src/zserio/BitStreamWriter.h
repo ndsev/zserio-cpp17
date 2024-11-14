@@ -475,9 +475,9 @@ inline void write(BitStreamWriter& writer, std::string_view value)
 }
 
 template <typename ALLOC>
-inline void write(BitStreamWriter& writer, const BasicBitBuffer<ALLOC>& value)
+inline void write(BitStreamWriter& writer, const BasicBitBufferView<ALLOC>& value)
 {
-    writer.writeBitBuffer(value);
+    writer.writeBitBuffer(value.get());
 }
 
 } // namespace detail

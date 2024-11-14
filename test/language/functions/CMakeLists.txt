@@ -14,15 +14,11 @@ if (ZSERIO_LOG)
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
 
-list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/structure_array_param/.*|.*/structure_array/.*|.*/structure_bytes/.*|.*/structure_extern/.*|.*/structure_optional/.*|.*/structure_param/.*|.*/structure_parent_child_value/.*|.*/structure_string/.*|.*/structure_value/.*")
-set_target_properties(functions_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
-
 add_custom_test(functions
     DEPENDS
         functions_zs
     SOURCES
-        #${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureArrayParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureBytesTest.cpp
@@ -32,7 +28,7 @@ add_custom_test(functions
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureParentChildValueTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureStringTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureValueTest.cpp
-        #${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionArrayTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

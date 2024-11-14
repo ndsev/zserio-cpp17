@@ -446,13 +446,29 @@ TEST(BitBufferTest, stdHash)
 
 TEST(BitBufferTest, bitSizeOf)
 {
-    EXPECT_EQ(8 + 8, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xC0}), 8)));
-    EXPECT_EQ(8 + 11, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xC0}), 11)));
-    EXPECT_EQ(8 + 16, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xCD}), 16)));
-    EXPECT_EQ(8 + 16, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>({0xAB, 0xCD}))));
+    BitBuffer buffer1(std::vector<uint8_t>({0xAB, 0xC0}), 8);
+    BitBufferView view1 = buffer1;
+    EXPECT_EQ(8 + 8, detail::bitSizeOf(view1));
 
-    EXPECT_EQ(8 + 15 * 8 + 7, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>(16), 127)));
-    EXPECT_EQ(16 + 16 * 8, detail::bitSizeOf(BitBuffer(std::vector<uint8_t>(16), 128)));
+    BitBuffer buffer2(std::vector<uint8_t>({0xAB, 0xC0}), 11);
+    BitBufferView view2 = buffer2;
+    EXPECT_EQ(8 + 11, detail::bitSizeOf(view2));
+
+    BitBuffer buffer3(std::vector<uint8_t>({0xAB, 0xCD}), 16);
+    BitBufferView view3 = buffer3;
+    EXPECT_EQ(8 + 16, detail::bitSizeOf(view3));
+
+    BitBuffer buffer4(std::vector<uint8_t>({0xAB, 0xCD}));
+    BitBufferView view4 = buffer4;
+    EXPECT_EQ(8 + 16, detail::bitSizeOf(view4));
+
+    BitBuffer buffer5(std::vector<uint8_t>(16), 127);
+    BitBufferView view5 = buffer5;
+    EXPECT_EQ(8 + 15 * 8 + 7, detail::bitSizeOf(view5));
+
+    BitBuffer buffer6(std::vector<uint8_t>(16), 128);
+    BitBufferView view6 = buffer6;
+    EXPECT_EQ(16 + 16 * 8, detail::bitSizeOf(view6));
 }
 
 } // namespace zserio

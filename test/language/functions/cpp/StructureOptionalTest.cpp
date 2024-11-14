@@ -3,6 +3,7 @@
 #include "functions/structure_optional/ValueConsumerCreator.h"
 #include "gtest/gtest.h"
 #include "test_utils/ReadTest.h"
+#include "test_utils/WriteReadTest.h"
 #include "zserio/BitStreamWriter.h"
 
 namespace functions
@@ -57,6 +58,7 @@ protected:
         writeData(expectedWriter, defaultValue, externalValue);
 
         test_utils::readTest(expectedWriter, data);
+        test_utils::writeReadTest(data);
     }
 
     static constexpr zserio::UInt4 INVALID_DEFAULT_VALUE = 0;

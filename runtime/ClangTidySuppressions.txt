@@ -8,25 +8,26 @@ bugprone-signed-char-misuse:src/zserio/DeltaContext.h:257
 bugprone-signed-char-misuse:src/zserio/DeltaContext.h:273
 
 # Optional is a generic container and exceptions may be thrown from the value type.
-bugprone-exception-escape:src/zserio/Optional.h:348
-bugprone-exception-escape:src/zserio/Optional.h:375
+bugprone-exception-escape:src/zserio/Optional.h:352
+bugprone-exception-escape:src/zserio/Optional.h:379
 
 # False positives - has_value() is checked before value().
-bugprone-exception-escape:src/zserio/Optional.h:211
-bugprone-exception-escape:src/zserio/Optional.h:395
+bugprone-exception-escape:src/zserio/Optional.h:215
+bugprone-exception-escape:src/zserio/Optional.h:399
 
 # Variant is a generic container and exceptions may be thrown from the element types.
-bugprone-exception-escape:src/zserio/Variant.h:236
-bugprone-exception-escape:src/zserio/Variant.h:263
+bugprone-exception-escape:src/zserio/Variant.h:242
+bugprone-exception-escape:src/zserio/Variant.h:269
 
 # Iteration through all variant types is needed for folding expression, m_data active element is moved out
 # but index remains so it's safe to access.
-bugprone-use-after-move:src/zserio/Variant.h:675
+bugprone-use-after-move:src/zserio/Variant.h:681
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:535
-cert-dcl58-cpp:src/zserio/Optional.h:1161
-cert-dcl58-cpp:src/zserio/Variant.h:835
+cert-dcl58-cpp:src/zserio/BitBuffer.h:580
+cert-dcl58-cpp:src/zserio/BitBuffer.h:592
+cert-dcl58-cpp:src/zserio/Optional.h:1165
+cert-dcl58-cpp:src/zserio/Variant.h:841
 cert-dcl58-cpp:src/zserio/View.h:200
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
@@ -44,14 +45,14 @@ cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
 
 # Optional follows std::optional so passing value by const & is correct.
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:573
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:590
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:790
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:804
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:930
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:944
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1002
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1016
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:577
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:594
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:794
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:808
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:934
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:948
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1006
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1020
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
@@ -86,7 +87,7 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:49
 google-explicit-constructor:src/zserio/Optional.h:117
 google-explicit-constructor:src/zserio/Optional.h:127
 google-explicit-constructor:src/zserio/Optional.h:137
-google-explicit-constructor:src/zserio/Optional.h:234
+google-explicit-constructor:src/zserio/Optional.h:238
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 google-explicit-constructor:src/zserio/Span.h:112
@@ -101,8 +102,8 @@ google-explicit-constructor:src/zserio/Types.h:58
 google-explicit-constructor:src/zserio/Types.h:65
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
-google-readability-casting:src/zserio/Variant.h:41
-google-readability-casting:src/zserio/Variant.h:62
+google-readability-casting:src/zserio/Variant.h:45
+google-readability-casting:src/zserio/Variant.h:66
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
 google-explicit-constructor:src/zserio/View.h:110

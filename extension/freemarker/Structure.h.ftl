@@ -108,9 +108,11 @@ public:
     <@structure_field_view_type_name field/> ${field.getterName}() const;
     </#items>
 </#list>
-<#list functionList as function>
+<#list functionList>
 
+    <#items as function>
     <@function_return_type_name function/> ${function.name}() const;
+    </#items>
 </#list>
 
 private:

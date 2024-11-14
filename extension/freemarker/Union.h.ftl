@@ -1,6 +1,7 @@
 <#include "FileHeader.inc.ftl">
 <#include "DocComment.inc.ftl">
 <#include "CompoundField.inc.ftl">
+<#include "CompoundFunction.inc.ftl">
 <#include "CompoundParameter.inc.ftl">
 <@file_header generatorDescription/>
 
@@ -89,6 +90,12 @@ public:
 
     <#items as field>
     <@field_view_type_name field/> ${field.getterName}() const;
+    </#items>
+</#list>
+<#list functionList>
+
+    <#items as function>
+    <@function_return_type_name function/> ${function.name}() const;
     </#items>
 </#list>
 

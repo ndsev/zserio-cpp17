@@ -5,6 +5,7 @@
 #include "functions/structure_array_param/ParentStructure.h"
 #include "gtest/gtest.h"
 #include "test_utils/ReadTest.h"
+#include "test_utils/WriteReadTest.h"
 #include "zserio/BitStreamWriter.h"
 
 namespace functions
@@ -83,6 +84,7 @@ TEST_F(StructureArrayParamTest, checkParentStructure)
     writeData(expectedWriter);
 
     test_utils::readTest(expectedWriter, data);
+    test_utils::writeReadTest(data);
 }
 
 } // namespace structure_array_param

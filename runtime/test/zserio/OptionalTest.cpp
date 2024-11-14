@@ -260,7 +260,7 @@ TYPED_TEST(OptionalTest, recursiveOpt)
         using IS_RECURSIVE = int;
         Optional<Tmp> next;
     };
-    ASSERT_TRUE(detail::is_heap_allocated_v<Tmp>);
+    ASSERT_TRUE(detail::is_optional_heap_allocated_v<Tmp>);
     Optional<Tmp> opt1;
     opt1 = Tmp();
     ASSERT_TRUE(opt1.has_value());

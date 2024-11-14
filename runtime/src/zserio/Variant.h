@@ -37,8 +37,12 @@ struct type_at
 template <auto I, typename... T>
 using type_at_t = typename type_at<static_cast<size_t>(I), T...>::type;
 
+template <auto I, typename... T>
+struct is_variant_heap_allocated : variant_element<type_at_t<I, T...>>::is_heap_allocated
+{};
+
 template <auto I, class... T>
-constexpr bool is_heap_allocated_v = variant_element<type_at_t<I, T...>>::is_heap_allocated::value;
+constexpr bool is_variant_heap_allocated_v = is_variant_heap_allocated<I, T...>::value;
 
 } // namespace detail
 
@@ -102,7 +106,7 @@ public:
     explicit BasicVariant(const ALLOC& allocator) :
             AllocatorHolder<ALLOC>(allocator)
     {
-        if constexpr (detail::is_heap_allocated_v<0, T...>)
+        if constexpr (detail::is_variant_heap_allocated_v<0, T...>)
         {
             emplace<INDEX{}>(); // enforce no empty state like std::variant
         }
@@ -116,7 +120,8 @@ public:
      *
      * \throw can throw any exception thrown by T[I]
      */
-    template <INDEX I, typename... ARGS, std::enable_if_t<!detail::is_heap_allocated_v<I, T...>>* = nullptr,
+    template <INDEX I, typename... ARGS,
+            std::enable_if_t<!detail::is_variant_heap_allocated_v<I, T...>>* = nullptr,
             std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
     explicit BasicVariant(in_place_index_t<I>, ARGS&&... args) :
             m_data(std::in_place_index<static_cast<size_t>(I)>, std::forward<ARGS>(args)...)
@@ -131,7 +136,8 @@ public:
      *
      * \throw can throw any exception thrown by T[I]
      */
-    template <INDEX I, typename... ARGS, std::enable_if_t<!detail::is_heap_allocated_v<I, T...>>* = nullptr>
+    template <INDEX I, typename... ARGS,
+            std::enable_if_t<!detail::is_variant_heap_allocated_v<I, T...>>* = nullptr>
     BasicVariant(in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
             AllocatorHolder<ALLOC>(allocator),
             m_data(std::in_place_index<static_cast<size_t>(I)>, std::forward<ARGS>(args)...)
@@ -147,7 +153,7 @@ public:
      * \throw can throw any exception thrown by T[I]
      */
     template <INDEX I, typename... ARGS, typename U = detail::type_at_t<static_cast<size_t>(I), T...>,
-            std::enable_if_t<detail::is_heap_allocated_v<I, T...>>* = nullptr>
+            std::enable_if_t<detail::is_variant_heap_allocated_v<I, T...>>* = nullptr>
     BasicVariant(in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
             AllocatorHolder<ALLOC>(allocator),
             m_data(std::in_place_index<static_cast<size_t>(I)>, allocateValue<U>(std::forward<ARGS>(args)...))
@@ -162,7 +168,7 @@ public:
      * \throw can throw any exception thrown by T[I]
      */
     template <INDEX I, typename... ARGS, typename U = detail::type_at_t<static_cast<size_t>(I), T...>,
-            std::enable_if_t<detail::is_heap_allocated_v<I, T...>>* = nullptr,
+            std::enable_if_t<detail::is_variant_heap_allocated_v<I, T...>>* = nullptr,
             std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
     explicit BasicVariant(in_place_index_t<I>, ARGS&&... args) :
             m_data(std::in_place_index<static_cast<size_t>(I)>, allocateValue<U>(std::forward<ARGS>(args)...))
@@ -293,7 +299,7 @@ public:
     decltype(auto) emplace(ARGS&&... args)
     {
         clear();
-        if constexpr (detail::is_heap_allocated_v<I, T...>)
+        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
         {
             using U = detail::type_at_t<I, T...>;
             U* ptr = allocateValue<U>(std::forward<ARGS>(args)...);
@@ -323,7 +329,7 @@ public:
         {
             return nullptr;
         }
-        if constexpr (detail::is_heap_allocated_v<I, T...>)
+        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
         {
             return *std::get_if<static_cast<size_t>(I)>(&m_data);
         }
@@ -343,7 +349,7 @@ public:
         {
             return nullptr;
         }
-        if constexpr (detail::is_heap_allocated_v<I, T...>)
+        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
         {
             return *std::get_if<static_cast<size_t>(I)>(&m_data);
         }
@@ -682,7 +688,7 @@ private:
         {
             return;
         }
-        if constexpr (detail::is_heap_allocated_v<I, T...>)
+        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
         {
             auto& ptr = *std::get_if<I>(&other.m_data);
             m_data.template emplace<I>(ptr);
@@ -713,7 +719,7 @@ private:
         {
             return;
         }
-        if constexpr (detail::is_heap_allocated_v<I, T...>)
+        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
         {
             auto& ptr = *std::get_if<I>(&m_data);
             destroyValue(ptr);
