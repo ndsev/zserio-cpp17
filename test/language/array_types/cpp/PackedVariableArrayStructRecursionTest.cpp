@@ -78,8 +78,7 @@ protected:
     {
         PackedVariableArray data;
         fillData(data, numElements);
-
-        zserio::View<PackedVariableArray> view(data);
+        const zserio::View<PackedVariableArray> view(data);
 
         const double unpackedBitSize = static_cast<double>(getUnpackedVariableArrayBitSize(numElements));
         const double packedBitSize = static_cast<double>(zserio::detail::bitSizeOf(view));

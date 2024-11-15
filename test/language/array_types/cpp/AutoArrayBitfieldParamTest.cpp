@@ -1,8 +1,7 @@
 #include "array_types/auto_array_bitfield_param/ParameterizedBitfieldLength.h"
 #include "gtest/gtest.h"
-#include "zserio/BitStreamReader.h"
+#include "test_utils/TestUtility.h"
 #include "zserio/BitStreamWriter.h"
-#include "zserio/SerializeUtil.h"
 
 namespace array_types
 {
@@ -16,145 +15,60 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class AutoArrayBitfieldParamTest : public ::testing::Test
 {
 protected:
-    void fillParameterizedBitfieldLength(ParameterizedBitfieldLength& parameterizedBitfieldLength)
+    void fillData(ParameterizedBitfieldLength& data)
     {
-        VectorType<zserio::DynUInt16<>>& dynamicBitfieldArray =
-                parameterizedBitfieldLength.dynamicBitfieldArray;
+        VectorType<zserio::DynUInt16<>>& dynamicBitfieldArray = data.dynamicBitfieldArray;
         for (uint16_t i = 0; i < DYNAMIC_BITFIELD_ARRAY_SIZE; ++i)
         {
             dynamicBitfieldArray.push_back(i);
         }
     }
 
-    void checkParameterizedBitfieldLengthInBitStream(zserio::BitStreamReader& reader,
-            const zserio::View<ParameterizedBitfieldLength>& parameterizedBitfieldLength)
+    void writeData(zserio::BitStreamWriter& writer)
     {
-        ASSERT_EQ(NUM_BITS_PARAM, parameterizedBitfieldLength.numBits());
-        ASSERT_EQ(DYNAMIC_BITFIELD_ARRAY_SIZE, reader.readVarSize());
+        writer.writeVarSize(static_cast<uint32_t>(DYNAMIC_BITFIELD_ARRAY_SIZE));
+
         for (uint16_t i = 0; i < DYNAMIC_BITFIELD_ARRAY_SIZE; ++i)
         {
-            ASSERT_EQ(i, reader.readUnsignedBits32(NUM_BITS_PARAM));
+            writer.writeUnsignedBits32(i, NUM_BITS_PARAM);
         }
-        reader.setBitPosition(0);
     }
 
     static constexpr std::string_view BLOB_NAME = "language/array_types/auto_array_bitfield_param.blob";
     static constexpr zserio::UInt4 NUM_BITS_PARAM = 9;
 
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
-
 private:
     static constexpr size_t DYNAMIC_BITFIELD_ARRAY_SIZE = (1U << 9U) - 1;
 };
 
-TEST_F(AutoArrayBitfieldParamTest, copyConstructor)
-{
-    ParameterizedBitfieldLength parameterizedBitfieldLengthOrig;
-    fillParameterizedBitfieldLength(parameterizedBitfieldLengthOrig);
-    zserio::View<ParameterizedBitfieldLength> viewOrig(parameterizedBitfieldLengthOrig, NUM_BITS_PARAM);
-    const zserio::BitSize origBitSize = zserio::detail::bitSizeOf(viewOrig);
-
-    zserio::BitBuffer bitBufferOrig(origBitSize);
-    zserio::BitStreamWriter writerOrig(bitBufferOrig);
-    zserio::detail::write(writerOrig, viewOrig);
-
-    ParameterizedBitfieldLength parameterizedBitfieldLengthCopied(parameterizedBitfieldLengthOrig);
-    zserio::View<ParameterizedBitfieldLength> viewCopied(parameterizedBitfieldLengthCopied, NUM_BITS_PARAM);
-    ASSERT_EQ(origBitSize, zserio::detail::bitSizeOf(viewCopied));
-
-    zserio::BitBuffer bitBufferCopied(origBitSize);
-    zserio::BitStreamWriter writerCopied(bitBufferCopied);
-    zserio::detail::write(writerCopied, viewCopied);
-    ASSERT_EQ(bitBufferOrig, bitBufferCopied);
-}
-
-TEST_F(AutoArrayBitfieldParamTest, moveConstructor)
-{
-    ParameterizedBitfieldLength parameterizedBitfieldLengthOrig;
-    fillParameterizedBitfieldLength(parameterizedBitfieldLengthOrig);
-    zserio::View<ParameterizedBitfieldLength> viewOrig(parameterizedBitfieldLengthOrig, NUM_BITS_PARAM);
-    const size_t origBitSize = zserio::detail::bitSizeOf(viewOrig);
-
-    zserio::BitBuffer bitBufferOrig(origBitSize);
-    zserio::BitStreamWriter writerOrig(bitBufferOrig);
-    zserio::detail::write(writerOrig, viewOrig);
-
-    ParameterizedBitfieldLength parameterizedBitfieldLengthMoved(std::move(parameterizedBitfieldLengthOrig));
-    zserio::View<ParameterizedBitfieldLength> viewMoved(parameterizedBitfieldLengthMoved, NUM_BITS_PARAM);
-    ASSERT_EQ(origBitSize, zserio::detail::bitSizeOf(viewMoved));
-
-    zserio::BitBuffer bitBufferMoved(origBitSize);
-    zserio::BitStreamWriter writerMoved(bitBufferMoved);
-    zserio::detail::write(writerMoved, viewMoved);
-    ASSERT_EQ(bitBufferOrig, bitBufferMoved);
-}
-
-TEST_F(AutoArrayBitfieldParamTest, copyAssignmentOperator)
-{
-    ParameterizedBitfieldLength parameterizedBitfieldLengthCopied;
-    size_t origBitSize = 0;
-    {
-        ParameterizedBitfieldLength parameterizedBitfieldLengthOrig;
-        fillParameterizedBitfieldLength(parameterizedBitfieldLengthOrig);
-        zserio::View<ParameterizedBitfieldLength> viewOrig(parameterizedBitfieldLengthOrig, NUM_BITS_PARAM);
-        origBitSize = zserio::detail::bitSizeOf(viewOrig);
-
-        parameterizedBitfieldLengthCopied = parameterizedBitfieldLengthOrig;
-    }
-
-    zserio::View<ParameterizedBitfieldLength> viewCopied(parameterizedBitfieldLengthCopied, NUM_BITS_PARAM);
-    ASSERT_EQ(origBitSize, zserio::detail::bitSizeOf(viewCopied));
-}
-
-TEST_F(AutoArrayBitfieldParamTest, moveAssignmentOperator)
-{
-    ParameterizedBitfieldLength parameterizedBitfieldLengthMoved;
-    size_t origBitSize = 0;
-    {
-        ParameterizedBitfieldLength parameterizedBitfieldLengthOrig;
-        fillParameterizedBitfieldLength(parameterizedBitfieldLengthOrig);
-        zserio::View<ParameterizedBitfieldLength> viewOrig(parameterizedBitfieldLengthOrig, NUM_BITS_PARAM);
-        origBitSize = zserio::detail::bitSizeOf(viewOrig);
-
-        parameterizedBitfieldLengthMoved = std::move(parameterizedBitfieldLengthOrig);
-    }
-
-    zserio::View<ParameterizedBitfieldLength> viewMoved(parameterizedBitfieldLengthMoved, NUM_BITS_PARAM);
-    ASSERT_EQ(origBitSize, zserio::detail::bitSizeOf(viewMoved));
-}
-
 TEST_F(AutoArrayBitfieldParamTest, writeRead)
 {
-    ParameterizedBitfieldLength parameterizedBitfieldLength;
-    fillParameterizedBitfieldLength(parameterizedBitfieldLength);
-    zserio::View<ParameterizedBitfieldLength> view(parameterizedBitfieldLength, NUM_BITS_PARAM);
+    ParameterizedBitfieldLength data;
+    fillData(data);
 
-    zserio::BitStreamWriter writer(bitBuffer);
-    zserio::detail::write(writer, view);
-
-    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    checkParameterizedBitfieldLengthInBitStream(reader, view);
-
-    ParameterizedBitfieldLength readParameterizedBitfieldLength;
-    zserio::View<ParameterizedBitfieldLength> readView =
-            zserio::detail::read(reader, readParameterizedBitfieldLength, NUM_BITS_PARAM);
-    ASSERT_EQ(parameterizedBitfieldLength, readParameterizedBitfieldLength);
-    ASSERT_EQ(view, readView);
+    test_utils::writeReadTest(data, NUM_BITS_PARAM);
 }
 
 TEST_F(AutoArrayBitfieldParamTest, writeReadFile)
 {
-    ParameterizedBitfieldLength parameterizedBitfieldLength;
-    fillParameterizedBitfieldLength(parameterizedBitfieldLength);
-    zserio::View<ParameterizedBitfieldLength> view(parameterizedBitfieldLength, NUM_BITS_PARAM);
+    ParameterizedBitfieldLength data;
+    fillData(data);
 
-    zserio::serializeToFile(view, BLOB_NAME);
+    test_utils::writeReadFileTest(BLOB_NAME, data, NUM_BITS_PARAM);
+}
 
-    ParameterizedBitfieldLength readParameterizedBitfieldLength;
-    const auto readView =
-            zserio::deserializeFromFile(BLOB_NAME, readParameterizedBitfieldLength, NUM_BITS_PARAM);
-    ASSERT_EQ(parameterizedBitfieldLength, readParameterizedBitfieldLength);
-    ASSERT_EQ(view, readView);
+TEST_F(AutoArrayBitfieldParamTest, read)
+{
+    ParameterizedBitfieldLength data;
+    fillData(data);
+    const zserio::View<ParameterizedBitfieldLength> view(data, NUM_BITS_PARAM);
+
+    const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
+    zserio::BitBuffer bitBuffer(bitSize);
+    zserio::BitStreamWriter writer(bitBuffer);
+    writeData(writer);
+
+    test_utils::readTest(writer, data, NUM_BITS_PARAM);
 }
 
 } // namespace auto_array_bitfield_param

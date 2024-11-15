@@ -17,6 +17,9 @@ bugprone-exception-escape:gen/array_types/packing_interface_optimization/Unpacke
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorStruct.cpp
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorUnion.h
 
+cert-err58-cpp:cpp/PackedAutoArrayStructWithBytesTest.cpp
+cert-err58-cpp:cpp/PackedAutoArrayStructWithExternTest.cpp
+
 google-explicit-constructor:gen/array_types/arrays_mapping/TestBitmask.h
 google-explicit-constructor:gen/array_types/packed_arrays_mapping/TestBitmask.h
 google-explicit-constructor:gen/array_types/packed_variable_array_struct/TestBitmask.h

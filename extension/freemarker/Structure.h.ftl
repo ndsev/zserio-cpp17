@@ -116,7 +116,9 @@ public:
 </#list>
 
 private:
+<#if fieldList?has_content>
     const ${fullName}& m_data;
+</#if>
 <#list parameterList as parameter>
     <@parameter_view_type_name parameter/> <@parameter_view_member_name parameter/>;
 </#list>

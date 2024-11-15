@@ -52,10 +52,10 @@ int64_t calcUncheckedDelta(T lhs, uint64_t rhs)
 /**
  * Context for delta packing created for each packable field.
  *
- * Contexts are always newly created for each array operation (bitSizeOfPacked, initializeOffsetsPacked,
- * readPacked, writePacked). They must be initialized at first via calling the init method for each packable
- * element present in the array. After the full initialization, only a single method (bitSizeOf, read, write)
- * can be repeatedly called for exactly the same sequence of packable elements.
+ * Contexts are always newly created for each array operation (bitSizeOfPacked, readPacked, writePacked).
+ * They must be initialized at first via calling the init method for each packable element present in the array.
+ * After the full initialization, only a single method (bitSizeOf, read, write) can be repeatedly called for
+ * exactly the same sequence of packable elements.
  */
 class DeltaContext
 {

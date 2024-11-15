@@ -99,13 +99,15 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
 
-View<${fullName}>::View(const ${fullName}& data<#rt>
+View<${fullName}>::View(const ${fullName}&<#if fieldList?has_content> data</#if><#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
-        <#lt>) noexcept :
+        <#lt>) noexcept<#if fieldList?has_content || parameterList?has_content> :</#if>
+<#if fieldList?has_content>
         m_data(data)<#rt>
+</#if>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_member_name parameter/>(<@parameter_view_arg_name parameter/>)<#rt>

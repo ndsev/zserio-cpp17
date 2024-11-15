@@ -1,14 +1,12 @@
-#include "array_types/variable_array_subtyped_struct/VariableArray.h"
+#include "array_types/variable_array_struct_cast_int8/VariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/BitStreamWriter.h"
-#include "zserio/RebindAlloc.h"
 #include "zserio/SerializeUtil.h"
 #include "zserio/StringConvertUtil.h"
 
 namespace array_types
 {
-namespace variable_array_subtyped_struct
+namespace variable_array_struct_cast_int8
 {
 
 using AllocatorType = VariableArray::AllocatorType;
@@ -16,36 +14,40 @@ using StringType = zserio::BasicString<AllocatorType>;
 template <typename T>
 using VectorType = zserio::Vector<T, AllocatorType>;
 
-class VariableArraySubtypedStructTest : public ::testing::Test
+class VariableArrayStructCastInt8Test : public ::testing::Test
 {
 protected:
     VariableArray createData(size_t numElements, bool wrong = false)
     {
-        VectorType<ArrayElement> compoundArray;
+        VectorType<TestStructure> compoundArray;
         compoundArray.reserve(numElements);
         for (size_t i = 0; i < numElements; ++i)
         {
-            const ArrayElement arrayElement(
-                    static_cast<uint32_t>(i), StringType("Name") + zserio::toString<AllocatorType>(i));
-            compoundArray.push_back(arrayElement);
+            TestStructure testStructure;
+            testStructure.id = static_cast<uint32_t>(i);
+            testStructure.name = StringType("Name") + zserio::toString<AllocatorType>(i);
+            compoundArray.push_back(testStructure);
         }
-        return VariableArray(static_cast<uint8_t>(wrong ? numElements + 1 : numElements), compoundArray);
+        VariableArray variableArray;
+        variableArray.numElements = static_cast<int8_t>(wrong ? numElements + 1 : numElements);
+        variableArray.compoundArray = compoundArray;
+        return variableArray;
     }
 
     void writeData(zserio::BitStreamWriter& writer, size_t numElements)
     {
-        writer.writeSignedBits32(static_cast<uint8_t>(numElements), 8);
+        writer.writeSignedBits32(static_cast<int8_t>(numElements), 8);
         for (size_t i = 0; i < numElements; ++i)
         {
             writer.writeUnsignedBits32(static_cast<uint32_t>(i), 32);
-            zserio::detail::write(writer, (std::string("Name") + std::to_string(i)));
+            writer.writeString(std::string("Name") + std::to_string(i));
         }
     }
 
-    static constexpr std::string_view BLOB_NAME = "language/array_types/variable_array_subtyped_struct.blob";
+    static constexpr std::string_view BLOB_NAME = "language/array_types/variable_array_struct_cast_int8.blob";
 };
 
-TEST_F(VariableArraySubtypedStructTest, bitSizeOf)
+TEST_F(VariableArrayStructCastInt8Test, bitSizeOf)
 {
     const size_t numElements = 33;
     auto data = createData(numElements);
@@ -57,7 +59,7 @@ TEST_F(VariableArraySubtypedStructTest, bitSizeOf)
     ASSERT_EQ(expectedBitSize, zserio::detail::bitSizeOf(view, bitPosition));
 }
 
-TEST_F(VariableArraySubtypedStructTest, read)
+TEST_F(VariableArrayStructCastInt8Test, read)
 {
     const size_t numElements = 59;
     auto data = createData(numElements);
@@ -71,7 +73,7 @@ TEST_F(VariableArraySubtypedStructTest, read)
     test_utils::readTest(writer, data);
 }
 
-TEST_F(VariableArraySubtypedStructTest, writeRead)
+TEST_F(VariableArrayStructCastInt8Test, writeRead)
 {
     const size_t numElements = 33;
     auto data = createData(numElements);
@@ -79,7 +81,7 @@ TEST_F(VariableArraySubtypedStructTest, writeRead)
     test_utils::writeReadTest(data);
 }
 
-TEST_F(VariableArraySubtypedStructTest, writeReadFile)
+TEST_F(VariableArrayStructCastInt8Test, writeReadFile)
 {
     const size_t numElements = 33;
     auto data = createData(numElements);
@@ -87,7 +89,7 @@ TEST_F(VariableArraySubtypedStructTest, writeReadFile)
     test_utils::writeReadFileTest(BLOB_NAME, data);
 }
 
-TEST_F(VariableArraySubtypedStructTest, writeWrongArray)
+TEST_F(VariableArrayStructCastInt8Test, writeWrongArray)
 {
     const size_t numElements = 33;
     auto data = createData(numElements, true);
@@ -95,5 +97,5 @@ TEST_F(VariableArraySubtypedStructTest, writeWrongArray)
     ASSERT_THROW(zserio::serialize(data), zserio::CppRuntimeException);
 }
 
-} // namespace variable_array_subtyped_struct
+} // namespace variable_array_struct_cast_int8
 } // namespace array_types

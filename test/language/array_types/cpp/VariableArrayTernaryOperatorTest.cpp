@@ -1,7 +1,7 @@
 #include "array_types/variable_array_ternary_operator/VariableArray.h"
 #include "gtest/gtest.h"
+#include "test_utils/TestUtility.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/SerializeUtil.h"
 
 namespace array_types
 {
@@ -15,7 +15,7 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class VariableArrayTernaryOperator : public ::testing::Test
 {
 protected:
-    void fillVariableArray(VariableArray& data, bool isFirstSizeUsed)
+    void fillData(VariableArray& data, bool isFirstSizeUsed)
     {
         data.isFirstSizeUsed = isFirstSizeUsed;
         const zserio::UInt6 currentSize = (isFirstSizeUsed) ? data.firstSize : data.secondSize;
@@ -30,34 +30,13 @@ protected:
         }
     }
 
-    void checkVariableArray(const zserio::View<VariableArray>& view, bool isFirstSizeUsed)
-    {
-        ASSERT_EQ(isFirstSizeUsed, view.isFirstSizeUsed());
-        const zserio::UInt6 currentSize = (isFirstSizeUsed) ? FIRST_SIZE : SECOND_SIZE;
-        const auto& array = view.array();
-        const size_t arraySize = static_cast<size_t>(currentSize) * static_cast<size_t>(currentSize);
-        for (size_t i = 0; i < arraySize; ++i)
-        {
-            const auto& element = array[i];
-            ASSERT_EQ(currentSize, element.bitSize());
-            ASSERT_EQ(i, element.element().value());
-        }
-    }
-
     void testWriteReadFile(bool isFirstSizeUsed)
     {
         VariableArray data;
-        fillVariableArray(data, isFirstSizeUsed);
-        zserio::View<VariableArray> view(data);
+        fillData(data, isFirstSizeUsed);
 
         const std::string_view blobName = (isFirstSizeUsed) ? BLOB_NAME_FIRST : BLOB_NAME_SECOND;
-        zserio::serializeToFile(view, blobName);
-
-        VariableArray readData;
-        auto readView = zserio::deserializeFromFile(blobName, readData);
-        checkVariableArray(readView, isFirstSizeUsed);
-        ASSERT_EQ(data, readData);
-        ASSERT_EQ(view, readView);
+        test_utils::writeReadFileTest(blobName, data);
     }
 
     static constexpr uint8_t FIRST_SIZE = 10;
@@ -67,8 +46,6 @@ protected:
             "language/array_types/variable_array_ternary_operator1.blob";
     static constexpr std::string_view BLOB_NAME_SECOND =
             "language/array_types/variable_array_ternary_operator1.blob";
-
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
 
 TEST_F(VariableArrayTernaryOperator, firstWriteReadFile)

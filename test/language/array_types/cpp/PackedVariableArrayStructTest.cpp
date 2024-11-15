@@ -19,20 +19,15 @@ protected:
     void fillData(PackedVariableArray& data, uint32_t numElements)
     {
         VectorType<TestStructure> testStructureArray;
-        fillTestStructureArray(testStructureArray, numElements);
-
-        data.numElements = numElements;
-        data.testUnpackedArray = TestUnpackedArray{testStructureArray};
-        data.testPackedArray = TestPackedArray{testStructureArray};
-    }
-
-    void fillTestStructureArray(VectorType<TestStructure>& testStructureArray, uint32_t numElements)
-    {
         testStructureArray.reserve(numElements);
         for (uint32_t i = 0; i < numElements; ++i)
         {
             testStructureArray.push_back(createTestStructure(i));
         }
+
+        data.numElements = numElements;
+        data.testUnpackedArray = TestUnpackedArray{testStructureArray};
+        data.testPackedArray = TestPackedArray{testStructureArray};
     }
 
     TestStructure createTestStructure(uint32_t index)
@@ -111,7 +106,7 @@ protected:
     {
         PackedVariableArray data;
         fillData(data, numElements);
-        zserio::View<PackedVariableArray> view(data);
+        const zserio::View<PackedVariableArray> view(data);
 
         const double unpackedBitSize = static_cast<double>(zserio::detail::bitSizeOf(view.testUnpackedArray()));
         const double packedBitSize = static_cast<double>(zserio::detail::bitSizeOf(view.testPackedArray()));
