@@ -57,9 +57,8 @@ Current state (15.11.2024):
 - Services, Pubsubs, SQL databases and SQL tables are silently ignored
 - DataView abstraction is not supported
 
-Current state of the generated sources can be investigated using the PoC
-[schema](https://github.com/ndsev/zserio-cpp17/blob/master/poc/test.zs)
-[here](https://github.com/ndsev/zserio-cpp17/tree/master/poc/gen/cpp17).
+Current state of the sources generated from [PoC schema](https://github.com/ndsev/zserio-cpp17/blob/master/poc/test.zs)
+can be investigated [here](https://github.com/ndsev/zserio-cpp17/tree/master/poc/gen/cpp17).
 
 ### How to Get the C++17 Generator
 
