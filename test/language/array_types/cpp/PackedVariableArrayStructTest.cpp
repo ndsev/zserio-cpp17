@@ -117,9 +117,9 @@ protected:
         const double packedBitSize = static_cast<double>(zserio::detail::bitSizeOf(view.testPackedArray()));
         const double minCompressionRatio = 0.622;
         ASSERT_GT(unpackedBitSize * minCompressionRatio, packedBitSize)
-                << "Unpacked array has " << std::to_string(unpackedBitSize) << " bits, "
-                << "packed array has " << std::to_string(packedBitSize) << " bits, "
-                << "compression ratio is " << std::to_string(packedBitSize / unpackedBitSize * 100) << "%!";
+                << "Unpacked array has " << std::to_string(unpackedBitSize) << " bits, packed array has "
+                << std::to_string(packedBitSize) << " bits, compression ratio is "
+                << std::to_string(packedBitSize / unpackedBitSize * 100) << "%!";
     }
 
     void checkWriteRead(uint32_t numElements)
