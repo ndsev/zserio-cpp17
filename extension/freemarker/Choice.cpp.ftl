@@ -98,11 +98,11 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 
 <@function_return_type_name function/> View<${fullName}>::${function.name}() const
 {
-    return ${function.resultExpression};
+    return <@function_result_expression function/>;
 }
 </#list>
 
-<#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1>
+<#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if !isSelectorBoolean>
 ${I}switch (${switchExpression})
@@ -111,7 +111,7 @@ ${I}{
             <#list caseMember.expressionList as expression>
 ${I}case ${expression}:
             </#list>
-            <#assign caseCode><@.vars[memberActionMacroName] caseMember, indent+1/></#assign>
+            <#assign caseCode><@.vars[memberActionMacroName] caseMember, indent+1, packed/></#assign>
         ${caseCode}<#t>
             <#if !caseCode?contains("return")>
 ${I}    break;
@@ -120,7 +120,7 @@ ${I}    break;
         <#if !isDefaultUnreachable>
 ${I}default:
             <#if defaultMember??>
-                <#assign defaultCode><@.vars[memberActionMacroName] defaultMember, indent+1/></#assign>
+                <#assign defaultCode><@.vars[memberActionMacroName] defaultMember, indent+1, packed/></#assign>
         ${defaultCode}<#t>
                 <#if !defaultCode?contains("return")>
 ${I}    break;
@@ -142,14 +142,14 @@ ${I}<#if caseMember?index != 0>else </#if>if (<#rt>
 ${I}else
             </#if>
 ${I}{
-        <@.vars[memberActionMacroName] caseMember, indent+1/>
+        <@.vars[memberActionMacroName] caseMember, indent+1, packed/>
 ${I}}
         </#list>
         <#if !isDefaultUnreachable>
 ${I}else
 ${I}{
             <#if defaultMember??>
-        <@.vars[memberActionMacroName] defaultMember, indent+1/>
+        <@.vars[memberActionMacroName] defaultMember, indent+1, packed/>
             <#else>
         <@.vars[noMatchMacroName] name, indent+1/>
             </#if>
@@ -157,7 +157,7 @@ ${I}}
         </#if>
     </#if>
 </#macro>
-<#macro choice_compare_member member indent>
+<#macro choice_compare_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}return (lhs.${member.field.getterName}() == rhs.${member.field.getterName}());
@@ -186,7 +186,7 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 </#if>
 }
 
-<#macro choice_less_than_member member indent>
+<#macro choice_less_than_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}return (lhs.${member.field.getterName}() < rhs.${member.field.getterName}());
@@ -232,7 +232,7 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
-<#macro choice_validate_member member indent>
+<#macro choice_validate_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}// check choice case
@@ -266,10 +266,12 @@ void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 </#if>
 }
 
-<#macro choice_bitsizeof_member member indent>
+<#macro choice_bitsizeof_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}endBitPosition += bitSizeOf(view.${member.field.getterName}(), endBitPosition);
+${I}endBitPosition += bitSizeOf<@array_packed_suffix member.field/>(<#rt>
+        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
+        <#lt>view.${member.field.getterName}(), endBitPosition);
     <#else>
 ${I}// empty
     </#if>
@@ -288,10 +290,12 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 </#if>
 }
 
-<#macro choice_write_member member indent>
+<#macro choice_write_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}write(writer, view.${member.field.getterName}());
+${I}write<@array_packed_suffix member.field/>(<#rt>
+        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
+        <#lt>writer, view.${member.field.getterName}());
     <#else>
 ${I}// empty
     </#if>
@@ -305,12 +309,13 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 </#if>
 }
 
-<#macro choice_read_member member indent>
+<#macro choice_read_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>();
-${I}<#if member.field.compound??>(void)</#if>read<#rt>
+${I}<#if member.field.compound??>(void)</#if>read<@array_packed_suffix member.field/><#rt>
         <#if member.field.array??><<@array_type_full_name fullName, member.field/>></#if>(<#t>
+        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters member.field/>);
     <#else>
@@ -337,6 +342,71 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 
     return view;
 }
+<#if isPackable && usedInPackedArray>
+
+<#macro choice_init_context member indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if member.field?? && field_needs_packing_context(member.field)>
+${I}initContext(<@packing_context member.field/>, view.${member.field.getterName}());
+    <#else>
+${I}// empty
+    </#if>
+</#macro>
+template <>
+void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        <#lt>const View<${fullName}>&<#if needs_packing_context(fieldList)> view</#if>)
+{
+    <#if fieldList?has_content>
+    <@choice_switch "choice_init_context", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+    </#if>
+}
+
+template <>
+BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+    <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+    <@choice_switch "choice_bitsizeof_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+
+    return endBitPosition - bitPosition;
+    <#else>
+    return 0;
+    </#if>
+}
+
+template <>
+void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
+{
+<#if fieldList?has_content>
+    <@choice_switch "choice_write_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+</#if>
+}
+
+template <>
+void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+    <#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+        <#lt>)
+{
+    View<${fullName}> view(data<#rt>
+<#list parameterList as parameter>
+            <#lt>,
+            <#nt><@parameter_view_arg_name parameter/><#rt>
+</#list>
+            <#lt>);
+<#if fieldList?has_content>
+    <@choice_switch "choice_read_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+</#if>
+    (void)view;
+}
+</#if>
 <@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
@@ -350,7 +420,7 @@ size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_conten
     return static_cast<size_t>(result);
 }
 
-<#macro choice_hash_member member indent>
+<#macro choice_hash_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}result = ::zserio::calcHashCode(result, view.${member.field.getterName}());

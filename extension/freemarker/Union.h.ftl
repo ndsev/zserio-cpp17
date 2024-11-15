@@ -130,6 +130,37 @@ View<${fullName}> read(BitStreamReader& reader, ${fullName}& data<#rt>
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
         <#lt>);
+<#if isPackable && usedInPackedArray>
+
+template <>
+struct PackingContext<${fullName}>
+{
+    DeltaContext zserioChoiceTag;
+<#list fieldList as field>
+    <#if field_needs_packing_context(field)>
+    <@packing_context_type_name field/> <@packing_context_member_name field/>;
+    </#if>
+</#list>
+};
+
+template <>
+void initContext(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view);
+
+template <>
+BitSize bitSizeOf(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view,
+        BitSize bitPosition);
+
+template <>
+void write(PackingContext<${fullName}>& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
+
+template <>
+void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
+    <#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+        <#lt>);
+</#if>
 <@namespace_end ["detail", "zserio"]/>
 <@namespace_begin ["std"]/>
 

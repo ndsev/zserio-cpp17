@@ -144,7 +144,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 
 <@function_return_type_name function/> View<${fullName}>::${function.name}() const
 {
-    return ${function.resultExpression};
+    return <@function_result_expression function/>;
 }
 </#list>
 

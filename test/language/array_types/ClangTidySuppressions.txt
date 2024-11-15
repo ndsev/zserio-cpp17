@@ -1,6 +1,37 @@
-bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion/Block.h
+bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/EmptyChoice.h
+bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/EmptyUnion.h
+bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/Main.cpp
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion/Block.cpp
+bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion/Block.h
+bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestChoice.h
+bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestStructure.cpp
+bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestUnion.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorChoice.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorStruct.cpp
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorUnion.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/PackedColorChoice.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/PackedColorStruct.cpp
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/PackedColorUnion.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorChoice.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorStruct.cpp
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorUnion.h
 
 google-explicit-constructor:gen/array_types/arrays_mapping/TestBitmask.h
+google-explicit-constructor:gen/array_types/packed_arrays_mapping/TestBitmask.h
+google-explicit-constructor:gen/array_types/packed_variable_array_struct/TestBitmask.h
+google-explicit-constructor:gen/array_types/packing_interface_optimization/MixedColorBitmask.h
+google-explicit-constructor:gen/array_types/packing_interface_optimization/PackedColorBitmask.h
+google-explicit-constructor:gen/array_types/packing_interface_optimization/UnpackedColorBitmask.h
 
 misc-no-recursion # reports also runtime
+
+performance-move-const-arg:gen/array_types/packed_auto_array_empty_compounds/Main.cpp
+
+readability-implicit-bool-conversion:gen/array_types/packing_interface_optimization/MixedColorChoice.cpp
+readability-implicit-bool-conversion:gen/array_types/packing_interface_optimization/PackedColorChoice.cpp
+readability-implicit-bool-conversion:gen/array_types/packing_interface_optimization/UnpackedColorChoice.cpp
+
+readability-simplify-boolean-expr:gen/array_types/packed_auto_array_empty_compounds/EmptyChoice.cpp
+readability-simplify-boolean-expr:gen/array_types/packing_interface_optimization/MixedColorChoice.cpp
+readability-simplify-boolean-expr:gen/array_types/packing_interface_optimization/PackedColorChoice.cpp
+readability-simplify-boolean-expr:gen/array_types/packing_interface_optimization/UnpackedColorChoice.cpp

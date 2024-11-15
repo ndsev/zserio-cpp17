@@ -84,7 +84,7 @@
             , view<#t>
         </#if>
         <#if field.array.viewIndirectLength??>
-            , ${field.array.viewIndirectLength}<#t>
+            , static_cast<size_t>(${field.array.viewIndirectLength})<#t>
         </#if>
     <#else>
         <#if field.compound??>

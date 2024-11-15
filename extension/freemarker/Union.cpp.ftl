@@ -99,17 +99,17 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 
 <@function_return_type_name function/> View<${fullName}>::${function.name}() const
 {
-    return ${function.resultExpression};
+    return <@function_result_expression function/>;
 }
 </#list>
 
-<#macro union_switch fieldActionMacroName noMatchMacroName switchExpression indent=1>
+<#macro union_switch fieldActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}switch (${switchExpression})
 ${I}{
     <#list fieldList as field>
 ${I}case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
-        <#assign caseCode><@.vars[fieldActionMacroName] field, indent+1/></#assign>
+        <#assign caseCode><@.vars[fieldActionMacroName] field, indent+1, packed/></#assign>
         ${caseCode}<#t>
         <#if !caseCode?contains("return")>
 ${I}    break;
@@ -123,7 +123,7 @@ ${I}}
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}throw CppRuntimeException("No case set in union ${fullName}!");
 </#macro>
-<#macro union_compare_field field indent>
+<#macro union_compare_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}return (lhs.${field.getterName}() == rhs.${field.getterName}());
 </#macro>
@@ -149,7 +149,7 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 </#if>
 }
 
-<#macro union_less_than_field field indent>
+<#macro union_less_than_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}return (lhs.${field.getterName}() < rhs.${field.getterName}());
 </#macro>
@@ -196,12 +196,12 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
-<#macro union_validate_field field indent>
+<#macro union_validate_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.array?? && field.array.viewIndirectLength??>
 ${I}// check array length
-${I}validate(view.${field.getterName}(), static_cast<size_t>(${field.array.viewIndirectLength})
-${I}        "'${name}.${field.name}'");
+${I}validate(view.${field.getterName}(), static_cast<size_t>(${field.array.viewIndirectLength}), <#rt>
+        <#lt>"'${name}.${field.name}'");
     </#if>
     <#if !field.array?? && field.typeInfo.isNumeric>
 ${I}// check range
@@ -220,9 +220,11 @@ void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 </#if>
 }
 
-<#macro union_bitsizeof_field field indent>
+<#macro union_bitsizeof_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += bitSizeOf(view.${field.getterName}(), endBitPosition);
+${I}endBitPosition += bitSizeOf<@array_packed_suffix field/>(<#rt>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
+        <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
 template <>
 BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
@@ -239,9 +241,11 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 </#if>
 }
 
-<#macro union_write_field field indent>
+<#macro union_write_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}write(writer, view.${field.getterName}());
+${I}write<@array_packed_suffix field/>(<#rt>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
+        <#lt>writer, view.${field.getterName}());
 </#macro>
 template <>
 void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
@@ -253,11 +257,12 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 </#if>
 }
 
-<#macro union_read_field field indent>
+<#macro union_read_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>();
-${I}<#if field.compound??>(void)</#if>read<#rt>
+${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field/><#rt>
         <#if field.array??><<@array_type_full_name fullName, field/>></#if>(<#t>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters field/>);
 </#macro>
@@ -284,6 +289,77 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 
     return view;
 }
+<#if isPackable && usedInPackedArray>
+
+<#macro union_init_context field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field_needs_packing_context(field)>
+${I}initContext(<@packing_context field/>, view.${field.getterName}());
+    <#else>
+${I}// empty
+    </#if>
+</#macro>
+template <>
+void initContext(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
+{
+    <#if fieldList?has_content>
+    initContext(packingContext.zserioChoiceTag, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
+    <@union_switch "union_init_context", "union_no_match", "view.zserioChoiceTag()", 1, true/>
+    </#if>
+}
+
+template <>
+BitSize bitSizeOf(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
+        const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+    <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+    endBitPosition += bitSizeOf(packingContext.zserioChoiceTag, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
+    <@union_switch "union_bitsizeof_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
+
+    return endBitPosition - bitPosition;
+    <#else>
+    return 0;
+    </#if>
+}
+
+template <>
+void write(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
+        BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
+{
+<#if fieldList?has_content>
+    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
+    <@union_switch "union_write_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
+</#if>
+}
+
+template <>
+void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+        BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+    <#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+        <#lt>)
+{
+    View<${fullName}> view(data<#rt>
+<#list parameterList as parameter>
+            <#lt>,
+            <#nt><@parameter_view_arg_name parameter/><#rt>
+</#list>
+            <#lt>);
+<#if fieldList?has_content>
+
+    VarSize choiceTag;
+    read(reader, choiceTag);
+    <@union_switch "union_read_field", "union_no_match", "choiceTag", 1, true/>
+</#if>
+    (void)view;
+}
+</#if>
 <@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
@@ -297,7 +373,7 @@ size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_conten
     return static_cast<size_t>(result);
 }
 
-<#macro union_hash_field field indent>
+<#macro union_hash_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}result = ::zserio::calcHashCode(result, view.${field.getterName}());
 </#macro>
