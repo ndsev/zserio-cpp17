@@ -300,7 +300,7 @@ ${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
-${I}endBitPosition += detail::bitSizeOf<@array_packed_suffix field/>(<#rt>
+${I}endBitPosition += detail::bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt><#if field.optional??>*</#if>view.${field.getterName}(), endBitPosition);
 </#macro>
@@ -341,7 +341,7 @@ ${I}writer.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}writer.alignTo(8);
     </#if>
-${I}detail::write<@array_packed_suffix field/>(<#rt>
+${I}detail::write<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, <#if field.optional??>*</#if>view.${field.getterName}());
 </#macro>
@@ -382,7 +382,7 @@ ${I}in.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}in.alignTo(8);
     </#if>
-${I}<#if field.compound??>(void)</#if>detail::read<@array_packed_suffix field/><#rt>
+${I}<#if field.compound??>(void)</#if>detail::read<@array_packed_suffix field, packed/><#rt>
         <#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>

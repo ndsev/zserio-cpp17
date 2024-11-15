@@ -16,6 +16,8 @@ template <typename T, typename... ARGS>
 void writeReadTestDetail(T& data, ARGS&&... arguments)
 {
     zserio::View<T> view(data, ::std::forward<ARGS>(arguments)...);
+    zserio::detail::validate(view);
+
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
 
     zserio::BitBuffer bitBuffer(bitSize);

@@ -180,7 +180,7 @@
     ${arrayType}<#t>
 </#macro>
 
-<#macro array_packed_suffix field packed=false>
+<#macro array_packed_suffix field packed>
     <#if field.array?? && field.isPackable && (packed || field.array.isPacked)>
         Packed<#t>
     </#if>

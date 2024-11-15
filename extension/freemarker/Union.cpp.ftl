@@ -222,7 +222,7 @@ void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 
 <#macro union_bitsizeof_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += bitSizeOf<@array_packed_suffix field/>(<#rt>
+${I}endBitPosition += bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
@@ -243,7 +243,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 
 <#macro union_write_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}write<@array_packed_suffix field/>(<#rt>
+${I}write<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, view.${field.getterName}());
 </#macro>
@@ -260,7 +260,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 <#macro union_read_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>();
-${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field/><#rt>
+${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field, packed/><#rt>
         <#if field.array??><<@array_type_full_name fullName, field/>></#if>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name field/>>()<#t>
@@ -316,7 +316,8 @@ BitSize bitSizeOf(PackingContext<${fullName}>&<#if fieldList?has_content> packin
 {
     <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(packingContext.zserioChoiceTag, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
+    endBitPosition += bitSizeOf(packingContext.zserioChoiceTag,
+            fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
     <@union_switch "union_bitsizeof_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
 
     return endBitPosition - bitPosition;
@@ -331,7 +332,8 @@ void write(PackingContext<${fullName}>&<#if fieldList?has_content> packingContex
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
+    write(packingContext.zserioChoiceTag, writer,
+            fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag())));
     <@union_switch "union_write_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
 </#if>
 }
@@ -354,7 +356,7 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
 <#if fieldList?has_content>
 
     VarSize choiceTag;
-    read(reader, choiceTag);
+    read(packingContext.zserioChoiceTag, reader, choiceTag);
     <@union_switch "union_read_field", "union_no_match", "choiceTag", 1, true/>
 </#if>
     (void)view;

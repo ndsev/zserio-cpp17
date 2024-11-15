@@ -269,7 +269,7 @@ void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 <#macro choice_bitsizeof_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}endBitPosition += bitSizeOf<@array_packed_suffix member.field/>(<#rt>
+${I}endBitPosition += bitSizeOf<@array_packed_suffix member.field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         <#lt>view.${member.field.getterName}(), endBitPosition);
     <#else>
@@ -293,7 +293,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 <#macro choice_write_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}write<@array_packed_suffix member.field/>(<#rt>
+${I}write<@array_packed_suffix member.field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         <#lt>writer, view.${member.field.getterName}());
     <#else>
@@ -313,7 +313,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>();
-${I}<#if member.field.compound??>(void)</#if>read<@array_packed_suffix member.field/><#rt>
+${I}<#if member.field.compound??>(void)</#if>read<@array_packed_suffix member.field, packed/><#rt>
         <#if member.field.array??><<@array_type_full_name fullName, member.field/>></#if>(<#t>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>()<#t>

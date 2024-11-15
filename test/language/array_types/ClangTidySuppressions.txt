@@ -5,6 +5,7 @@ bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion/Block.h
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestChoice.h
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestStructure.cpp
+bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestStructure.h
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestUnion.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorChoice.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorStruct.cpp
