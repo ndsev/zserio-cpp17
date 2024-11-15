@@ -42,21 +42,23 @@ The following two main features of a C++17 generator offer significant advantage
 The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator
 design and is updated regularly.
 
-Current state (17.10.2024):
+Current state (15.11.2024):
 
-- The class for optional members have been implemented in the runtime library header
-  [Optional.h](https://github.com/ndsev/zserio-cpp17/blob/master/runtime/src/zserio/Optional.h)
-- The class for choice members have been implemented in the runtime library header
-  [Variant.h](https://github.com/ndsev/zserio-cpp17/blob/master/runtime/src/zserio/Variant.h)
-- The classes for all Zserio types have been implemented in the runtime library header
-  [Types.h](https://github.com/ndsev/zserio-cpp17/blob/master/runtime/src/zserio/Types.h)
-- The generator partially supports the following Zserio types:
+- The generator fully supports the following Zserio types:
   - Enumeration types
   - Bitmask types
   - Constants
-  - Structure types (only Data)
-  - Choice types (only Data)
-  - Union types (only Data)
+  - Structure types
+  - Choice types
+  - Union types
+- Offsets are not supported, fatal error is reported during generation
+- Extended members are not supported
+- Templates are generated as instantiations without usage of native C++ templates
+- Services, Pubsubs, SQL databases and SQL tables are silently ignored
+- DataView abstraction is not supported
+
+Current state of the generated sources can be investigated at PoC
+[here](https://github.com/ndsev/zserio-cpp17/tree/master/poc/gen/cpp17).
 
 ### How to Get the C++17 Generator
 
@@ -68,11 +70,6 @@ using the following steps:
 - Scroll down to the Artifacts
 - Download `zserio-java8` artifact for Zserio bundle jar
 - Alternatively, download `zserio-runtime-cpp` artifact for Zserio runtime library
-
-For example, the Zserio bundle jar (17.10.2024) can be downloaded from
-[here](https://github.com/ndsev/zserio-cpp17/actions/runs/11382401787/artifacts/2068022014) and Zserio runtime
-library (17.10.2024) can be downloaded from
-[here](https://github.com/ndsev/zserio-cpp17/actions/runs/11382401787/artifacts/2068022016).
 
 ### How to Run the C++17 Generator
 
