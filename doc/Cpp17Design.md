@@ -83,8 +83,6 @@ range checks to ensure the value falls within the expected range.
 Beside that, C++ Zserio type classes will be possible to create from C++ native type value by
 `zserio::fromCheckedValue` function which automatically checks range check of the value.
 
-Explicit conversions between C++ Zserio types will be possible by `zserio::typeCast` function.
-
 The following table shows the mapping of all Zserio built-in types into the C++ Zserio type together with
 the C++ native type:
 
@@ -428,7 +426,7 @@ The Optional Members will use a dedicated abstraction `::zserio::Optional` with 
 `std::optional` from C++17 standard.
 
 The only implementation difference will be that `::zserio::Optional` will allocate additional dynamic memory
-for types bigger than some threshold and for recursive Optional Members. Thus, allocator must be provided to 
+for types bigger than some threshold and for recursive Optional Members. Thus, allocator must be provided to
 `::zserio::Optional` during construction.
 
 Such optimization is desirable to save memory for large optionals which are not present.
