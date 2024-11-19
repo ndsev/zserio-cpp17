@@ -429,7 +429,7 @@ TEST(ArrayTest, stringArray)
     Array<std::vector<std::string>, ArrayType::NORMAL> array1(rawArray1);
     Array<std::vector<std::string>, ArrayType::NORMAL> array2(rawArray2);
 
-    constexpr bool isStringView = std::is_same_v<std::string_view, decltype(array1.at(0))>;
+    constexpr bool isStringView = std::is_same_v<StringView, decltype(array1.at(0))>;
     ASSERT_TRUE(isStringView);
 
     ASSERT_EQ(rawArray1.at(0), array1.at(0));

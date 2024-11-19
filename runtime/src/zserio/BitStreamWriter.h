@@ -218,14 +218,14 @@ public:
      *
      * \param data Bytes to write.
      */
-    void writeBytes(Span<const uint8_t> data);
+    void writeBytes(BytesView data);
 
     /**
      * Writes UTF-8 string.
      *
      * \param data String view to write.
      */
-    void writeString(std::string_view data);
+    void writeString(StringView data);
 
     /**
      * Writes bit buffer.
@@ -233,7 +233,7 @@ public:
      * \param bitBuffer Bit buffer to write.
      */
     template <typename ALLOC>
-    void writeBitBuffer(const BasicBitBuffer<ALLOC>& bitBuffer)
+    void writeBitBuffer(const BasicBitBuffer<ALLOC> bitBuffer)
     {
         const VarSize bitSize = fromCheckedValue<VarSize>(convertSizeToUInt32(bitBuffer.getBitSize()));
         writeVarSize(bitSize);
@@ -469,7 +469,7 @@ inline void write(BitStreamWriter& writer, BytesView value)
     writer.writeBytes(value);
 }
 
-inline void write(BitStreamWriter& writer, std::string_view value)
+inline void write(BitStreamWriter& writer, StringView value)
 {
     writer.writeString(value);
 }

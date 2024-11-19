@@ -25,7 +25,7 @@ protected:
 
     static constexpr int8_t CASE1_FIELD = 13;
     static constexpr uint16_t CASE2_FIELD = 65535;
-    static constexpr std::string_view CASE3_FIELD = "SimpleUnion";
+    static constexpr zserio::StringView CASE3_FIELD = "SimpleUnion";
     static constexpr int8_t CASE4_FIELD = 42;
 };
 

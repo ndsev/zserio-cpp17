@@ -154,8 +154,8 @@ struct ArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
         : NumericArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
 {};
 
-template <>
-struct ArrayTraits<Bytes>
+template <typename ALLOC>
+struct ArrayTraits<BasicBytes<ALLOC>>
 {
     static constexpr BytesView at(const detail::DummyArrayOwner&, const Bytes& element, size_t)
     {
@@ -187,8 +187,7 @@ struct ArrayTraits<BasicBitBuffer<ALLOC>>
 template <typename ALLOC>
 struct ArrayTraits<std::basic_string<char, std::char_traits<char>, ALLOC>>
 {
-    static constexpr std::string_view at(
-            const detail::DummyArrayOwner&, const BasicString<ALLOC>& element, size_t)
+    static constexpr StringView at(const detail::DummyArrayOwner&, StringView element, size_t)
     {
         return element;
     }

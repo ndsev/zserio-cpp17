@@ -19,6 +19,11 @@ template <typename ALLOC>
 using BasicString = std::basic_string<char, std::char_traits<char>, RebindAlloc<ALLOC, char>>;
 
 /**
+ * Typedef to std::string_view to hide it under zserio specific name.
+ */
+using StringView = std::string_view;
+
+/**
  * Typedef to std::string provided for convenience - using std::allocator<uint8_t>.
  */
 using String = BasicString<std::allocator<char>>;
@@ -26,7 +31,7 @@ using String = BasicString<std::allocator<char>>;
 namespace detail
 {
 
-BitSize bitSizeOf(std::string_view stringValue, BitSize = 0);
+BitSize bitSizeOf(StringView stringValue, BitSize = 0);
 
 } // namespace detail
 
