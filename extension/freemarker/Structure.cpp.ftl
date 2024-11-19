@@ -98,6 +98,33 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 }
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
+<#list fieldList as field>
+    <#if array_needs_custom_traits(field)>
+
+View<${field.typeInfo.typeFullName}> View<${fullName}>::<@array_traits_name field/>::at(<#rt>
+        <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
+        const ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+{
+    return View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
+}
+
+void View<${fullName}>::<@array_traits_name field/>::read(BitStreamReader& reader, <#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
+                ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+{
+    (void)detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
+}
+        <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
+
+void View<${fullName}>::<@array_traits_name field/>::read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
+        const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
+        <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+{
+    detail::read(packingContext, reader, element<@field_view_owner_indirect_parameters field/>);
+}
+        </#if>
+    </#if>
+</#list>
 
 View<${fullName}>::View(const ${fullName}&<#if fieldList?has_content> data</#if><#rt>
 <#list parameterList as parameter>

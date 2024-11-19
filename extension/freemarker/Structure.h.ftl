@@ -66,25 +66,17 @@ public:
 
         </#if>
         static View<${field.typeInfo.typeFullName}> at(<#rt>
-                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
-                const ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
-        {
-            return View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
-        }
+                <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
+                const ${field.typeInfo.typeFullName}& element, size_t index);
 
-        static void read(BitStreamReader& reader,
-                const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
-                <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
-        {
-            (void)detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
-        }
+        static void read(BitStreamReader& reader, <#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
+                ${field.typeInfo.typeFullName}& element, size_t index);
         <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
+
         static void read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
-                const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
-                <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
-        {
-            detail::read(packingContext, reader, element<@field_view_owner_indirect_parameters field/>);
-        }
+                const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if>  owner, <#rt>
+                <#lt>${field.typeInfo.typeFullName}& element, size_t index);
         </#if>
     };
 
