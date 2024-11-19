@@ -54,6 +54,7 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 }
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
+<@array_traits_definition fullName, fieldList/>
 
 View<${fullName}>::View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
@@ -82,7 +83,7 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 }
 <#list fieldList as field>
 
-<@field_view_type_name field/> View<${fullName}>::${field.getterName}() const
+<@field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
     <#-- field which does not need View -->

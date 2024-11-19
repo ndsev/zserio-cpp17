@@ -72,6 +72,7 @@ template <>
 class View<${fullName}>
 {
 public:
+    <@array_traits_declaration fullName, fieldList/>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,

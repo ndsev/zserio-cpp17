@@ -57,31 +57,7 @@ template <>
 class View<${fullName}>
 {
 public:
-<#list fieldList as field>
-    <#if array_needs_custom_traits(field)>
-    struct <@array_traits_name field/>
-    {
-        <#if array_needs_owner(field)>
-        using OwnerType = View<${fullName}>;
-
-        </#if>
-        static View<${field.typeInfo.typeFullName}> at(<#rt>
-                <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
-                const ${field.typeInfo.typeFullName}& element, size_t index);
-
-        static void read(BitStreamReader& reader, <#rt>
-                <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
-                ${field.typeInfo.typeFullName}& element, size_t index);
-        <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
-
-        static void read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
-                const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if>  owner, <#rt>
-                <#lt>${field.typeInfo.typeFullName}& element, size_t index);
-        </#if>
-    };
-
-    </#if>
-</#list>
+    <@array_traits_declaration fullName, fieldList/>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,

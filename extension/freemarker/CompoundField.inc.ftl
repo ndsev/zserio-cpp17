@@ -151,6 +151,64 @@
     Zserio${field.name?cap_first}ArrayTraits<#t>
 </#macro>
 
+<#macro array_traits_declaration compoundFullName fieldList>
+    <#list fieldList as field>
+        <#if array_needs_custom_traits(field)>
+    struct <@array_traits_name field/>
+    {
+            <#if array_needs_owner(field)>
+        using OwnerType = View<${fullName}>;
+
+            </#if>
+        static View<${field.typeInfo.typeFullName}> at(<#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
+                const ${field.typeInfo.typeFullName}& element, size_t index);
+
+        static void read(BitStreamReader& reader, <#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
+                ${field.typeInfo.typeFullName}& element, size_t index);
+            <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
+
+        static void read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
+                const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if>  owner, <#rt>
+                <#lt>${field.typeInfo.typeFullName}& element, size_t index);
+            </#if>
+    };
+
+        </#if>
+    </#list>
+</#macro>
+
+<#macro array_traits_definition compoundFullName fieldList>
+    <#list fieldList as field>
+        <#if array_needs_custom_traits(field)>
+
+View<${field.typeInfo.typeFullName}> View<${fullName}>::<@array_traits_name field/>::at(<#rt>
+        <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
+        const ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+{
+    return View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
+}
+
+void View<${fullName}>::<@array_traits_name field/>::read(BitStreamReader& reader, <#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
+                ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+{
+    (void)detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
+}
+            <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
+
+void View<${fullName}>::<@array_traits_name field/>::read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
+        const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
+            <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+{
+    detail::read(packingContext, reader, element<@field_view_owner_indirect_parameters field/>);
+}
+            </#if>
+        </#if>
+    </#list>
+</#macro>
+
 <#macro array_type_name field>
     Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
             <#if array_needs_custom_traits(field)>, <@array_traits_name field/></#if>><#t>
