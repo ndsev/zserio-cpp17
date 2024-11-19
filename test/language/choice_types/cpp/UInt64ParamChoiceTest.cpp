@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "choice_types/uint64_param_choice/UInt64ParamChoice.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -14,6 +16,11 @@ using ChoiceTag = UInt64ParamChoice::ChoiceTag;
 class UInt64ParamChoiceTest : public ::testing::Test
 {
 protected:
+    static void writeData(zserio::BitStreamWriter& writer, VariantC valueC)
+    {
+        zserio::detail::write(writer, valueC);
+    }
+
     static constexpr zserio::UInt64 VARIANT_A_SELECTOR = 1;
     static constexpr zserio::UInt64 VARIANT_B_SELECTOR = 2;
     static constexpr zserio::UInt64 VARIANT_C_SELECTOR = 7;
@@ -231,13 +238,11 @@ TEST_F(UInt64ParamChoiceTest, writeReadFile)
 
 TEST_F(UInt64ParamChoiceTest, read)
 {
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(32);
-    zserio::BitStreamWriter writer(bitBuffer);
     const VariantC valueC = 0x0DEADBAD;
-    zserio::detail::write(writer, valueC);
-
     UInt64ParamChoice expectedReadData(zserio::in_place_index<ChoiceTag::CHOICE_valueC>, valueC);
-    test_utils::readTest(writer, expectedReadData, VARIANT_C_SELECTOR);
+
+    test_utils::readTest(
+            std::bind(writeData, std::placeholders::_1, valueC), expectedReadData, VARIANT_C_SELECTOR);
 }
 
 TEST_F(UInt64ParamChoiceTest, stdHash)

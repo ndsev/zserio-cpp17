@@ -13,14 +13,14 @@ namespace dynamic_bitfield_param
 class DynamicBitfieldParamTest : public ::testing::Test
 {
 protected:
-    void fillData(DynamicBitfieldParamHolder& dynamicBitfieldParamHolder)
+    static void fillData(DynamicBitfieldParamHolder& dynamicBitfieldParamHolder)
     {
         DynamicBitfieldParam& dynamicBitfieldParam = dynamicBitfieldParamHolder.dynamicBitfieldParam;
         dynamicBitfieldParam.value = DYNAMIC_BITFIELD_PARAM_VALUE;
         dynamicBitfieldParam.extraValue = DYNAMIC_BITFIELD_PARAM_EXTRA_VALUE;
     }
 
-    void writeToStream(zserio::BitStreamWriter& writer)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
         zserio::detail::write(writer, LENGTH);
         zserio::detail::write(writer, zserio::DynInt16<LENGTH>(BITFIELD));
@@ -45,13 +45,10 @@ TEST_F(DynamicBitfieldParamTest, writeRead)
 
 TEST_F(DynamicBitfieldParamTest, read)
 {
-    zserio::BitBuffer bitBuffer(57);
-    zserio::BitStreamWriter writer(bitBuffer);
-    writeToStream(writer);
-
     DynamicBitfieldParamHolder expectedDynamicBitfieldParamHolder;
     fillData(expectedDynamicBitfieldParamHolder);
-    test_utils::readTest(writer, expectedDynamicBitfieldParamHolder);
+
+    test_utils::readTest(writeData, expectedDynamicBitfieldParamHolder);
 }
 
 } // namespace dynamic_bitfield_param

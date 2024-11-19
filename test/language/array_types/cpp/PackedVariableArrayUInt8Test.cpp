@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "array_types/packed_variable_array_uint8/PackedVariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -16,7 +18,7 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class PackedVariableArrayUInt8Test : public ::testing::Test
 {
 protected:
-    void fillData(PackedVariableArray& data, size_t numElements)
+    static void fillData(PackedVariableArray& data, size_t numElements)
     {
         data.numElements = static_cast<uint32_t>(numElements);
 
@@ -32,7 +34,7 @@ protected:
         }
     }
 
-    zserio::BitSize getBitSize(size_t numElements)
+    static zserio::BitSize getBitSize(size_t numElements)
     {
         zserio::BitSize bitSize = 8; // array size: numElements
         bitSize += 1; // packing descriptor: isPacked
@@ -47,7 +49,7 @@ protected:
         return bitSize;
     }
 
-    void writeData(zserio::BitStreamWriter& writer, size_t numElements)
+    static void writeData(zserio::BitStreamWriter& writer, size_t numElements)
     {
         writer.writeVarSize(static_cast<uint32_t>(numElements));
         const bool isPacked = numElements > 1;
@@ -69,7 +71,7 @@ protected:
         }
     }
 
-    void checkBitSizeOf(size_t numElements)
+    static void checkBitSizeOf(size_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);
@@ -80,21 +82,15 @@ protected:
         ASSERT_EQ(autoArrayBitSize, zserio::detail::bitSizeOf(view, bitPosition));
     }
 
-    void checkRead(size_t numElements)
+    static void checkRead(size_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);
-        const zserio::View<PackedVariableArray> view(data);
 
-        const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer bitBuffer(bitSize);
-        zserio::BitStreamWriter writer(bitBuffer);
-        writeData(writer, numElements);
-
-        test_utils::readTest(writer, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, numElements), data);
     }
 
-    void checkWriteRead(size_t numElements)
+    static void checkWriteRead(size_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);
@@ -102,7 +98,7 @@ protected:
         test_utils::writeReadTest(data);
     }
 
-    void checkWriteReadFile(size_t numElements)
+    static void checkWriteReadFile(size_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);

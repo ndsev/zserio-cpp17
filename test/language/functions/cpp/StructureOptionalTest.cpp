@@ -1,4 +1,4 @@
-#include <vector>
+#include <utility>
 
 #include "functions/structure_optional/ValueConsumerCreator.h"
 #include "gtest/gtest.h"
@@ -14,12 +14,13 @@ namespace structure_optional
 class StructureOptionalTest : public ::testing::Test
 {
 protected:
-    zserio::UInt4 calculateValue(zserio::UInt4 defaultValue, zserio::UInt4 externalValue)
+    static zserio::UInt4 calculateValue(zserio::UInt4 defaultValue, zserio::UInt4 externalValue)
     {
         return (defaultValue != INVALID_DEFAULT_VALUE) ? defaultValue : externalValue;
     }
 
-    void writeData(zserio::BitStreamWriter& writer, zserio::UInt4 defaultValue, zserio::UInt4 externalValue)
+    static void writeData(
+            zserio::BitStreamWriter& writer, zserio::UInt4 defaultValue, zserio::UInt4 externalValue)
     {
         zserio::detail::write(writer, defaultValue);
         if (defaultValue == INVALID_DEFAULT_VALUE)
@@ -30,7 +31,7 @@ protected:
         writer.writeBool((calculateValue(defaultValue, externalValue) < SMALL_VALUE_THRESHOLD));
     }
 
-    void fillData(ValueConsumerCreator& data, zserio::UInt4 defaultValue, zserio::UInt4 externalValue)
+    static void fillData(ValueConsumerCreator& data, zserio::UInt4 defaultValue, zserio::UInt4 externalValue)
     {
         ValueCalculator& valueCalculator = data.valueCalculator;
         valueCalculator.defaultValue = defaultValue;
@@ -43,7 +44,7 @@ protected:
         valueConsumer.isSmall = calculateValue(defaultValue, externalValue) < SMALL_VALUE_THRESHOLD;
     }
 
-    void checkValueConsumerCreator(uint8_t defaultValue, uint8_t externalValue)
+    static void checkValueConsumerCreator(uint8_t defaultValue, uint8_t externalValue)
     {
         ValueConsumerCreator data;
         fillData(data, defaultValue, externalValue);
@@ -52,12 +53,7 @@ protected:
         const uint8_t expectedValue = calculateValue(defaultValue, externalValue);
         ASSERT_EQ(expectedValue, view.valueCalculator().value());
 
-        zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(bitSize);
-        zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-        writeData(expectedWriter, defaultValue, externalValue);
-
-        test_utils::readTest(expectedWriter, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, defaultValue, externalValue), data);
         test_utils::writeReadTest(data);
     }
 

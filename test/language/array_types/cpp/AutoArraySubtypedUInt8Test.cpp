@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "array_types/auto_array_subtyped_uint8/AutoArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -15,7 +17,7 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class AutoArraySubtypedUInt8Test : public ::testing::Test
 {
 protected:
-    void fillData(AutoArray& data, size_t numElements)
+    static void fillData(AutoArray& data, size_t numElements)
     {
         VectorType<ArrayElement> array;
         array.reserve(numElements);
@@ -26,7 +28,7 @@ protected:
         data.array = array;
     }
 
-    void writeData(zserio::BitStreamWriter& writer, size_t length)
+    static void writeData(zserio::BitStreamWriter& writer, size_t length)
     {
         writer.writeVarSize(static_cast<uint32_t>(length));
         for (size_t i = 0; i < length; ++i)
@@ -35,7 +37,7 @@ protected:
         }
     }
 
-    void checkBitSizeOf(size_t numElements)
+    static void checkBitSizeOf(size_t numElements)
     {
         AutoArray data;
         fillData(data, numElements);
@@ -47,21 +49,15 @@ protected:
         ASSERT_EQ(subtypedBuiltinAutoArrayBitSize, zserio::detail::bitSizeOf(view, bitPosition));
     }
 
-    void checkRead(size_t numElements)
+    static void checkRead(size_t numElements)
     {
         AutoArray data;
         fillData(data, numElements);
-        const zserio::View<AutoArray> view(data);
 
-        const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer bitBuffer(bitSize);
-        zserio::BitStreamWriter writer(bitBuffer);
-        writeData(writer, numElements);
-
-        test_utils::readTest(writer, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, numElements), data);
     }
 
-    void checkWriteRead(size_t numElements)
+    static void checkWriteRead(size_t numElements)
     {
         AutoArray data;
         fillData(data, numElements);
@@ -69,7 +65,7 @@ protected:
         test_utils::writeReadTest(data);
     }
 
-    void checkWriteReadFile(size_t numElements)
+    static void checkWriteReadFile(size_t numElements)
     {
         AutoArray data;
         fillData(data, numElements);

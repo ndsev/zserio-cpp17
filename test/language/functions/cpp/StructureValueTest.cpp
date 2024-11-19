@@ -1,4 +1,4 @@
-#include <vector>
+#include <utility>
 
 #include "functions/structure_value/CustomVarInt.h"
 #include "functions/structure_value/CustomVarList.h"
@@ -15,7 +15,7 @@ namespace structure_value
 class StructureValueTest : public ::testing::Test
 {
 protected:
-    void writeData(zserio::BitStreamWriter& writer, uint32_t value)
+    static void writeData(zserio::BitStreamWriter& writer, uint32_t value)
     {
         if (value <= MAX_ONE_BYTE_VALUE)
         {
@@ -33,7 +33,7 @@ protected:
         }
     }
 
-    void fillData(CustomVarInt& data, uint32_t value)
+    static void fillData(CustomVarInt& data, uint32_t value)
     {
         if (value <= MAX_ONE_BYTE_VALUE)
         {
@@ -51,7 +51,7 @@ protected:
         }
     }
 
-    void checkCustomVarInt(uint32_t value)
+    static void checkCustomVarInt(uint32_t value)
     {
         CustomVarInt data;
         fillData(data, value);
@@ -59,12 +59,7 @@ protected:
         zserio::UInt32 readValue = view.getValue();
         ASSERT_EQ(value, readValue);
 
-        zserio::BitSize bitSize = zserio::detail::bitSizeOf(zserio::View<CustomVarInt>(data));
-        zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(bitSize);
-        zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-        writeData(expectedWriter, value);
-
-        test_utils::readTest(expectedWriter, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, value), data);
         test_utils::writeReadTest(data);
     }
 

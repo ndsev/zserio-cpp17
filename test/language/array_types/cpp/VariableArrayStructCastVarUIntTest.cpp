@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "array_types/variable_array_struct_cast_varuint/VariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -17,7 +19,7 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class VariableArrayStructCastVarUIntTest : public ::testing::Test
 {
 protected:
-    VariableArray createData(size_t numElements, bool wrong = false)
+    static VariableArray createData(size_t numElements, bool wrong = false)
     {
         VectorType<TestStructure> compoundArray;
         compoundArray.reserve(numElements);
@@ -34,7 +36,7 @@ protected:
         return variableArray;
     }
 
-    void writeData(zserio::BitStreamWriter& writer, size_t numElements)
+    static void writeData(zserio::BitStreamWriter& writer, size_t numElements)
     {
         writer.writeUnsignedBits64(static_cast<uint64_t>(numElements), 8);
         for (size_t i = 0; i < numElements; ++i)
@@ -64,14 +66,8 @@ TEST_F(VariableArrayStructCastVarUIntTest, read)
 {
     const size_t numElements = 59;
     auto data = createData(numElements);
-    const zserio::View<VariableArray> view(data);
 
-    const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
-    zserio::BitStreamWriter writer(bitBuffer);
-    writeData(writer, numElements);
-
-    test_utils::readTest(writer, data);
+    test_utils::readTest(std::bind(writeData, std::placeholders::_1, numElements), data);
 }
 
 TEST_F(VariableArrayStructCastVarUIntTest, writeRead)

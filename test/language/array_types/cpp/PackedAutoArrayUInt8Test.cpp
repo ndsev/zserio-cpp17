@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "array_types/packed_auto_array_uint8/PackedAutoArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -11,7 +13,7 @@ namespace packed_auto_array_uint8
 class PackedAutoArrayUInt8Test : public ::testing::Test
 {
 protected:
-    void fillData(PackedAutoArray& data, size_t numElements)
+    static void fillData(PackedAutoArray& data, size_t numElements)
     {
         auto& uint8Array = data.uint8Array;
         uint8Array.reserve(numElements);
@@ -25,7 +27,7 @@ protected:
         }
     }
 
-    zserio::BitSize getBitSize(size_t numElements)
+    static zserio::BitSize getBitSize(size_t numElements)
     {
         zserio::BitSize bitSize = 8; // auto array size: varsize
         bitSize += 1; // packing descriptor: isPacked
@@ -40,7 +42,7 @@ protected:
         return bitSize;
     }
 
-    void writeData(zserio::BitStreamWriter& writer, size_t numElements)
+    static void writeData(zserio::BitStreamWriter& writer, size_t numElements)
     {
         writer.writeVarSize(static_cast<uint32_t>(numElements));
         const bool isPacked = numElements > 1;
@@ -62,7 +64,7 @@ protected:
         }
     }
 
-    void checkBitSizeOf(size_t numElements)
+    static void checkBitSizeOf(size_t numElements)
     {
         PackedAutoArray data;
         fillData(data, numElements);
@@ -73,21 +75,15 @@ protected:
         ASSERT_EQ(autoArrayBitSize, zserio::detail::bitSizeOf(view, bitPosition));
     }
 
-    void checkRead(size_t numElements)
+    static void checkRead(size_t numElements)
     {
         PackedAutoArray data;
         fillData(data, numElements);
-        const zserio::View<PackedAutoArray> view(data);
 
-        const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer bitBuffer(bitSize);
-        zserio::BitStreamWriter writer(bitBuffer);
-        writeData(writer, numElements);
-
-        test_utils::readTest(writer, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, numElements), data);
     }
 
-    void checkWriteRead(size_t numElements)
+    static void checkWriteRead(size_t numElements)
     {
         PackedAutoArray data;
         fillData(data, numElements);
@@ -95,7 +91,7 @@ protected:
         test_utils::writeReadTest(data);
     }
 
-    void checkWriteReadFile(size_t numElements)
+    static void checkWriteReadFile(size_t numElements)
     {
         PackedAutoArray data;
         fillData(data, numElements);

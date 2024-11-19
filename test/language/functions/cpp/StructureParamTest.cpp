@@ -15,13 +15,13 @@ namespace structure_param
 class StructureParamTest : public ::testing::Test
 {
 protected:
-    void writeData(zserio::BitStreamWriter& writer)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
         writer.writeUnsignedBits32(VALUE_A, 16);
         writer.writeUnsignedBits32(CONVERTED_CM_VALUE, 16);
     }
 
-    void fillData(MetresConverterCaller& data)
+    static void fillData(MetresConverterCaller& data)
     {
         MetresConverter& metresConverter = data.metresConverter;
         metresConverter.valueA = VALUE_A;
@@ -42,12 +42,7 @@ TEST_F(StructureParamTest, checkMetresConverterCaller)
     const uint16_t expectedCm = CONVERTED_CM_VALUE;
     ASSERT_EQ(expectedCm, view.centimeters());
 
-    zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(bitSize);
-    zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-    writeData(expectedWriter);
-
-    test_utils::readTest(expectedWriter, data);
+    test_utils::readTest(writeData, data);
     test_utils::writeReadTest(data);
 }
 

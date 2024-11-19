@@ -73,10 +73,11 @@ TEST(EmptyUnionTest, writeRead)
 
 TEST(EmptyUnionTest, read)
 {
-    zserio::BitBuffer bitBuffer;
-    zserio::BitStreamWriter writer(bitBuffer);
     EmptyUnion expectedReadData;
-    test_utils::readTest(writer, expectedReadData);
+    test_utils::readTest(
+            [](zserio::BitStreamWriter&) {
+            },
+            expectedReadData);
 }
 
 TEST(EmptyUnionTest, stdHash)

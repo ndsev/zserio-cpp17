@@ -14,12 +14,12 @@ namespace structure_parent_child_value
 class StructureParentChildValueTest : public ::testing::Test
 {
 protected:
-    void writeData(zserio::BitStreamWriter& writer)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
         writer.writeUnsignedBits32(CHILD_VALUE, 32);
     }
 
-    void fillData(ParentValue& data)
+    static void fillData(ParentValue& data)
     {
         data.childValue.val = CHILD_VALUE;
     }
@@ -35,12 +35,7 @@ TEST_F(StructureParentChildValueTest, checkParentValue)
 
     ASSERT_EQ(CHILD_VALUE, view.getValue());
 
-    zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(bitSize);
-    zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-    writeData(expectedWriter);
-
-    test_utils::readTest(expectedWriter, data);
+    test_utils::readTest(writeData, data);
     test_utils::writeReadTest(data);
 }
 

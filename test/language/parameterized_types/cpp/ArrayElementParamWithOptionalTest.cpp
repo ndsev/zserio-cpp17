@@ -16,7 +16,7 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class ArrayElementParamWithOptionalTest : public ::testing::Test
 {
 protected:
-    void fillData(Holder& data)
+    static void fillData(Holder& data)
     {
         data.param = Param(HAS_EXTRA, EXTRA_PARAM);
         Value value;
@@ -24,7 +24,7 @@ protected:
         data.values = {{value}};
     }
 
-    void writeToStream(zserio::BitStreamWriter& writer)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
         zserio::detail::write(writer, HAS_EXTRA);
         zserio::detail::write(writer, EXTRA_PARAM);
@@ -39,8 +39,6 @@ protected:
     static constexpr zserio::UInt7 EXTRA_PARAM = 0x00;
     static constexpr zserio::UInt64 EXTRA_VALUE = 0xDEAD;
     static constexpr zserio::BitSize HOLDER_BIT_SIZE = 1 + 7 + 8 /* bitSizeOf(VarSize(1)) */ + 64;
-
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
 
 TEST_F(ArrayElementParamWithOptionalTest, constructors)
@@ -123,13 +121,10 @@ TEST_F(ArrayElementParamWithOptionalTest, writeReadFile)
 
 TEST_F(ArrayElementParamWithOptionalTest, read)
 {
-
-    zserio::BitStreamWriter writer(bitBuffer);
-    writeToStream(writer);
-
     Holder expectedData;
     fillData(expectedData);
-    test_utils::readTest(writer, expectedData);
+
+    test_utils::readTest(writeData, expectedData);
 }
 
 TEST_F(ArrayElementParamWithOptionalTest, stdHash)

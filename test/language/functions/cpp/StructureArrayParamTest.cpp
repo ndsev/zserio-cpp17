@@ -1,5 +1,5 @@
 #include <array>
-#include <vector>
+#include <utility>
 
 #include "functions/structure_array_param/ChildStructure.h"
 #include "functions/structure_array_param/ParentStructure.h"
@@ -16,7 +16,7 @@ namespace structure_array_param
 class StructureArrayParamTest : public ::testing::Test
 {
 protected:
-    void writeData(zserio::BitStreamWriter& writer)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
         writer.writeUnsignedBits32(static_cast<uint32_t>(VALUES.size()), 8);
 
@@ -33,7 +33,7 @@ protected:
         }
     }
 
-    void fillData(ParentStructure& data)
+    static void fillData(ParentStructure& data)
     {
         data.numChildren = static_cast<uint8_t>(VALUES.size());
 
@@ -56,17 +56,13 @@ protected:
         }
     }
 
-    static const uint8_t CHILD_BIT_SIZE = 19;
-    static const uint8_t ANOTHER_CHILD_BIT_SIZE = 17;
+    static constexpr uint8_t CHILD_BIT_SIZE = 19;
+    static constexpr uint8_t ANOTHER_CHILD_BIT_SIZE = 17;
 
 private:
-    static const std::array<uint64_t, 2> VALUES;
-    static const std::array<uint64_t, 2> ANOTHER_VALUES;
+    static constexpr std::array<uint64_t, 2> VALUES = {0xAABB, 0xCCDD};
+    static constexpr std::array<uint64_t, 2> ANOTHER_VALUES = {0xAABB, 0xCCDD};
 };
-
-const std::array<uint64_t, 2> StructureArrayParamTest::VALUES = {0xAABB, 0xCCDD};
-
-const std::array<uint64_t, 2> StructureArrayParamTest::ANOTHER_VALUES = {0xAABB, 0xCCDD};
 
 TEST_F(StructureArrayParamTest, checkParentStructure)
 {
@@ -74,16 +70,10 @@ TEST_F(StructureArrayParamTest, checkParentStructure)
     fillData(data);
     zserio::View<ParentStructure> view(data);
 
-    const uint8_t expectedChildBitSize = CHILD_BIT_SIZE;
-    ASSERT_EQ(expectedChildBitSize, view.getChildBitSize());
-    const uint8_t expectedAnotherChildBitSize = ANOTHER_CHILD_BIT_SIZE;
-    ASSERT_EQ(expectedAnotherChildBitSize, view.notLeftMost().getAnotherChildBitSize());
+    ASSERT_EQ(CHILD_BIT_SIZE, view.getChildBitSize());
+    ASSERT_EQ(ANOTHER_CHILD_BIT_SIZE, view.notLeftMost().getAnotherChildBitSize());
 
-    zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(1024 * 8);
-    zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-    writeData(expectedWriter);
-
-    test_utils::readTest(expectedWriter, data);
+    test_utils::readTest(writeData, data);
     test_utils::writeReadTest(data);
 }
 

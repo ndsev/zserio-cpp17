@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "array_types/packed_fixed_array_uint8/PackedFixedArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -11,7 +13,7 @@ namespace packed_fixed_array_uint8
 class PackedFixedArrayUInt8Test : public ::testing::Test
 {
 protected:
-    void fillData(PackedFixedArray& data, size_t length = FIXED_ARRAY_LENGTH)
+    static void fillData(PackedFixedArray& data, size_t length = FIXED_ARRAY_LENGTH)
     {
         auto& uint8Array = data.uint8Array;
 
@@ -22,7 +24,7 @@ protected:
         }
     }
 
-    zserio::BitSize getBitSize()
+    static zserio::BitSize getBitSize()
     {
         zserio::BitSize bitSize = 1; // packing descriptor: isPacked
         bitSize += 6; // packing descriptor: maxBitNumber
@@ -31,7 +33,7 @@ protected:
         return bitSize;
     }
 
-    void writeData(zserio::BitStreamWriter& writer)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
         writer.writeBool(true);
         writer.writeUnsignedBits32(PACKED_ARRAY_MAX_BIT_NUMBER, 6);
@@ -60,14 +62,8 @@ TEST_F(PackedFixedArrayUInt8Test, read)
 {
     PackedFixedArray data;
     fillData(data);
-    const zserio::View<PackedFixedArray> view(data);
 
-    const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
-    zserio::BitStreamWriter writer(bitBuffer);
-    writeData(writer);
-
-    test_utils::readTest(writer, data);
+    test_utils::readTest(writeData, data);
 }
 
 TEST_F(PackedFixedArrayUInt8Test, writeRead)

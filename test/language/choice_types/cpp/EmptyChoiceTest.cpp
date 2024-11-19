@@ -80,10 +80,11 @@ TEST(EmptyChoiceTest, writeRead)
 
 TEST(EmptyChoiceTest, read)
 {
-    zserio::BitBuffer bitBuffer;
-    zserio::BitStreamWriter writer(bitBuffer);
     EmptyChoice expectedReadData;
-    test_utils::readTest(writer, expectedReadData, static_cast<zserio::UInt8>(0));
+    test_utils::readTest(
+            [](zserio::BitStreamWriter&) {
+            },
+            expectedReadData, static_cast<zserio::UInt8>(0));
 }
 
 TEST(EmptyChoiceTest, stdHash)

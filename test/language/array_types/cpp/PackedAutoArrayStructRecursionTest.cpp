@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "array_types/packed_auto_array_struct_recursion/PackedAutoArrayRecursion.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -10,7 +12,7 @@ namespace packed_auto_array_struct_recursion
 class PackedAutoArrayStructRecursionTest : public ::testing::Test
 {
 protected:
-    void fillData(PackedAutoArrayRecursion& data, size_t numElements)
+    static void fillData(PackedAutoArrayRecursion& data, size_t numElements)
     {
         data.id = 0;
 
@@ -23,7 +25,7 @@ protected:
         }
     }
 
-    zserio::BitSize getBitSize(size_t numElements)
+    static zserio::BitSize getBitSize(size_t numElements)
     {
         zserio::BitSize bitSize = 8; // id
         bitSize += 8; // varsize (length of auto array)
@@ -38,7 +40,7 @@ protected:
         return bitSize;
     }
 
-    void writeData(zserio::BitStreamWriter& writer, size_t numElements)
+    static void writeData(zserio::BitStreamWriter& writer, size_t numElements)
     {
         writer.writeUnsignedBits32(0, 8);
         writer.writeVarSize(static_cast<uint32_t>(numElements));
@@ -58,7 +60,7 @@ protected:
         }
     }
 
-    void checkBitSizeOf(size_t numElements)
+    static void checkBitSizeOf(size_t numElements)
     {
         PackedAutoArrayRecursion data;
         fillData(data, numElements);
@@ -69,21 +71,15 @@ protected:
         ASSERT_EQ(autoArrayBitSize, zserio::detail::bitSizeOf(view, bitPosition));
     }
 
-    void checkRead(size_t numElements)
+    static void checkRead(size_t numElements)
     {
         PackedAutoArrayRecursion data;
         fillData(data, numElements);
-        const zserio::View<PackedAutoArrayRecursion> view(data);
 
-        const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer bitBuffer(bitSize);
-        zserio::BitStreamWriter writer(bitBuffer);
-        writeData(writer, numElements);
-
-        test_utils::readTest(writer, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, numElements), data);
     }
 
-    void checkWriteRead(size_t numElements)
+    static void checkWriteRead(size_t numElements)
     {
         PackedAutoArrayRecursion data;
         fillData(data, numElements);
@@ -91,7 +87,7 @@ protected:
         test_utils::writeReadTest(data);
     }
 
-    void checkWriteReadFile(size_t numElements)
+    static void checkWriteReadFile(size_t numElements)
     {
         PackedAutoArrayRecursion data;
         fillData(data, numElements);

@@ -1,5 +1,5 @@
 #include <array>
-#include <vector>
+#include <utility>
 
 #include "functions/union_array/Inner.h"
 #include "functions/union_array/Item.h"
@@ -18,7 +18,7 @@ namespace union_array
 class UnionArrayTest : public ::testing::Test
 {
 protected:
-    void writeData(zserio::BitStreamWriter& writer, zserio::UInt16 pos)
+    static void writeData(zserio::BitStreamWriter& writer, zserio::UInt16 pos)
     {
         writer.writeUnsignedBits32(static_cast<uint32_t>(ITEMS.size()), 16);
 
@@ -41,7 +41,7 @@ protected:
         }
     }
 
-    void fillData(Inner& inner, zserio::UInt16 pos)
+    static void fillData(Inner& inner, zserio::UInt16 pos)
     {
         OuterArray outerArray;
         outerArray.numElements = static_cast<uint16_t>(ITEMS.size());
@@ -61,7 +61,7 @@ protected:
         }
     }
 
-    void checkUnionArrayFunction(zserio::UInt16 pos)
+    static void checkUnionArrayFunction(zserio::UInt16 pos)
     {
         Inner data;
         fillData(data, pos);
@@ -79,12 +79,7 @@ protected:
             ASSERT_EQ(zserio::View<Item>(ITEMS.at(pos)), readElement);
         }
 
-        zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(bitSize);
-        zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-        writeData(expectedWriter, pos);
-
-        test_utils::readTest(expectedWriter, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, pos), data);
         test_utils::writeReadTest(data);
     }
 

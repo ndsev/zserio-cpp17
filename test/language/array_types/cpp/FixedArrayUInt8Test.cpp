@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "array_types/fixed_array_uint8/FixedArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -16,7 +18,7 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class FixedArrayUInt8Test : public ::testing::Test
 {
 protected:
-    void fillData(FixedArray& data, size_t length = FIXED_ARRAY_LENGTH)
+    static void fillData(FixedArray& data, size_t length = FIXED_ARRAY_LENGTH)
     {
         VectorType<zserio::UInt8>& uint8Array = data.uint8Array;
         uint8Array.reserve(FIXED_ARRAY_LENGTH);
@@ -26,7 +28,7 @@ protected:
         }
     }
 
-    void writeData(zserio::BitStreamWriter& writer)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
         for (size_t i = 0; i < FIXED_ARRAY_LENGTH; ++i)
         {
@@ -52,14 +54,8 @@ TEST_F(FixedArrayUInt8Test, read)
 {
     FixedArray data;
     fillData(data);
-    const zserio::View<FixedArray> view(data);
 
-    const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
-    zserio::BitStreamWriter writer(bitBuffer);
-    writeData(writer);
-
-    test_utils::readTest(writer, data);
+    test_utils::readTest(writeData, data);
 }
 
 TEST_F(FixedArrayUInt8Test, writeRead)

@@ -17,6 +17,12 @@ using ChoiceTag = SimpleUnion::ChoiceTag;
 class SimpleUnionTest : public ::testing::Test
 {
 protected:
+    static void writeData(zserio::BitStreamWriter& writer)
+    {
+        zserio::detail::write(writer, ::zserio::VarSize(2)); // CASE3_FIELD index stored in the bit stream
+        zserio::detail::write(writer, CASE3_FIELD);
+    }
+
     static constexpr int8_t CASE1_FIELD = 13;
     static constexpr uint16_t CASE2_FIELD = 65535;
     static constexpr std::string_view CASE3_FIELD = "SimpleUnion";
@@ -229,13 +235,8 @@ TEST_F(SimpleUnionTest, writeRead)
 
 TEST_F(SimpleUnionTest, read)
 {
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(8 + CASE3_FIELD.length() * 8 + 8);
-    zserio::BitStreamWriter writer(bitBuffer);
-    zserio::detail::write(writer, ::zserio::VarSize(2)); // CASE3_FIELD index stored in the bit stream
-    zserio::detail::write(writer, CASE3_FIELD);
-
     SimpleUnion expectedReadData(zserio::in_place_index<ChoiceTag::CHOICE_case3Field>, CASE3_FIELD);
-    test_utils::readTest(writer, expectedReadData);
+    test_utils::readTest(writeData, expectedReadData);
 }
 
 TEST_F(SimpleUnionTest, stdHash)

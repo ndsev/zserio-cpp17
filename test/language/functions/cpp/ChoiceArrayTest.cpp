@@ -1,5 +1,5 @@
 #include <array>
-#include <vector>
+#include <utility>
 
 #include "functions/choice_array/Inner.h"
 #include "functions/choice_array/Item.h"
@@ -108,12 +108,7 @@ protected:
             ASSERT_EQ(zserio::View<Item>(m_items.at(pos)), readElement);
         }
 
-        zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(bitSize);
-        zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-        writeData(expectedWriter, pos);
-
-        test_utils::readTest(expectedWriter, data);
+        test_utils::readTest(std::bind(&ChoiceArrayTest::writeData, this, std::placeholders::_1, pos), data);
         test_utils::writeReadTest(data);
     }
 

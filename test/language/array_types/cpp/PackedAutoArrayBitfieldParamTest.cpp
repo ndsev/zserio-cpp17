@@ -15,7 +15,7 @@ using VectorType = zserio::Vector<T, AllocatorType>;
 class PackedAutoArrayBitfieldParamTest : public ::testing::Test
 {
 protected:
-    void fillData(ParameterizedBitfieldLength& parameterizedBitfieldLength)
+    static void fillData(ParameterizedBitfieldLength& parameterizedBitfieldLength)
     {
         VectorType<zserio::DynUInt16<>>& dynamicBitfieldArray =
                 parameterizedBitfieldLength.dynamicBitfieldArray;

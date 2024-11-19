@@ -1,5 +1,5 @@
 #include <array>
-#include <vector>
+#include <utility>
 
 #include "functions/structure_array/Item.h"
 #include "functions/structure_array/StructureArray.h"
@@ -16,7 +16,7 @@ namespace structure_array
 class StructureArrayTest : public ::testing::Test
 {
 protected:
-    void writeData(zserio::BitStreamWriter& writer, uint16_t pos)
+    static void writeData(zserio::BitStreamWriter& writer, uint16_t pos)
     {
         writer.writeUnsignedBits32(static_cast<uint32_t>(ITEMS.size()), 16);
 
@@ -29,7 +29,7 @@ protected:
         writer.writeUnsignedBits32(pos, 16);
     }
 
-    void fillData(StructureArray& structureArray, uint16_t pos)
+    static void fillData(StructureArray& structureArray, uint16_t pos)
     {
         structureArray.numElements = static_cast<uint16_t>(ITEMS.size());
 
@@ -39,7 +39,7 @@ protected:
         structureArray.pos = pos;
     }
 
-    void checkStructureArray(uint16_t pos)
+    static void checkStructureArray(uint16_t pos)
     {
         StructureArray data;
         fillData(data, pos);
@@ -48,12 +48,7 @@ protected:
         const auto& readElement = view.getElement();
         ASSERT_EQ(zserio::View<Item>(ITEMS.at(pos)), readElement);
 
-        zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-        zserio::BitBuffer expectedBitBuffer = zserio::BitBuffer(bitSize);
-        zserio::BitStreamWriter expectedWriter(expectedBitBuffer);
-        writeData(expectedWriter, pos);
-
-        test_utils::readTest(expectedWriter, data);
+        test_utils::readTest(std::bind(writeData, std::placeholders::_1, pos), data);
         test_utils::writeReadTest(data);
     }
 
