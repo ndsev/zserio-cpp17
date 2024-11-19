@@ -222,8 +222,8 @@ public final class CompoundFieldTemplateData
             final ExpressionFormatter cppOwnerIndirectExpressionFormatter =
                     context.getIndirectExpressionFormatter(includeCollector, "owner");
             indirectGetter = cppOwnerIndirectExpressionFormatter.formatGetter(offsetExpression);
-            setter = null; // TODO: cppExpressionFormatter.formatSetter(offsetExpression);
-            indirectSetter = null; // TODO: cppOwnerIndirectExpressionFormatter.formatSetter(offsetExpression);
+            setter = cppExpressionFormatter.formatSetter(offsetExpression);
+            indirectSetter = cppOwnerIndirectExpressionFormatter.formatSetter(offsetExpression);
             final ZserioType offsetExprZserioType = offsetExpression.getExprZserioType();
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType nativeType = cppNativeMapper.getCppType(offsetExprZserioType);

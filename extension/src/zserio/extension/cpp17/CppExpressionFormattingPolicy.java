@@ -377,8 +377,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
         if (isSetter)
         {
-            // TODO[Mi-L@]: Not implemented
-            throw new ZserioExtensionException("CppExpressionFormattingPolicy: Setters are not implemented!");
+            // TODO[Mi-L@]: Setters for offsets are not implemented (silently)
         }
         else
         {
