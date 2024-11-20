@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <string_view>
 #include <vector>
 
 #include "zserio/BitSize.h"
@@ -60,6 +61,7 @@ inline bool operator>=(const BytesView& lhs, const BytesView& rhs)
 namespace detail
 {
 
+void validate(BytesView stringValue, std::string_view fieldName);
 BitSize bitSizeOf(BytesView bytesValue, BitSize bitPosition = 0);
 
 } // namespace detail

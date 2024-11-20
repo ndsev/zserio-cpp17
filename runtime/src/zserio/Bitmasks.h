@@ -1,6 +1,7 @@
 #ifndef ZSERIO_BITMASKS_H_INC
 #define ZSERIO_BITMASKS_H_INC
 
+#include <string_view>
 #include <type_traits>
 
 #include "zserio/BitStreamReader.h"
@@ -12,6 +13,12 @@ namespace zserio
 
 namespace detail
 {
+
+template <typename T>
+std::enable_if_t<is_bitmask_v<T>> validate(T value, std::string_view fieldName)
+{
+    validate(value.getValue(), fieldName);
+}
 
 template <typename T>
 std::enable_if_t<is_bitmask_v<T>, BitSize> bitSizeOf(T value, BitSize bitPosition = 0)

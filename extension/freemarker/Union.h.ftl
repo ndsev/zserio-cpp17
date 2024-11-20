@@ -116,7 +116,7 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs);
 <@namespace_begin ["detail"]/>
 
 template <>
-void validate(const View<${fullName}>& view);
+void validate(const View<${fullName}>& view, ::std::string_view fieldName);
 
 template <>
 BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);

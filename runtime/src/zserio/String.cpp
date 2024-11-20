@@ -8,7 +8,12 @@ namespace zserio
 namespace detail
 {
 
-BitSize bitSizeOf(std::string_view stringValue, BitSize)
+void validate(StringView, std::string_view)
+{
+    // always validate
+}
+
+BitSize bitSizeOf(StringView stringValue, BitSize)
 {
     const VarSize stringSize = fromCheckedValue<VarSize>(convertSizeToUInt32(stringValue.size()));
 

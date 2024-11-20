@@ -15,7 +15,7 @@ if (ZSERIO_LOG)
 endif ()
 
 list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/empty_choice/.*|.*/uint64_param_choice/.*|.*/choice_with_array/.*")
+    ".*/empty_choice/.*|.*/uint64_param_choice/.*|.*/choice_with_array/.*|.*/multiple_param_choice/.*")
 set_target_properties(choice_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
 
 add_custom_test(choice_types
@@ -24,6 +24,7 @@ add_custom_test(choice_types
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceWithArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleParamChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt64ParamChoiceTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}

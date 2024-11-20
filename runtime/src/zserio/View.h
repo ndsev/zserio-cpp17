@@ -34,7 +34,7 @@ namespace detail
  * \throw CppRuntimeException In case of any validation error.
  */
 template <typename T>
-void validate(const View<T>& view);
+void validate(const View<T>& view, std::string_view fieldName = "");
 
 /**
  * Global function for bit size provided via specialization.

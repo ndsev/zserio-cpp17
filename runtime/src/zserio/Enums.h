@@ -100,6 +100,12 @@ namespace detail
 {
 
 template <typename T>
+std::enable_if_t<std::is_enum_v<T>> validate(T value, std::string_view fieldName)
+{
+    validate(enumToValue(value), fieldName);
+}
+
+template <typename T>
 std::enable_if_t<std::is_enum_v<T>, BitSize> bitSizeOf(T value, BitSize bitPosition = 0)
 {
     return bitSizeOf(enumToValue(value), bitPosition);

@@ -253,20 +253,15 @@ ${I}    throw ConstraintException("Constraint violated at '${name}.${field.name}
 ${I}}
     </#if>
 </#macro>
-<#function needs_validate_view>
-    <#list fieldList as field>
-        <#if field.constraint?? ||
-                (field.optional?? && field.optional.viewIndirectClause??) ||
-                (field.array?? && field.array.viewIndirectLength??) ||
-                (!field.array?? && field.typeInfo.isNumeric)>
-            <#return true>
-        </#if>
-    </#list>
-    <#return false>
-</#function>
 template <>
-void validate(const View<${fullName}>&<#if needs_validate_view()> view</#if>)
+void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
+<#list parameterList>
+    <#items as parameter>
+    validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+    </#items>
+
+</#list>
 <#list fieldList as field>
     <@structure_check_constraint field/>
     <#if field.optional?? && field.optional.viewIndirectClause??>
@@ -276,21 +271,14 @@ void validate(const View<${fullName}>&<#if needs_validate_view()> view</#if>)
         throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
     }
     </#if>
-    <#if field.array?? && field.array.viewIndirectLength??>
-    // check array length
-    validate(view.${field.getterName}(), static_cast<size_t>(${field.array.viewIndirectLength}),
-            "'${name}.${field.name}'");
-    </#if>
-    <#if !field.array?? && field.typeInfo.isNumeric>
-    // check range
-        <#if field.optional??>
+    <@array_check_length field/>
+    <#if field.optional??>
     if (view.${field.getterName}())
     {
         validate(*view.${field.getterName}(), "'${name}.${field.name}'");
     }
-        <#else>
+    <#else>
     validate(view.${field.getterName}(), "'${name}.${field.name}'");
-        </#if>
     </#if>
 </#list>
 }

@@ -199,23 +199,22 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 
 <#macro union_validate_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.array?? && field.array.viewIndirectLength??>
-${I}// check array length
-${I}validate(view.${field.getterName}(), static_cast<size_t>(${field.array.viewIndirectLength}), <#rt>
-        <#lt>"'${name}.${field.name}'");
-    </#if>
-    <#if !field.array?? && field.typeInfo.isNumeric>
-${I}// check range
-${I}validate(<#if field.optional??>*</#if>view.${field.getterName}(), "'${name}.${field.name}'");
-    </#if>
+    <@array_check_length field, indent/>
+${I}validate(view.${field.getterName}(), "'${name}.${field.name}'");
 </#macro>
 <#macro union_validate_no_match name indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}throw UnionCaseException("No case set in union '${name}'!");
 </#macro>
 template <>
-void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
+void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
+<#list parameterList>
+    <#items as parameter>
+    validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+    </#items>
+
+</#list>
 <#if fieldList?has_content>
     <@union_switch "union_validate_field", "union_validate_no_match", "view.zserioChoiceTag()"/>
 </#if>

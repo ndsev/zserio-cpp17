@@ -242,15 +242,8 @@ ${I}{
 ${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
 ${I}            " != " << static_cast<size_t>(${fullName}::ChoiceTag::<@choice_tag_name member.field/>) << ")!";
 ${I}}
-        <#if member.field.array?? && member.field.array.viewIndirectLength??>
-${I}// check array length
-${I}validate(view.${member.field.getterName}(), static_cast<size_t>(${member.field.array.viewIndirectLength}),
-${I}        "'${name}.${member.field.name}'");
-        </#if>
-        <#if !member.field.array?? && member.field.typeInfo.isNumeric>
-${I}// check range
-${I}validate(<#if member.field.optional??>*</#if>view.${member.field.getterName}(), "'${name}.${member.field.name}'");
-        </#if>
+    <@array_check_length member.field, indent/>
+${I}validate(view.${member.field.getterName}(), "'${name}.${member.field.name}'");
     <#else>
 ${I}// empty
     </#if>
@@ -260,8 +253,12 @@ ${I}// empty
 ${I}throw ChoiceCaseException("No match in choice ${fullName}!");
 </#macro>
 template <>
-void validate(const View<${fullName}>&<#if fieldList?has_content> view</#if>)
+void validate(const View<${fullName}>& view, ::std::string_view)
 {
+<#list parameterList as parameter>
+    validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+</#list>
+
 <#if fieldList?has_content>
     <@choice_switch "choice_validate_member", "choice_validate_no_match", viewIndirectSelectorExpression/>
 </#if>

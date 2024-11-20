@@ -861,7 +861,7 @@ namespace detail
 
 template <typename T,
         std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
-void validate(T wrapper, std::string_view fieldName)
+void validate(T wrapper, std::string_view fieldName) noexcept(!detail::needs_range_check_v<T>)
 {
     if constexpr (detail::needs_range_check_v<T>)
     {

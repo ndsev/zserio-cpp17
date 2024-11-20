@@ -28,6 +28,8 @@ using String = BasicString<std::allocator<char>>;
 namespace detail
 {
 
+void validate(StringView stringValue, std::string_view fieldName);
+
 BitSize bitSizeOf(StringView stringValue, BitSize = 0);
 
 } // namespace detail

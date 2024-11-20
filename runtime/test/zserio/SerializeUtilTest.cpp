@@ -96,7 +96,7 @@ namespace detail
 {
 
 template <>
-void validate(const ::zserio::View<SimpleStructure>&)
+void validate(const ::zserio::View<SimpleStructure>&, ::std::string_view)
 {}
 
 template <>
@@ -172,8 +172,10 @@ namespace detail
 {
 
 template <>
-void validate(const ::zserio::View<SimpleParameterizedStructure>& view)
+void validate(const ::zserio::View<SimpleParameterizedStructure>& view, ::std::string_view fieldName)
 {
+    (void)fieldName;
+
     // check constraint
     if (!(view.numberD() <= view.upperLimitD()))
     {

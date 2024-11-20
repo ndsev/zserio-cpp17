@@ -475,6 +475,10 @@ public final class CompoundFieldTemplateData
             isPacked = arrayInstantiation.isPacked();
             final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
             length = createLength(arrayInstantiation, cppExpressionFormatter);
+            if (length != null)
+            {
+                includeCollector.addCppUserIncludes(Arrays.asList("zserio/ArrayLengthException.h"));
+            }
             final ExpressionFormatter viewIndirectExpressionFormatter =
                     context.getIndirectExpressionFormatter(includeCollector, "view");
             viewIndirectLength = createLength(arrayInstantiation, viewIndirectExpressionFormatter);

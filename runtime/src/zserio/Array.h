@@ -250,13 +250,12 @@ namespace detail
 {
 
 template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-void validate(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, size_t expectedSize,
-        std::string_view fieldName)
+void validate(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, std::string_view fieldName)
 {
-    if (array.size() != expectedSize)
+    validate(VarSize{convertSizeToUInt32(array.size())}, fieldName);
+    for (size_t i = 0; i < array.size(); ++i)
     {
-        throw ArrayLengthException("Wrong array length for field ")
-                << fieldName << " (" << array.size() << " != " << expectedSize << ")!";
+        validate(array[i], fieldName);
     }
 }
 

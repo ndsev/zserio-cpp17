@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstring>
 #include <functional>
+#include <string_view>
 #include <type_traits>
 #include <vector>
 
@@ -555,6 +556,12 @@ uint32_t calcHashCode(uint32_t seedValue, const BasicBitBuffer<ALLOC>& value)
 
 namespace detail
 {
+
+template <typename ALLOC>
+void validate(const BasicBitBufferView<ALLOC>&, std::string_view)
+{
+    // always validate
+}
 
 template <typename ALLOC>
 BitSize bitSizeOf(const BasicBitBufferView<ALLOC>& bitBufferView, BitSize = 0)
