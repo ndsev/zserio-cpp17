@@ -1,8 +1,6 @@
 #include "gtest/gtest.h"
 #include "parameterized_types/array_element_param_with_optional/Holder.h"
-#include "test_utils/ComparisonOperatorsTest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/SerializeUtil.h"
 
 namespace parameterized_types
 {
@@ -10,8 +8,6 @@ namespace array_element_param_with_optional
 {
 
 using AllocatorType = Holder::AllocatorType;
-template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
 
 class ArrayElementParamWithOptionalTest : public ::testing::Test
 {

@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "parameterized_types/parameterized_nested_in_array/Holder.h"
-#include "test_utils/WriteReadTest.h"
+#include "test_utils/TestUtility.h"
 
 namespace parameterized_types
 {

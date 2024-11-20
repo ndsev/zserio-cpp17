@@ -5,18 +5,15 @@
 #include <string_view>
 
 #include "zserio/BitSize.h"
-#include "zserio/RebindAlloc.h"
 
 namespace zserio
 {
 
 /**
  * Typedef to std::basic_string provided for convenience - using char.
- *
- * Automatically rebinds the given allocator.
  */
 template <typename ALLOC>
-using BasicString = std::basic_string<char, std::char_traits<char>, RebindAlloc<ALLOC, char>>;
+using BasicString = std::basic_string<char, std::char_traits<char>, ALLOC>;
 
 /**
  * Typedef to std::string_view to hide it under zserio specific name.

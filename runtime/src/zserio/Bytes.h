@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <vector>
 
 #include "zserio/BitSize.h"
 #include "zserio/Span.h"

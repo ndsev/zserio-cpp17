@@ -3,8 +3,7 @@
 #include "array_types/fixed_array_uint8/FixedArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/BitStreamWriter.h"
-#include "zserio/SerializeUtil.h"
+#include "zserio/RebindAlloc.h"
 
 namespace array_types
 {
@@ -13,7 +12,7 @@ namespace fixed_array_uint8
 
 using AllocatorType = FixedArray::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class FixedArrayUInt8Test : public ::testing::Test
 {

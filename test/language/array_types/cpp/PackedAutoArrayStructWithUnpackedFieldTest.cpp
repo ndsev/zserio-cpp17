@@ -2,7 +2,7 @@
 
 #include "array_types/packed_auto_array_struct_with_unpacked_field/PackedAutoArray.h"
 #include "gtest/gtest.h"
-#include "test_utils/WriteReadFileTest.h"
+#include "test_utils/TestUtility.h"
 
 namespace array_types
 {
@@ -12,7 +12,7 @@ namespace packed_auto_array_struct_with_unpacked_field
 class PackedAutoArrayStructWithUnpackedFieldTest : public ::testing::Test
 {
 protected:
-    PackedAutoArray createData()
+    static PackedAutoArray createData()
     {
         PackedAutoArray packedAutoArray;
         auto& array = packedAutoArray.array;

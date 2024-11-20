@@ -3,8 +3,8 @@
 
 #include "array_types/packed_auto_array_struct_with_bytes/PackedAutoArray.h"
 #include "gtest/gtest.h"
-#include "test_utils/WriteReadFileTest.h"
-#include "test_utils/WriteReadTest.h"
+#include "test_utils/TestUtility.h"
+#include "zserio/RebindAlloc.h"
 
 namespace array_types
 {
@@ -12,14 +12,12 @@ namespace packed_auto_array_struct_with_bytes
 {
 
 using AllocatorType = PackedAutoArray::AllocatorType;
-template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
 using BytesType = zserio::BasicBytes<AllocatorType>;
 
 class PackedAutoArrayStructWithBytesTest : public ::testing::Test
 {
 protected:
-    PackedAutoArray createData()
+    static PackedAutoArray createData()
     {
         PackedAutoArray data;
         auto& array = data.array;

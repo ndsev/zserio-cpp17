@@ -3,8 +3,6 @@
 
 #include <vector>
 
-#include "zserio/RebindAlloc.h"
-
 namespace zserio
 {
 
@@ -14,7 +12,7 @@ namespace zserio
  * Automatically rebinds the given allocator.
  */
 template <typename T, typename ALLOC = std::allocator<T>>
-using Vector = std::vector<T, RebindAlloc<ALLOC, T>>;
+using Vector = std::vector<T, ALLOC>;
 
 } // namespace zserio
 

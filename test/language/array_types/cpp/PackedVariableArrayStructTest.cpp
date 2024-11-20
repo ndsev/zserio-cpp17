@@ -1,6 +1,7 @@
 #include "array_types/packed_variable_array_struct/PackedVariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/RebindAlloc.h"
 
 namespace array_types
 {
@@ -9,14 +10,13 @@ namespace packed_variable_array_struct
 
 using AllocatorType = PackedVariableArray::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
-
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
 
 class PackedVariableArrayStructTest : public ::testing::Test
 {
 protected:
-    void fillData(PackedVariableArray& data, uint32_t numElements)
+    static void fillData(PackedVariableArray& data, uint32_t numElements)
     {
         VectorType<TestStructure> testStructureArray;
         testStructureArray.reserve(numElements);
@@ -30,7 +30,7 @@ protected:
         data.testPackedArray = TestPackedArray{testStructureArray};
     }
 
-    TestStructure createTestStructure(uint32_t index)
+    static TestStructure createTestStructure(uint32_t index)
     {
         TestStructure testStructure;
         testStructure.id = index;
@@ -60,7 +60,7 @@ protected:
         return testStructure;
     }
 
-    TestChoice createTestChoice(uint32_t index)
+    static TestChoice createTestChoice(uint32_t index)
     {
         TestChoice testChoice;
         if (index == 0 || index == 2 || index == 4)
@@ -81,7 +81,7 @@ protected:
         return testChoice;
     }
 
-    TestUnion createTestUnion(uint32_t index)
+    static TestUnion createTestUnion(uint32_t index)
     {
         TestUnion testUnion;
         if (index % 2 == 0)
@@ -102,7 +102,7 @@ protected:
         return testUnion;
     }
 
-    void checkBitSizeOf(uint32_t numElements)
+    static void checkBitSizeOf(uint32_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);
@@ -117,7 +117,7 @@ protected:
                 << std::to_string(packedBitSize / unpackedBitSize * 100) << "%!";
     }
 
-    void checkWriteRead(uint32_t numElements)
+    static void checkWriteRead(uint32_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);
@@ -125,7 +125,7 @@ protected:
         test_utils::writeReadTest(data);
     }
 
-    void checkWriteReadFile(uint32_t numElements)
+    static void checkWriteReadFile(uint32_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);

@@ -3,6 +3,8 @@
 
 #include "gtest/gtest.h"
 #include "structure_types/one_string_structure/OneStringStructure.h"
+#include "test_utils/TestUtility.h"
+#include "zserio/RebindAlloc.h"
 
 namespace structure_types
 {
@@ -10,7 +12,7 @@ namespace one_string_structure
 {
 
 using AllocatorType = OneStringStructure::AllocatorType;
-using StringType = zserio::BasicString<AllocatorType>;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class OneStringStructureDataTest : public ::testing::Test
 {

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string_view>
 
+#include "zserio/RebindAlloc.h"
 #include "zserio/String.h"
 
 namespace zserio
@@ -162,10 +163,10 @@ inline const char* convertBoolToString(bool value)
  * \return String representation of the given integral value.
  */
 template <typename ALLOC, typename T>
-BasicString<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
+BasicString<RebindAlloc<ALLOC, char>> toString(T value, const ALLOC& allocator = ALLOC())
 {
     std::array<char, 24> buffer = {};
-    return BasicString<ALLOC>(convertIntToString(buffer, value), allocator);
+    return BasicString<RebindAlloc<ALLOC, char>>(convertIntToString(buffer, value), allocator);
 }
 
 /**
@@ -178,9 +179,9 @@ BasicString<ALLOC> toString(T value, const ALLOC& allocator = ALLOC())
  * \param allocator Allocator to use for the string allocation.
  */
 template <typename ALLOC>
-BasicString<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
+BasicString<RebindAlloc<ALLOC, char>> toString(bool value, const ALLOC& allocator = ALLOC())
 {
-    return BasicString<ALLOC>(convertBoolToString(value), allocator);
+    return BasicString<RebindAlloc<ALLOC, char>>(convertBoolToString(value), allocator);
 }
 
 /**
@@ -190,9 +191,9 @@ BasicString<ALLOC> toString(bool value, const ALLOC& allocator = ALLOC())
  * \param allocator Allocator to use for the string allocation.
  */
 template <typename ALLOC>
-BasicString<ALLOC> toString(std::string_view value, const ALLOC& allocator = ALLOC())
+BasicString<RebindAlloc<ALLOC, char>> toString(std::string_view value, const ALLOC& allocator = ALLOC())
 {
-    return BasicString<ALLOC>(value, allocator);
+    return BasicString<RebindAlloc<ALLOC, char>>(value, allocator);
 }
 
 /**

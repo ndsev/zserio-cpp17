@@ -73,11 +73,11 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:655
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:83
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:96
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:54
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:45
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:50
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:56
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19

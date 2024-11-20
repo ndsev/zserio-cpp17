@@ -3,8 +3,7 @@
 #include "array_types/variable_array_struct_cast_varuint/VariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/SerializeUtil.h"
-#include "zserio/StringConvertUtil.h"
+#include "zserio/RebindAlloc.h"
 
 namespace array_types
 {
@@ -12,9 +11,9 @@ namespace variable_array_struct_cast_varuint
 {
 
 using AllocatorType = VariableArray::AllocatorType;
-using StringType = zserio::BasicString<AllocatorType>;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class VariableArrayStructCastVarUIntTest : public ::testing::Test
 {

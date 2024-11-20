@@ -185,7 +185,7 @@ struct ArrayTraits<BasicBitBuffer<ALLOC>>
 };
 
 template <typename ALLOC>
-struct ArrayTraits<std::basic_string<char, std::char_traits<char>, ALLOC>>
+struct ArrayTraits<BasicString<ALLOC>>
 {
     static constexpr StringView at(const detail::DummyArrayOwner&, StringView element, size_t)
     {

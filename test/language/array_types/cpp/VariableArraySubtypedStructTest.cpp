@@ -3,10 +3,7 @@
 #include "array_types/variable_array_subtyped_struct/VariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/BitStreamWriter.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/SerializeUtil.h"
-#include "zserio/StringConvertUtil.h"
 
 namespace array_types
 {
@@ -14,9 +11,9 @@ namespace variable_array_subtyped_struct
 {
 
 using AllocatorType = VariableArray::AllocatorType;
-using StringType = zserio::BasicString<AllocatorType>;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class VariableArraySubtypedStructTest : public ::testing::Test
 {

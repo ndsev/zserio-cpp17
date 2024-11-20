@@ -10,12 +10,12 @@ namespace variable_array_ternary_operator
 
 using AllocatorType = VariableArray::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class VariableArrayTernaryOperator : public ::testing::Test
 {
 protected:
-    void fillData(VariableArray& data, bool isFirstSizeUsed)
+    static void fillData(VariableArray& data, bool isFirstSizeUsed)
     {
         data.isFirstSizeUsed = isFirstSizeUsed;
         const zserio::UInt6 currentSize = (isFirstSizeUsed) ? data.firstSize : data.secondSize;
@@ -30,7 +30,7 @@ protected:
         }
     }
 
-    void testWriteReadFile(bool isFirstSizeUsed)
+    static void testWriteReadFile(bool isFirstSizeUsed)
     {
         VariableArray data;
         fillData(data, isFirstSizeUsed);

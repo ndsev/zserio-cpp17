@@ -1,6 +1,7 @@
 #include "choice_types/choice_with_array/TestChoice.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/RebindAlloc.h"
 
 namespace choice_types
 {
@@ -9,7 +10,7 @@ namespace choice_with_array
 
 using AllocatorType = TestChoice::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 using ChoiceTag = TestChoice::ChoiceTag;
 
 class ChoiceWithArrayTest : public ::testing::Test

@@ -528,7 +528,7 @@ inline void read(BitStreamReader& reader, BasicBytes<ALLOC>& value)
 }
 
 template <typename ALLOC>
-inline void read(BitStreamReader& reader, std::basic_string<char, std::char_traits<char>, ALLOC>& value)
+inline void read(BitStreamReader& reader, zserio::BasicString<ALLOC>& value)
 {
     value = reader.readString(value.get_allocator());
 }

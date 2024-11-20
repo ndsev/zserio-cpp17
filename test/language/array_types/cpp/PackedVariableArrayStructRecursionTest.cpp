@@ -1,7 +1,6 @@
 #include "array_types/packed_variable_array_struct_recursion/PackedVariableArray.h"
 #include "gtest/gtest.h"
-#include "test_utils/WriteReadFileTest.h"
-#include "test_utils/WriteReadTest.h"
+#include "test_utils/TestUtility.h"
 
 namespace array_types
 {
@@ -11,7 +10,7 @@ namespace packed_variable_array_struct_recursion
 class PackedVariableArrayStructRecursionTest : public ::testing::Test
 {
 protected:
-    void fillData(PackedVariableArray& data, size_t numElements)
+    static void fillData(PackedVariableArray& data, size_t numElements)
     {
         const zserio::UInt8 byteCount = 1;
         data.byteCount = byteCount;
@@ -24,7 +23,7 @@ protected:
         }
     }
 
-    Block createBlock(uint8_t byteCount, bool isLast)
+    static Block createBlock(uint8_t byteCount, bool isLast)
     {
         Block block;
         auto& dataBytes = block.dataBytes;
@@ -48,7 +47,7 @@ protected:
         }
     }
 
-    zserio::BitSize getUnpackedVariableArrayBitSize(size_t numElements)
+    static zserio::BitSize getUnpackedVariableArrayBitSize(size_t numElements)
     {
         zserio::BitSize bitSize = 8; // byteCount
         bitSize += 8; // numElements
@@ -61,7 +60,7 @@ protected:
         return bitSize;
     }
 
-    zserio::BitSize getUnpackedBlockBitSize(uint8_t byteCount, bool isLast)
+    static zserio::BitSize getUnpackedBlockBitSize(uint8_t byteCount, bool isLast)
     {
         zserio::BitSize bitSize = 8U * byteCount; // dataBytes[byteCount]
         bitSize += 8; // blockTerminator
@@ -74,7 +73,7 @@ protected:
         return bitSize;
     }
 
-    void checkBitSizeOf(size_t numElements)
+    static void checkBitSizeOf(size_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);
@@ -89,7 +88,7 @@ protected:
                 << std::to_string(packedBitSize / unpackedBitSize * 100) << "%!";
     }
 
-    void checkWriteRead(size_t numElements)
+    static void checkWriteRead(size_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);
@@ -97,7 +96,7 @@ protected:
         test_utils::writeReadTest(data);
     }
 
-    void checkWriteReadFile(size_t numElements)
+    static void checkWriteReadFile(size_t numElements)
     {
         PackedVariableArray data;
         fillData(data, numElements);

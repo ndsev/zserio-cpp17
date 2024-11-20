@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 #include "test_utils/Assertions.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/RebindAlloc.h"
 
 namespace array_types
 {
@@ -10,12 +11,12 @@ namespace packing_interface_optimization
 
 using AllocatorType = PackingInterfaceOptimization::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class PackingInterfaceOptimizationTest : public ::testing::Test
 {
 protected:
-    void fillUnpackedColors(VectorType<UnpackedColorStruct>& unpackedColors)
+    static void fillUnpackedColors(VectorType<UnpackedColorStruct>& unpackedColors)
     {
         unpackedColors.emplace_back(true, UnpackedColorChoice{});
         unpackedColors.back().colorChoice.emplace<UnpackedColorChoice::ChoiceTag::CHOICE_colorName>("yellow");
@@ -31,7 +32,7 @@ protected:
                         UnpackedColorEnum::BLUE));
     }
 
-    void fillMixedColors(VectorType<MixedColorStruct>& mixedColors)
+    static void fillMixedColors(VectorType<MixedColorStruct>& mixedColors)
     {
         mixedColors.emplace_back(true, MixedColorChoice{});
         mixedColors.back().colorChoice.emplace<MixedColorChoice::ChoiceTag::CHOICE_colorName>("purple");
@@ -46,7 +47,7 @@ protected:
                 zserio::in_place_index<MixedColorUnion::ChoiceTag::CHOICE_colorEnum>, MixedColorEnum::RED));
     }
 
-    void fillPackedColors(VectorType<PackedColorStruct>& packedColors)
+    static void fillPackedColors(VectorType<PackedColorStruct>& packedColors)
     {
         packedColors.emplace_back(true, PackedColorChoice{});
         packedColors.back().colorChoice.emplace<PackedColorChoice::ChoiceTag::CHOICE_colorName>("grey");
@@ -62,19 +63,19 @@ protected:
                         PackedColorEnum::GREEN));
     }
 
-    void fillUnpackedColorsHolder(UnpackedColorsHolder& unpackedColorsHolder)
+    static void fillUnpackedColorsHolder(UnpackedColorsHolder& unpackedColorsHolder)
     {
         fillUnpackedColors(unpackedColorsHolder.unpackedColors);
         fillMixedColors(unpackedColorsHolder.mixedColors);
     }
 
-    void fillPackedColorsHolder(PackedColorsHolder& packedColorsHolder)
+    static void fillPackedColorsHolder(PackedColorsHolder& packedColorsHolder)
     {
         fillMixedColors(packedColorsHolder.mixedColors);
         fillPackedColors(packedColorsHolder.packedColors);
     }
 
-    void assertPackingInterfaceMethodsPresent(const std::string& typeName)
+    static void assertPackingInterfaceMethodsPresent(const std::string& typeName)
     {
         ASSERT_METHOD_PRESENT(
                 PATH, typeName, "void initContext(PackingContext<", "initContext(PackingContext<");
@@ -84,7 +85,7 @@ protected:
         ASSERT_METHOD_PRESENT(PATH, typeName, "void read(PackingContext<", "void read(PackingContext<");
     }
 
-    void assertPackingInterfaceMethodsNotPresent(const std::string& typeName)
+    static void assertPackingInterfaceMethodsNotPresent(const std::string& typeName)
     {
         ASSERT_METHOD_NOT_PRESENT(
                 PATH, typeName, "void initContext(PackingContext<", "void initContext(PackingContext<");

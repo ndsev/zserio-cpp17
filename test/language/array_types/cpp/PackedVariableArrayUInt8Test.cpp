@@ -3,17 +3,11 @@
 #include "array_types/packed_variable_array_uint8/PackedVariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/RebindAlloc.h"
-#include "zserio/SerializeUtil.h"
 
 namespace array_types
 {
 namespace packed_variable_array_uint8
 {
-
-using AllocatorType = PackedVariableArray::AllocatorType;
-template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
 
 class PackedVariableArrayUInt8Test : public ::testing::Test
 {

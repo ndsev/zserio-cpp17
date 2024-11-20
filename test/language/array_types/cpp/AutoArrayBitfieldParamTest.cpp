@@ -3,7 +3,7 @@
 #include "array_types/auto_array_bitfield_param/ParameterizedBitfieldLength.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/BitStreamWriter.h"
+#include "zserio/RebindAlloc.h"
 
 namespace array_types
 {
@@ -12,7 +12,7 @@ namespace auto_array_bitfield_param
 
 using AllocatorType = ParameterizedBitfieldLength::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class AutoArrayBitfieldParamTest : public ::testing::Test
 {

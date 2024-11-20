@@ -9,7 +9,7 @@ namespace packed_arrays_mapping
 
 using AllocatorType = PackedArraysMapping::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
 

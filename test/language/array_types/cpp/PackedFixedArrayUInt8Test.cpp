@@ -3,7 +3,6 @@
 #include "array_types/packed_fixed_array_uint8/PackedFixedArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
-#include "zserio/SerializeUtil.h"
 
 namespace array_types
 {

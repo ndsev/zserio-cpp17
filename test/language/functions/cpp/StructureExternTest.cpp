@@ -1,6 +1,7 @@
 #include "functions/structure_extern/TestStructure.h"
 #include "gtest/gtest.h"
-#include "zserio/Vector.h"
+#include "test_utils/TestUtility.h"
+#include "zserio/RebindAlloc.h"
 
 namespace functions
 {
@@ -9,7 +10,7 @@ namespace structure_extern
 
 using AllocatorType = TestStructure::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
 
 class StructureExternTest : public ::testing::Test

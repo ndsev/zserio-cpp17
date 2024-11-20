@@ -2,8 +2,7 @@
 
 #include "gtest/gtest.h"
 #include "optional_members/optional_recursion/Block.h"
-#include "zserio/BitStreamReader.h"
-#include "zserio/BitStreamWriter.h"
+#include "test_utils/TestUtility.h"
 #include "zserio/RebindAlloc.h"
 
 namespace optional_members
@@ -13,7 +12,7 @@ namespace optional_recursion
 
 using AllocatorType = Block::AllocatorType;
 template <typename T>
-using VectorType = zserio::Vector<T, AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class OptionalRecursionTest : public ::testing::Test
 {

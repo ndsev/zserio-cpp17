@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "parameterized_types/parameterized_param/ParameterizedParamHolder.h"
-#include "zserio/BitStreamReader.h"
-#include "zserio/BitStreamWriter.h"
+#include "test_utils/TestUtility.h"
 
 namespace parameterized_types
 {

@@ -10,6 +10,7 @@
 #include "zserio/FloatUtil.h"
 #include "zserio/Traits.h"
 #include "zserio/Types.h"
+#include "zserio/Vector.h"
 
 namespace zserio
 {
@@ -168,8 +169,7 @@ inline uint32_t calcHashCode(uint32_t seedValue, detail::FloatWrapper<VALUE_TYPE
  * \return Calculated hash code.
  */
 template <typename ALLOC>
-inline uint32_t calcHashCode(
-        uint32_t seedValue, const std::basic_string<char, std::char_traits<char>, ALLOC>& stringValue)
+inline uint32_t calcHashCode(uint32_t seedValue, const BasicString<ALLOC>& stringValue)
 {
     uint32_t result = seedValue;
     for (auto element : stringValue)
@@ -240,7 +240,7 @@ inline uint32_t calcHashCode(uint32_t seedValue, const BytesView& bytes)
  * \return Calculated hash code.
  */
 template <typename ARRAY_ELEMENT, typename ALLOC>
-inline uint32_t calcHashCode(uint32_t seedValue, const std::vector<ARRAY_ELEMENT, ALLOC>& array)
+inline uint32_t calcHashCode(uint32_t seedValue, const Vector<ARRAY_ELEMENT, ALLOC>& array)
 {
     uint32_t result = seedValue;
     for (const ARRAY_ELEMENT& element : array)

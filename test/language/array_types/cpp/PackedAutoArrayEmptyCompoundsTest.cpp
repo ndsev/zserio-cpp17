@@ -3,8 +3,7 @@
 
 #include "array_types/packed_auto_array_empty_compounds/PackedAutoArray.h"
 #include "gtest/gtest.h"
-#include "test_utils/WriteReadFileTest.h"
-#include "zserio/RebindAlloc.h"
+#include "test_utils/TestUtility.h"
 
 namespace array_types
 {
