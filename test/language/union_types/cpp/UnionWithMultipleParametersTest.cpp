@@ -1,5 +1,7 @@
 #include <array>
+#include <limits>
 #include <string>
+#include <string_view>
 
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -22,6 +24,7 @@ using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>
 class UnionWithMultipleParametersTest : public ::testing::Test
 {
 protected:
+    static constexpr std::string_view BLOB_NAME_BASE = "language/union_types/union_with_multiple_parameters_";
 };
 
 TEST_F(UnionWithMultipleParametersTest, arrayLength)
@@ -211,6 +214,14 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
     {
+        // field array5 has wrong length
+        TestUnion data;
+        const VectorType<zserio::UInt5> value = {1, 10, 15};
+        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        zserio::View<TestUnion> view(data, 1, 1);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
+    }
+    {
         // field array13 is out of range
         TestUnion data;
         const VectorType<Data13> value = {
@@ -221,6 +232,18 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         data.emplace<ChoiceTag::CHOICE_array13>(value);
         zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
+    }
+    {
+        // field array13 has wrong length
+        TestUnion data;
+        const VectorType<Data13> value = {
+                Data13{VectorType<zserio::Int13>{1, 10, 15}},
+                Data13{VectorType<zserio::Int13>{1, 10, 15}},
+                Data13{VectorType<zserio::Int13>{1, 10, 15}},
+        };
+        data.emplace<ChoiceTag::CHOICE_array13>(value);
+        zserio::View<TestUnion> view(data, 1, 1);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
     }
     {
         // field field17 is out of range
@@ -274,12 +297,11 @@ TEST_F(UnionWithMultipleParametersTest, writeRead)
 
 TEST_F(UnionWithMultipleParametersTest, writeReadFile)
 {
-    const std::string blobNameBase = "language/union_types/union_with_multiple_parameters_";
     {
         TestUnion data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
         data.emplace<ChoiceTag::CHOICE_array5>(value);
-        test_utils::writeReadFileTest(blobNameBase + "array5.blob", data,
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array5.blob", data,
                 zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
     {
@@ -290,7 +312,7 @@ TEST_F(UnionWithMultipleParametersTest, writeReadFile)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
         data.emplace<ChoiceTag::CHOICE_array13>(value);
-        test_utils::writeReadFileTest(blobNameBase + "array13.blob", data,
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array13.blob", data,
                 zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
     {
@@ -298,14 +320,14 @@ TEST_F(UnionWithMultipleParametersTest, writeReadFile)
         const zserio::Int17 value = 65535;
         data.emplace<ChoiceTag::CHOICE_field17>(value);
         test_utils::writeReadFileTest(
-                blobNameBase + "field17.blob", data, zserio::VarSize{1}, zserio::UInt4{1});
+                std::string(BLOB_NAME_BASE) + "field17.blob", data, zserio::VarSize{1}, zserio::UInt4{1});
     }
     {
         TestUnion data;
         const zserio::DynInt16<> value = 16383;
         data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
         test_utils::writeReadFileTest(
-                blobNameBase + "dynBitField.blob", data, zserio::VarSize{1}, zserio::UInt4{15});
+                std::string(BLOB_NAME_BASE) + "dynBitField.blob", data, zserio::VarSize{1}, zserio::UInt4{15});
     }
 }
 
