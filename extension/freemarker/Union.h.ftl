@@ -100,6 +100,9 @@ public:
     </#items>
 </#list>
 
+protected:
+    View(const ${fullName}& data, const View& other) noexcept;
+
 private:
     const ${fullName}& m_data;
 <#list parameterList as parameter>

@@ -33,6 +33,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/CppRuntimeExceptionTest.cpp
     zserio/CppRuntimeVersionTest.cpp
     zserio/ConstraintExceptionTest.cpp
+    zserio/DataViewTest.cpp
     zserio/EnumsTest.cpp
     zserio/FileUtilTest.cpp
     zserio/FloatUtilTest.cpp

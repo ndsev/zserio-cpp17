@@ -13,9 +13,9 @@ namespace detail
 {
 
 template <typename T, typename... ARGS>
-void writeReadTestDetail(T& data, ARGS&&... arguments)
+void writeReadTestDetail(const T& data, ARGS&&... arguments)
 {
-    zserio::View<T> view(data, ::std::forward<ARGS>(arguments)...);
+    zserio::View<T> view(data, arguments...);
     zserio::detail::validate(view);
 
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
@@ -27,47 +27,61 @@ void writeReadTestDetail(T& data, ARGS&&... arguments)
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     T readData;
-    const zserio::View<T> readView = zserio::detail::read(reader, readData, ::std::forward<ARGS>(arguments)...);
+    const zserio::View<T> readView = zserio::detail::read(reader, readData, arguments...);
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(readView, view);
 }
 
 template <typename T, typename... ARGS>
-void writeReadTestSerializeData(T& data, ARGS&&... arguments)
+void writeReadTestSerializeData(const T& data, ARGS&&... arguments)
 {
-    zserio::View<T> view(data, ::std::forward<ARGS>(arguments)...);
+    zserio::View<T> view(data, arguments...);
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
 
-    auto bitBuffer = zserio::serialize(data, ::std::forward<ARGS>(arguments)...);
+    auto bitBuffer = zserio::serialize(data, arguments...);
     ASSERT_EQ(bitSize, bitBuffer.getBitSize());
 
     T readData;
-    const zserio::View<T> readView = zserio::deserialize(bitBuffer, data, ::std::forward<ARGS>(arguments)...);
+    const zserio::View<T> readView = zserio::deserialize(bitBuffer, readData, arguments...);
     ASSERT_EQ(view, readView);
 }
 
 template <typename T, typename... ARGS>
-void writeReadTestSerializeView(T& data, ARGS&&... arguments)
+void writeReadTestSerializeView(const T& data, ARGS&&... arguments)
 {
-    zserio::View<T> view(data, ::std::forward<ARGS>(arguments)...);
+    zserio::View<T> view(data, arguments...);
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
 
     auto bitBuffer = zserio::serialize(view);
     ASSERT_EQ(bitSize, bitBuffer.getBitSize());
 
     T readData;
-    const zserio::View<T> readView = zserio::deserialize(bitBuffer, data, ::std::forward<ARGS>(arguments)...);
+    const zserio::View<T> readView = zserio::deserialize(bitBuffer, readData, arguments...);
     ASSERT_EQ(view, readView);
+}
+
+template <typename T, typename... ARGS>
+void writeReadTestSerializeDataView(const T& data, ARGS&&... arguments)
+{
+    zserio::DataView<T> dataView(data, arguments...);
+    const zserio::BitSize bitSize = zserio::detail::bitSizeOf(dataView);
+
+    auto bitBuffer = zserio::serialize(dataView);
+    ASSERT_EQ(bitSize, bitBuffer.getBitSize());
+
+    const zserio::DataView<T> readDataView = zserio::deserialize<T>(bitBuffer, arguments...);
+    ASSERT_EQ(dataView, readDataView);
 }
 
 } // namespace detail
 
 template <typename T, typename... ARGS>
-void writeReadTest(T& data, ARGS&&... arguments)
+void writeReadTest(const T& data, ARGS&&... arguments)
 {
-    detail::writeReadTestDetail(data, std::forward<ARGS>(arguments)...);
-    detail::writeReadTestSerializeData(data, std::forward<ARGS>(arguments)...);
-    detail::writeReadTestSerializeView(data, std::forward<ARGS>(arguments)...);
+    detail::writeReadTestDetail(data, arguments...);
+    detail::writeReadTestSerializeData(data, arguments...);
+    detail::writeReadTestSerializeView(data, arguments...);
+    detail::writeReadTestSerializeDataView(data, arguments...);
 }
 
 } // namespace test_utils

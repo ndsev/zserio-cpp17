@@ -83,6 +83,9 @@ public:
     </#items>
 </#list>
 
+protected:
+    View(const ${fullName}& data, const View& other) noexcept;
+
 private:
 <#if fieldList?has_content>
     const ${fullName}& m_data;

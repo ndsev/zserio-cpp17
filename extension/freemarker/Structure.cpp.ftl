@@ -107,13 +107,21 @@ View<${fullName}>::View(const ${fullName}&<#if fieldList?has_content> data</#if>
 </#list>
         <#lt>) noexcept<#if fieldList?has_content || parameterList?has_content> :</#if>
 <#if fieldList?has_content>
-        m_data(data)<#rt>
+        m_data(data)<#if parameterList?has_content>,</#if>
 </#if>
 <#list parameterList as parameter>
-        <#lt>,
-        <@parameter_view_member_name parameter/>(<@parameter_view_arg_name parameter/>)<#rt>
+        <@parameter_view_member_name parameter/>(<@parameter_view_arg_name parameter/>)<#if parameter?has_next>,</#if>
 </#list>
+{}
 
+View<${fullName}>::View(const ${fullName}&<#if fieldList?has_content> data</#if>,
+        const View&<#if parameterList?has_content> other</#if>) noexcept<#if fieldList?has_content || parameterList?has_content> :</#if>
+<#if fieldList?has_content>
+        m_data(data)<#if parameterList?has_content>,</#if>
+</#if>
+<#list parameterList as parameter>
+        <@parameter_view_member_name parameter/>(other.${parameter.getterName}())<#if parameter?has_next>,</#if>
+</#list>
 {}
 <#list parameterList as parameter>
 

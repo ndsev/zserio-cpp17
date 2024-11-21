@@ -36,8 +36,8 @@ template <typename T, typename... ARGS>
 struct is_first_allocator<T, ARGS...> : is_allocator<T>
 {};
 
-template <typename T, typename V = void>
-inline constexpr bool is_first_allocator_v = is_first_allocator<T, V>::value;
+template <typename... ARGS>
+inline constexpr bool is_first_allocator_v = is_first_allocator<ARGS...>::value;
 /** \} */
 
 /**
