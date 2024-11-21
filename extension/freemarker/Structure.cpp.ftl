@@ -368,10 +368,10 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 <#macro structure_view_read compoundName field indent packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}in.alignTo(${field.alignmentValue});
+${I}reader.alignTo(${field.alignmentValue});
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
-${I}in.alignTo(8);
+${I}reader.alignTo(8);
     </#if>
 ${I}<#if field.compound??>(void)</#if>detail::read<@array_packed_suffix field, packed/><#rt>
         <#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#t>
