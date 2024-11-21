@@ -1,3 +1,4 @@
+#include <string_view>
 #include <utility>
 
 #include "choice_types/uint64_param_choice/UInt64ParamChoice.h"
@@ -21,6 +22,7 @@ protected:
         zserio::detail::write(writer, valueC);
     }
 
+    static constexpr std::string_view BLOB_NAME_BASE = "language/choice_types/uint64_param_choice_";
     static constexpr zserio::UInt64 VARIANT_A_SELECTOR = 1;
     static constexpr zserio::UInt64 VARIANT_B_SELECTOR = 2;
     static constexpr zserio::UInt64 VARIANT_C_SELECTOR = 7;
@@ -223,16 +225,15 @@ TEST_F(UInt64ParamChoiceTest, writeRead)
 
 TEST_F(UInt64ParamChoiceTest, writeReadFile)
 {
-    const std::string blobNameBase = "language/choice_types/uint64_param_choice_";
     {
         const VariantA value = 99;
         UInt64ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueA>, value);
-        test_utils::writeReadFileTest(blobNameBase + "a.blob", data, VARIANT_A_SELECTOR);
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "a.blob", data, VARIANT_A_SELECTOR);
     }
     {
         const VariantB value = 234;
         UInt64ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
-        test_utils::writeReadFileTest(blobNameBase + "b.blob", data, VARIANT_B_SELECTOR);
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "b.blob", data, VARIANT_B_SELECTOR);
     }
 }
 

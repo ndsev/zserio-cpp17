@@ -1,3 +1,5 @@
+#include <string_view>
+
 #include "choice_types/choice_with_array/TestChoice.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -16,6 +18,7 @@ using ChoiceTag = TestChoice::ChoiceTag;
 class ChoiceWithArrayTest : public ::testing::Test
 {
 protected:
+    static constexpr std::string_view BLOB_NAME_BASE = "language/choice_types/choice_with_array_array";
     static constexpr zserio::Int8 ARRAY8_SELECTOR = 8;
     static constexpr zserio::Int8 ARRAY16_SELECTOR = 16;
 };
@@ -56,16 +59,15 @@ TEST_F(ChoiceWithArrayTest, array16)
 
 TEST_F(ChoiceWithArrayTest, writeReadFile)
 {
-    const std::string blobNameBase = "language/choice_types/choice_with_array_array";
     {
         const VectorType<Data8> array8{Data8{1}, Data8{2}, Data8{3}, Data8{4}};
         TestChoice data(zserio::in_place_index<ChoiceTag::CHOICE_array8>, array8);
-        test_utils::writeReadFileTest(blobNameBase + "8.blob", data, ARRAY8_SELECTOR);
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "8.blob", data, ARRAY8_SELECTOR);
     }
     {
         const VectorType<zserio::Int16> array16{10, 20, 30, 40, 50};
         TestChoice data(zserio::in_place_index<ChoiceTag::CHOICE_array16>, array16);
-        test_utils::writeReadFileTest(blobNameBase + "16.blob", data, ARRAY16_SELECTOR);
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "16.blob", data, ARRAY16_SELECTOR);
     }
 }
 

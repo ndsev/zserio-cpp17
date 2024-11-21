@@ -1,4 +1,5 @@
 #include <limits>
+#include <string_view>
 
 #include "choice_types/multiple_param_choice/TestChoice.h"
 #include "gtest/gtest.h"
@@ -20,6 +21,7 @@ using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 class MultipleParamChoiceTest : public ::testing::Test
 {
 protected:
+    static constexpr std::string_view BLOB_NAME_BASE = "language/choice_types/multiple_param_choice_";
     static constexpr zserio::UInt7 ARRAY5_SELECTOR = 5;
     static constexpr zserio::UInt7 ARRAY13_SELECTOR = 13;
     static constexpr zserio::UInt7 FIELD17_SELECTOR = 17;
@@ -237,6 +239,14 @@ TEST_F(MultipleParamChoiceTest, validate)
         ASSERT_THROW(zserio::detail::validate(view2), zserio::OutOfRangeException);
     }
     {
+        // field array5 has wrong length
+        TestChoice data;
+        const VectorType<zserio::UInt5> value = {1, 10, 15};
+        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        zserio::View<TestChoice> view(data, ARRAY5_SELECTOR, 1, 1);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
+    }
+    {
         // field array13 is out of range
         TestChoice data;
         const VectorType<Data13> value = {
@@ -249,6 +259,18 @@ TEST_F(MultipleParamChoiceTest, validate)
         ASSERT_THROW(zserio::detail::validate(view1), zserio::ChoiceCaseException);
         zserio::View<TestChoice> view2(data, ARRAY13_SELECTOR, static_cast<uint32_t>(value.size()), 1);
         ASSERT_THROW(zserio::detail::validate(view2), zserio::OutOfRangeException);
+    }
+    {
+        // field array13 has wrong length
+        TestChoice data;
+        const VectorType<Data13> value = {
+                Data13{VectorType<zserio::Int13>{1, 10, 15}},
+                Data13{VectorType<zserio::Int13>{1, 10, 15}},
+                Data13{VectorType<zserio::Int13>{1, 10, 15}},
+        };
+        data.emplace<ChoiceTag::CHOICE_array13>(value);
+        zserio::View<TestChoice> view(data, ARRAY13_SELECTOR, 1, 1);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
     }
     {
         // field field17 is out of range
@@ -308,12 +330,11 @@ TEST_F(MultipleParamChoiceTest, writeRead)
 
 TEST_F(MultipleParamChoiceTest, writeReadFile)
 {
-    const std::string blobNameBase = "language/choice_types/multiple_param_choice_";
     {
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
         data.emplace<ChoiceTag::CHOICE_array5>(value);
-        test_utils::writeReadFileTest(blobNameBase + "array5.blob", data, ARRAY5_SELECTOR,
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array5.blob", data, ARRAY5_SELECTOR,
                 zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
     {
@@ -324,22 +345,22 @@ TEST_F(MultipleParamChoiceTest, writeReadFile)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
         data.emplace<ChoiceTag::CHOICE_array13>(value);
-        test_utils::writeReadFileTest(blobNameBase + "array13.blob", data, ARRAY13_SELECTOR,
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array13.blob", data, ARRAY13_SELECTOR,
                 zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
     {
         TestChoice data;
         const zserio::Int17 value = 65535;
         data.emplace<ChoiceTag::CHOICE_field17>(value);
-        test_utils::writeReadFileTest(
-                blobNameBase + "field17.blob", data, FIELD17_SELECTOR, zserio::VarSize{1}, zserio::UInt4{1});
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "field17.blob", data, FIELD17_SELECTOR,
+                zserio::VarSize{1}, zserio::UInt4{1});
     }
     {
         TestChoice data;
         const zserio::DynInt16<> value = 16383;
         data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
-        test_utils::writeReadFileTest(blobNameBase + "dynBitField.blob", data, DYN_BIT_FIELD_SELECTOR,
-                zserio::VarSize{1}, zserio::UInt4{15});
+        test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "dynBitField.blob", data,
+                DYN_BIT_FIELD_SELECTOR, zserio::VarSize{1}, zserio::UInt4{15});
     }
 }
 
