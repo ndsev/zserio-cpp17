@@ -49,6 +49,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/TraitsTest.cpp
     zserio/TypesTest.cpp
     zserio/UnionCaseExceptionTest.cpp
+    zserio/ValidationExceptionTest.cpp
     zserio/VariantTest.cpp
 )
 

@@ -1,7 +1,7 @@
 #ifndef ZSERIO_UNION_CASE_EXCEPTION_H_INC
 #define ZSERIO_UNION_CASE_EXCEPTION_H_INC
 
-#include "zserio/CppRuntimeException.h"
+#include "zserio/ValidationException.h"
 
 namespace zserio
 {
@@ -9,10 +9,10 @@ namespace zserio
 /**
  * Exception thrown when a check of the union case fails.
  */
-class UnionCaseException : public CppRuntimeException
+class UnionCaseException : public ValidationException
 {
 public:
-    using CppRuntimeException::CppRuntimeException;
+    using ValidationException::ValidationException;
 };
 
 } // namespace zserio

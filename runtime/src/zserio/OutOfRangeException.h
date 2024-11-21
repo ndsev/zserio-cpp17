@@ -1,7 +1,7 @@
 #ifndef ZSERIO_OUT_OF_RANGE_EXCEPTION_H_INC
 #define ZSERIO_OUT_OF_RANGE_EXCEPTION_H_INC
 
-#include "zserio/CppRuntimeException.h"
+#include "zserio/ValidationException.h"
 
 namespace zserio
 {
@@ -9,10 +9,10 @@ namespace zserio
 /**
  * Exception thrown when a value is out of range.
  */
-class OutOfRangeException : public CppRuntimeException
+class OutOfRangeException : public ValidationException
 {
 public:
-    using CppRuntimeException::CppRuntimeException;
+    using ValidationException::ValidationException;
 };
 
 } // namespace zserio

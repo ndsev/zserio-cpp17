@@ -1,7 +1,7 @@
 #ifndef ZSERIO_CONSTRAINT_EXCEPTION_H_INC
 #define ZSERIO_CONSTRAINT_EXCEPTION_H_INC
 
-#include "zserio/CppRuntimeException.h"
+#include "zserio/ValidationException.h"
 
 namespace zserio
 {
@@ -9,10 +9,10 @@ namespace zserio
 /**
  * Exception thrown when a constraint check fails.
  */
-class ConstraintException : public CppRuntimeException
+class ConstraintException : public ValidationException
 {
 public:
-    using CppRuntimeException::CppRuntimeException;
+    using ValidationException::ValidationException;
 };
 
 } // namespace zserio

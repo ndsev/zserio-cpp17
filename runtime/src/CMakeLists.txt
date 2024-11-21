@@ -63,6 +63,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/Types.cpp
     zserio/Types.h
     zserio/UnionCaseException.h
+    zserio/ValidationException.h
     zserio/Variant.h
     zserio/Vector.h
     zserio/View.h
