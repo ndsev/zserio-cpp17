@@ -15,7 +15,7 @@ if (ZSERIO_LOG)
 endif ()
 
 list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/empty_union/.*|.*/simple_union/.*")
+    ".*/empty_union/.*|.*/simple_union/.*|.*/union_with_multiple_parameters/.*")
 set_target_properties(union_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
 
 add_custom_test(union_types
@@ -24,6 +24,7 @@ add_custom_test(union_types
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyUnionTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SimpleUnionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionWithMultipleParametersTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
