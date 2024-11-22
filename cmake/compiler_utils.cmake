@@ -8,13 +8,17 @@ endfunction()
 # Prepares warnings setup for current target
 function(compiler_get_warnings_setup VARNAME)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-        set(WARNINGS_SETUP "-Wall -Wextra -pedantic -Wconversion -Wno-long-long -Wshadow -Wold-style-cast")
+        set(WARNINGS_SETUP_LIST "-Wall -Wextra -pedantic -Wconversion -Wshadow -Wold-style-cast"
+                "-Wno-long-long"
+                "-Wno-maybe-uninitialized") # DataView
+
         # gcc 7.5 reports Wsign-conversion even on static_cast, reportedly fixed in gcc 9.3
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.3.0")
-            set(WARNINGS_SETUP "${WARNINGS_SETUP} -Wsign-conversion")
+            set(WARNINGS_SETUP_LIST "${WARNINGS_SETUP_LIST} -Wsign-conversion")
         endif ()
         # gcc doesn't detect this well so it's fired even when used (OptionalTest.cpp)
-        set(WARNINGS_SETUP "${WARNINGS_SETUP} -Wno-unused-local-typedefs")
+        set(WARNINGS_SETUP_LIST "${WARNINGS_SETUP_LIST} -Wno-unused-local-typedefs")
+        string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP_LIST}")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         set(WARNINGS_SETUP_LIST "-Weverything"
                 "-Wno-system-headers"
