@@ -248,7 +248,6 @@ ${I}{
 ${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
 ${I}            " != " << static_cast<size_t>(${fullName}::ChoiceTag::<@choice_tag_name member.field/>) << ")!";
 ${I}}
-    <@array_check_length member.field, indent/>
 ${I}validate(view.${member.field.getterName}(), "'${name}.${member.field.name}'");
     <#else>
 ${I}// empty
@@ -264,7 +263,6 @@ void validate(const View<${fullName}>& view, ::std::string_view)
 <#list parameterList as parameter>
     validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
-
 <#if fieldList?has_content>
     <@choice_switch "choice_validate_member", "choice_validate_no_match", viewIndirectSelectorExpression/>
 </#if>

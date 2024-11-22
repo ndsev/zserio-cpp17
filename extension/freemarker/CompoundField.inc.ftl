@@ -49,6 +49,9 @@
         <#if array_needs_owner(field)>
             , *this<#t>
         </#if>
+        <#if field.array.length??>
+            , static_cast<size_t>(${field.array.length})<#t>
+        </#if>
     <#else>
         <#if field.compound??>
             <#list field.compound.instantiatedParameters as instantiatedParameter>
@@ -149,18 +152,6 @@
 
 <#macro array_traits_name field>
     Zserio${field.name?cap_first}ArrayTraits<#t>
-</#macro>
-
-<#macro array_check_length field indent = 1>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.array?? && field.array.viewIndirectLength??>
-${I}// check array length
-${I}if (view.${field.getterName}().size() != static_cast<size_t>(${field.array.viewIndirectLength}))
-${I}{
-${I}    throw ArrayLengthException("Wrong array length for field '${name}.${field.name}' (") <<
-${I}            view.${field.getterName}().size() << " != " << static_cast<size_t>(${field.array.viewIndirectLength}) << ")!";
-${I}}
-    </#if>
 </#macro>
 
 <#macro array_traits_declaration compoundFullName fieldList>

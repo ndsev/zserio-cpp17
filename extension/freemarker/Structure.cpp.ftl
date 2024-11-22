@@ -264,28 +264,25 @@ ${I}}
 template <>
 void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
-<#list parameterList>
-    <#items as parameter>
+<#list parameterList as parameter>
     validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
-    </#items>
-
 </#list>
 <#list fieldList as field>
-    <@structure_check_constraint field/>
-    <#if field.optional?? && field.optional.viewIndirectClause??>
+    <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
     // check non-auto optional
     if (${field.optional.viewIndirectClause} && !view.${field.getterName}())
     {
         throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
     }
-    </#if>
-    <@array_check_length field/>
-    <#if field.optional??>
+        </#if>
     if (view.${field.getterName}())
     {
+        <@structure_check_constraint field, 2/>
         validate(*view.${field.getterName}(), "'${name}.${field.name}'");
     }
     <#else>
+    <@structure_check_constraint field/>
     validate(view.${field.getterName}(), "'${name}.${field.name}'");
     </#if>
 </#list>

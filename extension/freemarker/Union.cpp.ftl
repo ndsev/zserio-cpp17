@@ -205,7 +205,6 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 
 <#macro union_validate_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <@array_check_length field, indent/>
 ${I}validate(view.${field.getterName}(), "'${name}.${field.name}'");
 </#macro>
 <#macro union_validate_no_match name indent>
@@ -215,11 +214,8 @@ ${I}throw UnionCaseException("No case set in union '${name}'!");
 template <>
 void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
-<#list parameterList>
-    <#items as parameter>
+<#list parameterList as parameter>
     validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
-    </#items>
-
 </#list>
 <#if fieldList?has_content>
     <@union_switch "union_validate_field", "union_validate_no_match", "view.zserioChoiceTag()"/>

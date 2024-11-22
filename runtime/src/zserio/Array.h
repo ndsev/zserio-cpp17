@@ -25,9 +25,35 @@ enum ArrayType
     ALIGNED_AUTO /**< Aligned auto zserio array which is auto zserio array with indexed offsets. */
 };
 
+template <ArrayType ARRAY_TYPE, typename = void>
+class ArrayBase
+{
+public:
+    static constexpr bool HAS_SCHEMA_SIZE = false;
+};
+
+template <ArrayType ARRAY_TYPE>
+class ArrayBase<ARRAY_TYPE, std::enable_if_t<(ARRAY_TYPE == NORMAL || ARRAY_TYPE == ALIGNED)>>
+{
+public:
+    explicit ArrayBase(size_t schemaSize) :
+            m_schemaSize(schemaSize)
+    {}
+
+    size_t schemaSize() const
+    {
+        return m_schemaSize;
+    }
+
+    static constexpr bool HAS_SCHEMA_SIZE = true;
+
+private:
+    size_t m_schemaSize;
+};
+
 template <typename RAW_ARRAY, ArrayType ARRAY_TYPE,
         typename ARRAY_TRAITS = ArrayTraits<typename RAW_ARRAY::value_type>>
-class Array
+class Array : public ArrayBase<ARRAY_TYPE>
 {
 public:
     /** Array type. */
@@ -45,6 +71,9 @@ public:
     /** Typedef for the array traits. */
     using Traits = ARRAY_TRAITS;
 
+    /** Whether the array has defined size in the schema. */
+    static constexpr bool HAS_SCHEMA_SIZE = ArrayBase<ARRAY_TYPE>::HAS_SCHEMA_SIZE;
+
     /**
      * Typedef for the array's owner type.
      *
@@ -56,10 +85,35 @@ public:
     /**
      * Constructor from l-value raw array.
      *
-     * \param owner View to the array's owner.
      * \param rawArray Raw array.
      */
-    template <typename OWNER_TYPE_ = OwnerType, std::enable_if_t<!detail::is_dummy_v<OWNER_TYPE_>, int> = 0>
+    template <typename OWNER_TYPE_ = OwnerType,
+            std::enable_if_t<detail::is_dummy_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
+    explicit Array(const RawArray& rawArray) :
+            m_rawArray(rawArray)
+    {}
+
+    /**
+     * Constructor from l-value raw array.
+     *
+     * \param rawArray Raw array.
+     * \param schemaSize Array size defined by the schema.
+     */
+    template <typename OWNER_TYPE_ = OwnerType,
+            std::enable_if_t<detail::is_dummy_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
+    explicit Array(const RawArray& rawArray, size_t schemaSize) :
+            ArrayBase<ARRAY_TYPE>(schemaSize),
+            m_rawArray(rawArray)
+    {}
+
+    /**
+     * Constructor from l-value raw array.
+     *
+     * \param rawArray Raw array.
+     * \param owner View to the array's owner.
+     */
+    template <typename OWNER_TYPE_ = OwnerType,
+            std::enable_if_t<!detail::is_dummy_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
     explicit Array(const RawArray& rawArray, const OwnerType& owner) :
             m_rawArray(rawArray),
             m_owner(owner)
@@ -69,10 +123,15 @@ public:
      * Constructor from l-value raw array.
      *
      * \param rawArray Raw array.
+     * \param owner View to the array's owner.
+     * \param schemaSize Array size defined by the schema.
      */
-    template <typename OWNER_TYPE_ = OwnerType, std::enable_if_t<detail::is_dummy_v<OWNER_TYPE_>, int> = 0>
-    explicit Array(const RawArray& rawArray) :
-            m_rawArray(rawArray)
+    template <typename OWNER_TYPE_ = OwnerType,
+            std::enable_if_t<!detail::is_dummy_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
+    explicit Array(const RawArray& rawArray, const OwnerType& owner, size_t schemaSize) :
+            ArrayBase<ARRAY_TYPE>(schemaSize),
+            m_rawArray(rawArray),
+            m_owner(owner)
     {}
 
     /**
@@ -252,7 +311,17 @@ namespace detail
 template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
 void validate(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, std::string_view fieldName)
 {
+    if constexpr (Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>::HAS_SCHEMA_SIZE)
+    {
+        if (array.size() != array.schemaSize())
+        {
+            throw ArrayLengthException("Wrong array length for field '")
+                    << fieldName << "' (" << array.size() << " != " << array.schemaSize() << ")!";
+        }
+    }
+
     validate(VarSize{convertSizeToUInt32(array.size())}, fieldName);
+
     for (size_t i = 0; i < array.size(); ++i)
     {
         validate(array[i], fieldName);
