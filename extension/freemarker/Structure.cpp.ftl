@@ -296,7 +296,7 @@ ${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
-${I}endBitPosition += detail::bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
+${I}endBitPosition += bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt><#if field.optional??>*</#if>view.${field.getterName}(), endBitPosition);
 </#macro>
@@ -312,7 +312,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
             <#if field.optional.viewIndirectClause??>
     if (${field.optional.viewIndirectClause})
             <#else>
-    endBitPosition += detail::bitSizeOf(Bool());
+    endBitPosition += bitSizeOf(Bool());
     if (view.${field.getterName}())
             </#if>
     {
@@ -337,7 +337,7 @@ ${I}writer.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}writer.alignTo(8);
     </#if>
-${I}detail::write<@array_packed_suffix field, packed/>(<#rt>
+${I}write<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, <#if field.optional??>*</#if>view.${field.getterName}());
 </#macro>
@@ -378,7 +378,7 @@ ${I}reader.alignTo(${field.alignmentValue});
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}reader.alignTo(8);
     </#if>
-${I}<#if field.compound??>(void)</#if>detail::read<@array_packed_suffix field, packed/><#rt>
+${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field, packed/><#rt>
         <#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
@@ -454,7 +454,7 @@ BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldLi
                 <#if field.optional.viewIndirectClause??>
     if (${field.optional.viewIndirectClause})
                 <#else>
-    endBitPosition += detail::bitSizeOf(Bool());
+    endBitPosition += bitSizeOf(Bool());
     if (view.${field.getterName}())
                 </#if>
     {
