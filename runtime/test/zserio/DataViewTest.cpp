@@ -41,9 +41,9 @@ public:
             m_param(param)
     {}
 
-    Array<Vector<UInt32>, ArrayType::NORMAL> array() const
+    Array<Vector<UInt32>, ArrayType::AUTO> array() const
     {
-        return Array<Vector<UInt32>, ArrayType::NORMAL>(m_data.array);
+        return Array<Vector<UInt32>, ArrayType::AUTO>(m_data.array);
     }
 
     View<TestParam> param() const
