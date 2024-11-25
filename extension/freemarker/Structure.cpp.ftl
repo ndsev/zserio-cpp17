@@ -2,6 +2,7 @@
 <#include "Structure.inc.ftl">
 <@file_header generatorDescription/>
 
+#include <zserio/BitPositionUtil.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>

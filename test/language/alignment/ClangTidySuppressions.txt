@@ -1,0 +1,1 @@
+ readability-simplify-boolean-expr:gen/alignment/optional_member_alignment/OptionalMemberAlignment.cpp
