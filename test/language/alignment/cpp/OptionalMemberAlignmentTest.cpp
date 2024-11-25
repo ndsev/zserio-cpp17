@@ -38,6 +38,29 @@ protected:
     static constexpr size_t WITHOUT_OPTIONAL_MEMBER_ALIGNMENT_BIT_SIZE = 33;
 };
 
+TEST_F(OptionalMemberAlignmentTest, comparisonOperators)
+{
+    const bool hasOptional = true;
+    const int32_t optionalField = 0x1234;
+    const int32_t field = 0x7654;
+    OptionalMemberAlignment data;
+    fillData(data, hasOptional, optionalField, field);
+
+    OptionalMemberAlignment equalData;
+    fillData(equalData, hasOptional, optionalField, field);
+
+    OptionalMemberAlignment lessThanData;
+    fillData(lessThanData, false, 0, field);
+
+    test_utils::comparisonOperatorsTest(data, equalData, lessThanData);
+
+    zserio::View<OptionalMemberAlignment> view(data);
+    zserio::View<OptionalMemberAlignment> equalView(equalData);
+    zserio::View<OptionalMemberAlignment> lessThanView(lessThanData);
+
+    test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
+}
+
 TEST_F(OptionalMemberAlignmentTest, readWithOptional)
 {
     const bool hasOptional = true;

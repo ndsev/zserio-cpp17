@@ -15,7 +15,3 @@ readability-simplify-boolean-expr:gen/expressions/question_mark/QuestionMarkExpr
 readability-simplify-boolean-expr:gen/expressions/uint64_type/UInt64TypeExpression.cpp
 
 readability-uppercase-literal-suffix:gen/expressions/float_type/FloatTypeExpression.cpp
-
-readability-implicit-bool-conversion:gen/expressions/index_operator/Element.cpp
-readability-implicit-bool-conversion:gen/expressions/parameterized_array_type/ParameterizedArrayElement.cpp
-readability-implicit-bool-conversion:gen/expressions/parameterized_array_type/ParameterizedArrayHolder.cpp

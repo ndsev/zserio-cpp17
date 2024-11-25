@@ -11,9 +11,6 @@ performance-move-const-arg:gen/parameterized_types/fixed_and_variable_param/Fixe
 performance-move-const-arg:gen/parameterized_types/parameterized_inner_classes_clashing/Parent.cpp
 performance-move-const-arg:gen/parameterized_types/parameterized_nested_in_array/Element.cpp
 
-readability-implicit-bool-conversion:gen/parameterized_types/grand_child_param/Item.cpp
-readability-implicit-bool-conversion:gen/parameterized_types/grand_child_param/ItemChoice.cpp
-
 readability-simplify-boolean-expr:gen/parameterized_types/fixed_and_variable_param/ArrayHolder.cpp
 readability-simplify-boolean-expr:gen/parameterized_types/grand_child_param/Item.cpp
 readability-simplify-boolean-expr:gen/parameterized_types/grand_child_param/ItemChoice.cpp

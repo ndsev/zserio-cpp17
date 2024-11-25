@@ -31,10 +31,6 @@ misc-no-recursion # reports also runtime
 
 performance-move-const-arg:gen/array_types/packed_auto_array_empty_compounds/Main.cpp
 
-readability-implicit-bool-conversion:gen/array_types/packing_interface_optimization/MixedColorChoice.cpp
-readability-implicit-bool-conversion:gen/array_types/packing_interface_optimization/PackedColorChoice.cpp
-readability-implicit-bool-conversion:gen/array_types/packing_interface_optimization/UnpackedColorChoice.cpp
-
 readability-simplify-boolean-expr:gen/array_types/packed_auto_array_empty_compounds/EmptyChoice.cpp
 readability-simplify-boolean-expr:gen/array_types/packing_interface_optimization/MixedColorChoice.cpp
 readability-simplify-boolean-expr:gen/array_types/packing_interface_optimization/PackedColorChoice.cpp

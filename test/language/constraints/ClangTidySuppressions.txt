@@ -3,5 +3,3 @@ google-explicit-constructor:gen/constraints/structure_bitmask_constraints/Availa
 readability-simplify-boolean-expr:gen/constraints/choice_constraints/ChoiceConstraints.cpp
 readability-simplify-boolean-expr:gen/constraints/literal_constraint/LiteralConstraint.cpp
 readability-simplify-boolean-expr:gen/constraints/array_lengthof_constraint/ArrayLengthofConstraint.cpp
-
-readability-implicit-bool-conversion:gen/constraints/choice_constraints/ChoiceConstraints.cpp

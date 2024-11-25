@@ -173,6 +173,26 @@ public:
     using NumericTypeWrapper<bool>::NumericTypeWrapper;
 };
 
+constexpr bool operator<(const BoolWrapper& lhs, const BoolWrapper& rhs)
+{
+    return static_cast<int>(lhs) < static_cast<int>(rhs);
+}
+
+constexpr bool operator>(const BoolWrapper& lhs, const BoolWrapper& rhs)
+{
+    return rhs < lhs;
+}
+
+constexpr bool operator<=(const BoolWrapper& lhs, const BoolWrapper& rhs)
+{
+    return !(rhs < lhs);
+}
+
+constexpr bool operator>=(const BoolWrapper& lhs, const BoolWrapper& rhs)
+{
+    return !(lhs < rhs);
+}
+
 template <typename VALUE_TYPE, BitSize BIT_SIZE = 8 * sizeof(VALUE_TYPE)>
 class IntWrapper : public NumericTypeWrapper<VALUE_TYPE>
 {
