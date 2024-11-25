@@ -272,7 +272,7 @@ void validate(const View<${fullName}>&<#if fieldList?has_content || parameterLis
     <#if field.optional??>
         <#if field.optional.viewIndirectClause??>
     // check non-auto optional
-    if (${field.optional.viewIndirectClause} && !view.${field.getterName}())
+    if ((${field.optional.viewIndirectClause}) && !view.${field.getterName}())
     {
         throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
     }

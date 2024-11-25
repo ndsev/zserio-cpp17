@@ -19,6 +19,7 @@ add_custom_test(optional_members
         optional_members_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoOptionalTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalComplexExpressionTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalRecursionTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
