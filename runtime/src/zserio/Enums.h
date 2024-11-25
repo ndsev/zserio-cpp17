@@ -16,7 +16,7 @@ namespace zserio
 /**
  * Enum traits provides various information for Zserio enums.
  *
- * This information is provided via specializations of the EnumTraits strucure.
+ * This information is provided via specializations of the EnumTraits structure.
  */
 template <typename T>
 struct EnumTraits

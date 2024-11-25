@@ -195,10 +195,16 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         }
         else if (expr.op1().getExprZserioType() instanceof BitmaskType)
         {
-            final BitmaskType bitmaskType = (BitmaskType)expr.op1().getExprZserioType();
-            final CppNativeType bitmaskNativeType = cppNativeMapper.getCppType(bitmaskType);
-            return new UnaryExpressionFormatting(
-                    "static_cast<" + bitmaskNativeType.getFullName() + "::ZserioType::ValueType>(", ")");
+            if (expr.op1().requiresOwnerContext())
+            {
+                return new UnaryExpressionFormatting("(", ").getValue()");
+            }
+            else
+            {
+                final BitmaskType bitmaskType = (BitmaskType)expr.op1().getExprZserioType();
+                final CppNativeType bitmaskNativeType = cppNativeMapper.getCppType(bitmaskType);
+                return new UnaryExpressionFormatting(bitmaskNativeType.getFullName() + "(", ").getValue()");
+            }
         }
         else
         {

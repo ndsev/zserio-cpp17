@@ -99,8 +99,11 @@ function(compiler_get_warnings_as_errors_setup VARNAME)
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         if (ZSERIO_ENABLE_WERROR)
             set(WARNINGS_SETUP "-Werror")
-            set(WARNINGS_SETUP # used by zserio @deprecated feature (DeprecatedAttribute.h)
-                "${WARNINGS_SETUP} -Wno-deprecated-declarations")
+            set(WARNINGS_SETUP_LIST
+                "-Wno-deprecated-declarations" # used by zserio @deprecated feature (DeprecatedAttribute.h)
+                "-Wno-unreachable-code" # used by expressions tests
+            )
+            string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP} ${WARNINGS_SETUP_LIST}")
         endif ()
         if (CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "8.0.0")
             set(WARNINGS_SETUP_LIST

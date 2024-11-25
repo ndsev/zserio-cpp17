@@ -59,7 +59,7 @@ public:
 
     /** Default copy constructor. */
     ${name}(const ${name}&) = default;
-    
+
     /** Default assignment operator. */
     ${name}& operator=(const ${name}&) = default;
 
