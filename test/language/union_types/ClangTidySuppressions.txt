@@ -1,3 +1,7 @@
 bugprone-exception-escape:gen/union_types/empty_union/EmptyUnion.h
 bugprone-exception-escape:gen/union_types/simple_union/SimpleUnion.h
 bugprone-exception-escape:gen/union_types/union_with_multiple_parameters/TestUnion.h
+
+readability-implicit-bool-conversion:gen/union_types/union_with_parameter/TestUnion.cpp
+
+readability-simplify-boolean-expr:gen/union_types/empty_union_with_parameter/EmptyUnionWithParameter.cpp

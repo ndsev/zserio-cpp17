@@ -14,10 +14,6 @@ if (ZSERIO_LOG)
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
 
-list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/uint64_bitmask/.*|.*/bitfield_bitmask/.*")
-set_target_properties(bitmask_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
-
 add_custom_test(bitmask_types
     DEPENDS
         bitmask_types_zs

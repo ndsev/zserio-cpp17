@@ -1,5 +1,19 @@
+bugprone-exception-escape:gen/choice_types/choice_compatibility_check/ChoiceVersion1.h
+bugprone-exception-escape:gen/choice_types/choice_compatibility_check/ChoiceVersion2.h
+bugprone-exception-escape:gen/choice_types/choice_compatibility_check/HolderVersion1.cpp
+bugprone-exception-escape:gen/choice_types/choice_compatibility_check/HolderVersion2.cpp
 bugprone-exception-escape:gen/choice_types/empty_choice/EmptyChoice.h
 bugprone-exception-escape:gen/choice_types/multiple_param_choice/TestChoice.h
 bugprone-exception-escape:gen/choice_types/uint64_param_choice/UInt64ParamChoice.h
 
+readability-implicit-bool-conversion:gen/choice_types/bool_param_choice/BoolParamChoice.cpp
+readability-implicit-bool-conversion:gen/choice_types/function_returning_literal_selector_choice/Selector.cpp
+
+readability-simplify-boolean-expr:gen/choice_types/bool_param_choice/BoolParamChoice.cpp
+readability-simplify-boolean-expr:gen/choice_types/empty_choice_with_case/EmptyChoiceWithCase.cpp
+readability-simplify-boolean-expr:gen/choice_types/empty_choice_with_default/EmptyChoiceWithDefault.cp
+readability-simplify-boolean-expr:gen/choice_types/empty_choice_with_default/EmptyChoiceWithDefault.cpp
 readability-simplify-boolean-expr:gen/choice_types/empty_choice/EmptyChoice.cpp
+
+google-explicit-constructor:gen/choice_types/bitmask_param_choice/Selector.h
+google-explicit-constructor:gen/choice_types/full_bitmask_param_choice/Selector.h

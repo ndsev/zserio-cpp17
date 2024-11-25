@@ -31,7 +31,8 @@ public final class ChoiceEmitterTemplateData extends CompoundTypeTemplateData
         final ExpressionFormatter cppViewIndirectExpressionFormatter =
                 context.getIndirectExpressionFormatter(this, "view");
         viewIndirectSelectorExpression = cppViewIndirectExpressionFormatter.formatGetter(expression);
-        isSelectorBoolean = (expression.getExprType() == Expression.ExpressionType.BOOLEAN);
+        canUseNativeSwitch = expression.getExprType() != Expression.ExpressionType.BOOLEAN &&
+                expression.getExprType() != Expression.ExpressionType.BITMASK;
 
         caseMemberList = new ArrayList<CaseMember>();
         final Iterable<ChoiceCase> choiceCaseTypes = choiceType.getChoiceCases();
@@ -68,9 +69,9 @@ public final class ChoiceEmitterTemplateData extends CompoundTypeTemplateData
         return viewIndirectSelectorExpression;
     }
 
-    public boolean getIsSelectorBoolean()
+    public boolean getCanUseNativeSwitch()
     {
-        return isSelectorBoolean;
+        return canUseNativeSwitch;
     }
 
     public Iterable<CaseMember> getCaseMemberList()
@@ -143,7 +144,7 @@ public final class ChoiceEmitterTemplateData extends CompoundTypeTemplateData
     private final String selectorExpression;
     private final String lhsIndirectSelectorExpression;
     private final String viewIndirectSelectorExpression;
-    private final boolean isSelectorBoolean;
+    private final boolean canUseNativeSwitch;
     private final List<CaseMember> caseMemberList;
     private final DefaultMember defaultMember;
     private final boolean isDefaultUnreachable;

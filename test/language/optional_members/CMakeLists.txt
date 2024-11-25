@@ -14,16 +14,11 @@ if (ZSERIO_LOG)
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
 
-list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/auto_optional/.*|.*/optional_recursion/.*")
-set_target_properties(optional_members_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
-
 add_custom_test(optional_members
     DEPENDS
         optional_members_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoOptionalTest.cpp
-        #${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalArrayRecursionTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalRecursionTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}

@@ -14,10 +14,6 @@ if (ZSERIO_LOG)
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
 
-list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/empty_structure/.*|.*/one_string_structure/.*|.*/simple_structure/.*")
-set_target_properties(structure_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
-
 add_custom_test(structure_types
     DEPENDS
         structure_types_zs

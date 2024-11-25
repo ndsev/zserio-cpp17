@@ -14,10 +14,6 @@ if (ZSERIO_LOG)
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
 
-list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/uint8_enum/.*")
-set_target_properties(enumeration_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
-
 add_custom_test(enumeration_types
     DEPENDS
         enumeration_types_zs

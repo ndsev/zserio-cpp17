@@ -511,10 +511,11 @@ TEST(ConstantsTest, constantDefinedByBitmask)
 
 TEST(ConstantsTest, constantDefinedByBitmaskValueof)
 {
-    static_assert(static_cast<Permission::UnderlyingType>(Permission::Values::READ) == READ_PERMISSION_VALUE,
+    static_assert(
+            static_cast<Permission::ZserioType::ValueType>(Permission::Values::READ) == READ_PERMISSION_VALUE,
             "shall be constexpr");
 
-    ASSERT_EQ(static_cast<Permission::UnderlyingType>(Permission::Values::READ), READ_PERMISSION_VALUE);
+    ASSERT_EQ(static_cast<Permission::ZserioType::ValueType>(Permission::Values::READ), READ_PERMISSION_VALUE);
 }
 
 TEST(ConstantsTest, subtypeToBitmaskConstant)

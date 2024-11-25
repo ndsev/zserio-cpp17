@@ -111,7 +111,7 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 
 <#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if !isSelectorBoolean>
+    <#if canUseNativeSwitch>
 ${I}switch (${switchExpression})
 ${I}{
         <#list caseMemberList as caseMember>
@@ -120,7 +120,7 @@ ${I}case ${expression}:
             </#list>
             <#assign caseCode><@.vars[memberActionMacroName] caseMember, indent+1, packed/></#assign>
         ${caseCode}<#t>
-            <#if !caseCode?contains("return")>
+            <#if !caseCode?contains("return ")>
 ${I}    break;
             </#if>
         </#list>
@@ -129,7 +129,7 @@ ${I}default:
             <#if defaultMember??>
                 <#assign defaultCode><@.vars[memberActionMacroName] defaultMember, indent+1, packed/></#assign>
         ${defaultCode}<#t>
-                <#if !defaultCode?contains("return")>
+                <#if !defaultCode?contains("return ")>
 ${I}    break;
                 </#if>
             <#else>
@@ -142,7 +142,7 @@ ${I}}
             <#if caseMember?has_next || !isDefaultUnreachable>
 ${I}<#if caseMember?index != 0>else </#if>if (<#rt>
                 <#list caseMember.expressionList as expression>
-                    <#lt>(${switchExpression}) == ${expression}<#sep> ||</#sep><#rt>
+                    <#lt>(${switchExpression}) == (${expression})<#sep> ||</#sep><#rt>
                 </#list>
                 <#lt>)
             <#else>

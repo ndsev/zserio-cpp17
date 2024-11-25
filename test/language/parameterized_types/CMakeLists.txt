@@ -14,12 +14,6 @@ if (ZSERIO_LOG)
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
 
-list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/array_element_param_with_optional/.*|.*/dynamic_bitfield_param/.*|.*/multiple_params/.*|\
-.*/parameterized_nested_in_array/.*|.*/parameterized_param/.*|.*/param_with_optional/.*|\
-.*/simple_param/.*")
-set_target_properties(parameterized_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
-
 add_custom_test(parameterized_types
     DEPENDS
         parameterized_types_zs

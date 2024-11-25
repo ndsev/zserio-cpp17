@@ -20,11 +20,8 @@ public:
     /** Definition for bitmask zserio type. */
     using ZserioType = ${underlyingTypeInfo.typeFullName};
 
-    /** Definition for underlying type of bitmask values. */
-    using UnderlyingType = ZserioType::ValueType;
-
     /** Enumeration of all bitmask values. */
-    enum class Values : UnderlyingType
+    enum class Values : ZserioType::ValueType
     {
 <#list values as value>
     <#if value.docComments??>
@@ -45,7 +42,7 @@ public:
      * \param value Bitmask value to construct from.
      */
     constexpr ${name}(Values value) noexcept :
-            m_value(static_cast<UnderlyingType>(value))
+            m_value(static_cast<ZserioType::ValueType>(value))
     {}
 
     /**

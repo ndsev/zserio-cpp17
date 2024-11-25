@@ -8,17 +8,6 @@
 
 #include <array>
 
-<#function has_deprecated_items items>
-    <#list items as item>
-        <#if item.isDeprecated>
-            <#return true>
-        </#if>
-    </#list>
-    <#return false>
-</#function>
-<#if has_deprecated_items(items)>
-#include <zserio/DeprecatedAttribute.h>
-</#if>
 #include <zserio/Enums.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
@@ -33,7 +22,7 @@ enum class ${name} : ${underlyingTypeInfo.typeFullName}::ValueType
     <#if item.docComments??>
     <@doc_comments item.docComments, 1/>
     </#if>
-    ${item.name}<#if item.isDeprecated> ZSERIO_DEPRECATED</#if> = ${item.value}<#if item?has_next>,</#if>
+    ${item.name}<#if item.isDeprecated> [[deprecated]]</#if> = ${item.value}<#if item?has_next>,</#if>
 </#list>
 };
 <@namespace_end package.path/>

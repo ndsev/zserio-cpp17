@@ -14,10 +14,6 @@ if (ZSERIO_LOG)
     check_zserio_warnings("${ZSERIO_LOG}" 0)
 endif ()
 
-list(FILTER GENERATED_SOURCES INCLUDE REGEX
-    ".*/empty_choice/.*|.*/uint64_param_choice/.*|.*/choice_with_array/.*|.*/multiple_param_choice/.*")
-set_target_properties(choice_types_zs PROPERTIES SOURCES "${GENERATED_SOURCES}")
-
 add_custom_test(choice_types
     DEPENDS
         choice_types_zs
