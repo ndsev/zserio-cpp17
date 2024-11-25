@@ -9,6 +9,9 @@
 #include "zserio/TrackingAllocator.h"
 #include "zserio/Types.h"
 
+namespace
+{
+
 struct SimpleStructure
 {
     using AllocatorType = std::allocator<uint8_t>;
@@ -23,16 +26,15 @@ struct SimpleStructure
             numberC()
     {}
 
-    explicit SimpleStructure(
-            ::zserio::UInt3 numberA_, ::zserio::UInt8 numberB_, ::zserio::UInt7 numberC_) noexcept :
+    explicit SimpleStructure(zserio::UInt3 numberA_, zserio::UInt8 numberB_, zserio::UInt7 numberC_) noexcept :
             numberA(numberA_),
             numberB(numberB_),
             numberC(numberC_)
     {}
 
-    ::zserio::UInt3 numberA;
-    ::zserio::UInt8 numberB;
-    ::zserio::UInt7 numberC;
+    zserio::UInt3 numberA;
+    zserio::UInt8 numberB;
+    zserio::UInt7 numberC;
 };
 
 struct SimpleParameterizedStructure
@@ -50,19 +52,21 @@ struct SimpleParameterizedStructure
             numberD()
     {}
 
-    explicit SimpleParameterizedStructure(::zserio::UInt3 numberA_, ::zserio::UInt8 numberB_,
-            ::zserio::UInt7 numberC_, ::zserio::UInt6 numberD_) noexcept :
+    explicit SimpleParameterizedStructure(zserio::UInt3 numberA_, zserio::UInt8 numberB_,
+            zserio::UInt7 numberC_, zserio::UInt6 numberD_) noexcept :
             numberA(numberA_),
             numberB(numberB_),
             numberC(numberC_),
             numberD(numberD_)
     {}
 
-    ::zserio::UInt3 numberA;
-    ::zserio::UInt8 numberB;
-    ::zserio::UInt7 numberC;
-    ::zserio::UInt6 numberD;
+    zserio::UInt3 numberA;
+    zserio::UInt8 numberB;
+    zserio::UInt7 numberC;
+    zserio::UInt6 numberD;
 };
+
+} // namespace
 
 namespace zserio
 {
@@ -75,15 +79,15 @@ public:
             m_data(data)
     {}
 
-    ::zserio::UInt3 numberA() const
+    zserio::UInt3 numberA() const
     {
         return m_data.numberA;
     }
-    ::zserio::UInt8 numberB() const
+    zserio::UInt8 numberB() const
     {
         return m_data.numberB;
     }
-    ::zserio::UInt7 numberC() const
+    zserio::UInt7 numberC() const
     {
         return m_data.numberC;
     }
@@ -96,11 +100,11 @@ namespace detail
 {
 
 template <>
-void validate(const ::zserio::View<SimpleStructure>&, std::string_view)
+void validate(const zserio::View<SimpleStructure>&, std::string_view)
 {}
 
 template <>
-void write(::zserio::BitStreamWriter& writer, const ::zserio::View<SimpleStructure>& view)
+void write(zserio::BitStreamWriter& writer, const zserio::View<SimpleStructure>& view)
 {
     detail::write(writer, view.numberA());
     detail::write(writer, view.numberB());
@@ -108,7 +112,7 @@ void write(::zserio::BitStreamWriter& writer, const ::zserio::View<SimpleStructu
 }
 
 template <>
-View<SimpleStructure> read(::zserio::BitStreamReader& reader, SimpleStructure& data)
+View<SimpleStructure> read(zserio::BitStreamReader& reader, SimpleStructure& data)
 {
     View<SimpleStructure> view(data);
 
@@ -120,7 +124,7 @@ View<SimpleStructure> read(::zserio::BitStreamReader& reader, SimpleStructure& d
 }
 
 template <>
-BitSize bitSizeOf(const ::zserio::View<SimpleStructure>& view, BitSize bitPosition)
+BitSize bitSizeOf(const zserio::View<SimpleStructure>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
@@ -137,54 +141,54 @@ template <>
 class View<SimpleParameterizedStructure>
 {
 public:
-    explicit View(const SimpleParameterizedStructure& data, ::zserio::UInt6 upperLimitD) noexcept :
+    explicit View(const SimpleParameterizedStructure& data, zserio::UInt6 upperLimitD) noexcept :
             m_data(data),
             m_upperLimitD(upperLimitD)
     {}
 
-    ::zserio::UInt6 upperLimitD() const
+    zserio::UInt6 upperLimitD() const
     {
         return m_upperLimitD;
     }
-    ::zserio::UInt3 numberA() const
+    zserio::UInt3 numberA() const
     {
         return m_data.numberA;
     }
-    ::zserio::UInt8 numberB() const
+    zserio::UInt8 numberB() const
     {
         return m_data.numberB;
     }
-    ::zserio::UInt7 numberC() const
+    zserio::UInt7 numberC() const
     {
         return m_data.numberC;
     }
-    ::zserio::UInt6 numberD() const
+    zserio::UInt6 numberD() const
     {
         return m_data.numberD;
     }
 
 private:
     const SimpleParameterizedStructure& m_data;
-    ::zserio::UInt6 m_upperLimitD;
+    zserio::UInt6 m_upperLimitD;
 };
 
 namespace detail
 {
 
 template <>
-void validate(const ::zserio::View<SimpleParameterizedStructure>& view, std::string_view fieldName)
+void validate(const zserio::View<SimpleParameterizedStructure>& view, std::string_view fieldName)
 {
     (void)fieldName;
 
     // check constraint
     if (!(view.numberD() <= view.upperLimitD()))
     {
-        throw ::zserio::ConstraintException("validate: Constraint violated!");
+        throw zserio::ConstraintException("validate: Constraint violated!");
     }
 }
 
 template <>
-void write(::zserio::BitStreamWriter& writer, const ::zserio::View<SimpleParameterizedStructure>& view)
+void write(zserio::BitStreamWriter& writer, const zserio::View<SimpleParameterizedStructure>& view)
 {
     detail::write(writer, view.numberA());
     detail::write(writer, view.numberB());
@@ -194,7 +198,7 @@ void write(::zserio::BitStreamWriter& writer, const ::zserio::View<SimpleParamet
 
 template <>
 View<SimpleParameterizedStructure> read(
-        ::zserio::BitStreamReader& reader, SimpleParameterizedStructure& data, ::zserio::UInt6 upperLimitD)
+        zserio::BitStreamReader& reader, SimpleParameterizedStructure& data, zserio::UInt6 upperLimitD)
 {
     View<SimpleParameterizedStructure> view(data, upperLimitD);
 
@@ -207,7 +211,7 @@ View<SimpleParameterizedStructure> read(
 }
 
 template <>
-BitSize bitSizeOf(const ::zserio::View<SimpleParameterizedStructure>& view, BitSize bitPosition)
+BitSize bitSizeOf(const zserio::View<SimpleParameterizedStructure>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 

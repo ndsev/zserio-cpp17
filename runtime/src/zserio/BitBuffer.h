@@ -584,9 +584,9 @@ namespace std
  * Specialization of std::hash.
  */
 template <typename ALLOC>
-struct hash<::zserio::BasicBitBuffer<ALLOC>>
+struct hash<zserio::BasicBitBuffer<ALLOC>>
 {
-    size_t operator()(const ::zserio::BasicBitBuffer<ALLOC>& bitBuffer) const
+    size_t operator()(const zserio::BasicBitBuffer<ALLOC>& bitBuffer) const
     {
         return static_cast<size_t>(bitBuffer.hashCode());
     }
@@ -596,9 +596,9 @@ struct hash<::zserio::BasicBitBuffer<ALLOC>>
  * Specialization of std::hash.
  */
 template <typename ALLOC>
-struct hash<::zserio::BasicBitBufferView<ALLOC>>
+struct hash<zserio::BasicBitBufferView<ALLOC>>
 {
-    size_t operator()(const ::zserio::BasicBitBufferView<ALLOC>& bitBuffer) const
+    size_t operator()(const zserio::BasicBitBufferView<ALLOC>& bitBuffer) const
     {
         return static_cast<size_t>(bitBuffer.get().hashCode());
     }

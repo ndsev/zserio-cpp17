@@ -47,7 +47,7 @@ struct BigObj
 };
 
 template <class ALLOC>
-class OptionalTest : public ::testing::Test
+class OptionalTest : public testing::Test
 {
 public:
     using IntOptional = BasicOptional<ALLOC, int>;
@@ -58,7 +58,7 @@ public:
     ALLOC allocator;
 };
 
-using TestTypes = ::testing::Types<TrackingAllocator<uint8_t>, TrackingAllocatorNonProp<uint8_t>>;
+using TestTypes = testing::Types<TrackingAllocator<uint8_t>, TrackingAllocatorNonProp<uint8_t>>;
 TYPED_TEST_SUITE(OptionalTest, TestTypes, );
 
 TYPED_TEST(OptionalTest, defaultConstructor)

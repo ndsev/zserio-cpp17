@@ -14,7 +14,7 @@
 namespace zserio
 {
 
-class BitStreamTest : public ::testing::Test
+class BitStreamTest : public testing::Test
 {
 public:
     BitStreamTest() :

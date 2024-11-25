@@ -1162,11 +1162,11 @@ namespace std
 {
 
 template <typename ALLOC, typename T>
-struct hash<::zserio::BasicOptional<ALLOC, T>>
+struct hash<zserio::BasicOptional<ALLOC, T>>
 {
-    size_t operator()(const ::zserio::BasicOptional<ALLOC, T>& var) const
+    size_t operator()(const zserio::BasicOptional<ALLOC, T>& var) const
     {
-        return ::zserio::calcHashCode(::zserio::HASH_SEED, var);
+        return zserio::calcHashCode(zserio::HASH_SEED, var);
     }
 };
 

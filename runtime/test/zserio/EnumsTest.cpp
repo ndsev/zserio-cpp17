@@ -65,14 +65,14 @@ namespace std
 {
 
 template <>
-struct hash<::zserio::Color>
+struct hash<zserio::Color>
 {
-    size_t operator()(const ::zserio::Color& value) const
+    size_t operator()(const zserio::Color& value) const
     {
-        uint32_t result = ::zserio::HASH_SEED;
+        uint32_t result = zserio::HASH_SEED;
         // TODO[Mi-L@]: Should calcHashCode work with wrapper types?
-        result = ::zserio::calcHashCode(
-                result, static_cast<std::underlying_type_t<::zserio::Color>>(::zserio::enumToValue(value)));
+        result = zserio::calcHashCode(
+                result, static_cast<std::underlying_type_t<zserio::Color>>(zserio::enumToValue(value)));
         return static_cast<size_t>(result);
     }
 };

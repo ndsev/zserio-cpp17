@@ -8,7 +8,7 @@
 namespace zserio
 {
 
-class BitStreamReaderTest : public ::testing::Test
+class BitStreamReaderTest : public testing::Test
 {
 public:
     BitStreamReaderTest() :

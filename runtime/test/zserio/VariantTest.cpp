@@ -93,7 +93,7 @@ namespace zserio
 {
 
 template <class ALLOC>
-class VariantTest : public ::testing::Test
+class VariantTest : public testing::Test
 {
 public:
     enum class Idx1
@@ -111,7 +111,7 @@ public:
     ALLOC allocator;
 };
 
-using TestTypes = ::testing::Types<TrackingAllocator<uint8_t>, TrackingAllocatorNonProp<uint8_t>>;
+using TestTypes = testing::Types<TrackingAllocator<uint8_t>, TrackingAllocatorNonProp<uint8_t>>;
 TYPED_TEST_SUITE(VariantTest, TestTypes, );
 
 TYPED_TEST(VariantTest, emptyConstructor)

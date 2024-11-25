@@ -197,13 +197,13 @@ namespace std
 {
 
 template <typename VALUE_TYPE>
-struct hash<::zserio::View<::zserio::detail::DynIntWrapper<VALUE_TYPE, 0>>>
+struct hash<zserio::View<zserio::detail::DynIntWrapper<VALUE_TYPE, 0>>>
 {
-    size_t operator()(const ::zserio::View<zserio::detail::DynIntWrapper<VALUE_TYPE, 0>>& view) const
+    size_t operator()(const zserio::View<zserio::detail::DynIntWrapper<VALUE_TYPE, 0>>& view) const
     {
-        uint32_t result = ::zserio::HASH_SEED;
-        result = ::zserio::calcHashCode(result, view.numBits());
-        result = ::zserio::calcHashCode(result, view.value());
+        uint32_t result = zserio::HASH_SEED;
+        result = zserio::calcHashCode(result, view.numBits());
+        result = zserio::calcHashCode(result, view.value());
         return result;
     }
 };

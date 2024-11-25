@@ -8,7 +8,7 @@
 namespace zserio
 {
 
-class BitStreamWriterTest : public ::testing::Test
+class BitStreamWriterTest : public testing::Test
 {
 public:
     BitStreamWriterTest() :

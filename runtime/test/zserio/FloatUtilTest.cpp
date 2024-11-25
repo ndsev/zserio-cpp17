@@ -6,7 +6,7 @@
 namespace zserio
 {
 
-class FloatUtilTest : public ::testing::Test
+class FloatUtilTest : public testing::Test
 {
 protected:
     uint16_t createFloat16Value(uint16_t sign, uint16_t exponent, uint16_t significand)

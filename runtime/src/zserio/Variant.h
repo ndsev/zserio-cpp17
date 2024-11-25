@@ -838,11 +838,11 @@ namespace std
 {
 
 template <typename ALLOC, typename INDEX, typename... T>
-struct hash<::zserio::BasicVariant<ALLOC, INDEX, T...>>
+struct hash<zserio::BasicVariant<ALLOC, INDEX, T...>>
 {
-    size_t operator()(const ::zserio::BasicVariant<ALLOC, INDEX, T...>& var) const
+    size_t operator()(const zserio::BasicVariant<ALLOC, INDEX, T...>& var) const
     {
-        return ::zserio::calcHashCode(::zserio::HASH_SEED, var);
+        return zserio::calcHashCode(zserio::HASH_SEED, var);
     }
 };
 
