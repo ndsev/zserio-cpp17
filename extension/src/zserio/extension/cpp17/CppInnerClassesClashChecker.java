@@ -79,7 +79,7 @@ final class CppInnerClassesClashChecker extends DefaultTreeWalker
         {
             ZserioToolPrinter.printError(compoundType.getLocation(),
                     "Class name '" + className + "' generated for compound clashes with "
-                    + "it's inner typedef '" + className + "' generated in C++ code.");
+                            + "it's inner typedef '" + className + "' generated in C++ code.");
             throw new ZserioExtensionException("Class name clash detected!");
         }
     }
