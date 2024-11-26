@@ -1,0 +1,5 @@
+google-explicit-constructor:gen/identifiers/bitmask_name_clashing_with_java/String.h
+
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/String.cpp
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/String.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/StructureNameClashingWithJava.cpp
