@@ -4,7 +4,6 @@
 <#include "CompoundParameter.inc.ftl">
 <@file_header generatorDescription/>
 
-#include <zserio/BitPositionUtil.h>
 #include <zserio/ChoiceCaseException.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
