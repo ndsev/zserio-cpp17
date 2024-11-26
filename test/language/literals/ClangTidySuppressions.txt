@@ -1,0 +1,2 @@
+readability-uppercase-literal-suffix:gen/literals/FLOAT16.h
+readability-uppercase-literal-suffix:gen/literals/FLOAT32.h
