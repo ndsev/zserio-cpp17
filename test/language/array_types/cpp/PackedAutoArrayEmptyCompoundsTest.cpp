@@ -15,9 +15,14 @@ class PackedAutoArrayEmptyCompoundsTest : public ::testing::Test
 protected:
     PackedAutoArray createData()
     {
-        return PackedAutoArray({{EmptyStruct(), EmptyStruct(), EmptyStruct()}},
+        PackedAutoArray data({{EmptyStruct(), EmptyStruct(), EmptyStruct()}},
                 {{EmptyUnion(), EmptyUnion(), EmptyUnion()}}, {{EmptyChoice(), EmptyChoice(), EmptyChoice()}},
                 {{Main(), Main(), Main()}});
+
+        data.mainArray.at(0).param = 0;
+        data.mainArray.at(1).param = 1;
+        data.mainArray.at(2).param = 2;
+        return data;
     }
 
     static constexpr std::string_view BLOB_NAME = "language/array_types/packed_auto_array_empty_compounds.blob";

@@ -45,7 +45,7 @@ protected:
     static constexpr std::string_view BLOB_NAME_FIRST =
             "language/array_types/variable_array_ternary_operator1.blob";
     static constexpr std::string_view BLOB_NAME_SECOND =
-            "language/array_types/variable_array_ternary_operator1.blob";
+            "language/array_types/variable_array_ternary_operator2.blob";
 };
 
 TEST_F(VariableArrayTernaryOperator, firstWriteReadFile)

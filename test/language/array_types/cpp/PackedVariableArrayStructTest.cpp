@@ -71,7 +71,7 @@ protected:
         else if (index == 5)
         {
             testChoice.emplace<TestChoice::ChoiceTag::CHOICE_array32>(
-                    VectorType<zserio::UInt32>{index * 2, index * 2 + 1});
+                    VectorType<zserio::UInt32>{{index * 2, index * 2 + 1}});
         }
         else
         {
@@ -92,7 +92,7 @@ protected:
         else if (index == 5)
         {
             testUnion.emplace<TestUnion::ChoiceTag::CHOICE_array32>(
-                    VectorType<zserio::UInt32>{index * 2, index * 2 + 1});
+                    VectorType<zserio::UInt32>{{index * 2, index * 2 + 1}});
         }
         else
         {
