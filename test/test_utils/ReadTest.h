@@ -16,7 +16,7 @@ template <typename T, typename... ARGS>
 void readTest(
         std::function<void(zserio::BitStreamWriter&)> writeData, const T& expectedReadData, ARGS&&... arguments)
 {
-    const zserio::View<T> view(expectedReadData, arguments...);
+    const zserio::View view(expectedReadData, arguments...);
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
     zserio::BitBuffer bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
@@ -24,11 +24,11 @@ void readTest(
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     T readData;
-    zserio::View<T> readView = zserio::detail::read(reader, readData, arguments...);
+    zserio::View readView = zserio::detail::read(reader, readData, arguments...);
 
     ASSERT_EQ(expectedReadData, readData);
 
-    zserio::View<T> expectedReadView(expectedReadData, arguments...);
+    zserio::View expectedReadView(expectedReadData, arguments...);
     ASSERT_EQ(expectedReadView, readView);
 }
 

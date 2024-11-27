@@ -20,8 +20,12 @@ namespace zserio
  *
  * This information is provided via specializations of the View structure.
  */
-template <typename T, typename = void>
+template <typename T>
 class View;
+
+// template argument deduction guide for View constructor
+template <typename T, typename... ARGS>
+View(T, ARGS...) -> View<T>;
 
 namespace detail
 {

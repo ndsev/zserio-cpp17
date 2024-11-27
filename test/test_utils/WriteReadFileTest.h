@@ -14,11 +14,11 @@ namespace test_utils
 template <typename T, typename... ARGS>
 void writeReadFileTest(std::string_view fileName, T& data, ARGS&&... arguments)
 {
-    zserio::View<T> view(data, ::std::forward<ARGS>(arguments)...);
+    zserio::View view(data, ::std::forward<ARGS>(arguments)...);
     zserio::serializeToFile(view, fileName);
 
     T readData;
-    const zserio::View<T> readView =
+    const zserio::View readView =
             zserio::deserializeFromFile(fileName, readData, ::std::forward<ARGS>(arguments)...);
     ASSERT_EQ(readData, data);
     ASSERT_EQ(readView, view);

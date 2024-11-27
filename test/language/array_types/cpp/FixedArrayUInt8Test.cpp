@@ -43,7 +43,7 @@ TEST_F(FixedArrayUInt8Test, bitSizeOf)
 {
     FixedArray data;
     fillData(data);
-    const zserio::View<FixedArray> view(data);
+    const zserio::View view(data);
 
     const size_t bitPosition = 2;
     ASSERT_EQ(FIXED_ARRAY_LENGTH * 8, zserio::detail::bitSizeOf(view, bitPosition));

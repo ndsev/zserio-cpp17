@@ -50,7 +50,7 @@ const std::array<uint64_t, 10> PackedAutoArrayStructWithUnpackedFieldTest::UNPAC
 TEST_F(PackedAutoArrayStructWithUnpackedFieldTest, bitSizeOf)
 {
     auto data = createData();
-    const zserio::View<decltype(data)> view(data);
+    const zserio::View view(data);
     ASSERT_EQ(PACKED_AUTO_ARRAY_BIT_SIZE, zserio::detail::bitSizeOf(view));
 }
 

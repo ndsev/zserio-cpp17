@@ -92,6 +92,10 @@ private:
     T m_ownData;
 };
 
+// template argument deduction guide for DataView constructor
+template <typename T, typename... ARGS>
+DataView(T, ARGS...) -> DataView<T>;
+
 } // namespace zserio
 
 #endif // ZSERIO_DATA_VIEW_H_INC

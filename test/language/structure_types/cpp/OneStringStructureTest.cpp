@@ -172,8 +172,8 @@ TEST_F(OneStringStructureViewTest, operatorEquality)
     OneStringStructure oneStringStructure1;
     OneStringStructure oneStringStructure2;
 
-    zserio::View<OneStringStructure> view1(oneStringStructure1);
-    zserio::View<OneStringStructure> view2(oneStringStructure2);
+    zserio::View view1(oneStringStructure1);
+    zserio::View view2(oneStringStructure2);
 
     ASSERT_TRUE(view1 == view2);
 
@@ -189,8 +189,8 @@ TEST_F(OneStringStructureViewTest, operatorLessThan)
     OneStringStructure oneStringStructure1;
     OneStringStructure oneStringStructure2;
 
-    zserio::View<OneStringStructure> view1(oneStringStructure1);
-    zserio::View<OneStringStructure> view2(oneStringStructure2);
+    zserio::View view1(oneStringStructure1);
+    zserio::View view2(oneStringStructure2);
 
     ASSERT_FALSE(view1 < view2);
 
@@ -212,8 +212,8 @@ TEST_F(OneStringStructureViewTest, stdHash)
     OneStringStructure oneStringStructure1;
     OneStringStructure oneStringStructure2;
 
-    zserio::View<OneStringStructure> view1(oneStringStructure1);
-    zserio::View<OneStringStructure> view2(oneStringStructure2);
+    zserio::View view1(oneStringStructure1);
+    zserio::View view2(oneStringStructure2);
 
     std::hash<zserio::View<OneStringStructure>> hasher;
 
@@ -238,14 +238,14 @@ TEST_F(OneStringStructureViewTest, read)
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     OneStringStructure oneStringStructure{AllocatorType()};
-    zserio::View<OneStringStructure> readView = zserio::detail::read(reader, oneStringStructure);
+    zserio::View readView = zserio::detail::read(reader, oneStringStructure);
     ASSERT_EQ(ONE_STRING, readView.oneString());
 }
 
 TEST_F(OneStringStructureViewTest, writeRead)
 {
     OneStringStructure oneStringStructure{StringType(ONE_STRING)};
-    zserio::View<OneStringStructure> view(oneStringStructure);
+    zserio::View view(oneStringStructure);
 
     zserio::BitStreamWriter writer(bitBuffer);
     zserio::detail::write(writer, view);
@@ -253,7 +253,7 @@ TEST_F(OneStringStructureViewTest, writeRead)
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
 
     OneStringStructure readOneStringStructure{AllocatorType()};
-    zserio::View<OneStringStructure> readView = zserio::detail::read(reader, readOneStringStructure);
+    zserio::View readView = zserio::detail::read(reader, readOneStringStructure);
     ASSERT_EQ(ONE_STRING, readView.oneString());
     ASSERT_EQ(view, readView);
 }
@@ -263,7 +263,7 @@ TEST_F(OneStringStructureViewTest, bitSizeOf)
     using namespace std::literals;
 
     OneStringStructure oneStringStructure;
-    zserio::View<OneStringStructure> view(oneStringStructure);
+    zserio::View view(oneStringStructure);
 
     ASSERT_EQ(zserio::detail::bitSizeOf(""sv), zserio::detail::bitSizeOf(view, 0));
 

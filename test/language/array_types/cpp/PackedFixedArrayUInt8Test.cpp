@@ -50,7 +50,7 @@ TEST_F(PackedFixedArrayUInt8Test, bitSizeOf)
 {
     PackedFixedArray data;
     fillData(data);
-    const zserio::View<PackedFixedArray> view(data);
+    const zserio::View view(data);
 
     const size_t bitPosition = 2;
     const zserio::BitSize fixedArrayBitSize = getBitSize();

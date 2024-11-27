@@ -31,7 +31,7 @@ TEST_F(StructureParentChildValueTest, checkParentValue)
 {
     ParentValue data;
     fillData(data);
-    zserio::View<ParentValue> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(CHILD_VALUE, view.getValue());
 

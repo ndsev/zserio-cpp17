@@ -63,8 +63,8 @@ TEST_F(ParamWithOptionalTest, copyConstructor)
     const Holder holderCopy(holder);
     ASSERT_EQ(holder, holderCopy);
 
-    zserio::View<Holder> view(holder);
-    const zserio::View<Holder> viewCopy(view);
+    zserio::View view(holder);
+    const zserio::View viewCopy(view);
     ASSERT_EQ(view, viewCopy);
 }
 
@@ -103,7 +103,7 @@ TEST_F(ParamWithOptionalTest, bitSizeOf)
     Holder holder;
     fillHolder(holder);
 
-    zserio::View<Holder> view(holder);
+    zserio::View view(holder);
     ASSERT_EQ(HOLDER_BIT_SIZE, zserio::detail::bitSizeOf(view, 0));
     ASSERT_EQ(HOLDER_BIT_SIZE, zserio::detail::bitSizeOf(view, 1));
     ASSERT_EQ(HOLDER_BIT_SIZE, zserio::detail::bitSizeOf(view, 100));
@@ -116,7 +116,7 @@ TEST_F(ParamWithOptionalTest, read)
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     Holder holder;
-    zserio::View<Holder> view = zserio::detail::read(reader, holder);
+    zserio::View view = zserio::detail::read(reader, holder);
     checkHolder(holder);
     checkHolderView(view);
 }
@@ -127,14 +127,14 @@ TEST_F(ParamWithOptionalTest, writeRead)
     fillHolder(holder);
 
     zserio::BitStreamWriter writer(bitBuffer);
-    zserio::View<Holder> view(holder);
+    zserio::View view(holder);
     zserio::detail::write(writer, view);
 
     ASSERT_EQ(zserio::detail::bitSizeOf(view, 0), writer.getBitPosition());
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     Holder readHolder;
-    zserio::View<Holder> readView = zserio::detail::read(reader, readHolder);
+    zserio::View readView = zserio::detail::read(reader, readHolder);
     checkHolder(readHolder);
     checkHolderView(readView);
     ASSERT_EQ(view, readView);

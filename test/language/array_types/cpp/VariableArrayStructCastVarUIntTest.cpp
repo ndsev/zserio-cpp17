@@ -53,7 +53,7 @@ TEST_F(VariableArrayStructCastVarUIntTest, bitSizeOf)
 {
     const size_t numElements = 33;
     auto data = createData(numElements);
-    const zserio::View<VariableArray> view(data);
+    const zserio::View view(data);
 
     const size_t bitPosition = 2;
     const size_t numOneNumberIndexes = 10; // (numElements > 9) ? 10 : numElements

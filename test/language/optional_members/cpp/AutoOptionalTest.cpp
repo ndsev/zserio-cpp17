@@ -152,8 +152,8 @@ TEST_F(AutoOptionalViewTest, operatorEquality)
     Container container1;
     Container container2;
 
-    zserio::View<Container> view1(container1);
-    zserio::View<Container> view2(container2);
+    zserio::View view1(container1);
+    zserio::View view2(container2);
 
     container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
     container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
@@ -172,8 +172,8 @@ TEST_F(AutoOptionalViewTest, operatorLessThan)
     Container container1;
     Container container2;
 
-    zserio::View<Container> view1(container1);
-    zserio::View<Container> view2(container2);
+    zserio::View view1(container1);
+    zserio::View view2(container2);
 
     ASSERT_FALSE(view1 < view2);
     ASSERT_FALSE(view2 < view1);
@@ -200,8 +200,8 @@ TEST_F(AutoOptionalViewTest, stdHash)
     Container container1;
     Container container2;
 
-    zserio::View<Container> view1(container1);
-    zserio::View<Container> view2(container2);
+    zserio::View view1(container1);
+    zserio::View view2(container2);
 
     container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
     container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
@@ -222,7 +222,7 @@ TEST_F(AutoOptionalViewTest, stdHash)
 TEST_F(AutoOptionalViewTest, bitSizeOf)
 {
     Container container;
-    zserio::View<Container> view(container);
+    zserio::View view(container);
 
     container.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
     ASSERT_EQ(CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view, 0));
@@ -234,7 +234,7 @@ TEST_F(AutoOptionalViewTest, bitSizeOf)
 TEST_F(AutoOptionalViewTest, writeRead)
 {
     Container container;
-    zserio::View<Container> view(container);
+    zserio::View view(container);
     container.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
 
     zserio::BitStreamWriter writerNonOptional(bitBuffer);
@@ -244,8 +244,7 @@ TEST_F(AutoOptionalViewTest, writeRead)
             writerNonOptional.getWriteBuffer(), writerNonOptional.getBitPosition(), zserio::BitsTag());
     checkContainerInBitStream(readerNonOptional, NON_OPTIONAL_INT_VALUE, false, 0);
     Container readContainerNonOptional;
-    zserio::View<Container> readViewNonOptional =
-            zserio::detail::read(readerNonOptional, readContainerNonOptional);
+    zserio::View readViewNonOptional = zserio::detail::read(readerNonOptional, readContainerNonOptional);
     ASSERT_EQ(NON_OPTIONAL_INT_VALUE, readViewNonOptional.nonOptionalInt());
     ASSERT_FALSE(readViewNonOptional.autoOptionalInt());
 
@@ -258,7 +257,7 @@ TEST_F(AutoOptionalViewTest, writeRead)
             writerOptional.getWriteBuffer(), writerOptional.getBitPosition(), zserio::BitsTag());
     checkContainerInBitStream(readerOptional, NON_OPTIONAL_INT_VALUE, true, AUTO_OPTIONAL_INT_VALUE);
     Container readContainerOptional;
-    zserio::View<Container> readViewOptional = zserio::detail::read(readerOptional, readContainerOptional);
+    zserio::View readViewOptional = zserio::detail::read(readerOptional, readContainerOptional);
     ASSERT_EQ(NON_OPTIONAL_INT_VALUE, readViewOptional.nonOptionalInt());
     ASSERT_TRUE(readViewOptional.autoOptionalInt());
     ASSERT_EQ(AUTO_OPTIONAL_INT_VALUE, readViewOptional.autoOptionalInt());

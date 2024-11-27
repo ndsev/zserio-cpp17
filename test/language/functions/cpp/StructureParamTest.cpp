@@ -37,7 +37,7 @@ TEST_F(StructureParamTest, checkMetresConverterCaller)
 {
     MetresConverterCaller data;
     fillData(data);
-    zserio::View<MetresConverterCaller> view(data);
+    zserio::View view(data);
 
     const uint16_t expectedCm = CONVERTED_CM_VALUE;
     ASSERT_EQ(expectedCm, view.centimeters());

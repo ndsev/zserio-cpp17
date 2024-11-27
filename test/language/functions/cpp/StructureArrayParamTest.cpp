@@ -68,7 +68,7 @@ TEST_F(StructureArrayParamTest, checkParentStructure)
 {
     ParentStructure data;
     fillData(data);
-    zserio::View<ParentStructure> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(CHILD_BIT_SIZE, view.getChildBitSize());
     ASSERT_EQ(ANOTHER_CHILD_BIT_SIZE, view.notLeftMost().getAnotherChildBitSize());

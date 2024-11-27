@@ -23,14 +23,14 @@ const BytesType StructureBytesTest::CHILD_FIELD = BytesType{{0xCA, 0xFE}};
 TEST_F(StructureBytesTest, getField)
 {
     TestStructure data = TestStructure{FIELD, Child{CHILD_FIELD}};
-    zserio::View<TestStructure> view(data);
+    zserio::View view(data);
     ASSERT_EQ(FIELD, view.getField());
 }
 
 TEST_F(StructureBytesTest, getChildField)
 {
     TestStructure data = TestStructure{FIELD, Child{CHILD_FIELD}};
-    zserio::View<TestStructure> view(data);
+    zserio::View view(data);
     ASSERT_EQ(CHILD_FIELD, view.getChildField());
 }
 

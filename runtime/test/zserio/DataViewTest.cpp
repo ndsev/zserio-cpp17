@@ -80,7 +80,7 @@ TEST(DataViewTest, dataConstructor)
 {
     TestParam param{3};
     TestObject data{Vector<UInt32>{{0, 1, 2}}};
-    DataView<TestObject> dataView(data, View<TestParam>(param));
+    DataView dataView(data, View(param));
 
     // TODO[Mi-L@]: How to check that the raw array data doesn't remain on the same address?
 
@@ -90,14 +90,14 @@ TEST(DataViewTest, dataConstructor)
 
     // validation error
     TestParam wrongParam{4};
-    ASSERT_THROW(DataView<TestObject>(data, View<TestParam>(wrongParam)), CppRuntimeException);
+    ASSERT_THROW(DataView(data, View(wrongParam)), CppRuntimeException);
 }
 
 TEST(DataViewTest, dataMoveConstructor)
 {
     TestParam param{3};
     TestObject data{Vector<UInt32>{{0, 1, 2}}};
-    DataView<TestObject> dataView(std::move(data), View<TestParam>(param));
+    DataView dataView(std::move(data), View(param));
 
     // TODO[Mi-L@]: How to check that the raw array data remain on the same address?
 
@@ -108,16 +108,16 @@ TEST(DataViewTest, dataMoveConstructor)
     // validation error
     TestParam wrongParam{4};
     TestObject otherData{Vector<UInt32>{{0, 1, 2}}};
-    ASSERT_THROW(DataView<TestObject>(std::move(otherData), View<TestParam>(wrongParam)), CppRuntimeException);
+    ASSERT_THROW(DataView(std::move(otherData), View(wrongParam)), CppRuntimeException);
 }
 
 TEST(DataViewTest, copyConstructor)
 {
     TestParam param{3};
     TestObject data{Vector<UInt32>{{0, 1, 2}}};
-    DataView<TestObject> dataView(data, View<TestParam>(param));
+    DataView dataView(data, View(param));
 
-    DataView<TestObject> copied(dataView);
+    DataView copied(dataView);
     ASSERT_EQ(3, copied.param().len());
     ASSERT_EQ(0, copied.array().at(0));
 }
@@ -126,9 +126,9 @@ TEST(DataViewTest, moveConstructor)
 {
     TestParam param{3};
     TestObject data{Vector<UInt32>{{0, 1, 2}}};
-    DataView<TestObject> dataView(data, View<TestParam>(param));
+    DataView dataView(data, View(param));
 
-    DataView<TestObject> copied(std::move(dataView));
+    DataView copied(std::move(dataView));
     ASSERT_EQ(3, copied.param().len());
     ASSERT_EQ(0, copied.array().at(0));
 }

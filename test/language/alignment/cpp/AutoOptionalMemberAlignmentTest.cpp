@@ -66,7 +66,7 @@ TEST_F(AutoOptionalMemberAlignmentTest, bitSizeOfWithOptional)
 {
     AutoOptionalMemberAlignment data;
     fillData(data, true, 0x4433, 0x1122);
-    zserio::View<AutoOptionalMemberAlignment> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(WITH_OPTIONAL_MEMBER_ALIGNMENT_BIT_SIZE, zserio::detail::bitSizeOf(view));
 }
@@ -75,7 +75,7 @@ TEST_F(AutoOptionalMemberAlignmentTest, bitSizeOfWithoutOptional)
 {
     AutoOptionalMemberAlignment data;
     fillData(data, false, 0, 0x7624);
-    zserio::View<AutoOptionalMemberAlignment> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(WITHOUT_OPTIONAL_MEMBER_ALIGNMENT_BIT_SIZE, zserio::detail::bitSizeOf(view));
 }

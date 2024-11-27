@@ -18,7 +18,7 @@ TEST(BitFieldUIn64LengthTest, bitSizeOf)
     container.signedBitField = std::numeric_limits<int32_t>::max() + static_cast<int64_t>(1);
     const size_t expectedBitSizeOfContainer = 64 + bitFieldLength + bitFieldLength;
 
-    zserio::View<Container> view(container);
+    zserio::View view(container);
     ASSERT_EQ(expectedBitSizeOfContainer, zserio::detail::bitSizeOf(view));
 }
 
@@ -30,13 +30,13 @@ TEST(BitFieldUIn64LengthTest, readWrite)
     container.unsignedBitField = std::numeric_limits<uint32_t>::max() + static_cast<uint64_t>(1);
     container.signedBitField = std::numeric_limits<int32_t>::max() + static_cast<int64_t>(1);
 
-    zserio::View<Container> view(container);
+    zserio::View view(container);
 
     const std::string fileName = "language/builtin_types/bit_field_uint64_length.blob";
     zserio::serializeToFile(view, fileName);
 
     Container readContainer;
-    const zserio::View<Container> readView = zserio::deserializeFromFile(fileName, readContainer);
+    const zserio::View readView = zserio::deserializeFromFile(fileName, readContainer);
     ASSERT_EQ(view, readView);
 }
 

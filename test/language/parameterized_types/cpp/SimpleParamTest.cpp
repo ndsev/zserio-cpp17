@@ -170,15 +170,15 @@ TEST_F(SimpleParamViewTest, operatorEquality)
     Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
     Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
 
-    zserio::View<Item> view1(item1, HIGHER_VERSION);
-    zserio::View<Item> view21(item2, HIGHER_VERSION);
+    zserio::View view1(item1, HIGHER_VERSION);
+    zserio::View view21(item2, HIGHER_VERSION);
     ASSERT_TRUE(view1 == view21);
 
-    zserio::View<Item> view22(item2, LOWER_VERSION);
+    zserio::View view22(item2, LOWER_VERSION);
     ASSERT_FALSE(view21 == view22);
 
     Item item3(ITEM_PARAM, {});
-    zserio::View<Item> view3(item3, LOWER_VERSION);
+    zserio::View view3(item3, LOWER_VERSION);
     ASSERT_TRUE(view22 == view3);
 
     // TODO[Mi-L@]: Check exceptions?
@@ -189,17 +189,17 @@ TEST_F(SimpleParamViewTest, operatorLessThan)
     Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
     Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
 
-    zserio::View<Item> view1(item1, HIGHER_VERSION);
-    zserio::View<Item> view21(item2, HIGHER_VERSION);
+    zserio::View view1(item1, HIGHER_VERSION);
+    zserio::View view21(item2, HIGHER_VERSION);
     ASSERT_FALSE(view1 < view21);
     ASSERT_FALSE(view21 < view1);
 
-    zserio::View<Item> view22(item2, LOWER_VERSION);
+    zserio::View view22(item2, LOWER_VERSION);
     ASSERT_TRUE(view22 < view21);
     ASSERT_FALSE(view21 < view22);
 
     Item item3(ITEM_PARAM, {});
-    zserio::View<Item> view3(item3, LOWER_VERSION);
+    zserio::View view3(item3, LOWER_VERSION);
     ASSERT_FALSE(view22 < view3);
     ASSERT_FALSE(view3 < view22);
 }
@@ -210,15 +210,15 @@ TEST_F(SimpleParamViewTest, stdHash)
     Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
     Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
 
-    zserio::View<Item> view1(item1, HIGHER_VERSION);
-    zserio::View<Item> view21(item2, HIGHER_VERSION);
+    zserio::View view1(item1, HIGHER_VERSION);
+    zserio::View view21(item2, HIGHER_VERSION);
     ASSERT_EQ(hasher(view1), hasher(view21));
 
-    zserio::View<Item> view22(item2, LOWER_VERSION);
+    zserio::View view22(item2, LOWER_VERSION);
     ASSERT_NE(hasher(view1), hasher(view22));
 
     Item item3(ITEM_PARAM, {});
-    zserio::View<Item> view3(item3, LOWER_VERSION);
+    zserio::View view3(item3, LOWER_VERSION);
     ASSERT_EQ(hasher(view22), hasher(view3));
 }
 
@@ -226,11 +226,11 @@ TEST_F(SimpleParamViewTest, bitSizeOf)
 {
     Item item1;
     item1.param = ITEM_PARAM;
-    zserio::View<Item> view1(item1, LOWER_VERSION);
+    zserio::View view1(item1, LOWER_VERSION);
     ASSERT_EQ(ITEM_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view1, 0));
 
     Item item2{ITEM_PARAM, ITEM_EXTRA_PARAM};
-    ::zserio::View<Item> view2(item2, HIGHER_VERSION);
+    ::zserio::View view2(item2, HIGHER_VERSION);
     ASSERT_EQ(ITEM_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view2, 0));
 }
 
@@ -242,7 +242,7 @@ TEST_F(SimpleParamViewTest, writeRead)
     item.param = ITEM_PARAM;
     item.extraParam = ITEM_EXTRA_PARAM;
 
-    zserio::View<Item> view(item, version);
+    zserio::View view(item, version);
 
     zserio::BitStreamWriter writer(bitBuffer);
     zserio::detail::write(writer, view);
@@ -251,7 +251,7 @@ TEST_F(SimpleParamViewTest, writeRead)
     checkItemInBitStream(reader, version, item);
 
     Item readItem;
-    zserio::View<Item> readView = zserio::detail::read(reader, readItem, version);
+    zserio::View readView = zserio::detail::read(reader, readItem, version);
     ASSERT_EQ(item, readItem);
     ASSERT_EQ(view, readView);
 }

@@ -57,7 +57,7 @@ TEST_F(AutoOptionalTest, constructors)
     }
 
     const Container data = Container(NON_OPTIONAL_BOOL_VALUE, AUTO_OPTIONAL_BOOL_VALUE);
-    zserio::View<Container> view(data);
+    zserio::View view(data);
     ASSERT_EQ(NON_OPTIONAL_BOOL_VALUE, view.nonOptionalBool());
     ASSERT_TRUE(view.autoOptionalBool());
     ASSERT_EQ(AUTO_OPTIONAL_BOOL_VALUE, view.autoOptionalBool().value());
@@ -68,7 +68,7 @@ TEST_F(AutoOptionalTest, bitSizeOfWithOptional)
     const bool hasOptional = true;
     Container data;
     fillData(data, hasOptional);
-    zserio::View<Container> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(CONTAINER_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view));
 }
@@ -78,7 +78,7 @@ TEST_F(AutoOptionalTest, bitSizeOfWithoutOptional)
     const bool hasOptional = false;
     Container data;
     fillData(data, hasOptional);
-    zserio::View<Container> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view));
 }
@@ -93,9 +93,9 @@ TEST_F(AutoOptionalTest, comparisionOperators)
     fillData(lessThanData, false);
     test_utils::comparisonOperatorsTest(data, equalData, lessThanData);
 
-    zserio::View<Container> view(data);
-    zserio::View<Container> equalView(equalData);
-    zserio::View<Container> lessThanView(lessThanData);
+    zserio::View view(data);
+    zserio::View equalView(equalData);
+    zserio::View lessThanView(lessThanData);
     test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
 }
 
@@ -145,10 +145,10 @@ TEST_F(AutoOptionalTest, stdHash)
     const size_t diffDataHash = 851;
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
-    zserio::View<Container> view(data);
+    zserio::View view(data);
     const size_t viewHash = 31488;
-    zserio::View<Container> equalView(equalData);
-    zserio::View<Container> diffView(diffData);
+    zserio::View equalView(equalData);
+    zserio::View diffView(diffData);
     const size_t diffViewHash = 851;
     test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }

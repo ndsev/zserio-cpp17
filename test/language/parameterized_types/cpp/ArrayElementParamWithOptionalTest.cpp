@@ -62,7 +62,7 @@ TEST_F(ArrayElementParamWithOptionalTest, constructors)
 
     {
         Holder data(Param{HAS_EXTRA, EXTRA_PARAM}, {{Value{std::nullopt, ExtraValue{EXTRA_VALUE}}}});
-        zserio::View<Holder> view(data);
+        zserio::View view(data);
         ASSERT_EQ(HAS_EXTRA, view.param().hasExtra());
         ASSERT_EQ(EXTRA_PARAM, view.param().extraParam().value());
         ASSERT_EQ(EXTRA_VALUE, view.values().at(0).extraValue()->value());
@@ -83,9 +83,9 @@ TEST_F(ArrayElementParamWithOptionalTest, comparisonOperators)
 
     test_utils::comparisonOperatorsTest(data, equalData, lessThanData);
 
-    zserio::View<Holder> view(data);
-    zserio::View<Holder> equalView(equalData);
-    zserio::View<Holder> lessThanView(lessThanData);
+    zserio::View view(data);
+    zserio::View equalView(equalData);
+    zserio::View lessThanView(lessThanData);
     test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
 }
 
@@ -93,7 +93,7 @@ TEST_F(ArrayElementParamWithOptionalTest, bitSizeOf)
 {
     Holder data;
     fillData(data);
-    zserio::View<Holder> view(data);
+    zserio::View view(data);
 
     const size_t bitPosition = 2;
     ASSERT_EQ(HOLDER_BIT_SIZE, zserio::detail::bitSizeOf(view, bitPosition));
@@ -139,10 +139,10 @@ TEST_F(ArrayElementParamWithOptionalTest, stdHash)
 
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
-    zserio::View<Holder> view(data);
+    zserio::View view(data);
     const size_t viewHash = 1256582;
-    zserio::View<Holder> equalView(equalData);
-    zserio::View<Holder> diffView(diffData);
+    zserio::View equalView(equalData);
+    zserio::View diffView(diffData);
     const size_t diffViewHash = 1256581;
     test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }

@@ -32,7 +32,7 @@ TEST_F(UnionWithMultipleParametersTest, arrayLength)
     TestUnion data;
     const VectorType<zserio::UInt5> value = {1, 10, 15};
     data.emplace<ChoiceTag::CHOICE_array5>(value);
-    zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+    zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
     ASSERT_EQ(static_cast<uint32_t>(value.size()), view.arrayLength());
 }
 
@@ -41,7 +41,7 @@ TEST_F(UnionWithMultipleParametersTest, bitFieldLength)
     TestUnion data;
     const VectorType<zserio::UInt5> value = {1, 10, 15};
     data.emplace<ChoiceTag::CHOICE_array5>(value);
-    zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+    zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
     ASSERT_EQ(1, view.bitFieldLength());
 }
 
@@ -51,7 +51,7 @@ TEST_F(UnionWithMultipleParametersTest, zserioChoiceTag)
         TestUnion data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
         data.emplace<ChoiceTag::CHOICE_array5>(value);
-        zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+        zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
         ASSERT_EQ(ChoiceTag::CHOICE_array5, view.zserioChoiceTag());
     }
     {
@@ -62,21 +62,21 @@ TEST_F(UnionWithMultipleParametersTest, zserioChoiceTag)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
         data.emplace<ChoiceTag::CHOICE_array13>(value);
-        zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+        zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
         ASSERT_EQ(ChoiceTag::CHOICE_array13, view.zserioChoiceTag());
     }
     {
         TestUnion data;
         const zserio::Int17 value = 65535;
         data.emplace<ChoiceTag::CHOICE_field17>(value);
-        zserio::View<TestUnion> view(data, 1, 1);
+        zserio::View view(data, 1, 1);
         ASSERT_EQ(ChoiceTag::CHOICE_field17, view.zserioChoiceTag());
     }
     {
         TestUnion data;
         const zserio::DynInt16<> value = 16383;
         data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
-        zserio::View<TestUnion> view(data, 1, 15);
+        zserio::View view(data, 1, 15);
         ASSERT_EQ(ChoiceTag::CHOICE_dynBitField, view.zserioChoiceTag());
     }
 }
@@ -91,7 +91,7 @@ TEST_F(UnionWithMultipleParametersTest, array5)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_dynBitField>(data), zserio::BadVariantAccess);
     ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_array5>(data));
 
-    zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+    zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
     ASSERT_THROW(view.array13(), zserio::BadVariantAccess);
     ASSERT_THROW(view.field17(), zserio::BadVariantAccess);
     ASSERT_THROW(view.dynBitField(), zserio::BadVariantAccess);
@@ -114,7 +114,7 @@ TEST_F(UnionWithMultipleParametersTest, array13)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_dynBitField>(data), zserio::BadVariantAccess);
     ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_array13>(data));
 
-    zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+    zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
     ASSERT_THROW(view.array5(), zserio::BadVariantAccess);
     ASSERT_THROW(view.field17(), zserio::BadVariantAccess);
     ASSERT_THROW(view.dynBitField(), zserio::BadVariantAccess);
@@ -134,7 +134,7 @@ TEST_F(UnionWithMultipleParametersTest, field17)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_dynBitField>(data), zserio::BadVariantAccess);
     ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_field17>(data));
 
-    zserio::View<TestUnion> view(data, 1, 1);
+    zserio::View view(data, 1, 1);
     ASSERT_THROW(view.array5(), zserio::BadVariantAccess);
     ASSERT_THROW(view.array13(), zserio::BadVariantAccess);
     ASSERT_THROW(view.dynBitField(), zserio::BadVariantAccess);
@@ -151,7 +151,7 @@ TEST_F(UnionWithMultipleParametersTest, dynBitField)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_field17>(data), zserio::BadVariantAccess);
     ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_dynBitField>(data));
 
-    zserio::View<TestUnion> view(data, 1, 15);
+    zserio::View view(data, 1, 15);
     ASSERT_THROW(view.array5(), zserio::BadVariantAccess);
     ASSERT_THROW(view.array13(), zserio::BadVariantAccess);
     ASSERT_THROW(view.field17(), zserio::BadVariantAccess);
@@ -169,16 +169,16 @@ TEST_F(UnionWithMultipleParametersTest, comparisonOperators)
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
     const VectorType<zserio::UInt5> value = {1, 10, 15};
-    zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
-    zserio::View<TestUnion> equalView(equalData, static_cast<uint32_t>(value.size()), 1);
-    zserio::View<TestUnion> lessThenView(lessThenData, static_cast<uint32_t>(value.size()), 1);
+    zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
+    zserio::View equalView(equalData, static_cast<uint32_t>(value.size()), 1);
+    zserio::View lessThenView(lessThenData, static_cast<uint32_t>(value.size()), 1);
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
     TestUnion anotherLessThenData;
     anotherLessThenData.emplace<ChoiceTag::CHOICE_array5>(value);
     test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
 
-    zserio::View<TestUnion> anotherLessThenView(anotherLessThenData, static_cast<uint32_t>(value.size()), 1);
+    zserio::View anotherLessThenView(anotherLessThenData, static_cast<uint32_t>(value.size()), 1);
     test_utils::comparisonOperatorsTest(view, equalView, anotherLessThenView);
 }
 
@@ -187,7 +187,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
     {
         // initialized union
         TestUnion data;
-        zserio::View<TestUnion> view(data, 1, 1);
+        zserio::View view(data, 1, 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::UnionCaseException);
     }
     {
@@ -195,7 +195,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         TestUnion data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
         data.emplace<ChoiceTag::CHOICE_array5>(value);
-        zserio::View<TestUnion> view(data, std::numeric_limits<uint32_t>::max(), 1);
+        zserio::View view(data, std::numeric_limits<uint32_t>::max(), 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
     {
@@ -203,7 +203,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         TestUnion data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
         data.emplace<ChoiceTag::CHOICE_array5>(value);
-        zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 16);
+        zserio::View view(data, static_cast<uint32_t>(value.size()), 16);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
     {
@@ -211,7 +211,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         TestUnion data;
         const VectorType<zserio::UInt5> value = {1, 10, 255};
         data.emplace<ChoiceTag::CHOICE_array5>(value);
-        zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+        zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
     {
@@ -219,7 +219,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         TestUnion data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
         data.emplace<ChoiceTag::CHOICE_array5>(value);
-        zserio::View<TestUnion> view(data, 1, 1);
+        zserio::View view(data, 1, 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
     }
     {
@@ -231,7 +231,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
                 Data13{VectorType<zserio::Int13>{1, 10, 32767}},
         };
         data.emplace<ChoiceTag::CHOICE_array13>(value);
-        zserio::View<TestUnion> view(data, static_cast<uint32_t>(value.size()), 1);
+        zserio::View view(data, static_cast<uint32_t>(value.size()), 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
     {
@@ -243,7 +243,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
         data.emplace<ChoiceTag::CHOICE_array13>(value);
-        zserio::View<TestUnion> view(data, 1, 1);
+        zserio::View view(data, 1, 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
     }
     {
@@ -251,7 +251,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         TestUnion data;
         const zserio::Int17 value = 131072;
         data.emplace<ChoiceTag::CHOICE_field17>(value);
-        zserio::View<TestUnion> view(data, 1, 1);
+        zserio::View view(data, 1, 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
     {
@@ -259,7 +259,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
         TestUnion data;
         const zserio::DynInt16<> value = 32767;
         data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
-        zserio::View<TestUnion> view(data, 1, 15);
+        zserio::View view(data, 1, 15);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
 }

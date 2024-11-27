@@ -45,7 +45,7 @@ protected:
     {
         AutoArrayRecursion autoArrayRecursion;
         fillData(autoArrayRecursion, numElements);
-        const zserio::View<AutoArrayRecursion> view(autoArrayRecursion);
+        const zserio::View view(autoArrayRecursion);
 
         const size_t bitPosition = 2;
         const zserio::BitSize autoArrayBitSize = getBitSize(numElements);

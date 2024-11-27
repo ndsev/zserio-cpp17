@@ -96,16 +96,16 @@ protected:
     {
         Inner data;
         fillData(data, pos);
-        zserio::View<Inner> view(data);
+        zserio::View view(data);
 
         const auto& readElement = view.ref().getElement();
         if (pos >= m_items.size())
         {
-            ASSERT_EQ(zserio::View<Item>(m_explicitItem), readElement);
+            ASSERT_EQ(zserio::View(m_explicitItem), readElement);
         }
         else
         {
-            ASSERT_EQ(zserio::View<Item>(m_items.at(pos)), readElement);
+            ASSERT_EQ(zserio::View(m_items.at(pos)), readElement);
         }
 
         test_utils::readTest(std::bind(&ChoiceArrayTest::writeData, this, std::placeholders::_1, pos), data);

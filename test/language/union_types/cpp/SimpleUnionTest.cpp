@@ -46,7 +46,7 @@ TEST_F(SimpleUnionTest, constructors)
     }
     {
         SimpleUnion data;
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
     }
 }
@@ -56,25 +56,25 @@ TEST_F(SimpleUnionTest, zserioChoiceTag)
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(ChoiceTag::CHOICE_case1Field, view.zserioChoiceTag());
     }
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(ChoiceTag::CHOICE_case2Field, view.zserioChoiceTag());
     }
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(ChoiceTag::CHOICE_case3Field, view.zserioChoiceTag());
     }
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(ChoiceTag::CHOICE_case4Field, view.zserioChoiceTag());
     }
 }
@@ -88,7 +88,7 @@ TEST_F(SimpleUnionTest, case1Field)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(data), zserio::BadVariantAccess);
     ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(data));
 
-    zserio::View<SimpleUnion> view(data);
+    zserio::View view(data);
     ASSERT_THROW(view.case2Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case3Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case4Field(), zserio::BadVariantAccess);
@@ -104,7 +104,7 @@ TEST_F(SimpleUnionTest, case2Field)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(data), zserio::BadVariantAccess);
     ASSERT_EQ(CASE2_FIELD, zserio::get<ChoiceTag::CHOICE_case2Field>(data));
 
-    zserio::View<SimpleUnion> view(data);
+    zserio::View view(data);
     ASSERT_THROW(view.case1Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case3Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case4Field(), zserio::BadVariantAccess);
@@ -120,7 +120,7 @@ TEST_F(SimpleUnionTest, case3Field)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case4Field>(data), zserio::BadVariantAccess);
     ASSERT_EQ(CASE3_FIELD, zserio::get<ChoiceTag::CHOICE_case3Field>(data));
 
-    zserio::View<SimpleUnion> view(data);
+    zserio::View view(data);
     ASSERT_THROW(view.case1Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case2Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case4Field(), zserio::BadVariantAccess);
@@ -145,7 +145,7 @@ TEST_F(SimpleUnionTest, case4Field)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_case3Field>(data), zserio::BadVariantAccess);
     ASSERT_EQ(CASE4_FIELD, zserio::get<ChoiceTag::CHOICE_case4Field>(data));
 
-    zserio::View<SimpleUnion> view(data);
+    zserio::View view(data);
     ASSERT_THROW(view.case1Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case2Field(), zserio::BadVariantAccess);
     ASSERT_THROW(view.case3Field(), zserio::BadVariantAccess);
@@ -162,23 +162,23 @@ TEST_F(SimpleUnionTest, comparisonOperators)
     lessThenData.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
-    zserio::View<SimpleUnion> view(data);
-    zserio::View<SimpleUnion> equalView(equalData);
-    zserio::View<SimpleUnion> lessThenView(lessThenData);
+    zserio::View view(data);
+    zserio::View equalView(equalData);
+    zserio::View lessThenView(lessThenData);
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
     SimpleUnion anotherLessThenData;
     anotherLessThenData.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD - 1);
     test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
 
-    zserio::View<SimpleUnion> anotherLessThenView(anotherLessThenData);
+    zserio::View anotherLessThenView(anotherLessThenData);
     test_utils::comparisonOperatorsTest(view, equalView, anotherLessThenView);
 }
 
 TEST_F(SimpleUnionTest, validate)
 {
     SimpleUnion data;
-    zserio::View<SimpleUnion> view(data);
+    zserio::View view(data);
     ASSERT_THROW(zserio::detail::validate(view), zserio::UnionCaseException);
 }
 
@@ -187,25 +187,25 @@ TEST_F(SimpleUnionTest, bitSizeOf)
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(8 + 8, zserio::detail::bitSizeOf(view));
     }
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case2Field>(CASE2_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(8 + 16, zserio::detail::bitSizeOf(view));
     }
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case3Field>(CASE3_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(8 + CASE3_FIELD.length() * 8 + 8, zserio::detail::bitSizeOf(view));
     }
     {
         SimpleUnion data;
         data.emplace<ChoiceTag::CHOICE_case4Field>(CASE4_FIELD);
-        zserio::View<SimpleUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(8 + 8, zserio::detail::bitSizeOf(view));
     }
 }
@@ -255,10 +255,10 @@ TEST_F(SimpleUnionTest, stdHash)
 
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
-    zserio::View<SimpleUnion> view(data);
+    zserio::View view(data);
     const size_t viewHash = 864; // hardcoded value to check that the hash code is stable
-    zserio::View<SimpleUnion> equalView(equalData);
-    zserio::View<SimpleUnion> diffView(diffData);
+    zserio::View equalView(equalData);
+    zserio::View diffView(diffData);
     const size_t diffHash = 893; // hardcoded value to check that the hash code is stable
     test_utils::hashTest(view, viewHash, equalView, diffView, diffHash);
 }

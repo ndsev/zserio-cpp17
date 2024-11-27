@@ -96,7 +96,7 @@ TEST_F(BitAlignmentTest, bitSizeOf)
 {
     BitAlignment data;
     fillData(data);
-    zserio::View<BitAlignment> view(data);
+    zserio::View view(data);
 
     // test default argument
     ASSERT_EQ(BIT_ALIGNMENT_BIT_SIZE, zserio::detail::bitSizeOf(view));
@@ -106,7 +106,7 @@ TEST_F(BitAlignmentTest, bitSizeOfWithPosition)
 {
     BitAlignment data;
     fillData(data);
-    zserio::View<BitAlignment> view(data);
+    zserio::View view(data);
 
     // starting up to bit position 77, the structure still fits into original size thanks to alignments
     zserio::BitSize startBitPosition = 0;

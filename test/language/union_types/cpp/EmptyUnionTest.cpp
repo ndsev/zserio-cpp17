@@ -26,7 +26,7 @@ TEST(EmptyUnionTest, emptyConstructor)
     }
     {
         EmptyUnion data;
-        zserio::View<EmptyUnion> view(data);
+        zserio::View view(data);
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
     }
 }
@@ -34,7 +34,7 @@ TEST(EmptyUnionTest, emptyConstructor)
 TEST(EmptyUnionTest, zserioChoiceTag)
 {
     EmptyUnion data;
-    zserio::View<EmptyUnion> view(data);
+    zserio::View view(data);
     ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
 }
 
@@ -45,8 +45,8 @@ TEST(EmptyUnionTest, comparisonOperators)
     ASSERT_TRUE(data == equalData);
     ASSERT_FALSE(data < equalData);
 
-    zserio::View<EmptyUnion> view(data);
-    zserio::View<EmptyUnion> equalView(equalData);
+    zserio::View view(data);
+    zserio::View equalView(equalData);
     ASSERT_TRUE(view == equalView);
     ASSERT_FALSE(view < equalView);
 }
@@ -54,14 +54,14 @@ TEST(EmptyUnionTest, comparisonOperators)
 TEST(EmptyUnionTest, validate)
 {
     EmptyUnion data;
-    zserio::View<EmptyUnion> view(data);
+    zserio::View view(data);
     EXPECT_NO_THROW(zserio::detail::validate(view));
 }
 
 TEST(EmptyUnionTest, bitSizeOf)
 {
     EmptyUnion data;
-    zserio::View<EmptyUnion> view(data);
+    zserio::View view(data);
     ASSERT_EQ(0, zserio::detail::bitSizeOf(view));
 }
 
@@ -88,7 +88,7 @@ TEST(EmptyUnionTest, stdHash)
     ASSERT_EQ(dataHash, dataHasher(data));
 
     std::hash<zserio::View<EmptyUnion>> viewHasher;
-    zserio::View<EmptyUnion> view(data);
+    zserio::View view(data);
     const size_t viewHash = dataHash;
     ASSERT_EQ(viewHash, viewHasher(view));
 }

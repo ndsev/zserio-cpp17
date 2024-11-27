@@ -54,9 +54,9 @@ TEST_F(OptionalMemberAlignmentTest, comparisonOperators)
 
     test_utils::comparisonOperatorsTest(data, equalData, lessThanData);
 
-    zserio::View<OptionalMemberAlignment> view(data);
-    zserio::View<OptionalMemberAlignment> equalView(equalData);
-    zserio::View<OptionalMemberAlignment> lessThanView(lessThanData);
+    zserio::View view(data);
+    zserio::View equalView(equalData);
+    zserio::View lessThanView(lessThanData);
 
     test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
 }
@@ -87,7 +87,7 @@ TEST_F(OptionalMemberAlignmentTest, bitSizeOfWithOptional)
 {
     OptionalMemberAlignment data;
     fillData(data, true, 0x4433, 0x1122);
-    zserio::View<OptionalMemberAlignment> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(WITH_OPTIONAL_MEMBER_ALIGNMENT_BIT_SIZE, zserio::detail::bitSizeOf(view));
 }
@@ -96,7 +96,7 @@ TEST_F(OptionalMemberAlignmentTest, bitSizeOfWithoutOptional)
 {
     OptionalMemberAlignment data;
     fillData(data, false, 0, 0x7624);
-    zserio::View<OptionalMemberAlignment> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(WITHOUT_OPTIONAL_MEMBER_ALIGNMENT_BIT_SIZE, zserio::detail::bitSizeOf(view));
 }

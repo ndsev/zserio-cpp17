@@ -215,8 +215,8 @@ TEST_F(SimpleStructureViewTest, operatorEquality)
 {
     SimpleStructure simpleStructure1;
     SimpleStructure simpleStructure2;
-    zserio::View<SimpleStructure> view1(simpleStructure1);
-    zserio::View<SimpleStructure> view2(simpleStructure2);
+    zserio::View view1(simpleStructure1);
+    zserio::View view2(simpleStructure2);
     ASSERT_TRUE(view1 == view2);
 
     const uint8_t numberA = 0x03;
@@ -238,8 +238,8 @@ TEST_F(SimpleStructureViewTest, operatorLessThan)
 {
     SimpleStructure simpleStructure1;
     SimpleStructure simpleStructure2;
-    zserio::View<SimpleStructure> view1(simpleStructure1);
-    zserio::View<SimpleStructure> view2(simpleStructure2);
+    zserio::View view1(simpleStructure1);
+    zserio::View view2(simpleStructure2);
 
     ASSERT_FALSE(view1 < view2);
     ASSERT_FALSE(view2 < view1);
@@ -262,8 +262,8 @@ TEST_F(SimpleStructureViewTest, stdHash)
 {
     SimpleStructure simpleStructure1;
     SimpleStructure simpleStructure2;
-    zserio::View<SimpleStructure> view1(simpleStructure1);
-    zserio::View<SimpleStructure> view2(simpleStructure2);
+    zserio::View view1(simpleStructure1);
+    zserio::View view2(simpleStructure2);
 
     std::hash<zserio::View<SimpleStructure>> hasher;
 
@@ -296,7 +296,7 @@ TEST_F(SimpleStructureViewTest, read)
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     SimpleStructure simpleStructure{AllocatorType()};
-    zserio::View<SimpleStructure> readView = zserio::detail::read(reader, simpleStructure);
+    zserio::View readView = zserio::detail::read(reader, simpleStructure);
     ASSERT_EQ(numberA, readView.numberA());
     ASSERT_EQ(numberB, readView.numberB());
     ASSERT_EQ(numberC, readView.numberC());
@@ -305,14 +305,14 @@ TEST_F(SimpleStructureViewTest, read)
 TEST_F(SimpleStructureViewTest, writeRead)
 {
     SimpleStructure simpleStructure(0x04, 0xCD, 0x57);
-    zserio::View<SimpleStructure> view(simpleStructure);
+    zserio::View view(simpleStructure);
 
     zserio::BitStreamWriter writer(bitBuffer);
     zserio::detail::write(writer, view);
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     SimpleStructure readSimpleStructure;
-    zserio::View<SimpleStructure> readView = zserio::detail::read(reader, readSimpleStructure);
+    zserio::View readView = zserio::detail::read(reader, readSimpleStructure);
     ASSERT_EQ(readView, view);
 }
 
@@ -323,7 +323,7 @@ TEST_F(SimpleStructureViewTest, bitSizeOf)
     const uint8_t numberC = 0x57;
 
     SimpleStructure simpleStructure(numberA, numberB, numberC);
-    zserio::View<SimpleStructure> view(simpleStructure);
+    zserio::View view(simpleStructure);
     ASSERT_EQ(SIMPLE_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 0));
     ASSERT_EQ(SIMPLE_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 1));
     ASSERT_EQ(SIMPLE_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 100));

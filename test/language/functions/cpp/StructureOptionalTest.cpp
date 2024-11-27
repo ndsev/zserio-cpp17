@@ -48,7 +48,7 @@ protected:
     {
         ValueConsumerCreator data;
         fillData(data, defaultValue, externalValue);
-        zserio::View<ValueConsumerCreator> view(data);
+        zserio::View view(data);
 
         const uint8_t expectedValue = calculateValue(defaultValue, externalValue);
         ASSERT_EQ(expectedValue, view.valueCalculator().value());

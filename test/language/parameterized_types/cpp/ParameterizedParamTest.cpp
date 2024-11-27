@@ -51,7 +51,7 @@ TEST_F(ParameterizedParamTest, writeRead)
 {
     ParameterizedParamHolder parameterizedParamHolder;
     fillParameterizedParamHolder(parameterizedParamHolder);
-    zserio::View<ParameterizedParamHolder> view(parameterizedParamHolder);
+    zserio::View view(parameterizedParamHolder);
 
     zserio::BitStreamWriter writer(bitBuffer);
     zserio::detail::write(writer, view);
@@ -60,8 +60,7 @@ TEST_F(ParameterizedParamTest, writeRead)
     checkParameterizedParamHolderInBitStream(reader, parameterizedParamHolder);
 
     ParameterizedParamHolder readParameterizedParamHolder;
-    zserio::View<ParameterizedParamHolder> readView =
-            zserio::detail::read(reader, readParameterizedParamHolder);
+    zserio::View readView = zserio::detail::read(reader, readParameterizedParamHolder);
     ASSERT_EQ(parameterizedParamHolder, readParameterizedParamHolder);
     ASSERT_EQ(view, readView);
 }

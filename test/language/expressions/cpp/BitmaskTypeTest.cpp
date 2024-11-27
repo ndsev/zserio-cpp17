@@ -12,7 +12,7 @@ TEST(BitmaskTypeTest, bitSizeOfNoColor)
     data.colors = Colors();
     data.hasNotColorRed = true;
 
-    ASSERT_EQ(9, zserio::detail::bitSizeOf(zserio::View<BitmaskTypeExpression>(data)));
+    ASSERT_EQ(9, zserio::detail::bitSizeOf(zserio::View(data)));
 }
 
 TEST(BitmaskTypeTest, bitSizeOfRed)
@@ -21,7 +21,7 @@ TEST(BitmaskTypeTest, bitSizeOfRed)
     data.colors = Colors::Values::RED;
     data.hasColorRed = true;
 
-    ASSERT_EQ(9, zserio::detail::bitSizeOf(zserio::View<BitmaskTypeExpression>(data)));
+    ASSERT_EQ(9, zserio::detail::bitSizeOf(zserio::View(data)));
 }
 
 TEST(BitmaskTypeTest, bitSizeOfGreen)
@@ -32,7 +32,7 @@ TEST(BitmaskTypeTest, bitSizeOfGreen)
     data.hasNotColorRed = true;
     data.hasOtherColorThanRed = true;
 
-    ASSERT_EQ(11, zserio::detail::bitSizeOf(zserio::View<BitmaskTypeExpression>(data)));
+    ASSERT_EQ(11, zserio::detail::bitSizeOf(zserio::View(data)));
 }
 
 TEST(BitmaskTypeTest, bitSizeOfBlue)
@@ -43,7 +43,7 @@ TEST(BitmaskTypeTest, bitSizeOfBlue)
     data.hasNotColorRed = true;
     data.hasOtherColorThanRed = true;
 
-    ASSERT_EQ(11, zserio::detail::bitSizeOf(zserio::View<BitmaskTypeExpression>(data)));
+    ASSERT_EQ(11, zserio::detail::bitSizeOf(zserio::View(data)));
 }
 
 TEST(BitmaskTypeTest, bitSizeOfBlueGreen)
@@ -55,7 +55,7 @@ TEST(BitmaskTypeTest, bitSizeOfBlueGreen)
     data.hasNotColorRed = true;
     data.hasOtherColorThanRed = true;
 
-    ASSERT_EQ(12, zserio::detail::bitSizeOf(zserio::View<BitmaskTypeExpression>(data)));
+    ASSERT_EQ(12, zserio::detail::bitSizeOf(zserio::View(data)));
 }
 
 TEST(BitmaskTypeTest, bitSizeOfAllColors)
@@ -68,7 +68,7 @@ TEST(BitmaskTypeTest, bitSizeOfAllColors)
     data.hasAllColors = true;
     data.hasOtherColorThanRed = true;
 
-    ASSERT_EQ(13, zserio::detail::bitSizeOf(zserio::View<BitmaskTypeExpression>(data)));
+    ASSERT_EQ(13, zserio::detail::bitSizeOf(zserio::View(data)));
 }
 
 } // namespace bitmask_type

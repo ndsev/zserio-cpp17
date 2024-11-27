@@ -26,7 +26,7 @@ const BitBuffer StructureExternTest::CHILD_FIELD = BitBuffer{VectorType<uint8_t>
 TEST_F(StructureExternTest, getField)
 {
     TestStructure data = TestStructure{FIELD, Child{CHILD_FIELD}};
-    zserio::View<TestStructure> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(FIELD, view.getField());
 }
@@ -34,7 +34,7 @@ TEST_F(StructureExternTest, getField)
 TEST_F(StructureExternTest, getChildField)
 {
     TestStructure data = TestStructure{FIELD, Child{CHILD_FIELD}};
-    zserio::View<TestStructure> view(data);
+    zserio::View view(data);
 
     ASSERT_EQ(CHILD_FIELD, view.getChildField());
 }

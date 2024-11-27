@@ -18,7 +18,7 @@ protected:
 TEST_F(OptionalComplexExpressionTest, withoutOptional)
 {
     Container data{Permission::Values::READ, {}};
-    ASSERT_EQ(CONTAINER_WITHOUT_OPTIONAL_BIT_SIZE, zserio::detail::bitSizeOf(zserio::View<Container>(data)));
+    ASSERT_EQ(CONTAINER_WITHOUT_OPTIONAL_BIT_SIZE, zserio::detail::bitSizeOf(zserio::View(data)));
 
     test_utils::writeReadTest(data);
 }
@@ -26,7 +26,7 @@ TEST_F(OptionalComplexExpressionTest, withoutOptional)
 TEST_F(OptionalComplexExpressionTest, withOptional)
 {
     Container data{Permission::Values::WRITE, EXTRA_DATA_VALUE};
-    ASSERT_EQ(CONTAINER_WITH_OPTIONAL_BIT_SIZE, zserio::detail::bitSizeOf(zserio::View<Container>(data)));
+    ASSERT_EQ(CONTAINER_WITH_OPTIONAL_BIT_SIZE, zserio::detail::bitSizeOf(zserio::View(data)));
 
     test_utils::writeReadTest(data);
 }

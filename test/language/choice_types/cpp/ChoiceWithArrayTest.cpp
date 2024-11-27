@@ -31,7 +31,7 @@ TEST_F(ChoiceWithArrayTest, array8)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array16>(data), zserio::BadVariantAccess);
     ASSERT_EQ(array8, zserio::get<ChoiceTag::CHOICE_array8>(data));
 
-    zserio::View<TestChoice> view(data, ARRAY8_SELECTOR);
+    zserio::View view(data, ARRAY8_SELECTOR);
     ASSERT_THROW(view.array16(), zserio::BadVariantAccess);
     ASSERT_EQ(array8.size(), view.array8().size());
     for (size_t i = 0; i < array8.size(); ++i)
@@ -48,7 +48,7 @@ TEST_F(ChoiceWithArrayTest, array16)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array8>(data), zserio::BadVariantAccess);
     ASSERT_EQ(array16, zserio::get<ChoiceTag::CHOICE_array16>(data));
 
-    zserio::View<TestChoice> view(data, ARRAY16_SELECTOR);
+    zserio::View view(data, ARRAY16_SELECTOR);
     ASSERT_THROW(view.array8(), zserio::BadVariantAccess);
     ASSERT_EQ(array16.size(), view.array16().size());
     for (size_t i = 0; i < array16.size(); ++i)

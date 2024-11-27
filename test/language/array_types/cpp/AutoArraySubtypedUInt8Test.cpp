@@ -41,7 +41,7 @@ protected:
     {
         AutoArray data;
         fillData(data, numElements);
-        const zserio::View<AutoArray> view(data);
+        const zserio::View view(data);
 
         const size_t bitPosition = 2;
         const zserio::BitSize subtypedBuiltinAutoArrayBitSize =

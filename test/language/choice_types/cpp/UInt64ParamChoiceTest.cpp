@@ -47,7 +47,7 @@ TEST_F(UInt64ParamChoiceTest, constructors)
         UInt64ParamChoice data;
         const VariantA value = 99;
         data.emplace<ChoiceTag::CHOICE_valueA>(value);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
+        zserio::View view(data, VARIANT_A_SELECTOR);
         ASSERT_EQ(ChoiceTag::CHOICE_valueA, view.zserioChoiceTag());
     }
 }
@@ -56,13 +56,13 @@ TEST_F(UInt64ParamChoiceTest, selector)
 {
     UInt64ParamChoice data;
     data.emplace<ChoiceTag::CHOICE_valueA>(0);
-    zserio::View<UInt64ParamChoice> viewA(data, VARIANT_A_SELECTOR);
+    zserio::View viewA(data, VARIANT_A_SELECTOR);
     ASSERT_EQ(VARIANT_A_SELECTOR, viewA.selector());
 
-    zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
+    zserio::View viewB(data, VARIANT_B_SELECTOR);
     ASSERT_EQ(VARIANT_B_SELECTOR, viewB.selector());
 
-    zserio::View<UInt64ParamChoice> viewE(data, EMPTY_SELECTOR);
+    zserio::View viewE(data, EMPTY_SELECTOR);
     ASSERT_EQ(EMPTY_SELECTOR, viewE.selector());
 }
 
@@ -71,19 +71,19 @@ TEST_F(UInt64ParamChoiceTest, zserioChoiceTag)
     {
         UInt64ParamChoice data;
         data.emplace<ChoiceTag::CHOICE_valueA>(0);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
+        zserio::View view(data, VARIANT_A_SELECTOR);
         ASSERT_EQ(ChoiceTag::CHOICE_valueA, view.zserioChoiceTag());
     }
     {
         UInt64ParamChoice data;
         data.emplace<ChoiceTag::CHOICE_valueB>(0);
-        zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
+        zserio::View viewB(data, VARIANT_B_SELECTOR);
         ASSERT_EQ(ChoiceTag::CHOICE_valueB, viewB.zserioChoiceTag());
     }
     {
         UInt64ParamChoice data;
         data.emplace<ChoiceTag::CHOICE_valueC>(0);
-        zserio::View<UInt64ParamChoice> viewC(data, EMPTY_SELECTOR);
+        zserio::View viewC(data, EMPTY_SELECTOR);
         ASSERT_EQ(ChoiceTag::CHOICE_valueC, viewC.zserioChoiceTag());
     }
 }
@@ -97,7 +97,7 @@ TEST_F(UInt64ParamChoiceTest, valueA)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueC>(data), zserio::BadVariantAccess);
     ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueA>(data));
 
-    zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
+    zserio::View view(data, VARIANT_A_SELECTOR);
     ASSERT_THROW(view.valueB(), zserio::BadVariantAccess);
     ASSERT_THROW(view.valueC(), zserio::BadVariantAccess);
     ASSERT_EQ(value, view.valueA());
@@ -111,7 +111,7 @@ TEST_F(UInt64ParamChoiceTest, valueB)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueC>(data), zserio::BadVariantAccess);
     ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueB>(data));
 
-    zserio::View<UInt64ParamChoice> view(data, VARIANT_B_SELECTOR);
+    zserio::View view(data, VARIANT_B_SELECTOR);
     ASSERT_THROW(view.valueA(), zserio::BadVariantAccess);
     ASSERT_THROW(view.valueC(), zserio::BadVariantAccess);
     ASSERT_EQ(value, view.valueB());
@@ -126,7 +126,7 @@ TEST_F(UInt64ParamChoiceTest, valueC)
     ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueB>(data), zserio::BadVariantAccess);
     ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueC>(data));
 
-    zserio::View<UInt64ParamChoice> view(data, VARIANT_C_SELECTOR);
+    zserio::View view(data, VARIANT_C_SELECTOR);
     ASSERT_THROW(view.valueA(), zserio::BadVariantAccess);
     ASSERT_THROW(view.valueB(), zserio::BadVariantAccess);
     ASSERT_EQ(value, view.valueC());
@@ -142,16 +142,16 @@ TEST_F(UInt64ParamChoiceTest, comparisonOperators)
     lessThenData.emplace<ChoiceTag::CHOICE_valueA>(2);
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
-    zserio::View<UInt64ParamChoice> view(data, VARIANT_B_SELECTOR);
-    zserio::View<UInt64ParamChoice> equalView(equalData, VARIANT_B_SELECTOR);
-    zserio::View<UInt64ParamChoice> lessThenView(lessThenData, VARIANT_A_SELECTOR);
+    zserio::View view(data, VARIANT_B_SELECTOR);
+    zserio::View equalView(equalData, VARIANT_B_SELECTOR);
+    zserio::View lessThenView(lessThenData, VARIANT_A_SELECTOR);
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
     UInt64ParamChoice anotherLessThenData;
     anotherLessThenData.emplace<ChoiceTag::CHOICE_valueB>(1);
     test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
 
-    zserio::View<UInt64ParamChoice> anotherLessThenView(anotherLessThenData, VARIANT_A_SELECTOR);
+    zserio::View anotherLessThenView(anotherLessThenData, VARIANT_A_SELECTOR);
     test_utils::comparisonOperatorsTest(view, equalView, anotherLessThenView);
 }
 
@@ -161,26 +161,26 @@ TEST_F(UInt64ParamChoiceTest, validate)
         UInt64ParamChoice data;
         const VariantA value = 99;
         data.emplace<ChoiceTag::CHOICE_valueA>(value);
-        zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
+        zserio::View viewB(data, VARIANT_B_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
-        zserio::View<UInt64ParamChoice> viewC(data, VARIANT_C_SELECTOR);
+        zserio::View viewC(data, VARIANT_C_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewC), zserio::ChoiceCaseException);
     }
     {
         const VariantB value = 234;
         UInt64ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
-        zserio::View<UInt64ParamChoice> viewA(data, VARIANT_A_SELECTOR);
+        zserio::View viewA(data, VARIANT_A_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
-        zserio::View<UInt64ParamChoice> viewC(data, VARIANT_C_SELECTOR);
+        zserio::View viewC(data, VARIANT_C_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewC), zserio::ChoiceCaseException);
     }
     {
         UInt64ParamChoice data;
         const VariantC value = 23456;
         data.emplace<ChoiceTag::CHOICE_valueC>(value);
-        zserio::View<UInt64ParamChoice> viewA(data, VARIANT_A_SELECTOR);
+        zserio::View viewA(data, VARIANT_A_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
-        zserio::View<UInt64ParamChoice> viewB(data, VARIANT_B_SELECTOR);
+        zserio::View viewB(data, VARIANT_B_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
     }
 }
@@ -191,20 +191,20 @@ TEST_F(UInt64ParamChoiceTest, bitSizeOf)
         UInt64ParamChoice data;
         const VariantA value = 99;
         data.emplace<ChoiceTag::CHOICE_valueA>(value);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
+        zserio::View view(data, VARIANT_A_SELECTOR);
         ASSERT_EQ(8, zserio::detail::bitSizeOf(view));
     }
     {
         const VariantB value = 234;
         UInt64ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_B_SELECTOR);
+        zserio::View view(data, VARIANT_B_SELECTOR);
         ASSERT_EQ(16, zserio::detail::bitSizeOf(view));
     }
     {
         UInt64ParamChoice data;
         const VariantC value = 23456;
         data.emplace<ChoiceTag::CHOICE_valueC>(value);
-        zserio::View<UInt64ParamChoice> view(data, VARIANT_C_SELECTOR);
+        zserio::View view(data, VARIANT_C_SELECTOR);
         ASSERT_EQ(32, zserio::detail::bitSizeOf(view));
     }
 }
@@ -262,10 +262,10 @@ TEST_F(UInt64ParamChoiceTest, stdHash)
 
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
-    zserio::View<UInt64ParamChoice> view(data, VARIANT_A_SELECTOR);
+    zserio::View view(data, VARIANT_A_SELECTOR);
     const size_t viewHash = 851; // hardcoded value to check that the hash code is stable
-    zserio::View<UInt64ParamChoice> equalView(equalData, VARIANT_A_SELECTOR);
-    zserio::View<UInt64ParamChoice> diffView(diffData, VARIANT_A_SELECTOR);
+    zserio::View equalView(equalData, VARIANT_A_SELECTOR);
+    zserio::View diffView(diffData, VARIANT_A_SELECTOR);
     const size_t diffHash = 950; // hardcoded value to check that the hash code is stable
     test_utils::hashTest(view, viewHash, equalView, diffView, diffHash);
 }

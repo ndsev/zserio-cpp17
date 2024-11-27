@@ -55,7 +55,7 @@ protected:
     {
         CustomVarInt data;
         fillData(data, value);
-        zserio::View<CustomVarInt> view(data);
+        zserio::View view(data);
         zserio::UInt32 readValue = view.getValue();
         ASSERT_EQ(value, readValue);
 

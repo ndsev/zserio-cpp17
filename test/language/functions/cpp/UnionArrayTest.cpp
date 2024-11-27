@@ -65,18 +65,18 @@ protected:
     {
         Inner data;
         fillData(data, pos);
-        zserio::View<Inner> view(data);
+        zserio::View view(data);
 
         const zserio::UInt8 isExplicit = (pos >= ITEMS.size()) ? 1 : 0;
         if (isExplicit != 0)
         {
             const auto& readElement = view.ref().getItem();
-            ASSERT_EQ(zserio::View<Item>(EXPLICIT_ITEM), readElement);
+            ASSERT_EQ(zserio::View(EXPLICIT_ITEM), readElement);
         }
         else
         {
             const auto& readElement = view.ref().getElement();
-            ASSERT_EQ(zserio::View<Item>(ITEMS.at(pos)), readElement);
+            ASSERT_EQ(zserio::View(ITEMS.at(pos)), readElement);
         }
 
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, pos), data);

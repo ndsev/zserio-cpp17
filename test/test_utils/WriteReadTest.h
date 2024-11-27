@@ -15,7 +15,7 @@ namespace detail
 template <typename T, typename... ARGS>
 void writeReadTestDetail(const T& data, ARGS&&... arguments)
 {
-    zserio::View<T> view(data, arguments...);
+    zserio::View view(data, arguments...);
     zserio::detail::validate(view);
 
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
@@ -27,7 +27,7 @@ void writeReadTestDetail(const T& data, ARGS&&... arguments)
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     T readData;
-    const zserio::View<T> readView = zserio::detail::read(reader, readData, arguments...);
+    const zserio::View readView = zserio::detail::read(reader, readData, arguments...);
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(readView, view);
 }
@@ -35,41 +35,41 @@ void writeReadTestDetail(const T& data, ARGS&&... arguments)
 template <typename T, typename... ARGS>
 void writeReadTestSerializeData(const T& data, ARGS&&... arguments)
 {
-    zserio::View<T> view(data, arguments...);
+    zserio::View view(data, arguments...);
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
 
     auto bitBuffer = zserio::serialize(data, arguments...);
     ASSERT_EQ(bitSize, bitBuffer.getBitSize());
 
     T readData;
-    const zserio::View<T> readView = zserio::deserialize(bitBuffer, readData, arguments...);
+    const zserio::View readView = zserio::deserialize(bitBuffer, readData, arguments...);
     ASSERT_EQ(view, readView);
 }
 
 template <typename T, typename... ARGS>
 void writeReadTestSerializeView(const T& data, ARGS&&... arguments)
 {
-    zserio::View<T> view(data, arguments...);
+    zserio::View view(data, arguments...);
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
 
     auto bitBuffer = zserio::serialize(view);
     ASSERT_EQ(bitSize, bitBuffer.getBitSize());
 
     T readData;
-    const zserio::View<T> readView = zserio::deserialize(bitBuffer, readData, arguments...);
+    const zserio::View readView = zserio::deserialize(bitBuffer, readData, arguments...);
     ASSERT_EQ(view, readView);
 }
 
 template <typename T, typename... ARGS>
 void writeReadTestSerializeDataView(const T& data, ARGS&&... arguments)
 {
-    zserio::DataView<T> dataView(data, arguments...);
+    zserio::DataView dataView(data, arguments...);
     const zserio::BitSize bitSize = zserio::detail::bitSizeOf(dataView);
 
     auto bitBuffer = zserio::serialize(dataView);
     ASSERT_EQ(bitSize, bitBuffer.getBitSize());
 
-    const zserio::DataView<T> readDataView = zserio::deserialize<T>(bitBuffer, arguments...);
+    const zserio::DataView readDataView = zserio::deserialize<T>(bitBuffer, arguments...);
     ASSERT_EQ(dataView, readDataView);
 }
 

@@ -67,7 +67,7 @@ protected:
     {
         PackedAutoArray data;
         fillData(data, numElements);
-        const zserio::View<PackedAutoArray> view(data);
+        const zserio::View view(data);
 
         const size_t bitPosition = 2;
         const zserio::BitSize autoArrayBitSize = getBitSize(numElements);

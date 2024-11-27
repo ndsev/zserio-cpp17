@@ -26,7 +26,7 @@ TEST(EmptyChoiceTest, constructors)
     }
     {
         EmptyChoice data;
-        zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+        zserio::View view(data, static_cast<zserio::UInt8>(0));
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
     }
 }
@@ -34,14 +34,14 @@ TEST(EmptyChoiceTest, constructors)
 TEST(EmptyChoiceTest, selector)
 {
     EmptyChoice data;
-    zserio::View<EmptyChoice> viewA(data, static_cast<zserio::UInt8>(0));
+    zserio::View viewA(data, static_cast<zserio::UInt8>(0));
     ASSERT_EQ(0, viewA.selector());
 }
 
 TEST(EmptyChoiceTest, zserioChoiceTag)
 {
     EmptyChoice data;
-    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    zserio::View view(data, static_cast<zserio::UInt8>(0));
     ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
 }
 
@@ -52,23 +52,23 @@ TEST(EmptyChoiceTest, comparisonOperators)
     ASSERT_TRUE(data == equalData);
     ASSERT_FALSE(data < equalData);
 
-    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(1));
-    zserio::View<EmptyChoice> equalView(equalData, static_cast<zserio::UInt8>(1));
-    zserio::View<EmptyChoice> lessThenView(equalData, static_cast<zserio::UInt8>(0));
+    zserio::View view(data, static_cast<zserio::UInt8>(1));
+    zserio::View equalView(equalData, static_cast<zserio::UInt8>(1));
+    zserio::View lessThenView(equalData, static_cast<zserio::UInt8>(0));
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 }
 
 TEST(EmptyChoiceTest, validate)
 {
     EmptyChoice data;
-    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    zserio::View view(data, static_cast<zserio::UInt8>(0));
     EXPECT_NO_THROW(zserio::detail::validate(view));
 }
 
 TEST(EmptyChoiceTest, bitSizeOf)
 {
     EmptyChoice data;
-    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    zserio::View view(data, static_cast<zserio::UInt8>(0));
     ASSERT_EQ(0, zserio::detail::bitSizeOf(view));
 }
 
@@ -95,7 +95,7 @@ TEST(EmptyChoiceTest, stdHash)
     ASSERT_EQ(dataHash, dataHasher(data));
 
     std::hash<zserio::View<EmptyChoice>> viewHasher;
-    zserio::View<EmptyChoice> view(data, static_cast<zserio::UInt8>(0));
+    zserio::View view(data, static_cast<zserio::UInt8>(0));
     const size_t viewHash = dataHash;
     ASSERT_EQ(viewHash, viewHasher(view));
 }

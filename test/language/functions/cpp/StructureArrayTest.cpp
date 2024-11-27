@@ -43,10 +43,10 @@ protected:
     {
         StructureArray data;
         fillData(data, pos);
-        zserio::View<StructureArray> view(data);
+        zserio::View view(data);
 
         const auto& readElement = view.getElement();
-        ASSERT_EQ(zserio::View<Item>(ITEMS.at(pos)), readElement);
+        ASSERT_EQ(zserio::View(ITEMS.at(pos)), readElement);
 
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, pos), data);
         test_utils::writeReadTest(data);
