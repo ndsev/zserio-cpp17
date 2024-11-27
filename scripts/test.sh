@@ -48,6 +48,84 @@ get_test_suites()
     return 0
 }
 
+# Compare BLOBs and JSONs created by tests.
+compare_test_data()
+{
+    exit_if_argc_ne $# 4
+    local TEST_SRC_DIR="$1"; shift
+    local TEST_OUT_DIR="$1"; shift
+    local MSYS_WORKAROUND_TEMP=("${!1}"); shift
+    local TEST_SUITES=("${MSYS_WORKAROUND_TEMP[@]}")
+    local PLATFORM_NAME="$1"; shift
+
+    echo
+    echo "Comparing data created by ${PLATFORM_NAME} tests"
+    echo
+
+    local TOTAL_BLOBS=0
+    local TOTAL_JSONS=0
+    for TEST_SUITE in "${TEST_SUITES[@]}"; do
+        local TEST_DATA_DIR="${TEST_SRC_DIR}/data/${TEST_SUITE}/data"
+        local TEST_SUITE_DIR="${TEST_OUT_DIR}/${TEST_SUITE}"
+
+        # check if test suite exists for this platform
+        if [ -d "${TEST_SUITE_DIR}" ] ; then
+            local FIND_PARAMS="-name *.blob -o -name *.json -not -name compile_commands.json"
+            local TEST_SUITE_FILES=($("${FIND}" "${TEST_SUITE_DIR}" ${FIND_PARAMS} | sort))
+
+            echo -n "${TEST_SUITE} ... "
+            local NUM_BLOBS=0
+            local NUM_JSONS=0
+            local CMP_RESULT=0
+            for TEST_SUITE_FILE in ${TEST_SUITE_FILES[@]} ; do
+                local FILE_NAME="${TEST_SUITE_FILE##*/}"
+                local TEST_DATA_FILE="${TEST_DATA_DIR}/${FILE_NAME}"
+
+                if [ ! -e "${TEST_DATA_FILE}" ] ; then
+                    stderr_echo "Data file '${TEST_DATA_FILE}' doesn't exist!"
+                    echo
+                    return 1
+                fi
+
+                if [[ "${FILE_NAME}" == *.blob ]] ; then
+                    NUM_BLOBS=$((NUM_BLOBS+1))
+                    cmp "${TEST_SUITE_FILE}" "${TEST_DATA_FILE}"
+                    if [ $? -ne 0 ] ; then
+                        CMP_RESULT=1
+                    fi
+                else
+                    NUM_JSONS=$((NUM_JSONS+1))
+                    diff --strip-trailing-cr "${TEST_SUITE_FILE}" "${TEST_DATA_FILE}"
+                    if [ $? -ne 0 ] ; then
+                        CMP_RESULT=1
+                    fi
+                fi
+            done
+
+            if [ ${CMP_RESULT} -ne 0 ] ; then
+                stderr_echo "Comparison failed!"
+                echo
+                return 1
+            fi
+
+            if [ ${NUM_BLOBS} -eq 0 -a ${NUM_JSONS} -eq 0 ] ; then
+                echo "N/A"
+            else
+                echo "${NUM_BLOBS} BLOBs, ${NUM_JSONS} JSONs"
+            fi
+
+            TOTAL_BLOBS=$((TOTAL_BLOBS+NUM_BLOBS))
+            TOTAL_JSONS=$((TOTAL_JSONS+NUM_JSONS))
+        fi
+    done
+
+    if [[ $((TOTAL_BLOBS+TOTAL_JSONS)) -gt 0 ]] ; then
+        echo "Successfully compared ${TOTAL_BLOBS} BLOBs and ${TOTAL_JSONS} JSONs."
+    else
+        echo "Nothing to compare."
+    fi
+}
+
 # Run Zserio C++ tests
 test_cpp()
 {
@@ -102,12 +180,12 @@ test_cpp()
                 BUILD_TYPE="debug"
             fi
 
-            #compare_test_data "${TEST_SRC_DIR}" "${TEST_OUT_DIR}/${TARGET}/${BUILD_TYPE}" TEST_SUITES[@] \
-            #        "C++ ${TARGET}"
-            #if [ $? -ne 0 ] ; then
-            #    stderr_echo "${MESSAGE} failed!"
-            #    return 1
-            #fi
+            compare_test_data "${TEST_SRC_DIR}" "${TEST_OUT_DIR}/${TARGET}/${BUILD_TYPE}" TEST_SUITES[@] \
+                    "C++ ${TARGET}"
+            if [ $? -ne 0 ] ; then
+                stderr_echo "${MESSAGE} failed!"
+                return 1
+            fi
         done
     fi
 
