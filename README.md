@@ -42,7 +42,7 @@ The following two main features of a C++17 generator offer significant advantage
 The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator
 design and is updated regularly.
 
-Current state (15.11.2024):
+Current state (28.11.2024):
 
 - The generator fully supports the following Zserio types:
   - Enumeration types
@@ -51,16 +51,14 @@ Current state (15.11.2024):
   - Structure types
   - Choice types
   - Union types
-- Offsets are not supported, fatal error is reported during generation
-- Extended members are not supported
+- Extended members are not implemented and are always generated as regular compound fields
 - Templates are generated as instantiations without usage of native C++ templates
-- Services, Pubsubs, SQL databases and SQL tables are silently ignored
-- DataView abstraction is not supported
+- Offsets, Service Typs, Pubsub Types, SQL databases and SQL tables are silently ignored
 
 Current state of the sources generated from [PoC schema](https://github.com/ndsev/zserio-cpp17/blob/master/poc/test.zs)
 can be investigated [here](https://github.com/ndsev/zserio-cpp17/tree/master/poc/gen/cpp17).
 
-### How to Get the C++17 Generator
+### How to Get the latest C++17 Generator
 
 Download the latest Zserio bundle jar (together with Zserio runtime library) from the GitHub action artifacts
 using the following steps:
@@ -71,7 +69,7 @@ using the following steps:
 - Download `zserio-java8` artifact for Zserio bundle jar
 - Alternatively, download `zserio-runtime-cpp` artifact for Zserio runtime library
 
-### How to Run the C++17 Generator
+### How to Run the latest C++17 Generator
 
 Run the Zserio C++17 generator using the following steps:
 

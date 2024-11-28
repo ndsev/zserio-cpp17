@@ -14,8 +14,10 @@ public final class Cpp17ExtensionMain
         System.out.println("This generator cannot be run standalone and is designed as an extension to the "
                 + "Zserio version " + Cpp17ExtensionVersion.EXPECTED_ZSERIO_VERSION_STRING + ".\n");
         System.out.println("How to run it using Zserio bundle:");
-        System.out.println("  java -cp zserio.jar:zserio_cpp17.jar zserio.tools.ZserioTool\n");
+        System.out.println("  java -cp zserio.jar:zserio_cpp17.jar zserio.tools.ZserioTool schema_name.zs "
+                + "-cpp17 output_directory_name\n");
         System.out.println("How to run it using Zserio core:");
-        System.out.println("  java -cp zserio_core.jar:zserio_cpp17.jar zserio.tools.ZserioTool");
+        System.out.println("  java -cp zserio_core.jar:zserio_cpp17.jar zserio.tools.ZserioTool "
+                + "schema_name.zs -cpp17 output_directory_name");
     }
 }
