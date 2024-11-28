@@ -15,7 +15,7 @@ import zserio.tools.Extension;
 import zserio.tools.ExtensionParameters;
 
 /**
- * The extension which generates C++ API sources.
+ * The extension which generates C++17 API sources.
  */
 public final class Cpp17Extension implements Extension
 {

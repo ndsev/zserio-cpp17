@@ -184,6 +184,7 @@ spotbugs.home_dir        - Location of the spotbugs tool. If not set, spotbugs i
             <zipfileset dir="${zserio_cpp17.base_dir}/freemarker" includes="*.ftl"
                 prefix="freemarker/cpp17"/>
             <manifest>
+                <attribute name="Main-Class" value="zserio.extension.cpp17.Cpp17ExtensionMain"/>
                 <attribute name="Implementation-Version" value="${zserio_cpp17.version}"/>
             </manifest>
             <metainf dir="${zserio_cpp17.build_dir}/metainf" includes="**/*"/>
