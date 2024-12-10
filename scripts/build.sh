@@ -11,7 +11,7 @@ Description:
     Builds Zserio into the distr directory.
 
 Usage:
-    $0 [-h] [-e] [-c] [-p] [-o <dir>] package...
+    $0 [-h] [-e] [-c] [-p] [-o <dir>] [-z <dir>] package...
 
 Arguments:
     -h, --help               Show this help.
@@ -20,6 +20,8 @@ Arguments:
     -p, --purge              Purge build and distr directories before build.
     -o <dir>, --output-directory <dir>
                              Output directory where build and distr will be located.
+    -z <dir>, --zserio-distr-dir <dir>
+                             Force Zserio distr directory instead of GitHub download.
     package                  Specify the package to build or clean.
 
 Package can be the combination of:
@@ -48,12 +50,13 @@ EOF
 # 3 - Environment help switch is present. Arguments after help switch have not been checked.
 parse_arguments()
 {
-    local NUM_OF_ARGS=6
+    local NUM_OF_ARGS=7
     exit_if_argc_lt $# ${NUM_OF_ARGS}
     local PARAM_CPP_OUT="$1"; shift
     local PARAM_CPP_TARGET_ARRAY_OUT="$1"; shift
     local PARAM_ZSERIO_OUT="$1"; shift
     local PARAM_OUT_DIR_OUT="$1"; shift
+    local PARAM_ZSERIO_DISTR_DIR_OUT="$1"; shift
     local SWITCH_CLEAN_OUT="$1"; shift
     local SWITCH_PURGE_OUT="$1"; shift
 
@@ -92,6 +95,16 @@ parse_arguments()
                     return 1
                 fi
                 eval ${PARAM_OUT_DIR_OUT}="$2"
+                shift 2
+                ;;
+
+            "-z" | "--zserio-distr-dir")
+                if [ $# -eq 1 ] ; then
+                    stderr_echo "Missing Zserio distr directory!"
+                    echo
+                    return 1
+                fi
+                eval ${PARAM_ZSERIO_DISTR_DIR_OUT}="$2"
                 shift 2
                 ;;
 
@@ -157,10 +170,11 @@ main()
     local PARAM_CPP_TARGET_ARRAY=()
     local PARAM_ZSERIO
     local PARAM_OUT_DIR="${ZSERIO_CPP17_PROJECT_ROOT}"
+    local PARAM_ZSERIO_DISTR_DIR=""
     local SWITCH_CLEAN
     local SWITCH_PURGE
     parse_arguments PARAM_CPP PARAM_CPP_TARGET_ARRAY PARAM_ZSERIO \
-                    PARAM_OUT_DIR SWITCH_CLEAN SWITCH_PURGE "$@"
+                    PARAM_OUT_DIR PARAM_ZSERIO_DISTR_DIR SWITCH_CLEAN SWITCH_PURGE "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
         print_help
@@ -220,10 +234,17 @@ main()
         local ACTION_DESCRIPTION="Building"
     fi
 
+    # prepare Ant properties
     local ZSERIO_CPP17_ANT_PROPS=(
             -Dzserio_cpp17.build_dir="${ZSERIO_CPP17_BUILD_DIR}/extension"
             -Dzserio_cpp17.install_dir="${ZSERIO_CPP17_DISTR_DIR}"
     )
+    if [ ! -z "${PARAM_ZSERIO_DISTR_DIR}" ] ; then
+        local ZSERIO_CPP17_ANT_PROPS=(
+                ${ZSERIO_CPP17_ANT_PROPS}
+                -Dzserio.distr_dir="${PARAM_ZSERIO_DISTR_DIR}"
+        )
+    fi
 
     # build Zserio C++ extension
     if [[ ${PARAM_CPP} == 1 ]] ; then
