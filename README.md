@@ -37,12 +37,32 @@ The following two main features of a C++17 generator offer significant advantage
   same C++ `uint8_t` type), this approach also involves implementing dedicated C++ Zserio types for all Zserio
   built-in types within the C++ runtime library.
 
+## Supported Platforms
+
+Zserio C++17 generator supports the following platforms:
+
+- 64-bit Linux
+- 32-bit Linux
+- 64-bit Windows
+
+## Supported Compilers
+
+Zserio C++17 generator supports the following C++ compilers:
+
+- g++ 11.4.0
+- clang 14.0.0
+- clang 18.1.3
+- MinGW 11.2.0
+- MSVC 2022
+
+Although newer C++ compilers are not tested, they should work as well as long as they are backward compatible.
+
 ## Current State
 
 The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator
 design and is updated regularly.
 
-Current state (28.11.2024):
+Current state (10.12.2024):
 
 - The generator fully supports the following Zserio types:
   - Enumeration types
@@ -53,10 +73,8 @@ Current state (28.11.2024):
   - Union types
 - Extended members are not implemented and are always generated as regular compound fields
 - Templates are generated as instantiations without usage of native C++ templates
-- Offsets, Service Typs, Pubsub Types, SQL databases and SQL tables are silently ignored
-
-Current state of the sources generated from [PoC schema](https://github.com/ndsev/zserio-cpp17/blob/master/poc/test.zs)
-can be investigated [here](https://github.com/ndsev/zserio-cpp17/tree/master/poc/gen/cpp17).
+- Offsets, Service Types, Pubsub Types, SQL databases and SQL tables are silently ignored
+- No support for generic programming, including JSON export and import
 
 ### How to Get the latest C++17 Generator
 
