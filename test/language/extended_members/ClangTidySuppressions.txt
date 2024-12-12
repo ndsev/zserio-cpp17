@@ -1,0 +1,14 @@
+bugprone-exception-escape:gen/extended_members/extended_choice_field/Choice.h
+bugprone-exception-escape:gen/extended_members/extended_choice_field/Extended.cpp
+bugprone-exception-escape:gen/extended_members/extended_choice_field/Extended.h
+bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Extended2.cpp
+bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Extended2.h
+bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Union.h
+
+cert-err58-cpp:cpp/ExtendedChoiceFieldTest.cpp
+cert-err58-cpp:cpp/ExtendedCompoundFieldTest.cpp
+cert-err58-cpp:cpp/ExtendedIndexedOffsetsTest.cpp
+cert-err58-cpp:cpp/ExtendedOptionalParameterizedFieldTest.cpp
+cert-err58-cpp:cpp/MultipleExtendedFieldsVariousTypesTest.cpp
+
+performance-move-const-arg:gen/extended_members/extended_field_in_template/ExtendedCompound.cpp

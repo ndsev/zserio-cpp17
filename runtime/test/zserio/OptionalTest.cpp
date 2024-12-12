@@ -6,6 +6,7 @@
 #include "zserio/HashCodeUtil.h"
 #include "zserio/Optional.h"
 #include "zserio/TrackingAllocator.h"
+#include "zserio/Types.h"
 
 namespace zserio
 {
@@ -50,6 +51,9 @@ template <class ALLOC>
 class OptionalTest : public testing::Test
 {
 public:
+    using AllocatorType = ALLOC;
+
+    using BoolOptional = BasicOptional<ALLOC, Bool>;
     using IntOptional = BasicOptional<ALLOC, int>;
     using ShortOptional = BasicOptional<ALLOC, int16_t>;
     using BigOptional = BasicOptional<ALLOC, BigObj>;
@@ -247,10 +251,32 @@ TYPED_TEST(OptionalTest, valueComparison)
 
 TYPED_TEST(OptionalTest, makeOptional)
 {
-    auto opt1 = make_optional(2.5);
+    auto opt1 = zserio::make_optional(2.5);
     ASSERT_TRUE((std::is_same_v<decltype(opt1), Optional<double>>));
-    auto opt2 = make_optional<BigObj>('x');
+    auto opt2 = zserio::make_optional<BigObj>('x');
     ASSERT_TRUE((std::is_same_v<decltype(opt2), Optional<BigObj>>));
+}
+
+TYPED_TEST(OptionalTest, optionalInOptional)
+{
+    using IntOptionalInOptional =
+            BasicOptional<typename TestFixture::AllocatorType, typename TestFixture::IntOptional>;
+
+    IntOptionalInOptional intOpt(std::in_place, std::in_place, 2);
+    ASSERT_TRUE(intOpt.has_value());
+    ASSERT_TRUE(intOpt.value().has_value());
+    ASSERT_EQ(2, intOpt.value().value());
+    ASSERT_EQ(2, **intOpt);
+
+    using BoolOptionalInOptional =
+            BasicOptional<typename TestFixture::AllocatorType, typename TestFixture::BoolOptional>;
+    BoolOptionalInOptional boolOpt(std::in_place, std::in_place, true);
+    BoolOptionalInOptional boolOpt2(std::in_place, this->allocator, std::in_place, this->allocator, true);
+
+    auto stringOpt = zserio::make_optional(typename TestFixture::StringOptional("test"));
+    ASSERT_TRUE(stringOpt.has_value());
+    ASSERT_TRUE(stringOpt.value().has_value());
+    ASSERT_EQ("test", stringOpt.value().value());
 }
 
 TYPED_TEST(OptionalTest, recursiveOpt)

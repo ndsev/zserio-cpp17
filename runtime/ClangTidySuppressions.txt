@@ -26,6 +26,7 @@ bugprone-use-after-move:src/zserio/Variant.h:681
 # Specialization of std::hash is allowed.
 cert-dcl58-cpp:src/zserio/BitBuffer.h:587
 cert-dcl58-cpp:src/zserio/BitBuffer.h:599
+cert-dcl58-cpp:src/zserio/Extended.h:203
 cert-dcl58-cpp:src/zserio/Optional.h:1165
 cert-dcl58-cpp:src/zserio/Variant.h:841
 cert-dcl58-cpp:src/zserio/View.h:204
@@ -109,15 +110,17 @@ google-readability-casting:src/zserio/Variant.h:66
 google-explicit-constructor:src/zserio/View.h:114
 
 # Intentional tests.
+bugprone-exception-escape:test/zserio/OptionalTest.cpp:284
+bugprone-exception-escape:test/zserio/VariantTest.cpp:35
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
-bugprone-exception-escape:test/zserio/OptionalTest.cpp:258
-bugprone-exception-escape:test/zserio/VariantTest.cpp:35
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86
+performance-move-const-arg:test/zserio/ExtendedTest.cpp:83
+performance-move-const-arg:test/zserio/ExtendedTest.cpp:91

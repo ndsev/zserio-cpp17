@@ -36,6 +36,8 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/ConstraintExceptionTest.cpp
     zserio/DataViewTest.cpp
     zserio/EnumsTest.cpp
+    zserio/ExtendedFieldExceptionTest.cpp
+    zserio/ExtendedTest.cpp
     zserio/FileUtilTest.cpp
     zserio/FloatUtilTest.cpp
     zserio/HashCodeUtilTest.cpp

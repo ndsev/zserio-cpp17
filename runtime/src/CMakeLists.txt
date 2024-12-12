@@ -42,6 +42,8 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ChoiceTag.h
     zserio/ConstraintException.h
     zserio/DeltaContext.h
+    zserio/Extended.h
+    zserio/ExtendedFieldException.h
     zserio/FileUtil.cpp
     zserio/FileUtil.h
     zserio/FloatUtil.cpp

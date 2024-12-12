@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 #include "optional_members/optional_recursion/Block.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/ArrayLengthException.h"
 #include "zserio/RebindAlloc.h"
 
 namespace optional_members
@@ -226,7 +227,7 @@ TEST_F(OptionalRecursionTest, bitSizeOf)
     ASSERT_EQ(getBlockBitSize(BLOCK1_DATA.size(), BLOCK2_DATA.size()), zserio::detail::bitSizeOf(view12));
 
     block12.blockTerminator = 0; // set but not used
-    ASSERT_EQ(getBlockBitSize(BLOCK1_DATA.size()), zserio::detail::bitSizeOf(view12));
+    ASSERT_THROW(zserio::detail::validate(view12), zserio::ArrayLengthException);
 }
 
 TEST_F(OptionalRecursionTest, writeBlock1)
@@ -269,18 +270,7 @@ TEST_F(OptionalRecursionTest, writeBlock12)
     ASSERT_EQ(view12, readView12);
 
     block12.blockTerminator = 0; // set but not used
-    zserio::BitStreamWriter writer2(bitBuffer);
-    zserio::detail::write(writer2, view12);
-
-    zserio::BitStreamReader reader2(writer2.getWriteBuffer(), writer2.getBitPosition(), zserio::BitsTag());
-    checkBlockInBitStream(reader2, BLOCK1_DATA);
-    reader2.setBitPosition(0);
-
-    Block readBlock12_2;
-    zserio::View readView12_2 = zserio::detail::read(
-            reader2, readBlock12_2, zserio::UInt8(static_cast<uint8_t>(BLOCK1_DATA.size())));
-    // block12 now has different data than readBlock12_2
-    ASSERT_EQ(view12, readView12_2);
+    ASSERT_THROW(zserio::detail::validate(view12), zserio::ArrayLengthException);
 }
 
 } // namespace optional_recursion

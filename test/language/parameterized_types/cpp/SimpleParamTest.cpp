@@ -165,45 +165,6 @@ TEST_F(SimpleParamDataTest, stdHash)
     ASSERT_TRUE(hasher(item2) != hasher(item3));
 }
 
-TEST_F(SimpleParamViewTest, operatorEquality)
-{
-    Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
-
-    zserio::View view1(item1, HIGHER_VERSION);
-    zserio::View view21(item2, HIGHER_VERSION);
-    ASSERT_TRUE(view1 == view21);
-
-    zserio::View view22(item2, LOWER_VERSION);
-    ASSERT_FALSE(view21 == view22);
-
-    Item item3(ITEM_PARAM, {});
-    zserio::View view3(item3, LOWER_VERSION);
-    ASSERT_TRUE(view22 == view3);
-
-    // TODO[Mi-L@]: Check exceptions?
-}
-
-TEST_F(SimpleParamViewTest, operatorLessThan)
-{
-    Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
-
-    zserio::View view1(item1, HIGHER_VERSION);
-    zserio::View view21(item2, HIGHER_VERSION);
-    ASSERT_FALSE(view1 < view21);
-    ASSERT_FALSE(view21 < view1);
-
-    zserio::View view22(item2, LOWER_VERSION);
-    ASSERT_TRUE(view22 < view21);
-    ASSERT_FALSE(view21 < view22);
-
-    Item item3(ITEM_PARAM, {});
-    zserio::View view3(item3, LOWER_VERSION);
-    ASSERT_FALSE(view22 < view3);
-    ASSERT_FALSE(view3 < view22);
-}
-
 TEST_F(SimpleParamViewTest, stdHash)
 {
     std::hash<zserio::View<Item>> hasher;

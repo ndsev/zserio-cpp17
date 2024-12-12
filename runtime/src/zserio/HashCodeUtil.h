@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <vector>
 
@@ -170,6 +171,25 @@ inline uint32_t calcHashCode(uint32_t seedValue, detail::FloatWrapper<VALUE_TYPE
  */
 template <typename ALLOC>
 inline uint32_t calcHashCode(uint32_t seedValue, const BasicString<ALLOC>& stringValue)
+{
+    uint32_t result = seedValue;
+    for (auto element : stringValue)
+    {
+        result = calcHashCode(result, element);
+    }
+
+    return result;
+}
+
+/**
+ * Calculates hash code of the given string value using the given seed value.
+ *
+ * \param seedValue Seed value (current hash code).
+ * \param stringValue Value for which to calculate the hash code.
+ *
+ * \return Calculated hash code.
+ */
+inline uint32_t calcHashCode(uint32_t seedValue, std::string_view stringValue)
 {
     uint32_t result = seedValue;
     for (auto element : stringValue)

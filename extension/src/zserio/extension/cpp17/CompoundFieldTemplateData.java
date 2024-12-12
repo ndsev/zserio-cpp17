@@ -41,6 +41,11 @@ public final class CompoundFieldTemplateData
         getterName = AccessorNameFormatter.getGetterName(field);
 
         isExtended = field.isExtended();
+        if (isExtended)
+        {
+            includeCollector.addHeaderSystemIncludes(Arrays.asList("zserio/Extended.h"));
+            includeCollector.addCppSystemIncludes(Arrays.asList("zserio/ExtendedFieldException.h"));
+        }
         isPackable = field.isPackable();
 
         offset = createOffset(context, field, includeCollector);
@@ -148,7 +153,7 @@ public final class CompoundFieldTemplateData
             }
             else
             {
-                includeCollector.addCppUserIncludes(Arrays.asList("zserio/MissedOptionalException.h"));
+                includeCollector.addCppSystemIncludes(Arrays.asList("zserio/MissedOptionalException.h"));
                 final ExpressionFormatter cppExpressionFormatter =
                         context.getExpressionFormatter(includeCollector);
                 clause = cppExpressionFormatter.formatGetter(optionalClauseExpression);
@@ -585,7 +590,7 @@ public final class CompoundFieldTemplateData
         if (constraintExpression == null)
             return null;
 
-        includeCollector.addCppUserIncludes(Arrays.asList("zserio/ConstraintException.h"));
+        includeCollector.addCppSystemIncludes(Arrays.asList("zserio/ConstraintException.h"));
         final ExpressionFormatter viewIndirectExpressionFormatter =
                 context.getIndirectExpressionFormatter(includeCollector, "view");
         return new Constraint(constraintExpression, viewIndirectExpressionFormatter);

@@ -298,7 +298,13 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         result.append(AccessorNameFormatter.getGetterName(field));
         result.append(CPP_GETTER_FUNCTION_CALL);
         if (field.isOptional())
+        {
             result.append(CPP_GETTER_OPTIONAL_VALUE);
+        }
+        if (field.isExtended())
+        {
+            result.append(CPP_GETTER_EXTENDED_VALUE);
+        }
         final TypeInstantiation typeInstantiation = field.getTypeInstantiation();
         if (typeInstantiation instanceof DynamicBitFieldInstantiation)
         {
@@ -481,6 +487,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
     private final static String CPP_GETTER_FUNCTION_CALL = "()";
     private final static String CPP_GETTER_OPTIONAL_VALUE = ".value()";
+    private final static String CPP_GETTER_EXTENDED_VALUE = ".value()";
     private final static String CPP_GETTER_DYNAMIC_BITFIELD_VALUE = ".value()";
 
     private final static List<String> BUILT_IN_OPERATORS_INCLUDE = Arrays.asList("zserio/BuiltInOperators.h");

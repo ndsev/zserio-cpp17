@@ -16,7 +16,7 @@ namespace zserio
  *
  * \return Aligned bit position.
  */
-inline BitSize alignTo(BitSize alignmentValue, BitSize bitPosition)
+inline constexpr BitSize alignTo(BitSize alignmentValue, BitSize bitPosition)
 {
     return (bitPosition > 0 && alignmentValue != 0)
             ? (((bitPosition - 1) / alignmentValue) + 1) * alignmentValue

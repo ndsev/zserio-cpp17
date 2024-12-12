@@ -16,17 +16,46 @@ ${name}::${name}() noexcept :
         ${name}(AllocatorType{})
 {}
 
-${name}::${name}(const AllocatorType&<#if fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+<#function structure_field_needs_allocator field>
+    <#return field.typeInfo.needsAllocator || field.optional?? || field.array??>
+</#function>
+<#function structure_fields_need_allocator fieldList>
+    <#list fieldList as field>
+        <#if structure_field_needs_allocator(field)>
+            <#return true>
+        </#if>
+    </#list>
+    <#return false>
+</#function>
+<#macro structure_field_initializer field>
+    <#if field.initializer??>
+        <#local initializer>
+            <#if field.typeInfo.isNumeric>static_cast<${field.typeInfo.typeFullName}::ValueType>(</#if><#t>
+            ${field.initializer}<#t>
+            <#if field.typeInfo.isNumeric>)</#if><#t>
+        </#local>
+        <#local initializer>
+            <#if field.typeInfo.needsAllocator>
+                ${initializer}, allocator<#t>
+            <#else>
+                ${initializer}<#t>
+            </#if>
+        </#local>
+        <#if field.optional??>
+            <#local initializer>
+                ::std::in_place, allocator, ${initializer}<#t>
+            </#local>
+        </#if>
+        ${initializer}<#t>
+    <#elseif field.typeInfo.needsAllocator || field.optional?? || field.array??>
+        allocator<#t>
+    </#if>
+</#macro>
+${name}::${name}(const AllocatorType&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
         <#lt> :
     <#items as field>
-        <#if field.initializer??>
-        ${field.name}(<#if field.typeInfo.isNumeric>static_cast<${field.typeInfo.typeFullName}::ValueType>(</#if><#rt>
-                <#lt>${field.initializer}<#if field.typeInfo.isNumeric>)</#if><#rt>
-                <#lt><#if field_needs_allocator(field)>, allocator</#if>)<#sep>,</#sep>
-        <#else>
-        ${field.name}(<#if field_needs_allocator(field)>allocator</#if>)<#sep>,</#sep>
-        </#if>
+        ${field.name}(<@structure_field_initializer field/>)<#sep>,</#sep>
     </#items>
 <#else>
 
@@ -36,12 +65,12 @@ ${name}::${name}(const AllocatorType&<#if fields_need_allocator(fieldList)> allo
 
 ${name}::${name}(
     <#list fieldList as field>
-        <@structure_field_data_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept :</#if>
+        <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept :</#if>
     </#list>
     <#list fieldList as field>
-        ${field.name}(<#if field.array?? || field.optional?? || !field.typeInfo.isSimple>::std::move(</#if><#rt>
+        ${field.name}(<#if structure_field_needs_allocator(field)>::std::move(</#if><#rt>
                 <@field_data_arg_name field/>)<#t>
-                <#lt><#if field.array?? || field.optional?? || !field.typeInfo.isSimple>)</#if><#sep>,</#sep>
+                <#lt><#if structure_field_needs_allocator(field)>)</#if><#sep>,</#sep>
     </#list>
 {}
 </#if>
@@ -54,7 +83,7 @@ bool operator==(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
         <#list fieldList as field>
             lhs.${field.name}<#if field?has_next>,<#else>)</#if>
         </#list>
-            == std::tie(
+            == ::std::tie(
         <#list fieldList as field>
             rhs.${field.name}<#if field?has_next>,<#else>);</#if>
         </#list>
@@ -71,7 +100,7 @@ bool operator<(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
         <#list fieldList as field>
             lhs.${field.name}<#if field?has_next>,<#else>)</#if>
         </#list>
-            < std::tie(
+            < ::std::tie(
         <#list fieldList as field>
             rhs.${field.name}<#if field?has_next>,<#else>);</#if>
         </#list>
@@ -135,22 +164,59 @@ View<${fullName}>::View(const ${fullName}&<#if fieldList?has_content> data</#if>
 </#list>
 <#list fieldList as field>
 
+<#macro structure_field_view_getter field, indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.isExtended>
+${I}if (m_data.<@field_data_member_name field/>.isPresent())
+${I}{
+        <@structure_field_view_getter_optional field, indent+1/>
+${I}}
+${I}else
+${I}{
+${I}    auto <@field_view_local_name field/> = <#rt>
+        <#if field.optional??><#-- TODO[Mi-L@]: What if non-present optional in data has value? -->
+            <#lt><@structure_field_view_type_name field/>(::std::nullopt);
+        <#else>
+            <#lt><@structure_field_view_getter_inner field, indent+1/>;
+        </#if>
+${I}    <@field_view_local_name field/>.setPresent(false);
+${I}    return <@field_view_local_name field/>;
+${I}}
+    <#else>
+    <@structure_field_view_getter_optional field, indent/>
+    </#if>
+</#macro>
+<#macro structure_field_view_getter_optional field, indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.optional??>
+${I}if (m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>has_value())
+${I}{
+${I}    return <@structure_field_view_getter_inner field, indent+1/>;
+${I}}
+${I}else
+${I}{
+${I}    return <@structure_field_view_type_name field/>(::std::nullopt);
+${I}}
+    <#else>
+${I}return <@structure_field_view_getter_inner field, indent/>;
+    </#if>
+</#macro>
+<#macro structure_field_view_getter_inner field, indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#lt><@structure_field_view_type_name field/>{
+${I}        <#if field.optional??>std::in_place, <#rt>
+            m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator(), </#if><#t>
+            <#if field.isExtended>*</#if><#if field.optional??>*</#if><#t>
+            m_data.<@field_data_member_name field/><@field_view_parameters field/>}<#t>
+</#macro>
 <@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
+    <#-- TODO[Mi-L@]: Use proper allocators - for optional / extended! -->
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
-    <#-- simple or optional simple -->
+    <#-- simple -->
     return m_data.<@field_data_member_name field/>;
     <#else>
-        <#if field.optional??>
-    if (!m_data.<@field_data_member_name field/>)
-    {
-        return {};
-    }
-
-    return <@field_view_type_name field/>{*m_data.<@field_data_member_name field/><@field_view_parameters field/>};
-        <#else>
-    return <@field_view_type_name field/>{m_data.<@field_data_member_name field/><@field_view_parameters field/>};
-        </#if>
+    <@structure_field_view_getter field, 1/>
     </#if>
 }
 </#list>
@@ -172,19 +238,14 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
             <#lt> &&
             <#nt><#rt>
         </#if>
-            lhs.${parameter.getterName}() == rhs.${parameter.getterName}()<#t>
+        lhs.${parameter.getterName}() == rhs.${parameter.getterName}()<#t>
     </#list>
     <#list fieldList as field>
         <#if parameterList?has_content || !field?is_first>
             <#lt> &&
             <#nt><#rt>
         </#if>
-        <#if field.optional?? && field.optional.lhsIndirectClause??>
-            (!(${field.optional.lhsIndirectClause}) ? !(${field.optional.rhsIndirectClause}) : <#t>
-                    *lhs.${field.getterName}() == *rhs.${field.getterName}())<#t>
-        <#else>
-            lhs.${field.getterName}() == rhs.${field.getterName}()<#t>
-        </#if>
+        lhs.${field.getterName}() == rhs.${field.getterName}()<#t>
     </#list>
             <#lt>;
 <#else>
@@ -192,14 +253,6 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 </#if>
 }
 
-<#macro structure_view_field_less_than field indent>
-    <#local resolveOptional=field.optional?? && field.optional.lhsIndirectClause??/>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}if (<#if resolveOptional>*</#if>lhs.${field.getterName}() != <#if resolveOptional>*</#if>rhs.${field.getterName}())
-${I}{
-${I}    return <#if resolveOptional>*</#if>lhs.${field.getterName}() < <#if resolveOptional>*</#if>rhs.${field.getterName}();
-${I}}
-</#macro>
 bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
@@ -210,18 +263,10 @@ bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterLi
     }
 </#list>
 <#list fieldList as field>
-    <#if field.optional?? && field.optional.lhsIndirectClause??>
-    if ((${field.optional.lhsIndirectClause}) && (${field.optional.rhsIndirectClause}))
+    if (lhs.${field.getterName}() != rhs.${field.getterName}())
     {
-        <@structure_view_field_less_than field, 2/>
+        return lhs.${field.getterName}() < rhs.${field.getterName}();
     }
-    else if ((${field.optional.lhsIndirectClause}) != (${field.optional.rhsIndirectClause}))
-    {
-        return !(${field.optional.lhsIndirectClause});
-    }
-    <#else>
-    <@structure_view_field_less_than field, 1/>
-    </#if>
 </#list>
 
     return false;
@@ -248,7 +293,51 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
-<#macro structure_check_constraint field indent=1>
+<#assign numExtendedFields=0/>
+<#macro structure_validate_field field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.isExtended>
+        <#if numExtendedFields == 0>
+${I}uint32_t numExtendedFields = 0;
+        </#if>
+        <#assign numExtendedFields++/>
+${I}if (view.${field.getterName}().isPresent())
+${I}{
+${I}    if (++numExtendedFields != ${numExtendedFields})
+${I}    {
+${I}        throw ExtendedFieldException(
+${I}                "Some of preceding extended fields is not present before '${name}.${field.name}'!");
+${I}    }
+        <@structure_validate_field_optional field, indent+1/>
+${I}}
+    <#else>
+    <@structure_validate_field_optional field, indent/>
+    </#if>
+</#macro>
+<#macro structure_validate_field_optional field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
+${I}// check non-auto optional
+${I}if ((${field.optional.viewIndirectClause}) && !view.${field.getterName}()<#if field.isExtended>.value()</#if>.has_value())
+${I}{
+${I}    throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
+${I}}
+        </#if>
+${I}if (view.${field.getterName}()<#if field.isExtended>-><#else>.</#if>has_value())
+${I}{
+        <@structure_validate_field_inner field, indent+1/>
+${I}}
+    <#else>
+    <@structure_validate_field_inner field, indent/>
+    </#if>
+</#macro>
+<#macro structure_validate_field_inner field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <@structure_check_constraint field, indent/>
+${I}validate(<#if field.isExtended>*</#if><#if field.optional??>*</#if>view.${field.getterName}(), "'${name}.${field.name}'");
+</#macro>
+<#macro structure_check_constraint field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.constraint??>
 ${I}// check constraint
@@ -265,27 +354,37 @@ void validate(const View<${fullName}>&<#if fieldList?has_content || parameterLis
     validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#list fieldList as field>
-    <#if field.optional??>
-        <#if field.optional.viewIndirectClause??>
-    // check non-auto optional
-    if ((${field.optional.viewIndirectClause}) && !view.${field.getterName}())
-    {
-        throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
-    }
-        </#if>
-    if (view.${field.getterName}())
-    {
-        <@structure_check_constraint field, 2/>
-        validate(*view.${field.getterName}(), "'${name}.${field.name}'");
-    }
-    <#else>
-    <@structure_check_constraint field/>
-    validate(view.${field.getterName}(), "'${name}.${field.name}'");
-    </#if>
+    <@structure_validate_field field, 1/>
 </#list>
 }
 
-<#macro structure_view_bitsizeof field indent packed=false>
+<#macro structure_bitsizeof_field_extended field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.isExtended>
+${I}if (<@field_view_local_name field/>.isPresent())
+${I}{
+${I}    endBitPosition = ::zserio::alignTo(8, endBitPosition);
+        <@structure_bitsizeof_field field, indent+1, false/>
+${I}}
+    <#else>
+    <@structure_bitsizeof_field field, indent, false/>
+    </#if>
+</#macro>
+<#macro structure_bitsizeof_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.optional??>
+        <#if !field.optional.viewIndirectClause??>
+${I}endBitPosition += bitSizeOf(Bool());
+        </#if>
+${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
+${I}{
+        <@structure_bitsizeof_field_inner field, indent+1, packed/>
+${I}}
+    <#else>
+    <@structure_bitsizeof_field_inner field, indent, packed/>
+    </#if>
+</#macro>
+<#macro structure_bitsizeof_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
 ${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
@@ -295,7 +394,7 @@ ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
 ${I}endBitPosition += bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#lt><#if field.optional??>*</#if>view.${field.getterName}(), endBitPosition);
+        <#lt><#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition);
 </#macro>
 template <>
 BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
@@ -305,19 +404,8 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
     BitSize endBitPosition = bitPosition;
 
     <#list fieldList as field>
-        <#if field.optional??>
-            <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-            <#else>
-    endBitPosition += bitSizeOf(Bool());
-    if (view.${field.getterName}())
-            </#if>
-    {
-        <@structure_view_bitsizeof field, 2/>
-    }
-        <#else>
-    <@structure_view_bitsizeof field, 1/>
-        </#if>
+    auto <@field_view_local_name field/> = view.${field.getterName}();
+    <@structure_bitsizeof_field_extended field, 1/>
     </#list>
 
     return endBitPosition - bitPosition;
@@ -326,7 +414,39 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 </#if>
 }
 
-<#macro structure_view_write field indent packed=false>
+<#macro structure_write_field_extended field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.isExtended>
+${I}if (<@field_view_local_name field/>.isPresent())
+${I}{
+${I}    writer.alignTo(8);
+        <@structure_write_field field, indent+1, false/>
+${I}}
+    <#else>
+    <@structure_write_field field, indent, false/>
+    </#if>
+</#macro>
+<#macro structure_write_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.optional??>
+${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
+${I}{
+        <#if !field.optional.viewIndirectClause??>
+${I}    writer.writeBool(true);
+        </#if>
+        <@structure_write_field_inner field, indent+1, packed/>
+${I}}
+        <#if !field.optional.viewIndirectClause??>
+${I}else
+${I}{
+${I}    writer.writeBool(false);
+${I}}
+        </#if>
+    <#else>
+    <@structure_write_field_inner field, indent, packed/>
+    </#if>
+</#macro>
+<#macro structure_write_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
 ${I}writer.alignTo(${field.alignmentValue});
@@ -336,38 +456,56 @@ ${I}writer.alignTo(8);
     </#if>
 ${I}write<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#lt>writer, <#if field.optional??>*</#if>view.${field.getterName}());
+        <#lt>writer, <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>);
 </#macro>
 template <>
 void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#list fieldList as field>
-    <#if field.optional??>
-        <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-        <#else>
-    if (view.${field.getterName}())
-        </#if>
-    {
-        <#if !field.optional.viewIndirectClause??>
-        writer.writeBool(true);
-        </#if>
-        <@structure_view_write field, 2/>
-    }
-        <#if !field.optional.viewIndirectClause??>
-    else
-    {
-        writer.writeBool(false);
-    }
-        </#if>
-    <#else>
-    <@structure_view_write field, 1/>
-    </#if>
+    auto <@field_view_local_name field/> = view.${field.getterName}();
+    <@structure_write_field_extended field, 1/>
 </#list>
 }
 
-<#macro structure_view_read compoundName field indent packed=false>
+<#macro structure_read_field_extended compoundName field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.isExtended>
+${I}if (::zserio::alignTo(8U, static_cast<::zserio::BitSize>(reader.getBitPosition())) <
+${I}        reader.getBufferBitSize())
+${I}{
+        reader.alignTo(8);
+        <@structure_read_field compoundName, field, indent+1, false/>
+${I}}
+${I}else
+${I}{
+${I}    data.<@field_data_member_name field/>.setPresent(false);
+${I}}
+    <#else>
+    <@structure_read_field compoundName, field, indent, false/>
+    </#if>
+</#macro>
+<#macro structure_read_field compoundName field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.optional??>
+        <#if field.optional.viewIndirectClause??>
+${I}if (${field.optional.viewIndirectClause})
+            <#else>
+${I}if (reader.readBool())
+            </#if>
+${I}{
+${I}    data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>emplace(<#rt>
+            <#if field.typeInfo.needsAllocator>
+                data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator()<#t>
+            </#if>
+                <#lt>);
+        <@structure_read_field_inner compoundName, field, indent+1, packed/>
+${I}}
+    <#else>
+    <@structure_read_field_inner compoundName, field, indent, packed/>
+    </#if>
+</#macro>
+<#macro structure_read_field_inner compoundName field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
 ${I}reader.alignTo(${field.alignmentValue});
@@ -378,7 +516,7 @@ ${I}reader.alignTo(8);
 ${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field, packed/><#rt>
         <#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        reader, <#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
+        reader, <#if field.isExtended>*</#if><#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
         <#lt><@field_view_view_indirect_parameters field/>);
 </#macro>
 template <>
@@ -396,21 +534,8 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 </#list>
             <#lt>);
 <#list fieldList as field>
-    <#if field.optional??>
-        <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-        <#else>
-    if (reader.readBool())
-        </#if>
-    {
-        data.<@field_data_member_name field/> = <@field_data_type_name field/>(<#rt>
-                <#lt><#if field.typeInfo.needsAllocator>data.<@field_data_member_name field/>.get_allocator()</#if>);
-        <@structure_view_read fullName, field, 2/>
-    }
-    <#else>
-    <@structure_view_read fullName, field, 1/>
-    </#if>
-    <@structure_check_constraint field/>
+    <@structure_read_field_extended fullName, field, 1/>
+    <@structure_check_constraint field, 1/>
 </#list>
     return view;
 }
@@ -423,13 +548,10 @@ void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldLis
     <#list fieldList as field>
         <#if field_needs_packing_context(field)>
             <#if field.optional??>
-                <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-                <#else>
-    if (view.${field.getterName}())
-                </#if>
+    auto <@field_view_local_name field/> = view.${field.getterName}();
+    if (<@field_view_local_name field/>.has_value())
     {
-        initContext(<@packing_context field/>, *view.${field.getterName}());
+        initContext(<@packing_context field/>, *<@field_view_local_name field/>);
     }
             <#else>
     initContext(<@packing_context field/>, view.${field.getterName}());
@@ -447,19 +569,8 @@ BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldLi
     BitSize endBitPosition = bitPosition;
 
         <#list fieldList as field>
-            <#if field.optional??>
-                <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-                <#else>
-    endBitPosition += bitSizeOf(Bool());
-    if (view.${field.getterName}())
-                </#if>
-    {
-        <@structure_view_bitsizeof field, 2, true/>
-    }
-            <#else>
-    <@structure_view_bitsizeof field, 1, true/>
-            </#if>
+    auto <@field_view_local_name field/> = view.${field.getterName}();
+    <@structure_bitsizeof_field field, 1, true/>
         </#list>
 
     return endBitPosition - bitPosition;
@@ -474,27 +585,8 @@ void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pa
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#list fieldList as field>
-    <#if field.optional??>
-        <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-        <#else>
-    if (view.${field.getterName}())
-        </#if>
-    {
-        <#if !field.optional.viewIndirectClause??>
-        writer.writeBool(true);
-        </#if>
-        <@structure_view_write field, 2, true/>
-    }
-        <#if !field.optional.viewIndirectClause??>
-    else
-    {
-        writer.writeBool(false);
-    }
-        </#if>
-    <#else>
-    <@structure_view_write field, 1, true/>
-    </#if>
+    auto <@field_view_local_name field/> = view.${field.getterName}();
+    <@structure_write_field field, 1, true/>
 </#list>
 }
 
@@ -514,20 +606,8 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
 </#list>
             <#lt>);
 <#list fieldList as field>
-    <#if field.optional??>
-        <#if field.optional.viewIndirectClause??>
-    if (${field.optional.viewIndirectClause})
-        <#else>
-    if (reader.readBool())
-        </#if>
-    {
-        data.<@field_data_member_name field/> = <@field_data_type_name field/>(<#rt>
-                <#lt><#if field.typeInfo.needsAllocator>data.<@field_data_member_name field/>.get_allocator()</#if>);
-        <@structure_view_read fullName, field, 2, true/>
-    }
-    <#else>
-    <@structure_view_read fullName, field, 1, true/>
-    </#if>
+    <@structure_read_field fullName, field, 1, true/>
+    <@structure_check_constraint field, 1/>
 </#list>
     (void)view;
 }
