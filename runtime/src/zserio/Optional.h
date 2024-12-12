@@ -18,11 +18,11 @@ namespace detail
 {
 
 template <typename T, bool = (sizeof(T) > 3 * sizeof(void*))>
-struct is_big : std::false_type
+struct is_optional_big : std::false_type
 {};
 
 template <typename T>
-struct is_big<T, true> : std::true_type
+struct is_optional_big<T, true> : std::true_type
 {};
 
 template <typename T, typename = void>
@@ -34,7 +34,7 @@ struct is_recursive<T, std::void_t<typename T::IS_RECURSIVE>> : std::true_type
 {};
 
 template <typename T, bool = is_recursive<T>::value>
-struct is_optional_heap_allocated_impl : is_big<T>::type
+struct is_optional_heap_allocated_impl : is_optional_big<T>::type
 {};
 
 template <typename T>
@@ -695,17 +695,17 @@ using Optional = BasicOptional<std::allocator<uint8_t>, T>;
  * Calculates Optional hash code from given seed.
  *
  * \param seed Initial hash value.
- * \param var Optional to calculate the hash from.
+ * \param opt Optional to calculate the hash from.
  *
  * \return Calculated hash code.
  */
 template <typename ALLOC, typename T>
-uint32_t calcHashCode(uint32_t seed, const BasicOptional<ALLOC, T>& var)
+uint32_t calcHashCode(uint32_t seed, const BasicOptional<ALLOC, T>& opt)
 {
     uint32_t result = seed;
-    if (var)
+    if (opt)
     {
-        result = calcHashCode(result, *var);
+        result = calcHashCode(result, *opt);
     }
     return result;
 }
@@ -1164,12 +1164,12 @@ namespace std
 template <typename ALLOC, typename T>
 struct hash<zserio::BasicOptional<ALLOC, T>>
 {
-    size_t operator()(const zserio::BasicOptional<ALLOC, T>& var) const
+    size_t operator()(const zserio::BasicOptional<ALLOC, T>& opt) const
     {
-        return zserio::calcHashCode(zserio::HASH_SEED, var);
+        return zserio::calcHashCode(zserio::HASH_SEED, opt);
     }
 };
 
 } // namespace std
 
-#endif
+#endif // ZSERIO_OPTIONAL_H_INC

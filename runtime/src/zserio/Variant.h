@@ -848,4 +848,4 @@ struct hash<zserio::BasicVariant<ALLOC, INDEX, T...>>
 
 } // namespace std
 
-#endif
+#endif // ZSERIO_VARIANT_H_INC

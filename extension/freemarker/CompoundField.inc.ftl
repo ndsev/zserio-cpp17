@@ -14,6 +14,10 @@
     ${field.name}<#t>
 </#macro>
 
+<#macro field_view_local_name field>
+    ${field.name}_<#t>
+</#macro>
+
 <#macro field_view_type_name field>
     <#if field.array??>
         <@array_type_name field/><#t>
@@ -38,10 +42,6 @@
     <#else>
         <@field_view_type_name field/><#t>
     </#if>
-</#macro>
-
-<#macro field_view_getter_name field>
-    get${field.name?cap_first}<#t>
 </#macro>
 
 <#macro field_view_parameters field>
@@ -145,6 +145,16 @@
         , static_cast<uint8_t>(${field.dynamicBitFieldLength.ownerIndirectExpression})<#t>
     </#if>
 </#macro>
+
+<#function num_extended_fields fieldList>
+    <#local numExtended=0/>
+    <#list fieldList as field>
+        <#if field.isExtended>
+            <#local numExtended=numExtended+1/>
+        </#if>
+    </#list>
+    <#return numExtended>
+</#function>
 
 <#macro choice_tag_name field>
     CHOICE_${field.name}<#t>
@@ -315,18 +325,5 @@ void View<${fullName}>::<@array_traits_name field/>::read(<@packing_context_type
             <#return field.dynamicBitFieldLength.needsIndex>
         </#if>
     </#if>
-    <#return false>
-</#function>
-
-<#function field_needs_allocator field>
-    <#return field.typeInfo.needsAllocator || field.optional?? || field.array??>
-</#function>
-
-<#function fields_need_allocator fieldList>
-    <#list fieldList as field>
-        <#if field_needs_allocator(field)>
-            <#return true>
-        </#if>
-    </#list>
     <#return false>
 </#function>

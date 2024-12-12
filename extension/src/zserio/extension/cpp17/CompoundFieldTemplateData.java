@@ -41,6 +41,10 @@ public final class CompoundFieldTemplateData
         getterName = AccessorNameFormatter.getGetterName(field);
 
         isExtended = field.isExtended();
+        if (isExtended)
+        {
+            includeCollector.addHeaderSystemIncludes(Arrays.asList("zserio/Extended.h"));
+        }
         isPackable = field.isPackable();
 
         offset = createOffset(context, field, includeCollector);

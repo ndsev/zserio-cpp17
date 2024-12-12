@@ -35,7 +35,7 @@ struct ${name}
 
     explicit ${name}(
     <#items as field>
-        <@structure_field_data_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept;</#if>
+            <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept;</#if>
     </#items>
 </#list>
 
@@ -53,6 +53,7 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs);
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
 
+<#assign numExtendedFields=num_extended_fields(fieldList)>
 template <>
 class View<${fullName}>
 {
