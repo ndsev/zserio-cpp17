@@ -83,7 +83,7 @@ public:
 
     constexpr NumericTypeWrapper operator++(int) noexcept
     {
-        NumericTypeWrapper old;
+        NumericTypeWrapper old = *this;
         operator++();
         return old;
     }
@@ -96,7 +96,7 @@ public:
 
     constexpr NumericTypeWrapper operator--(int) noexcept
     {
-        NumericTypeWrapper old;
+        NumericTypeWrapper old = *this;
         operator--();
         return old;
     }

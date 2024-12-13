@@ -58,10 +58,14 @@ void testIntOperators(typename T::ValueType minValue = NumericLimits<T>::min())
     }
 
     // increment / decrement
-    ++value;
-    --value;
-    value++;
-    value--;
+    value = +valueMin;
+    Int64 origValue = value;
+    ASSERT_EQ(origValue + 1, ++value);
+    ASSERT_EQ(origValue, --value);
+    ASSERT_EQ(origValue, value++);
+    ASSERT_EQ(origValue + 1, value);
+    ASSERT_EQ(origValue + 1, value--);
+    ASSERT_EQ(origValue, value);
 
     // logical
     ASSERT_FALSE(!valueMin);
@@ -133,10 +137,14 @@ void testUIntOperators(typename T::ValueType minValue = NumericLimits<T>::min())
     }
 
     // increment / decrement
-    ++value;
-    --value;
-    value++;
-    value--;
+    value = +valueMin;
+    UInt64 origValue = value;
+    ASSERT_EQ(origValue + 1, ++value);
+    ASSERT_EQ(origValue, --value);
+    ASSERT_EQ(origValue, value++);
+    ASSERT_EQ(origValue + 1, value);
+    ASSERT_EQ(origValue + 1, value--);
+    ASSERT_EQ(origValue, value);
 
     // logical
     ASSERT_FALSE(!valueMax);
@@ -210,10 +218,14 @@ void testFloatOperators()
     value = valueMax / valueMin;
 
     // increment / decrement
-    ++value;
-    --value;
-    value++;
-    value--;
+    value = static_cast<typename FloatWrapper::ValueType>(0);
+    FloatWrapper origValue = value;
+    ASSERT_DOUBLE_EQ(origValue + 1, ++value);
+    ASSERT_DOUBLE_EQ(origValue, --value);
+    ASSERT_DOUBLE_EQ(origValue, value++);
+    ASSERT_DOUBLE_EQ(origValue + 1, value);
+    ASSERT_DOUBLE_EQ(origValue + 1, value--);
+    ASSERT_DOUBLE_EQ(origValue, value);
 
     // comparison
     ASSERT_TRUE(valueMin < valueMax);
