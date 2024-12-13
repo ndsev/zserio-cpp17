@@ -20,6 +20,7 @@ add_custom_test(expressions
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitmaskTypeTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/LeftShiftOperatorTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/LengthOfOperatorTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
