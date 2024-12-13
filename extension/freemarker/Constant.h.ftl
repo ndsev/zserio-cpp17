@@ -14,7 +14,7 @@
 <@doc_comments docComments/>
 </#if>
 constexpr ${typeInfo.typeFullName} ${name} = <#rt>
-        <#lt><#if typeInfo.isNumeric>static_cast<${typeInfo.typeFullName}>(</#if>${value}<#rt>
+        <#lt><#if typeInfo.isNumeric>static_cast<${typeInfo.typeFullName}::ValueType>(</#if>${value}<#rt>
         <#lt><#if typeInfo.isNumeric>)</#if>;
 <@namespace_end package.path/>
 

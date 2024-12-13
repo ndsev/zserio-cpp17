@@ -21,7 +21,9 @@ ${name}::${name}(const AllocatorType&<#if fields_need_allocator(fieldList)> allo
         <#lt> :
     <#items as field>
         <#if field.initializer??>
-        ${field.name}(${field.initializer}<#if field_needs_allocator(field)>, allocator</#if>)<#sep>,</#sep>
+        ${field.name}(<#if field.typeInfo.isNumeric>static_cast<${field.typeInfo.typeFullName}::ValueType>(</#if><#rt>
+                <#lt>${field.initializer}<#if field.typeInfo.isNumeric>)</#if><#rt>
+                <#lt><#if field_needs_allocator(field)>, allocator</#if>)<#sep>,</#sep>
         <#else>
         ${field.name}(<#if field_needs_allocator(field)>allocator</#if>)<#sep>,</#sep>
         </#if>
