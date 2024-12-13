@@ -8,6 +8,8 @@ google-explicit-constructor:gen/expressions/isset_operator/TestBitmask.h
 performance-move-const-arg:gen/expressions/field_type/FieldTypeExpression.cpp
 performance-move-const-arg:gen/expressions/field_type_with_clash/FieldTypeExpression.cpp
 
+hicpp-signed-bitwise:gen/expressions/left_shift_operator/LeftShiftOperator.cpp
+
 readability-simplify-boolean-expr:gen/expressions/array_type/ArrayTypeExpression.cpp
 readability-simplify-boolean-expr:gen/expressions/index_operator/Element.cpp
 readability-simplify-boolean-expr:gen/expressions/parameterized_array_type/ParameterizedArrayElement.cpp

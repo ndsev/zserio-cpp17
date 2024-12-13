@@ -253,6 +253,30 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     }
 
     @Override
+    public BinaryExpressionFormatting getLeftShift(Expression expr)
+    {
+        if (expr.op1().getIntegerLowerBound() != null &&
+                expr.op1().getIntegerLowerBound().compareTo(BigInteger.ZERO) >= 0)
+        {
+            // left operand has a unsigned type
+            return new BinaryExpressionFormatting("(", ") << (", ")");
+        }
+        else
+        {
+            // left operand has a signed type
+            if (expr.op2().getIntegerUpperBound() != null &&
+                    expr.op2().getIntegerUpperBound().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0)
+            {
+                return new BinaryExpressionFormatting("(", ") * (INT32_C(1) << (", "))");
+            }
+            else
+            {
+                return new BinaryExpressionFormatting("(", ") * (INT64_C(1) << (", "))");
+            }
+        }
+    }
+
+    @Override
     public TernaryExpressionFormatting getQuestionMark(Expression expr)
     {
         if (expr.getExprType() == ExpressionType.INTEGER || expr.getExprType() == ExpressionType.FLOAT)

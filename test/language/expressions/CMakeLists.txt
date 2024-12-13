@@ -19,6 +19,7 @@ add_custom_test(expressions
         expressions_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitmaskTypeTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/LeftShiftOperatorTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
