@@ -74,6 +74,9 @@ public:
     /** Whether the array has defined size in the schema. */
     static constexpr bool HAS_SCHEMA_SIZE = ArrayBase<ARRAY_TYPE>::HAS_SCHEMA_SIZE;
 
+    /** Forward declaration of the Array const iterator. */
+    class ConstIterator;
+
     /**
      * Typedef for the array's owner type.
      *
@@ -299,6 +302,165 @@ public:
     {
         return Traits::at(m_owner, m_rawArray[index], index);
     }
+
+    /**
+     * Returns an constant iterator to the beginning.
+     *
+     * \return Constant iterator to the beginning.
+     */
+    ConstIterator begin() const
+    {
+        return ConstIterator(this, 0);
+    }
+
+    /**
+     * Returns and constant iterator to the end.
+     *
+     * \return Constant iterator to the end.
+     */
+    ConstIterator end() const
+    {
+        return ConstIterator(this, size());
+    }
+
+    /**
+     * Implementation of Array constant iterator.
+     */
+    class ConstIterator
+    {
+    public:
+        using iterator_category = std::random_access_iterator_tag;
+        using value_type = decltype(std::declval<Array>().at(std::declval<size_t>()));
+        using difference_type = std::ptrdiff_t;
+        /** Helper needed to implement operator-> on the ConstIterator. */
+        struct PointerHelper
+        {
+            value_type* operator->()
+            {
+                return std::addressof(value);
+            }
+
+            value_type value;
+        };
+        using pointer = PointerHelper;
+        using reference = value_type; // we always return by value!
+
+        ConstIterator(const Array* array, size_t index) :
+                m_array(array),
+                m_index(index)
+        {}
+
+        value_type operator*() const
+        {
+            return m_array->at(m_index);
+        }
+
+        PointerHelper operator->() const
+        {
+            return PointerHelper{m_array->at(m_index)};
+        }
+
+        value_type operator[](difference_type offset) const
+        {
+            return m_array->at(m_index + static_cast<size_t>(offset));
+        }
+
+        ConstIterator& operator++()
+        {
+            ++m_index;
+            return *this;
+        }
+
+        ConstIterator operator++(int)
+        {
+            ConstIterator tmp = *this;
+            m_index++;
+            return tmp;
+        }
+
+        ConstIterator& operator--()
+        {
+            --m_index;
+            return *this;
+        }
+
+        ConstIterator operator--(int)
+        {
+            ConstIterator tmp = *this;
+            m_index--;
+            return tmp;
+        }
+
+        ConstIterator& operator+=(difference_type offset)
+        {
+            m_index += static_cast<size_t>(offset);
+            return *this;
+        }
+
+        ConstIterator operator+(difference_type offset) const
+        {
+            return ConstIterator(m_array, m_index + static_cast<size_t>(offset));
+        }
+
+        friend ConstIterator operator+(difference_type offset, const ConstIterator& right)
+        {
+            return ConstIterator(right.m_array, right.m_index + static_cast<size_t>(offset));
+        }
+
+        ConstIterator& operator-=(difference_type offset)
+        {
+            m_index -= static_cast<size_t>(offset);
+            return *this;
+        }
+
+        ConstIterator operator-(difference_type offset)
+        {
+            return ConstIterator(m_array, m_index - static_cast<size_t>(offset));
+        }
+
+        bool operator==(const ConstIterator& other) const
+        {
+            return m_array == other.m_array && m_index == other.m_index;
+        }
+
+        bool operator!=(const ConstIterator& other) const
+        {
+            return !(*this == other);
+        }
+
+        bool operator<(const ConstIterator& other) const
+        {
+            if (m_array != other.m_array)
+            {
+                return m_array < other.m_array;
+            }
+            if (m_index != other.m_index)
+            {
+                return m_index < other.m_index;
+            }
+
+            return false;
+        }
+
+        bool operator>(const ConstIterator& other) const
+        {
+            return other < *this;
+        }
+
+        bool operator<=(const ConstIterator& other) const
+        {
+            return !(other < *this);
+        }
+
+        bool operator>=(const ConstIterator& other) const
+        {
+            return !(*this < other);
+        }
+
+    private:
+        const Array* m_array;
+        size_t m_index;
+    };
 
 private:
     const RawArray& m_rawArray;

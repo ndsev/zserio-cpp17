@@ -234,6 +234,53 @@ TEST(ArrayTest, int8PackedArray)
     Vector<Int8> readRawArray;
     detail::readPacked<Array<Vector<Int8>, ArrayType::NORMAL>>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(rawArray, readRawArray);
+
+    auto it = array.begin();
+    ASSERT_EQ(-4, *it);
+    ASSERT_EQ(-1, it[2]);
+    it += 2;
+    ASSERT_EQ(-1, *it);
+    ASSERT_EQ(-3, it[-1]);
+    it -= 1;
+    ASSERT_EQ(-3, *it);
+    auto otherIt = it + 2;
+    ASSERT_EQ(0, *otherIt);
+    ASSERT_EQ(2, *(++otherIt));
+    ASSERT_EQ(2, *(otherIt++));
+    ASSERT_EQ(4, *otherIt);
+    ASSERT_EQ(2, *(--otherIt));
+    ASSERT_EQ(2, *(otherIt--));
+    ASSERT_EQ(0, *otherIt);
+    otherIt = 2 + it;
+    ASSERT_EQ(0, *otherIt);
+    otherIt = it - 1;
+    ASSERT_EQ(-4, *otherIt);
+
+    ASSERT_TRUE(otherIt == array.begin());
+    ASSERT_FALSE(otherIt == array.end());
+
+    ASSERT_TRUE(otherIt != array.end());
+    ASSERT_FALSE(otherIt != array.begin());
+
+    ASSERT_TRUE(otherIt < array.end());
+    ASSERT_FALSE(array.end() < otherIt);
+
+    ASSERT_TRUE(array.end() > array.begin());
+    ASSERT_FALSE(array.begin() > array.end());
+
+    ASSERT_TRUE(array.begin() <= array.end());
+    ASSERT_TRUE(array.begin() <= array.begin());
+    ASSERT_FALSE(array.end() <= array.begin());
+
+    ASSERT_TRUE(array.end() >= array.begin());
+    ASSERT_TRUE(array.end() >= array.end());
+    ASSERT_FALSE(array.begin() >= array.end());
+
+    size_t i = 0;
+    for (auto element : array)
+    {
+        ASSERT_EQ(rawArray[i++], element);
+    }
 }
 
 TEST(ArrayTest, fixedDynInt16Array)
@@ -478,6 +525,20 @@ TEST(ArrayTest, testObjectArray)
     detail::read<Array<Vector<TestObject>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    size_t i = 0;
+    for (auto object : array1)
+    {
+        ASSERT_EQ(i++ == 0 ? 0 : 13, object.field());
+    }
+
+    TestObject object{13};
+    zserio::View view(object);
+    ASSERT_EQ(view, *(array1.begin() + 1));
+    ASSERT_EQ(0, array1.begin()->field());
+    ASSERT_EQ(view, array1.begin()[1]);
+    ASSERT_EQ(array1.begin(), array1.end() - 2);
+    ASSERT_EQ(*array1.begin(), *(array1.end() - 2));
 }
 
 TEST(ArrayTest, testObjectPackedArray)
