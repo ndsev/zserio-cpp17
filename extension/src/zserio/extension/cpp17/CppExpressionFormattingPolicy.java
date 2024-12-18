@@ -265,7 +265,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         {
             // left operand has a signed type
             if (expr.op2().getIntegerUpperBound() != null &&
-                    expr.op2().getIntegerUpperBound().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0)
+                    expr.op2().getIntegerUpperBound().compareTo(BigInteger.valueOf(32)) < 0)
             {
                 return new BinaryExpressionFormatting("(", ") * (INT32_C(1) << (", "))");
             }
