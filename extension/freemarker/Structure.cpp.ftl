@@ -175,7 +175,8 @@ ${I}else
 ${I}{
 ${I}    auto <@field_view_local_name field/> = <#rt>
         <#if field.optional??><#-- TODO[Mi-L@]: What if non-present optional in data has value? -->
-            <#lt><@structure_field_view_type_name field/>(::std::nullopt);
+            <@structure_field_view_type_name field/>(::std::nullopt, <#t>
+                    <#lt>m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
         <#else>
             <#lt><@structure_field_view_getter_inner field, indent+1/>;
         </#if>
@@ -195,7 +196,8 @@ ${I}    return <@structure_field_view_getter_inner field, indent+1/>;
 ${I}}
 ${I}else
 ${I}{
-${I}    return <@structure_field_view_type_name field/>(::std::nullopt);
+${I}    return <@structure_field_view_type_name field/>(::std::nullopt, <#rt>
+                <#lt>m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
 ${I}}
     <#else>
 ${I}return <@structure_field_view_getter_inner field, indent/>;
@@ -211,7 +213,6 @@ ${I}        <#if field.optional??>std::in_place, <#rt>
 </#macro>
 <@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
-    <#-- TODO[Mi-L@]: Use proper allocators - for optional / extended! -->
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
     <#-- simple -->
     return m_data.<@field_data_member_name field/>;
