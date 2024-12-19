@@ -235,6 +235,18 @@ TEST(ArrayTest, int8PackedArray)
     detail::readPacked<Array<Vector<Int8>, ArrayType::NORMAL>>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(rawArray, readRawArray);
 
+    ASSERT_EQ(rawArray.size(), array.size());
+    ASSERT_FALSE(array.empty());
+
+    Vector<Int8> emptyRawArray;
+    Array<Vector<Int8>, ArrayType::AUTO> emptyArray(emptyRawArray);
+    ASSERT_TRUE(emptyArray.empty());
+
+    ASSERT_THROW(emptyArray.front(), std::out_of_range); // TODO[Mi-L@]: Do we need it to use at() internally?
+
+    ASSERT_EQ(rawArray.front(), array.front());
+    ASSERT_EQ(rawArray.back(), array.back());
+
     auto it = array.begin();
     ASSERT_EQ(-4, *it);
     ASSERT_EQ(-1, it[2]);
@@ -280,6 +292,12 @@ TEST(ArrayTest, int8PackedArray)
     for (auto element : array)
     {
         ASSERT_EQ(rawArray[i++], element);
+    }
+
+    i = array.size() - 1;
+    for (auto rit = array.rbegin(); rit < array.rend(); ++rit)
+    {
+        ASSERT_EQ(rawArray[i--], *rit);
     }
 }
 
@@ -525,6 +543,10 @@ TEST(ArrayTest, testObjectArray)
     detail::read<Array<Vector<TestObject>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    ASSERT_FALSE(array1.empty());
+    ASSERT_EQ(0, array1.front().field());
+    ASSERT_EQ(13, array1.back().field());
 
     size_t i = 0;
     for (auto object : array1)
