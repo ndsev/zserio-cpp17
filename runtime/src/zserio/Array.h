@@ -77,6 +77,8 @@ public:
     /** Forward declaration of the Array const iterator. */
     class ConstIterator;
 
+    using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
+
     /**
      * Typedef for the array's owner type.
      *
@@ -281,6 +283,16 @@ public:
     }
 
     /**
+     * Gets whether the array is empty.
+     *
+     * \return True when the array is empty, false otherwise.
+     */
+    bool empty() const
+    {
+        return m_rawArray.empty();
+    }
+
+    /**
      * Returns element view at the given index.
      *
      * \param index Element index.
@@ -304,24 +316,92 @@ public:
     }
 
     /**
+     * Returns element view for the first element in container.
+     *
+     * \return View to the first element.
+     */
+    decltype(auto) front() const
+    {
+        return Traits::at(m_owner, m_rawArray.at(0), 0);
+    }
+
+    /**
+     * Returns element view for the last element in container.
+     *
+     * \return View to the last element.
+     */
+    decltype(auto) back() const
+    {
+        return Traits::at(m_owner, m_rawArray.at(size() - 1), size() - 1);
+    }
+
+    /**
      * Returns an constant iterator to the beginning.
      *
      * \return Constant iterator to the beginning.
      */
-    ConstIterator begin() const
+    /** \{ */
+    ConstIterator cbegin() const noexcept
     {
         return ConstIterator(this, 0);
     }
+
+    ConstIterator begin() const noexcept
+    {
+        return cbegin();
+    }
+    /** \} */
 
     /**
      * Returns and constant iterator to the end.
      *
      * \return Constant iterator to the end.
      */
-    ConstIterator end() const
+    /** \{ */
+    ConstIterator cend() const noexcept
     {
         return ConstIterator(this, size());
     }
+
+    ConstIterator end() const noexcept
+    {
+        return cend();
+    }
+    /** \} */
+
+    /**
+     * Returns an constant reverse iterator to the beginning of the reversed array.
+     *
+     * \return Constant reverse iterator to the beginning of the reversed array.
+     */
+    /** \{ */
+    ConstReverseIterator crbegin() const noexcept
+    {
+        return ConstReverseIterator(end());
+    }
+
+    ConstReverseIterator rbegin() const noexcept
+    {
+        return crbegin();
+    }
+    /** \} */
+
+    /**
+     * Returns an constant reverse iterator to the end of the reversed array.
+     *
+     * \return Constant reverse iterator to the end of the reversed array.
+     */
+    /** \{ */
+    ConstReverseIterator crend() const noexcept
+    {
+        return ConstReverseIterator(begin());
+    }
+
+    ConstReverseIterator rend() const noexcept
+    {
+        return crend();
+    }
+    /** \} */
 
     /**
      * Implementation of Array constant iterator.
@@ -332,8 +412,11 @@ public:
         using iterator_category = std::random_access_iterator_tag;
         using value_type = decltype(std::declval<Array>().at(std::declval<size_t>()));
         using difference_type = std::ptrdiff_t;
+        using pointer = void;
+        using reference = value_type; // we always return by value!
+
         /** Helper needed to implement operator-> on the ConstIterator. */
-        struct PointerHelper
+        struct ArrowHelper
         {
             value_type* operator->()
             {
@@ -342,8 +425,6 @@ public:
 
             value_type value;
         };
-        using pointer = PointerHelper;
-        using reference = value_type; // we always return by value!
 
         ConstIterator(const Array* array, size_t index) :
                 m_array(array),
@@ -355,9 +436,9 @@ public:
             return m_array->at(m_index);
         }
 
-        PointerHelper operator->() const
+        ArrowHelper operator->() const
         {
-            return PointerHelper{m_array->at(m_index)};
+            return ArrowHelper{m_array->at(m_index)};
         }
 
         value_type operator[](difference_type offset) const
@@ -420,7 +501,7 @@ public:
 
         bool operator==(const ConstIterator& other) const
         {
-            return m_array == other.m_array && m_index == other.m_index;
+            return m_index == other.m_index;
         }
 
         bool operator!=(const ConstIterator& other) const
@@ -430,10 +511,6 @@ public:
 
         bool operator<(const ConstIterator& other) const
         {
-            if (m_array != other.m_array)
-            {
-                return m_array < other.m_array;
-            }
             if (m_index != other.m_index)
             {
                 return m_index < other.m_index;
