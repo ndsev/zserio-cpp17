@@ -19,8 +19,13 @@ set(ZSERIO_CPP17_PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
 set(ZSERIO_RELEASE_ROOT "${ZSERIO_CPP17_PROJECT_ROOT}/build/extension/download" CACHE PATH "Root directory of Zserio release binaries.")
 set(ZSERIO_CPP17_RELEASE_ROOT "${ZSERIO_CPP17_PROJECT_ROOT}/distr" CACHE PATH "Root directory of Zserio C++17 release binaries.")
 set(ZSERIO_TEST_DATA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/data" CACHE PATH "Root directory of the Zserio test data.")
-set(ZSERIO_USE_BUNDLE OFF CACHE BOOL "Generate code using zserio.jar instead of core+cpp17.jar directly.")
+set(ZSERIO_USE_BUNDLE OFF CACHE BOOL "Generate code using zserio.jar instead of zserio_cpp17.jar directly.")
 set(ZSERIO_TEST_SUITES "**" CACHE STRING "List of test suites to run. Default is '**'.")
+
+set(ZSERIO_TEST_EXTERN_SCHEMA "" CACHE STRING "Name of external schema to test.")
+set(ZSERIO_TEST_EXTERN_SCHEMA_ROOT "." CACHE STRING "Root directory of external schema to test.")
+set(ZSERIO_TEST_EXTERN_SCHEMA_NAME "" CACHE STRING "Name of output subdirectory for external schema to test.")
+set(ZSERIO_TEST_EXTERN_SCHEMA_TEST_FILE "" CACHE STRING "External schema test source file.")
 
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use.")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Whether C++ standard is required.")
@@ -93,6 +98,11 @@ function(add_custom_test TEST_NAME)
     add_library(${TEST_NAME} INTERFACE)
     add_dependencies(${TEST_NAME} ${TEST_ARG_DEPENDS})
 
+    if ("${TEST_NAME}" STREQUAL "external")
+        set(CLANG_TIDY_WERROR OFF)
+    else ()
+        set(CLANG_TIDY_WERROR ON)
+    endif ()
     clang_tidy_add_custom_target(${TEST_NAME}-clang-tidy
                                  DEPENDS
                                     ${TEST_NAME}
@@ -104,7 +114,9 @@ function(add_custom_test TEST_NAME)
                                  CONFIG_FILE
                                     "${ZSERIO_CPP17_PROJECT_ROOT}/runtime/ClangTidyConfig.txt"
                                  HEADER_FILTER
-                                    "${CMAKE_CURRENT_SOURCE_DIR}/.*|${CMAKE_CURRENT_BINARY_DIR}/.*")
+                                    "${CMAKE_CURRENT_SOURCE_DIR}/.*|${CMAKE_CURRENT_BINARY_DIR}/.*"
+                                 WERROR
+                                    ${CLANG_TIDY_WERROR})
 
     if (DEFINED TEST_ARG_SOURCES)
         clang_format_add_custom_target(${TEST_NAME}-clang-format
@@ -124,26 +136,25 @@ function(add_custom_test TEST_NAME)
     endif ()
 endfunction()
 
-# add all test suites (filter out utils and data subdirectories)
+# add all test suites
 set(ZSERIO_EXTRA_ARGS "$ENV{ZSERIO_EXTRA_ARGS}")
 separate_arguments(ZSERIO_EXTRA_ARGS)
 foreach (TEST_SUITE ${ZSERIO_TEST_SUITES})
     file(GLOB_RECURSE SUBPROJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${TEST_SUITE}/CMakeLists.txt")
-    foreach (subproject ${SUBPROJECTS})
-        if (NOT "${subproject}" MATCHES "data/.*")
-            get_filename_component(subdirectory ${subproject} DIRECTORY)
-            set(TEST_ZS_ROOT "${ZSERIO_TEST_DATA_ROOT}/${TEST_SUITE}/zs")
-            add_subdirectory(${subdirectory})
+    foreach (SUBPROJECT ${SUBPROJECTS})
+        if (NOT "${SUBPROJECT}" MATCHES "data/.*" AND NOT "${SUBPROJECT}" MATCHES "others/external/.*")
+            get_filename_component(SUBDIRECTORY ${SUBPROJECT} DIRECTORY)
+            if ("${SUBDIRECTORY}" MATCHES "external/*")
+                add_subdirectory(${SUBDIRECTORY} "${SUBDIRECTORY}/${ZSERIO_TEST_EXTERN_SCHEMA_NAME}")
+            else ()
+                set(TEST_ZS_ROOT "${ZSERIO_TEST_DATA_ROOT}/${TEST_SUITE}/zs")
+                add_subdirectory(${SUBDIRECTORY})
+            endif ()
         endif ()
     endforeach ()
 endforeach ()
 
 if (NOT TEST_SOURCES_LIST)
-    if (NOT TEST_DEPENDENCIES_LIST)
-        message(STATUS "Test suites doesn't match any test!")
-        return()
-    endif ()
-
     set(EMPTY_TEST_HELPER ${CMAKE_CURRENT_BINARY_DIR}/EmptyTestHelper.cpp)
     set(EMPTY_TEST_HELPER_CONTENT
         "#include \"gtest/gtest.h\"\nTEST(EmptyTestHelper, Success)\n{\n    ASSERT_TRUE(true);\n}\n"
