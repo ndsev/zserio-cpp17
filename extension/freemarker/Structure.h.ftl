@@ -40,7 +40,7 @@ struct ${name}
 </#list>
 
 <#list fieldList as field>
-    <@structure_field_data_type_name field/> <@field_data_member_name field/>;
+    <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
 </#list>
 };
 
@@ -59,6 +59,7 @@ class View<${fullName}>
 {
 public:
     <@array_traits_declaration fullName, fieldList/>
+    <@structure_offset_setters_declaration fullName, fieldList/>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
@@ -84,13 +85,13 @@ public:
     </#items>
 </#list>
 
+    const ${fullName}& zserioData() const;
+
 protected:
     View(const ${fullName}& data, const View& other) noexcept;
 
 private:
-<#if fieldList?has_content>
     const ${fullName}& m_data;
-</#if>
 <#list parameterList as parameter>
     <@parameter_view_type_name parameter/> <@parameter_view_member_name parameter/>;
 </#list>
@@ -150,8 +151,19 @@ void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, 
     </#list>
         <#lt>);
 </#if>
-<@namespace_end ["detail"]/>
-<@namespace_end ["zserio"]/>
+<#if containsOffset>
+
+template <>
+struct OffsetsInitializer<${fullName}>
+{
+    static BitSize initialize(const View<${fullName}>& view, BitSize bitPosition);
+    <#if isPackable && usedInPackedArray>
+    static BitSize initialize(PackingContext<${fullName}>& packingContext,
+            const View<${fullName}>& view, BitSize bitPosition);
+    </#if>
+};
+</#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 template <>

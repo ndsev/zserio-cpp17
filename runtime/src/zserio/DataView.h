@@ -42,6 +42,7 @@ public:
             m_ownData(data)
     {
         detail::validate(*this);
+        (void)detail::initializeOffsets(*this, 0);
     }
 
     /**
@@ -56,6 +57,7 @@ public:
             m_ownData(std::move(data))
     {
         detail::validate(*this);
+        (void)detail::initializeOffsets(*this, 0);
     }
 
     /**

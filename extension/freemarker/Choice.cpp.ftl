@@ -82,11 +82,6 @@ View<${fullName}>::View(const ${fullName}& data,
     return <@parameter_view_member_name parameter/>;
 }
 </#list>
-
-${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
-{
-    return m_data.index();
-}
 <#list fieldList as field>
 
 <@field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
@@ -108,6 +103,16 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
     return <@function_result_expression function/>;
 }
 </#list>
+
+${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
+{
+    return m_data.index();
+}
+
+const ${fullName}& View<${fullName}>::zserioData() const
+{
+    return m_data;
+}
 
 <#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
@@ -409,8 +414,51 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
     (void)view;
 }
 </#if>
-<@namespace_end ["detail"]/>
-<@namespace_end ["zserio"]/>
+<#if containsOffset>
+
+<#macro choice_initialize_offsets_member member indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if member.field??>
+${I}endBitPosition += <#if member.field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
+        <@array_packed_suffix member.field, packed/>(<#t>
+        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
+        <#lt>view.${member.field.getterName}(), endBitPosition);
+    <#else>
+${I}// empty
+    </#if>
+</#macro>
+BitSize OffsetsInitializer<${fullName}>::initialize(
+        const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
+        <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+    <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+    <@choice_switch "choice_initialize_offsets_member", "choice_no_match", viewIndirectSelectorExpression/>
+
+    return endBitPosition - bitPosition;
+    <#else>
+    return 0;
+    </#if>
+}
+    <#if isPackable && usedInPackedArray>
+
+BitSize OffsetsInitializer<${fullName}>::initialize(
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>,
+        const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+        <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+    <@choice_switch "choice_initilize_offsets_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+
+    return endBitPosition - bitPosition;
+        <#else>
+    return 0;
+        </#if>
+}
+    </#if>
+</#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> value</#if>) const

@@ -158,7 +158,8 @@ TEST_F(ExtendedIndexedOffsetsTest, writeExtendedReadOriginal)
     zserio::BitStreamReader reader(bitBuffer);
     Original readDataOriginal;
     zserio::View readViewOriginal = zserio::detail::read(reader, readDataOriginal);
-    ASSERT_EQ(view.offsets(), readViewOriginal.offsets());
+    // cannot compare Array views since extended version Array is ArrayStorage::MUTABLE
+    ASSERT_EQ(view.zserioData().offsets, readViewOriginal.zserioData().offsets);
     ASSERT_EQ(ORIGINAL_BIT_SIZE, reader.getBitPosition());
 }
 

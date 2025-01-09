@@ -137,7 +137,7 @@ TEST_F(MultipleParamChoiceTest, array13)
     ASSERT_THROW(view.array5(), zserio::BadVariantAccess);
     ASSERT_THROW(view.field17(), zserio::BadVariantAccess);
     ASSERT_THROW(view.dynBitField(), zserio::BadVariantAccess);
-    zserio::Array<zserio::Vector<Data13>, zserio::ArrayType::NORMAL,
+    zserio::Array<zserio::Vector<Data13>, zserio::ArrayType::NORMAL, zserio::ArrayStorage::IMMUTABLE,
             zserio::View<TestChoice>::ZserioArray13ArrayTraits>
             expectedArray13View(value, view, value.size());
     ASSERT_EQ(expectedArray13View, view.array13());

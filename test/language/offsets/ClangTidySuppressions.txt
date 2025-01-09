@@ -1,0 +1,9 @@
+bugprone-exception-escape:gen/offsets/nested_offset/NestedOffset.cpp
+bugprone-exception-escape:gen/offsets/nested_offset/NestedOffset.h
+bugprone-exception-escape:gen/offsets/nested_offset/NestedOffsetChoice.h
+bugprone-exception-escape:gen/offsets/nested_offset/NestedOffsetUnion.h
+
+performance-move-const-arg:gen/offsets/parameter_offset/School.cpp
+
+readability-simplify-boolean-expr:gen/offsets/nested_offset/NestedOffsetChoice.cpp
+readability-simplify-boolean-expr:gen/offsets/optional_member_offset/OptionalMemberOffset.cpp

@@ -335,11 +335,13 @@ TEST(ArrayTest, variableDynInt16Array)
 
     VarDynInt16Owner owner;
 
-    Array<Vector<DynInt16<>>, ArrayType::AUTO, VarDynInt16ArrayTraits> array1(rawArray1, owner);
+    Array<Vector<DynInt16<>>, ArrayType::AUTO, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits> array1(
+            rawArray1, owner);
     ASSERT_EQ(rawArray1.at(0), array1.at(0).value());
     ASSERT_EQ(rawArray1.at(1), array1.at(1).value());
 
-    Array<Vector<DynInt16<>>, ArrayType::AUTO, VarDynInt16ArrayTraits> array2(rawArray2, owner);
+    Array<Vector<DynInt16<>>, ArrayType::AUTO, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits> array2(
+            rawArray2, owner);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -352,7 +354,7 @@ TEST(ArrayTest, variableDynInt16Array)
 
     BitStreamReader reader(buffer);
     Vector<DynInt16<>> readRawArray;
-    detail::read<Array<Vector<DynInt16<>>, ArrayType::AUTO, VarDynInt16ArrayTraits>>(
+    detail::read<Array<Vector<DynInt16<>>, ArrayType::AUTO, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits>>(
             reader, readRawArray, owner, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
@@ -363,7 +365,7 @@ TEST(ArrayTest, variableDynInt16PackedArray)
     Vector<DynInt16<>> rawArray{-2, 0, 2, 4, 6, 8, 10};
 
     VarDynInt16Owner owner;
-    Array<Vector<DynInt16<>>, ArrayType::NORMAL, VarDynInt16ArrayTraits> array(
+    Array<Vector<DynInt16<>>, ArrayType::NORMAL, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits> array(
             rawArray, owner, rawArray.size());
 
     // maxBitNumber == 2
@@ -378,7 +380,8 @@ TEST(ArrayTest, variableDynInt16PackedArray)
 
     BitStreamReader reader(buffer);
     Vector<DynInt16<>> readRawArray;
-    detail::readPacked<Array<Vector<DynInt16<>>, ArrayType::NORMAL, VarDynInt16ArrayTraits>>(
+    detail::readPacked<
+            Array<Vector<DynInt16<>>, ArrayType::NORMAL, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits>>(
             reader, readRawArray, owner, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
@@ -463,6 +466,8 @@ TEST(ArrayTest, bytesArray)
     Array<Vector<Bytes>, ArrayType::AUTO> array1(rawArray1);
     Array<Vector<Bytes>, ArrayType::AUTO> array2(rawArray2);
 
+    ASSERT_EQ(rawArray1, array1.zserioData());
+
     constexpr bool isSpan = std::is_same_v<Span<const uint8_t>, decltype(array1.at(0))>;
     ASSERT_TRUE(isSpan);
 
@@ -528,6 +533,7 @@ TEST(ArrayTest, testObjectArray)
     ASSERT_EQ(rawArray1.at(1).field, array1.at(1).field());
 
     Array<Vector<TestObject>, ArrayType::AUTO> array2(rawArray2);
+
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);

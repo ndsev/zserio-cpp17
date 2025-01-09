@@ -2,7 +2,6 @@ package zserio.extension.cpp17;
 
 import zserio.ast.Constant;
 import zserio.extension.common.OutputFileManager;
-import zserio.extension.common.PackedTypesCollector;
 import zserio.extension.common.ZserioExtensionException;
 
 /**
@@ -11,9 +10,9 @@ import zserio.extension.common.ZserioExtensionException;
 public final class ConstEmitter extends CppDefaultEmitter
 {
     public ConstEmitter(OutputFileManager outputFileManager, Cpp17ExtensionParameters cppParameters,
-            PackedTypesCollector packedTypesCollector)
+            TemplateDataContext context)
     {
-        super(outputFileManager, cppParameters, packedTypesCollector);
+        super(outputFileManager, cppParameters, context);
     }
 
     @Override

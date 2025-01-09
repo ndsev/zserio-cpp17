@@ -223,7 +223,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     @Override
     public BinaryExpressionFormatting getArrayElement(Expression expr, boolean isSetter)
     {
-        return new BinaryExpressionFormatting("", ".at(", (isSetter) ? ") = value" : ")");
+        return new BinaryExpressionFormatting("", ".at(", ")");
     }
 
     @Override
@@ -413,7 +413,9 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
         if (isSetter)
         {
-            // TODO[Mi-L@]: Setters for offsets are not implemented (silently)
+            result.append(CPP_SETTER_ZSERIO_DATA_ACCESSOR);
+            result.append(".");
+            result.append(field.getName());
         }
         else
         {
@@ -484,6 +486,8 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
     private final CppNativeMapper cppNativeMapper;
     private final IncludeCollector includeCollector;
+
+    private final static String CPP_SETTER_ZSERIO_DATA_ACCESSOR = "zserioData()";
 
     private final static String CPP_GETTER_FUNCTION_CALL = "()";
     private final static String CPP_GETTER_OPTIONAL_VALUE = ".value()";

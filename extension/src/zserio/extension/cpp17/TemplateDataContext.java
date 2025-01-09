@@ -11,10 +11,11 @@ import zserio.extension.common.PackedTypesCollector;
  */
 final class TemplateDataContext
 {
-    public TemplateDataContext(
-            Cpp17ExtensionParameters cppParameters, PackedTypesCollector packedTypesCollector)
+    public TemplateDataContext(Cpp17ExtensionParameters cppParameters,
+            PackedTypesCollector packedTypesCollector, OffsetFieldsCollector offsetFieldsCollector)
     {
         this.packedTypesCollector = packedTypesCollector;
+        this.offsetFieldsCollector = offsetFieldsCollector;
 
         typesContext = new TypesContext(cppParameters.getAllocatorDefinition());
         cppNativeMapper = new CppNativeMapper(typesContext);
@@ -34,6 +35,11 @@ final class TemplateDataContext
     public PackedTypesCollector getPackedTypesCollector()
     {
         return packedTypesCollector;
+    }
+
+    public OffsetFieldsCollector getOffsetFieldsCollector()
+    {
+        return offsetFieldsCollector;
     }
 
     public TypesContext getTypesContext()
@@ -84,6 +90,7 @@ final class TemplateDataContext
     }
 
     private final PackedTypesCollector packedTypesCollector;
+    private final OffsetFieldsCollector offsetFieldsCollector;
 
     private final TypesContext typesContext;
 

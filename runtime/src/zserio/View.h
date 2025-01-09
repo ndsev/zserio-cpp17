@@ -52,16 +52,35 @@ template <typename T>
 BitSize bitSizeOf(const View<T>& view, BitSize bitPosition = 0);
 
 /**
- * Global function for offsets initialization provided via specialization.
- *
- * \param data Zserio Data to use for initialization.
- * \param bitPosition Bit position to use.
- * \param arguments All parameters in case of Zserio parameterized type.
- *
- * \return End bit position.
+ * Default offset initializer. Types which need offset initialization shall provide this
+ * information via specialization of this template structure.
  */
-template <typename T, typename... ARGS>
-BitSize initializeOffsets(T& data, BitSize bitPosition, ARGS...);
+template <typename T>
+struct OffsetsInitializer;
+
+template <typename T, typename = void>
+struct has_offsets_initializer : std::false_type
+{};
+
+template <typename T>
+struct has_offsets_initializer<T, std::void_t<decltype(OffsetsInitializer<T>{})>> : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool has_offsets_initializer_v = has_offsets_initializer<T, V>::value;
+
+template <typename T>
+BitSize initializeOffsets(const View<T>& view, BitSize bitPosition)
+{
+    if constexpr (has_offsets_initializer_v<T>)
+    {
+        return OffsetsInitializer<T>::initialize(view, bitPosition);
+    }
+    else
+    {
+        return bitSizeOf(view, bitPosition);
+    }
+}
 
 /**
  * Global function for writing provided via specialization.

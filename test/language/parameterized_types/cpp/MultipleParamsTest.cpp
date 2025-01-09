@@ -60,7 +60,7 @@ TEST_F(MultipleParamsTest, array13)
     };
     data.array13 = array13;
     zserio::View view(data, static_cast<uint32_t>(array13.size()), 1);
-    zserio::Array<zserio::Vector<Data13>, zserio::ArrayType::NORMAL,
+    zserio::Array<zserio::Vector<Data13>, zserio::ArrayType::NORMAL, zserio::ArrayStorage::IMMUTABLE,
             zserio::View<TestStructure>::ZserioArray13ArrayTraits>
             expectedArray13View(array13, view, array13.size());
     ASSERT_EQ(expectedArray13View, view.array13());

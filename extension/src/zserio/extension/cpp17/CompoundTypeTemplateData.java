@@ -21,6 +21,7 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         super(context, compoundType, compoundType);
 
         usedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(compoundType);
+        containsOffset = context.getOffsetFieldsCollector().containsOffset(compoundType);
 
         fieldList = createFieldList(context, compoundType, this);
         parameterList = createParameterList(context, compoundType, this);
@@ -34,6 +35,11 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
     public boolean getUsedInPackedArray()
     {
         return usedInPackedArray;
+    }
+
+    public boolean getContainsOffset()
+    {
+        return containsOffset;
     }
 
     public Iterable<CompoundFieldTemplateData> getFieldList()
@@ -107,6 +113,7 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
     }
 
     private final boolean usedInPackedArray;
+    private final boolean containsOffset;
 
     private final List<CompoundFieldTemplateData> fieldList;
     private final List<CompoundParameterTemplateData> parameterList;

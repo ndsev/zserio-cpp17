@@ -560,7 +560,7 @@ namespace detail
 template <typename ALLOC>
 void validate(const BasicBitBufferView<ALLOC>&, std::string_view)
 {
-    // always validate
+    // always valid
 }
 
 template <typename ALLOC>

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
+#include "zserio/BitPositionUtil.h"
 #include "zserio/ConstraintException.h"
 #include "zserio/SerializeUtil.h"
 #include "zserio/TrackingAllocator.h"
@@ -47,6 +48,7 @@ struct SimpleParameterizedStructure
 
     explicit SimpleParameterizedStructure(const AllocatorType&) noexcept :
             numberA(),
+            offsetB(),
             numberB(),
             numberC(),
             numberD()
@@ -55,12 +57,14 @@ struct SimpleParameterizedStructure
     explicit SimpleParameterizedStructure(zserio::UInt3 numberA_, zserio::UInt8 numberB_,
             zserio::UInt7 numberC_, zserio::UInt6 numberD_) noexcept :
             numberA(numberA_),
+            offsetB(),
             numberB(numberB_),
             numberC(numberC_),
             numberD(numberD_)
     {}
 
     zserio::UInt3 numberA;
+    mutable zserio::UInt16 offsetB;
     zserio::UInt8 numberB;
     zserio::UInt7 numberC;
     zserio::UInt6 numberD;
@@ -154,6 +158,10 @@ public:
     {
         return m_data.numberA;
     }
+    zserio::UInt16 offsetB() const
+    {
+        return m_data.offsetB;
+    }
     zserio::UInt8 numberB() const
     {
         return m_data.numberB;
@@ -165,6 +173,11 @@ public:
     zserio::UInt6 numberD() const
     {
         return m_data.numberD;
+    }
+
+    const SimpleParameterizedStructure& zserioData() const
+    {
+        return m_data;
     }
 
 private:
@@ -191,6 +204,8 @@ template <>
 void write(zserio::BitStreamWriter& writer, const zserio::View<SimpleParameterizedStructure>& view)
 {
     detail::write(writer, view.numberA());
+    detail::write(writer, view.offsetB());
+    writer.alignTo(8);
     detail::write(writer, view.numberB());
     detail::write(writer, view.numberC());
     detail::write(writer, view.numberD());
@@ -203,6 +218,8 @@ View<SimpleParameterizedStructure> read(
     View<SimpleParameterizedStructure> view(data, upperLimitD);
 
     detail::read(reader, data.numberA);
+    detail::read(reader, data.offsetB);
+    reader.alignTo(8);
     detail::read(reader, data.numberB);
     detail::read(reader, data.numberC);
     detail::read(reader, data.numberD);
@@ -216,12 +233,34 @@ BitSize bitSizeOf(const zserio::View<SimpleParameterizedStructure>& view, BitSiz
     BitSize endBitPosition = bitPosition;
 
     endBitPosition += detail::bitSizeOf(view.numberA());
+    endBitPosition += detail::bitSizeOf(view.offsetB());
+    endBitPosition = alignTo(8, endBitPosition);
     endBitPosition += detail::bitSizeOf(view.numberB());
     endBitPosition += detail::bitSizeOf(view.numberC());
     endBitPosition += detail::bitSizeOf(view.numberD());
 
     return endBitPosition - bitPosition;
 }
+
+template <>
+struct OffsetsInitializer<SimpleParameterizedStructure>
+{
+    static BitSize initialize(const zserio::View<SimpleParameterizedStructure>& view, BitSize bitPosition)
+    {
+        BitSize endBitPosition = bitPosition;
+
+        endBitPosition += detail::bitSizeOf(view.numberA());
+        endBitPosition += detail::bitSizeOf(view.offsetB());
+        endBitPosition = alignTo(8, endBitPosition);
+        // set offset
+        view.zserioData().offsetB = static_cast<uint16_t>(endBitPosition / 8);
+        endBitPosition += detail::bitSizeOf(view.numberB());
+        endBitPosition += detail::bitSizeOf(view.numberC());
+        endBitPosition += detail::bitSizeOf(view.numberD());
+
+        return endBitPosition - bitPosition;
+    }
+};
 
 } // namespace detail
 
@@ -329,28 +368,35 @@ TEST(SerializeUtilTest, deserializeDataFromFile)
 TEST(SerializeUtilTest, serializeParameterizedData)
 {
     const SimpleParameterizedStructure simpleParameterizedStructure{0x07, 0x07, 0x7F, 0x01};
+    EXPECT_EQ(45, detail::bitSizeOf(View(simpleParameterizedStructure, static_cast<UInt6>(0x0F))));
     const BitBuffer bitBuffer = serialize(simpleParameterizedStructure, static_cast<UInt6>(0x0F));
-    ASSERT_EQ(24, bitBuffer.getBitSize());
+    ASSERT_EQ(45, bitBuffer.getBitSize());
+    EXPECT_EQ(3, simpleParameterizedStructure.offsetB);
     ASSERT_EQ(0xE0, bitBuffer.getData()[0]);
-    ASSERT_EQ(0xFF, bitBuffer.getData()[1]);
-    ASSERT_EQ(0xC1, bitBuffer.getData()[2]);
+    ASSERT_EQ(0x00, bitBuffer.getData()[1]);
+    ASSERT_EQ(0x60, bitBuffer.getData()[2]);
+    ASSERT_EQ(0x07, bitBuffer.getData()[3]);
+    ASSERT_EQ(0xFE, bitBuffer.getData()[4]);
+    ASSERT_EQ(0x08, bitBuffer.getData()[5]);
 }
 
 TEST(SerializeUtilTest, deserializeParameterizedData)
 {
-    const std::array<uint8_t, 3> buffer = {0xE0, 0xFF, 0xC1};
-    const BitBuffer bitBuffer(buffer, 24);
+    const std::array<uint8_t, 6> buffer = {0xE0, 0x00, 0x60, 0x07, 0xFE, 0x08};
+    const BitBuffer bitBuffer(buffer, 45);
     SimpleParameterizedStructure simpleParameterizedStructure;
     const UInt6 upperLimitD = 0x0F;
     const View<SimpleParameterizedStructure> view =
             deserialize(bitBuffer, simpleParameterizedStructure, upperLimitD);
 
     ASSERT_EQ(0x07, simpleParameterizedStructure.numberA);
+    ASSERT_EQ(3, simpleParameterizedStructure.offsetB);
     ASSERT_EQ(0x07, simpleParameterizedStructure.numberB);
     ASSERT_EQ(0x7F, simpleParameterizedStructure.numberC);
     ASSERT_EQ(0x01, simpleParameterizedStructure.numberD);
     ASSERT_EQ(0x0F, view.upperLimitD());
     ASSERT_EQ(simpleParameterizedStructure.numberA, view.numberA());
+    ASSERT_EQ(simpleParameterizedStructure.offsetB, view.offsetB());
     ASSERT_EQ(simpleParameterizedStructure.numberB, view.numberB());
     ASSERT_EQ(simpleParameterizedStructure.numberC, view.numberC());
     ASSERT_EQ(simpleParameterizedStructure.numberD, view.numberD());

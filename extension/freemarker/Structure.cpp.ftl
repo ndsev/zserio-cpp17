@@ -16,17 +16,6 @@ ${name}::${name}() noexcept :
         ${name}(AllocatorType{})
 {}
 
-<#function structure_field_needs_allocator field>
-    <#return field.typeInfo.needsAllocator || field.optional?? || field.array??>
-</#function>
-<#function structure_fields_need_allocator fieldList>
-    <#list fieldList as field>
-        <#if structure_field_needs_allocator(field)>
-            <#return true>
-        </#if>
-    </#list>
-    <#return false>
-</#function>
 <#macro structure_field_initializer field>
     <#if field.initializer??>
         <#local initializer>
@@ -130,27 +119,24 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 }
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
-<@array_traits_definition fullName, fieldList/>
 
-View<${fullName}>::View(const ${fullName}&<#if fieldList?has_content> data</#if><#rt>
+<@array_traits_definition fullName, fieldList/>
+<@structure_offset_setters_definition fullName, fieldList/>
+View<${fullName}>::View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
-        <#lt>) noexcept<#if fieldList?has_content || parameterList?has_content> :</#if>
-<#if fieldList?has_content>
+        <#lt>) noexcept :
         m_data(data)<#if parameterList?has_content>,</#if>
-</#if>
 <#list parameterList as parameter>
         <@parameter_view_member_name parameter/>(<@parameter_view_arg_name parameter/>)<#if parameter?has_next>,</#if>
 </#list>
 {}
 
-View<${fullName}>::View(const ${fullName}&<#if fieldList?has_content> data</#if>,
-        const View&<#if parameterList?has_content> other</#if>) noexcept<#if fieldList?has_content || parameterList?has_content> :</#if>
-<#if fieldList?has_content>
+View<${fullName}>::View(const ${fullName}& data,
+        const View&<#if parameterList?has_content> other</#if>) noexcept :
         m_data(data)<#if parameterList?has_content>,</#if>
-</#if>
 <#list parameterList as parameter>
         <@parameter_view_member_name parameter/>(other.${parameter.getterName}())<#if parameter?has_next>,</#if>
 </#list>
@@ -228,6 +214,11 @@ ${I}        <#if field.optional??>std::in_place, <#rt>
     return <@function_result_expression function/>;
 }
 </#list>
+
+const ${fullName}& View<${fullName}>::zserioData() const
+{
+    return m_data;
+}
 
 bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
@@ -395,7 +386,7 @@ ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
 ${I}endBitPosition += bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#lt><#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition);
+        <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#lt>);
 </#macro>
 template <>
 BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
@@ -613,8 +604,99 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
     (void)view;
 }
 </#if>
-<@namespace_end ["detail"]/>
-<@namespace_end ["zserio"]/>
+<#if containsOffset>
+
+<#macro structure_initialize_offsets_field_extended field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.isExtended>
+${I}if (<@field_view_local_name field/>.isPresent())
+${I}{
+${I}    endBitPosition = ::zserio::alignTo(8, endBitPosition);
+        <@structure_initialize_offsets_field field, indent+1, false/>
+${I}}
+    <#else>
+    <@structure_initialize_offsets_field field, indent, false/>
+    </#if>
+</#macro>
+<#macro structure_initialize_offsets_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.optional??>
+        <#if !field.optional.viewIndirectClause??>
+${I}endBitPosition += bitSizeOf(Bool());
+        </#if>
+${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
+${I}{
+        <@structure_initialize_offsets_field_inner field, indent+1, packed/>
+${I}}
+    <#else>
+    <@structure_initialize_offsets_field_inner field, indent, packed/>
+    </#if>
+</#macro>
+<#macro structure_initialize_offsets_field_inner field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.alignmentValue??>
+${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
+    </#if>
+    <#if field.offset?? && !field.offset.containsIndex>
+${I}endBitPosition = alignTo(8, endBitPosition);
+    </#if>
+    <#if field.offset?? && !field.offset.containsIndex>
+${I}${field.offset.viewIndirectSetter} = static_cast<${field.offset.typeInfo.typeFullName}::ValueType>(endBitPosition / 8);
+    </#if>
+${I}endBitPosition += <#rt>
+        <#if field.compound?? || field.offset?? && field.offset.containsIndex>
+        initializeOffsets<#t>
+        <#else>
+        bitSizeOf<#t>
+        </#if>
+        <@array_packed_suffix field, packed/>(<#t>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
+        <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#t>
+        <#if field.offset?? && field.offset.containsIndex>
+        , View<${fullName}>::<@structure_offset_setter_name field/>(view)<#t>
+        </#if>
+        <#lt>);
+</#macro>
+BitSize OffsetsInitializer<${fullName}>::initialize(
+        const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
+        <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+    <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+
+        <#list fieldList as field>
+    auto <@field_view_local_name field/> = view.${field.getterName}();
+    <@structure_initialize_offsets_field_extended field, 1/>
+        </#list>
+
+    return endBitPosition - bitPosition;
+    <#else>
+    return 0;
+    </#if>
+}
+    <#if isPackable && usedInPackedArray>
+
+BitSize OffsetsInitializer<${fullName}>::initialize(
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>,
+        const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+        <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+
+            <#list fieldList as field>
+    auto <@field_view_local_name field/> = view.${field.getterName}();
+    <@structure_initialize_offsets_field field, 1, true/>
+            </#list>
+
+    return endBitPosition - bitPosition;
+        <#else>
+    return 0;
+        </#if>
+}
+    </#if>
+</#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> data</#if>) const

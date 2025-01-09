@@ -45,11 +45,11 @@ template <typename T, typename V = void>
 using array_owner_type_t = typename array_owner_type<T, V>::type;
 
 template <typename T>
-struct is_dummy : std::is_same<DummyArrayOwner, T>
+struct is_dummy_array_owner : std::is_same<DummyArrayOwner, T>
 {};
 
 template <typename T>
-inline constexpr bool is_dummy_v = is_dummy<T>::value;
+inline constexpr bool is_dummy_array_owner_v = is_dummy_array_owner<T>::value;
 
 // helper trait to choose packing context type for an array from an element type T
 template <typename T, typename = void>
@@ -68,11 +68,22 @@ template <typename T, typename V = void>
 using packing_context_type_t = typename packing_context_type<T, V>::type;
 
 template <typename T>
-struct is_delta : std::is_same<DeltaContext, T>
+struct is_delta_context : std::is_same<DeltaContext, T>
 {};
 
 template <typename T>
-inline constexpr bool is_delta_v = is_delta<T>::value;
+inline constexpr bool is_delta_context_v = is_delta_context<T>::value;
+
+template <typename T, typename = void>
+struct array_traits_has_at : std::false_type
+{};
+
+template <typename T>
+struct array_traits_has_at<T, std::void_t<decltype(T::at)>> : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool array_traits_has_at_v = array_traits_has_at<T, V>::value;
 
 } // namespace detail
 
@@ -91,7 +102,7 @@ struct ArrayTraits
     }
 
     template <typename OBJECT_ = OBJECT>
-    static std::enable_if_t<!detail::is_delta_v<detail::packing_context_type_t<OBJECT_>>> read(
+    static std::enable_if_t<!detail::is_delta_context_v<detail::packing_context_type_t<OBJECT_>>> read(
             typename detail::PackingContext<OBJECT_>& packingContext, BitStreamReader& reader,
             const detail::DummyArrayOwner&, OBJECT& element, size_t)
     {
@@ -102,11 +113,6 @@ struct ArrayTraits
 template <typename T>
 struct NumericArrayTraits
 {
-    static constexpr T at(const detail::DummyArrayOwner&, T element, size_t)
-    {
-        return element;
-    }
-
     static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(reader, element);
@@ -202,11 +208,6 @@ struct ArrayTraits<BasicString<ALLOC>>
 template <typename T>
 struct ArrayTraits<T, std::enable_if_t<std::is_enum_v<T>>>
 {
-    static constexpr T at(const detail::DummyArrayOwner&, T element, size_t)
-    {
-        return element;
-    }
-
     static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(reader, element);
@@ -222,11 +223,6 @@ struct ArrayTraits<T, std::enable_if_t<std::is_enum_v<T>>>
 template <typename T>
 struct ArrayTraits<T, std::enable_if_t<zserio::is_bitmask_v<T>>>
 {
-    static constexpr T at(const detail::DummyArrayOwner&, T element, size_t)
-    {
-        return element;
-    }
-
     static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(reader, element);

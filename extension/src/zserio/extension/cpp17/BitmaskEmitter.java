@@ -11,9 +11,9 @@ import zserio.extension.common.ZserioExtensionException;
 public final class BitmaskEmitter extends CppDefaultEmitter
 {
     public BitmaskEmitter(OutputFileManager outputFileManager, Cpp17ExtensionParameters cppParameters,
-            PackedTypesCollector packedTypesCollector)
+            TemplateDataContext context)
     {
-        super(outputFileManager, cppParameters, packedTypesCollector);
+        super(outputFileManager, cppParameters, context);
     }
 
     @Override

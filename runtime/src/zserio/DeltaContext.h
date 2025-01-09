@@ -319,6 +319,19 @@ template <typename T>
 BitSize bitSizeOf(PackingContext<T>& packingContext, const View<T>& view, BitSize bitPosition);
 
 template <typename T>
+BitSize initializeOffsets(PackingContext<T>& packingContext, const View<T>& view, BitSize bitPosition)
+{
+    if constexpr (has_offsets_initializer_v<T>)
+    {
+        return OffsetsInitializer<T>::initialize(packingContext, view, bitPosition);
+    }
+    else
+    {
+        return bitSizeOf(packingContext, view, bitPosition);
+    }
+}
+
+template <typename T>
 void write(PackingContext<T>& packingContext, BitStreamWriter& writer, const View<T>& view);
 
 template <typename T, typename... ARGS>

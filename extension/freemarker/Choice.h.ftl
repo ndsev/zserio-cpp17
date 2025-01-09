@@ -85,8 +85,6 @@ public:
     <@parameter_view_type_name parameter/> ${parameter.getterName}() const;
     </#items>
 </#list>
-
-    ${fullName}::ChoiceTag zserioChoiceTag() const;
 <#list fieldList>
 
     <#items as field>
@@ -99,6 +97,9 @@ public:
     <@function_return_type_name function/> ${function.name}() const;
     </#items>
 </#list>
+
+    ${fullName}::ChoiceTag zserioChoiceTag() const;
+    const ${fullName}& zserioData() const;
 
 protected:
     View(const ${fullName}& data, const View& other) noexcept;
@@ -164,7 +165,19 @@ void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, 
     </#list>
         <#lt>);
 </#if>
-<@namespace_end ["detail", "zserio"]/>
+<#if containsOffset>
+
+template <>
+struct OffsetsInitializer<${fullName}>
+{
+    static BitSize initialize(const View<${fullName}>& view, BitSize bitPosition);
+    <#if isPackable && usedInPackedArray>
+    static BitSize initialize(PackingConext<${fullName}>& packingContext,
+            const View<${fullName}>& view, , BitSize bitPosition);
+    </#if>
+};
+</#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 template <>

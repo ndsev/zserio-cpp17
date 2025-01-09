@@ -74,6 +74,16 @@ void validate(const zserio::View<TestObject>& view, std::string_view fieldName)
     }
 }
 
+template <>
+BitSize bitSizeOf(const zserio::View<TestObject>& view, BitSize bitPosition)
+{
+    BitSize endBitPosition = bitPosition;
+
+    endBitPosition = bitSizeOf(view.array());
+
+    return endBitPosition - bitPosition;
+}
+
 } // namespace detail
 
 TEST(DataViewTest, dataConstructor)

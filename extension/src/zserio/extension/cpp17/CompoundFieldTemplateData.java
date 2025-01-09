@@ -40,6 +40,8 @@ public final class CompoundFieldTemplateData
         name = field.getName();
         getterName = AccessorNameFormatter.getGetterName(field);
 
+        usedAsOffset = context.getOffsetFieldsCollector().isUsedAsOffset(field);
+
         isExtended = field.isExtended();
         if (isExtended)
         {
@@ -75,6 +77,11 @@ public final class CompoundFieldTemplateData
     public String getGetterName()
     {
         return getterName;
+    }
+
+    public boolean getUsedAsOffset()
+    {
+        return usedAsOffset;
     }
 
     public boolean getIsExtended()
@@ -222,13 +229,12 @@ public final class CompoundFieldTemplateData
         public Offset(TemplateDataContext context, Expression offsetExpression,
                 IncludeCollector includeCollector) throws ZserioExtensionException
         {
-            final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
-            getter = cppExpressionFormatter.formatGetter(offsetExpression);
+            final ExpressionFormatter cppViewIndirectExpressionFormatter =
+                    context.getIndirectExpressionFormatter(includeCollector, "view");
+            viewIndirectSetter = cppViewIndirectExpressionFormatter.formatSetter(offsetExpression);
             final ExpressionFormatter cppOwnerIndirectExpressionFormatter =
-                    context.getIndirectExpressionFormatter(includeCollector, "owner");
-            indirectGetter = cppOwnerIndirectExpressionFormatter.formatGetter(offsetExpression);
-            setter = cppExpressionFormatter.formatSetter(offsetExpression);
-            indirectSetter = cppOwnerIndirectExpressionFormatter.formatSetter(offsetExpression);
+                    context.getIndirectExpressionFormatter(includeCollector, "m_owner");
+            ownerIndirectSetter = cppOwnerIndirectExpressionFormatter.formatSetter(offsetExpression);
             final ZserioType offsetExprZserioType = offsetExpression.getExprZserioType();
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType nativeType = cppNativeMapper.getCppType(offsetExprZserioType);
@@ -236,24 +242,14 @@ public final class CompoundFieldTemplateData
             containsIndex = offsetExpression.containsIndex();
         }
 
-        public String getGetter()
+        public String getViewIndirectSetter()
         {
-            return getter;
+            return viewIndirectSetter;
         }
 
-        public String getIndirectGetter()
+        public String getOwnerIndirectSetter()
         {
-            return indirectGetter;
-        }
-
-        public String getSetter()
-        {
-            return setter;
-        }
-
-        public String getIndirectSetter()
-        {
-            return indirectSetter;
+            return ownerIndirectSetter;
         }
 
         public NativeTypeInfoTemplateData getTypeInfo()
@@ -266,10 +262,8 @@ public final class CompoundFieldTemplateData
             return containsIndex;
         }
 
-        private final String getter;
-        private final String indirectGetter;
-        private final String setter;
-        private final String indirectSetter;
+        private final String viewIndirectSetter;
+        private final String ownerIndirectSetter;
         private final NativeTypeInfoTemplateData typeInfo;
         private final boolean containsIndex;
     }
@@ -750,6 +744,7 @@ public final class CompoundFieldTemplateData
 
     private final String name;
     private final String getterName;
+    private final boolean usedAsOffset;
     private final boolean isExtended;
     private final boolean isPackable;
     private final Offset offset;

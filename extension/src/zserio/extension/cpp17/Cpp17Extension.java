@@ -77,14 +77,21 @@ public final class Cpp17Extension implements Extension
         final PackedTypesCollector packedTypesCollector = new PackedTypesCollector();
         rootNode.accept(packedTypesCollector);
 
+        // collect which fields are used in offset expressions
+        final OffsetFieldsCollector offsetFieldsCollector = new OffsetFieldsCollector();
+        rootNode.accept(offsetFieldsCollector);
+
+        final TemplateDataContext context =
+                new TemplateDataContext(cppParameters, packedTypesCollector, offsetFieldsCollector);
+
         final List<CppDefaultEmitter> emitters = new ArrayList<CppDefaultEmitter>();
-        emitters.add(new ConstEmitter(outputFileManager, cppParameters, packedTypesCollector));
-        emitters.add(new BitmaskEmitter(outputFileManager, cppParameters, packedTypesCollector));
-        emitters.add(new EnumerationEmitter(outputFileManager, cppParameters, packedTypesCollector));
-        emitters.add(new StructureEmitter(outputFileManager, cppParameters, packedTypesCollector));
-        emitters.add(new ChoiceEmitter(outputFileManager, cppParameters, packedTypesCollector));
-        emitters.add(new UnionEmitter(outputFileManager, cppParameters, packedTypesCollector));
-        emitters.add(new SubtypeEmitter(outputFileManager, cppParameters, packedTypesCollector));
+        emitters.add(new ConstEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new BitmaskEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new EnumerationEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new StructureEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new ChoiceEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new UnionEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new SubtypeEmitter(outputFileManager, cppParameters, context));
 
         // emit C++ code
         for (CppDefaultEmitter emitter : emitters)

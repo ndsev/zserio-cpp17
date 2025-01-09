@@ -83,11 +83,6 @@ View<${fullName}>::View(const ${fullName}& data,
     return <@parameter_view_member_name parameter/>;
 }
 </#list>
-
-${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
-{
-    return m_data.index();
-}
 <#list fieldList as field>
 
 <@field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
@@ -109,6 +104,16 @@ ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
     return <@function_result_expression function/>;
 }
 </#list>
+
+${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
+{
+    return m_data.index();
+}
+
+const ${fullName}& View<${fullName}>::zserioData() const
+{
+    return m_data;
+}
 
 <#macro union_switch fieldActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
@@ -341,7 +346,7 @@ void write(PackingContext<${fullName}>&<#if fieldList?has_content> packingContex
 }
 
 template <>
-void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+void read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
         BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
@@ -364,8 +369,50 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
     (void)view;
 }
 </#if>
-<@namespace_end ["detail"]/>
-<@namespace_end ["zserio"]/>
+<#if containsOffset>
+
+<#macro union_initialize_offsets_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}endBitPosition += <#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
+        <@array_packed_suffix field, packed/>(<#t>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
+        <#lt>view.${field.getterName}(), endBitPosition);
+</#macro>
+BitSize OffsetsInitializer<${fullName}>::initialize(
+        const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
+        <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+    <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+    endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    <@union_switch "union_initialize_offsets_field", "union_no_match", "view.zserioChoiceTag()"/>
+
+    return endBitPosition - bitPosition;
+    <#else>
+    return 0;
+    </#if>
+}
+    <#if isPackable && usedInPackedArray>
+
+BitSize OffsetsInitializer<${fullName}>::initialize(
+        PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>,
+        const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+{
+        <#if fieldList?has_content>
+    BitSize endBitPosition = bitPosition;
+    endBitPosition += bitSizeOf(packingContext.zserioChoiceTag,
+            fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    <@union_switch "union_initialize_offsets_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
+
+    return endBitPosition - bitPosition;
+        <#else>
+    return 0;
+        </#if>
+}
+    </#if>
+</#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> value</#if>) const

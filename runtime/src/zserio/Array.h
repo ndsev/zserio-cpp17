@@ -25,6 +25,36 @@ enum ArrayType
     ALIGNED_AUTO /**< Aligned auto zserio array which is auto zserio array with indexed offsets. */
 };
 
+/**
+ * Array storage type. Normally all array view's are immutable except for arrays which are used as
+ * offsets.
+ */
+enum ArrayStorage
+{
+    IMMUTABLE, /**< Immutable array. */
+    MUTABLE /**< Mutable array, used only when the array is used for offsets. */
+};
+
+namespace detail
+{
+
+template <typename RAW_ARRAY, ArrayStorage ARRAY_STORAGE>
+struct array_storage
+{
+    using type = const RAW_ARRAY&;
+};
+
+template <typename RAW_ARRAY>
+struct array_storage<RAW_ARRAY, ArrayStorage::MUTABLE>
+{
+    using type = RAW_ARRAY&;
+};
+
+template <typename RAW_ARRAY, ArrayStorage ARRAY_STORAGE>
+using array_storage_t = typename array_storage<RAW_ARRAY, ARRAY_STORAGE>::type;
+
+} // namespace detail
+
 template <ArrayType ARRAY_TYPE, typename = void>
 class ArrayBase
 {
@@ -51,13 +81,16 @@ private:
     size_t m_schemaSize;
 };
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE,
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE = ArrayStorage::IMMUTABLE,
         typename ARRAY_TRAITS = ArrayTraits<typename RAW_ARRAY::value_type>>
 class Array : public ArrayBase<ARRAY_TYPE>
 {
 public:
     /** Array type. */
     static constexpr ArrayType TYPE = ARRAY_TYPE;
+
+    /** Array storage type. */
+    static constexpr ArrayStorage STORAGE = ARRAY_STORAGE;
 
     /** Typedef for the raw array. */
     using RawArray = RAW_ARRAY;
@@ -93,8 +126,8 @@ public:
      * \param rawArray Raw array.
      */
     template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<detail::is_dummy_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(const RawArray& rawArray) :
+            std::enable_if_t<detail::is_dummy_array_owner_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
+    explicit Array(detail::array_storage_t<RawArray, STORAGE> rawArray) :
             m_rawArray(rawArray)
     {}
 
@@ -105,8 +138,8 @@ public:
      * \param schemaSize Array size defined by the schema.
      */
     template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<detail::is_dummy_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(const RawArray& rawArray, size_t schemaSize) :
+            std::enable_if_t<detail::is_dummy_array_owner_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
+    explicit Array(detail::array_storage_t<RawArray, STORAGE> rawArray, size_t schemaSize) :
             ArrayBase<ARRAY_TYPE>(schemaSize),
             m_rawArray(rawArray)
     {}
@@ -118,8 +151,8 @@ public:
      * \param owner View to the array's owner.
      */
     template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<!detail::is_dummy_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(const RawArray& rawArray, const OwnerType& owner) :
+            std::enable_if_t<!detail::is_dummy_array_owner_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
+    explicit Array(detail::array_storage_t<RawArray, STORAGE> rawArray, const OwnerType& owner) :
             m_rawArray(rawArray),
             m_owner(owner)
     {}
@@ -132,8 +165,9 @@ public:
      * \param schemaSize Array size defined by the schema.
      */
     template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<!detail::is_dummy_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(const RawArray& rawArray, const OwnerType& owner, size_t schemaSize) :
+            std::enable_if_t<!detail::is_dummy_array_owner_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
+    explicit Array(
+            detail::array_storage_t<RawArray, STORAGE> rawArray, const OwnerType& owner, size_t schemaSize) :
             ArrayBase<ARRAY_TYPE>(schemaSize),
             m_rawArray(rawArray),
             m_owner(owner)
@@ -154,6 +188,24 @@ public:
      */
 
     /**
+     * Gets underlying raw data array.
+     *
+     * \return Reference to underlying data array.
+     */
+    /** \{ */
+    const RawArray& zserioData() const
+    {
+        return m_rawArray;
+    }
+
+    template <ArrayStorage ARRAY_STORAGE_ = STORAGE>
+    std::enable_if_t<ARRAY_STORAGE_ == ArrayStorage::MUTABLE, RawArray&> zserioData()
+    {
+        return m_rawArray;
+    }
+    /** \} */
+
+    /**
      * Operator equality.
      *
      * \param other Array to compare.
@@ -162,8 +214,8 @@ public:
      */
     bool operator==(const Array& other) const
     {
-        if constexpr (std::is_same_v<View<ValueType>,
-                              std::invoke_result_t<decltype(&Array::at), Array, size_t>>)
+        using AtResult = decltype(std::declval<const Array&>().at(std::declval<size_t>()));
+        if constexpr (std::is_same_v<View<ValueType>, AtResult>)
         {
             const size_t thisSize = size();
             const size_t otherSize = other.size();
@@ -197,8 +249,8 @@ public:
      */
     bool operator<(const Array& other) const
     {
-        if constexpr (std::is_same_v<View<ValueType>,
-                              std::invoke_result_t<decltype(&Array::at), Array, size_t>>)
+        using AtResult = decltype(std::declval<const Array&>().at(std::declval<size_t>()));
+        if constexpr (std::is_same_v<View<ValueType>, AtResult>)
         {
             const size_t thisSize = size();
             const size_t otherSize = other.size();
@@ -300,7 +352,14 @@ public:
      */
     decltype(auto) at(size_t index) const
     {
-        return Traits::at(m_owner, m_rawArray.at(index), index);
+        if constexpr (detail::array_traits_has_at_v<Traits>)
+        {
+            return Traits::at(m_owner, m_rawArray.at(index), index);
+        }
+        else
+        {
+            return m_rawArray.at(index);
+        }
     }
 
     /**
@@ -312,7 +371,14 @@ public:
      */
     decltype(auto) operator[](size_t index) const
     {
-        return Traits::at(m_owner, m_rawArray[index], index);
+        if constexpr (detail::array_traits_has_at_v<Traits>)
+        {
+            return Traits::at(m_owner, m_rawArray[index], index);
+        }
+        else
+        {
+            return m_rawArray[index];
+        }
     }
 
     /**
@@ -322,7 +388,7 @@ public:
      */
     decltype(auto) front() const
     {
-        return Traits::at(m_owner, m_rawArray.at(0), 0);
+        return at(0);
     }
 
     /**
@@ -332,7 +398,7 @@ public:
      */
     decltype(auto) back() const
     {
-        return Traits::at(m_owner, m_rawArray.at(size() - 1), size() - 1);
+        return at(size() - 1);
     }
 
     /**
@@ -540,17 +606,18 @@ public:
     };
 
 private:
-    const RawArray& m_rawArray;
+    detail::array_storage_t<RawArray, STORAGE> m_rawArray;
     OwnerType m_owner; // view to owner type, parameters are copied by value and that is ok
 };
 
 namespace detail
 {
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-void validate(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, std::string_view fieldName)
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
+void validate(
+        const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array, std::string_view fieldName)
 {
-    if constexpr (Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>::HAS_SCHEMA_SIZE)
+    if constexpr (Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>::HAS_SCHEMA_SIZE)
     {
         if (array.size() != array.schemaSize())
         {
@@ -567,8 +634,9 @@ void validate(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, std::stri
     }
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-BitSize bitSizeOf(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
+BitSize bitSizeOf(
+        const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
     BitSize endBitPosition = bitPosition;
 
@@ -585,6 +653,49 @@ BitSize bitSizeOf(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSi
         }
 
         endBitPosition += bitSizeOf(array[i], endBitPosition);
+    }
+
+    return endBitPosition - bitPosition;
+}
+
+struct DummyOffsetSetter
+{
+    static void setOffset(size_t /*index*/, BitSize /*byteOffset*/)
+    {}
+};
+
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS,
+        typename OFFSET_SETTER = DummyOffsetSetter>
+BitSize initializeOffsets(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array,
+        BitSize bitPosition, const OFFSET_SETTER& offsetSetter = OFFSET_SETTER())
+{
+    using ValueType = typename RAW_ARRAY::value_type;
+    using ArrayT = Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>;
+
+    BitSize endBitPosition = bitPosition;
+
+    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    {
+        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
+    }
+
+    for (size_t i = 0; i < array.size(); ++i)
+    {
+        if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+        {
+            endBitPosition = alignTo(8, endBitPosition);
+            offsetSetter.setOffset(i, endBitPosition / 8);
+        }
+
+        using AtResult = decltype(std::declval<const ArrayT&>().at(std::declval<size_t>()));
+        if constexpr (std::is_same_v<View<ValueType>, AtResult>)
+        {
+            endBitPosition += initializeOffsets(array[i], endBitPosition);
+        }
+        else
+        {
+            endBitPosition += bitSizeOf(array[i], endBitPosition);
+        }
     }
 
     return endBitPosition - bitPosition;
@@ -639,15 +750,15 @@ void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typename 
     }
 }
 
-template <typename ARRAY, std::enable_if_t<is_dummy_v<typename ARRAY::OwnerType>, int> = 0>
+template <typename ARRAY, std::enable_if_t<is_dummy_array_owner_v<typename ARRAY::OwnerType>, int> = 0>
 void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, size_t arrayLength = 0)
 {
     DummyArrayOwner owner;
     read<ARRAY>(reader, rawArray, owner, arrayLength);
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array)
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
+void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array)
 {
     if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
     {
@@ -665,8 +776,9 @@ void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRA
     }
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-BitSize bitSizeOfPacked(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
+BitSize bitSizeOfPacked(
+        const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
     static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
@@ -701,8 +813,59 @@ BitSize bitSizeOfPacked(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array,
     return endBitPosition - bitPosition;
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-void writePacked(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array)
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS,
+        typename OFFSET_SETTER = DummyOffsetSetter>
+BitSize initializeOffsetsPacked(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array,
+        BitSize bitPosition, const OFFSET_SETTER& offsetInitializer = OFFSET_SETTER())
+{
+    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
+
+    using ValueType = typename RAW_ARRAY::value_type;
+    using ArrayT = Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>;
+
+    BitSize endBitPosition = bitPosition;
+
+    const size_t arrayLength = array.size();
+    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    {
+        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(arrayLength)));
+    }
+
+    if (arrayLength > 0)
+    {
+        detail::packing_context_type_t<ValueType> context;
+
+        for (size_t i = 0; i < arrayLength; ++i)
+        {
+            initContext(context, array[i]);
+        }
+
+        for (size_t i = 0; i < arrayLength; ++i)
+        {
+            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+            {
+                endBitPosition = alignTo(8, endBitPosition);
+                offsetInitializer.setOffset(i, endBitPosition / 8);
+            }
+
+            using AtResult = decltype(std::declval<const ArrayT&>().at(std::declval<size_t>()));
+            if constexpr (std::is_same_v<View<ValueType>, AtResult>)
+            {
+                endBitPosition += initializeOffsets(context, array[i], endBitPosition);
+            }
+            else
+            {
+                endBitPosition += bitSizeOf(context, array[i], endBitPosition);
+            }
+        }
+    }
+
+    return endBitPosition - bitPosition;
+}
+
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
+void writePacked(
+        BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array)
 {
     static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
@@ -768,7 +931,7 @@ void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typ
     }
 }
 
-template <typename ARRAY, std::enable_if_t<is_dummy_v<typename ARRAY::OwnerType>, int> = 0>
+template <typename ARRAY, std::enable_if_t<is_dummy_array_owner_v<typename ARRAY::OwnerType>, int> = 0>
 void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, size_t arrayLength = 0)
 {
     DummyArrayOwner owner;
@@ -777,8 +940,9 @@ void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, siz
 
 } // namespace detail
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
-uint32_t calcHashCode(uint32_t seedValue, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_TRAITS>& array)
+template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
+uint32_t calcHashCode(
+        uint32_t seedValue, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array)
 {
     uint32_t result = seedValue;
     for (size_t i = 0; i < array.size(); ++i)
