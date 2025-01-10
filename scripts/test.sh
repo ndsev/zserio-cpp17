@@ -126,10 +126,10 @@ compare_test_data()
     fi
 }
 
-# Run Zserio C++ tests
+# Run integration tests
 test_cpp()
 {
-    exit_if_argc_ne $# 11
+    exit_if_argc_ne $# 7
     local ZSERIO_CPP17_DISTR_DIR="$1"; shift
     local ZSERIO_CPP17_PROJECT_ROOT="$1"; shift
     local ZSERIO_CPP17_BUILD_DIR="$1"; shift
@@ -139,20 +139,10 @@ test_cpp()
     local SWITCH_CLEAN="$1"; shift
     local MSYS_WORKAROUND_TEMP=("${!1}"); shift
     local TEST_SUITES=("${MSYS_WORKAROUND_TEMP[@]}")
-    local PARAM_EXTERN_SCHEMA="$1"; shift
-    local PARAM_EXTERN_SCHEMA_ROOT="$1"; shift
-    local PARAM_EXTERN_SCHEMA_NAME="$1"; shift
-    local PARAM_EXTERN_SCHEMA_TEST="$1"; shift
 
-    # run Zserio C++ tests
-    local MESSAGE="Zserio C++ tests"
+    # run integration tests
+    local MESSAGE="Zserio C++17 integration tests"
     echo "STARTING - ${MESSAGE}"
-
-    local HOST_PLATFORM
-    get_host_platform HOST_PLATFORM
-    if [ $? -ne 0 ] ; then
-        return 1
-    fi
 
     local TEST_SUITES_LIST=""
     for i in ${!TEST_SUITES[@]} ; do
@@ -164,11 +154,7 @@ test_cpp()
 
     local CMAKE_ARGS=("-DZSERIO_RELEASE_ROOT=${ZSERIO_CPP17_BUILD_DIR}/extension/download"
                       "-DZSERIO_CPP17_RELEASE_ROOT=${ZSERIO_CPP17_DISTR_DIR}"
-                      "-DZSERIO_TEST_SUITES=${TEST_SUITES_LIST}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA=${PARAM_EXTERN_SCHEMA}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA_ROOT=${PARAM_EXTERN_SCHEMA_ROOT}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA_NAME=${PARAM_EXTERN_SCHEMA_NAME}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA_TEST=${PARAM_EXTERN_SCHEMA_TEST}")
+                      "-DZSERIO_TEST_SUITES=${TEST_SUITES_LIST}")
     local CTEST_ARGS=()
     if [[ ${SWITCH_CLEAN} == 1 ]] ; then
         local CPP_TARGET="clean"
@@ -183,7 +169,7 @@ test_cpp()
         return 1
     fi
 
-    if [[ ${SWITCH_CLEAN} != 1 && "${PARAM_EXTERN_SCHEMA}" == "" ]] ; then
+    if [[ ${SWITCH_CLEAN} != 1 ]] ; then
         for TARGET in "${CPP_TARGETS[@]}"; do
             local BUILD_TYPE="release"
             if [[ "${CMAKE_EXTRA_ARGS}" == *-DCMAKE_BUILD_TYPE=?ebug* ]] ; then
@@ -212,8 +198,7 @@ Description:
     Runs integration tests using C++17 extension from distr directory.
 
 Usage:
-    $0 [-h] [-e] [-c] [-p] [-o <dir>] [-i <pattern>]... [-x <pattern>]...
-            [-s <schema>] [-d <dir>] [-n <name>] [-t <file>] target...
+    $0 [-h] [-e] [-c] [-p] [-o <dir>] [-i <pattern>]... [-x <pattern>]... target...
 
 Arguments:
     -h, --help           Show this help.
@@ -226,14 +211,6 @@ Arguments:
                          Include internal tests matching the specified pattern. Can be specified multiple times.
     -x <pattern>, --exclude <pattern>
                          Exclude internal tests matching the specified pattern. Can be specified multiple times.
-    -s <schema>, --external-schema <schema>
-                         Main external schema source to test (skips all internal tests). Default is no external schema to test. 
-    -d <dir>, --external-schema-directory <dir>
-                         Directory with external sources to test. Default is ".".
-    -n <name>, --external-schema-name <name>
-                         External schema name to use for output subdirectory. Default is no subdirectory.
-    -t <file>, --external-schema-test <file>
-                         External schema test source file. Default is no test suite.
     target               Specify the target to test.
 
 Target can be a combination of:
@@ -261,13 +238,9 @@ EOF
 # 3 - Environment help switch is present. Arguments after help switch have not been checked.
 parse_arguments()
 {
-    exit_if_argc_lt $# 9
+    exit_if_argc_lt $# 5
     local PARAM_CPP_TARGET_ARRAY_OUT="$1"; shift
-    local PARAM_OUT_DIR_OUT="$1"; shift
-    local PARAM_EXTERN_SCHEMA_OUT="$1"; shift
-    local PARAM_EXTERN_SCHEMA_ROOT_OUT="$1"; shift
-    local PARAM_EXTERN_SCHEMA_NAME_OUT="$1"; shift
-    local PARAM_EXTERN_SCHEMA_TEST_OUT="$1"; shift
+    local SWITCH_OUT_DIR_OUT="$1"; shift
     local SWITCH_CLEAN_OUT="$1"; shift
     local SWITCH_PURGE_OUT="$1"; shift
     local SWITCH_TEST_SUITES_ARRAY_OUT="$1"; shift
@@ -305,7 +278,7 @@ parse_arguments()
                     echo
                     return 1
                 fi
-                eval ${PARAM_OUT_DIR_OUT}="$2"
+                eval ${SWITCH_OUT_DIR_OUT}="$2"
                 shift 2
                 ;;
 
@@ -328,46 +301,6 @@ parse_arguments()
                 fi
                 eval ${SWITCH_TEST_SUITES_ARRAY_OUT}[${NUM_PATTERNS}]="x:$2"
                 NUM_PATTERNS=$((NUM_PATTERNS + 1))
-                shift 2
-                ;;
-
-            "-s" | "--external-schema")
-                if [ $# -eq 1 ] ; then
-                    stderr_echo "Missing external schema file!"
-                    echo
-                    return 1
-                fi
-                eval ${PARAM_EXTERN_SCHEMA_OUT}="$2"
-                shift 2
-                ;;
-
-            "-d" | "--external-schema-directory")
-                if [ $# -eq 1 ] ; then
-                    stderr_echo "Missing external schema directory!"
-                    echo
-                    return 1
-                fi
-                eval ${PARAM_EXTERN_SCHEMA_ROOT_OUT}="$2"
-                shift 2
-                ;;
-
-            "-n" | "--external-schema-name")
-                if [ $# -eq 1 ] ; then
-                    stderr_echo "Missing external schema name!"
-                    echo
-                    return 1
-                fi
-                eval ${PARAM_EXTERN_SCHEMA_NAME_OUT}="$2"
-                shift 2
-                ;;
-
-            "-t" | "--external-schema-test")
-                if [ $# -eq 1 ] ; then
-                    stderr_echo "Missing external schema test file!"
-                    echo
-                    return 1
-                fi
-                eval ${PARAM_EXTERN_SCHEMA_TEST_OUT}="$2"
                 shift 2
                 ;;
 
@@ -420,18 +353,13 @@ main()
 
     # parse command line arguments
     local PARAM_CPP_TARGET_ARRAY=()
-    local PARAM_OUT_DIR="${ZSERIO_CPP17_PROJECT_ROOT}"
-    local PARAM_EXTERN_SCHEMA=""
-    local PARAM_EXTERN_SCHEMA_ROOT=""
-    local PARAM_EXTERN_SCHEMA_NAME=""
-    local PARAM_EXTERN_SCHEMA_TEST=""
+    local SWITCH_OUT_DIR="${ZSERIO_CPP17_PROJECT_ROOT}"
     local SWITCH_CLEAN
     local SWITCH_PURGE
     local SWITCH_TEST_PATTERN_ARRAY=()
     # note that "$@" must have qoutes to prevent expansion of include/exclude patterns
-    parse_arguments PARAM_CPP_TARGET_ARRAY PARAM_OUT_DIR PARAM_EXTERN_SCHEMA PARAM_EXTERN_SCHEMA_ROOT \
-                    PARAM_EXTERN_SCHEMA_NAME PARAM_EXTERN_SCHEMA_TEST \
-                    SWITCH_CLEAN SWITCH_PURGE SWITCH_TEST_PATTERN_ARRAY "$@"
+    parse_arguments PARAM_CPP_TARGET_ARRAY SWITCH_OUT_DIR SWITCH_CLEAN SWITCH_PURGE SWITCH_TEST_PATTERN_ARRAY \
+            "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
         print_help
@@ -443,13 +371,8 @@ main()
     elif [ ${PARSE_RESULT} -ne 0 ] ; then
         return 1
     fi
-    if [[ "${PARAM_EXTERN_SCHEMA}" != "" && ${#SWITCH_TEST_PATTERN_ARRAY[@]} != 0 ]] ; then
-        stderr_echo "External test is requested but pattern for internal tests has been specified!"
-        echo
-        return 1
-    fi
 
-    echo "Compilation and testing of Zserio sources."
+    echo "C++17 Extension Integration Tests"
     echo
 
     # set global variables
@@ -466,13 +389,10 @@ main()
     fi
 
     # cmake needs absolute paths
-    convert_to_absolute_path "${PARAM_OUT_DIR}" PARAM_OUT_DIR
-    if [[ "${PARAM_EXTERN_SCHEMA_ROOT}" != "" ]] ; then
-        convert_to_absolute_path "${PARAM_EXTERN_SCHEMA_ROOT}" PARAM_EXTERN_SCHEMA_ROOT
-    fi
+    convert_to_absolute_path "${SWITCH_OUT_DIR}" SWITCH_OUT_DIR
 
     # purge if requested and then create test output directory
-    local ZSERIO_CPP17_BUILD_DIR="${PARAM_OUT_DIR}/build"
+    local ZSERIO_CPP17_BUILD_DIR="${SWITCH_OUT_DIR}/build"
     local TEST_OUT_DIR="${ZSERIO_CPP17_BUILD_DIR}/test"
     if [[ ${SWITCH_PURGE} == 1 ]] ; then
         echo "Purging test directory."
@@ -487,24 +407,19 @@ main()
 
     # get test suites to run
     local TEST_SUITES=()
-    if [[ "${PARAM_EXTERN_SCHEMA}" == "" ]] ; then
-        get_test_suites "${ZSERIO_CPP17_PROJECT_ROOT}" SWITCH_TEST_PATTERN_ARRAY[@] TEST_SUITES
-        if [ $? -ne 0 ] ; then
-            return 1
-        fi
-        if [ ${#TEST_SUITES[@]} -eq 0 ] ; then
-            echo "No test suites found."
-            return 0
-        fi
-    else
-        TEST_SUITES=("external")
+    get_test_suites "${ZSERIO_CPP17_PROJECT_ROOT}" SWITCH_TEST_PATTERN_ARRAY[@] TEST_SUITES
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
+    if [ ${#TEST_SUITES[@]} -eq 0 ] ; then
+        echo "No test suites found."
+        return 0
     fi
 
     # run test
-    local ZSERIO_CPP17_DISTR_DIR="${PARAM_OUT_DIR}/distr"
+    local ZSERIO_CPP17_DISTR_DIR="${SWITCH_OUT_DIR}/distr"
     test_cpp "${ZSERIO_CPP17_DISTR_DIR}" "${ZSERIO_CPP17_PROJECT_ROOT}" "${ZSERIO_CPP17_BUILD_DIR}" \
-        "${TEST_OUT_DIR}" PARAM_CPP_TARGET_ARRAY[@] ${SWITCH_CLEAN} TEST_SUITES[@] "${PARAM_EXTERN_SCHEMA}" \
-        "${PARAM_EXTERN_SCHEMA_ROOT}" "${PARAM_EXTERN_SCHEMA_NAME}" "${PARAM_EXTERN_SCHEMA_TEST}"
+        "${TEST_OUT_DIR}" PARAM_CPP_TARGET_ARRAY[@] ${SWITCH_CLEAN} TEST_SUITES[@]
     if [ $? -ne 0 ] ; then
         return 1
     fi

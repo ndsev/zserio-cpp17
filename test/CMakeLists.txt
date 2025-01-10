@@ -25,7 +25,7 @@ set(ZSERIO_TEST_SUITES "**" CACHE STRING "List of test suites to run. Default is
 set(ZSERIO_TEST_EXTERN_SCHEMA "" CACHE STRING "Name of external schema to test.")
 set(ZSERIO_TEST_EXTERN_SCHEMA_ROOT "." CACHE STRING "Root directory of external schema to test.")
 set(ZSERIO_TEST_EXTERN_SCHEMA_NAME "" CACHE STRING "Name of output subdirectory for external schema to test.")
-set(ZSERIO_TEST_EXTERN_SCHEMA_TEST_FILE "" CACHE STRING "External schema test source file.")
+set(ZSERIO_TEST_EXTERN_SCHEMA_TEST "" CACHE STRING "External schema test source file.")
 
 set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use.")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Whether C++ standard is required.")
@@ -100,8 +100,10 @@ function(add_custom_test TEST_NAME)
 
     if ("${TEST_NAME}" STREQUAL "external")
         set(CLANG_TIDY_WERROR OFF)
+        set(CLANG_FORMAT OFF)
     else ()
         set(CLANG_TIDY_WERROR ON)
+        set(CLANG_FORMAT ON)
     endif ()
     clang_tidy_add_custom_target(${TEST_NAME}-clang-tidy
                                  DEPENDS
@@ -118,7 +120,7 @@ function(add_custom_test TEST_NAME)
                                  WERROR
                                     ${CLANG_TIDY_WERROR})
 
-    if (DEFINED TEST_ARG_SOURCES)
+    if (DEFINED TEST_ARG_SOURCES AND CLANG_FORMAT)
         clang_format_add_custom_target(${TEST_NAME}-clang-format
                                      DEPENDS
                                         ${TEST_NAME}
@@ -142,7 +144,7 @@ separate_arguments(ZSERIO_EXTRA_ARGS)
 foreach (TEST_SUITE ${ZSERIO_TEST_SUITES})
     file(GLOB_RECURSE SUBPROJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${TEST_SUITE}/CMakeLists.txt")
     foreach (SUBPROJECT ${SUBPROJECTS})
-        if (NOT "${SUBPROJECT}" MATCHES "data/.*" AND NOT "${SUBPROJECT}" MATCHES "others/external/.*")
+        if (NOT "${SUBPROJECT}" MATCHES "data/.*")
             get_filename_component(SUBDIRECTORY ${SUBPROJECT} DIRECTORY)
             if ("${SUBDIRECTORY}" MATCHES "external/*")
                 add_subdirectory(${SUBDIRECTORY} "${SUBDIRECTORY}/${ZSERIO_TEST_EXTERN_SCHEMA_NAME}")
@@ -163,7 +165,6 @@ if (NOT TEST_SOURCES_LIST)
     set(TEST_SOURCES_LIST ${EMPTY_TEST_HELPER})
 endif ()
 
-
 # add_executable requieres at least a single source file
 add_executable(${PROJECT_NAME} ${TEST_SOURCES_LIST})
 target_link_libraries(${PROJECT_NAME} ${TEST_DEPENDENCIES_LIST} gtest_main ZserioCppTestUtils ZserioCpp17Runtime
@@ -171,4 +172,8 @@ target_link_libraries(${PROJECT_NAME} ${TEST_DEPENDENCIES_LIST} gtest_main Zseri
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SQLITE_INCDIR})
 
 # add tests - test are labeled by file names (i.e. grouped)
-gtest_add_tests(${PROJECT_NAME} "--gtest_output=xml" ${TEST_SOURCES_LIST})
+if (ZSERIO_TEST_EXTERN_SCHEMA_TEST)
+    add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+else ()
+    gtest_add_tests(${PROJECT_NAME} "--gtest_output=xml" ${TEST_SOURCES_LIST})
+endif()

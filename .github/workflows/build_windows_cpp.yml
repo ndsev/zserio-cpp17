@@ -113,7 +113,11 @@ jobs:
         name: zserio-java8
         path: distr
 
-    - name: Run Zserio tests
+    - name: Run Zserio integration tests
       shell: bash
       run: |
         scripts/test.sh cpp-${PACKAGE}
+
+    - name: Run Zserio custom integration test
+      run: |
+        scripts/test_zs.sh cpp-${PACKAGE} -d test/data/others/gif/zs -s gif.zs
