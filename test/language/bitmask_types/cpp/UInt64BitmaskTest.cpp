@@ -2,9 +2,7 @@
 
 #include "bitmask_types/uint64_bitmask/Permission.h"
 #include "gtest/gtest.h"
-#include "zserio/BitStreamReader.h"
-#include "zserio/BitStreamWriter.h"
-#include "zserio/CppRuntimeException.h"
+#include "test_utils/TestUtility.h"
 
 namespace bitmask_types
 {
@@ -14,20 +12,14 @@ namespace uint64_bitmask
 class Uint64BitmaskTest : public ::testing::Test
 {
 protected:
-    static const size_t PERMISSION_BITSIZEOF;
+    static constexpr size_t PERMISSION_BITSIZEOF = 64;
 
-    static const Permission::ZserioType NONE_PERMISSION_VALUE;
-    static const Permission::ZserioType READ_PERMISSION_VALUE;
-    static const Permission::ZserioType WRITE_PERMISSION_VALUE;
+    static constexpr Permission::ZserioType NONE_PERMISSION_VALUE = 0;
+    static constexpr Permission::ZserioType READ_PERMISSION_VALUE = 2;
+    static constexpr Permission::ZserioType WRITE_PERMISSION_VALUE = 4;
 
     zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
-
-const size_t Uint64BitmaskTest::PERMISSION_BITSIZEOF = 64;
-
-const Permission::ZserioType Uint64BitmaskTest::NONE_PERMISSION_VALUE = 0;
-const Permission::ZserioType Uint64BitmaskTest::READ_PERMISSION_VALUE = 2;
-const Permission::ZserioType Uint64BitmaskTest::WRITE_PERMISSION_VALUE = 4;
 
 TEST_F(Uint64BitmaskTest, emptyConstructor)
 {
@@ -41,7 +33,7 @@ TEST_F(Uint64BitmaskTest, emptyConstructor)
     }
 }
 
-TEST_F(Uint64BitmaskTest, valuesConstroctor)
+TEST_F(Uint64BitmaskTest, valuesConstructor)
 {
     const Permission permission(Permission::Values::write_permission);
     ASSERT_EQ(WRITE_PERMISSION_VALUE, permission.getValue());
@@ -138,97 +130,12 @@ TEST_F(Uint64BitmaskTest, toString)
             Permission(255).toString().c_str());
 }
 
-TEST_F(Uint64BitmaskTest, operatorEquality)
+TEST_F(Uint64BitmaskTest, comparisionOperator)
 {
-    ASSERT_TRUE(Permission::Values::READ_PERMISSION == Permission::Values::READ_PERMISSION);
-    ASSERT_FALSE(Permission::Values::READ_PERMISSION == Permission::Values::write_permission);
-    ASSERT_TRUE(Permission::Values::write_permission == Permission::Values::write_permission);
-
-    const Permission read(Permission::Values::READ_PERMISSION);
-    ASSERT_TRUE(read == Permission::Values::READ_PERMISSION);
-    ASSERT_TRUE(Permission::Values::READ_PERMISSION == read);
-    ASSERT_FALSE(read == Permission::Values::write_permission);
-    ASSERT_FALSE(Permission::Values::write_permission == read);
-
-    const Permission write(Permission::Values::write_permission);
-    ASSERT_TRUE(write == Permission::Values::write_permission);
-    ASSERT_TRUE(Permission::Values::write_permission == write);
-    ASSERT_FALSE(write == Permission::Values::READ_PERMISSION);
-    ASSERT_FALSE(Permission::Values::READ_PERMISSION == write);
-
-    ASSERT_TRUE(read == read);
-    ASSERT_TRUE(read == Permission(read)); // copy
-    ASSERT_TRUE(write == write);
-    ASSERT_TRUE(write == Permission(write)); // copy
-
-    ASSERT_FALSE(read == write);
-}
-
-TEST_F(Uint64BitmaskTest, stdHash)
-{
-    std::hash<Permission> hasher;
-    const Permission readPermission(Permission::Values::READ_PERMISSION);
-    const Permission writePermission(Permission::Values::write_permission);
-    const Permission copyRead(readPermission);
-    ASSERT_EQ(hasher(readPermission), hasher(copyRead));
-    ASSERT_NE(hasher(readPermission), hasher(writePermission));
-    ASSERT_NE(hasher(readPermission), hasher(Permission::Values::nonePermission));
-    ASSERT_NE(hasher(writePermission), hasher(Permission::Values::nonePermission));
-
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(851, hasher(Permission(Permission::Values::nonePermission)));
-    ASSERT_EQ(853, hasher(Permission(Permission::Values::READ_PERMISSION)));
-    ASSERT_EQ(855, hasher(Permission(Permission::Values::write_permission)));
-    ASSERT_EQ(859, hasher(Permission(Permission::Values::CreatePermission)));
-}
-
-TEST_F(Uint64BitmaskTest, operatorInequality)
-{
-    ASSERT_FALSE(Permission::Values::READ_PERMISSION != Permission::Values::READ_PERMISSION);
-    ASSERT_TRUE(Permission::Values::READ_PERMISSION != Permission::Values::write_permission);
-    ASSERT_FALSE(Permission::Values::write_permission != Permission::Values::write_permission);
-
-    const Permission read(Permission::Values::READ_PERMISSION);
-    ASSERT_FALSE(read != Permission::Values::READ_PERMISSION);
-    ASSERT_FALSE(Permission::Values::READ_PERMISSION != read);
-    ASSERT_TRUE(read != Permission::Values::write_permission);
-    ASSERT_TRUE(Permission::Values::write_permission != read);
-
-    const Permission write(Permission::Values::write_permission);
-    ASSERT_FALSE(write != Permission::Values::write_permission);
-    ASSERT_FALSE(Permission::Values::write_permission != write);
-    ASSERT_TRUE(write != Permission::Values::READ_PERMISSION);
-    ASSERT_TRUE(Permission::Values::READ_PERMISSION != write);
-
-    ASSERT_FALSE(read != read);
-    ASSERT_FALSE(read != Permission(read)); // copy
-    ASSERT_FALSE(write != write);
-    ASSERT_FALSE(write != Permission(write)); // copy
-
-    ASSERT_TRUE(read != write);
-}
-
-TEST_F(Uint64BitmaskTest, operatorLessThan)
-{
-    ASSERT_TRUE(Permission::Values::nonePermission < Permission::Values::READ_PERMISSION);
-    ASSERT_FALSE(Permission::Values::READ_PERMISSION < Permission::Values::nonePermission);
-
-    ASSERT_TRUE(Permission::Values::READ_PERMISSION < Permission::Values::write_permission);
-    ASSERT_FALSE(Permission::Values::write_permission < Permission::Values::READ_PERMISSION);
-
-    ASSERT_FALSE(Permission::Values::nonePermission < Permission::Values::nonePermission);
-    ASSERT_FALSE(Permission::Values::READ_PERMISSION < Permission::Values::READ_PERMISSION);
-    ASSERT_FALSE(Permission::Values::write_permission < Permission::Values::write_permission);
-
-    ASSERT_TRUE(Permission::Values::READ_PERMISSION <
-            (Permission::Values::READ_PERMISSION | Permission::Values::write_permission));
-    ASSERT_FALSE((Permission::Values::READ_PERMISSION | Permission::Values::write_permission) <
-            Permission::Values::READ_PERMISSION);
-
-    const Permission read(Permission::Values::READ_PERMISSION);
-    const Permission write(Permission::Values::write_permission);
-    ASSERT_TRUE(read < write);
-    ASSERT_FALSE(write < read);
+    Permission writePermission = Permission::Values::write_permission;
+    Permission equalPermission = Permission::Values::write_permission;
+    Permission lessThanPermission = Permission::Values::READ_PERMISSION;
+    test_utils::comparisonOperatorsTest(writePermission, equalPermission, lessThanPermission);
 }
 
 TEST_F(Uint64BitmaskTest, operatorBitwiseOr)
@@ -339,6 +246,17 @@ TEST_F(Uint64BitmaskTest, operatorBitwiseXorAssignment)
 
     permission ^= Permission::Values::READ_PERMISSION;
     ASSERT_EQ(Permission::Values::nonePermission, permission);
+}
+
+TEST_F(Uint64BitmaskTest, stdHash)
+{
+    const Permission readPermission(Permission::Values::READ_PERMISSION);
+    const size_t readHash = 853; // use hardcoded values to check that the hash code is stable
+    const Permission equalPermission(Permission::Values::READ_PERMISSION);
+    const Permission writePermission(Permission::Values::write_permission);
+    const size_t writeHash = 855;
+
+    test_utils::hashTest(readPermission, readHash, equalPermission, writePermission, writeHash);
 }
 
 } // namespace uint64_bitmask

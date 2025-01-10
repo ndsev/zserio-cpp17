@@ -19,7 +19,13 @@ add_custom_test(bitmask_types
         bitmask_types_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitfieldBitmaskTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitfieldConstBitmaskTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitmaskDefinedByConstantTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitmaskUsedByBitmaskTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitmaskWithoutNoneTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt8BitmaskTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt64BitmaskTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/VarUIntBitmaskTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

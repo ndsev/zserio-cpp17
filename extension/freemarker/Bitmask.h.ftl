@@ -142,6 +142,45 @@ inline constexpr bool operator<(const ${name}& lhs, const ${name}& rhs)
 }
 
 /**
+ * Defines operator '>' for the bitmask '${name}'.
+ *
+ * \param lhs Left operand.
+ * \param rhs Right operand.
+ *
+ * \return True if lhs is greater than the rhs, otherwise false.
+ */
+inline constexpr bool operator>(const ${name}& lhs, const ${name}& rhs)
+{
+    return lhs.getValue() > rhs.getValue();
+}
+
+/**
+ * Defines operator '<=' for the bitmask '${name}'.
+ *
+ * \param lhs Left operand.
+ * \param rhs Right operand.
+ *
+ * \return True if lhs is less than or equal to the rhs, otherwise false.
+ */
+inline constexpr bool operator<=(const ${name}& lhs, const ${name}& rhs)
+{
+    return lhs.getValue() <= rhs.getValue();
+}
+
+/**
+ * Defines operator '>=' for the bitmask '${name}'.
+ *
+ * \param lhs Left operand.
+ * \param rhs Right operand.
+ *
+ * \return True if lhs is greater than or equal to the rhs, otherwise false.
+ */
+inline constexpr bool operator>=(const ${name}& lhs, const ${name}& rhs)
+{
+    return lhs.getValue() >= rhs.getValue();
+}
+
+/**
  * Defines operator '|' for the bitmask '${name}'.
  *
  * \param lhs Const reference to the left operand.

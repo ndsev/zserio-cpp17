@@ -10,4 +10,10 @@ google-explicit-constructor:gen/bitmask_types/uint8_bitmask/Permission.h
 google-explicit-constructor:gen/bitmask_types/varuint_bitmask/Permission.h
 
 performance-move-const-arg:cpp/BitfieldBitmaskTest.cpp
+performance-move-const-arg:cpp/BitfieldConstBitmaskTest.cpp
+performance-move-const-arg:cpp/BitmaskDefinedByConstantTest.cpp
+performance-move-const-arg:cpp/BitmaskUsedByBitmaskTest.cpp
+performance-move-const-arg:cpp/BitmaskWithoutNoneTest.cpp
 performance-move-const-arg:cpp/UInt64BitmaskTest.cpp
+performance-move-const-arg:cpp/UInt8BitmaskTest.cpp
+performance-move-const-arg:cpp/VarUIntBitmaskTest.cpp
