@@ -6,6 +6,7 @@ import zserio.ast.BytesType;
 import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.DynamicBitFieldType;
 import zserio.ast.EnumType;
+import zserio.ast.Expression;
 import zserio.ast.ExternType;
 import zserio.ast.FloatType;
 import zserio.ast.IntegerType;
@@ -13,7 +14,6 @@ import zserio.ast.StringType;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
 import zserio.ast.ZserioType;
-import zserio.extension.common.ExpressionFormatter;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
@@ -31,17 +31,20 @@ public final class NativeTypeInfoTemplateDataCreator
         final StringBuilder typeTemplateArgBuilder = new StringBuilder();
         if (nativeType instanceof NativeIntegralType)
         {
-            final ExpressionFormatter expressionFormatter = context.getExpressionFormatter(includeCollector);
             if (nativeType instanceof NativeDynamicBitFieldType &&
                     typeInstantiation instanceof DynamicBitFieldInstantiation)
             {
                 typeTemplateArgBuilder.append('<');
                 final DynamicBitFieldInstantiation dynamicBitFieldInstantiation =
                         (DynamicBitFieldInstantiation)typeInstantiation;
-                if (dynamicBitFieldInstantiation.getLengthExpression().getIntegerValue() != null)
+                final Expression lengthExpression = dynamicBitFieldInstantiation.getLengthExpression();
+                // dynamic bit field length must be constant expression and since this is a generic expression,
+                // which can contain e.g. functions (which are implemented only on View),
+                // it's safer to use the calculated value
+                if (lengthExpression.getIntegerValue() != null)
                 {
-                    typeTemplateArgBuilder.append(expressionFormatter.formatGetter(
-                            dynamicBitFieldInstantiation.getLengthExpression()));
+                    typeTemplateArgBuilder.append(
+                            CppLiteralFormatter.formatUInt8Literal(lengthExpression.getIntegerValue()));
                 }
                 else
                 {

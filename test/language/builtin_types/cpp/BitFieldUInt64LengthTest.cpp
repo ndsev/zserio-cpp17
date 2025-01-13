@@ -22,7 +22,7 @@ TEST(BitFieldUIn64LengthTest, bitSizeOf)
     ASSERT_EQ(expectedBitSizeOfContainer, zserio::detail::bitSizeOf(view));
 }
 
-TEST(BitFieldUIn64LengthTest, readWrite)
+TEST(BitFieldUIn64LengthTest, writeRead)
 {
     Container container;
     const uint64_t bitFieldLength = 33;

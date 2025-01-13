@@ -11,9 +11,9 @@ import zserio.extension.cpp17.types.NativeIntegralType;
  */
 public final class CppLiteralFormatter
 {
-    public static String formatUInt8Literal(int value) throws ZserioExtensionException
+    public static String formatUInt8Literal(BigInteger value) throws ZserioExtensionException
     {
-        return uint8Type.formatLiteral(BigInteger.valueOf(value));
+        return uint8Type.formatLiteral(value);
     }
 
     public static String formatStringLiteral(String value)
