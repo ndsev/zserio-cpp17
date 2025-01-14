@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "gtest/gtest.h"
 #include "zserio/Array.h"
 #include "zserio/Types.h"
@@ -267,6 +269,9 @@ TEST(ArrayTest, int8PackedArray)
     ASSERT_EQ(0, *otherIt);
     otherIt = it - 1;
     ASSERT_EQ(-4, *otherIt);
+    ASSERT_EQ(1, it - otherIt);
+    ASSERT_EQ(-1, otherIt - it);
+    ASSERT_EQ(array.size(), array.end() - array.begin());
 
     ASSERT_TRUE(otherIt == array.begin());
     ASSERT_FALSE(otherIt == array.end());
@@ -299,6 +304,12 @@ TEST(ArrayTest, int8PackedArray)
     {
         ASSERT_EQ(rawArray[i--], *rit);
     }
+
+    auto foundIt = std::find_if(array.begin(), array.end(), [](auto value) {
+        return value > 0;
+    });
+    ASSERT_NE(array.end(), foundIt);
+    ASSERT_EQ(2, *foundIt);
 }
 
 TEST(ArrayTest, fixedDynInt16Array)
@@ -567,6 +578,18 @@ TEST(ArrayTest, testObjectArray)
     ASSERT_EQ(view, array1.begin()[1]);
     ASSERT_EQ(array1.begin(), array1.end() - 2);
     ASSERT_EQ(*array1.begin(), *(array1.end() - 2));
+    ASSERT_EQ(array1.size(), array1.end() - array1.begin());
+
+    auto foundIt = std::find_if(array1.begin(), array1.end(), [](const zserio::View<TestObject>& element) {
+        return element.field() != 0;
+    });
+    ASSERT_NE(array1.end(), foundIt);
+    ASSERT_EQ(array1.at(1), *foundIt);
+
+    auto notFoundIt = std::find_if(array1.begin(), array1.end(), [](const zserio::View<TestObject>& element) {
+        return element.field() > 13;
+    });
+    ASSERT_EQ(array1.end(), notFoundIt);
 }
 
 TEST(ArrayTest, testObjectPackedArray)

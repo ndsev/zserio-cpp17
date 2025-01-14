@@ -549,9 +549,9 @@ public:
             return ConstIterator(m_array, m_index + static_cast<size_t>(offset));
         }
 
-        friend ConstIterator operator+(difference_type offset, const ConstIterator& right)
+        friend ConstIterator operator+(difference_type offset, const ConstIterator& other)
         {
-            return ConstIterator(right.m_array, right.m_index + static_cast<size_t>(offset));
+            return ConstIterator(other.m_array, other.m_index + static_cast<size_t>(offset));
         }
 
         ConstIterator& operator-=(difference_type offset)
@@ -560,9 +560,14 @@ public:
             return *this;
         }
 
-        ConstIterator operator-(difference_type offset)
+        ConstIterator operator-(difference_type offset) const
         {
             return ConstIterator(m_array, m_index - static_cast<size_t>(offset));
+        }
+
+        difference_type operator-(const ConstIterator& other) const
+        {
+            return static_cast<difference_type>(m_index - other.m_index);
         }
 
         bool operator==(const ConstIterator& other) const
