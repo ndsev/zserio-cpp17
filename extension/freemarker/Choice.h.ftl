@@ -105,7 +105,7 @@ protected:
     View(const ${fullName}& data, const View& other) noexcept;
 
 private:
-    const ${fullName}& m_data;
+    const ${fullName}* m_data;
 <#list parameterList as parameter>
     <@parameter_view_type_name parameter/> <@parameter_view_member_name parameter/>;
 </#list>

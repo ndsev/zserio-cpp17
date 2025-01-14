@@ -52,6 +52,62 @@ TEST_F(UInt64ParamChoiceTest, constructors)
     }
 }
 
+TEST_F(UInt64ParamChoiceTest, copyConstructor)
+{
+    UInt64ParamChoice data;
+    const VariantA value = 99;
+    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    UInt64ParamChoice dataCopy(data);
+    ASSERT_EQ(dataCopy, data);
+
+    zserio::View view(data, VARIANT_A_SELECTOR);
+    zserio::View viewCopy(view);
+    ASSERT_EQ(viewCopy, view);
+}
+
+TEST_F(UInt64ParamChoiceTest, assignmentOperator)
+{
+    UInt64ParamChoice data;
+    const VariantA value = 99;
+    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    UInt64ParamChoice dataCopy;
+    dataCopy = data;
+    ASSERT_EQ(dataCopy, data);
+
+    zserio::View view(data, VARIANT_A_SELECTOR);
+    zserio::View viewCopy(UInt64ParamChoice{}, VARIANT_B_SELECTOR);
+    viewCopy = view;
+    ASSERT_EQ(viewCopy, view);
+}
+
+TEST_F(UInt64ParamChoiceTest, moveConstructor)
+{
+    UInt64ParamChoice data;
+    const VariantA value = 99;
+    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    UInt64ParamChoice dataMoved(std::move(data));
+    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueA>(dataMoved));
+
+    zserio::View view(dataMoved, VARIANT_A_SELECTOR);
+    zserio::View viewMoved(std::move(view));
+    ASSERT_EQ(value, viewMoved.valueA());
+}
+
+TEST_F(UInt64ParamChoiceTest, moveAssignmentOperator)
+{
+    UInt64ParamChoice data;
+    const VariantA value = 99;
+    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    UInt64ParamChoice dataMoved;
+    dataMoved = std::move(data);
+    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueA>(dataMoved));
+
+    zserio::View view(dataMoved, VARIANT_A_SELECTOR);
+    zserio::View viewMoved(UInt64ParamChoice{}, VARIANT_B_SELECTOR);
+    viewMoved = std::move(view);
+    ASSERT_EQ(value, viewMoved.valueA());
+}
+
 TEST_F(UInt64ParamChoiceTest, selector)
 {
     UInt64ParamChoice data;

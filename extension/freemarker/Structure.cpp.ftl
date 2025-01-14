@@ -128,7 +128,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
         <#lt>) noexcept :
-        m_data(data)<#if parameterList?has_content>,</#if>
+        m_data(&data)<#if parameterList?has_content>,</#if>
 <#list parameterList as parameter>
         <@parameter_view_member_name parameter/>(<@parameter_view_arg_name parameter/>)<#if parameter?has_next>,</#if>
 </#list>
@@ -136,7 +136,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 
 View<${fullName}>::View(const ${fullName}& data,
         const View&<#if parameterList?has_content> other</#if>) noexcept :
-        m_data(data)<#if parameterList?has_content>,</#if>
+        m_data(&data)<#if parameterList?has_content>,</#if>
 <#list parameterList as parameter>
         <@parameter_view_member_name parameter/>(other.${parameter.getterName}())<#if parameter?has_next>,</#if>
 </#list>
@@ -153,7 +153,7 @@ View<${fullName}>::View(const ${fullName}& data,
 <#macro structure_field_view_getter field, indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.isExtended>
-${I}if (m_data.<@field_data_member_name field/>.isPresent())
+${I}if (m_data-><@field_data_member_name field/>.isPresent())
 ${I}{
         <@structure_field_view_getter_optional field, indent+1/>
 ${I}}
@@ -162,7 +162,7 @@ ${I}{
 ${I}    auto <@field_view_local_name field/> = <#rt>
         <#if field.optional??><#-- TODO[Mi-L@]: What if non-present optional in data has value? -->
             <@structure_field_view_type_name field/>(::std::nullopt, <#t>
-                    <#lt>m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
+                    <#lt>m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
         <#else>
             <#lt><@structure_field_view_getter_inner field, indent+1/>;
         </#if>
@@ -176,14 +176,14 @@ ${I}}
 <#macro structure_field_view_getter_optional field, indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.optional??>
-${I}if (m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>has_value())
+${I}if (m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>has_value())
 ${I}{
 ${I}    return <@structure_field_view_getter_inner field, indent+1/>;
 ${I}}
 ${I}else
 ${I}{
 ${I}    return <@structure_field_view_type_name field/>(::std::nullopt, <#rt>
-                <#lt>m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
+                <#lt>m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
 ${I}}
     <#else>
 ${I}return <@structure_field_view_getter_inner field, indent/>;
@@ -193,15 +193,15 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#lt><@structure_field_view_type_name field/>{
 ${I}        <#if field.optional??>std::in_place, <#rt>
-            m_data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator(), </#if><#t>
+            m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator(), </#if><#t>
             <#if field.isExtended>*</#if><#if field.optional??>*</#if><#t>
-            m_data.<@field_data_member_name field/><@field_view_parameters field/>}<#t>
+            m_data-><@field_data_member_name field/><@field_view_parameters field/>}<#t>
 </#macro>
 <@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
     <#-- simple -->
-    return m_data.<@field_data_member_name field/>;
+    return m_data-><@field_data_member_name field/>;
     <#else>
     <@structure_field_view_getter field, 1/>
     </#if>
@@ -217,7 +217,7 @@ ${I}        <#if field.optional??>std::in_place, <#rt>
 
 const ${fullName}& View<${fullName}>::zserioData() const
 {
-    return m_data;
+    return *m_data;
 }
 
 bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>

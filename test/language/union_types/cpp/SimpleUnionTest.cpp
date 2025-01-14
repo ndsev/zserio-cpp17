@@ -51,6 +51,58 @@ TEST_F(SimpleUnionTest, constructors)
     }
 }
 
+TEST_F(SimpleUnionTest, copyConstructor)
+{
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+    SimpleUnion dataCopy(data);
+    ASSERT_EQ(dataCopy, data);
+
+    zserio::View view(data);
+    zserio::View viewCopy(view);
+    ASSERT_EQ(viewCopy, view);
+}
+
+TEST_F(SimpleUnionTest, assignmentOperator)
+{
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+    SimpleUnion dataCopy;
+    dataCopy = data;
+    ASSERT_EQ(dataCopy, data);
+
+    zserio::View view(data);
+    zserio::View viewCopy(SimpleUnion{});
+    viewCopy = view;
+    ASSERT_EQ(viewCopy, view);
+}
+
+TEST_F(SimpleUnionTest, moveConstructor)
+{
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+    SimpleUnion dataMoved(std::move(data));
+    ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(dataMoved));
+
+    zserio::View view(dataMoved);
+    zserio::View viewMoved(std::move(view));
+    ASSERT_EQ(CASE1_FIELD, viewMoved.case1Field());
+}
+
+TEST_F(SimpleUnionTest, moveAssignmentOperator)
+{
+    SimpleUnion data;
+    data.emplace<ChoiceTag::CHOICE_case1Field>(CASE1_FIELD);
+    SimpleUnion dataMoved;
+    dataMoved = std::move(data);
+    ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(dataMoved));
+
+    zserio::View view(dataMoved);
+    zserio::View viewMoved(SimpleUnion{});
+    viewMoved = std::move(view);
+    ASSERT_EQ(CASE1_FIELD, viewMoved.case1Field());
+}
+
 TEST_F(SimpleUnionTest, zserioChoiceTag)
 {
     {

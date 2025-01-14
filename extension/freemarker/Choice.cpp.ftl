@@ -62,7 +62,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
         <#lt>) noexcept :
-        m_data(data)<#if parameterList?has_content>,</#if>
+        m_data(&data)<#if parameterList?has_content>,</#if>
 <#list parameterList as parameter>
         <@parameter_view_member_name parameter/>(<@parameter_view_arg_name parameter/>)<#if parameter?has_next>,</#if>
 </#list>
@@ -70,7 +70,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 
 View<${fullName}>::View(const ${fullName}& data,
         const View&<#if parameterList?has_content> other</#if>) noexcept :
-        m_data(data)<#if parameterList?has_content>,</#if>
+        m_data(&data)<#if parameterList?has_content>,</#if>
 <#list parameterList as parameter>
         <@parameter_view_member_name parameter/>(other.${parameter.getterName}())<#if parameter?has_next>,</#if>
 </#list>
@@ -88,10 +88,10 @@ View<${fullName}>::View(const ${fullName}& data,
 {
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
     <#-- field which does not need View -->
-    return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data);
+    return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(*m_data);
     <#else>
     <#-- field which needs View -->
-    return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_data)<#rt>
+    return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(*m_data)<#rt>
             <#lt><@field_view_parameters field/>};
     </#if>
 }
@@ -106,12 +106,12 @@ View<${fullName}>::View(const ${fullName}& data,
 
 ${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
 {
-    return m_data.index();
+    return m_data->index();
 }
 
 const ${fullName}& View<${fullName}>::zserioData() const
 {
-    return m_data;
+    return *m_data;
 }
 
 <#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>

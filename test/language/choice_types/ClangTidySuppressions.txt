@@ -13,3 +13,5 @@ readability-simplify-boolean-expr:gen/choice_types/empty_choice/EmptyChoice.cpp
 
 google-explicit-constructor:gen/choice_types/bitmask_param_choice/Selector.h
 google-explicit-constructor:gen/choice_types/full_bitmask_param_choice/Selector.h
+
+performance-move-const-arg:cpp/UInt64ParamChoiceTest.cpp

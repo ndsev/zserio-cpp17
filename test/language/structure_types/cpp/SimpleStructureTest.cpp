@@ -211,6 +211,18 @@ TEST_F(SimpleStructureDataTest, stdHash)
     ASSERT_EQ(hasher(simpleStructure1), hasher(simpleStructure2));
 }
 
+TEST_F(SimpleStructureViewTest, assignmentOperator)
+{
+    const uint8_t numberA = 0x07;
+    const uint8_t numberB = 0xFF;
+    const uint8_t numberC = 0x7F;
+    SimpleStructure simpleStructure(numberA, numberB, numberC);
+    zserio::View view(simpleStructure);
+    zserio::View viewCopy(SimpleStructure{0, 0, 0});
+    viewCopy = view;
+    ASSERT_EQ(viewCopy, view);
+}
+
 TEST_F(SimpleStructureViewTest, operatorEquality)
 {
     SimpleStructure simpleStructure1;
