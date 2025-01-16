@@ -483,9 +483,12 @@ ${I}// empty
 ${I}throw ::zserio::CppRuntimeException("No match in choice ${fullName}!");
 </#macro>
 size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
-        <#lt>const ::zserio::View<${fullName}>&<#if fieldList?has_content> view</#if>) const
+        <#lt>const ::zserio::View<${fullName}>&<#if parameterList?has_content || fieldList?has_content> view</#if>) const
 {
     uint32_t result = ::zserio::HASH_SEED;
+<#list parameterList as parameter>
+    result = ::zserio::calcHashCode(result, view.${parameter.getterName}());
+</#list>
 <#if fieldList?has_content>
     <@choice_switch "choice_hash_member", "choice_hash_no_match", viewIndirectSelectorExpression/>
 

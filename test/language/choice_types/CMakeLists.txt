@@ -18,9 +18,25 @@ add_custom_test(choice_types
     DEPENDS
         choice_types_zs
     SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitmaskParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BoolParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceCompatibilityCheckTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceWithArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ConstantInChoiceCaseTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DefaultEmptyChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyChoiceWithCaseTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyChoiceWithDefaultTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EnumParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EnumWithRemovedItemParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionSelectorChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FullBitmaskParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FullEnumParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FunctionReturningLiteralSelectorChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FunctionSelectorChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt16ParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt32ParamChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt64ParamChoiceTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}

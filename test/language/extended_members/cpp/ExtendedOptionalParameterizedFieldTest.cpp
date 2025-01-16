@@ -212,10 +212,10 @@ TEST_F(ExtendedOptionalParameterizedFieldTest, stdHash)
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
     zserio::View view(data);
-    const size_t viewHash = 3594355405;
+    const size_t viewHash = 263620308;
     zserio::View equalView(equalData);
     zserio::View diffView(diffData);
-    const size_t diffViewHash = 3594355368;
+    const size_t diffViewHash = 1146261878;
 
     test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }

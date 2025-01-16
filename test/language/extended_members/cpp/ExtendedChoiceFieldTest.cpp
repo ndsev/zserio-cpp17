@@ -237,10 +237,10 @@ TEST_F(ExtendedChoiceFieldTest, stdHash)
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
     zserio::View view(data);
-    const size_t viewHash = 32417;
+    const size_t viewHash = 63090;
     zserio::View equalView(equalData);
     zserio::View diffView(diffData);
-    const size_t diffViewHash = 32416;
+    const size_t diffViewHash = 63089;
 
     test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }

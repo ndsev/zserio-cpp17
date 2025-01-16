@@ -140,10 +140,10 @@ TEST_F(ArrayElementParamWithOptionalTest, stdHash)
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
     zserio::View view(data);
-    const size_t viewHash = 1256582;
+    const size_t viewHash = 2484242;
     zserio::View equalView(equalData);
     zserio::View diffView(diffData);
-    const size_t diffViewHash = 1256581;
+    const size_t diffViewHash = 2484241;
     test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }
 

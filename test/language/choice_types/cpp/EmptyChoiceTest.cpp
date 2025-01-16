@@ -89,15 +89,18 @@ TEST(EmptyChoiceTest, read)
 
 TEST(EmptyChoiceTest, stdHash)
 {
-    std::hash<EmptyChoice> dataHasher;
     EmptyChoice data;
     const size_t dataHash = 23; // hardcoded value to check that the hash code is stable
-    ASSERT_EQ(dataHash, dataHasher(data));
+    EmptyChoice equalData;
+    EmptyChoice diffData;
+    test_utils::hashTest(data, dataHash, equalData);
 
-    std::hash<zserio::View<EmptyChoice>> viewHasher;
-    zserio::View view(data, static_cast<zserio::UInt8>(0));
-    const size_t viewHash = dataHash;
-    ASSERT_EQ(viewHash, viewHasher(view));
+    zserio::View view(data, zserio::UInt8(0));
+    const size_t viewHash = 851; // hardcoded value to check that the hash code is stable
+    zserio::View equalView(equalData, zserio::UInt8(0));
+    zserio::View diffView(diffData, zserio::UInt8(1));
+    const size_t diffViewHash = 852; // hardcoded value to check that the hash code is stable
+    test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }
 
 } // namespace empty_choice

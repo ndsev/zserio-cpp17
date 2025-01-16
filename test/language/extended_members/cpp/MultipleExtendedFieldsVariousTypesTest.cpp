@@ -325,26 +325,6 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, writeExtended1ReadExtended2)
     test_utils::writeReadTest(readDataExtended2);
 }
 
-TEST_F(MultipleExtendedFieldsVariousTypesTest, stdHash)
-{
-    Extended2 data = createExtended2();
-    const size_t dataHash = 2740934259;
-    Extended2 equalData = createExtended2();
-    Extended2 diffData = createExtended2();
-    **diffData.extendedValue9 -= 1;
-    const size_t diffDataHash = 2740934258;
-
-    test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
-
-    zserio::View view(data);
-    const size_t viewHash = 2739830956;
-    zserio::View equalView(equalData);
-    zserio::View diffView(diffData);
-    const size_t diffViewHash = 2739830955;
-
-    test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
-}
-
 TEST_F(MultipleExtendedFieldsVariousTypesTest, validationError)
 {
     Original dataOriginal;
@@ -391,6 +371,26 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, validationError)
 
     dataExtended2.extendedValue8.setPresent(true);
     ASSERT_NO_THROW((void)zserio::serialize(dataExtended2));
+}
+
+TEST_F(MultipleExtendedFieldsVariousTypesTest, stdHash)
+{
+    Extended2 data = createExtended2();
+    const size_t dataHash = 2740934259;
+    Extended2 equalData = createExtended2();
+    Extended2 diffData = createExtended2();
+    **diffData.extendedValue9 -= 1;
+    const size_t diffDataHash = 2740934258;
+
+    test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
+
+    zserio::View view(data);
+    const size_t viewHash = 2740968595;
+    zserio::View equalView(equalData);
+    zserio::View diffView(diffData);
+    const size_t diffViewHash = 2740968594;
+
+    test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }
 
 } // namespace multiple_extended_fields_various_types
