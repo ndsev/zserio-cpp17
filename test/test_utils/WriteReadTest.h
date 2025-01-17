@@ -29,7 +29,7 @@ void writeReadTestDetail(const T& data, ARGS&&... arguments)
     T readData;
     const zserio::View readView = zserio::detail::read(reader, readData, arguments...);
     ASSERT_EQ(bitSize, reader.getBitPosition());
-    ASSERT_EQ(readView, view);
+    ASSERT_EQ(view, readView);
 }
 
 template <typename T, typename... ARGS>

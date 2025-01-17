@@ -2,36 +2,35 @@
 #include "default_values/structure_default_values/Permission.h"
 #include "default_values/structure_default_values/StructureDefaultValues.h"
 #include "gtest/gtest.h"
-#include "zserio/BitStreamReader.h"
-#include "zserio/CppRuntimeException.h"
+#include "test_utils/TestUtility.h"
 
 namespace default_values
 {
 namespace structure_default_values
 {
 
-TEST(StructureDefaultValuesDataTest, checkDefaultBoolValue)
+TEST(StructureDefaultValuesTest, checkDefaultBoolValue)
 {
-    StructureDefaultValues structureDefaultValues;
-    ASSERT_EQ(true, structureDefaultValues.boolValue);
+    StructureDefaultValues data;
+    ASSERT_EQ(true, data.boolValue);
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultBit4Value)
+TEST(StructureDefaultValuesTest, checkDefaultBit4Value)
 {
-    StructureDefaultValues structureDefaultValues;
-    ASSERT_EQ(0x0F, structureDefaultValues.bit4Value);
+    StructureDefaultValues data;
+    ASSERT_EQ(0x0F, data.bit4Value);
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultInt16Value)
+TEST(StructureDefaultValuesTest, checkDefaultInt16Value)
 {
-    StructureDefaultValues structureDefaultValues;
-    ASSERT_EQ(0x0BEE, structureDefaultValues.int16Value);
+    StructureDefaultValues data;
+    ASSERT_EQ(0x0BEE, data.int16Value);
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultFloat16Value)
+TEST(StructureDefaultValuesTest, checkDefaultFloat16Value)
 {
-    StructureDefaultValues structureDefaultValues;
-    float diff = 1.23F - structureDefaultValues.float16Value;
+    StructureDefaultValues data;
+    float diff = 1.23F - data.float16Value;
     if (diff < 0.0F)
     {
         diff = -diff;
@@ -39,10 +38,10 @@ TEST(StructureDefaultValuesDataTest, checkDefaultFloat16Value)
     ASSERT_TRUE(diff <= std::numeric_limits<float>::epsilon());
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultFloat32Value)
+TEST(StructureDefaultValuesTest, checkDefaultFloat32Value)
 {
-    StructureDefaultValues structureDefaultValues;
-    float diff = 1.234F - structureDefaultValues.float32Value;
+    StructureDefaultValues data;
+    float diff = 1.234F - data.float32Value;
     if (diff < 0.0F)
     {
         diff = -diff;
@@ -50,10 +49,10 @@ TEST(StructureDefaultValuesDataTest, checkDefaultFloat32Value)
     ASSERT_TRUE(diff <= std::numeric_limits<float>::epsilon());
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultFloat64Value)
+TEST(StructureDefaultValuesTest, checkDefaultFloat64Value)
 {
-    StructureDefaultValues structureDefaultValues;
-    double diff = 1.2345 - structureDefaultValues.float64Value;
+    StructureDefaultValues data;
+    double diff = 1.2345 - data.float64Value;
     if (diff < 0.0)
     {
         diff = -diff;
@@ -61,37 +60,54 @@ TEST(StructureDefaultValuesDataTest, checkDefaultFloat64Value)
     ASSERT_TRUE(diff <= std::numeric_limits<double>::epsilon());
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultStringValue)
+TEST(StructureDefaultValuesTest, checkDefaultStringValue)
 {
-    StructureDefaultValues structureDefaultValues;
-    ASSERT_EQ("string", structureDefaultValues.stringValue);
+    StructureDefaultValues data;
+    ASSERT_EQ("string", data.stringValue);
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultEnumValue)
+TEST(StructureDefaultValuesTest, checkDefaultEnumValue)
 {
-    StructureDefaultValues structureDefaultValues;
-    ASSERT_EQ(BasicColor::BLACK, structureDefaultValues.enumValue);
+    StructureDefaultValues data;
+    ASSERT_EQ(BasicColor::BLACK, data.enumValue);
 }
 
-TEST(StructureDefaultValuesDataTest, checkDefaultBitmaskValue)
+TEST(StructureDefaultValuesTest, checkDefaultBitmaskValue)
 {
-    StructureDefaultValues structureDefaultValues;
-    ASSERT_EQ(Permission::Values::READ_WRITE, structureDefaultValues.bitmaskValue);
+    StructureDefaultValues data;
+    ASSERT_EQ(Permission::Values::READ_WRITE, data.bitmaskValue);
 }
 
-TEST(StructureDefaultValuesDataTest, operatorEquality)
+TEST(StructureDefaultValuesTest, comparisonOperators)
 {
-    StructureDefaultValues structureDefaultValues1;
-    StructureDefaultValues structureDefaultValues2;
-    ASSERT_EQ(structureDefaultValues1, structureDefaultValues2);
+    StructureDefaultValues data1;
+    StructureDefaultValues data2;
+    test_utils::comparisonOperatorsTest(data1, data2);
 }
 
-TEST(StructureDefaultValuesDataTest, operatorLessThan)
+TEST(StructureDefaultValuesTest, writeRead)
 {
-    StructureDefaultValues structureDefaultValues1;
-    StructureDefaultValues structureDefaultValues2;
-    ASSERT_FALSE(structureDefaultValues1 < structureDefaultValues2);
-    ASSERT_FALSE(structureDefaultValues2 < structureDefaultValues1);
+    // Zserio equality operator doesn't work due double arithmetic
+    StructureDefaultValues data;
+    zserio::View view(data);
+
+    auto bitBuffer = zserio::serialize(view);
+    StructureDefaultValues readData;
+    zserio::View readView = zserio::deserialize(bitBuffer, readData);
+
+    ASSERT_EQ(data.boolValue, readData.boolValue);
+    ASSERT_EQ(data.bit4Value, readData.bit4Value);
+    ASSERT_EQ(data.int16Value, readData.int16Value);
+    ASSERT_EQ(data.stringValue, readData.stringValue);
+    ASSERT_EQ(data.enumValue, readData.enumValue);
+    ASSERT_EQ(data.bitmaskValue, readData.bitmaskValue);
+
+    ASSERT_EQ(view.boolValue(), readView.boolValue());
+    ASSERT_EQ(view.bit4Value(), readView.bit4Value());
+    ASSERT_EQ(view.int16Value(), readView.int16Value());
+    ASSERT_EQ(view.stringValue(), readView.stringValue());
+    ASSERT_EQ(view.enumValue(), readView.enumValue());
+    ASSERT_EQ(view.bitmaskValue(), readView.bitmaskValue());
 }
 
 } // namespace structure_default_values
