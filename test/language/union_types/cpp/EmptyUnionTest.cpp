@@ -42,13 +42,11 @@ TEST(EmptyUnionTest, comparisonOperators)
 {
     EmptyUnion data;
     EmptyUnion equalData;
-    ASSERT_TRUE(data == equalData);
-    ASSERT_FALSE(data < equalData);
+    test_utils::comparisonOperatorsTest(data, equalData);
 
     zserio::View view(data);
     zserio::View equalView(equalData);
-    ASSERT_TRUE(view == equalView);
-    ASSERT_FALSE(view < equalView);
+    test_utils::comparisonOperatorsTest(view, equalView);
 }
 
 TEST(EmptyUnionTest, validate)
@@ -82,15 +80,15 @@ TEST(EmptyUnionTest, read)
 
 TEST(EmptyUnionTest, stdHash)
 {
-    std::hash<EmptyUnion> dataHasher;
     EmptyUnion data;
     const size_t dataHash = 23; // hardcoded value to check that the hash code is stable
-    ASSERT_EQ(dataHash, dataHasher(data));
+    EmptyUnion equalData;
+    test_utils::hashTest(data, dataHash, equalData);
 
-    std::hash<zserio::View<EmptyUnion>> viewHasher;
     zserio::View view(data);
     const size_t viewHash = dataHash;
-    ASSERT_EQ(viewHash, viewHasher(view));
+    zserio::View equalView(equalData);
+    test_utils::hashTest(view, viewHash, equalView);
 }
 
 } // namespace empty_union

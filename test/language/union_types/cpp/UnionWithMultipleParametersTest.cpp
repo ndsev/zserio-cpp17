@@ -1,4 +1,3 @@
-#include <array>
 #include <limits>
 #include <string>
 #include <string_view>
@@ -19,7 +18,6 @@ using ChoiceTag = TestUnion::ChoiceTag;
 
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class UnionWithMultipleParametersTest : public ::testing::Test
 {
