@@ -1,5 +1,11 @@
 bugprone-exception-escape:gen/union_types/empty_union/EmptyUnion.h
+bugprone-exception-escape:gen/union_types/empty_union_with_parameter/EmptyUnionWithParameter.h
 bugprone-exception-escape:gen/union_types/simple_union/SimpleUnion.h
+bugprone-exception-escape:gen/union_types/union_compatibility_check/UnionVersion1.h
+bugprone-exception-escape:gen/union_types/union_compatibility_check/UnionVersion2.h
+bugprone-exception-escape:gen/union_types/union_with_array/TestUnion.h
+bugprone-exception-escape:gen/union_types/union_with_parameter/TestUnion.h
+bugprone-exception-escape:gen/union_types/union_with_parameterized_field/TestUnion.h
 bugprone-exception-escape:gen/union_types/union_with_multiple_parameters/TestUnion.h
 
 readability-simplify-boolean-expr:gen/union_types/empty_union_with_parameter/EmptyUnionWithParameter.cpp

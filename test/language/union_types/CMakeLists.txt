@@ -19,8 +19,13 @@ add_custom_test(union_types
         union_types_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyUnionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyUnionWithParameterTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SimpleUnionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionCompatibilityCheckTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionWithArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionWithMultipleParametersTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionWithParameterTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionWithParameterizedFieldTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

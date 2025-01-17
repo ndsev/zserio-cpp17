@@ -24,10 +24,10 @@ protected:
         zserio::detail::write(writer, CASE3_FIELD);
     }
 
-    static constexpr int8_t CASE1_FIELD = 13;
-    static constexpr uint16_t CASE2_FIELD = 65535;
+    static constexpr zserio::Int8 CASE1_FIELD = 13;
+    static constexpr zserio::UInt16 CASE2_FIELD = 65535;
     static constexpr zserio::StringView CASE3_FIELD = "SimpleUnion";
-    static constexpr int8_t CASE4_FIELD = 42;
+    static constexpr zserio::Int8 CASE4_FIELD = 42;
 };
 
 TEST_F(SimpleUnionTest, constructors)
@@ -72,7 +72,8 @@ TEST_F(SimpleUnionTest, assignmentOperator)
     ASSERT_EQ(dataCopy, data);
 
     zserio::View view(data);
-    zserio::View viewCopy(SimpleUnion{});
+    SimpleUnion emptyData{};
+    zserio::View viewCopy(emptyData);
     viewCopy = view;
     ASSERT_EQ(viewCopy, view);
 }
@@ -98,7 +99,8 @@ TEST_F(SimpleUnionTest, moveAssignmentOperator)
     ASSERT_EQ(CASE1_FIELD, zserio::get<ChoiceTag::CHOICE_case1Field>(dataMoved));
 
     zserio::View view(dataMoved);
-    zserio::View viewMoved(SimpleUnion{});
+    SimpleUnion emptyData{};
+    zserio::View viewMoved(emptyData);
     viewMoved = std::move(view);
     ASSERT_EQ(CASE1_FIELD, viewMoved.case1Field());
 }
