@@ -53,7 +53,6 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs);
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
 
-<#assign numExtendedFields=num_extended_fields(fieldList)>
 template <>
 class View<${fullName}>
 {

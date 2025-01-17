@@ -253,6 +253,7 @@ ${I}{
 ${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
 ${I}            " != " << static_cast<size_t>(${fullName}::ChoiceTag::<@choice_tag_name member.field/>) << ")!";
 ${I}}
+    <@field_check_constraint member.field, indent/>
 ${I}validate(view.${member.field.getterName}(), "'${name}.${member.field.name}'");
     <#else>
 ${I}// empty
@@ -325,6 +326,7 @@ ${I}<#if member.field.compound??>(void)</#if>read<@array_packed_suffix member.fi
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters member.field/>);
+    <@field_check_constraint member.field, indent/>
     <#else>
 ${I}// empty
     </#if>

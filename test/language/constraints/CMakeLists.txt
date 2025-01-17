@@ -18,7 +18,13 @@ add_custom_test(constraints
     DEPENDS
         constraints_zs
     SOURCES
-        #
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ArrayLengthofConstraintTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceConstraintsTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/LiteralConstraintTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalConstraintsTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureBitmaskConstraintsTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureConstraintsTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionConstraintsTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

@@ -326,18 +326,8 @@ ${I}}
 </#macro>
 <#macro structure_validate_field_inner field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <@structure_check_constraint field, indent/>
+    <@field_check_constraint field, indent/>
 ${I}validate(<#if field.isExtended>*</#if><#if field.optional??>*</#if>view.${field.getterName}(), "'${name}.${field.name}'");
-</#macro>
-<#macro structure_check_constraint field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.constraint??>
-${I}// check constraint
-${I}if (!(${field.constraint.viewIndirectExpression}))
-${I}{
-${I}    throw ConstraintException("Constraint violated at '${name}.${field.name}'!");
-${I}}
-    </#if>
 </#macro>
 template <>
 void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
@@ -510,6 +500,7 @@ ${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field, packed/><
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, <#if field.isExtended>*</#if><#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
         <#lt><@field_view_view_indirect_parameters field/>);
+    <@field_check_constraint field, 1/>
 </#macro>
 template <>
 View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
@@ -527,7 +518,6 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
             <#lt>);
 <#list fieldList as field>
     <@structure_read_field_extended fullName, field, 1/>
-    <@structure_check_constraint field, 1/>
 </#list>
     return view;
 }
@@ -599,7 +589,6 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
             <#lt>);
 <#list fieldList as field>
     <@structure_read_field fullName, field, 1, true/>
-    <@structure_check_constraint field, 1/>
 </#list>
     (void)view;
 }

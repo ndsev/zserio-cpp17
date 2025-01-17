@@ -210,6 +210,7 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 
 <#macro union_validate_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
+    <@field_check_constraint field, indent/>
 ${I}validate(view.${field.getterName}(), "'${name}.${field.name}'");
 </#macro>
 <#macro union_validate_no_match name indent>
@@ -272,6 +273,7 @@ ${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field, packed/><
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters field/>);
+    <@field_check_constraint field, indent/>
 </#macro>
 template <>
 View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>

@@ -146,15 +146,16 @@
     </#if>
 </#macro>
 
-<#function num_extended_fields fieldList>
-    <#local numExtended=0/>
-    <#list fieldList as field>
-        <#if field.isExtended>
-            <#local numExtended=numExtended+1/>
-        </#if>
-    </#list>
-    <#return numExtended>
-</#function>
+<#macro field_check_constraint field indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+    <#if field.constraint??>
+${I}// check constraint
+${I}if (!(${field.constraint.viewIndirectExpression}))
+${I}{
+${I}    throw ConstraintException("Constraint violated at '${name}.${field.name}'!");
+${I}}
+    </#if>
+</#macro>
 
 <#macro choice_tag_name field>
     CHOICE_${field.name}<#t>
