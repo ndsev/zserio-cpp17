@@ -18,7 +18,8 @@ add_custom_test(identifiers
     DEPENDS
         identifiers_zs
     SOURCES
-        #
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitmaskNameClashingWithJavaTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureNameClashingWithJavaTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
