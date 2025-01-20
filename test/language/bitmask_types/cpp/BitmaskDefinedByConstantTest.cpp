@@ -18,8 +18,6 @@ protected:
     static constexpr Permission::ZserioType NONE_VALUE = 0;
     static constexpr Permission::ZserioType READ_VALUE = READ_PERMISSION;
     static constexpr Permission::ZserioType WRITE_VALUE = 4;
-
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
 
 TEST_F(BitmaskDefinedByConstantTest, emptyConstructor)
@@ -97,6 +95,7 @@ TEST_F(BitmaskDefinedByConstantTest, bitSizeOf)
 TEST_F(BitmaskDefinedByConstantTest, write)
 {
     const Permission permission(Permission::Values::READ);
+    zserio::BitBuffer bitBuffer(PERMISSION_BITSIZEOF);
     zserio::BitStreamWriter writer(bitBuffer);
     zserio::detail::write(writer, permission);
 
@@ -106,6 +105,7 @@ TEST_F(BitmaskDefinedByConstantTest, write)
 
 TEST_F(BitmaskDefinedByConstantTest, read)
 {
+    zserio::BitBuffer bitBuffer(PERMISSION_BITSIZEOF);
     zserio::BitStreamWriter writer(bitBuffer);
     writer.writeUnsignedBits32(static_cast<uint32_t>(Permission::Values::WRITE), PERMISSION_BITSIZEOF);
 

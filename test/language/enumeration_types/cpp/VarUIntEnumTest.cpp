@@ -1,25 +1,28 @@
-#include "enumeration_types/uint8_enum/DarkColor.h"
+#include "enumeration_types/varuint_enum/DarkColor.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
 #include "zserio/CppRuntimeException.h"
 
 namespace enumeration_types
 {
-namespace uint8_enum
+namespace varuint_enum
 {
 
-class UInt8EnumTest : public ::testing::Test
+class VarUIntEnumTest : public ::testing::Test
 {
 protected:
-    static constexpr uint8_t DARK_COLOR_BITSIZEOF = 8;
+    static constexpr size_t DARK_COLOR_NONE_BITSIZEOF = 8;
+    static constexpr size_t DARK_COLOR_DARK_RED_BITSIZEOF = 8;
+    static constexpr size_t DARK_COLOR_DARK_BLUE_BITSIZEOF = 8;
+    static constexpr size_t DARK_COLOR_DARK_GREEN_BITSIZEOF = 16;
 
-    static constexpr zserio::UInt8 NONE_VALUE = 0;
-    static constexpr zserio::UInt8 DARK_RED_VALUE = 1;
-    static constexpr zserio::UInt8 DARK_BLUE_VALUE = 2;
-    static constexpr zserio::UInt8 DARK_GREEN_VALUE = 7;
+    static constexpr uint64_t NONE_VALUE = 0;
+    static constexpr uint64_t DARK_RED_VALUE = 1;
+    static constexpr uint64_t DARK_BLUE_VALUE = 2;
+    static constexpr uint64_t DARK_GREEN_VALUE = 255;
 };
 
-TEST_F(UInt8EnumTest, EnumTraits)
+TEST_F(VarUIntEnumTest, EnumTraits)
 {
     ASSERT_EQ(std::string("NONE"), zserio::EnumTraits<DarkColor>::names[0]);
     ASSERT_EQ(std::string("DARK_GREEN"), zserio::EnumTraits<DarkColor>::names[3]);
@@ -30,7 +33,7 @@ TEST_F(UInt8EnumTest, EnumTraits)
     ASSERT_EQ(4, zserio::EnumTraits<DarkColor>::values.size());
 }
 
-TEST_F(UInt8EnumTest, enumToOrdinal)
+TEST_F(VarUIntEnumTest, enumToOrdinal)
 {
     ASSERT_EQ(0, zserio::enumToOrdinal(DarkColor::NONE));
     ASSERT_EQ(1, zserio::enumToOrdinal(DarkColor::DARK_RED));
@@ -38,7 +41,7 @@ TEST_F(UInt8EnumTest, enumToOrdinal)
     ASSERT_EQ(3, zserio::enumToOrdinal(DarkColor::DARK_GREEN));
 }
 
-TEST_F(UInt8EnumTest, valueToEnum)
+TEST_F(VarUIntEnumTest, valueToEnum)
 {
     ASSERT_EQ(DarkColor::NONE, zserio::valueToEnum<DarkColor>(NONE_VALUE));
     ASSERT_EQ(DarkColor::DARK_RED, zserio::valueToEnum<DarkColor>(DARK_RED_VALUE));
@@ -46,7 +49,7 @@ TEST_F(UInt8EnumTest, valueToEnum)
     ASSERT_EQ(DarkColor::DARK_GREEN, zserio::valueToEnum<DarkColor>(DARK_GREEN_VALUE));
 }
 
-TEST_F(UInt8EnumTest, stringToEnum)
+TEST_F(VarUIntEnumTest, stringToEnum)
 {
     ASSERT_EQ(DarkColor::NONE, zserio::stringToEnum<DarkColor>("NONE"));
     ASSERT_EQ(DarkColor::DARK_RED, zserio::stringToEnum<DarkColor>("DARK_RED"));
@@ -54,25 +57,38 @@ TEST_F(UInt8EnumTest, stringToEnum)
     ASSERT_EQ(DarkColor::DARK_GREEN, zserio::stringToEnum<DarkColor>("DARK_GREEN"));
 }
 
-TEST_F(UInt8EnumTest, valueToEnumFailure)
+TEST_F(VarUIntEnumTest, valueToEnumFailure)
 {
     ASSERT_THROW(zserio::valueToEnum<DarkColor>(3), zserio::CppRuntimeException);
 }
 
-TEST_F(UInt8EnumTest, stringToEnumFailure)
+TEST_F(VarUIntEnumTest, stringToEnumFailure)
 {
     ASSERT_THROW(zserio::stringToEnum<DarkColor>("NONEXISTING"), zserio::CppRuntimeException);
 }
-TEST_F(UInt8EnumTest, bitSizeOf)
+
+TEST_F(VarUIntEnumTest, enumHashCode)
 {
-    ASSERT_TRUE(zserio::detail::bitSizeOf(DarkColor::NONE) == DARK_COLOR_BITSIZEOF);
+    // use hardcoded values to check that the hash code is stable
+    ASSERT_EQ(1702, zserio::calcHashCode(zserio::HASH_SEED, DarkColor::NONE));
+    ASSERT_EQ(1703, zserio::calcHashCode(zserio::HASH_SEED, DarkColor::DARK_RED));
+    ASSERT_EQ(1704, zserio::calcHashCode(zserio::HASH_SEED, DarkColor::DARK_BLUE));
+    ASSERT_EQ(1957, zserio::calcHashCode(zserio::HASH_SEED, DarkColor::DARK_GREEN));
 }
 
-TEST_F(UInt8EnumTest, read)
+TEST_F(VarUIntEnumTest, bitSizeOf)
 {
-    zserio::BitBuffer bitBuffer(DARK_COLOR_BITSIZEOF);
+    ASSERT_TRUE(zserio::detail::bitSizeOf(DarkColor::NONE) == DARK_COLOR_NONE_BITSIZEOF);
+    ASSERT_TRUE(zserio::detail::bitSizeOf(DarkColor::DARK_RED) == DARK_COLOR_DARK_RED_BITSIZEOF);
+    ASSERT_TRUE(zserio::detail::bitSizeOf(DarkColor::DARK_BLUE) == DARK_COLOR_DARK_BLUE_BITSIZEOF);
+    ASSERT_TRUE(zserio::detail::bitSizeOf(DarkColor::DARK_GREEN) == DARK_COLOR_DARK_GREEN_BITSIZEOF);
+}
+
+TEST_F(VarUIntEnumTest, read)
+{
+    zserio::BitBuffer bitBuffer(DARK_COLOR_DARK_RED_BITSIZEOF);
     zserio::BitStreamWriter writer(bitBuffer);
-    writer.writeUnsignedBits32(zserio::enumToValue(DarkColor::DARK_RED), DARK_COLOR_BITSIZEOF);
+    writer.writeVarUInt(static_cast<uint32_t>(DarkColor::DARK_RED));
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
     DarkColor darkColor{};
@@ -80,29 +96,16 @@ TEST_F(UInt8EnumTest, read)
     ASSERT_EQ(DARK_RED_VALUE, zserio::enumToValue(darkColor));
 }
 
-TEST_F(UInt8EnumTest, write)
+TEST_F(VarUIntEnumTest, write)
 {
-    zserio::BitBuffer bitBuffer(DARK_COLOR_BITSIZEOF);
-    const DarkColor darkColor(DarkColor::DARK_BLUE);
+    const DarkColor darkColor(DarkColor::DARK_GREEN);
+    zserio::BitBuffer bitBuffer(DARK_COLOR_DARK_GREEN_BITSIZEOF);
     zserio::BitStreamWriter writer(bitBuffer);
     zserio::detail::write(writer, darkColor);
 
     zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    ASSERT_EQ(DARK_BLUE_VALUE, reader.readUnsignedBits32(DARK_COLOR_BITSIZEOF));
+    ASSERT_EQ(DARK_GREEN_VALUE, reader.readVarUInt());
 }
 
-TEST_F(UInt8EnumTest, stdHash)
-{
-    // use hardcoded values to check that the hash code is stable
-
-    DarkColor color = DarkColor::DARK_RED;
-    const size_t colorHash = 852;
-    DarkColor equalColor = DarkColor::DARK_RED;
-    DarkColor diffColor = DarkColor::NONE;
-    const size_t diffColorHash = 851;
-
-    test_utils::hashTest(color, colorHash, equalColor, diffColor, diffColorHash);
-}
-
-} // namespace uint8_enum
+} // namespace varuint_enum
 } // namespace enumeration_types

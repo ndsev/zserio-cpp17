@@ -18,7 +18,16 @@ add_custom_test(enumeration_types
     DEPENDS
         enumeration_types_zs
     SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitfieldConstEnumTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitfieldEnumTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DeprecatedEnumItemTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EnumDefinedByConstantTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EnumUsedByEnumTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleRemovedEnumItemsTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/RemovedEnumItemTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt8EnumTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt64EnumTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/VarUIntEnumTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
