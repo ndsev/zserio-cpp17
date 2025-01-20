@@ -44,15 +44,24 @@ TEST_F(EmptyUnionWithParameterTest, zserioChoiceTag)
     ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
 }
 
+TEST_F(EmptyUnionWithParameterTest, param)
+{
+    EmptyUnionWithParameter data;
+    zserio::View view(data, PARAM);
+    ASSERT_EQ(PARAM, view.param());
+}
+
 TEST_F(EmptyUnionWithParameterTest, comparisonOperators)
 {
     EmptyUnionWithParameter data;
     EmptyUnionWithParameter equalData;
+    EmptyUnionWithParameter lessThenData;
     test_utils::comparisonOperatorsTest(data, equalData);
 
     zserio::View view(data, PARAM);
     zserio::View equalView(equalData, PARAM);
-    test_utils::comparisonOperatorsTest(view, equalView);
+    zserio::View lessThenView(lessThenData, PARAM - 1);
+    test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 }
 
 TEST_F(EmptyUnionWithParameterTest, validate)
@@ -89,12 +98,15 @@ TEST_F(EmptyUnionWithParameterTest, stdHash)
     EmptyUnionWithParameter data;
     const size_t dataHash = 23; // hardcoded value to check that the hash code is stable
     EmptyUnionWithParameter equalData;
+    EmptyUnionWithParameter diffData;
     test_utils::hashTest(data, dataHash, equalData);
 
     zserio::View view(data, PARAM);
     const size_t viewHash = 864; // hardcoded value to check that the hash code is stable
     zserio::View equalView(equalData, PARAM);
-    test_utils::hashTest(view, viewHash, equalView);
+    zserio::View diffView(diffData, PARAM - 1);
+    const size_t diffHash = 863; // hardcoded value to check that the hash code is stable
+    test_utils::hashTest(view, viewHash, equalView, diffView, diffHash);
 }
 
 } // namespace empty_union_with_parameter

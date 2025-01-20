@@ -38,9 +38,11 @@ struct ${name}
             <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept;</#if>
     </#items>
 </#list>
+<#list fieldList>
 
-<#list fieldList as field>
-    <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
+    <#items as field>
+        <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
+    </#items>
 </#list>
 };
 

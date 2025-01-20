@@ -1,4 +1,3 @@
-#include <cstring>
 #include <string_view>
 
 #include "gtest/gtest.h"
@@ -14,264 +13,214 @@ namespace one_string_structure
 using AllocatorType = OneStringStructure::AllocatorType;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
-class OneStringStructureDataTest : public ::testing::Test
+class OneStringStructureTest : public ::testing::Test
 {
 protected:
-    static constexpr std::string_view ONE_STRING = "This is a string!";
-};
-
-class OneStringStructureViewTest : public OneStringStructureDataTest
-{
-protected:
-    void writeOneStringStructure(zserio::BitStreamWriter& writer, std::string_view oneString)
+    static void writeData(zserio::BitStreamWriter& writer)
     {
-        writer.writeString(oneString);
+        writer.writeString(ONE_STRING);
     }
 
     static constexpr std::string_view BLOB_NAME = "language/structure_types/one_string_structure.blob";
     static constexpr std::string_view ONE_STRING = "This is a string!";
+    static constexpr std::string_view ONE_DIFF_STRING = "This is a different string!";
     static constexpr size_t ONE_STRING_STRUCTURE_BIT_SIZE = (1 + ONE_STRING.length()) * 8;
-
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
 
-TEST_F(OneStringStructureDataTest, emptyConstructor)
+TEST_F(OneStringStructureTest, emptyConstructor)
 {
     {
-        OneStringStructure oneStringStructure;
-        ASSERT_EQ("", oneStringStructure.oneString);
+        OneStringStructure data;
+        ASSERT_EQ("", data.oneString);
     }
     {
-        OneStringStructure oneStringStructure = {};
-        ASSERT_EQ("", oneStringStructure.oneString);
+        OneStringStructure data = {};
+        ASSERT_EQ("", data.oneString);
     }
     {
-        OneStringStructure oneStringStructure(AllocatorType{});
-        ASSERT_EQ("", oneStringStructure.oneString);
+        OneStringStructure data(AllocatorType{});
+        ASSERT_EQ("", data.oneString);
+    }
+    {
+        OneStringStructure data;
+        zserio::View view(data);
+        ASSERT_EQ("", view.oneString());
     }
 }
 
-TEST_F(OneStringStructureDataTest, fieldConstructor)
+TEST_F(OneStringStructureTest, fieldConstructor)
 {
     {
-        const char* str = "test";
-        OneStringStructure oneStringStructure(str);
-        ASSERT_EQ(str, oneStringStructure.oneString);
+        const StringType oneString = "test";
+        OneStringStructure data(oneString);
+        ASSERT_EQ(oneString, data.oneString);
     }
     {
         StringType movedString(1000, 'a'); // long enough to prevent small string optimization
         const void* ptr = movedString.data();
-        OneStringStructure oneStringStructure(std::move(movedString));
-        const void* movedPtr = oneStringStructure.oneString.data();
+        OneStringStructure data(std::move(movedString));
+        const void* movedPtr = data.oneString.data();
         ASSERT_EQ(ptr, movedPtr);
     }
     {
         // cannot use just '{}' since ctor would be ambiguous (ambiguity with move/copy ctors)
-        OneStringStructure oneStringStructure(StringType{});
-        ASSERT_TRUE(oneStringStructure.oneString.empty());
+        OneStringStructure data(StringType{});
+        ASSERT_TRUE(data.oneString.empty());
+    }
+    {
+        const StringType oneString = "yet another test";
+        OneStringStructure data(oneString);
+        zserio::View view(data);
+        ASSERT_EQ(oneString, view.oneString());
     }
 }
 
-// we shall test also generated 'default' methods!
-TEST_F(OneStringStructureDataTest, copyConstructor)
+TEST_F(OneStringStructureTest, copyConstructor)
 {
-    const char* str = "test";
-    OneStringStructure oneStringStructure(str);
-    OneStringStructure oneStringStructureCopy(oneStringStructure);
-    ASSERT_EQ(str, oneStringStructure.oneString);
-    ASSERT_EQ(str, oneStringStructureCopy.oneString);
+    const StringType oneString = "test";
+    OneStringStructure data(oneString);
+    OneStringStructure dataCopy(data);
+    ASSERT_EQ(dataCopy, data);
+
+    zserio::View view(data);
+    OneStringStructure emptyData{};
+    zserio::View viewCopy(emptyData);
+    viewCopy = view;
+    ASSERT_EQ(viewCopy, view);
 }
 
-// we shall test also generated 'default' methods!
-TEST_F(OneStringStructureDataTest, copyAssignmentOperator)
+TEST_F(OneStringStructureTest, assignmentOperator)
 {
-    const char* str = "test";
-    OneStringStructure oneStringStructure(str);
-    OneStringStructure oneStringStructureCopy;
-    oneStringStructureCopy = oneStringStructure;
-    ASSERT_EQ(str, oneStringStructure.oneString);
-    ASSERT_EQ(str, oneStringStructureCopy.oneString);
+    const StringType oneString = "test";
+    OneStringStructure data(oneString);
+    OneStringStructure dataCopy;
+    dataCopy = data;
+    ASSERT_EQ(dataCopy, data);
+
+    zserio::View view(data);
+    OneStringStructure emptyData{};
+    zserio::View viewCopy(emptyData);
+    viewCopy = view;
+    ASSERT_EQ(viewCopy, view);
 }
 
-// we shall test also generated 'default' methods!
-TEST_F(OneStringStructureDataTest, moveConstructor)
+TEST_F(OneStringStructureTest, moveConstructor)
 {
-    OneStringStructure oneStringStructure(StringType(1000, 'a'));
-    const void* ptr = oneStringStructure.oneString.data();
-    OneStringStructure movedOneStringStructure(std::move(oneStringStructure));
-    const void* movedPtr = movedOneStringStructure.oneString.data();
+    OneStringStructure data(StringType(1000, 'a'));
+    const void* ptr = data.oneString.data();
+    OneStringStructure dataMoved(std::move(data));
+    const void* movedPtr = dataMoved.oneString.data();
     ASSERT_EQ(ptr, movedPtr);
-    ASSERT_EQ(StringType(1000, 'a'), movedOneStringStructure.oneString);
+    ASSERT_EQ(StringType(1000, 'a'), dataMoved.oneString);
+
+    zserio::View view(dataMoved);
+    zserio::View viewMoved(std::move(view));
+    ASSERT_EQ(StringType(1000, 'a'), viewMoved.oneString());
 }
 
-// we shall test also generated 'default' methods!
-TEST_F(OneStringStructureDataTest, moveAssignmentOperator)
+TEST_F(OneStringStructureTest, moveAssignmentOperator)
 {
-    OneStringStructure oneStringStructure(StringType(1000, 'a'));
-    const void* ptr = oneStringStructure.oneString.data();
-    OneStringStructure movedOneStringStructure;
-    movedOneStringStructure = std::move(oneStringStructure);
-    const void* movedPtr = movedOneStringStructure.oneString.data();
+    OneStringStructure data(StringType(1000, 'a'));
+    const void* ptr = data.oneString.data();
+    OneStringStructure dataMoved;
+    dataMoved = std::move(data);
+    const void* movedPtr = dataMoved.oneString.data();
     ASSERT_EQ(ptr, movedPtr);
-    ASSERT_EQ(StringType(1000, 'a'), movedOneStringStructure.oneString);
+    ASSERT_EQ(StringType(1000, 'a'), dataMoved.oneString);
+
+    zserio::View view(dataMoved);
+    OneStringStructure emptyData{};
+    zserio::View viewMoved(emptyData);
+    viewMoved = std::move(view);
+    ASSERT_EQ(StringType(1000, 'a'), dataMoved.oneString);
 }
 
-TEST_F(OneStringStructureDataTest, operatorEquality)
+TEST_F(OneStringStructureTest, oneString)
 {
-    OneStringStructure oneStringStructure1;
-    OneStringStructure oneStringStructure2;
-    ASSERT_TRUE(oneStringStructure1 == oneStringStructure2);
+    const StringType oneString = "test";
+    OneStringStructure data(oneString);
+    ASSERT_EQ(oneString, data.oneString);
 
-    oneStringStructure1.oneString = ONE_STRING;
-    ASSERT_FALSE(oneStringStructure1 == oneStringStructure2);
-
-    oneStringStructure2.oneString = ONE_STRING;
-    ASSERT_TRUE(oneStringStructure1 == oneStringStructure2);
+    zserio::View view(data);
+    ASSERT_EQ(oneString, view.oneString());
 }
 
-TEST_F(OneStringStructureDataTest, operatorLessThan)
+TEST_F(OneStringStructureTest, comparisonOperators)
 {
-    OneStringStructure oneStringStructure1;
-    OneStringStructure oneStringStructure2;
-    ASSERT_FALSE(oneStringStructure1 < oneStringStructure2);
+    const StringType oneString(ONE_STRING);
+    OneStringStructure data(oneString);
+    OneStringStructure equalData(oneString);
+    OneStringStructure lessThenData("This is a bbb string!");
+    test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
-    oneStringStructure1.oneString = ONE_STRING;
-    ASSERT_FALSE(oneStringStructure1 < oneStringStructure2);
-    ASSERT_TRUE(oneStringStructure2 < oneStringStructure1);
+    zserio::View view(data);
+    zserio::View equalView(equalData);
+    zserio::View lessThenView(lessThenData);
+    test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
-    oneStringStructure2.oneString = ONE_STRING;
-    ASSERT_FALSE(oneStringStructure1 < oneStringStructure2);
-    ASSERT_FALSE(oneStringStructure2 < oneStringStructure1);
+    OneStringStructure anotherLessThenData("This is a aaa string!");
+    test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
 
-    oneStringStructure1.oneString = "A string";
-    ASSERT_TRUE(oneStringStructure1 < oneStringStructure2);
-    ASSERT_FALSE(oneStringStructure2 < oneStringStructure1);
+    zserio::View anotherLessThenView(anotherLessThenData);
+    test_utils::comparisonOperatorsTest(view, equalView, anotherLessThenView);
 }
 
-TEST_F(OneStringStructureDataTest, stdHash)
+TEST_F(OneStringStructureTest, validate)
 {
-    OneStringStructure oneStringStructure1;
-    OneStringStructure oneStringStructure2;
-    std::hash<OneStringStructure> hasher;
-
-    ASSERT_EQ(hasher(oneStringStructure1), hasher(oneStringStructure2));
-
-    oneStringStructure1.oneString = ONE_STRING;
-    ASSERT_NE(hasher(oneStringStructure1), hasher(oneStringStructure2));
-
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(1773897624, hasher(oneStringStructure1));
-    ASSERT_EQ(23, hasher(oneStringStructure2));
-
-    oneStringStructure2.oneString = ONE_STRING;
-    ASSERT_EQ(hasher(oneStringStructure1), hasher(oneStringStructure2));
+    OneStringStructure data;
+    data.oneString = ONE_STRING;
+    zserio::View view(data);
+    ASSERT_NO_THROW(zserio::detail::validate(view)); // always valid
 }
 
-TEST_F(OneStringStructureViewTest, operatorEquality)
+TEST_F(OneStringStructureTest, bitSizeOf)
 {
-    OneStringStructure oneStringStructure1;
-    OneStringStructure oneStringStructure2;
-
-    zserio::View view1(oneStringStructure1);
-    zserio::View view2(oneStringStructure2);
-
-    ASSERT_TRUE(view1 == view2);
-
-    oneStringStructure1.oneString = ONE_STRING;
-    ASSERT_FALSE(view1 == view2);
-
-    oneStringStructure2.oneString = ONE_STRING;
-    ASSERT_TRUE(view1 == view2);
+    OneStringStructure data;
+    data.oneString = ONE_STRING;
+    zserio::View view(data);
+    ASSERT_EQ(ONE_STRING_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 0));
+    ASSERT_EQ(ONE_STRING_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 1));
+    ASSERT_EQ(ONE_STRING_STRUCTURE_BIT_SIZE, zserio::detail::bitSizeOf(view, 100));
 }
 
-TEST_F(OneStringStructureViewTest, operatorLessThan)
+TEST_F(OneStringStructureTest, read)
 {
-    OneStringStructure oneStringStructure1;
-    OneStringStructure oneStringStructure2;
-
-    zserio::View view1(oneStringStructure1);
-    zserio::View view2(oneStringStructure2);
-
-    ASSERT_FALSE(view1 < view2);
-
-    oneStringStructure1.oneString = ONE_STRING;
-    ASSERT_FALSE(view1 < view2);
-    ASSERT_TRUE(view2 < view1);
-
-    oneStringStructure2.oneString = ONE_STRING;
-    ASSERT_FALSE(view1 < view2);
-    ASSERT_FALSE(view2 < view1);
-
-    oneStringStructure1.oneString = "A string";
-    ASSERT_TRUE(view1 < view2);
-    ASSERT_FALSE(view2 < view1);
+    OneStringStructure data;
+    data.oneString = ONE_STRING;
+    test_utils::readTest(writeData, data);
 }
 
-TEST_F(OneStringStructureViewTest, stdHash)
+TEST_F(OneStringStructureTest, writeRead)
 {
-    OneStringStructure oneStringStructure1;
-    OneStringStructure oneStringStructure2;
-
-    zserio::View view1(oneStringStructure1);
-    zserio::View view2(oneStringStructure2);
-
-    std::hash<zserio::View<OneStringStructure>> hasher;
-
-    ASSERT_EQ(hasher(view1), hasher(view2));
-
-    oneStringStructure1.oneString = ONE_STRING;
-    ASSERT_NE(hasher(view1), hasher(view2));
-
-    // TODO[Mi-L@]: View returns string_view which goes through different calcHashCode calls then string
-    // use hardcoded values to check that the hash code is stable
-    // ASSERT_EQ(1773897624, hasher(view1));
-    // ASSERT_EQ(23, hasher(view2));
-
-    oneStringStructure2.oneString = ONE_STRING;
-    ASSERT_EQ(hasher(view1), hasher(view2));
+    OneStringStructure data;
+    data.oneString = ONE_STRING;
+    test_utils::writeReadTest(data);
 }
 
-TEST_F(OneStringStructureViewTest, read)
+TEST_F(OneStringStructureTest, writeReadFile)
 {
-    zserio::BitStreamWriter writer(bitBuffer);
-    writeOneStringStructure(writer, ONE_STRING);
-
-    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    OneStringStructure oneStringStructure{AllocatorType()};
-    zserio::View readView = zserio::detail::read(reader, oneStringStructure);
-    ASSERT_EQ(ONE_STRING, readView.oneString());
+    OneStringStructure data;
+    data.oneString = ONE_STRING;
+    test_utils::writeReadFileTest(BLOB_NAME, data);
 }
 
-TEST_F(OneStringStructureViewTest, writeRead)
+TEST_F(OneStringStructureTest, stdHash)
 {
-    OneStringStructure oneStringStructure{StringType(ONE_STRING)};
-    zserio::View view(oneStringStructure);
+    const StringType oneString(ONE_STRING);
+    OneStringStructure data(oneString);
+    const size_t dataHash = 1773897624; // hardcoded value to check that the hash code is stable
+    OneStringStructure equalData(oneString);
+    const StringType oneDiffString(ONE_DIFF_STRING);
+    OneStringStructure diffData(oneDiffString);
+    const size_t diffDataHash = 505292923; // hardcoded value to check that the hash code is stable
+    test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
-    zserio::BitStreamWriter writer(bitBuffer);
-    zserio::detail::write(writer, view);
-
-    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-
-    OneStringStructure readOneStringStructure{AllocatorType()};
-    zserio::View readView = zserio::detail::read(reader, readOneStringStructure);
-    ASSERT_EQ(ONE_STRING, readView.oneString());
-    ASSERT_EQ(view, readView);
-}
-
-TEST_F(OneStringStructureViewTest, bitSizeOf)
-{
-    using namespace std::literals;
-
-    OneStringStructure oneStringStructure;
-    zserio::View view(oneStringStructure);
-
-    ASSERT_EQ(zserio::detail::bitSizeOf(""sv), zserio::detail::bitSizeOf(view, 0));
-
-    oneStringStructure.oneString = ONE_STRING;
-
-    ASSERT_EQ(zserio::detail::bitSizeOf(ONE_STRING), zserio::detail::bitSizeOf(view, 0));
-    ASSERT_EQ(zserio::detail::bitSizeOf(ONE_STRING), zserio::detail::bitSizeOf(view, 1));
-    ASSERT_EQ(zserio::detail::bitSizeOf(ONE_STRING), zserio::detail::bitSizeOf(view, 100));
+    zserio::View view(data);
+    const size_t viewHash = 1773897624; // hardcoded value to check that the hash code is stable
+    zserio::View equalView(equalData);
+    zserio::View diffView(diffData);
+    const size_t diffHash = 505292923; // hardcoded value to check that the hash code is stable
+    test_utils::hashTest(view, viewHash, equalView, diffView, diffHash);
 }
 
 } // namespace one_string_structure

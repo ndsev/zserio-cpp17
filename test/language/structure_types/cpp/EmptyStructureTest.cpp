@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "structure_types/empty_structure/EmptyStructure.h"
+#include "test_utils/TestUtility.h"
 
 namespace structure_types
 {
@@ -8,145 +9,80 @@ namespace empty_structure
 
 using AllocatorType = EmptyStructure::AllocatorType;
 
-TEST(EmptyStructureDataTest, emptyConstructor)
+TEST(EmptyStructureTest, emptyConstructor)
 {
     {
-        EmptyStructure emptyStructure;
-        (void)emptyStructure;
+        EmptyStructure data;
+        (void)data;
     }
     {
-        EmptyStructure emptyStructure = {};
-        (void)emptyStructure;
+        EmptyStructure data = {};
+        (void)data;
     }
     {
-        EmptyStructure emptyStructure(AllocatorType{});
-        (void)emptyStructure;
+        EmptyStructure data(AllocatorType{});
+        (void)data;
+    }
+    {
+        EmptyStructure data;
+        zserio::View view(data);
+        (void)view;
     }
 }
 
-TEST(EmptyStructureDataTest, copyConstructor)
+TEST(EmptyStructureTest, comparisonOperators)
 {
-    EmptyStructure emptyStructure;
-    EmptyStructure emptyStructureCopy(emptyStructure);
-    ASSERT_EQ(emptyStructure, emptyStructureCopy);
+    EmptyStructure data;
+    EmptyStructure equalData;
+    test_utils::comparisonOperatorsTest(data, equalData);
+
+    zserio::View view(data);
+    zserio::View equalView(equalData);
+    test_utils::comparisonOperatorsTest(view, equalView);
 }
 
-TEST(EmptyStructureDataTest, assignmentOperator)
+TEST(EmptyStructureTest, validate)
 {
-    EmptyStructure emptyStructure;
-    EmptyStructure emptyStructureCopy;
-    emptyStructureCopy = emptyStructure;
-    ASSERT_EQ(emptyStructure, emptyStructureCopy);
+    EmptyStructure data;
+    zserio::View view(data);
+    EXPECT_NO_THROW(zserio::detail::validate(view));
 }
 
-TEST(EmptyStructureDataTest, moveConstructor)
+TEST(EmptyStructureTest, bitSizeOf)
 {
-    EmptyStructure emptyStructure;
-    EmptyStructure emptyStructureMoved(std::move(emptyStructure));
-    (void)emptyStructureMoved;
-}
-
-TEST(EmptyStructureDataTest, moveAssignmentOperator)
-{
-    EmptyStructure emptyStructure;
-    EmptyStructure emptyStructureMoved;
-    emptyStructureMoved = std::move(emptyStructure);
-    (void)emptyStructureMoved;
-}
-
-TEST(EmptyStructureDataTest, operatorEquality)
-{
-    EmptyStructure emptyStructure1;
-    EmptyStructure emptyStructure2;
-    ASSERT_TRUE(emptyStructure1 == emptyStructure2);
-}
-
-TEST(EmptyStructureDataTest, operatorLessThan)
-{
-    EmptyStructure emptyStructure1;
-    EmptyStructure emptyStructure2;
-    ASSERT_FALSE(emptyStructure1 < emptyStructure2);
-    ASSERT_FALSE(emptyStructure2 < emptyStructure1);
-}
-
-TEST(EmptyStructureDataTest, stdHash)
-{
-    std::hash<EmptyStructure> hasher;
-
-    EmptyStructure emptyStructure1;
-    EmptyStructure emptyStructure2;
-    ASSERT_EQ(hasher(emptyStructure1), hasher(emptyStructure2));
-
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(23, hasher(emptyStructure1));
-}
-
-TEST(EmptyStructureViewTest, operatorEquality)
-{
-    EmptyStructure emptyStructure1;
-    EmptyStructure emptyStructure2;
-
-    zserio::View view1(emptyStructure1);
-    zserio::View view2(emptyStructure2);
-    ASSERT_TRUE(view1 == view2);
-}
-
-TEST(EmptyStructureViewTest, operatorLessThan)
-{
-    EmptyStructure emptyStructure1;
-    EmptyStructure emptyStructure2;
-
-    zserio::View view1(emptyStructure1);
-    zserio::View view2(emptyStructure2);
-    ASSERT_FALSE(view1 < view2);
-    ASSERT_FALSE(view2 < view1);
-}
-
-TEST(EmptyStructureViewTest, stdHash)
-{
-    std::hash<zserio::View<EmptyStructure>> hasher;
-
-    EmptyStructure emptyStructure1;
-    EmptyStructure emptyStructure2;
-
-    zserio::View view1(emptyStructure1);
-    zserio::View view2(emptyStructure2);
-    ASSERT_EQ(hasher(view1), hasher(view2));
-
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(23, hasher(view1));
-}
-
-TEST(EmptyStructureViewTest, read)
-{
-    zserio::BitStreamReader reader(zserio::Span<const uint8_t>{});
-    EmptyStructure emptyStructure{AllocatorType()};
-    zserio::View readView = zserio::detail::read(reader, emptyStructure);
-    (void)readView;
-}
-
-TEST(EmptyStructureViewTest, writeRead)
-{
-    EmptyStructure emptyStructure{AllocatorType()};
-    zserio::View view(emptyStructure);
-
-    zserio::BitBuffer bitBuffer(0);
-    zserio::BitStreamWriter writer(bitBuffer);
-    zserio::detail::write(writer, view);
-
-    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    EmptyStructure readEmptyStructure{AllocatorType()};
-    zserio::View readView = zserio::detail::read(reader, readEmptyStructure);
-    ASSERT_EQ(view, readView);
-}
-
-TEST(EmptyStructureViewTest, bitSizeOf)
-{
-    EmptyStructure emptyStructure;
-    zserio::View view(emptyStructure);
-    ASSERT_EQ(0, zserio::detail::bitSizeOf(view, 0));
+    EmptyStructure data;
+    zserio::View view(data);
+    ASSERT_EQ(0, zserio::detail::bitSizeOf(view));
     ASSERT_EQ(0, zserio::detail::bitSizeOf(view, 1));
     ASSERT_EQ(0, zserio::detail::bitSizeOf(view, 100));
+}
+
+TEST(EmptyStructureTest, read)
+{
+    EmptyStructure expectedReadData;
+    test_utils::readTest(
+            [](zserio::BitStreamWriter&) {
+            },
+            expectedReadData);
+}
+
+TEST(EmptyStructureTest, writeRead)
+{
+    EmptyStructure data;
+    test_utils::writeReadTest(data);
+}
+
+TEST(EmptyStructureTest, stdHash)
+{
+    EmptyStructure data;
+    const size_t dataHash = 23; // hardcoded value to check that the hash code is stable
+    EmptyStructure equalData;
+    test_utils::hashTest(data, dataHash, equalData);
+
+    zserio::View view(data);
+    const size_t viewHash = dataHash;
+    zserio::View equalView(equalData);
+    test_utils::hashTest(view, viewHash, equalView);
 }
 
 } // namespace empty_structure

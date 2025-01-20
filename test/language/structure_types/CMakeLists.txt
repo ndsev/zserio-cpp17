@@ -19,8 +19,11 @@ add_custom_test(structure_types
         structure_types_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyStructureTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyStructureWithParameterTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OneStringStructureTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SimpleStructureTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureInnerClassesClashingTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureWithRemovedEnumItemFieldTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
