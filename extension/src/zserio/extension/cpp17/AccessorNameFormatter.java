@@ -16,17 +16,17 @@ public final class AccessorNameFormatter
 {
     public static String getGetterName(Field field)
     {
-        return getAccessorName(GETTER_NAME_PREFIX, field.getName());
+        return uncapFirst(field.getName());
     }
 
     public static String getGetterName(Parameter param)
     {
-        return getAccessorName(GETTER_NAME_PREFIX, param.getName());
+        return uncapFirst(param.getName());
     }
 
     public static String getFunctionName(Function function)
     {
-        return getAccessorName(FUNCTION_NAME_PREFIX, function.getName());
+        return uncapFirst(function.getName());
     }
 
     public static String getEnumeratorName(EnumItem enumItem)
@@ -34,36 +34,14 @@ public final class AccessorNameFormatter
         return enumItem.isRemoved() ? REMOVED_ENUMERATOR_PREFIX + enumItem.getName() : enumItem.getName();
     }
 
-    private static String getAccessorName(String accessorNamePrefix, String memberName)
+    private static String uncapFirst(String name)
     {
-        return getAccessorName(accessorNamePrefix, memberName, "");
+        final StringBuilder nameFirstUncap = new StringBuilder();
+        nameFirstUncap.append(String.valueOf(name.charAt(0)).toLowerCase(Locale.ENGLISH));
+        nameFirstUncap.append(name.substring(1));
+
+        return nameFirstUncap.toString();
     }
 
-    private static String getAccessorName(
-            String accessorNamePrefix, String memberName, String accessorNameSuffix)
-    {
-        StringBuilder accessorName = new StringBuilder(accessorNamePrefix);
-        if (!memberName.isEmpty())
-        {
-            if (accessorName.length() != 0)
-            {
-                final String firstMemberNameChar = String.valueOf(memberName.charAt(0));
-                final String restMemberNameChars = memberName.substring(1, memberName.length());
-                accessorName.append(firstMemberNameChar.toUpperCase(Locale.ENGLISH));
-                accessorName.append(restMemberNameChars);
-            }
-            else
-            {
-                accessorName.append(memberName);
-            }
-        }
-        if (!accessorNameSuffix.isEmpty())
-            accessorName.append(accessorNameSuffix);
-
-        return accessorName.toString();
-    }
-
-    private final static String GETTER_NAME_PREFIX = "";
-    private final static String FUNCTION_NAME_PREFIX = "";
     private final static String REMOVED_ENUMERATOR_PREFIX = "ZSERIO_REMOVED_";
 }

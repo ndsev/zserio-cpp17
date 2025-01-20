@@ -44,7 +44,7 @@ ${name}::${name}(const AllocatorType&<#if structure_fields_need_allocator(fieldL
 <#list fieldList>
         <#lt> :
     <#items as field>
-        ${field.name}(<@structure_field_initializer field/>)<#sep>,</#sep>
+        <@field_data_member_name field/>(<@structure_field_initializer field/>)<#sep>,</#sep>
     </#items>
 <#else>
 
@@ -57,7 +57,7 @@ ${name}::${name}(
         <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept :</#if>
     </#list>
     <#list fieldList as field>
-        ${field.name}(<#if structure_field_needs_allocator(field)>::std::move(</#if><#rt>
+        <@field_data_member_name field/>(<#if structure_field_needs_allocator(field)>::std::move(</#if><#rt>
                 <@field_data_arg_name field/>)<#t>
                 <#lt><#if structure_field_needs_allocator(field)>)</#if><#sep>,</#sep>
     </#list>
@@ -70,11 +70,11 @@ bool operator==(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
     <#if fieldList?has_content>
     return ::std::tie(
         <#list fieldList as field>
-            lhs.${field.name}<#if field?has_next>,<#else>)</#if>
+            lhs.<@field_data_member_name field/><#if field?has_next>,<#else>)</#if>
         </#list>
             == ::std::tie(
         <#list fieldList as field>
-            rhs.${field.name}<#if field?has_next>,<#else>);</#if>
+            rhs.<@field_data_member_name field/><#if field?has_next>,<#else>);</#if>
         </#list>
     <#else>
     return true;
@@ -87,11 +87,11 @@ bool operator<(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
     <#if fieldList?has_content>
     return ::std::tie(
         <#list fieldList as field>
-            lhs.${field.name}<#if field?has_next>,<#else>)</#if>
+            lhs.<@field_data_member_name field/><#if field?has_next>,<#else>)</#if>
         </#list>
             < ::std::tie(
         <#list fieldList as field>
-            rhs.${field.name}<#if field?has_next>,<#else>);</#if>
+            rhs.<@field_data_member_name field/><#if field?has_next>,<#else>);</#if>
         </#list>
     <#else>
     return false;
@@ -692,7 +692,7 @@ size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_conten
 {
     uint32_t result = ::zserio::HASH_SEED;
 <#list fieldList as field>
-    result = ::zserio::calcHashCode(result, data.${field.name});
+    result = ::zserio::calcHashCode(result, data.<@field_data_member_name field/>);
 </#list>
     return static_cast<size_t>(result);
 }

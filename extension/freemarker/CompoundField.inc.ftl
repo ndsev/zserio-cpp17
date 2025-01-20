@@ -6,16 +6,20 @@
     </#if>
 </#macro>
 
+<#macro field_name field>
+    ${field.name?uncap_first}<#t>
+</#macro>
+
 <#macro field_data_arg_name field>
-    ${field.name}_<#t>
+    <@field_name field/>_<#t>
 </#macro>
 
 <#macro field_data_member_name field>
-    ${field.name}<#t>
+    <@field_name field/><#t>
 </#macro>
 
 <#macro field_view_local_name field>
-    ${field.name}_<#t>
+    <@field_name field/>_<#t>
 </#macro>
 
 <#macro field_view_type_name field>
@@ -158,7 +162,7 @@ ${I}}
 </#macro>
 
 <#macro choice_tag_name field>
-    CHOICE_${field.name}<#t>
+    CHOICE_<@field_name field/><#t>
 </#macro>
 
 <#macro array_traits_name field>
@@ -273,7 +277,7 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
 </#macro>
 
 <#macro packing_context_member_name field>
-    ${field.name}<#t>
+    <@field_name field/><#t>
 </#macro>
 
 <#macro packing_context_type_name field needsNamespace=false>

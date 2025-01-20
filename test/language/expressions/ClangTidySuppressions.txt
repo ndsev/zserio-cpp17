@@ -2,11 +2,14 @@ bugprone-exception-escape:gen/expressions/isset_operator/IsSetOperator.cpp
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.h
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.cpp
 
+cppcoreguidelines-pro-bounds-constant-array-index:cpp/IndexOperatorTest.cpp
+
 google-explicit-constructor:gen/expressions/bitmask_type/Colors.h
 google-explicit-constructor:gen/expressions/isset_operator/TestBitmask.h
 
 performance-move-const-arg:gen/expressions/field_type/FieldTypeExpression.cpp
 performance-move-const-arg:gen/expressions/field_type_with_clash/FieldTypeExpression.cpp
+performance-move-const-arg:gen/expressions/field_type_with_parent_clash/FieldTypeExpression.cpp
 
 hicpp-signed-bitwise:gen/expressions/left_shift_operator/LeftShiftOperator.cpp
 
