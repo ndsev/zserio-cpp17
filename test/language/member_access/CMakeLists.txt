@@ -18,7 +18,7 @@ add_custom_test(member_access
     DEPENDS
         member_access_zs
     SOURCES
-        #
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AccessWithinTypeTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
