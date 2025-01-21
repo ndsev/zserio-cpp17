@@ -104,7 +104,10 @@ add_custom_test(packages
         packages_zs
         reader_zs
     SOURCES
-        #
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DefaultPackageTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/IndexTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PackageNameConflictTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ReaderTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES_DEFAULT_PACKAGE}
         ${GENERATED_SOURCES_INDEX}
