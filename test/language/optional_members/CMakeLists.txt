@@ -20,7 +20,11 @@ add_custom_test(optional_members
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoOptionalBoolTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoOptionalTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalArrayRecursionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalComplexExpressionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalExpressionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalExpressionWithRemovedEnumItemTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalRecursionTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}

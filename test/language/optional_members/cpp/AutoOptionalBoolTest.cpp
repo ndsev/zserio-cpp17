@@ -9,7 +9,7 @@ namespace auto_optional_bool
 
 using AllocatorType = Container::AllocatorType;
 
-class AutoOptionalTest : public ::testing::Test
+class AutoOptionalBoolTest : public ::testing::Test
 {
 protected:
     static void fillData(Container& data, bool hasOptional)
@@ -38,7 +38,7 @@ protected:
     static constexpr zserio::Bool AUTO_OPTIONAL_BOOL_VALUE = true;
 };
 
-TEST_F(AutoOptionalTest, constructors)
+TEST_F(AutoOptionalBoolTest, constructors)
 {
     {
         const Container data;
@@ -55,15 +55,16 @@ TEST_F(AutoOptionalTest, constructors)
         ASSERT_FALSE(data.nonOptionalBool);
         ASSERT_FALSE(data.autoOptionalBool);
     }
-
-    const Container data = Container(NON_OPTIONAL_BOOL_VALUE, AUTO_OPTIONAL_BOOL_VALUE);
-    zserio::View view(data);
-    ASSERT_EQ(NON_OPTIONAL_BOOL_VALUE, view.nonOptionalBool());
-    ASSERT_TRUE(view.autoOptionalBool());
-    ASSERT_EQ(AUTO_OPTIONAL_BOOL_VALUE, view.autoOptionalBool().value());
+    {
+        const Container data = Container(NON_OPTIONAL_BOOL_VALUE, AUTO_OPTIONAL_BOOL_VALUE);
+        zserio::View view(data);
+        ASSERT_EQ(NON_OPTIONAL_BOOL_VALUE, view.nonOptionalBool());
+        ASSERT_TRUE(view.autoOptionalBool());
+        ASSERT_EQ(AUTO_OPTIONAL_BOOL_VALUE, view.autoOptionalBool().value());
+    }
 }
 
-TEST_F(AutoOptionalTest, bitSizeOfWithOptional)
+TEST_F(AutoOptionalBoolTest, bitSizeOfWithOptional)
 {
     const bool hasOptional = true;
     Container data;
@@ -73,7 +74,7 @@ TEST_F(AutoOptionalTest, bitSizeOfWithOptional)
     ASSERT_EQ(CONTAINER_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view));
 }
 
-TEST_F(AutoOptionalTest, bitSizeOfWithoutOptional)
+TEST_F(AutoOptionalBoolTest, bitSizeOfWithoutOptional)
 {
     const bool hasOptional = false;
     Container data;
@@ -83,7 +84,7 @@ TEST_F(AutoOptionalTest, bitSizeOfWithoutOptional)
     ASSERT_EQ(CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view));
 }
 
-TEST_F(AutoOptionalTest, comparisionOperators)
+TEST_F(AutoOptionalBoolTest, comparisionOperators)
 {
     Container data;
     fillData(data, true);
@@ -99,7 +100,7 @@ TEST_F(AutoOptionalTest, comparisionOperators)
     test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
 }
 
-TEST_F(AutoOptionalTest, readWithOptional)
+TEST_F(AutoOptionalBoolTest, readWithOptional)
 {
     Container data;
     fillData(data, true);
@@ -107,7 +108,7 @@ TEST_F(AutoOptionalTest, readWithOptional)
     test_utils::readTest(std::bind(writeData, std::placeholders::_1, true), data);
 }
 
-TEST_F(AutoOptionalTest, readWithoutOptional)
+TEST_F(AutoOptionalBoolTest, readWithoutOptional)
 {
     Container data;
     fillData(data, false);
@@ -115,7 +116,7 @@ TEST_F(AutoOptionalTest, readWithoutOptional)
     test_utils::readTest(std::bind(writeData, std::placeholders::_1, false), data);
 }
 
-TEST_F(AutoOptionalTest, writeReadWithOptional)
+TEST_F(AutoOptionalBoolTest, writeReadWithOptional)
 {
     Container data;
     fillData(data, true);
@@ -123,7 +124,7 @@ TEST_F(AutoOptionalTest, writeReadWithOptional)
     test_utils::writeReadTest(data);
 }
 
-TEST_F(AutoOptionalTest, writeReadWithoutOptional)
+TEST_F(AutoOptionalBoolTest, writeReadWithoutOptional)
 {
     Container data;
     fillData(data, false);
@@ -131,7 +132,7 @@ TEST_F(AutoOptionalTest, writeReadWithoutOptional)
     test_utils::writeReadTest(data);
 }
 
-TEST_F(AutoOptionalTest, stdHash)
+TEST_F(AutoOptionalBoolTest, stdHash)
 {
     Container data;
     fillData(data, true);

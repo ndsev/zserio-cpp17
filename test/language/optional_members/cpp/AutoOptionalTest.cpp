@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "optional_members/auto_optional/Container.h"
-#include "zserio/BitStreamReader.h"
-#include "zserio/BitStreamWriter.h"
+#include "test_utils/TestUtility.h"
 
 namespace optional_members
 {
@@ -10,257 +9,122 @@ namespace auto_optional
 
 using AllocatorType = Container::AllocatorType;
 
-class AutoOptionalDataTest : public ::testing::Test
+class AutoOptionalTest : public ::testing::Test
 {
 protected:
-    static constexpr zserio::Int32 NON_OPTIONAL_INT_VALUE = static_cast<int32_t>(0xDEADDEAD);
-    static constexpr zserio::Int32 AUTO_OPTIONAL_INT_VALUE = static_cast<int32_t>(0xBEEFBEEF);
-};
-
-class AutoOptionalViewTest : public AutoOptionalDataTest
-{
-protected:
-    void checkContainerInBitStream(zserio::BitStreamReader& reader, int32_t nonOptionalIntValue,
-            bool hasOptionalIntValue, int32_t optionalIntValue)
+    static void writeData(zserio::BitStreamWriter& writer, zserio::Int32 nonOptionalIntValue,
+            bool hasOptionalIntValue, zserio::Int32 optionalIntValue)
     {
-        ASSERT_EQ(nonOptionalIntValue, reader.readSignedBits32(32));
+        writer.writeSignedBits32(nonOptionalIntValue, 32);
+        writer.writeBool(hasOptionalIntValue);
         if (hasOptionalIntValue)
         {
-            ASSERT_TRUE(reader.readBool());
-            ASSERT_EQ(optionalIntValue, reader.readSignedBits32(32));
+            writer.writeSignedBits32(optionalIntValue, 32);
         }
-        else
-        {
-            ASSERT_FALSE(reader.readBool());
-        }
-        reader.setBitPosition(0);
     }
+
+    static constexpr zserio::Int32 NON_OPTIONAL_INT_VALUE = static_cast<int32_t>(0xDEADDEAD);
+    static constexpr zserio::Int32 AUTO_OPTIONAL_INT_VALUE = static_cast<int32_t>(0xBEEFBEEF);
 
     static constexpr size_t CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL = 32 + 1;
     static constexpr size_t CONTAINER_BIT_SIZE_WITH_OPTIONAL = 32 + 1 + 32;
-
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 };
 
-TEST_F(AutoOptionalDataTest, emptyConstructor)
+TEST_F(AutoOptionalTest, constructors)
 {
     {
-        const Container container;
-        ASSERT_FALSE(container.autoOptionalInt);
+        const Container data;
+        ASSERT_FALSE(data.autoOptionalInt);
     }
     {
-        const Container container = {};
-        ASSERT_FALSE(container.autoOptionalInt);
+        const Container data = {};
+        ASSERT_FALSE(data.autoOptionalInt);
     }
     {
-        const Container container{AllocatorType()};
-        ASSERT_FALSE(container.autoOptionalInt);
+        const Container data{AllocatorType()};
+        ASSERT_FALSE(data.autoOptionalInt);
+    }
+    {
+        const Container data = Container(NON_OPTIONAL_INT_VALUE, AUTO_OPTIONAL_INT_VALUE);
+        zserio::View view(data);
+        ASSERT_EQ(NON_OPTIONAL_INT_VALUE, view.nonOptionalInt());
+        ASSERT_TRUE(view.autoOptionalInt());
+        ASSERT_EQ(AUTO_OPTIONAL_INT_VALUE, view.autoOptionalInt().value());
     }
 }
 
-TEST_F(AutoOptionalDataTest, fieldConstructor)
+TEST_F(AutoOptionalTest, comparisionOperators)
 {
-    const Container containerWithOptional(NON_OPTIONAL_INT_VALUE, AUTO_OPTIONAL_INT_VALUE);
-    ASSERT_TRUE(containerWithOptional.autoOptionalInt);
-    ASSERT_EQ(AUTO_OPTIONAL_INT_VALUE, *containerWithOptional.autoOptionalInt);
+    Container data = Container(NON_OPTIONAL_INT_VALUE, AUTO_OPTIONAL_INT_VALUE);
+    Container equalData = Container(NON_OPTIONAL_INT_VALUE, AUTO_OPTIONAL_INT_VALUE);
+    Container lessThanData = Container(NON_OPTIONAL_INT_VALUE, std::nullopt);
 
-    const Container containerWithoutOptional(NON_OPTIONAL_INT_VALUE, {});
-    ASSERT_FALSE(containerWithoutOptional.autoOptionalInt);
+    test_utils::comparisonOperatorsTest(data, equalData, lessThanData);
 
-    const Container containerWithDefaultOptional({}, {});
-    ASSERT_EQ(0, containerWithDefaultOptional.nonOptionalInt);
-    ASSERT_FALSE(containerWithDefaultOptional.autoOptionalInt);
+    zserio::View view(data);
+    zserio::View equalView(equalData);
+    zserio::View lessThanView(lessThanData);
+
+    test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
 }
 
-TEST_F(AutoOptionalDataTest, resetAutoOptionalInt)
+TEST_F(AutoOptionalTest, bitSizeOf)
 {
-    Container container;
-    container.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_TRUE(container.autoOptionalInt);
+    Container data;
+    zserio::View view(data);
 
-    container.autoOptionalInt = {};
-    ASSERT_FALSE(container.autoOptionalInt);
+    data.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    ASSERT_EQ(CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view));
 
-    container.autoOptionalInt = std::nullopt;
-    ASSERT_FALSE(container.autoOptionalInt);
+    data.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    ASSERT_EQ(CONTAINER_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view));
 }
 
-TEST_F(AutoOptionalDataTest, operatorEquality)
+TEST_F(AutoOptionalTest, writeRead)
 {
-    Container container1;
-    Container container2;
+    Container data;
 
-    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    ASSERT_FALSE(container1 == container2);
+    data.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    test_utils::writeReadTest(data);
 
-    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_TRUE(container1 == container2);
-
-    container1.autoOptionalInt = {};
-    ASSERT_FALSE(container1 == container2);
+    data.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    test_utils::writeReadTest(data);
 }
 
-TEST_F(AutoOptionalDataTest, operatorLessThan)
+TEST_F(AutoOptionalTest, read)
 {
-    Container container1;
-    Container container2;
-    ASSERT_FALSE(container1 < container2);
-    ASSERT_FALSE(container2 < container1);
+    Container data;
 
-    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    ASSERT_FALSE(container1 < container2);
-    ASSERT_TRUE(container2 < container1);
+    data.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
+    test_utils::readTest(
+            std::bind(writeData, std::placeholders::_1, NON_OPTIONAL_INT_VALUE, false, AUTO_OPTIONAL_INT_VALUE),
+            data);
 
-    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_FALSE(container1 < container2);
-    ASSERT_FALSE(container2 < container1);
-
-    container1.autoOptionalInt = {};
-    ASSERT_TRUE(container1 < container2);
-    ASSERT_FALSE(container2 < container1);
+    data.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
+    test_utils::readTest(
+            std::bind(writeData, std::placeholders::_1, NON_OPTIONAL_INT_VALUE, true, AUTO_OPTIONAL_INT_VALUE),
+            data);
 }
 
-TEST_F(AutoOptionalDataTest, stdHash)
+TEST_F(AutoOptionalTest, stdHash)
 {
-    std::hash<Container> hasher;
-
-    Container container1;
-    Container container2;
-
-    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    ASSERT_NE(hasher(container1), hasher(container2));
-
-    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_EQ(hasher(container1), hasher(container2));
-
-    container1.autoOptionalInt = {};
-    ASSERT_NE(hasher(container1), hasher(container2));
-
     // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(3735937536, hasher(container1));
-    ASSERT_EQ(3994118383, hasher(container2));
-}
 
-TEST_F(AutoOptionalViewTest, operatorEquality)
-{
-    Container container1;
-    Container container2;
+    Container data(NON_OPTIONAL_INT_VALUE, AUTO_OPTIONAL_INT_VALUE);
+    const size_t dataHash = 3994118383;
+    Container equalData(NON_OPTIONAL_INT_VALUE, AUTO_OPTIONAL_INT_VALUE);
+    Container diffData(NON_OPTIONAL_INT_VALUE, std::nullopt);
+    const size_t diffDataHash = 3735937536;
 
-    zserio::View view1(container1);
-    zserio::View view2(container2);
+    test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
 
-    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    ASSERT_FALSE(view1 == view2);
+    zserio::View view(data);
+    const size_t viewHash = 3994118383;
+    zserio::View equalView(equalData);
+    zserio::View diffView(diffData);
+    const size_t diffViewHash = 3735937536;
 
-    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_TRUE(view1 == view2);
-
-    container1.autoOptionalInt = {};
-    ASSERT_FALSE(view1 == view2);
-}
-
-TEST_F(AutoOptionalViewTest, operatorLessThan)
-{
-    Container container1;
-    Container container2;
-
-    zserio::View view1(container1);
-    zserio::View view2(container2);
-
-    ASSERT_FALSE(view1 < view2);
-    ASSERT_FALSE(view2 < view1);
-
-    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    ASSERT_FALSE(view1 < view2);
-    ASSERT_TRUE(view2 < view1);
-
-    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_FALSE(view1 < view2);
-    ASSERT_FALSE(view2 < view1);
-
-    container1.autoOptionalInt = {};
-    ASSERT_TRUE(view1 < view2);
-    ASSERT_FALSE(view2 < view1);
-}
-
-TEST_F(AutoOptionalViewTest, stdHash)
-{
-    std::hash<zserio::View<Container>> hasher;
-
-    Container container1;
-    Container container2;
-
-    zserio::View view1(container1);
-    zserio::View view2(container2);
-
-    container1.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    container1.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    container2.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    ASSERT_NE(hasher(view1), hasher(view2));
-
-    container2.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_EQ(hasher(view1), hasher(view2));
-
-    container1.autoOptionalInt = {};
-    ASSERT_NE(hasher(view1), hasher(view2));
-
-    // use hardcoded values to check that the hash code is stable
-    ASSERT_EQ(3735937536, hasher(view1));
-    ASSERT_EQ(3994118383, hasher(view2));
-}
-
-TEST_F(AutoOptionalViewTest, bitSizeOf)
-{
-    Container container;
-    zserio::View view(container);
-
-    container.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-    ASSERT_EQ(CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view, 0));
-
-    container.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-    ASSERT_EQ(CONTAINER_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view, 0));
-}
-
-TEST_F(AutoOptionalViewTest, writeRead)
-{
-    Container container;
-    zserio::View view(container);
-    container.nonOptionalInt = NON_OPTIONAL_INT_VALUE;
-
-    zserio::BitStreamWriter writerNonOptional(bitBuffer);
-    zserio::detail::write(writerNonOptional, view);
-
-    zserio::BitStreamReader readerNonOptional(
-            writerNonOptional.getWriteBuffer(), writerNonOptional.getBitPosition(), zserio::BitsTag());
-    checkContainerInBitStream(readerNonOptional, NON_OPTIONAL_INT_VALUE, false, 0);
-    Container readContainerNonOptional;
-    zserio::View readViewNonOptional = zserio::detail::read(readerNonOptional, readContainerNonOptional);
-    ASSERT_EQ(NON_OPTIONAL_INT_VALUE, readViewNonOptional.nonOptionalInt());
-    ASSERT_FALSE(readViewNonOptional.autoOptionalInt());
-
-    container.autoOptionalInt = AUTO_OPTIONAL_INT_VALUE;
-
-    zserio::BitStreamWriter writerOptional(bitBuffer);
-    zserio::detail::write(writerOptional, view);
-
-    zserio::BitStreamReader readerOptional(
-            writerOptional.getWriteBuffer(), writerOptional.getBitPosition(), zserio::BitsTag());
-    checkContainerInBitStream(readerOptional, NON_OPTIONAL_INT_VALUE, true, AUTO_OPTIONAL_INT_VALUE);
-    Container readContainerOptional;
-    zserio::View readViewOptional = zserio::detail::read(readerOptional, readContainerOptional);
-    ASSERT_EQ(NON_OPTIONAL_INT_VALUE, readViewOptional.nonOptionalInt());
-    ASSERT_TRUE(readViewOptional.autoOptionalInt());
-    ASSERT_EQ(AUTO_OPTIONAL_INT_VALUE, readViewOptional.autoOptionalInt());
+    test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }
 
 } // namespace auto_optional
