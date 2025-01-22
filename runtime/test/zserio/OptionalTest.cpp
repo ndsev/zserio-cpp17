@@ -7,6 +7,7 @@
 #include "zserio/Optional.h"
 #include "zserio/TrackingAllocator.h"
 #include "zserio/Types.h"
+#include "zserio/View.h"
 
 namespace zserio
 {
@@ -45,6 +46,53 @@ struct BigObj
         return data[0] < obj.data[0];
     }
     std::array<char, 30> data;
+};
+
+template <>
+class View<BigObj>
+{
+public:
+    explicit View(const BigObj& data, std::array<char, 30> param) :
+            m_data(data),
+            m_param(param)
+    {}
+
+    const std::array<char, 30>& param() const
+    {
+        return m_param;
+    }
+
+    const BigObj& zserioData() const
+    {
+        return m_data;
+    }
+
+private:
+    const BigObj& m_data;
+    std::array<char, 30> m_param;
+};
+
+struct Recursive
+{
+    using IS_RECURSIVE = int;
+    Optional<Recursive> next;
+};
+
+template <>
+class View<Recursive>
+{
+public:
+    explicit View(const Recursive& data) :
+            m_data(data)
+    {}
+
+    const Recursive& zserioData() const
+    {
+        return m_data;
+    }
+
+private:
+    const Recursive& m_data;
 };
 
 template <class ALLOC>
@@ -279,22 +327,29 @@ TYPED_TEST(OptionalTest, optionalInOptional)
     ASSERT_EQ("test", stringOpt.value().value());
 }
 
+TYPED_TEST(OptionalTest, bigObjOpt)
+{
+    ASSERT_TRUE(detail::is_optional_heap_allocated_v<BigObj>);
+    ASSERT_FALSE(detail::is_optional_heap_allocated_v<View<BigObj>>);
+
+    Optional<BigObj> opt;
+    opt = BigObj();
+    ASSERT_TRUE(opt.has_value());
+    ASSERT_TRUE(std::as_const(opt).has_value());
+}
+
 TYPED_TEST(OptionalTest, recursiveOpt)
 {
-    struct Tmp
-    {
-        using IS_RECURSIVE = int;
-        Optional<Tmp> next;
-    };
-    ASSERT_TRUE(detail::is_optional_heap_allocated_v<Tmp>);
-    Optional<Tmp> opt1;
-    opt1 = Tmp();
-    ASSERT_TRUE(opt1.has_value());
-    ASSERT_TRUE(!opt1->next.has_value());
-    ASSERT_TRUE(!std::as_const(opt1)->next.has_value());
-    opt1->next = Tmp();
-    ASSERT_TRUE(opt1->next.has_value());
-    ASSERT_TRUE(!opt1->next->next.has_value());
+    ASSERT_TRUE(detail::is_optional_heap_allocated_v<Recursive>);
+    ASSERT_FALSE(detail::is_optional_heap_allocated_v<View<Recursive>>);
+    Optional<Recursive> opt;
+    opt = Recursive();
+    ASSERT_TRUE(opt.has_value());
+    ASSERT_TRUE(!opt->next.has_value());
+    ASSERT_TRUE(!std::as_const(opt)->next.has_value());
+    opt->next = Recursive();
+    ASSERT_TRUE(opt->next.has_value());
+    ASSERT_TRUE(!opt->next->next.has_value());
 }
 
 TYPED_TEST(OptionalTest, errors)

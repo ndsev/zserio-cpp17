@@ -8,12 +8,12 @@ bugprone-signed-char-misuse:src/zserio/DeltaContext.h:257
 bugprone-signed-char-misuse:src/zserio/DeltaContext.h:273
 
 # Optional is a generic container and exceptions may be thrown from the value type.
-bugprone-exception-escape:src/zserio/Optional.h:352
-bugprone-exception-escape:src/zserio/Optional.h:379
+bugprone-exception-escape:src/zserio/Optional.h:357
+bugprone-exception-escape:src/zserio/Optional.h:384
 
 # False positives - has_value() is checked before value().
-bugprone-exception-escape:src/zserio/Optional.h:215
-bugprone-exception-escape:src/zserio/Optional.h:399
+bugprone-exception-escape:src/zserio/Optional.h:220
+bugprone-exception-escape:src/zserio/Optional.h:404
 
 # Variant is a generic container and exceptions may be thrown from the element types.
 bugprone-exception-escape:src/zserio/Variant.h:242
@@ -27,7 +27,7 @@ bugprone-use-after-move:src/zserio/Variant.h:681
 cert-dcl58-cpp:src/zserio/BitBuffer.h:587
 cert-dcl58-cpp:src/zserio/BitBuffer.h:599
 cert-dcl58-cpp:src/zserio/Extended.h:203
-cert-dcl58-cpp:src/zserio/Optional.h:1165
+cert-dcl58-cpp:src/zserio/Optional.h:1170
 cert-dcl58-cpp:src/zserio/Variant.h:841
 cert-dcl58-cpp:src/zserio/View.h:223
 
@@ -46,14 +46,14 @@ cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
 
 # Optional follows std::optional so passing value by const & is correct.
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:577
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:594
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:794
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:808
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:934
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:948
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1006
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1020
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:582
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:599
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:799
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:813
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:939
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:953
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1011
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1025
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
@@ -85,10 +85,10 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:49
 
 # Optional follows std::optional so the ctors should be implicit.
-google-explicit-constructor:src/zserio/Optional.h:117
-google-explicit-constructor:src/zserio/Optional.h:127
-google-explicit-constructor:src/zserio/Optional.h:137
-google-explicit-constructor:src/zserio/Optional.h:238
+google-explicit-constructor:src/zserio/Optional.h:122
+google-explicit-constructor:src/zserio/Optional.h:132
+google-explicit-constructor:src/zserio/Optional.h:142
+google-explicit-constructor:src/zserio/Optional.h:243
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 google-explicit-constructor:src/zserio/Span.h:112
@@ -110,7 +110,7 @@ google-readability-casting:src/zserio/Variant.h:66
 google-explicit-constructor:src/zserio/View.h:133
 
 # Intentional tests.
-bugprone-exception-escape:test/zserio/OptionalTest.cpp:284
+bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32

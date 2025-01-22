@@ -7,6 +7,7 @@
 #include "zserio/CppRuntimeException.h"
 #include "zserio/HashCodeUtil.h"
 #include "zserio/Traits.h"
+#include "zserio/View.h"
 
 namespace zserio
 {
@@ -43,6 +44,10 @@ struct is_optional_heap_allocated_impl<T, true> : std::true_type
 
 template <typename T>
 struct is_optional_heap_allocated : is_optional_heap_allocated_impl<T>
+{};
+
+template <typename T>
+struct is_optional_heap_allocated<View<T>> : std::false_type
 {};
 
 template <typename T>
