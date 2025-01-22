@@ -18,13 +18,22 @@ add_custom_test(parameterized_types
     DEPENDS
         parameterized_types_zs
     SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ArrayElementParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ArrayElementParamWithOptionalTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BytesParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DynamicBitfieldParamTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExternParamTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FixedAndVariableParamTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/GrandChildParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleParamsTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/NestedParameterizedFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PackedArrayElementParamTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterizedInnerClassesClashingTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterizedParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterizedNestedInArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParamWithOptionalTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SimpleParamTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedBitfieldParamTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

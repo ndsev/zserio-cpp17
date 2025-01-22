@@ -10,34 +10,29 @@ namespace parameterized_param
 class ParameterizedParamTest : public ::testing::Test
 {
 protected:
-    void fillParameterizedParamHolder(ParameterizedParamHolder& parameterizedParamHolder)
+    static void fillData(ParameterizedParamHolder& data)
     {
-        Param& param = parameterizedParamHolder.param;
+        Param& param = data.param;
         param.value = PARAM_VALUE;
         param.extraValue = PARAM_EXTRA_VALUE;
 
-        ParameterizedParam& parameterizedParam = parameterizedParamHolder.parameterizedParam;
+        ParameterizedParam& parameterizedParam = data.parameterizedParam;
         parameterizedParam.value = PARAMETERIZED_PARAM_VALUE;
         parameterizedParam.extraValue = PARAMETERIZED_PARAM_EXTRA_VALUE;
     }
 
-    void checkParameterizedParamHolderInBitStream(
-            zserio::BitStreamReader& reader, const ParameterizedParamHolder& parameterizedParamHolder)
+    static void writeData(zserio::BitStreamWriter& writer, const ParameterizedParamHolder& data)
     {
-        ASSERT_EQ(parameterizedParamHolder.parameter, reader.readUnsignedBits32(16));
+        writer.writeUnsignedBits32(data.parameter, 16);
 
-        const Param& param = parameterizedParamHolder.param;
-        ASSERT_EQ(param.value, reader.readUnsignedBits32(16));
-        ASSERT_EQ(param.extraValue, reader.readUnsignedBits32(32));
+        const Param& param = data.param;
+        writer.writeUnsignedBits32(param.value, 16);
+        writer.writeUnsignedBits32(*param.extraValue, 32);
 
-        const ParameterizedParam& parameterizedParam = parameterizedParamHolder.parameterizedParam;
-        ASSERT_EQ(parameterizedParam.value, reader.readUnsignedBits32(16));
-        ASSERT_EQ(parameterizedParam.extraValue, reader.readUnsignedBits32(32));
-
-        reader.setBitPosition(0);
+        const ParameterizedParam& parameterizedParam = data.parameterizedParam;
+        writer.writeUnsignedBits32(parameterizedParam.value, 16);
+        writer.writeUnsignedBits32(*parameterizedParam.extraValue, 32);
     }
-
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
 
 private:
     static constexpr uint16_t PARAMETER = 11;
@@ -49,20 +44,18 @@ private:
 
 TEST_F(ParameterizedParamTest, writeRead)
 {
-    ParameterizedParamHolder parameterizedParamHolder;
-    fillParameterizedParamHolder(parameterizedParamHolder);
-    zserio::View view(parameterizedParamHolder);
+    ParameterizedParamHolder data;
+    fillData(data);
 
-    zserio::BitStreamWriter writer(bitBuffer);
-    zserio::detail::write(writer, view);
+    test_utils::writeReadTest(data);
+}
 
-    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    checkParameterizedParamHolderInBitStream(reader, parameterizedParamHolder);
+TEST_F(ParameterizedParamTest, read)
+{
+    ParameterizedParamHolder data;
+    fillData(data);
 
-    ParameterizedParamHolder readParameterizedParamHolder;
-    zserio::View readView = zserio::detail::read(reader, readParameterizedParamHolder);
-    ASSERT_EQ(parameterizedParamHolder, readParameterizedParamHolder);
-    ASSERT_EQ(view, readView);
+    test_utils::readTest(std::bind(writeData, std::placeholders::_1, data), data);
 }
 
 } // namespace parameterized_param

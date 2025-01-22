@@ -10,9 +10,9 @@ namespace dynamic_bitfield_param
 class DynamicBitfieldParamTest : public ::testing::Test
 {
 protected:
-    static void fillData(DynamicBitfieldParamHolder& dynamicBitfieldParamHolder)
+    static void fillData(DynamicBitfieldParamHolder& data)
     {
-        DynamicBitfieldParam& dynamicBitfieldParam = dynamicBitfieldParamHolder.dynamicBitfieldParam;
+        DynamicBitfieldParam& dynamicBitfieldParam = data.dynamicBitfieldParam;
         dynamicBitfieldParam.value = DYNAMIC_BITFIELD_PARAM_VALUE;
         dynamicBitfieldParam.extraValue = DYNAMIC_BITFIELD_PARAM_EXTRA_VALUE;
     }
@@ -34,10 +34,10 @@ private:
 
 TEST_F(DynamicBitfieldParamTest, writeRead)
 {
-    DynamicBitfieldParamHolder dynamicBitfieldParamHolder;
-    fillData(dynamicBitfieldParamHolder);
+    DynamicBitfieldParamHolder data;
+    fillData(data);
 
-    test_utils::writeReadTest(dynamicBitfieldParamHolder);
+    test_utils::writeReadTest(data);
 }
 
 TEST_F(DynamicBitfieldParamTest, read)

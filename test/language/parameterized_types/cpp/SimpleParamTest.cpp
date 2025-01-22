@@ -9,21 +9,11 @@ namespace simple_param
 
 using AllocatorType = Item::AllocatorType;
 
-class SimpleParamDataTest : public ::testing::Test
+class SimpleParamTest : public ::testing::Test
 {
 protected:
-    static constexpr zserio::UInt32 LOWER_VERSION = 9;
-    static constexpr zserio::UInt32 HIGHER_VERSION = 10;
-
-    static constexpr zserio::UInt16 ITEM_PARAM = 0xAA;
-    static constexpr zserio::UInt32 ITEM_EXTRA_PARAM = 0xBB;
-};
-
-class SimpleParamViewTest : public SimpleParamDataTest
-{
-protected:
-    void writeItemToByteArray(
-            zserio::BitStreamWriter& writer, uint32_t version, uint16_t param, uint32_t extraParam)
+    static void writeData(zserio::BitStreamWriter& writer, zserio::UInt32 version, zserio::UInt16 param,
+            zserio::UInt32 extraParam)
     {
         writer.writeUnsignedBits32(param, 16);
         if (version >= HIGHER_VERSION)
@@ -32,189 +22,112 @@ protected:
         }
     }
 
-    void checkItemInBitStream(zserio::BitStreamReader& reader, uint32_t version, const Item& item)
-    {
-        ASSERT_EQ(item.param, reader.readUnsignedBits32(16));
-        if (version >= HIGHER_VERSION)
-        {
-            ASSERT_EQ(item.extraParam, reader.readUnsignedBits32(32));
-        }
-        reader.setBitPosition(0);
-    }
-
     static constexpr size_t ITEM_BIT_SIZE_WITHOUT_OPTIONAL = 16;
     static constexpr size_t ITEM_BIT_SIZE_WITH_OPTIONAL = 16 + 32;
 
-    zserio::BitBuffer bitBuffer = zserio::BitBuffer(1024 * 8);
+    static constexpr zserio::UInt32 LOWER_VERSION = 9;
+    static constexpr zserio::UInt32 HIGHER_VERSION = 10;
+
+    static constexpr zserio::UInt16 ITEM_PARAM = 0xAA;
+    static constexpr zserio::UInt32 ITEM_EXTRA_PARAM = 0xBB;
 };
 
-TEST_F(SimpleParamDataTest, emptyConstructor)
+TEST_F(SimpleParamTest, constructors)
 {
     {
-        Item item;
-        ASSERT_EQ(0, item.param);
-        ASSERT_FALSE(item.extraParam);
+        Item data;
+        ASSERT_EQ(0, data.param);
+        ASSERT_FALSE(data.extraParam);
     }
 
     {
-        Item item = {};
-        ASSERT_EQ(0, item.param);
-        ASSERT_FALSE(item.extraParam);
+        Item data = {};
+        ASSERT_EQ(0, data.param);
+        ASSERT_FALSE(data.extraParam);
     }
 
     {
-        Item item{AllocatorType()};
-        ASSERT_EQ(0, item.param);
-        ASSERT_FALSE(item.extraParam);
-    }
-}
-
-TEST_F(SimpleParamDataTest, fieldConstructor)
-{
-    {
-        Item item(ITEM_PARAM, std::nullopt);
-        ASSERT_FALSE(item.extraParam);
-    }
-    {
-        Item item(ITEM_PARAM, ITEM_EXTRA_PARAM);
-        ASSERT_TRUE(item.extraParam);
-        ASSERT_EQ(ITEM_EXTRA_PARAM, *item.extraParam);
+        Item data{AllocatorType()};
+        ASSERT_EQ(0, data.param);
+        ASSERT_FALSE(data.extraParam);
     }
 
     {
-        Item item({}, {});
-        ASSERT_EQ(0, item.param);
-        ASSERT_FALSE(item.extraParam);
+        Item data(ITEM_PARAM, ITEM_EXTRA_PARAM);
+        zserio::View view(data, HIGHER_VERSION);
+        ASSERT_EQ(ITEM_PARAM, view.param());
+        ASSERT_EQ(ITEM_EXTRA_PARAM, view.extraParam());
     }
 }
 
-TEST_F(SimpleParamDataTest, copyConstructor)
+TEST_F(SimpleParamTest, comparisionOperators)
 {
-    Item item;
-    item.param = ITEM_PARAM;
-    item.extraParam = ITEM_EXTRA_PARAM;
+    Item data(ITEM_PARAM, ITEM_EXTRA_PARAM);
+    Item equalData(ITEM_PARAM, ITEM_EXTRA_PARAM);
+    Item lessThanData(ITEM_PARAM, std::nullopt);
 
-    const Item itemCopy(item);
-    ASSERT_EQ(item.param, itemCopy.param);
-    ASSERT_TRUE(itemCopy.extraParam);
-    ASSERT_EQ(*item.extraParam, *itemCopy.extraParam);
+    test_utils::comparisonOperatorsTest(data, equalData, lessThanData);
+
+    zserio::View view(data, HIGHER_VERSION);
+    zserio::View equalView(equalData, HIGHER_VERSION);
+    zserio::View lessThanView(lessThanData, LOWER_VERSION);
+
+    test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
 }
 
-TEST_F(SimpleParamDataTest, operatorAssignment)
+TEST_F(SimpleParamTest, bitSizeOf)
 {
-    Item item;
-    item.param = ITEM_PARAM;
-    item.extraParam = ITEM_EXTRA_PARAM;
-
-    const Item itemCopy = item;
-    ASSERT_EQ(item.param, itemCopy.param);
-    ASSERT_TRUE(itemCopy.extraParam);
-    ASSERT_EQ(*item.extraParam, *itemCopy.extraParam);
-}
-
-TEST_F(SimpleParamDataTest, moveConstructor)
-{
-    Item item(ITEM_PARAM, {});
-
-    Item movedItem(std::move(item));
-    ASSERT_EQ(ITEM_PARAM, movedItem.param);
-    ASSERT_FALSE(movedItem.extraParam);
-}
-
-TEST_F(SimpleParamDataTest, moveAssignmentOperator)
-{
-    Item item(ITEM_PARAM, ITEM_EXTRA_PARAM);
-
-    Item movedItem;
-    movedItem = std::move(item);
-    ASSERT_EQ(ITEM_PARAM, movedItem.param);
-    ASSERT_TRUE(movedItem.extraParam);
-    ASSERT_EQ(ITEM_EXTRA_PARAM, movedItem.extraParam);
-}
-
-TEST_F(SimpleParamDataTest, operatorEquality)
-{
-    Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    ASSERT_TRUE(item1 == item2);
-
-    Item item3(ITEM_PARAM, {ITEM_EXTRA_PARAM + 1});
-    ASSERT_FALSE(item2 == item3);
-}
-
-TEST_F(SimpleParamDataTest, operatorLessThan)
-{
-    Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    ASSERT_FALSE(item1 < item2);
-    ASSERT_FALSE(item2 < item1);
-
-    Item item3(ITEM_PARAM, {ITEM_EXTRA_PARAM + 1});
-    ASSERT_TRUE(item2 < item3);
-    ASSERT_FALSE(item3 < item2);
-}
-
-TEST_F(SimpleParamDataTest, stdHash)
-{
-    std::hash<Item> hasher;
-    Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    ASSERT_EQ(hasher(item1), hasher(item2));
-
-    Item item3(ITEM_PARAM, {ITEM_EXTRA_PARAM + 1});
-    ASSERT_TRUE(hasher(item2) != hasher(item3));
-}
-
-TEST_F(SimpleParamViewTest, stdHash)
-{
-    std::hash<zserio::View<Item>> hasher;
-    Item item1(ITEM_PARAM, ITEM_EXTRA_PARAM);
-    Item item2(ITEM_PARAM, ITEM_EXTRA_PARAM);
-
-    zserio::View view1(item1, HIGHER_VERSION);
-    zserio::View view21(item2, HIGHER_VERSION);
-    ASSERT_EQ(hasher(view1), hasher(view21));
-
-    zserio::View view22(item2, LOWER_VERSION);
-    ASSERT_NE(hasher(view1), hasher(view22));
-
-    Item item3(ITEM_PARAM, {});
-    zserio::View view3(item3, LOWER_VERSION);
-    ASSERT_EQ(hasher(view22), hasher(view3));
-}
-
-TEST_F(SimpleParamViewTest, bitSizeOf)
-{
-    Item item1;
-    item1.param = ITEM_PARAM;
-    zserio::View view1(item1, LOWER_VERSION);
+    Item data1;
+    data1.param = ITEM_PARAM;
+    zserio::View view1(data1, LOWER_VERSION);
     ASSERT_EQ(ITEM_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view1, 0));
 
-    Item item2{ITEM_PARAM, ITEM_EXTRA_PARAM};
-    ::zserio::View view2(item2, HIGHER_VERSION);
+    Item data2{ITEM_PARAM, ITEM_EXTRA_PARAM};
+    ::zserio::View view2(data2, HIGHER_VERSION);
     ASSERT_EQ(ITEM_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view2, 0));
 }
 
-TEST_F(SimpleParamViewTest, writeRead)
+TEST_F(SimpleParamTest, writeRead)
 {
-    const zserio::UInt32 version = HIGHER_VERSION;
+    Item data;
+    data.param = ITEM_PARAM;
+    test_utils::writeReadTest(data, LOWER_VERSION);
 
-    Item item;
-    item.param = ITEM_PARAM;
-    item.extraParam = ITEM_EXTRA_PARAM;
+    data.extraParam = ITEM_EXTRA_PARAM;
+    test_utils::writeReadTest(data, HIGHER_VERSION);
+}
 
-    zserio::View view(item, version);
+TEST_F(SimpleParamTest, read)
+{
+    Item data;
+    data.param = ITEM_PARAM;
+    test_utils::readTest(
+            std::bind(writeData, std::placeholders::_1, LOWER_VERSION, ITEM_PARAM, ITEM_EXTRA_PARAM), data,
+            LOWER_VERSION);
 
-    zserio::BitStreamWriter writer(bitBuffer);
-    zserio::detail::write(writer, view);
+    data.extraParam = ITEM_EXTRA_PARAM;
+    test_utils::readTest(
+            std::bind(writeData, std::placeholders::_1, HIGHER_VERSION, ITEM_PARAM, ITEM_EXTRA_PARAM), data,
+            HIGHER_VERSION);
+}
 
-    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
-    checkItemInBitStream(reader, version, item);
+TEST_F(SimpleParamTest, stdHash)
+{
+    Item data(ITEM_PARAM, ITEM_EXTRA_PARAM);
+    const size_t dataHash = 37964;
+    Item equalData(ITEM_PARAM, ITEM_EXTRA_PARAM);
+    Item diffData(ITEM_PARAM, std::nullopt);
+    const size_t diffDataHash = 1021;
 
-    Item readItem;
-    zserio::View readView = zserio::detail::read(reader, readItem, version);
-    ASSERT_EQ(item, readItem);
-    ASSERT_EQ(view, readView);
+    test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);
+
+    zserio::View view(data, HIGHER_VERSION);
+    const size_t viewHash = 1185186;
+    zserio::View equalView(equalData, HIGHER_VERSION);
+    zserio::View diffView(diffData, LOWER_VERSION);
+    const size_t diffViewHash = 31990;
+
+    test_utils::hashTest(view, viewHash, equalView, diffView, diffViewHash);
 }
 
 } // namespace simple_param
