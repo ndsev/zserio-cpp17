@@ -119,5 +119,16 @@ jobs:
         scripts/test.sh cpp-${PACKAGE}
 
     - name: Run Zserio custom integration test
+      shell: bash
       run: |
         scripts/test_zs.sh cpp-${PACKAGE} -d test/data/others/gif/zs -s gif.zs
+
+    - name: Run Zserio performance test
+      shell: bash
+      run: |
+        scripts/test_perf.sh cpp-${PACKAGE} -d test/data/others/gif/zs -s gif.zs -b gif.GifFile \
+              -f test/data/others/gif/data/1pix.gif -c READ
+        scripts/test_perf.sh cpp-${PACKAGE} -d test/data/others/gif/zs -s gif.zs -b gif.GifFile \
+              -f test/data/others/gif/data/1pix.gif -c WRITE
+        scripts/test_perf.sh cpp-${PACKAGE} -d test/data/others/gif/zs -s gif.zs -b gif.GifFile \
+              -f test/data/others/gif/data/1pix.gif -c READ_WRITE

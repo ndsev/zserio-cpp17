@@ -17,11 +17,6 @@ generate_performance_test()
     local TEST_CONFIG="$1"; shift
     local PROFILE="$1"; shift
 
-    # use host paths in generated files
-    local DISABLE_SLASHES_CONVERSION=1
-    posix_to_host_path "${JSON_FILE}" HOST_JSON_FILE ${DISABLE_SLASHES_CONVERSION}
-    posix_to_host_path "${BLOB_FILE}" HOST_BLOB_FILE ${DISABLE_SLASHES_CONVERSION}
-
     local BLOB_INCLUDE_PATH=${BLOB_FULL_NAME//.//}.h
     local BLOB_CLASS_FULL_NAME=${BLOB_FULL_NAME//./::}
     local TOP_LEVEL_PACKAGE_NAME=${BLOB_FULL_NAME%%.*}
@@ -32,6 +27,10 @@ generate_performance_test()
         local INPUT_SWITCH="true"
         local INPUT_FILE="${JSON_FILE}"
     fi
+
+    # use host paths in generated files (needed for Windows)
+    local DISABLE_SLASHES_CONVERSION=1
+    posix_to_host_path "${INPUT_FILE}" INPUT_FILE ${DISABLE_SLASHES_CONVERSION}
 
     cat > "${SRC_FILE}" << EOF
 #include <fstream>
@@ -270,19 +269,23 @@ EOF
     case "${TEST_CONFIG}" in
         "READ")
             cat >> "${SRC_FILE}" << EOF
-        zserio::deserialize(bitBuffer, readData[i]);
+        zserio::BitStreamReader reader(bitBuffer);
+        zserio::detail::read(reader, readData[i]);
 EOF
             ;;
         "READ_WRITE")
             cat >> "${SRC_FILE}" << EOF
-        auto readView = zserio::deserialize(bitBuffer, readData[i]);
-        zserio::serialize(readView);
+        zserio::BitStreamReader reader(bitBuffer);
+        auto readView = zserio::detail::read(reader, readData[i]);
+        zserio::BitStreamWriter writer(bitBuffer);
+        zserio::detail::write(writer, readView);
 EOF
             ;;
 
         "WRITE")
             cat >> "${SRC_FILE}" << EOF
-        zserio::serialize(readView);
+        zserio::BitStreamWriter writer(bitBuffer);
+        zserio::detail::write(writer, readView);
 EOF
             ;;
     esac
@@ -368,40 +371,31 @@ test_perf()
     local SWITCH_RUN_ONLY="$1"; shift
     local SWITCH_PROFILE="$1"; shift
 
-    # run C++ performance test
-    local TEST_SRC_DIR="${TEST_OUT_DIR}/src"
-    mkdir -p "${TEST_SRC_DIR}"
-    local TEST_SRC_FILE="${TEST_SRC_DIR}/PerformanceTest.cpp"
-    local TEST_LOG_DIR="${TEST_OUT_DIR}/log"
-    mkdir -p "${TEST_LOG_DIR}"
-    if [[ ${SWITCH_RUN_ONLY} == 0 ]] ; then
-        generate_performance_test "${TEST_SRC_FILE}" "${SWITCH_BLOB_NAME}" \
-                "${SWITCH_JSON_FILE}" "${SWITCH_BLOB_FILE}" "${TEST_LOG_DIR}/PerformanceTest.log" \
-                ${SWITCH_NUM_ITERATIONS} ${SWITCH_TEST_CONFIG} ${SWITCH_PROFILE}
-    fi
-    local CMAKE_ARGS=()
-    local CTEST_ARGS=("--verbose")
-    if [[ ${SWITCH_PROFILE} == 1 ]] ; then
-        CMAKE_ARGS=("-DCMAKE_BUILD_TYPE=RelWithDebInfo")
-        CTEST_ARGS+=("-T memcheck")
-    fi
+    # run C++ performance tests
+    local TEST_LOG_FILE_SUBDIR="log"
+    local TEST_LOG_FILE_NAME="PerformanceTest.log"
+    for CPP_TARGET in "${CPP_TARGETS[@]}" ; do
+        local TARGET_TEST_OUT_DIR="${TEST_OUT_DIR}/${CPP_TARGET}"
+        local TEST_SRC_DIR="${TARGET_TEST_OUT_DIR}/src"
+        mkdir -p "${TEST_SRC_DIR}"
+        local TEST_SRC_FILE="${TEST_SRC_DIR}/PerformanceTest.cpp"
+        local TEST_LOG_DIR="${TARGET_TEST_OUT_DIR}/${TEST_LOG_FILE_SUBDIR}"
+        mkdir -p "${TEST_LOG_DIR}"
+        mkdir -p "${TARGET_TEST_OUT_DIR}"
+        if [[ ${SWITCH_RUN_ONLY} == 0 ]] ; then
+            generate_performance_test "${TEST_SRC_FILE}" "${SWITCH_BLOB_NAME}" \
+                    "${SWITCH_JSON_FILE}" "${SWITCH_BLOB_FILE}" "${TEST_LOG_DIR}/${TEST_LOG_FILE_NAME}" \
+                    ${SWITCH_NUM_ITERATIONS} ${SWITCH_TEST_CONFIG} ${SWITCH_PROFILE}
+        fi
 
-    # run test
-    test_zs "${ZSERIO_CPP17_DISTR_DIR}" "${ZSERIO_CPP17_PROJECT_ROOT}" "${ZSERIO_CPP17_BUILD_DIR}" \
-        "${TEST_OUT_DIR}" PARAM_CPP_TARGET_ARRAY[@] "${SWITCH_SOURCE}" "${SWITCH_DIRECTORY}" \
-        "${SWITCH_TEST_NAME}" "${TEST_SRC_FILE}"
-    if [ $? -ne 0 ] ; then
-        return 1
-    fi
-
-    if [[ ${SWITCH_PROFILE} == 1 ]] ; then
-        echo
-        echo "C++ profiling finished, use one of the following commands for analysis:"
-        for CPP_TARGET in "${CPP_TARGETS[@]}" ; do
-            local CALLGRIND_FILE=$(${FIND} "${TEST_OUT_DIR}/cpp/${CPP_TARGET}" -name "callgrind.out")
-            echo "    kcachegrind ${CALLGRIND_FILE}"
-        done
-    fi
+        # run external integration test
+        test_zs "${ZSERIO_CPP17_DISTR_DIR}" "${ZSERIO_CPP17_PROJECT_ROOT}" "${ZSERIO_CPP17_BUILD_DIR}" \
+            "${TEST_OUT_DIR}" CPP_TARGET "${SWITCH_SOURCE}" "${SWITCH_DIRECTORY}" \
+            "${SWITCH_TEST_NAME}" "${TEST_SRC_FILE}" ${SWITCH_PROFILE}
+        if [ $? -ne 0 ] ; then
+            return 1
+        fi
+    done
 
     # collect results
     echo
@@ -417,7 +411,7 @@ test_perf()
            "Generator" "Total Duration" "Iterations" "Step Duration" "Blob Size" "Blob in Memory"
     echo -n "|" ; for i in {1..101} ; do echo -n "-" ; done ; echo "|"
     for CPP_TARGET in "${CPP_TARGETS[@]}" ; do
-        local PERF_TEST_FILE=$(${FIND} "${TEST_OUT_DIR}/cpp/${CPP_TARGET}" -name "PerformanceTest.log")
+        local PERF_TEST_FILE="${TEST_OUT_DIR}/${CPP_TARGET}/${TEST_LOG_FILE_SUBDIR}/${TEST_LOG_FILE_NAME}"
         local RESULTS=($(cat ${PERF_TEST_FILE}))
         printf "| %-21s | %14s | %10s | %15s | %10s | %14s |\n" \
                "C++ (${CPP_TARGET})" ${RESULTS[0]} ${RESULTS[1]} ${RESULTS[2]} ${RESULTS[3]} ${RESULTS[4]}
@@ -436,7 +430,7 @@ Description:
     Runs performance tests on given zserio sources using C++17 extension from distr directory.
 
 Usage:
-    $0 [-h] [-e] [-p] [-r] [--profile] [-o <dir>] [-d <dir>] [-t <name>] -[n <num>] [-c <config>]
+    $0 [-h] [-e] [-p] [-r] [-l] [-o <dir>] [-d <dir>] [-t <name>] -[n <num>] [-c <config>]
         target... -s <source> -b <blobname> [-f <blobfile> | -j <jsonfile>]
 
 Arguments:
@@ -444,7 +438,7 @@ Arguments:
     -e, --help-env          Show help for enviroment variables.
     -p, --purge             Purge test build directory.
     -r, --run-only          Run already compiled PerformanceTests again.
-    --profile               Run the test in profiling mode and produce profiling data.
+    -l, --profile           Run the test in profiling mode and produce profiling data.
     -o <dir>, --output-directory <dir>
                             Output directory where tests will be run.
     -d <dir>, --source-dir <dir>
@@ -629,7 +623,7 @@ parse_arguments()
                 shift
                 ;;
 
-            "--profile")
+            "-l" | "--profile")
                 eval ${SWITCH_PROFILE_OUT}=1
                 shift
                 ;;

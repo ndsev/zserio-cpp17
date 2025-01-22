@@ -7,7 +7,7 @@ source "${SCRIPT_DIR}/test.sh"
 # Run custom integration test
 test_zs()
 {
-    exit_if_argc_ne $# 9
+    exit_if_argc_ne $# 10
     local ZSERIO_CPP17_DISTR_DIR="$1"; shift
     local ZSERIO_CPP17_PROJECT_ROOT="$1"; shift
     local ZSERIO_CPP17_BUILD_DIR="$1"; shift
@@ -18,6 +18,7 @@ test_zs()
     local SWITCH_DIRECTORY="$1"; shift
     local SWITCH_TEST_NAME="$1"; shift
     local SWITCH_TEST_FILE="$1"; shift
+    local SWITCH_PROFILE="$1"; shift
 
     # run custom integration tests
     local MESSAGE="Zserio C++17 custom integration test"
@@ -25,13 +26,18 @@ test_zs()
 
     local TEST_SUITES_LIST="external"
     local CMAKE_ARGS=("-DZSERIO_RELEASE_ROOT=${ZSERIO_CPP17_BUILD_DIR}/extension/download"
-                      "-DZSERIO_CPP17_RELEASE_ROOT=${ZSERIO_CPP17_DISTR_DIR}"
-                      "-DZSERIO_TEST_SUITES=${TEST_SUITES_LIST}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA=${SWITCH_SOURCE}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA_ROOT=${SWITCH_DIRECTORY}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA_NAME=${SWITCH_TEST_NAME}"
-                      "-DZSERIO_TEST_EXTERN_SCHEMA_TEST=${SWITCH_TEST_FILE}")
+            "-DZSERIO_CPP17_RELEASE_ROOT=${ZSERIO_CPP17_DISTR_DIR}"
+            "-DZSERIO_TEST_SUITES=${TEST_SUITES_LIST}"
+            "-DZSERIO_TEST_EXTERN_SCHEMA=${SWITCH_SOURCE}"
+            "-DZSERIO_TEST_EXTERN_SCHEMA_ROOT=${SWITCH_DIRECTORY}"
+            "-DZSERIO_TEST_EXTERN_SCHEMA_NAME=${SWITCH_TEST_NAME}"
+            "-DZSERIO_TEST_EXTERN_SCHEMA_TEST=${SWITCH_TEST_FILE}")
     local CTEST_ARGS=(--verbose)
+    if [[ ${SWITCH_PROFILE} == 1 ]] ; then
+        CMAKE_ARGS+=("-DPROFILING_ENABLED=ON"
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo")
+        CTEST_ARGS+=("-T memcheck")
+    fi
     local CPP_TARGET="all"
     local TEST_SRC_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/test"
     compile_cpp "${ZSERIO_CPP17_PROJECT_ROOT}" "${TEST_OUT_DIR}" "${TEST_SRC_DIR}" CPP_TARGETS[@] \
@@ -39,6 +45,12 @@ test_zs()
     if [ $? -ne 0 ] ; then
         stderr_echo "${MESSAGE} failed!"
         return 1
+    fi
+
+    if [[ ${SWITCH_PROFILE} == 1 ]] ; then
+        echo "C++ profiling finished, use the following commands for analysis:"
+        local CALLGRIND_FILE=$(${FIND} "${TEST_OUT_DIR}" -name "callgrind.out")
+        echo "    kcachegrind ${CALLGRIND_FILE}"
     fi
 
     echo -e "FINISHED - ${MESSAGE}\n"
@@ -54,12 +66,13 @@ Description:
     Runs given integration test on given zserio sources using C++17 extension from distr directory.
 
 Usage:
-    $0 [-h] [-e] [-p] [-o <dir>] [-d <dir>] [-s <source>] [-t <name>] [-f <file>] target
+    $0 [-h] [-e] [-p] [-l] [-o <dir>] [-d <dir>] [-s <source>] [-t <name>] [-f <file>] target
 
 Arguments:
     -h, --help            Show this help.
     -e, --help-env        Show help for enviroment variables.
     -p, --purge           Purge test build directory.
+    -l, --profile         Run the test in profiling mode and produce profiling data.
     -o <dir>, --output-directory <dir>
                           Output directory where tests will be run.
     -d <dir>, --source-dir <dir>
@@ -96,7 +109,7 @@ EOF
 # 3 - Environment help switch is present. Arguments after help switch have not been checked.
 parse_arguments()
 {
-    exit_if_argc_lt $# 7
+    exit_if_argc_lt $# 8
     local PARAM_CPP_TARGET_ARRAY_OUT="$1"; shift
     local SWITCH_OUT_DIR_OUT="$1"; shift
     local SWITCH_PURGE_OUT="$1"; shift
@@ -104,12 +117,14 @@ parse_arguments()
     local SWITCH_SOURCE_OUT="$1"; shift
     local SWITCH_TEST_NAME_OUT="$1"; shift
     local SWITCH_TEST_FILE_OUT="$1"; shift
+    local SWITCH_PROFILE_OUT="$1"; shift
 
     eval ${SWITCH_PURGE_OUT}=0
     eval ${SWITCH_DIRECTORY_OUT}="."
     eval ${SWITCH_SOURCE_OUT}=""
     eval ${SWITCH_TEST_NAME_OUT}=""
     eval ${SWITCH_TEST_FILE_OUT}=""
+    eval ${SWITCH_PROFILE_OUT}=0
 
     local NUM_PARAMS=0
     local PARAM_ARRAY=();
@@ -177,6 +192,11 @@ parse_arguments()
                 fi
                 eval ${SWITCH_TEST_FILE_OUT}="$2"
                 shift 2
+                ;;
+
+            "-l" | "--profile")
+                eval ${SWITCH_PROFILE_OUT}=1
+                shift
                 ;;
 
             "-"*)
@@ -248,8 +268,9 @@ main()
     local SWITCH_SOURCE
     local SWITCH_TEST_NAME
     local SWITCH_TEST_FILE
+    local SWITCH_PROFILE
     parse_arguments PARAM_CPP_TARGET_ARRAY SWITCH_OUT_DIR SWITCH_PURGE SWITCH_DIRECTORY SWITCH_SOURCE \
-            SWITCH_TEST_NAME SWITCH_TEST_FILE "$@"
+            SWITCH_TEST_NAME SWITCH_TEST_FILE SWITCH_PROFILE "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
         print_help
@@ -306,8 +327,8 @@ main()
     # run test
     local ZSERIO_CPP17_DISTR_DIR="${SWITCH_OUT_DIR}/distr"
     test_zs "${ZSERIO_CPP17_DISTR_DIR}" "${ZSERIO_CPP17_PROJECT_ROOT}" "${ZSERIO_CPP17_BUILD_DIR}" \
-            "${TEST_OUT_DIR}" PARAM_CPP_TARGET_ARRAY[@] "${SWITCH_SOURCE}" "${SWITCH_DIRECTORY}" \
-            "${SWITCH_TEST_NAME}" "${SWITCH_TEST_FILE}"
+            "${TEST_OUT_DIR}" PARAM_CPP_TARGET_ARRAY[@] "${SWITCH_SOURCE}" \
+            "${SWITCH_DIRECTORY}" "${SWITCH_TEST_NAME}" "${SWITCH_TEST_FILE}" ${SWITCH_PROFILE}
     if [ $? -ne 0 ] ; then
         return 1
     fi

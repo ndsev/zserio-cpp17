@@ -12,6 +12,7 @@ enable_testing()
 
 # input parameters
 set(SANITIZERS_ENABLED OFF CACHE BOOL "Whether the compiler sanitizers are enabled.")
+set(PROFILING_ENABLED OFF CACHE BOOL "Whether the valgrind profiling in tests is enabled (for gcc only).")
 set(CLANG_TIDY_BIN "" CACHE STRING "Name of clang-tidy binary. If empty, clang-tidy tool is not called.")
 set(CLANG_FORMAT_BIN "" CACHE STRING "Name of clang-format binary. If empty, clang-format tool is not called.")
 
@@ -48,6 +49,14 @@ compiler_reset_debug_iterators() # fixes arguments/set_cpp_allocator tests for M
 if (SANITIZERS_ENABLED)
     compiler_set_address_sanitizer()
     compiler_set_undefined_sanitizer()
+endif ()
+
+if (PROFILING_ENABLED)
+    string(CONCAT MEMORYCHECK_COMMAND_OPTIONS
+        "--tool=callgrind -v --instr-atstart=no --collect-atstart=no --collect-jumps=yes --dump-instr=yes "
+        "--callgrind-out-file=callgrind.out"
+    )
+    include(CTest)
 endif ()
 
 # add test utility library
