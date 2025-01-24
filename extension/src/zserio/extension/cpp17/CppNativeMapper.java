@@ -666,7 +666,10 @@ public final class CppNativeMapper
         @Override
         public void visitPubsubType(PubsubType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            final PackageName packageName = type.getPackage().getPackageName();
+            final String name = type.getName();
+            final String includeFileName = getIncludePath(packageName, name);
+            cppType = new NativeUserType(packageName, name, includeFileName);
         }
 
         @Override
