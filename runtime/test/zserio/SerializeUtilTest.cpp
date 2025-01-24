@@ -274,6 +274,42 @@ TEST(SerializeUtilTest, serializeData)
     ASSERT_EQ(0xC0, bitBuffer.getData()[2]);
 }
 
+TEST(SerializeUtilTest, serializeDataToBytes)
+{
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const Vector<uint8_t> buffer = serializeToBytes(simpleStructure);
+    ASSERT_EQ(3, buffer.size());
+    ASSERT_EQ(0xE0, buffer.at(0));
+    ASSERT_EQ(0xFF, buffer.at(1));
+    ASSERT_EQ(0xC0, buffer.at(2));
+}
+
+TEST(SerializeUtilTest, serializeDataWithAllocator)
+{
+    const TrackingAllocator<uint8_t> allocator;
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const BasicBitBuffer<TrackingAllocator<uint8_t>> bitBuffer = serialize(simpleStructure, allocator);
+    ASSERT_EQ(1, allocator.numAllocs());
+    ASSERT_EQ(3, allocator.totalAllocatedSize());
+    ASSERT_EQ(18, bitBuffer.getBitSize());
+    ASSERT_EQ(0xE0, bitBuffer.getData()[0]);
+    ASSERT_EQ(0xFF, bitBuffer.getData()[1]);
+    ASSERT_EQ(0xC0, bitBuffer.getData()[2]);
+}
+
+TEST(SerializeUtilTest, serializeDataToBytesWithAllocator)
+{
+    const TrackingAllocator<uint8_t> allocator;
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const Vector<uint8_t, TrackingAllocator<uint8_t>> buffer = serializeToBytes(simpleStructure, allocator);
+    ASSERT_EQ(1, allocator.numAllocs());
+    ASSERT_EQ(3, allocator.totalAllocatedSize());
+    ASSERT_EQ(3, buffer.size());
+    ASSERT_EQ(0xE0, buffer.at(0));
+    ASSERT_EQ(0xFF, buffer.at(1));
+    ASSERT_EQ(0xC0, buffer.at(2));
+}
+
 TEST(SerializeUtilTest, serializeView)
 {
     const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
@@ -283,6 +319,17 @@ TEST(SerializeUtilTest, serializeView)
     ASSERT_EQ(0xE0, bitBuffer.getData()[0]);
     ASSERT_EQ(0xFF, bitBuffer.getData()[1]);
     ASSERT_EQ(0xC0, bitBuffer.getData()[2]);
+}
+
+TEST(SerializeUtilTest, serializeViewToBytes)
+{
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const View<SimpleStructure> view(simpleStructure);
+    const Vector<uint8_t> buffer = serializeToBytes(view);
+    ASSERT_EQ(3, buffer.size());
+    ASSERT_EQ(0xE0, buffer.at(0));
+    ASSERT_EQ(0xFF, buffer.at(1));
+    ASSERT_EQ(0xC0, buffer.at(2));
 }
 
 TEST(SerializeUtilTest, serializeViewWithAllocator)
@@ -300,18 +347,119 @@ TEST(SerializeUtilTest, serializeViewWithAllocator)
     ASSERT_EQ(0xC0, bitBuffer.getData()[2]);
 }
 
+TEST(SerializeUtilTest, serializeViewToBytesWithAllocator)
+{
+    const TrackingAllocator<uint8_t> allocator;
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const View<SimpleStructure> view(simpleStructure);
+    const Vector<uint8_t, TrackingAllocator<uint8_t>> buffer = serializeToBytes(view, allocator);
+
+    ASSERT_EQ(1, allocator.numAllocs());
+    ASSERT_EQ(3, allocator.totalAllocatedSize());
+    ASSERT_EQ(3, buffer.size());
+    ASSERT_EQ(0xE0, buffer.at(0));
+    ASSERT_EQ(0xFF, buffer.at(1));
+    ASSERT_EQ(0xC0, buffer.at(2));
+}
+
+TEST(SerializeUtilTest, serializeDataView)
+{
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const DataView<SimpleStructure> dataView(simpleStructure);
+    const BitBuffer bitBuffer = serialize(dataView);
+    ASSERT_EQ(18, bitBuffer.getBitSize());
+    ASSERT_EQ(0xE0, bitBuffer.getData()[0]);
+    ASSERT_EQ(0xFF, bitBuffer.getData()[1]);
+    ASSERT_EQ(0xC0, bitBuffer.getData()[2]);
+}
+
+TEST(SerializeUtilTest, serializeDataViewToBytes)
+{
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const DataView<SimpleStructure> dataView(simpleStructure);
+    const Vector<uint8_t> buffer = serializeToBytes(dataView);
+    ASSERT_EQ(3, buffer.size());
+    ASSERT_EQ(0xE0, buffer.at(0));
+    ASSERT_EQ(0xFF, buffer.at(1));
+    ASSERT_EQ(0xC0, buffer.at(2));
+}
+
+TEST(SerializeUtilTest, serializeDataViewWithAllocator)
+{
+    const TrackingAllocator<uint8_t> allocator;
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const DataView<SimpleStructure> dataView(simpleStructure);
+    const BasicBitBuffer<TrackingAllocator<uint8_t>> bitBuffer = serialize(dataView, allocator);
+
+    ASSERT_EQ(1, allocator.numAllocs());
+    ASSERT_EQ(3, allocator.totalAllocatedSize());
+    ASSERT_EQ(18, bitBuffer.getBitSize());
+    ASSERT_EQ(0xE0, bitBuffer.getData()[0]);
+    ASSERT_EQ(0xFF, bitBuffer.getData()[1]);
+    ASSERT_EQ(0xC0, bitBuffer.getData()[2]);
+}
+
+TEST(SerializeUtilTest, serializeDataViewToBytesWithAllocator)
+{
+    const TrackingAllocator<uint8_t> allocator;
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    const DataView<SimpleStructure> dataView(simpleStructure);
+    const Vector<uint8_t, TrackingAllocator<uint8_t>> buffer = serializeToBytes(dataView, allocator);
+
+    ASSERT_EQ(1, allocator.numAllocs());
+    ASSERT_EQ(3, allocator.totalAllocatedSize());
+    ASSERT_EQ(3, buffer.size());
+    ASSERT_EQ(0xE0, buffer.at(0));
+    ASSERT_EQ(0xFF, buffer.at(1));
+    ASSERT_EQ(0xC0, buffer.at(2));
+}
+
 TEST(SerializeUtilTest, deserializeData)
 {
     const std::array<uint8_t, 3> buffer = {0xE0, 0xFF, 0xC0};
     const BitBuffer bitBuffer(buffer, 18);
     SimpleStructure simpleStructure;
-    const View<SimpleStructure> view = deserialize<SimpleStructure>(bitBuffer, simpleStructure);
+    const View<SimpleStructure> view = deserialize(bitBuffer, simpleStructure);
     ASSERT_EQ(0x07, simpleStructure.numberA);
     ASSERT_EQ(0x07, simpleStructure.numberB);
     ASSERT_EQ(0x7F, simpleStructure.numberC);
     ASSERT_EQ(simpleStructure.numberA, view.numberA());
     ASSERT_EQ(simpleStructure.numberB, view.numberB());
     ASSERT_EQ(simpleStructure.numberC, view.numberC());
+}
+
+TEST(SerializeUtilTest, deserializeDataFromBytes)
+{
+    const std::array<uint8_t, 3> buffer = {0xE0, 0xFF, 0xC0};
+    Span<const uint8_t> byteBuffer(buffer);
+    SimpleStructure simpleStructure;
+    const View<SimpleStructure> view = deserializeFromBytes(byteBuffer, simpleStructure);
+    ASSERT_EQ(0x07, simpleStructure.numberA);
+    ASSERT_EQ(0x07, simpleStructure.numberB);
+    ASSERT_EQ(0x7F, simpleStructure.numberC);
+    ASSERT_EQ(simpleStructure.numberA, view.numberA());
+    ASSERT_EQ(simpleStructure.numberB, view.numberB());
+    ASSERT_EQ(simpleStructure.numberC, view.numberC());
+}
+
+TEST(SerializeUtilTest, deserializeDataView)
+{
+    const std::array<uint8_t, 3> buffer = {0xE0, 0xFF, 0xC0};
+    const BitBuffer bitBuffer(buffer, 18);
+    const DataView<SimpleStructure> dataView = deserialize<SimpleStructure>(bitBuffer);
+    ASSERT_EQ(0x07, dataView.numberA());
+    ASSERT_EQ(0x07, dataView.numberB());
+    ASSERT_EQ(0x7F, dataView.numberC());
+}
+
+TEST(SerializeUtilTest, deserializeDataViewFromBytes)
+{
+    const std::array<uint8_t, 3> buffer = {0xE0, 0xFF, 0xC0};
+    Span<const uint8_t> byteBuffer(buffer);
+    const DataView<SimpleStructure> dataView = deserializeFromBytes<SimpleStructure>(byteBuffer);
+    ASSERT_EQ(0x07, dataView.numberA());
+    ASSERT_EQ(0x07, dataView.numberB());
+    ASSERT_EQ(0x7F, dataView.numberC());
 }
 
 TEST(SerializeUtilTest, serializeDataToFile)
@@ -334,7 +482,24 @@ TEST(SerializeUtilTest, serializeViewToFile)
     const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
     std::string_view fileName("SerializeViewToFile.bin");
     const View<SimpleStructure> view(simpleStructure);
-    serializeToFile(simpleStructure, fileName);
+    serializeToFile(view, fileName);
+
+    std::ifstream file(fileName.data(), std::ios::binary);
+    const std::vector<uint8_t> readData(
+            (std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
+    file.close();
+    ASSERT_EQ(3, readData.size());
+    ASSERT_EQ(0xE0, readData[0]);
+    ASSERT_EQ(0xFF, readData[1]);
+    ASSERT_EQ(0xC0, readData[2]);
+}
+
+TEST(SerializeUtilTest, serializeDataViewToFile)
+{
+    const SimpleStructure simpleStructure{0x07, 0x07, 0x7F};
+    std::string_view fileName("SerializeViewToFile.bin");
+    const DataView<SimpleStructure> dataView(simpleStructure);
+    serializeToFile(dataView, fileName);
 
     std::ifstream file(fileName.data(), std::ios::binary);
     const std::vector<uint8_t> readData(
@@ -356,13 +521,28 @@ TEST(SerializeUtilTest, deserializeDataFromFile)
     file.close();
 
     SimpleStructure simpleStructure;
-    const View<SimpleStructure> view = deserializeFromFile<SimpleStructure>(fileName, simpleStructure);
+    const View<SimpleStructure> view = deserializeFromFile(fileName, simpleStructure);
     ASSERT_EQ(0x07, simpleStructure.numberA);
     ASSERT_EQ(0x07, simpleStructure.numberB);
     ASSERT_EQ(0x7F, simpleStructure.numberC);
     ASSERT_EQ(simpleStructure.numberA, view.numberA());
     ASSERT_EQ(simpleStructure.numberB, view.numberB());
     ASSERT_EQ(simpleStructure.numberC, view.numberC());
+}
+
+TEST(SerializeUtilTest, deserializeDataViewFromFile)
+{
+    std::string_view fileName("DeserializeDataFromFile.bin");
+    const std::vector<char> data({static_cast<char>(0xE0), static_cast<char>(0xFF), static_cast<char>(0xC0)});
+    std::ofstream file;
+    file.open(fileName.data(), std::ios::out | std::ios::binary);
+    file.write(&data[0], static_cast<std::streamsize>(data.size()));
+    file.close();
+
+    const DataView<SimpleStructure> dataView = deserializeFromFile<SimpleStructure>(fileName);
+    ASSERT_EQ(0x07, dataView.numberA());
+    ASSERT_EQ(0x07, dataView.numberB());
+    ASSERT_EQ(0x7F, dataView.numberC());
 }
 
 TEST(SerializeUtilTest, serializeParameterizedData)
