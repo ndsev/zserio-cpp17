@@ -170,6 +170,12 @@ public abstract class CppTemplateData implements IncludeCollector
                     nativeMapper.getStringType(), nativeMapper.getStringType().needsAllocatorArgument());
             vector = new TypeTemplateData(
                     nativeMapper.getVectorType(), nativeMapper.getVectorType().needsAllocatorArgument());
+            service = new TypeTemplateData(nativeMapper.getServiceType());
+            serviceClient = new TypeTemplateData(nativeMapper.getServiceClientType());
+            serviceDataPtr = new TypeTemplateData(nativeMapper.getServiceDataPtrType());
+            objectServiceData = new TypeTemplateData(nativeMapper.getObjectServiceDataType());
+            rawServiceDataHolder = new TypeTemplateData(nativeMapper.getRawServiceDataHolderType());
+            rawServiceDataView = new TypeTemplateData(nativeMapper.getRawServiceDataViewType());
         }
 
         public AllocatorTemplateData getAllocator()
@@ -200,6 +206,36 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getVector()
         {
             return vector;
+        }
+
+        public TypeTemplateData getService()
+        {
+            return service;
+        }
+
+        public TypeTemplateData getServiceClient()
+        {
+            return serviceClient;
+        }
+
+        public TypeTemplateData getServiceDataPtr()
+        {
+            return serviceDataPtr;
+        }
+
+        public TypeTemplateData getObjectServiceData()
+        {
+            return objectServiceData;
+        }
+
+        public TypeTemplateData getRawServiceDataHolder()
+        {
+            return rawServiceDataHolder;
+        }
+
+        public TypeTemplateData getRawServiceDataView()
+        {
+            return rawServiceDataView;
         }
 
         public static final class AllocatorTemplateData
@@ -294,6 +330,12 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData bytes;
         private final TypeTemplateData string;
         private final TypeTemplateData vector;
+        private final TypeTemplateData service;
+        private final TypeTemplateData serviceClient;
+        private final TypeTemplateData serviceDataPtr;
+        private final TypeTemplateData objectServiceData;
+        private final TypeTemplateData rawServiceDataHolder;
+        private final TypeTemplateData rawServiceDataView;
     }
 
     private final String generatorDescription;

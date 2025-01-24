@@ -1,0 +1,5 @@
+bugprone-exception-escape:gen/service_types/complex_types_service/Response.cpp
+bugprone-exception-escape:gen/service_types/complex_types_service/Response.h
+bugprone-exception-escape:gen/service_types/complex_types_service/ResponseData.h
+
+cppcoreguidelines-pro-bounds-constant-array-index:cpp/ComplexTypesServiceTest.cpp

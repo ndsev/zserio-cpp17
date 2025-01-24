@@ -112,7 +112,7 @@ function(compiler_get_warnings_as_errors_setup VARNAME)
             )
             string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP} ${WARNINGS_SETUP_LIST}")
         endif ()
-        if (CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "14.0.0")
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "14.0.0")
             set(WARNINGS_SETUP_LIST
                 "-Wno-error=reserved-identifier" # identifier is reserved because it starts with '_' ...
                 "-Wno-error=deprecated-copy-with-dtor" # definition of implicit copy constructor is deprecated

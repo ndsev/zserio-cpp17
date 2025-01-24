@@ -60,6 +60,18 @@ public final class CppNativeMapper
         bytesType = new NativeAllocType(typesContext.getBytes(), allocatorDefinition);
         stringType = new NativeAllocType(typesContext.getString(), allocatorDefinition, "char");
         vectorType = new NativeAllocType(typesContext.getVector(), allocatorDefinition);
+
+        serviceType = new NativeAllocType(typesContext.getService(), allocatorDefinition, "uint8_t");
+        serviceClientType =
+                new NativeAllocType(typesContext.getServiceClient(), allocatorDefinition, "uint8_t");
+        serviceDataPtrType =
+                new NativeAllocType(typesContext.getServiceDataPtr(), allocatorDefinition, "uint8_t");
+        objectServiceDataType =
+                new NativeAllocType(typesContext.getObjectServiceData(), allocatorDefinition, "uint8_t");
+        rawServiceDataHolderType =
+                new NativeAllocType(typesContext.getRawServiceDataHolder(), allocatorDefinition, "uint8_t");
+        rawServiceDataViewType =
+                new NativeAllocType(typesContext.getRawServiceDataView(), allocatorDefinition, "uint8_t");
     }
 
     public CppNativeSymbol getCppSymbol(AstNode symbol) throws ZserioExtensionException
@@ -162,6 +174,36 @@ public final class CppNativeMapper
     public NativeAllocType getVectorType()
     {
         return vectorType;
+    }
+
+    public NativeAllocType getServiceType()
+    {
+        return serviceType;
+    }
+
+    public NativeAllocType getServiceClientType()
+    {
+        return serviceClientType;
+    }
+
+    public NativeAllocType getServiceDataPtrType()
+    {
+        return serviceDataPtrType;
+    }
+
+    public NativeAllocType getObjectServiceDataType()
+    {
+        return objectServiceDataType;
+    }
+
+    public NativeAllocType getRawServiceDataHolderType()
+    {
+        return rawServiceDataHolderType;
+    }
+
+    public NativeAllocType getRawServiceDataViewType()
+    {
+        return rawServiceDataViewType;
     }
 
     private CppNativeType mapArray(ArrayInstantiation instantiation) throws ZserioExtensionException
@@ -615,7 +657,10 @@ public final class CppNativeMapper
         @Override
         public void visitServiceType(ServiceType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            final PackageName packageName = type.getPackage().getPackageName();
+            final String name = type.getName();
+            final String includeFileName = getIncludePath(packageName, name);
+            cppType = new NativeUserType(packageName, name, includeFileName);
         }
 
         @Override
@@ -708,6 +753,13 @@ public final class CppNativeMapper
     private final NativeAllocType bytesType;
     private final NativeAllocType stringType;
     private final NativeAllocType vectorType;
+
+    private final NativeAllocType serviceType;
+    private final NativeAllocType serviceClientType;
+    private final NativeAllocType serviceDataPtrType;
+    private final NativeAllocType objectServiceDataType;
+    private final NativeAllocType rawServiceDataHolderType;
+    private final NativeAllocType rawServiceDataViewType;
 
     private final static NativeNumericWrapperType booleanType = new NativeNumericWrapperType("Bool", "bool");
     private final static NativeNumericWrapperType float16Type =
