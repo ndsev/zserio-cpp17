@@ -49,10 +49,12 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
     zserio/HashCodeUtil.h
+    zserio/IPubsub.h
     zserio/IService.h
     zserio/MissedOptionalException.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
+    zserio/PubsubException.h
     zserio/RebindAlloc.h
     zserio/RuntimeArch.h
     zserio/SerializeUtil.h
