@@ -54,7 +54,7 @@ ${name}::${name}(const AllocatorType&<#if structure_fields_need_allocator(fieldL
 
 ${name}::${name}(
     <#list fieldList as field>
-        <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) noexcept :</#if>
+        <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) :</#if>
     </#list>
     <#list fieldList as field>
         <@field_data_member_name field/>(<#if structure_field_needs_allocator(field)>::std::move(</#if><#rt>
