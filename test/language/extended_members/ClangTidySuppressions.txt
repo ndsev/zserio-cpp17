@@ -1,7 +1,5 @@
 bugprone-exception-escape:gen/extended_members/extended_choice_field/Choice.h
-bugprone-exception-escape:gen/extended_members/extended_choice_field/Extended.cpp
 bugprone-exception-escape:gen/extended_members/extended_choice_field/Extended.h
-bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Extended2.cpp
 bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Extended2.h
 bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Union.h
 

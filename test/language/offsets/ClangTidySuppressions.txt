@@ -1,4 +1,3 @@
-bugprone-exception-escape:gen/offsets/nested_offset/NestedOffset.cpp
 bugprone-exception-escape:gen/offsets/nested_offset/NestedOffset.h
 bugprone-exception-escape:gen/offsets/nested_offset/NestedOffsetChoice.h
 bugprone-exception-escape:gen/offsets/nested_offset/NestedOffsetUnion.h

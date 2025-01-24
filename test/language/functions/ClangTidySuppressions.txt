@@ -1,13 +1,12 @@
-bugprone-exception-escape:gen/functions/choice_array/Inner.cpp
 bugprone-exception-escape:gen/functions/choice_array/Inner.h
 bugprone-exception-escape:gen/functions/choice_array/ItemRef.h
-bugprone-exception-escape:gen/functions/union_array/Inner.cpp
 bugprone-exception-escape:gen/functions/union_array/Inner.h
 bugprone-exception-escape:gen/functions/union_array/ItemRef.h
 
-
 cert-err58-cpp:cpp/StructureBytesTest.cpp
 cert-err58-cpp:cpp/StructureExternTest.cpp
+cert-err58-cpp:cpp/StructureArrayTest.cpp
+cert-err58-cpp:cpp/UnionArrayTest.cpp
 
 performance-move-const-arg:gen/functions/structure_array_param/ParentStructure.cpp
 performance-move-const-arg:gen/functions/structure_optional/ValueConsumerCreator.cpp

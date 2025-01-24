@@ -2,9 +2,7 @@ bugprone-exception-escape:gen/choice_types/bitmask_param_choice/BitmaskParamChoi
 bugprone-exception-escape:gen/choice_types/bool_param_choice/BoolParamChoice.h
 bugprone-exception-escape:gen/choice_types/choice_compatibility_check/ChoiceVersion1.h
 bugprone-exception-escape:gen/choice_types/choice_compatibility_check/ChoiceVersion2.h
-bugprone-exception-escape:gen/choice_types/choice_compatibility_check/HolderVersion1.cpp
 bugprone-exception-escape:gen/choice_types/choice_compatibility_check/HolderVersion1.h
-bugprone-exception-escape:gen/choice_types/choice_compatibility_check/HolderVersion2.cpp
 bugprone-exception-escape:gen/choice_types/choice_compatibility_check/HolderVersion2.h
 bugprone-exception-escape:gen/choice_types/constant_in_choice_case/ConstantInChoiceCase.h
 bugprone-exception-escape:gen/choice_types/default_empty_choice/DefaultEmptyChoice.h

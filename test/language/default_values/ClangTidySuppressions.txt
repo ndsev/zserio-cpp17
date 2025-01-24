@@ -1,6 +1,4 @@
-bugprone-exception-escape:gen/default_values/extended_default_values/ExtendedDefaultValues.cpp
 bugprone-exception-escape:gen/default_values/extended_default_values/ExtendedDefaultValues.h
-bugprone-exception-escape:gen/default_values/optional_default_values/OptionalDefaultValues.cpp
 bugprone-exception-escape:gen/default_values/optional_default_values/OptionalDefaultValues.h
 
 google-explicit-constructor:gen/default_values/structure_default_values/Permission.h

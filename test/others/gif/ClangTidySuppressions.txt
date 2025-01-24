@@ -1,21 +1,9 @@
-bugprone-exception-escape:gen/gif/gif_data/ApplicationExtension.cpp
-bugprone-exception-escape:gen/gif/gif_data/BlockData.cpp
 bugprone-exception-escape:gen/gif/gif_data/BlockData.h
-bugprone-exception-escape:gen/gif/gif_data/CommentExtension.cpp
 bugprone-exception-escape:gen/gif/gif_data/CommentExtension.h
-bugprone-exception-escape:gen/gif/gif_data/ExtensionBlock.cpp
 bugprone-exception-escape:gen/gif/gif_data/ExtensionTypes.h
-bugprone-exception-escape:gen/gif/gif_data/GifData.cpp
 bugprone-exception-escape:gen/gif/gif_data/GifData.h
-bugprone-exception-escape:gen/gif/gif_data/ImageBlock.cpp
-bugprone-exception-escape:gen/gif/gif_data/PlainTextExtension.cpp
-bugprone-exception-escape:gen/gif/gif_data/RasterData.cpp
 bugprone-exception-escape:gen/gif/gif_data/RasterData.h
-bugprone-exception-escape:gen/gif/gif_data/SubBlock.cpp
-bugprone-exception-escape:gen/gif/gif_data/ZippedBlockData.cpp
 bugprone-exception-escape:gen/gif/gif_data/ZippedBlockData.h
-bugprone-exception-escape:gen/gif/gif_data/ZippedSubBlock.cpp
-bugprone-exception-escape:gen/gif/GifFile.cpp
 
 bugprone-misplaced-widening-cast:gen/gif/gif_data/ImageDescriptor.cpp
 bugprone-misplaced-widening-cast:gen/gif/screen_descriptor/ScreenDescriptor.cpp

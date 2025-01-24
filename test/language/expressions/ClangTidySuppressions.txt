@@ -1,6 +1,4 @@
-bugprone-exception-escape:gen/expressions/isset_operator/IsSetOperator.cpp
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.h
-bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.cpp
 
 cppcoreguidelines-pro-bounds-constant-array-index:cpp/IndexOperatorTest.cpp
 
@@ -13,10 +11,8 @@ performance-move-const-arg:gen/expressions/field_type_with_parent_clash/FieldTyp
 
 hicpp-signed-bitwise:gen/expressions/left_shift_operator/LeftShiftOperator.cpp
 
-readability-simplify-boolean-expr:gen/expressions/array_type/ArrayTypeExpression.cpp
 readability-simplify-boolean-expr:gen/expressions/index_operator/Element.cpp
 readability-simplify-boolean-expr:gen/expressions/parameterized_array_type/ParameterizedArrayElement.cpp
 readability-simplify-boolean-expr:gen/expressions/question_mark/QuestionMarkExpression.cpp
-readability-simplify-boolean-expr:gen/expressions/uint64_type/UInt64TypeExpression.cpp
 
 readability-uppercase-literal-suffix:gen/expressions/float_type/FloatTypeExpression.cpp
