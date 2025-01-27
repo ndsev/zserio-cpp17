@@ -21,8 +21,11 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/AllocatorHolder.h
     zserio/Array.h
     zserio/ArrayLengthException.h
+    zserio/ArrayTraits.h
     zserio/BitBuffer.h
     zserio/BitFieldUtil.cpp
+    zserio/BitFieldUtil.h
+    zserio/Bitmasks.h
     zserio/BitPositionUtil.h
     zserio/BitFieldUtil.h
     zserio/BitSize.h
@@ -30,18 +33,19 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BitStreamReader.h
     zserio/BitStreamWriter.cpp
     zserio/BitStreamWriter.h
-    zserio/Bitmasks.h
     zserio/BuiltInOperators.cpp
     zserio/BuiltInOperators.h
     zserio/Bytes.cpp
     zserio/Bytes.h
     zserio/ChoiceCaseException.h
+    zserio/ChoiceTag.h
+    zserio/ConstraintException.h
     zserio/CppRuntimeException.cpp
     zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
-    zserio/ChoiceTag.h
-    zserio/ConstraintException.h
+    zserio/DataView.h
     zserio/DeltaContext.h
+    zserio/Enums.h
     zserio/Extended.h
     zserio/ExtendedFieldException.h
     zserio/FileUtil.cpp
