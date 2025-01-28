@@ -82,7 +82,7 @@ TEST_F(VariableArrayStructCastVarUIntTest, writeWrongArray)
     const size_t numElements = 33;
     auto data = createData(numElements, true);
 
-    ASSERT_THROW(zserio::serialize(data), zserio::CppRuntimeException);
+    ASSERT_THROW(zserio::serialize(data), zserio::ArrayLengthException);
 }
 
 } // namespace variable_array_struct_cast_varuint

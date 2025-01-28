@@ -42,7 +42,7 @@ TEST_F(PackedAutoArrayRemovedEnumItemTest, writeRemovedException)
     packedArray.push_back(Traffic::MID);
     packedArray.push_back(Traffic::ZSERIO_REMOVED_HEAVY);
 
-    ASSERT_THROW(zserio::serialize(packedAutoArrayRemovedEnumItem), zserio::CppRuntimeException);
+    ASSERT_THROW(zserio::serialize(packedAutoArrayRemovedEnumItem), zserio::ArrayLengthException);
 }
 */
 

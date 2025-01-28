@@ -2,6 +2,7 @@
 #include "optional_members/optional_expression/BasicColor.h"
 #include "optional_members/optional_expression/Container.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/MissedOptionalException.h"
 
 namespace optional_members
 {
@@ -61,23 +62,6 @@ TEST_F(OptionalExpressionTest, fieldConstructor)
     ASSERT_FALSE(viewWithoutOptionals.blackColor());
 }
 
-TEST_F(OptionalExpressionTest, bitSizeOf)
-{
-    Container data;
-    data.basicColor = BasicColor::WHITE;
-    zserio::View view(data);
-
-    ASSERT_EQ(CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view));
-
-    data.basicColor = BasicColor::BLACK;
-    data.numBlackTones = NUM_BLACK_TONES;
-    BlackColor blackColor;
-    fillBlackColor(blackColor, NUM_BLACK_TONES);
-    data.blackColor = blackColor;
-
-    ASSERT_EQ(CONTAINER_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view));
-}
-
 TEST_F(OptionalExpressionTest, comparisionOperators)
 {
     Container data;
@@ -104,6 +88,32 @@ TEST_F(OptionalExpressionTest, comparisionOperators)
     zserio::View lessThanView(lessThanData);
 
     test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
+}
+
+TEST_F(OptionalExpressionTest, validate)
+{
+    Container data;
+    data.basicColor = BasicColor::BLACK;
+    data.numBlackTones = NUM_BLACK_TONES;
+    zserio::View view(data);
+    ASSERT_THROW(zserio::detail::validate(view), zserio::MissedOptionalException);
+}
+
+TEST_F(OptionalExpressionTest, bitSizeOf)
+{
+    Container data;
+    data.basicColor = BasicColor::WHITE;
+    zserio::View view(data);
+
+    ASSERT_EQ(CONTAINER_BIT_SIZE_WITHOUT_OPTIONAL, zserio::detail::bitSizeOf(view));
+
+    data.basicColor = BasicColor::BLACK;
+    data.numBlackTones = NUM_BLACK_TONES;
+    BlackColor blackColor;
+    fillBlackColor(blackColor, NUM_BLACK_TONES);
+    data.blackColor = blackColor;
+
+    ASSERT_EQ(CONTAINER_BIT_SIZE_WITH_OPTIONAL, zserio::detail::bitSizeOf(view));
 }
 
 TEST_F(OptionalExpressionTest, writeRead)

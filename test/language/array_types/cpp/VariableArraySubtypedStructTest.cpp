@@ -3,6 +3,7 @@
 #include "array_types/variable_array_subtyped_struct/VariableArray.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/ArrayLengthException.h"
 #include "zserio/RebindAlloc.h"
 
 namespace array_types
@@ -85,7 +86,7 @@ TEST_F(VariableArraySubtypedStructTest, writeWrongArray)
     const size_t numElements = 33;
     auto data = createData(numElements, true);
 
-    ASSERT_THROW(zserio::serialize(data), zserio::CppRuntimeException);
+    ASSERT_THROW(zserio::serialize(data), zserio::ArrayLengthException);
 }
 
 } // namespace variable_array_subtyped_struct

@@ -86,7 +86,7 @@ TEST_F(PackedFixedArrayUInt8Test, writeWrongArray)
     PackedFixedArray data;
     fillData(data, FIXED_ARRAY_LENGTH + 1);
 
-    ASSERT_THROW(zserio::serialize(data), zserio::CppRuntimeException);
+    ASSERT_THROW(zserio::serialize(data), zserio::ArrayLengthException);
 }
 
 } // namespace packed_fixed_array_uint8

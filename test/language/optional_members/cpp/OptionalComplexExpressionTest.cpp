@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "optional_members/optional_complex_expression/Container.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/MissedOptionalException.h"
 
 namespace optional_members
 {
@@ -29,6 +30,14 @@ TEST_F(OptionalComplexExpressionTest, withOptional)
     ASSERT_EQ(CONTAINER_WITH_OPTIONAL_BIT_SIZE, zserio::detail::bitSizeOf(zserio::View(data)));
 
     test_utils::writeReadTest(data);
+}
+
+TEST_F(OptionalComplexExpressionTest, validate)
+{
+    Container data;
+    data.permission = Permission::Values::WRITE;
+    zserio::View view(data);
+    ASSERT_THROW(zserio::detail::validate(view), zserio::MissedOptionalException);
 }
 
 } // namespace optional_complex_expression

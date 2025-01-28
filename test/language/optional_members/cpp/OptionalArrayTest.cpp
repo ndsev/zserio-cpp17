@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "optional_members/optional_array/TestStruct.h"
+#include "zserio/MissedOptionalException.h"
 #include "zserio/RebindAlloc.h"
 
 // just test setters and getters
@@ -52,6 +53,14 @@ TEST(OptionalArrayTest, autoData16)
 
     ASSERT_TRUE(view.autoData16());
     ASSERT_EQ(4, view.autoData16()->size());
+}
+
+TEST(OptionalArrayTest, validate)
+{
+    TestStruct data;
+    data.hasData8 = true;
+    zserio::View view(data);
+    ASSERT_THROW(zserio::detail::validate(view), zserio::MissedOptionalException);
 }
 
 } // namespace optional_array
