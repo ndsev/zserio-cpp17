@@ -23,6 +23,9 @@ set_global_common_variables()
         stderr_echo "Provided CLANG_FORMAT_BIN=\"${CLANG_FORMAT_BIN}\" does not exist!"
         return 1
     fi
+
+    # clang-format force flag to use for formatting check, by default is 0 (false)
+    CLANG_FORMAT_FORCE="${CLANG_FORMAT_FORCE:-0}"
 }
 
 # Set and check global variables for Java projects.
@@ -144,6 +147,7 @@ Uses the following environment variables for building:
     ANT                    Ant executable to use. Default is "ant".
     ANT_EXTRA_ARGS         Extra arguments to Ant. Default is empty string.
     CLANG_FORMAT_BIN       Name of clang-format binary. If not set, clang-format tool is not called.
+    CLANG_FORMAT_FORCE     Defines whether to force formatting changes. Default is 0 (disabled).
     CLANG_TIDY_BIN         Name of clang-tidy binary. If not set, clang-tidy tool is not called.
     CLANG_VERSION_SUFFIX   Clang compiler version suffix. Default is empty.
                            Set e.g. "-8" to use "clang-8" instead of "clang".
@@ -283,6 +287,9 @@ compile_java()
     if [ -n "${CLANG_FORMAT_BIN}" ] ; then
         ANT_PROPS+=("-Dclang_format.exec_file=${CLANG_FORMAT_BIN}")
     fi
+    if [[ ${CLANG_FORMAT_FORCE} == 1 ]] ; then
+        local ANT_PROPS+=("-Dclang_format.force=true")
+    fi
 
     if [ -n "${SPOTBUGS_HOME}" ] ; then
         ANT_PROPS+=("-Dspotbugs.home_dir=${SPOTBUGS_HOME}")
@@ -347,21 +354,27 @@ compile_cpp_for_target()
                 "-DCMAKE_PREFIX_PATH=${SQLITE_RELEASE_ROOT}/${TARGET}")
 
     if [ ${SANITIZERS_ENABLED} -eq 1 ] ; then
-        CMAKE_ARGS=("${CMAKE_ARGS[@]}" "-DSANITIZERS_ENABLED=ON")
+        CMAKE_ARGS+=("-DSANITIZERS_ENABLED=ON")
     else
-        CMAKE_ARGS=("${CMAKE_ARGS[@]}" "-DSANITIZERS_ENABLED=OFF")
+        CMAKE_ARGS+=("-DSANITIZERS_ENABLED=OFF")
     fi
 
     if [ ! -z "${CLANG_TIDY_BIN}" ] ; then
-        CMAKE_ARGS=("${CMAKE_ARGS[@]}" "-DCLANG_TIDY_BIN=${CLANG_TIDY_BIN}")
+        CMAKE_ARGS+=("-DCLANG_TIDY_BIN=${CLANG_TIDY_BIN}")
     else
-        CMAKE_ARGS=("${CMAKE_ARGS[@]}" "-UCLANG_TIDY_BIN")
+        CMAKE_ARGS+=("-UCLANG_TIDY_BIN")
     fi
 
     if [ ! -z "${CLANG_FORMAT_BIN}" ] ; then
-        CMAKE_ARGS=("${CMAKE_ARGS[@]}" "-DCLANG_FORMAT_BIN=${CLANG_FORMAT_BIN}")
+        CMAKE_ARGS+=("-DCLANG_FORMAT_BIN=${CLANG_FORMAT_BIN}")
     else
-        CMAKE_ARGS=("${CMAKE_ARGS[@]}" "-UCLANG_FORMAT_BIN")
+        CMAKE_ARGS+=("-UCLANG_FORMAT_BIN")
+    fi
+
+    if [[ ${CLANG_FORMAT_FORCE} == 1 ]] ; then
+        CMAKE_ARGS+=("-DCLANG_FORMAT_FORCE=ON")
+    else
+        CMAKE_ARGS+=("-DCLANG_FORMAT_FORCE=OFF")
     fi
 
     # detect build type

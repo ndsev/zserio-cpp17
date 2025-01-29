@@ -8,9 +8,10 @@
 #   SOURCE           Source to check by clang-format.
 #   CONFIG_FILE      Path to the clang-format config file.
 #   WERROR           Ends with an error in case of any format violation.
+#   FORCE            Force formatting without any reports.
 cmake_minimum_required(VERSION 3.15.0)
 
-foreach (ARG CLANG_FORMAT_BIN SOURCE CONFIG_FILE WERROR)
+foreach (ARG CLANG_FORMAT_BIN SOURCE CONFIG_FILE WERROR FORCE)
     if (NOT DEFINED ${ARG})
         message(FATAL_ERROR "Argument '${ARG}' not defined!")
     endif ()
@@ -20,8 +21,15 @@ if (WERROR)
     set(WERROR_OPTION --Werror)
 endif ()
 
+if (NOT FORCE)
+    set(DRY_RUN_OPTION --dry-run)
+else ()
+    set(INPLACE_OPTION -i)
+endif ()
+
 execute_process(
-    COMMAND ${CLANG_FORMAT_BIN} --style=file:${CONFIG_FILE} --dry-run ${WERROR_OPTION} ${SOURCE}
+    COMMAND ${CLANG_FORMAT_BIN} --style=file:${CONFIG_FILE} ${DRY_RUN_OPTION} ${WERROR_OPTION}
+            ${INPLACE_OPTION} ${SOURCE}
     RESULT_VARIABLE CLANG_FORMAT_RESULT
 )
 

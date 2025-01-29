@@ -6,11 +6,12 @@
 #   SOURCES_GLOBS List of sources globbing expressions which will be searched using GLOG_RECURSE.
 #   CONFIG_FILE   Path to .clang-format config file.
 #   WERROR        Ends with an error in case of any format violation. Default is ON.
+#   FORCE         Force formatting without any report. Default is OFF.
 function(clang_format_add_custom_target CLANG_FORMAT_TARGET)
     if (CLANG_FORMAT_BIN)
         cmake_parse_arguments(CLANG_FORMAT
             ""
-            "CONFIG_FILE;WERROR"
+            "CONFIG_FILE;WERROR;FORCE"
             "DEPENDS;SOURCES;SOURCES_GLOBS"
             ${ARGN}
         )
@@ -27,6 +28,9 @@ function(clang_format_add_custom_target CLANG_FORMAT_TARGET)
         endif ()
 
         # process optional arguments
+        if (NOT DEFINED CLANG_FORMAT_FORCE)
+            set(CLANG_FORMAT_FORCE OFF)
+        endif ()
         if (NOT DEFINED CLANG_FORMAT_WERROR)
             set(CLANG_FORMAT_WERROR ON)
         endif ()
@@ -52,6 +56,7 @@ function(clang_format_add_custom_target CLANG_FORMAT_TARGET)
                     -DSOURCE="${SOURCE_FILE}"
                     -DCONFIG_FILE="${CLANG_FORMAT_CONFIG_FILE}"
                     -DWERROR="${CLANG_FORMAT_WERROR}"
+                    -DFORCE="${CLANG_FORMAT_FORCE}"
                     -P ${CMAKE_MODULE_PATH}/clang_format_tool.cmake
                 COMMAND "${CMAKE_COMMAND}" -E touch "${CLANG_FORMAT_FILE_STAMP}"
                 DEPENDS ${SOURCE_FILE} ${CLANG_FORMAT_CONFIG_FILE}

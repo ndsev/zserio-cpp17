@@ -15,6 +15,7 @@ set(SANITIZERS_ENABLED OFF CACHE BOOL "Whether the compiler sanitizers are enabl
 set(PROFILING_ENABLED OFF CACHE BOOL "Whether the valgrind profiling in tests is enabled (for gcc only).")
 set(CLANG_TIDY_BIN "" CACHE STRING "Name of clang-tidy binary. If empty, clang-tidy tool is not called.")
 set(CLANG_FORMAT_BIN "" CACHE STRING "Name of clang-format binary. If empty, clang-format tool is not called.")
+set(CLANG_FORMAT_FORCE OFF CACHE BOOL "Whether the automatic formatting is enabled.")
 
 set(ZSERIO_CPP17_PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
 set(ZSERIO_RELEASE_ROOT "${ZSERIO_CPP17_PROJECT_ROOT}/build/extension/download" CACHE PATH "Root directory of Zserio release binaries.")
@@ -138,7 +139,9 @@ function(add_custom_test TEST_NAME)
                                      CONFIG_FILE
                                         "${ZSERIO_CPP17_PROJECT_ROOT}/.clang-format"
                                      WERROR
-                                        ON)
+                                        ON
+                                     FORCE
+                                        ${CLANG_FORMAT_FORCE})
     endif ()
 
     set(TEST_DEPENDENCIES_LIST "${TEST_DEPENDENCIES_LIST};${TEST_ARG_DEPENDS}" CACHE INTERNAL "")

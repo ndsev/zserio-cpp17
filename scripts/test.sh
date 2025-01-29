@@ -153,8 +153,8 @@ test_cpp()
     done
 
     local CMAKE_ARGS=("-DZSERIO_RELEASE_ROOT=${ZSERIO_CPP17_BUILD_DIR}/extension/download"
-                      "-DZSERIO_CPP17_RELEASE_ROOT=${ZSERIO_CPP17_DISTR_DIR}"
-                      "-DZSERIO_TEST_SUITES=${TEST_SUITES_LIST}")
+            "-DZSERIO_CPP17_RELEASE_ROOT=${ZSERIO_CPP17_DISTR_DIR}"
+            "-DZSERIO_TEST_SUITES=${TEST_SUITES_LIST}")
     local CTEST_ARGS=()
     if [[ ${SWITCH_CLEAN} == 1 ]] ; then
         local CPP_TARGET="clean"
@@ -358,8 +358,8 @@ main()
     local SWITCH_PURGE
     local SWITCH_TEST_PATTERN_ARRAY=()
     # note that "$@" must have qoutes to prevent expansion of include/exclude patterns
-    parse_arguments PARAM_CPP_TARGET_ARRAY SWITCH_OUT_DIR SWITCH_CLEAN SWITCH_PURGE SWITCH_TEST_PATTERN_ARRAY \
-            "$@"
+    parse_arguments PARAM_CPP_TARGET_ARRAY SWITCH_OUT_DIR SWITCH_CLEAN SWITCH_PURGE \
+            SWITCH_TEST_PATTERN_ARRAY "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
         print_help

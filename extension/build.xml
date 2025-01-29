@@ -12,10 +12,11 @@ zserio_cpp17.install_dir - Directory where to install Zserio C++17 Extension jar
 zserio.distr_dir         - Zserio distr directory to use. If not set, zserio binaries will be automatically
                            downloaded from GitHub.
 clang_format.exec_file   - Clang-format executable file. If not set, clang-format is not run.
+clang_format.force       - Whether the automatic formatting is enabled. If not set, only dry run will be used.
 spotbugs.home_dir        - Location of the spotbugs tool. If not set, spotbugs is not run.
 
 -->
-<project name="zserio_cpp17" basedir="." default="jar">
+<project name="zserio_cpp17" basedir="." default="jar" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <dirname property="zserio_cpp17.base_dir" file="${ant.file.zserio_cpp17}"/>
 
     <property name="zserio_cpp17.build_dir" value="${zserio_cpp17.base_dir}/../build/extension"/>
@@ -224,8 +225,9 @@ Command hints to reformat source manually using clang-format tool (in case of fo
         </echo>
         <apply executable="${clang_format.exec_file}" failonerror="true">
             <arg value="--style=file"/>
-            <arg value="--dry-run"/>
+            <arg value="--dry-run" unless:true="${clang_format.force}"/>
             <arg value="--Werror"/>
+            <arg value="-i" if:true="${clang_format.force}"/>
             <srcfile/>
             <fileset dir="${zserio_cpp17.src_dir}" includes="**/*.java"/>
         </apply>
@@ -281,8 +283,9 @@ Command hints to reformat source manually using clang-format tool (in case of fo
         </echo>
         <apply executable="${clang_format.exec_file}" failonerror="true">
             <arg value="--style=file"/>
-            <arg value="--dry-run"/>
+            <arg value="--dry-run" unless:true="${clang_format.force}"/>
             <arg value="--Werror"/>
+            <arg value="-i" if:true="${clang_format.force}"/>
             <srcfile/>
             <fileset dir="${zserio_cpp17.test.src_dir}" includes="**/*.java"/>
         </apply>

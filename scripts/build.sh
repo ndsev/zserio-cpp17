@@ -240,10 +240,7 @@ main()
             -Dzserio_cpp17.install_dir="${ZSERIO_CPP17_DISTR_DIR}"
     )
     if [ ! -z "${PARAM_ZSERIO_DISTR_DIR}" ] ; then
-        local ZSERIO_CPP17_ANT_PROPS=(
-                ${ZSERIO_CPP17_ANT_PROPS}
-                -Dzserio.distr_dir="${PARAM_ZSERIO_DISTR_DIR}"
-        )
+        local ZSERIO_CPP17_ANT_PROPS+=(-Dzserio.distr_dir="${PARAM_ZSERIO_DISTR_DIR}")
     fi
 
     # build Zserio C++ extension
