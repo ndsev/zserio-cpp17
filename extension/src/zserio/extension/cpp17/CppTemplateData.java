@@ -170,6 +170,14 @@ public abstract class CppTemplateData implements IncludeCollector
                     nativeMapper.getStringType(), nativeMapper.getStringType().needsAllocatorArgument());
             vector = new TypeTemplateData(
                     nativeMapper.getVectorType(), nativeMapper.getVectorType().needsAllocatorArgument());
+            map = new TypeTemplateData(
+                    nativeMapper.getMapType(), nativeMapper.getMapType().needsAllocatorArgument());
+            set = new TypeTemplateData(
+                    nativeMapper.getSetType(), nativeMapper.getSetType().needsAllocatorArgument());
+            optional = new TypeTemplateData(
+                    nativeMapper.getOptionalType(), nativeMapper.getOptionalType().needsAllocatorArgument());
+            uniquePtr = new TypeTemplateData(
+                    nativeMapper.getUniquePtrType(), nativeMapper.getUniquePtrType().needsAllocatorArgument());
             service = new TypeTemplateData(nativeMapper.getServiceType());
             serviceClient = new TypeTemplateData(nativeMapper.getServiceClientType());
             serviceDataPtr = new TypeTemplateData(nativeMapper.getServiceDataPtrType());
@@ -206,6 +214,26 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getVector()
         {
             return vector;
+        }
+
+        public TypeTemplateData getMap()
+        {
+            return map;
+        }
+
+        public TypeTemplateData getSet()
+        {
+            return set;
+        }
+
+        public TypeTemplateData getOptional()
+        {
+            return optional;
+        }
+
+        public TypeTemplateData getUniquePtr()
+        {
+            return uniquePtr;
         }
 
         public TypeTemplateData getService()
@@ -330,6 +358,10 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData bytes;
         private final TypeTemplateData string;
         private final TypeTemplateData vector;
+        private final TypeTemplateData map;
+        private final TypeTemplateData set;
+        private final TypeTemplateData optional;
+        private final TypeTemplateData uniquePtr;
         private final TypeTemplateData service;
         private final TypeTemplateData serviceClient;
         private final TypeTemplateData serviceDataPtr;

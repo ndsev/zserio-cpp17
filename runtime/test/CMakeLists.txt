@@ -11,6 +11,10 @@ project(ZserioCpp17RuntimeTest)
 include(gtest_utils)
 gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
 
+# add SQLite3 library
+include(sqlite_utils)
+sqlite_add_library(${ZSERIO_CPP17_PROJECT_ROOT})
+
 compiler_set_warnings()
 compiler_set_warnings_as_errors()
 if (SANITIZERS_ENABLED)
@@ -49,6 +53,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/ServiceExceptionTest.cpp
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
+    zserio/SqliteConnectionTest.cpp
     zserio/StringConvertUtilTest.cpp
     zserio/StringTest.cpp
     zserio/TrackingAllocator.h
@@ -56,6 +61,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/TypesTest.cpp
     zserio/UnionCaseExceptionTest.cpp
     zserio/ValidationExceptionTest.cpp
+    zserio/ValidationSqliteUtilTest.cpp
     zserio/VariantTest.cpp
 )
 
@@ -63,6 +69,7 @@ add_executable(${PROJECT_NAME} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE .)
 target_include_directories(${PROJECT_NAME} PRIVATE ../src)
-target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17Runtime gtest_main)
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SQLITE_INCDIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17Runtime gtest_main ${SQLITE_LIBRARY})
 
 gtest_add_tests(${PROJECT_NAME} "--gtest_output=xml" ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})

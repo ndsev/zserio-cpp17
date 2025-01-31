@@ -162,7 +162,7 @@ inline const char* convertBoolToString(bool value)
  *
  * \return String representation of the given integral value.
  */
-template <typename ALLOC, typename T>
+template <typename ALLOC, typename T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
 BasicString<RebindAlloc<ALLOC, char>> toString(T value, const ALLOC& allocator = ALLOC())
 {
     std::array<char, 24> buffer = {};

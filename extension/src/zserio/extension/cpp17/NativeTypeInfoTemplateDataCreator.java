@@ -21,9 +21,8 @@ import zserio.extension.cpp17.types.NativeIntegralType;
 
 public final class NativeTypeInfoTemplateDataCreator
 {
-    public static NativeTypeInfoTemplateData create(TemplateDataContext context, CppNativeType nativeType,
-            TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
-            throws ZserioExtensionException
+    public static NativeTypeInfoTemplateData create(
+            CppNativeType nativeType, TypeInstantiation typeInstantiation) throws ZserioExtensionException
     {
         final ZserioType baseType = typeInstantiation.getBaseType();
 

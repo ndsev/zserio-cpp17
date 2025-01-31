@@ -293,6 +293,11 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         return "";
     }
 
+    protected String getAccessOperatorForCompoundType()
+    {
+        return ".";
+    }
+
     protected void formatFieldGetter(StringBuilder result, boolean isMostLeftId, Field field)
     {
         result.append(AccessorNameFormatter.getGetterName(field));
@@ -315,6 +320,13 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
                 result.append(CPP_GETTER_DYNAMIC_BITFIELD_VALUE);
             }
         }
+    }
+
+    private String getAccessPrefix()
+    {
+        final String accessPrefix = getAccessPrefixForCompoundType();
+
+        return (accessPrefix.isEmpty()) ? accessPrefix : accessPrefix + getAccessOperatorForCompoundType();
     }
 
     private void formatTypeIdentifier(StringBuilder result, ZserioType resolvedType)
@@ -385,13 +397,6 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         return literalSuffix;
     }
 
-    private String getAccessPrefix()
-    {
-        final String accessPrefix = getAccessPrefixForCompoundType();
-
-        return (accessPrefix.isEmpty()) ? accessPrefix : accessPrefix + ".";
-    }
-
     private void formatParameterAccessor(StringBuilder result, boolean isMostLeftId, Parameter param)
     {
         if (isMostLeftId)
@@ -405,8 +410,8 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         }
     }
 
-    private void formatFieldAccessor(StringBuilder result, boolean isMostLeftId, Field field, boolean isSetter)
-            throws ZserioExtensionException
+    protected void formatFieldAccessor(StringBuilder result, boolean isMostLeftId, Field field,
+            boolean isSetter) throws ZserioExtensionException
     {
         if (isMostLeftId)
             result.append(getAccessPrefix());
@@ -490,7 +495,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     private final static String CPP_SETTER_ZSERIO_DATA_ACCESSOR = "zserioData()";
 
     private final static String CPP_GETTER_FUNCTION_CALL = "()";
-    private final static String CPP_GETTER_OPTIONAL_VALUE = ".value()";
+    protected final static String CPP_GETTER_OPTIONAL_VALUE = ".value()";
     private final static String CPP_GETTER_EXTENDED_VALUE = ".value()";
     private final static String CPP_GETTER_DYNAMIC_BITFIELD_VALUE = ".value()";
 
