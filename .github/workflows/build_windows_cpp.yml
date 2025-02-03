@@ -86,8 +86,7 @@ jobs:
         scripts/build.sh cpp_rt-${PACKAGE}
 
     - name: Archive Zserio C++ runtime artifacts
-      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       # we want this artifact only once since it contains only sources
       if: ${{ matrix.msvc-toolset == 'v141' && matrix.cxx-standard && matrix.build-type == 'Release' }}
       with:
@@ -95,8 +94,7 @@ jobs:
         path: distr/runtime_lib
 
     - name: Archive Zseiro C++ build artifacts
-      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "\
           zserio-build-${{matrix.os}}-\
@@ -108,7 +106,7 @@ jobs:
           build/runtime_lib/**/runtime/*.lib
 
     - name: Download Zserio bundle artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: zserio-java8
         path: distr

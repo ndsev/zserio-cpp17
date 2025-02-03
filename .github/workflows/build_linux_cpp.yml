@@ -102,8 +102,7 @@ jobs:
         scripts/build.sh cpp_rt-${PACKAGE}
 
     - name: Upload Zserio C++17 runtime artifacts
-      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       # we need to collect this artifact from a build which has both clang coverage and clang-tidy reports
       if: ${{ matrix.platform == '64' && matrix.clang-version == '18' && matrix.cxx-standard == '17' &&
               matrix.build-type == 'Debug' }}
@@ -112,8 +111,7 @@ jobs:
         path: distr/runtime_lib
 
     - name: Upload Zserio C++17 build artifacts
-      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "\
           zserio-build-${{matrix.os}}-${{matrix.platform}}-\
@@ -123,7 +121,7 @@ jobs:
         path: build/runtime_lib/**/runtime/*.a
 
     - name: Download Zserio bundle artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: zserio-java8
         path: distr

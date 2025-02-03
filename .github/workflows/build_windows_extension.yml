@@ -65,15 +65,13 @@ jobs:
         scripts/build.sh cpp zserio
 
     - name: Upload C++17 extension artifact
-      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "zserio-cpp17-java${{matrix.java-version}}"
         path: distr/zserio_cpp17*.jar
 
     - name: Upload Zserio bundle with C++17 extension
-      # update when https://github.com/actions/upload-artifact/issues/543 is fixed
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "zserio-java${{matrix.java-version}}"
         path: |
