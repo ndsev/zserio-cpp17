@@ -52,7 +52,8 @@ public:
          *
          * /return The value of the explicit parameter ${parameter.expression}.
          */
-        virtual <@sql_parameter_provider_return_type parameter/> <@sql_parameter_provider_getter_name parameter/>(const Row& currentRow) = 0;
+        virtual <@sql_parameter_provider_return_type parameter/> <@sql_parameter_provider_getter_name parameter/>(<#rt>
+                <#lt>const ::zserio::View<Row>& currentRow) = 0;
     </#list>
     };
 
@@ -243,11 +244,12 @@ private:
     <#list fields as field>
         <#if field.sqlTypeData.isBlob>
     bool validateBlob${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
-            sqlite3_stmt* statement, Row& row<#rt>
-            <#lt><#if needsParameterProvider>, IParameterProvider& parameterProvider</#if>, bool& continueValidation);
+            sqlite3_stmt* statement, Row& row<#if needsParameterProvider>, IParameterProvider& parameterProvider</#if>,
+            bool& continueValidation);
         <#else>
     bool validateField${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
-            sqlite3_stmt* statement, Row& row, bool& continueValidation);
+            sqlite3_stmt* statement, Row& row<#if needsParameterProvider>, IParameterProvider& parameterProvider</#if>,
+            bool& continueValidation);
         </#if>
     </#list>
 
@@ -274,7 +276,7 @@ template<>
 class View<${fullName}::Row>
 {
 public:
-    View(const ${fullName}::Row& row<#if needsParameterProvider>, ${fullName}::IParameterProvider& parameterProvider</#if>);
+    explicit View(const ${fullName}::Row& row<#if needsParameterProvider>, ${fullName}::IParameterProvider& parameterProvider</#if>);
 <#list fields>
 
     <#items as field>
@@ -288,6 +290,6 @@ private:
     ${fullName}::IParameterProvider& m_parameterProvider;
 </#if>
 };
-
 <@namespace_end ["zserio"]/>
+
 <@include_guard_end package.path, name/>

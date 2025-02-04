@@ -66,14 +66,7 @@ protected:
         row.blobId = blobId;
         row.name = name;
 
-        // count must be changing because we need to catch error
-        // caused by copying of ParameterizedBlob and its wrong initialization
-        // - When the Row is read by a generated Reader, it is created on stack and ParameterizedBlob
-        //   stores reference to Parameters which are created also on stack. Since the Row in the Reader::next()
-        //   method is created still on the same place, the value stored in Parameters would be still the same
-        //   if we used a constant and the test doesn't catch the error.
-        // - This test tries to check that the generated Row is able to "reinitialize" its fields after
-        //   move or copy.
+        // count must be changing because we need to catch error (in the old C++ generator)
         const uint32_t count = 1 + blobId;
         Parameters parameters(count);
         row.parameters = parameters;

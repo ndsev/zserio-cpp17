@@ -7,7 +7,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import zserio.ast.BitmaskType;
-import zserio.ast.CompoundType;
 import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.EnumType;
 import zserio.ast.Expression;
@@ -28,6 +27,7 @@ import zserio.extension.common.sql.types.NativeBlobType;
 import zserio.extension.common.sql.types.NativeIntegerType;
 import zserio.extension.common.sql.types.NativeRealType;
 import zserio.extension.common.sql.types.SqlNativeType;
+import zserio.extension.cpp17.SqlTableEmitterTemplateData.FieldTemplateData.DynamicBitLength;
 import zserio.extension.cpp17.SqlTableEmitterTemplateData.FieldTemplateData.SqlRangeCheckData;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeIntegralType;
@@ -241,6 +241,9 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             this.hasExplicitParameters = hasExplicitParameters;
             this.requiresOwnerContext = requiresOwnerContext;
 
+            dynamicBitFieldLength =
+                    createDynamicBitLength(fieldTypeInstantiation, cppRowIndirectExpressionFormatter);
+
             final ZserioType fieldBaseType = fieldTypeInstantiation.getBaseType();
             underlyingTypeInfo = createUnderlyingTypeInfo(cppNativeMapper, fieldBaseType, includeCollector);
             final SqlNativeTypeMapper sqlNativeTypeMapper = new SqlNativeTypeMapper();
@@ -304,6 +307,11 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         public boolean getRequiresOwnerContext()
         {
             return requiresOwnerContext;
+        }
+
+        public DynamicBitLength getDynamicBitFieldLength()
+        {
+            return dynamicBitFieldLength;
         }
 
         public NativeTypeInfoTemplateData getUnderlyingTypeInfo()
@@ -386,6 +394,38 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             private final String getterName;
         }
 
+        public static final class DynamicBitLength
+        {
+            public DynamicBitLength(DynamicBitFieldInstantiation dynamicBitFieldInstantiation,
+                    ExpressionFormatter cppRowIndirectExpressionFormatter) throws ZserioExtensionException
+            {
+                final Expression lengthExpression = dynamicBitFieldInstantiation.getLengthExpression();
+
+                expression = cppRowIndirectExpressionFormatter.formatGetter(lengthExpression);
+                needsOwner = lengthExpression.requiresOwnerContext();
+                needsIndex = lengthExpression.containsIndex();
+            }
+
+            public String getExpression()
+            {
+                return expression;
+            }
+
+            public boolean getNeedsOwner()
+            {
+                return needsOwner;
+            }
+
+            public boolean getNeedsIndex()
+            {
+                return needsIndex;
+            }
+
+            private final String expression;
+            private final boolean needsOwner;
+            private final boolean needsIndex;
+        }
+
         public static final class SqlTypeTemplateData
         {
             public SqlTypeTemplateData(SqlNativeTypeMapper sqlNativeTypeMapper, Field field)
@@ -428,12 +468,15 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         public static final class SqlRangeCheckData
         {
             public SqlRangeCheckData(boolean checkLowerBound, String lowerBound, String upperBound,
-                    NativeTypeInfoTemplateData typeInfo) throws ZserioExtensionException
+                    NativeTypeInfoTemplateData typeInfo, DynamicBitLength dynamicBitFieldLength)
+                    throws ZserioExtensionException
             {
                 this.checkLowerBound = checkLowerBound;
                 this.lowerBound = lowerBound;
                 this.upperBound = upperBound;
                 this.typeInfo = typeInfo;
+                this.bitFieldLength =
+                        dynamicBitFieldLength != null ? dynamicBitFieldLength.getExpression() : null;
             }
 
             public boolean getCheckLowerBound()
@@ -456,10 +499,16 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                 return typeInfo;
             }
 
+            public String getBitFieldLength()
+            {
+                return bitFieldLength;
+            }
+
             private final boolean checkLowerBound;
             private final String lowerBound;
             private final String upperBound;
             private final NativeTypeInfoTemplateData typeInfo;
+            private final String bitFieldLength;
         }
 
         private static NativeTypeInfoTemplateData createUnderlyingTypeInfo(CppNativeMapper cppNativeMapper,
@@ -496,10 +545,27 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         private final boolean hasImplicitParameters;
         private final boolean hasExplicitParameters;
         private final boolean requiresOwnerContext;
+        private final DynamicBitLength dynamicBitFieldLength;
         private final NativeTypeInfoTemplateData underlyingTypeInfo;
         private final SqlTypeTemplateData sqlTypeData;
         private final SqlRangeCheckData sqlRangeCheckData;
         private final DocCommentsTemplateData docComments;
+    }
+
+    private static DynamicBitLength createDynamicBitLength(TypeInstantiation typeInstantiation,
+            ExpressionFormatter cppRowIndirectExpressionFormatter) throws ZserioExtensionException
+    {
+        if (typeInstantiation instanceof DynamicBitFieldInstantiation)
+        {
+            final DynamicBitFieldInstantiation dynamicBitFieldInstantiation =
+                    ((DynamicBitFieldInstantiation)typeInstantiation);
+            if (dynamicBitFieldInstantiation.getLengthExpression().getIntegerValue() == null)
+            {
+                // only for dynamic bit fields which have unknown bit length
+                return new DynamicBitLength(dynamicBitFieldInstantiation, cppRowIndirectExpressionFormatter);
+            }
+        }
+        return null;
     }
 
     private static String createSqlConstraint(SqlConstraint sqlConstraint,
@@ -529,8 +595,8 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         if (!(baseTypeInstantiation.getBaseType() instanceof IntegerType))
             return null;
 
-        final String bitFieldLength =
-                getDynamicBitFieldLength(baseTypeInstantiation, cppRowIndirectExpressionFormatter);
+        final DynamicBitLength dynamicBitFieldLength =
+                createDynamicBitLength(baseTypeInstantiation, cppRowIndirectExpressionFormatter);
         final NativeIntegralType nativeType = cppNativeMapper.getCppIntegralType(baseTypeInstantiation);
         final boolean isSigned = nativeType.isSigned();
         final IntegerType typeToCheck = (IntegerType)baseTypeInstantiation.getBaseType();
@@ -542,7 +608,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         // since we use sqlite_column_int64, it has no sense to test 64-bit types
         final NativeIntegralType sqlNativeType =
                 (isSigned) ? cppNativeMapper.getInt64Type() : cppNativeMapper.getUInt64Type();
-        if (bitFieldLength == null)
+        if (dynamicBitFieldLength == null)
         {
             final BigInteger nativeLowerBound = sqlNativeType.getLowerBound();
             checkLowerBound = nativeLowerBound.compareTo(zserioLowerBound) < 0;
@@ -559,19 +625,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         final NativeTypeInfoTemplateData typeInfo =
                 NativeTypeInfoTemplateDataCreator.create(sqlNativeType, baseTypeInstantiation);
 
-        return new SqlRangeCheckData(checkLowerBound, lowerBound, upperBound, typeInfo);
-    }
-
-    private static String getDynamicBitFieldLength(TypeInstantiation instantiation,
-            ExpressionFormatter cppRowIndirectExpressionFormatter) throws ZserioExtensionException
-    {
-        if (!(instantiation instanceof DynamicBitFieldInstantiation))
-            return null;
-
-        final DynamicBitFieldInstantiation dynamicBitFieldInstantiation =
-                (DynamicBitFieldInstantiation)instantiation;
-        return cppRowIndirectExpressionFormatter.formatGetter(
-                dynamicBitFieldInstantiation.getLengthExpression());
+        return new SqlRangeCheckData(checkLowerBound, lowerBound, upperBound, typeInfo, dynamicBitFieldLength);
     }
 
     private final List<FieldTemplateData> fields;

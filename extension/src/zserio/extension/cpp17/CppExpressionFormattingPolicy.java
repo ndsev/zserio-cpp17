@@ -293,11 +293,6 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         return "";
     }
 
-    protected String getAccessOperatorForCompoundType()
-    {
-        return ".";
-    }
-
     protected void formatFieldGetter(StringBuilder result, boolean isMostLeftId, Field field)
     {
         result.append(AccessorNameFormatter.getGetterName(field));
@@ -326,7 +321,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     {
         final String accessPrefix = getAccessPrefixForCompoundType();
 
-        return (accessPrefix.isEmpty()) ? accessPrefix : accessPrefix + getAccessOperatorForCompoundType();
+        return (accessPrefix.isEmpty()) ? accessPrefix : accessPrefix + ".";
     }
 
     private void formatTypeIdentifier(StringBuilder result, ZserioType resolvedType)

@@ -25,7 +25,7 @@ class View;
 
 // template argument deduction guide for View constructor
 template <typename T, typename... ARGS>
-View(T, ARGS...) -> View<T>;
+View(T, ARGS&&...) -> View<T>;
 
 namespace detail
 {

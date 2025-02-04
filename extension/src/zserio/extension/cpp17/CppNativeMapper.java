@@ -117,10 +117,6 @@ public final class CppNativeMapper
         final TypeMapperVisitor visitor = new TypeMapperVisitor();
         type.accept(visitor);
 
-        final ZserioExtensionException thrownException = visitor.getThrownException();
-        if (thrownException != null)
-            throw thrownException;
-
         final CppNativeType nativeType = visitor.getCppType();
         if (nativeType == null)
             throw new ZserioExtensionException(
@@ -574,11 +570,6 @@ public final class CppNativeMapper
             return cppType;
         }
 
-        public ZserioExtensionException getThrownException()
-        {
-            return thrownException;
-        }
-
         @Override
         public void visitStdIntegerType(StdIntegerType type)
         {
@@ -786,7 +777,6 @@ public final class CppNativeMapper
         }
 
         private CppNativeType cppType = null;
-        private ZserioExtensionException thrownException = null;
     }
 
     private final static String INCLUDE_DIR_SEPARATOR = "/";
