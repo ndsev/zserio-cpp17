@@ -10,10 +10,10 @@
 
 #include <memory>
 #include <array>
+#include <string_view>
 <@type_includes types.set/>
 <@type_includes types.vector/>
 <@type_includes types.map/>
-<@type_includes types.vector/>
 <@type_includes types.string/>
 <@type_includes types.uniquePtr/>
 #include <zserio/AllocatorHolder.h>
@@ -180,22 +180,22 @@ public:
      *
      * \return Database name.
      */
-    static ::zserio::StringView databaseName() noexcept;
+    static ::std::string_view databaseName() noexcept;
 
     /**
      * Gets all table names of the database.
      *
      * \return Array of all table names of the database.
      */
-    static const ::std::array<::zserio::StringView, ${fields?size}>& tableNames() noexcept;
+    static const ::std::array<::std::string_view, ${fields?size}>& tableNames() noexcept;
 
 private:
     void initTables();
-    void attachDatabase(::zserio::StringView fileName, ::zserio::StringView attachedDbName);
+    void attachDatabase(::std::string_view fileName, const ${types.string.name}& attachedDbName);
     void detachDatabases();
 
 <#list fields as field>
-    static ::zserio::StringView <@sql_db_table_name_getter field/> noexcept;
+    static ::std::string_view <@sql_db_table_name_getter field/> noexcept;
 </#list>
 
     ::zserio::SqliteConnection m_db;

@@ -26,16 +26,4 @@ cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/subtyped_enum_field_t
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/without_pk_table/WithoutPkTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:cpp/BlobParamTableTest.cpp
 
-google-explicit-constructor:gen/sql_tables/blob_field_with_children_initialization_table/BlobFieldWithChildrenInitializationTable.h
-google-explicit-constructor:gen/sql_tables/blob_offsets_param_table/BlobOffsetsParamTable.h
-google-explicit-constructor:gen/sql_tables/blob_param_table/BlobParamTable.h
-google-explicit-constructor:gen/sql_tables/column_param_table/ColumnParamTable.h
-google-explicit-constructor:gen/sql_tables/const_param_table/ConstParamTable.h
-google-explicit-constructor:gen/sql_tables/dynamic_bit_field_enum_field_table/DynamicBitFieldEnumFieldTable.h
-google-explicit-constructor:gen/sql_tables/multiple_pk_table/MultiplePkTable.h
-google-explicit-constructor:gen/sql_tables/subtyped_bitmask_field_table/SubtypedBitmaskFieldTable.h
 google-explicit-constructor:gen/sql_tables/subtyped_bitmask_field_table/TestBitmask.h
-google-explicit-constructor:gen/sql_tables/subtyped_bool_field_table/SubtypedBoolFieldTable.h
-google-explicit-constructor:gen/sql_tables/subtyped_enum_field_table/SubtypedEnumFieldTable.h
-google-explicit-constructor:gen/sql_tables/subtyped_table/TestTable.h
-google-explicit-constructor:gen/sql_tables/without_pk_table/WithoutPkTable.h

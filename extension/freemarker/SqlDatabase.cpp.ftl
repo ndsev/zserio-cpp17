@@ -3,8 +3,6 @@
 <@file_header generatorDescription/>
 <#assign needsParameterProvider = sql_db_needs_parameter_provider(fields)/>
 
-#include <string_view>
-
 #include <zserio/SqliteException.h>
 #include <zserio/ValidationSqliteUtil.h>
 
@@ -27,8 +25,7 @@ ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& t
                 ::zserio::SqliteErrorCode(sqliteResult);
     }
 
-    <@map_type_name "::std::string_view" types.string.name/> dbFileNameToAttachedDbNameMap(
-            get_allocator_ref());
+    <@map_type_name types.string.name types.string.name/> dbFileNameToAttachedDbNameMap(get_allocator_ref());
     for (const auto& relocation : tableToDbFileNameRelocationMap)
     {
         const ${types.string.name}& tableName = relocation.first;
@@ -46,7 +43,7 @@ ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& t
                 ${types.string.name}(attachedDbIt->second, get_allocator_ref()));
         if (!emplaceResult.second)
         {
-            throw ::zserio::SqliteException("${name}::${name}: can't insert ") << tableName.c_str() << 
+            throw ::zserio::SqliteException("${name}::${name}: can't insert ") << tableName <<
                     " into Database Relocation Map!";
         }
     }
@@ -204,7 +201,7 @@ void ${name}::initTables()
 </#list>
 }
 
-void ${name}::attachDatabase(::zserio::StringView fileName, ::zserio::StringView attachedDbName)
+void ${name}::attachDatabase(::std::string_view fileName, const ${types.string.name}& attachedDbName)
 {
     ${types.string.name} sqlQuery(get_allocator_ref());
     sqlQuery += "ATTACH DATABASE '";
@@ -214,7 +211,7 @@ void ${name}::attachDatabase(::zserio::StringView fileName, ::zserio::StringView
 
     m_db.executeUpdate(sqlQuery);
 
-    m_attachedDbList.push_back(${types.string.name}(attachedDbName, get_allocator_ref()));
+    m_attachedDbList.push_back(attachedDbName);
 }
 
 void ${name}::detachDatabases()
