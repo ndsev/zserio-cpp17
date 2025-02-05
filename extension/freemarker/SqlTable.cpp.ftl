@@ -89,7 +89,9 @@ ${name}::Reader::Reader(::zserio::SqliteConnection& db, <#rt>
         <#lt><#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
         <#lt>const ${types.string.name}& sqlQuery, const AllocatorType& allocator) :
         ::zserio::AllocatorHolder<AllocatorType>(allocator),
-        <#if needsParameterProvider>m_parameterProvider(parameterProvider),</#if>
+<#if needsParameterProvider>
+        m_parameterProvider(parameterProvider),
+</#if>
         m_stmt(db.prepareStatement(sqlQuery))
 {
     makeStep();
@@ -750,25 +752,28 @@ void ${name}::appendTableNameToQuery(${types.string.name}& sqlQuery) const
 <@namespace_begin ["zserio"]/>
 
 View<${fullName}::Row>::View(const ${fullName}::Row& row<#if needsParameterProvider>, ${fullName}::IParameterProvider& parameterProvider</#if>) :
-        m_row(row)<#if needsParameterProvider>,</#if>
-        <#if needsParameterProvider>m_parameterProvider(parameterProvider)</#if>
+        m_row(&row)<#if needsParameterProvider>,
+        m_parameterProvider(parameterProvider)</#if>
 {}
-<#list fields>
+<#list fields as field>
 
-    <#items as field>
 <@sql_row_view_field_type_name field/> View<${fullName}::Row>::${field.getterName}()
 {
-    if (!m_row.<@sql_row_member_name field/>)
+    if (!m_row-><@sql_row_member_name field/>)
     {
-        return <@sql_row_view_field_type_name field/>(std::nullopt, m_row.<@sql_row_member_name field/>.get_allocator());
+        return <@sql_row_view_field_type_name field/>(std::nullopt, m_row-><@sql_row_member_name field/>.get_allocator());
     }
 
     <#if field.requiresOwnerContext || field.hasExplicitParameters || field.typeInfo.isDynamicBitField>
     View<${fullName}::Row>& rowView = *this;
     </#if>
-    return <@sql_row_view_field_type_name field/>(std::in_place, m_row.<@sql_row_member_name field/>.get_allocator(),
-            *m_row.<@sql_row_member_name field/><@view_parameters field, "m_parameterProvider", "rowView"/>);
+    return <@sql_row_view_field_type_name field/>(std::in_place, m_row-><@sql_row_member_name field/>.get_allocator(),
+            *m_row-><@sql_row_member_name field/><@view_parameters field, "m_parameterProvider", "rowView"/>);
 }
-    </#items>
 </#list>
+
+const ${fullName}::Row& View<${fullName}::Row>::zserioData() const
+{
+    return *m_row;
+}
 <@namespace_end ["zserio"]/>

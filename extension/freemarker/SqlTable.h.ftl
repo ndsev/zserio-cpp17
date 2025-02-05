@@ -284,8 +284,10 @@ public:
     </#items>
 
 </#list>
+    const ${fullName}::Row& zserioData() const;
+
 private:
-    const ${fullName}::Row& m_row;
+    const ${fullName}::Row* m_row;
 <#if needsParameterProvider>
     ${fullName}::IParameterProvider& m_parameterProvider;
 </#if>
