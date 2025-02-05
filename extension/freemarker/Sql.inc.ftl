@@ -37,7 +37,7 @@
 </#macro>
 
 <#macro sql_row_view_field_type_name field>
-    ::zserio::Optional<<#t>
+    Optional<<#t>
     <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
         ${field.typeInfo.typeFullName}<#t>
     <#elseif field.typeInfo.isString>
@@ -57,11 +57,16 @@
 </#macro>
 
 <#macro sql_parameter_provider_return_type parameter>
-    <#if parameter.typeInfo.isSimple>
+    <#if parameter.typeInfo.isSimple && !parameter.typeInfo.isDynamicBitField>
         ${parameter.typeInfo.typeFullName}<#t>
+    <#elseif parameter.typeInfo.isString>
+        StringView<#t>
+    <#elseif parameter.typeInfo.isExtern>
+        ${types.bitBufferView.name}<#t>
+    <#elseif parameter.typeInfo.isBytes>
+        BytesView<#t>
     <#else>
-        <#-- non-const reference is necessary for setting of offsets -->
-        ${parameter.typeInfo.typeFullName}&<#t>
+        ::zserio::View<${parameter.typeInfo.typeFullName}><#t>
     </#if>
 </#macro>
 

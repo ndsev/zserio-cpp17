@@ -46,11 +46,11 @@ public:
 
             </#if>
         /**
-         * Gets the value of the explicit parameter ${parameter.expression}.
+         * Gets the explicit parameter ${parameter.expression}.
          *
          * /param currentRow Current row of the table which can be used during parameter calculation.
          *
-         * /return The value of the explicit parameter ${parameter.expression}.
+         * /return The the explicit parameter ${parameter.expression}.
          */
         virtual <@sql_parameter_provider_return_type parameter/> <@sql_parameter_provider_getter_name parameter/>(<#rt>
                 <#lt>const ::zserio::View<Row>& currentRow) = 0;

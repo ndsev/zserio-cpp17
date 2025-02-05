@@ -115,9 +115,6 @@ bool ${name}::Reader::hasNext() const noexcept
                 ))<#t>
                 </#if>
             </#if>
-            <#if parameter?has_next>
-                , <#t>
-            </#if>
         </#list>
     <#elseif field.typeInfo.isDynamicBitField>
         , static_cast<uint8_t>(${field.dynamicBitFieldLength.expression})<#t>
