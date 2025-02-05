@@ -3,8 +3,8 @@
 
 #include "gtest/gtest.h"
 #include "sql_virtual_columns/simple_virtual_columns/SimpleVirtualColumnsDb.h"
+#include "test_utils/SqlUtility.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/SqliteFinalizer.h"
 
 namespace sql_virtual_columns
 {
@@ -75,49 +75,6 @@ protected:
         }
     }
 
-    bool isTableInDb()
-    {
-        StringType sqlQuery =
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + m_tableName + "'";
-        std::unique_ptr<sqlite3_stmt, zserio::SqliteFinalizer> statement(
-                m_database->connection().prepareStatement(sqlQuery));
-
-        int result = sqlite3_step(statement.get());
-        if (result == SQLITE_DONE || result != SQLITE_ROW)
-        {
-            return false;
-        }
-
-        const unsigned char* readTableName = sqlite3_column_text(statement.get(), 0);
-        return (readTableName != nullptr && m_tableName == reinterpret_cast<const char*>(readTableName));
-    }
-
-    bool isVirtualColumnInTable()
-    {
-        StringType sqlQuery = "PRAGMA table_info(" + m_tableName + ")";
-        std::unique_ptr<sqlite3_stmt, zserio::SqliteFinalizer> statement(
-                m_database->connection().prepareStatement(sqlQuery));
-
-        bool isFound = false;
-        while (!isFound)
-        {
-            int result = sqlite3_step(statement.get());
-            if (result == SQLITE_DONE || result != SQLITE_ROW)
-            {
-                break;
-            }
-
-            const unsigned char* readColumnName = sqlite3_column_text(statement.get(), 1);
-            if (readColumnName != nullptr &&
-                    m_virtualColumnName == reinterpret_cast<const char*>(readColumnName))
-            {
-                isFound = true;
-            }
-        }
-
-        return isFound;
-    }
-
     static constexpr int32_t NUM_TABLE_ROWS = 5;
 
     StringType m_tableName;
@@ -127,14 +84,14 @@ protected:
 
 TEST_F(SimpleVirtualColumnsTest, deleteTable)
 {
-    ASSERT_TRUE(isTableInDb());
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, m_tableName));
 
     SimpleVirtualColumnsTable& testTable = m_database->getSimpleVirtualColumnsTable();
     testTable.deleteTable();
-    ASSERT_FALSE(isTableInDb());
+    ASSERT_FALSE(test_utils::isTableInDb(*m_database, m_tableName));
 
     testTable.createTable();
-    ASSERT_TRUE(isTableInDb());
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, m_tableName));
 }
 
 TEST_F(SimpleVirtualColumnsTest, readWithoutCondition)
@@ -203,7 +160,7 @@ TEST_F(SimpleVirtualColumnsTest, update)
 
 TEST_F(SimpleVirtualColumnsTest, checkVirtualColumn)
 {
-    ASSERT_TRUE(isVirtualColumnInTable());
+    ASSERT_TRUE(test_utils::isVirtualColumnInTable(*m_database, m_tableName, m_virtualColumnName));
 }
 
 } // namespace simple_virtual_columns

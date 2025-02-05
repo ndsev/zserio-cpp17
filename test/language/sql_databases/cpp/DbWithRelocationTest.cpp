@@ -6,8 +6,8 @@
 #include "gtest/gtest.h"
 #include "sql_databases/db_with_relocation/AmericaDb.h"
 #include "sql_databases/db_with_relocation/EuropeDb.h"
+#include "test_utils/SqlUtility.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/SqliteFinalizer.h"
 #include "zserio/StringConvertUtil.h"
 
 namespace sql_databases
@@ -47,23 +47,6 @@ public:
     }
 
 protected:
-    bool isTableInDb(zserio::ISqliteDatabase& database, const StringType& checkTableName)
-    {
-        StringType sqlQuery =
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + checkTableName + "'";
-        std::unique_ptr<sqlite3_stmt, zserio::SqliteFinalizer> statement(
-                database.connection().prepareStatement(sqlQuery));
-
-        int result = sqlite3_step(statement.get());
-        if (result == SQLITE_DONE || result != SQLITE_ROW)
-        {
-            return false;
-        }
-
-        const unsigned char* readTableName = sqlite3_column_text(statement.get(), 0);
-        return (readTableName != nullptr && checkTableName == reinterpret_cast<const char*>(readTableName));
-    }
-
     const StringType m_europeDbFileName;
     const StringType m_americaDbFileName;
     const StringType m_relocatedSlovakiaTableName;
@@ -91,8 +74,8 @@ TEST_F(DbWithRelocationTest, tableGetters)
 
 TEST_F(DbWithRelocationTest, relocatedSlovakiaTable)
 {
-    ASSERT_FALSE(isTableInDb(*m_americaDb, m_relocatedSlovakiaTableName));
-    ASSERT_TRUE(isTableInDb(*m_europeDb, m_relocatedSlovakiaTableName));
+    ASSERT_FALSE(test_utils::isTableInDb(*m_americaDb, m_relocatedSlovakiaTableName));
+    ASSERT_TRUE(test_utils::isTableInDb(*m_europeDb, m_relocatedSlovakiaTableName));
 
     // write to relocated table
     int32_t updateTileId = 1;
@@ -131,8 +114,8 @@ TEST_F(DbWithRelocationTest, relocatedSlovakiaTable)
 
 TEST_F(DbWithRelocationTest, relocatedCzechiaTable)
 {
-    ASSERT_FALSE(isTableInDb(*m_americaDb, m_relocatedCzechiaTableName));
-    ASSERT_TRUE(isTableInDb(*m_europeDb, m_relocatedCzechiaTableName));
+    ASSERT_FALSE(test_utils::isTableInDb(*m_americaDb, m_relocatedCzechiaTableName));
+    ASSERT_TRUE(test_utils::isTableInDb(*m_europeDb, m_relocatedCzechiaTableName));
 
     // write to relocated table
     int32_t updateTileId = 1;

@@ -6,8 +6,8 @@
 
 #include "gtest/gtest.h"
 #include "sql_tables/TestDb.h"
+#include "test_utils/SqlUtility.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/SqliteFinalizer.h"
 #include "zserio/StringConvertUtil.h"
 
 namespace sql_tables
@@ -108,24 +108,6 @@ protected:
         }
     }
 
-    bool isTableInDb()
-    {
-        StringType checkTableName = "blobParamTable";
-        StringType sqlQuery =
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + checkTableName + "'";
-        std::unique_ptr<sqlite3_stmt, zserio::SqliteFinalizer> statement(
-                m_database->connection().prepareStatement(sqlQuery));
-
-        int result = sqlite3_step(statement.get());
-        if (result == SQLITE_DONE || result != SQLITE_ROW)
-        {
-            return false;
-        }
-
-        const unsigned char* readTableName = sqlite3_column_text(statement.get(), 0);
-        return (readTableName != nullptr && checkTableName == reinterpret_cast<const char*>(readTableName));
-    }
-
     static const char* const DB_FILE_NAME;
 
     static const uint32_t NUM_BLOB_PARAM_TABLE_ROWS;
@@ -139,14 +121,15 @@ const uint32_t BlobParamTableTest::NUM_BLOB_PARAM_TABLE_ROWS = 20;
 
 TEST_F(BlobParamTableTest, deleteTable)
 {
-    ASSERT_TRUE(isTableInDb());
+    const StringType checkTableName = "blobParamTable";
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, checkTableName));
 
     BlobParamTable& testTable = m_database->getBlobParamTable();
     testTable.deleteTable();
-    ASSERT_FALSE(isTableInDb());
+    ASSERT_FALSE(test_utils::isTableInDb(*m_database, checkTableName));
 
     testTable.createTable();
-    ASSERT_TRUE(isTableInDb());
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, checkTableName));
 }
 
 TEST_F(BlobParamTableTest, readWithoutCondition)

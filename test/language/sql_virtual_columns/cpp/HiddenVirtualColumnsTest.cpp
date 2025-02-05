@@ -3,8 +3,8 @@
 
 #include "gtest/gtest.h"
 #include "sql_virtual_columns/hidden_virtual_columns/HiddenVirtualColumnsDb.h"
+#include "test_utils/SqlUtility.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/SqliteFinalizer.h"
 #include "zserio/ValidationSqliteUtil.h"
 
 namespace sql_virtual_columns
@@ -84,23 +84,6 @@ protected:
         }
     }
 
-    bool isTableInDb()
-    {
-        StringType sqlQuery =
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + m_tableName + "'";
-        std::unique_ptr<sqlite3_stmt, zserio::SqliteFinalizer> statement(
-                m_database->connection().prepareStatement(sqlQuery));
-
-        int result = sqlite3_step(statement.get());
-        if (result == SQLITE_DONE || result != SQLITE_ROW)
-        {
-            return false;
-        }
-
-        const unsigned char* readTableName = sqlite3_column_text(statement.get(), 0);
-        return (readTableName != nullptr && m_tableName == reinterpret_cast<const char*>(readTableName));
-    }
-
     bool isHiddenVirtualColumnInTable(const StringType& columnName)
     {
         return zserio::ValidationSqliteUtil<AllocatorType>::isColumnInTable(
@@ -115,14 +98,14 @@ protected:
 
 TEST_F(HiddenVirtualColumnsTest, deleteTable)
 {
-    ASSERT_TRUE(isTableInDb());
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, m_tableName));
 
     HiddenVirtualColumnsTable& testTable = m_database->getHiddenVirtualColumnsTable();
     testTable.deleteTable();
-    ASSERT_FALSE(isTableInDb());
+    ASSERT_FALSE(test_utils::isTableInDb(*m_database, m_tableName));
 
     testTable.createTable();
-    ASSERT_TRUE(isTableInDb());
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, m_tableName));
 }
 
 TEST_F(HiddenVirtualColumnsTest, readWithoutCondition)

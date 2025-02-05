@@ -3,8 +3,8 @@
 
 #include "gtest/gtest.h"
 #include "sql_virtual_tables/fts5_virtual_table/Fts5TestDb.h"
+#include "test_utils/SqlUtility.h"
 #include "zserio/RebindAlloc.h"
-#include "zserio/SqliteFinalizer.h"
 
 namespace sql_virtual_tables
 {
@@ -76,24 +76,6 @@ protected:
         }
     }
 
-    bool isTableInDb()
-    {
-        StringType checkTableName = "fts5VirtualTable";
-        StringType sqlQuery =
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + checkTableName + "'";
-        std::unique_ptr<sqlite3_stmt, zserio::SqliteFinalizer> statement(
-                m_database->connection().prepareStatement(sqlQuery));
-
-        int result = sqlite3_step(statement.get());
-        if (result == SQLITE_DONE || result != SQLITE_ROW)
-        {
-            return false;
-        }
-
-        const unsigned char* readTableName = sqlite3_column_text(statement.get(), 0);
-        return (readTableName != nullptr && checkTableName == reinterpret_cast<const char*>(readTableName));
-    }
-
     static constexpr int32_t NUM_VIRTUAL_TABLE_ROWS = 5;
 
     sql_virtual_tables::fts5_virtual_table::Fts5TestDb* m_database;
@@ -101,14 +83,15 @@ protected:
 
 TEST_F(Fts5VirtualTableTest, deleteTable)
 {
-    ASSERT_TRUE(isTableInDb());
+    const StringType checkTableName = "fts5VirtualTable";
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, checkTableName));
 
     Fts5VirtualTable& testTable = m_database->getFts5VirtualTable();
     testTable.deleteTable();
-    ASSERT_FALSE(isTableInDb());
+    ASSERT_FALSE(test_utils::isTableInDb(*m_database, checkTableName));
 
     testTable.createTable();
-    ASSERT_TRUE(isTableInDb());
+    ASSERT_TRUE(test_utils::isTableInDb(*m_database, checkTableName));
 }
 
 TEST_F(Fts5VirtualTableTest, readWithoutCondition)
