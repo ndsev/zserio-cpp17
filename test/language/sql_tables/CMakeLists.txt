@@ -23,15 +23,15 @@ add_custom_test(sql_tables
         # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BlobOffsetsParamTableTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BlobParamTableTest.cpp
         # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ColumnParamTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ComplexTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ConstParamTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DynamicBitFieldEnumFieldTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultiplePkTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedBitmaskFieldTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedBoolFieldTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedEnumFieldTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedTableTest.cpp
-        # ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WithoutPkTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ComplexTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ConstParamTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DynamicBitFieldEnumFieldTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultiplePkTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedBitmaskFieldTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedBoolFieldTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedEnumFieldTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WithoutPkTableTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

@@ -38,6 +38,5 @@ cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/subtyped_bitmask_fiel
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/subtyped_bool_field_table/SubtypedBoolFieldTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/subtyped_enum_field_table/SubtypedEnumFieldTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/without_pk_table/WithoutPkTable.cpp
-cppcoreguidelines-pro-type-reinterpret-cast:cpp/BlobParamTableTest.cpp
 
 google-explicit-constructor:gen/sql_tables/subtyped_bitmask_field_table/TestBitmask.h
