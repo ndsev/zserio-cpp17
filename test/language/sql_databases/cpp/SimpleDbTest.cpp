@@ -118,13 +118,13 @@ TEST_F(SimpleDbTest, deleteSchema)
 
 TEST_F(SimpleDbTest, databaseName)
 {
-    ASSERT_EQ(std::string_view(m_worldDbName), WorldDb::databaseName());
+    ASSERT_EQ(std::string_view(m_worldDbName), WorldDb::databaseName);
 }
 
 TEST_F(SimpleDbTest, tableNames)
 {
     VectorType<StringType> tableNames;
-    std::transform(WorldDb::tableNames().begin(), WorldDb::tableNames().end(), std::back_inserter(tableNames),
+    std::transform(WorldDb::tableNames.begin(), WorldDb::tableNames.end(), std::back_inserter(tableNames),
             [](zserio::StringView name) -> StringType {
                 return zserio::toString(name, AllocatorType());
             });

@@ -170,7 +170,7 @@ TEST_F(SimpleTableValidationTest, validate)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -190,7 +190,7 @@ TEST_F(SimpleTableValidationTest, validateBlobFailure)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -219,7 +219,7 @@ TEST_F(SimpleTableValidationTest, validateSingleTable)
 
     ASSERT_TRUE(isValidated);
     ASSERT_TRUE(continueValidation);
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
     ASSERT_TRUE(validationObserver.getErrors().empty()) << validationObserver.getErrorsString();
@@ -241,7 +241,7 @@ TEST_F(SimpleTableValidationTest, validateExtraColumn)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(0, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -281,7 +281,7 @@ TEST_F(SimpleTableValidationTest, validateMissingColumn)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(0, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -321,7 +321,7 @@ TEST_F(SimpleTableValidationTest, validateWrongColumnType)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(0, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -361,7 +361,7 @@ TEST_F(SimpleTableValidationTest, validateWrongColumnNotNullConstraint)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(0, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -410,7 +410,7 @@ TEST_F(SimpleTableValidationTest, validateWrongColumnPrimaryKeyConstraint)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(0, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -449,7 +449,7 @@ TEST_F(SimpleTableValidationTest, validateOutOfRange)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -508,7 +508,7 @@ TEST_F(SimpleTableValidationTest, validateInvalidEnumValue)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = SimpleTableValidationDb::tableNames()[0];
+    const auto& tableName = SimpleTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 

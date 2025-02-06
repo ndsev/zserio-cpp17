@@ -229,7 +229,7 @@ inline constexpr ${name} operator&(const ${name}& lhs, const ${name}& rhs)
  */
 inline constexpr ${name} operator&(${name}::Values lhs, ${name}::Values rhs)
 {
-    return ${name}(lhs) & ${name}(rhs); 
+    return ${name}(lhs) & ${name}(rhs);
 }
 
 /**

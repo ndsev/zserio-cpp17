@@ -91,7 +91,7 @@ TEST_F(DependTableValidationTest, validate)
     ASSERT_EQ(zserio::IValidationObserver::BLOB_PARSE_FAILED, errors.at(1).errorType);
     ASSERT_EQ("Optional is empty", errors.at(1).message);
 
-    const auto& tableName = DependTableValidationDb::tableNames()[0];
+    const auto& tableName = DependTableValidationDb::tableNames.at(0);
     ASSERT_EQ(2, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(2, validationObserver.getNumberOfValidatedTableRows(tableName));
 }

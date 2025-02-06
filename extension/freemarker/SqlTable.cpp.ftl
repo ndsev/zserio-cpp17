@@ -17,6 +17,98 @@
 <@user_includes cppUserIncludes, false/>
 <@namespace_begin package.path/>
 
+namespace
+{
+
+::std::array<bool, ${fields?size}> createColumnsMapping(::zserio::Span<const ::std::string> columns)
+{
+    if (columns.empty())
+    {
+        static constexpr ::std::array<bool, ${fields?size}> allColumns = {<#rt>
+                <#lt><#list fields as field>true<#sep>, </#sep></#list>};
+        return allColumns;
+    }
+
+    ::std::array<bool, ${fields?size}> columnsMapping = {};
+    for (const ::std::string& columnName : columns)
+    {
+        const auto it = ::std::find(${name}::columnNames.begin(), ${name}::columnNames.end(), columnName);
+        if (it == ${name}::columnNames.end())
+        {
+            throw ::zserio::SqliteException("Column name '") << columnName
+                    << "' doesn't exist in '${name}'!";
+        }
+        columnsMapping[static_cast<size_t>(it - ${name}::columnNames.begin())] = true;
+    }
+
+    return columnsMapping;
+}
+
+void appendColumnsToQuery(${types.string.name}& sqlQuery, ::std::array<bool, ${fields?size}> columnsMapping)
+{
+    bool isFirst = true;
+    for (size_t i = 0; i < columnsMapping.size(); ++i)
+    {
+        if (columnsMapping[i])
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+            else
+            {
+                sqlQuery += ", ";
+            }
+            sqlQuery += ${name}::columnNames[i];
+        }
+    }
+}
+
+void appendWriteParametersToQuery(
+        ${types.string.name}& sqlQuery, ::std::array<bool, ${fields?size}> columnsMapping)
+{
+    bool isFirst = true;
+    for (bool columnUsed : columnsMapping)
+    {
+        if (columnUsed)
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+            else
+            {
+                sqlQuery += ", ";
+            }
+            sqlQuery += "?";
+        }
+    }
+}
+
+void appendUpdateParametersToQuery(
+        ${types.string.name}& sqlQuery, ::std::array<bool, ${fields?size}> columnsMapping)
+{
+    bool isFirst = true;
+    for (size_t i = 0; i < columnsMapping.size(); ++i)
+    {
+        if (columnsMapping[i])
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+            else
+            {
+                sqlQuery += ", ";
+            }
+            sqlQuery += ${name}::columnNames[i];
+            sqlQuery += "=?";
+        }
+    }
+}
+
+} // namespace
+
 <#assign needsParameterProvider=explicitParameters?has_content/>
 <#assign hasPrimaryKeyField=false/>
 <#list fields as field>
@@ -68,13 +160,19 @@ void ${name}::deleteTable()
 ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
         <#lt>::std::string_view condition) const
 {
+    return createReader(<#if needsParameterProvider>parameterProvider, </#if>{}, condition);
+}
+
+${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
+        <#lt>::zserio::Span<const ::std::string> columns,
+        ::std::string_view condition) const
+{
+    const ::std::array<bool, ${fields?size}> columnsMapping = createColumnsMapping(columns);
+
     ${types.string.name} sqlQuery(get_allocator_ref());
-    sqlQuery +=
-            "SELECT "
-<#list fields as field>
-            "${field.name}<#if field?has_next>, </#if>"
-</#list>
-            " FROM ";
+    sqlQuery += "SELECT ";
+    appendColumnsToQuery(sqlQuery, columnsMapping);
+    sqlQuery += " FROM ";
     appendTableNameToQuery(sqlQuery);
     if (!condition.empty())
     {
@@ -82,16 +180,19 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
         sqlQuery += condition;
     }
 
-    return Reader(m_db, <#if needsParameterProvider>parameterProvider, </#if>sqlQuery, get_allocator_ref());
+    return Reader(m_db, <#if needsParameterProvider>parameterProvider, </#if>columnsMapping, <#rt>
+            <#lt>sqlQuery, get_allocator_ref());
 }
 
 ${name}::Reader::Reader(::zserio::SqliteConnection& db, <#rt>
-        <#lt><#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-        <#lt>const ${types.string.name}& sqlQuery, const AllocatorType& allocator) :
+        <#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#t>
+        <#lt>::std::array<bool, ${fields?size}> columnsMapping,
+        ::std::string_view sqlQuery, const AllocatorType& allocator) :
         ::zserio::AllocatorHolder<AllocatorType>(allocator),
 <#if needsParameterProvider>
         m_parameterProvider(parameterProvider),
 </#if>
+        m_columnsMapping(columnsMapping),
         m_stmt(db.prepareStatement(sqlQuery))
 {
     makeStep();
@@ -126,43 +227,49 @@ bool ${name}::Reader::hasNext() const noexcept
 {
     if (!hasNext())
     {
-        throw ::zserio::SqliteException("Table::Reader::next: next row is not available: ") <<
+        throw ::zserio::SqliteException("${name}::Reader::next: next row is not available: ") <<
                 ::zserio::SqliteErrorCode(m_lastResult);
     }
 
     ::zserio::View rowView(row<#if needsParameterProvider>, m_parameterProvider</#if>);
+    int index = 0;
 <#list fields as field>
     // field ${field.name}
-    if (sqlite3_column_type(m_stmt.get(), ${field?index}) != SQLITE_NULL)
+    if (m_columnsMapping[${field?index}])
     {
+        if (sqlite3_column_type(m_stmt.get(), index) != SQLITE_NULL)
+        {
     <#if field.sqlTypeData.isBlob>
-        const void* blobDataPtr = sqlite3_column_blob(m_stmt.get(), ${field?index});
-        const int blobDataLength = sqlite3_column_bytes(m_stmt.get(), ${field?index});
-        ::zserio::Span<const uint8_t> blobData(static_cast<const uint8_t*>(blobDataPtr),
-                static_cast<size_t>(blobDataLength));
-        row.<@sql_row_member_name field/>.emplace(get_allocator_ref());
-        zserio::deserializeFromBytes(blobData, *row.<@sql_row_member_name field/><#rt>
-                <#lt><@view_parameters field, "m_parameterProvider"/>);
+            const void* blobDataPtr = sqlite3_column_blob(m_stmt.get(), index);
+            const int blobDataLength = sqlite3_column_bytes(m_stmt.get(), index);
+            ::zserio::Span<const uint8_t> blobData(static_cast<const uint8_t*>(blobDataPtr),
+                    static_cast<size_t>(blobDataLength));
+            row.<@sql_row_member_name field/>.emplace(get_allocator_ref());
+            zserio::deserializeFromBytes(blobData, *row.<@sql_row_member_name field/><#rt>
+                    <#lt><@view_parameters field, "m_parameterProvider"/>);
     <#elseif field.sqlTypeData.isInteger>
-        const int64_t intValue = sqlite3_column_int64(m_stmt.get(), ${field?index});
+            const int64_t intValue = sqlite3_column_int64(m_stmt.get(), index);
         <#if field.typeInfo.isEnum>
-        row.<@sql_row_member_name field/> = ::zserio::valueToEnum<${field.typeInfo.typeFullName}>(<#rt>
-                <#lt>static_cast<${field.underlyingTypeInfo.typeFullName}::ValueType>(intValue));
+            row.<@sql_row_member_name field/> = ::zserio::valueToEnum<${field.typeInfo.typeFullName}>(<#rt>
+                    static_cast<${field.underlyingTypeInfo.typeFullName}::ValueType>(intValue));
         <#elseif field.typeInfo.isBitmask>
-        row.<@sql_row_member_name field/> = ${field.typeInfo.typeFullName}(static_cast<${field.underlyingTypeInfo.typeFullName}::ValueType>(intValue));
+            row.<@sql_row_member_name field/> = ${field.typeInfo.typeFullName}(
+                    static_cast<${field.underlyingTypeInfo.typeFullName}::ValueType>(intValue));
         <#elseif field.typeInfo.isBoolean>
-        row.<@sql_row_member_name field/> = intValue != 0;
+            row.<@sql_row_member_name field/> = intValue != 0;
         <#else>
-        row.<@sql_row_member_name field/>= static_cast<${field.typeInfo.typeFullName}::ValueType>(intValue);
+            row.<@sql_row_member_name field/>= static_cast<${field.typeInfo.typeFullName}::ValueType>(intValue);
         </#if>
     <#elseif field.sqlTypeData.isReal>
-        const double doubleValue = sqlite3_column_double(m_stmt.get(), ${field?index});
-        row.<@sql_row_member_name field/> = static_cast<${field.typeInfo.typeFullName}::ValueType>(doubleValue);
+            const double doubleValue = sqlite3_column_double(m_stmt.get(), index);
+            row.<@sql_row_member_name field/> = static_cast<${field.typeInfo.typeFullName}::ValueType>(doubleValue);
     <#else>
-        const unsigned char* textValue = sqlite3_column_text(m_stmt.get(), ${field?index});
-        row.<@sql_row_member_name field/> = ${field.typeInfo.typeFullName}(<#rt>
-                <#lt>reinterpret_cast<const char*>(textValue), get_allocator_ref());
+            const unsigned char* textValue = sqlite3_column_text(m_stmt.get(), index);
+            row.<@sql_row_member_name field/> = ${field.typeInfo.typeFullName}(
+                    reinterpret_cast<const char*>(textValue), get_allocator_ref());
     </#if>
+        }
+        ++index;
     }
 </#list>
 
@@ -182,22 +289,19 @@ void ${name}::Reader::makeStep()
 }
 
 void ${name}::write(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-        <#lt>::zserio::Span<Row> rows)
+        <#lt>::zserio::Span<Row> rows,
+        ::zserio::Span<const ::std::string> columns)
 {
     // assemble sql query
+    const ::std::array<bool, ${fields?size}> columnsMapping = createColumnsMapping(columns);
     ${types.string.name} sqlQuery(get_allocator_ref());
     sqlQuery += "INSERT INTO ";
     appendTableNameToQuery(sqlQuery);
-    sqlQuery +=
-            "("
-<#list fields as field>
-            "${field.name}<#if field?has_next>, </#if>"
-</#list>
-            ") VALUES (<#rt>
-<#list fields as field>
-            ?<#if field?has_next>, </#if><#t>
-</#list>
-            );";<#lt>
+    sqlQuery += "(";
+    appendColumnsToQuery(sqlQuery, columnsMapping);
+    sqlQuery += ") VALUES (";
+    appendWriteParametersToQuery(sqlQuery, columnsMapping);
+    sqlQuery += ");";
 
     // write rows
     const bool wasTransactionStarted = m_db.startTransaction();
@@ -205,7 +309,7 @@ void ${name}::write(<#if needsParameterProvider>IParameterProvider& parameterPro
 
     for (Row& row : rows)
     {
-        writeRow(<#if needsParameterProvider>parameterProvider, </#if>row, *statement);
+        writeRow(<#if needsParameterProvider>parameterProvider, </#if>row, columnsMapping, *statement);
         int result = sqlite3_step(statement.get());
         if (result != SQLITE_DONE)
         {
@@ -231,24 +335,28 @@ void ${name}::write(<#if needsParameterProvider>IParameterProvider& parameterPro
     m_db.endTransaction(wasTransactionStarted);
 }
 
-void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-        <#lt>Row& row, ::std::string_view whereCondition)
+void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row, <#rt>
+        <#lt>::std::string_view whereCondition)
+{
+    update(<#if needsParameterProvider>parameterProvider, </#if>row, {}, whereCondition);
+}
+
+void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
+        ::zserio::Span<const ::std::string> columns, ::std::string_view whereCondition)
 {
     // assemble sql query
+    const ::std::array<bool, ${fields?size}> columnsMapping = createColumnsMapping(columns);
     ${types.string.name} sqlQuery(get_allocator_ref());
     sqlQuery += "UPDATE ";
     appendTableNameToQuery(sqlQuery);
-    sqlQuery +=
-            " SET"
-<#list fields as field>
-            " ${field.name}=?<#if field?has_next>,</#if>"
-</#list>
-            " WHERE ";
+    sqlQuery += " SET ";
+    appendUpdateParametersToQuery(sqlQuery, columnsMapping);
+    sqlQuery += " WHERE ";
     sqlQuery += whereCondition;
 
     // update row
     ::std::unique_ptr<sqlite3_stmt, ::zserio::SqliteFinalizer> statement(m_db.prepareStatement(sqlQuery));
-    writeRow(<#if needsParameterProvider>parameterProvider, </#if>row, *statement);
+    writeRow(<#if needsParameterProvider>parameterProvider, </#if>row, columnsMapping, *statement);
     const int result = sqlite3_step(statement.get());
     if (result != SQLITE_DONE)
     {
@@ -668,44 +776,46 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
 }
 </#if>
 
-void ${name}::writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-        <#lt>Row& row, sqlite3_stmt& statement)
+void ${name}::writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
+        ::std::array<bool, ${fields?size}> columnsMapping, sqlite3_stmt& statement)
 {
     int result = SQLITE_ERROR;
 
     zserio::View rowView(row<#if needsParameterProvider>, parameterProvider</#if>);
+    int index = 1;
 <#list fields as field>
     // field ${field.name}
-    if (!row.<@sql_row_member_name field/>)
+    if (columnsMapping[${field?index}])
     {
-        result = sqlite3_bind_null(&statement, ${field?index + 1});
-    }
-    else
-    {
+        if (!row.<@sql_row_member_name field/>)
+        {
+            result = sqlite3_bind_null(&statement, index);
+        }
+        else
+        {
     <#if field.sqlTypeData.isBlob>
-        const ${field.typeInfo.typeFullName}& blob = *row.<@sql_row_member_name field/>;
-        auto bitBuffer = zserio::serialize(blob, get_allocator_ref()<@view_parameters field, "parameterProvider"/>);
-        result = sqlite3_bind_blob(&statement, ${field?index + 1}, bitBuffer.getBuffer(),
-                static_cast<int>(bitBuffer.getByteSize()), SQLITE_TRANSIENT);
+            const ${field.typeInfo.typeFullName}& blob = *row.<@sql_row_member_name field/>;
+            auto bitBuffer = zserio::serialize(blob, get_allocator_ref()<@view_parameters field, "parameterProvider"/>);
+            result = sqlite3_bind_blob(&statement, index, bitBuffer.getBuffer(),
+                    static_cast<int>(bitBuffer.getByteSize()), SQLITE_TRANSIENT);
     <#elseif field.sqlTypeData.isInteger>
-        const int64_t intValue = static_cast<int64_t>(row.<@sql_row_member_name field/><#if field.typeInfo.isBitmask>->getValue()<#else>.value()</#if>);
-        result = sqlite3_bind_int64(&statement, ${field?index + 1}, intValue);
+            const int64_t intValue = static_cast<int64_t>(row.<@sql_row_member_name field/><#if field.typeInfo.isBitmask>->getValue()<#else>.value()</#if>);
+            result = sqlite3_bind_int64(&statement, index, intValue);
     <#elseif field.sqlTypeData.isReal>
-        const ${field.typeInfo.typeFullName} realValue = *row.<@sql_row_member_name field/>;
-        result = sqlite3_bind_double(&statement, ${field?index + 1}, static_cast<double>(realValue));
+            const ${field.typeInfo.typeFullName} realValue = *row.<@sql_row_member_name field/>;
+            result = sqlite3_bind_double(&statement, index, static_cast<double>(realValue));
     <#else>
-        const ${field.typeInfo.typeFullName}& stringValue = *row.<@sql_row_member_name field/>;
-        result = sqlite3_bind_text(&statement, ${field?index + 1}, stringValue.c_str(), -1, SQLITE_TRANSIENT);
+            const ${field.typeInfo.typeFullName}& stringValue = *row.<@sql_row_member_name field/>;
+            result = sqlite3_bind_text(&statement, index, stringValue.c_str(), -1, SQLITE_TRANSIENT);
     </#if>
+        }
+        if (result != SQLITE_OK)
+        {
+            throw ::zserio::SqliteException("${name}::WriteRow: sqlite3_bind() for field ${field.name} failed: ")
+                    << ::zserio::SqliteErrorCode(result);
+        }
+        ++index;
     }
-    if (result != SQLITE_OK)
-    {
-        throw ::zserio::SqliteException("${name}::WriteRow: sqlite3_bind() for field ${field.name} failed: ") <<
-                ::zserio::SqliteErrorCode(result);
-    }
-    <#if field?has_next>
-
-    </#if>
 </#list>
 }
 

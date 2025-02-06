@@ -100,7 +100,8 @@ public:
     private:
         explicit Reader(::zserio::SqliteConnection& db, <#rt>
                 <#lt><#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-                <#lt>const ${types.string.name}& sqlQuery, const AllocatorType& allocator = AllocatorType());
+                <#lt>::std::array<bool, ${fields?size}> columnsMapping,
+                ::std::string_view sqlQuery, const AllocatorType& allocator);
         friend class ${name};
 
         void makeStep();
@@ -108,6 +109,7 @@ public:
 <#if needsParameterProvider>
         IParameterProvider& m_parameterProvider;
 </#if>
+        ::std::array<bool, ${fields?size}> m_columnsMapping;
         ::std::unique_ptr<sqlite3_stmt, ::zserio::SqliteFinalizer> m_stmt;
         int m_lastResult;
     };
@@ -171,12 +173,19 @@ public:
         <#if needsParameterProvider>
      * \param parameterProvider Explicit parameter provider to be used during reading.
         </#if>
+     * \param columns Column names to use in select statement. If omitted or empty, all columns are used.
      * \param condition SQL condition to use.
      *
      * \return Created table reader.
      */
+    /** \{ */
     Reader createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
             <#lt>::std::string_view condition = ::std::string_view()) const;
+
+    Reader createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
+            <#lt>::zserio::Span<const ::std::string> columns,
+            ::std::string_view condition = ::std::string_view()) const;
+    /** \} */
 
     /**
      * Writes rows to the table.
@@ -185,9 +194,10 @@ public:
      * \param parameterProvider Explicit parameter provider to be used during reading.
 </#if>
      * \param rows Table rows to write.
+     * \param columns Column names to write. If omitted or empty, all columns are used.
      */
     void write(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-            <#lt>::zserio::Span<Row> rows);
+            <#lt>::zserio::Span<Row> rows, ::zserio::Span<const ::std::string> columns = {});
 
     /**
      * Updates row of the table.
@@ -196,10 +206,16 @@ public:
      * \param parameterProvider Explicit parameter provider to be used during reading.
 </#if>
      * \param row Table row to update.
+     * \param columns Column names to update. If omitted or empty, all columns are used.
      * \param whereCondition SQL where condition to use.
      */
-    void update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-            <#lt>Row& row, ::std::string_view whereCondition);
+    /** \{ */
+    void update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row, <#rt>
+            <#lt>::std::string_view whereCondition);
+
+    void update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
+             ::zserio::Span<const ::std::string> columns, ::std::string_view whereCondition);
+    /** \} */
 
     /**
      * Validates the table.
@@ -226,6 +242,13 @@ public:
      */
     bool validate(::zserio::IValidationObserver& validationObserver<#rt>
             <#lt><#if needsParameterProvider>, IParameterProvider& parameterProvider</#if>, bool& continueValidation);
+
+    static constexpr ::std::array<::std::string_view, ${fields?size}> columnNames =
+    {{
+<#list fields as field>
+        "${field.name}"<#sep>,</#sep>
+</#list>
+    }};
 
 private:
     bool validateSchema(::zserio::IValidationObserver& validationObserver);
@@ -258,11 +281,10 @@ private:
             const <@vector_type_name types.string.name/>& rowKeyValuesHolder);
 </#if>
 
-    void writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-            <#lt>Row& row, sqlite3_stmt& statement);
+    void writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
+            ::std::array<bool, ${fields?size}> columnsMapping, sqlite3_stmt& statement);
 
     void appendCreateTableToQuery(${types.string.name}& sqlQuery) const;
-
     void appendTableNameToQuery(${types.string.name}& sqlQuery) const;
 
     ::zserio::SqliteConnection& m_db;

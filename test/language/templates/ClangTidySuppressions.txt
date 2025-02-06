@@ -26,6 +26,12 @@ cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/instantiate_type_as_sq
 cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/sql_table_templated_field/TemplatedTable_Union.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/sql_table_templated_field/TemplatedTable_uint32.cpp
 
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/instantiate_sql_table/U32Table.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/instantiate_type_as_sql_database_field/StringTable.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/instantiate_type_as_sql_table_field/Test32Table.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/sql_table_templated_field/TemplatedTable_Union.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/sql_table_templated_field/TemplatedTable_uint32.cpp
+
 google-explicit-constructor:gen/templates/expression_bitmask_template_argument/Permission.h
 
 misc-no-recursion # reports also tested_release and some system headers

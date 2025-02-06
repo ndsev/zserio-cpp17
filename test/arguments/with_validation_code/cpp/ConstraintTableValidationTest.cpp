@@ -70,7 +70,7 @@ TEST_F(ConstraintTableValidationTest, validate)
     ASSERT_EQ("constraintTable, blob, [0], 6, Constraint violated at 'Blob.value'!\n",
             validationObserver.getErrorsString());
 
-    const auto& tableName = ConstraintTableValidationDb::tableNames()[0];
+    const auto& tableName = ConstraintTableValidationDb::tableNames.at(0);
     ASSERT_EQ(1, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTableRows(tableName));
 }

@@ -20,8 +20,8 @@
     get${field.name?cap_first}<#t>
 </#macro>
 
-<#macro sql_db_table_name_getter field>
-    tableName${field.name?cap_first}()<#t>
+<#macro sql_db_table_name field>
+    tableName${field.name?cap_first}<#t>
 </#macro>
 
 <#macro sql_field_member_name field>

@@ -77,7 +77,7 @@ TEST_F(HiddenColumnTableValidationTest, validate)
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
     ASSERT_EQ(0, validationObserver.getErrors().size()) << validationObserver.getErrorsString();
 
-    const auto& tableName = HiddenColumnTableValidationDb::tableNames()[0];
+    const auto& tableName = HiddenColumnTableValidationDb::tableNames.at(0);
     ASSERT_EQ(NUM_TABLE_ROWS, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(NUM_TABLE_ROWS, validationObserver.getNumberOfValidatedTableRows(tableName));
 }

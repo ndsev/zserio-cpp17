@@ -34,7 +34,7 @@ ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& t
         if (attachedDbIt == dbFileNameToAttachedDbNameMap.end())
         {
             ${types.string.name} attachedDbName =
-                    ${types.string.name}(databaseName(), get_allocator_ref()) + "_" + tableName;
+                    ${types.string.name}(databaseName, get_allocator_ref()) + "_" + tableName;
             attachDatabase(fileName, attachedDbName);
             attachedDbIt = dbFileNameToAttachedDbNameMap.emplace(fileName, ::std::move(attachedDbName)).first;
         }
@@ -104,7 +104,7 @@ void ${name}::createSchema(const <@set_type_name types.string.name/>&<#if hasWit
     <#list fields as field>
         <#if field.isWithoutRowIdTable>
     if (withoutRowIdTableNamesBlackList.find(${types.string.name}(
-            <@sql_db_table_name_getter field/>, get_allocator_ref())) != withoutRowIdTableNamesBlackList.end())
+            tableNames[${field?index}], get_allocator_ref())) != withoutRowIdTableNamesBlackList.end())
     {
         <@sql_field_member_name field/>->createOrdinaryRowIdTable();
     }
@@ -156,43 +156,19 @@ void ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
     validationObserver.endDatabase(numberOfValidatedTables);
 }
 
-::std::string_view ${name}::databaseName() noexcept
-{
-    return "${name}";
-}
-
-<#list fields as field>
-::std::string_view ${name}::<@sql_db_table_name_getter field/> noexcept
-{
-    return "${field.name}";
-}
-
-</#list>
-const ::std::array<::std::string_view, ${fields?size}>& ${name}::tableNames() noexcept
-{
-    static const ::std::array<::std::string_view, ${fields?size}> names =
-    {
-<#list fields as field>
-        <@sql_db_table_name_getter field/><#if !field?is_last>,</#if>
-</#list>
-    };
-
-    return names;
-}
-
 void ${name}::initTables()
 {
     static const ::std::string_view EMPTY_STR = ::std::string_view();
 <#list fields as field>
     <#if field?is_first>
     auto relocationIt = m_tableToAttachedDbNameRelocationMap.find(
-            ${types.string.name}(<@sql_db_table_name_getter field/>, get_allocator_ref()));
+            ${types.string.name}(tableNames[${field?index}], get_allocator_ref()));
     <#else>
     relocationIt = m_tableToAttachedDbNameRelocationMap.find(
-            ${types.string.name}(<@sql_db_table_name_getter field/>, get_allocator_ref()));
+            ${types.string.name}(tableNames[${field?index}], get_allocator_ref()));
     </#if>
     <@sql_field_member_name field/> = ::zserio::allocate_unique<${field.typeInfo.typeFullName}>(
-            get_allocator_ref(), this->m_db, <@sql_db_table_name_getter field/>,
+            get_allocator_ref(), this->m_db, tableNames[${field?index}],
             relocationIt != m_tableToAttachedDbNameRelocationMap.end() ? relocationIt->second : EMPTY_STR,
             get_allocator_ref());
     <#if field?has_next>

@@ -78,7 +78,7 @@ TEST_F(BlobTableValidationTest, validate)
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
     ASSERT_EQ(0, validationObserver.getErrors().size()) << validationObserver.getErrorsString();
 
-    const auto& tableName = BlobTableValidationDb::tableNames()[0];
+    const auto& tableName = BlobTableValidationDb::tableNames.at(0);
     ASSERT_EQ(1, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTableRows(tableName));
 }

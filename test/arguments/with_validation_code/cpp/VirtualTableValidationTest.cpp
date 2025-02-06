@@ -77,11 +77,11 @@ TEST_F(VirtualTableValidationTest, validate)
     ASSERT_EQ(2, validationObserver.getNumberOfValidatedTables());
     ASSERT_EQ(0, validationObserver.getErrors().size()) << validationObserver.getErrorsString();
 
-    const auto& tableName1 = VirtualTableValidationDb::tableNames()[0];
+    const auto& tableName1 = VirtualTableValidationDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName1));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName1));
 
-    const auto& tableName2 = VirtualTableValidationDb::tableNames()[1];
+    const auto& tableName2 = VirtualTableValidationDb::tableNames.at(1);
     ASSERT_EQ(0, validationObserver.getNumberOfTableRows(tableName2));
     ASSERT_EQ(0, validationObserver.getNumberOfValidatedTableRows(tableName2));
 }

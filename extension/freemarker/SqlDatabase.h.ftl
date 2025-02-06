@@ -176,27 +176,28 @@ public:
 
     <#-- cannot be constexpr since constexpr must be defined inline -->
     /**
-     * Gets the database name.
+     * The database name.
      *
      * \return Database name.
      */
-    static ::std::string_view databaseName() noexcept;
+    static constexpr::std::string_view databaseName = "${name}";
 
     /**
      * Gets all table names of the database.
      *
      * \return Array of all table names of the database.
      */
-    static const ::std::array<::std::string_view, ${fields?size}>& tableNames() noexcept;
+    static constexpr ::std::array<::std::string_view, ${fields?size}> tableNames =
+    {{
+<#list fields as field>
+        "${field.name}"<#sep>,</#sep>
+</#list>
+    }};
 
 private:
     void initTables();
     void attachDatabase(::std::string_view fileName, const ${types.string.name}& attachedDbName);
     void detachDatabases();
-
-<#list fields as field>
-    static ::std::string_view <@sql_db_table_name_getter field/> noexcept;
-</#list>
 
     ::zserio::SqliteConnection m_db;
     <@vector_type_name types.string.name/> m_attachedDbList;

@@ -81,7 +81,7 @@ TEST_F(ColumnTypeValidationTest, validate)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -98,7 +98,7 @@ TEST_F(ColumnTypeValidationTest, validateNullValues)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -117,7 +117,7 @@ TEST_F(ColumnTypeValidationTest, validateFloatWhileIntegerExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -140,7 +140,7 @@ TEST_F(ColumnTypeValidationTest, validateStringWhileIntegerExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -163,7 +163,7 @@ TEST_F(ColumnTypeValidationTest, validateNumericStringWhileIntegerExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -183,7 +183,7 @@ TEST_F(ColumnTypeValidationTest, validateEmptyStringWhileIntegerExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -212,7 +212,7 @@ TEST_F(ColumnTypeValidationTest, validateBlobWhileIntegerExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -235,7 +235,7 @@ TEST_F(ColumnTypeValidationTest, validateIntegerWhileFloatExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -255,7 +255,7 @@ TEST_F(ColumnTypeValidationTest, validateStringWhileFloatExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -278,7 +278,7 @@ TEST_F(ColumnTypeValidationTest, validateNumericStringWhileFloatExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -298,7 +298,7 @@ TEST_F(ColumnTypeValidationTest, validateEmptyStringWhileFloatExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -327,7 +327,7 @@ TEST_F(ColumnTypeValidationTest, validateBlobWhileFloatExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -350,7 +350,7 @@ TEST_F(ColumnTypeValidationTest, validateIntegerWhileStringExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -370,7 +370,7 @@ TEST_F(ColumnTypeValidationTest, validateFlaotWhileStringExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -396,7 +396,7 @@ TEST_F(ColumnTypeValidationTest, validateBlobWhileStringExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -419,7 +419,7 @@ TEST_F(ColumnTypeValidationTest, validateIntegerWhileBlobExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -442,7 +442,7 @@ TEST_F(ColumnTypeValidationTest, validateFloatWhileBlobExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -465,7 +465,7 @@ TEST_F(ColumnTypeValidationTest, validateStringWhileBlobExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 
@@ -488,7 +488,7 @@ TEST_F(ColumnTypeValidationTest, validateEmptyStringWhileBlobExpected)
     ASSERT_EQ(1, validationObserver.getNumberOfTables());
     ASSERT_EQ(1, validationObserver.getNumberOfValidatedTables());
 
-    const auto& tableName = ColumnTypeDb::tableNames()[0];
+    const auto& tableName = ColumnTypeDb::tableNames.at(0);
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfTableRows(tableName));
     ASSERT_EQ(ENTRY_COUNT, validationObserver.getNumberOfValidatedTableRows(tableName));
 

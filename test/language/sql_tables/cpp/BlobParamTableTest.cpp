@@ -8,6 +8,7 @@
 #include "sql_tables/TestDb.h"
 #include "test_utils/SqlUtility.h"
 #include "zserio/RebindAlloc.h"
+#include "zserio/SqliteException.h"
 #include "zserio/StringConvertUtil.h"
 
 namespace sql_tables
@@ -189,6 +190,48 @@ TEST_F(BlobParamTableTest, readWithCondition)
     checkBlobParamTableRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
+TEST_F(BlobParamTableTest, readWithColumns)
+{
+    BlobParamTable& testTable = m_database->getBlobParamTable();
+
+    VectorType<BlobParamTable::Row> writtenRows;
+    fillBlobParamTableRows(writtenRows);
+    testTable.write(writtenRows);
+
+    {
+        VectorType<StringType> columns = {"parameters", "blobId"};
+        BlobParamTable::Reader reader = testTable.createReader(columns);
+        VectorType<BlobParamTable::Row> readRows;
+        size_t i = 0;
+        while (reader.hasNext())
+        {
+            auto rowView = reader.next(readRows.emplace_back());
+            ASSERT_TRUE(rowView.blobId());
+            ASSERT_EQ(*writtenRows[i].blobId, *rowView.blobId());
+            ASSERT_FALSE(rowView.name());
+            ASSERT_TRUE(rowView.parameters());
+            ASSERT_EQ(*writtenRows[i].parameters, rowView.parameters()->zserioData());
+            ASSERT_FALSE(rowView.blob());
+            ++i;
+        }
+    }
+
+    {
+        // throws exception because column with the given name doesn't exist
+        VectorType<StringType> columns = {"blobId", "nonexisting"};
+        ASSERT_THROW((void)testTable.createReader(columns), zserio::SqliteException);
+    }
+
+    {
+        // throws exception since parameters are not available
+        VectorType<StringType> columns = {"blobId", "blob"};
+        BlobParamTable::Reader reader = testTable.createReader(columns);
+        ASSERT_TRUE(reader.hasNext());
+        BlobParamTable::Row readRow;
+        ASSERT_THROW(reader.next(readRow), zserio::CppRuntimeException);
+    }
+}
+
 TEST_F(BlobParamTableTest, update)
 {
     BlobParamTable& testTable = m_database->getBlobParamTable();
@@ -212,6 +255,67 @@ TEST_F(BlobParamTableTest, update)
     ASSERT_EQ(1, readRows.size());
 
     checkBlobParamTableRow(updateRow, readRows[0]);
+}
+
+TEST_F(BlobParamTableTest, updateWithColumns)
+{
+    BlobParamTable& testTable = m_database->getBlobParamTable();
+
+    VectorType<BlobParamTable::Row> writtenRows;
+    fillBlobParamTableRows(writtenRows);
+
+    // write all columns except name
+    {
+        VectorType<StringType> columns = {"parameters", "blob", "blobId"};
+        testTable.write(writtenRows, columns);
+    }
+
+    // check that name is not present (read all columns)
+    {
+        BlobParamTable::Reader reader = testTable.createReader();
+        VectorType<BlobParamTable::Row> readRows;
+        size_t i = 0;
+        while (reader.hasNext())
+        {
+            auto rowView = reader.next(readRows.emplace_back());
+            ASSERT_TRUE(rowView.blobId());
+            ASSERT_EQ(*writtenRows[i].blobId, *rowView.blobId());
+            ASSERT_FALSE(rowView.name()); // not written!
+            ASSERT_TRUE(rowView.parameters());
+            ASSERT_EQ(*writtenRows[i].parameters, rowView.parameters()->zserioData());
+            ASSERT_TRUE(rowView.blob());
+            ASSERT_EQ(*writtenRows[i].blob, rowView.blob()->zserioData());
+            ++i;
+        }
+    }
+
+    // update name column everywhere
+    {
+        BlobParamTable::Row updateRow;
+        updateRow.name = "UpdatedName";
+        VectorType<StringType> columns = {"name"};
+        testTable.update(updateRow, columns, "true"); // only names shall be updated in all rows
+    }
+
+    // check that all rows and columns contain correct data
+    {
+        BlobParamTable::Reader reader = testTable.createReader();
+        VectorType<BlobParamTable::Row> readRows;
+        size_t i = 0;
+        while (reader.hasNext())
+        {
+            auto rowView = reader.next(readRows.emplace_back());
+            ASSERT_TRUE(rowView.blobId());
+            ASSERT_EQ(*writtenRows[i].blobId, *rowView.blobId());
+            ASSERT_TRUE(rowView.name());
+            ASSERT_EQ("UpdatedName", *rowView.name());
+            ASSERT_TRUE(rowView.parameters());
+            ASSERT_EQ(*writtenRows[i].parameters, rowView.parameters()->zserioData());
+            ASSERT_TRUE(rowView.blob());
+            ASSERT_EQ(*writtenRows[i].blob, rowView.blob()->zserioData());
+            ++i;
+        }
+    }
 }
 
 } // namespace blob_param_table
