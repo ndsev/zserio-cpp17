@@ -45,8 +45,8 @@ function(clang_tidy_add_custom_target CLANG_TIDY_TARGET)
             set(CLANG_TIDY_HEADER_FILTER ".*")
         endif ()
 
-        if (NOT DEFINED CLANG_TIDY_OUTPUT_FILE)
-            set(CLANG_TIDY_OUTPUT_FILE "clang-tidy-report.txt")
+        if (NOT DEFINED CLANG_TIDY_OUTPUT_LOG_FILE)
+            set(CLANG_TIDY_OUTPUT_LOG_FILE "clang-tidy-report.txt")
         endif ()
 
         if (NOT DEFINED CLANG_TIDY_SUPPRESSIONS_FILE)
@@ -74,34 +74,33 @@ function(clang_tidy_add_custom_target CLANG_TIDY_TARGET)
 
         set(CLANG_TIDY_TIMESTAMP_FILE "clang-tidy/${CLANG_TIDY_TARGET}-timestamp")
         add_custom_command(
-            OUTPUT "${CLANG_TIDY_TIMESTAMP_FILE}" "${CLANG_TIDY_OUTPUT_FILE}"
-            COMMAND "${CMAKE_COMMAND}" -E rm -f "${CLANG_TIDY_OUTPUT_FILE}"
-            COMMAND "${CMAKE_COMMAND}" -E touch "${CLANG_TIDY_OUTPUT_FILE}"
+            OUTPUT "${CLANG_TIDY_TIMESTAMP_FILE}" "${CLANG_TIDY_OUTPUT_LOG_FILE}"
+            COMMAND "${CMAKE_COMMAND}" -E rm -f "${CLANG_TIDY_OUTPUT_LOG_FILE}"
+            COMMAND "${CMAKE_COMMAND}" -E touch "${CLANG_TIDY_OUTPUT_LOG_FILE}"
             COMMAND "${CMAKE_COMMAND}" -E make_directory clang-tidy
             COMMAND "${CMAKE_COMMAND}" -E touch "${CLANG_TIDY_TIMESTAMP_FILE}"
             DEPENDS "${CLANG_TIDY_DEPENDS}" "${CLANG_TIDY_CONFIG_FILE}"
-            COMMENT "Prepare clear ${CLANG_TIDY_OUTPUT_FILE} in ${CLANG_TIDY_TARGET}"
+            COMMENT "Prepare clear ${CLANG_TIDY_OUTPUT_LOG_FILE} in ${CLANG_TIDY_TARGET}"
         )
 
         set(INDEX 0)
         foreach (SOURCE_FILE ${CLANG_TIDY_SOURCES_LIST})
             get_filename_component(SOURCE_FILE_NAME ${SOURCE_FILE} NAME)
-            set(CLANG_TIDY_FILE_STAMP "clang-tidy/${INDEX}_${SOURCE_FILE_NAME}")
+            set(CLANG_TIDY_SINGLE_LOG_FILE "clang-tidy/${INDEX}_${SOURCE_FILE_NAME}")
             add_custom_command(
-                OUTPUT "${CLANG_TIDY_FILE_STAMP}"
+                OUTPUT "${CLANG_TIDY_SINGLE_LOG_FILE}"
                 COMMAND "${CMAKE_COMMAND}"
                     -DCLANG_TIDY_BIN="${CLANG_TIDY_BIN}"
                     -DSOURCES="${SOURCE_FILE}"
                     -DBUILD_PATH="${CLANG_TIDY_BUILD_PATH}"
                     -DCONFIG_FILE="${CLANG_TIDY_CONFIG_FILE}"
                     -DHEADER_FILTER="${CLANG_TIDY_HEADER_FILTER}"
-                    -DOUTPUT_FILE="${CLANG_TIDY_OUTPUT_FILE}"
+                    -DOUTPUT_FILE="${CLANG_TIDY_SINGLE_LOG_FILE}"
                     -P ${CMAKE_MODULE_PATH}/clang_tidy_tool.cmake
-                COMMAND "${CMAKE_COMMAND}" -E touch "${CLANG_TIDY_FILE_STAMP}"
                 DEPENDS "${SOURCE_FILE}" "${CLANG_TIDY_TIMESTAMP_FILE}"
                 COMMENT "Running clang-tidy on ${SOURCE_FILE}"
             )
-            list(APPEND CLANG_TIDY_FILE_STAMPS "${CLANG_TIDY_FILE_STAMP}")
+            list(APPEND CLANG_TIDY_SINGLE_LOG_FILES "${CLANG_TIDY_SINGLE_LOG_FILE}")
             math(EXPR INDEX "${INDEX} + 1")
         endforeach ()
 
@@ -109,13 +108,14 @@ function(clang_tidy_add_custom_target CLANG_TIDY_TARGET)
         add_custom_command(
             OUTPUT "${CLANG_TIDY_CHECK_FILE}"
             COMMAND ${CMAKE_COMMAND}
-                -DLOG_FILE="${CLANG_TIDY_OUTPUT_FILE}"
+                -DSINGLE_LOG_FILES="${CLANG_TIDY_SINGLE_LOG_FILES}"
+                -DOUTPUT_LOG_FILE="${CLANG_TIDY_OUTPUT_LOG_FILE}"
                 -DSUPPRESSIONS_FILE="${CLANG_TIDY_SUPPRESSIONS_FILE}"
                 -DWERROR="${CLANG_TIDY_WERROR}"
                 -DWERROR_UNUSED_SUPPRESSIONS="${CLANG_TIDY_WERROR_UNUSED_SUPPRESSIONS}"
                 -P ${CMAKE_MODULE_PATH}/clang_tidy_check.cmake
             COMMAND "${CMAKE_COMMAND}" -E touch "${CLANG_TIDY_CHECK_FILE}"
-            DEPENDS "${CLANG_TIDY_FILE_STAMPS}" "${CLANG_TIDY_SUPPRESSIONS_FILE}"
+            DEPENDS "${CLANG_TIDY_SINGLE_LOG_FILES}" "${CLANG_TIDY_SUPPRESSIONS_FILE}"
             COMMENT "Checking clang-tidy warnings in ${CLANG_TIDY_TARGET}"
         )
 

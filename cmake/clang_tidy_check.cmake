@@ -4,7 +4,8 @@
 #   CMake 3.15+
 #
 # Expected definitions:
-#   LOG_FILE          File containing clang-tidy log.
+#   SINGLE_LOG_FILES  List of single log files to use.
+#   OUTPUT_LOG_FILE   Output file which will contain all single log files.
 #   SUPPRESSIONS_FILE Suppressions file for clang-tidy warnings. If any warnings are fired but not suppressed,
 #                     the clang-tidy target will fail.
 #                     Syntax:
@@ -54,16 +55,23 @@ function(strip_suppressions SUPPRESSIONS_LINES SUPPRESSIONS_LINES_VAR)
     set("${SUPPRESSIONS_LINES_VAR}" "${SUPPRESSION_LINES_STRIPPED}" PARENT_SCOPE)
 endfunction()
 
-foreach (ARG LOG_FILE SUPPRESSIONS_FILE)
+foreach (ARG SINGLE_LOG_FILES OUTPUT_LOG_FILE SUPPRESSIONS_FILE)
     if (NOT DEFINED ${ARG})
         message(FATAL_ERROR "Argument '${ARG}' not defined!")
     endif ()
 endforeach ()
 
+separate_arguments(SINGLE_LOG_FILES)
+file(WRITE "${OUTPUT_LOG_FILE}" "")
+foreach (SINGLE_LOG_FILE ${SINGLE_LOG_FILES})
+    file(READ "${SINGLE_LOG_FILE}" SINGLE_LOG_FILE_CONTENT)
+    file(APPEND "${OUTPUT_LOG_FILE}" "${SINGLE_LOG_FILE_CONTENT}")
+    list(APPEND OUTPUT_LOG_FILE_CONTENT "${SINGLE_LOG_FILE_CONTENT}")
+endforeach ()
+
 # cannot use file(STRING) since the log contains semicolons
-file(READ "${LOG_FILE}" LOG_CONTENT)
-string(REPLACE ";" ":" LOG_CONTENT "${LOG_CONTENT}")
-string(REGEX REPLACE "\r?\n" ";" LOG_LINES "${LOG_CONTENT}")
+string(REPLACE ";" ":" OUTPUT_LOG_FILE_CONTENT "${OUTPUT_LOG_FILE_CONTENT}")
+string(REGEX REPLACE "\r?\n" ";" LOG_LINES "${OUTPUT_LOG_FILE_CONTENT}")
 
 file(STRINGS "${SUPPRESSIONS_FILE}" SUPPRESSIONS_LINES)
 strip_suppressions("${SUPPRESSIONS_LINES}" SUPPRESSIONS_LINES)
