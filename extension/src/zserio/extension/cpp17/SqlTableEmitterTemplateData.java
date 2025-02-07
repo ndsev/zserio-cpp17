@@ -50,14 +50,14 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         isWithoutRowId = tableType.isWithoutRowId();
 
         final List<Field> tableFields = tableType.getFields();
-        fields = new ArrayList<FieldTemplateData>(tableFields.size());
+        fieldList = new ArrayList<FieldTemplateData>(tableFields.size());
         explicitParameters = new TreeSet<ExplicitParameterTemplateData>();
         boolean hasImplicitParameters = false;
         boolean requiresOwnerContext = false;
         for (Field tableField : tableFields)
         {
             final FieldTemplateData field = new FieldTemplateData(context, tableType, tableField, this);
-            fields.add(field);
+            fieldList.add(field);
 
             if (field.getHasImplicitParameters())
                 hasImplicitParameters = true;
@@ -84,9 +84,9 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         templateInstantiation = TemplateInstantiationTemplateData.create(context, tableType, this);
     }
 
-    public Iterable<FieldTemplateData> getFields()
+    public Iterable<FieldTemplateData> getFieldList()
     {
-        return fields;
+        return fieldList;
     }
 
     public Iterable<ExplicitParameterTemplateData> getExplicitParameters()
@@ -628,7 +628,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         return new SqlRangeCheckData(checkLowerBound, lowerBound, upperBound, typeInfo, dynamicBitFieldLength);
     }
 
-    private final List<FieldTemplateData> fields;
+    private final List<FieldTemplateData> fieldList;
     private final SortedSet<ExplicitParameterTemplateData> explicitParameters;
     private final boolean hasImplicitParameters;
     private final boolean requiresOwnerContext;

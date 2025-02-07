@@ -24,14 +24,14 @@ public final class SqlDatabaseEmitterTemplateData extends UserTypeTemplateData
         super(context, databaseType, databaseType);
 
         final List<Field> dbFields = databaseType.getFields();
-        fields = new ArrayList<DatabaseField>(dbFields.size());
+        fieldList = new ArrayList<DatabaseField>(dbFields.size());
         for (Field dbField : dbFields)
-            fields.add(new DatabaseField(context, dbField, this));
+            fieldList.add(new DatabaseField(context, dbField, this));
     }
 
-    public Iterable<DatabaseField> getFields()
+    public Iterable<DatabaseField> getFieldList()
     {
-        return fields;
+        return fieldList;
     }
 
     public static final class DatabaseField
@@ -125,5 +125,5 @@ public final class SqlDatabaseEmitterTemplateData extends UserTypeTemplateData
         private final DocCommentsTemplateData docComments;
     }
 
-    private final List<DatabaseField> fields;
+    private final List<DatabaseField> fieldList;
 }

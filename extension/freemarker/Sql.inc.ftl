@@ -1,5 +1,5 @@
-<#function sql_table_has_non_virtual_field fields>
-    <#list fields as field>
+<#function sql_table_has_non_virtual_field fieldList>
+    <#list fieldList as field>
         <#if !field.isVirtual>
             <#return true>
         </#if>
@@ -7,8 +7,8 @@
     <#return false>
 </#function>
 
-<#function sql_db_has_without_rowid_table fields>
-    <#list fields as field>
+<#function sql_db_has_without_rowid_table fieldList>
+    <#list fieldList as field>
         <#if field.isWithoutRowIdTable>
             <#return true>
         </#if>
@@ -86,8 +86,8 @@
     get${field.name?cap_first}ParameterProvider()<#t>
 </#macro>
 
-<#function sql_db_needs_parameter_provider fields>
-    <#list fields as field>
+<#function sql_db_needs_parameter_provider fieldList>
+    <#list fieldList as field>
         <#if field.hasExplicitParameters>
             <#return true>
         </#if>

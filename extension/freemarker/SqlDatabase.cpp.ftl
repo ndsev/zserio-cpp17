@@ -1,7 +1,7 @@
 <#include "FileHeader.inc.ftl">
 <#include "Sql.inc.ftl">
 <@file_header generatorDescription/>
-<#assign needsParameterProvider = sql_db_needs_parameter_provider(fields)/>
+<#assign needsParameterProvider = sql_db_needs_parameter_provider(fieldList)/>
 
 #include <zserio/SqliteException.h>
 #include <zserio/ValidationSqliteUtil.h>
@@ -9,7 +9,7 @@
 <@user_include package.path, "${name}.h"/>
 <@namespace_begin package.path/>
 
-<#assign hasWithoutRowIdTable=sql_db_has_without_rowid_table(fields)/>
+<#assign hasWithoutRowIdTable=sql_db_has_without_rowid_table(fieldList)/>
 ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& tableToDbFileNameRelocationMap,
         const AllocatorType& allocator) :
         ::zserio::AllocatorHolder<AllocatorType>(allocator),
@@ -77,7 +77,7 @@ ${name}::~${name}()
 {
     return m_db;
 }
-<#list fields as field>
+<#list fieldList as field>
 
 ${field.typeInfo.typeFullName}& ${name}::<@sql_db_table_getter_name field/>() noexcept
 {
@@ -89,7 +89,7 @@ void ${name}::createSchema()
 {
     const bool wasTransactionStarted = m_db.startTransaction();
 
-<#list fields as field>
+<#list fieldList as field>
     <@sql_field_member_name field/>->createTable();
 </#list>
 
@@ -101,7 +101,7 @@ void ${name}::createSchema(const <@set_type_name types.string.name/>&<#if hasWit
 <#if hasWithoutRowIdTable>
     const bool wasTransactionStarted = m_db.startTransaction();
 
-    <#list fields as field>
+    <#list fieldList as field>
         <#if field.isWithoutRowIdTable>
     if (withoutRowIdTableNamesBlackList.find(${types.string.name}(
             tableNames[${field?index}], get_allocator_ref())) != withoutRowIdTableNamesBlackList.end())
@@ -127,7 +127,7 @@ void ${name}::deleteSchema()
 {
     const bool wasTransactionStarted = m_db.startTransaction();
 
-<#list fields as field>
+<#list fieldList as field>
     <@sql_field_member_name field/>->deleteTable();
 </#list>
 
@@ -137,11 +137,11 @@ void ${name}::deleteSchema()
 void ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
         <#lt><#if needsParameterProvider>, IParameterProvider& parameterProvider</#if>)
 {
-    validationObserver.beginDatabase(${fields?size});
+    validationObserver.beginDatabase(${fieldList?size});
     bool continueValidation = true;
     size_t numberOfValidatedTables = 0;
 
-<#list fields as field>
+<#list fieldList as field>
     if (<#if !field?is_first>continueValidation && </#if><@sql_field_member_name field/>->validate(validationObserver<#rt>
     <#if field.hasExplicitParameters>
             <#lt>,
@@ -159,7 +159,7 @@ void ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
 void ${name}::initTables()
 {
     static const ::std::string_view EMPTY_STR = ::std::string_view();
-<#list fields as field>
+<#list fieldList as field>
     <#if field?is_first>
     auto relocationIt = m_tableToAttachedDbNameRelocationMap.find(
             ${types.string.name}(tableNames[${field?index}], get_allocator_ref()));

@@ -5,7 +5,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/SerializeUtil.h>
 #include <zserio/SqliteException.h>
-<#assign hasNonVirtualField=sql_table_has_non_virtual_field(fields)/>
+<#assign hasNonVirtualField=sql_table_has_non_virtual_field(fieldList)/>
 <#if hasNonVirtualField>
 #include <algorithm>
 #include <zserio/BitFieldUtil.h>
@@ -20,16 +20,16 @@
 namespace
 {
 
-::std::array<bool, ${fields?size}> createColumnsMapping(::zserio::Span<const ::std::string> columns)
+::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ::std::string> columns)
 {
     if (columns.empty())
     {
-        static constexpr ::std::array<bool, ${fields?size}> allColumns = {<#rt>
-                <#lt><#list fields as field>true<#sep>, </#sep></#list>};
+        static constexpr ::std::array<bool, ${fieldList?size}> allColumns = {<#rt>
+                <#lt><#list fieldList as field>true<#sep>, </#sep></#list>};
         return allColumns;
     }
 
-    ::std::array<bool, ${fields?size}> columnsMapping = {};
+    ::std::array<bool, ${fieldList?size}> columnsMapping = {};
     for (const ::std::string& columnName : columns)
     {
         const auto it = ::std::find(${name}::columnNames.begin(), ${name}::columnNames.end(), columnName);
@@ -44,7 +44,7 @@ namespace
     return columnsMapping;
 }
 
-void appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fields?size}>& columnsMapping)
+void appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping)
 {
     bool isFirst = true;
     for (size_t i = 0; i < columnsMapping.size(); ++i)
@@ -64,7 +64,7 @@ void appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<boo
     }
 }
 
-void appendWriteParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fields?size}>& columnsMapping)
+void appendWriteParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping)
 {
     bool isFirst = true;
     for (bool columnUsed : columnsMapping)
@@ -84,7 +84,7 @@ void appendWriteParametersToQuery(${types.string.name}& sqlQuery, const ::std::a
     }
 }
 
-void appendUpdateParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fields?size}>& columnsMapping)
+void appendUpdateParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping)
 {
     bool isFirst = true;
     for (size_t i = 0; i < columnsMapping.size(); ++i)
@@ -109,7 +109,7 @@ void appendUpdateParametersToQuery(${types.string.name}& sqlQuery, const ::std::
 
 <#assign needsParameterProvider=explicitParameters?has_content/>
 <#assign hasPrimaryKeyField=false/>
-<#list fields as field>
+<#list fieldList as field>
     <#if field.isPrimaryKey>
         <#assign hasPrimaryKeyField=true/>
         <#break>
@@ -165,7 +165,7 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
         <#lt>::zserio::Span<const ::std::string> columns,
         ::std::string_view condition) const
 {
-    const ::std::array<bool, ${fields?size}> columnsMapping = createColumnsMapping(columns);
+    const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
 
     ${types.string.name} sqlQuery(get_allocator_ref());
     sqlQuery += "SELECT ";
@@ -184,7 +184,7 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
 
 ${name}::Reader::Reader(::zserio::SqliteConnection& db, <#rt>
         <#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#t>
-        <#lt>const ::std::array<bool, ${fields?size}>& columnsMapping,
+        <#lt>const ::std::array<bool, ${fieldList?size}>& columnsMapping,
         ::std::string_view sqlQuery, const AllocatorType& allocator) :
         ::zserio::AllocatorHolder<AllocatorType>(allocator),
 <#if needsParameterProvider>
@@ -231,7 +231,7 @@ bool ${name}::Reader::hasNext() const noexcept
 
     ::zserio::View rowView(row<#if needsParameterProvider>, m_parameterProvider</#if>);
     int index = 0;
-<#list fields as field>
+<#list fieldList as field>
     // field ${field.name}
     if (m_columnsMapping[${field?index}])
     {
@@ -291,7 +291,7 @@ void ${name}::write(<#if needsParameterProvider>IParameterProvider& parameterPro
         ::zserio::Span<const ::std::string> columns)
 {
     // assemble sql query
-    const ::std::array<bool, ${fields?size}> columnsMapping = createColumnsMapping(columns);
+    const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
     ${types.string.name} sqlQuery(get_allocator_ref());
     sqlQuery += "INSERT INTO ";
     appendTableNameToQuery(sqlQuery);
@@ -343,7 +343,7 @@ void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterPr
         ::zserio::Span<const ::std::string> columns, ::std::string_view whereCondition)
 {
     // assemble sql query
-    const ::std::array<bool, ${fields?size}> columnsMapping = createColumnsMapping(columns);
+    const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
     ${types.string.name} sqlQuery(get_allocator_ref());
     sqlQuery += "UPDATE ";
     appendTableNameToQuery(sqlQuery);
@@ -379,7 +379,7 @@ bool ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
     {
         ${types.string.name} sqlQuery{get_allocator_ref()};
         sqlQuery += "SELECT ";
-    <#list fields as field>
+    <#list fieldList as field>
         sqlQuery += "${field.name}<#if field?has_next || !hasPrimaryKeyField>, </#if>";
     </#list>
     <#if !hasPrimaryKeyField><#-- use rowid instead of primary key in getRowKeyValuesHolder -->
@@ -394,7 +394,7 @@ bool ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
         {
             ++numberOfValidatedRows;
 
-    <#list fields as field>
+    <#list fieldList as field>
             if (!validateType${field.name?cap_first}(validationObserver, statement.get(), continueValidation))
             {
                 continue;
@@ -402,7 +402,7 @@ bool ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
     </#list>
 
             Row row;
-    <#list fields as field>
+    <#list fieldList as field>
         <#if field.sqlTypeData.isBlob>
             if (!validateBlob${field.name?cap_first}(validationObserver, statement.get(), row<#rt>
                     <#lt><#if needsParameterProvider>, parameterProvider</#if>, continueTableValidation))
@@ -443,7 +443,7 @@ bool ${name}::validateSchema(::zserio::IValidationObserver& validationObserver)
 
     bool result = true;
     bool continueValidation = true;
-<#list fields as field>
+<#list fieldList as field>
 
     if (<#if !field?is_first>continueValidation && </#if>!validateColumn${field.name?cap_first}(
             validationObserver, tableSchema, continueValidation))
@@ -475,7 +475,7 @@ bool ${name}::validateSchema(::zserio::IValidationObserver& validationObserver)
 
     return result;
 }
-<#list fields as field>
+<#list fieldList as field>
 
 bool ${name}::validateColumn${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
         ::zserio::ValidationSqliteUtil<${types.allocator.default}>::TableSchema& tableSchema,
@@ -538,7 +538,7 @@ bool ${name}::validateColumn${field.name?cap_first}(::zserio::IValidationObserve
 }
 </#list>
 <#if hasNonVirtualField>
-    <#list fields as field>
+    <#list fieldList as field>
 
 <#macro sqlite_type_field field>
     <#if field.sqlTypeData.isInteger>
@@ -578,7 +578,7 @@ bool ${name}::validateType${field.name?cap_first}(::zserio::IValidationObserver&
     return true;
 }
     </#list>
-    <#list fields as field>
+    <#list fieldList as field>
 
         <#if field.sqlTypeData.isBlob>
 bool ${name}::validateBlob${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
@@ -732,7 +732,7 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
 
     <#assign needsStatementArgument=false/>
     <#if hasPrimaryKeyField>
-        <#list fields as field>
+        <#list fieldList as field>
             <#if field.isPrimaryKey>
                 <#if !field.sqlTypeData.isBlob>
                     <#assign needsStatementArgument=true/>
@@ -748,7 +748,7 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
     <@vector_type_name types.string.name/> rowKeyValuesHolder{get_allocator_ref()};
 
     <#if hasPrimaryKeyField>
-        <#list fields as field>
+        <#list fieldList as field>
             <#if field.isPrimaryKey>
                 <#if field.sqlTypeData.isBlob>
     rowKeyValuesHolder.emplace_back("BLOB");
@@ -759,7 +759,7 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
             </#if>
         </#list>
     <#else>
-    const unsigned char* strValueRowId = sqlite3_column_text(statement, ${fields?size});
+    const unsigned char* strValueRowId = sqlite3_column_text(statement, ${fieldList?size});
     rowKeyValuesHolder.emplace_back(reinterpret_cast<const char*>(strValueRowId));
     </#if>
 
@@ -778,12 +778,12 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
 </#if>
 
 void ${name}::writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
-        const ::std::array<bool, ${fields?size}>& columnsMapping, sqlite3_stmt& statement)
+        const ::std::array<bool, ${fieldList?size}>& columnsMapping, sqlite3_stmt& statement)
 {
     int result = SQLITE_ERROR;
 
     ::zserio::View rowView(row<#if needsParameterProvider>, parameterProvider</#if>);
-<#list fields as field>
+<#list fieldList as field>
     <#if field.sqlTypeData.isBlob>
     ::zserio::BitSize <@sql_field_bit_size_name field/> = 0;
     if (columnsMapping[${field?index}] && rowView.${field.getterName}())
@@ -796,7 +796,7 @@ void ${name}::writeRow(<#if needsParameterProvider>IParameterProvider& parameter
 </#list>
 
     int index = 1;
-<#list fields as field>
+<#list fieldList as field>
     // field ${field.name}
     if (columnsMapping[${field?index}])
     {
@@ -844,7 +844,7 @@ void ${name}::appendCreateTableToQuery(${types.string.name}& sqlQuery) const
 <#if hasNonVirtualField || sqlConstraint??>
     sqlQuery += '(';
     <#assign firstNonVirtualField=true/>
-    <#list fields as field>
+    <#list fieldList as field>
         <#if !field.isVirtual>
     sqlQuery += "<#if !firstNonVirtualField>, </#if>${field.name}<#if needsTypesInSchema> ${field.sqlTypeData.name}</#if>";
             <#if field.sqlConstraint??>
@@ -880,7 +880,7 @@ View<${fullName}::Row>::View(const ${fullName}::Row& row<#if needsParameterProvi
         m_row(&row)<#if needsParameterProvider>,
         m_parameterProvider(parameterProvider)</#if>
 {}
-<#list fields as field>
+<#list fieldList as field>
 
 <@sql_row_view_field_type_name field/> View<${fullName}::Row>::${field.getterName}()
 {

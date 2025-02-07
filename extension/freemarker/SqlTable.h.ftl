@@ -24,7 +24,7 @@
 <@namespace_begin package.path/>
 
 <#assign needsParameterProvider=explicitParameters?has_content/>
-<#assign hasNonVirtualField=sql_table_has_non_virtual_field(fields)/>
+<#assign hasNonVirtualField=sql_table_has_non_virtual_field(fieldList)/>
 <#if docComments??>
 <@doc_comments docComments/>
 </#if>
@@ -61,7 +61,7 @@ public:
     /** Class which describes one row in the table. Contains only data. See View<Row> for View. */
     struct Row
     {
-<#list fields as field>
+<#list fieldList as field>
         ${types.optional.name}<${field.typeInfo.typeFullName}> <@sql_row_member_name field/>;
 </#list>
     };
@@ -100,7 +100,7 @@ public:
     private:
         explicit Reader(::zserio::SqliteConnection& db, <#rt>
                 <#lt><#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-                <#lt>const ::std::array<bool, ${fields?size}>& columnsMapping,
+                <#lt>const ::std::array<bool, ${fieldList?size}>& columnsMapping,
                 ::std::string_view sqlQuery, const AllocatorType& allocator);
         friend class ${name};
 
@@ -109,7 +109,7 @@ public:
 <#if needsParameterProvider>
         IParameterProvider& m_parameterProvider;
 </#if>
-        ::std::array<bool, ${fields?size}> m_columnsMapping;
+        ::std::array<bool, ${fieldList?size}> m_columnsMapping;
         ::std::unique_ptr<sqlite3_stmt, ::zserio::SqliteFinalizer> m_stmt;
         int m_lastResult;
     };
@@ -152,7 +152,7 @@ public:
      * Creates the table using database connection given by constructor.
      */
     void createTable();
-<#if sql_table_has_non_virtual_field(fields) && isWithoutRowId>
+<#if sql_table_has_non_virtual_field(fieldList) && isWithoutRowId>
 
     /**
      * Creates the table as ordinary row id using database connection given by constructor.
@@ -243,28 +243,28 @@ public:
     bool validate(::zserio::IValidationObserver& validationObserver<#rt>
             <#lt><#if needsParameterProvider>, IParameterProvider& parameterProvider</#if>, bool& continueValidation);
 
-    static constexpr ::std::array<::std::string_view, ${fields?size}> columnNames =
+    static constexpr ::std::array<::std::string_view, ${fieldList?size}> columnNames =
     {{
-<#list fields as field>
+<#list fieldList as field>
         "${field.name}"<#sep>,</#sep>
 </#list>
     }};
 
 private:
     bool validateSchema(::zserio::IValidationObserver& validationObserver);
-<#list fields as field>
+<#list fieldList as field>
     bool validateColumn${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
             ::zserio::ValidationSqliteUtil<${types.allocator.default}>::TableSchema& tableSchema,
             bool& continueValidation);
 </#list>
 <#if hasNonVirtualField>
 
-    <#list fields as field>
+    <#list fieldList as field>
     bool validateType${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
             sqlite3_stmt* statement, bool& continueValidation);
     </#list>
 
-    <#list fields as field>
+    <#list fieldList as field>
         <#if field.sqlTypeData.isBlob>
     bool validateBlob${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
             sqlite3_stmt* statement, Row& row<#if needsParameterProvider>, IParameterProvider& parameterProvider</#if>,
@@ -282,7 +282,7 @@ private:
 </#if>
 
     void writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
-            const ::std::array<bool, ${fields?size}>& columnsMapping, sqlite3_stmt& statement);
+            const ::std::array<bool, ${fieldList?size}>& columnsMapping, sqlite3_stmt& statement);
 
     void appendCreateTableToQuery(${types.string.name}& sqlQuery) const;
     void appendTableNameToQuery(${types.string.name}& sqlQuery) const;
@@ -299,7 +299,7 @@ class View<${fullName}::Row>
 {
 public:
     explicit View(const ${fullName}::Row& row<#if needsParameterProvider>, ${fullName}::IParameterProvider& parameterProvider</#if>);
-<#list fields>
+<#list fieldList>
 
     <#items as field>
     <@sql_row_view_field_type_name field/> ${field.getterName}();

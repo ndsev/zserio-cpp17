@@ -2,7 +2,7 @@
 <#include "Sql.inc.ftl">
 <#include "DocComment.inc.ftl">
 <@file_header generatorDescription/>
-<#assign needsParameterProvider = sql_db_needs_parameter_provider(fields)/>
+<#assign needsParameterProvider = sql_db_needs_parameter_provider(fieldList)/>
 
 <@include_guard_begin package.path, name/>
 
@@ -39,7 +39,7 @@ public:
         virtual ~IParameterProvider() = default;
 
     <#assign isTheFirst=true>
-    <#list fields as field>
+    <#list fieldList as field>
         <#if field.hasExplicitParameters>
                 <#if !isTheFirst>
 
@@ -128,7 +128,7 @@ public:
      */
     ::zserio::SqliteConnection& connection() noexcept override;
 
-<#list fields as field>
+<#list fieldList as field>
         <#if !field?is_first>
 
         </#if>
@@ -187,9 +187,9 @@ public:
      *
      * \return Array of all table names of the database.
      */
-    static constexpr ::std::array<::std::string_view, ${fields?size}> tableNames =
+    static constexpr ::std::array<::std::string_view, ${fieldList?size}> tableNames =
     {{
-<#list fields as field>
+<#list fieldList as field>
         "${field.name}"<#sep>,</#sep>
 </#list>
     }};
@@ -203,7 +203,7 @@ private:
     <@vector_type_name types.string.name/> m_attachedDbList;
     TRelocationMap m_tableToAttachedDbNameRelocationMap;
 
-<#list fields as field>
+<#list fieldList as field>
     <@unique_ptr_type_name field.typeInfo.typeFullName/> <@sql_field_member_name field/>;
 </#list>
 };
