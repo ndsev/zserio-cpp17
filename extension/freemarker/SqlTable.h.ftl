@@ -100,7 +100,7 @@ public:
     private:
         explicit Reader(::zserio::SqliteConnection& db, <#rt>
                 <#lt><#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-                <#lt>::std::array<bool, ${fields?size}> columnsMapping,
+                <#lt>const ::std::array<bool, ${fields?size}>& columnsMapping,
                 ::std::string_view sqlQuery, const AllocatorType& allocator);
         friend class ${name};
 
@@ -282,7 +282,7 @@ private:
 </#if>
 
     void writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
-            ::std::array<bool, ${fields?size}> columnsMapping, sqlite3_stmt& statement);
+            const ::std::array<bool, ${fields?size}>& columnsMapping, sqlite3_stmt& statement);
 
     void appendCreateTableToQuery(${types.string.name}& sqlQuery) const;
     void appendTableNameToQuery(${types.string.name}& sqlQuery) const;

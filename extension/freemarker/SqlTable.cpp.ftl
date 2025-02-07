@@ -38,13 +38,13 @@ namespace
             throw ::zserio::SqliteException("Column name '") << columnName
                     << "' doesn't exist in '${name}'!";
         }
-        columnsMapping[static_cast<size_t>(it - ${name}::columnNames.begin())] = true;
+        columnsMapping.at(static_cast<size_t>(it - ${name}::columnNames.begin())) = true;
     }
 
     return columnsMapping;
 }
 
-void appendColumnsToQuery(${types.string.name}& sqlQuery, ::std::array<bool, ${fields?size}> columnsMapping)
+void appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fields?size}>& columnsMapping)
 {
     bool isFirst = true;
     for (size_t i = 0; i < columnsMapping.size(); ++i)
@@ -64,8 +64,7 @@ void appendColumnsToQuery(${types.string.name}& sqlQuery, ::std::array<bool, ${f
     }
 }
 
-void appendWriteParametersToQuery(
-        ${types.string.name}& sqlQuery, ::std::array<bool, ${fields?size}> columnsMapping)
+void appendWriteParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fields?size}>& columnsMapping)
 {
     bool isFirst = true;
     for (bool columnUsed : columnsMapping)
@@ -85,8 +84,7 @@ void appendWriteParametersToQuery(
     }
 }
 
-void appendUpdateParametersToQuery(
-        ${types.string.name}& sqlQuery, ::std::array<bool, ${fields?size}> columnsMapping)
+void appendUpdateParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fields?size}>& columnsMapping)
 {
     bool isFirst = true;
     for (size_t i = 0; i < columnsMapping.size(); ++i)
@@ -186,7 +184,7 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
 
 ${name}::Reader::Reader(::zserio::SqliteConnection& db, <#rt>
         <#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#t>
-        <#lt>::std::array<bool, ${fields?size}> columnsMapping,
+        <#lt>const ::std::array<bool, ${fields?size}>& columnsMapping,
         ::std::string_view sqlQuery, const AllocatorType& allocator) :
         ::zserio::AllocatorHolder<AllocatorType>(allocator),
 <#if needsParameterProvider>
@@ -777,7 +775,7 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
 </#if>
 
 void ${name}::writeRow(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
-        ::std::array<bool, ${fields?size}> columnsMapping, sqlite3_stmt& statement)
+        const ::std::array<bool, ${fields?size}>& columnsMapping, sqlite3_stmt& statement)
 {
     int result = SQLITE_ERROR;
 
