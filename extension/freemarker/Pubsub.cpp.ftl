@@ -27,7 +27,7 @@ public:
     void operator()(::std::string_view topic, ::zserio::Span<const uint8_t> data) override
     {
         ZSERIO_MESSAGE message(m_allocator);
-        zserio::deserializeFromBytes(data, message);
+        ::zserio::deserializeFromBytes(data, message);
 
         m_callback->operator()(topic, message);
     }
@@ -91,7 +91,7 @@ void ${name}::unsubscribe(::zserio::IPubsub::SubscriptionId id)
 template <typename ZSERIO_MESSAGE>
 void ${name}::publish(ZSERIO_MESSAGE& message, ::std::string_view topic, void* context)
 {
-    const auto buffer = zserio::serializeToBytes(message, get_allocator_ref());
+    const auto buffer = ::zserio::serializeToBytes(message, get_allocator_ref());
     m_pubsub.publish(topic, buffer, context);
 }
 </#if>

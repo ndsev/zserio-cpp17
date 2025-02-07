@@ -51,7 +51,7 @@ ${types.serviceDataPtr.name} Service::${method.name}Method(
 {
     <#if !method.requestTypeInfo.isBytes>
     ${method.requestTypeInfo.typeFullName} request(get_allocator_ref());
-    zserio::deserializeFromBytes(requestData, request);
+    ::zserio::deserializeFromBytes(requestData, request);
 
     </#if>
     <#if method.responseTypeInfo.isBytes>
@@ -103,7 +103,7 @@ ${method.responseTypeInfo.typeFullName} Client::${method.name}Method(<#rt>
     <#else>
 
     ${method.responseTypeInfo.typeFullName} response(get_allocator_ref());
-    zserio::deserializeFromBytes(responseData, response);
+    ::zserio::deserializeFromBytes(responseData, response);
     return response;
     </#if>
 }

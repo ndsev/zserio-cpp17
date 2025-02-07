@@ -95,7 +95,7 @@ public:
          *
          * \return Read row.
          */
-         zserio::View<Row> next(Row& row);
+        ::zserio::View<Row> next(Row& row);
 
     private:
         explicit Reader(::zserio::SqliteConnection& db, <#rt>
