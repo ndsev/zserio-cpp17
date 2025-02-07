@@ -60,11 +60,6 @@ protected:
         {
             array.push_back(i);
         }
-
-        // TODO[Mi-L@]: Now user has to use detail namespace.
-        //              Cannot the table do offsets initialization automatically?
-        zserio::View rowView(row);
-        zserio::detail::initializeOffsets(*rowView.blob(), 0);
     }
 
     static void fillBlobOffsetsParamTableRows(VectorType<BlobOffsetsParamTable::Row>& rows)

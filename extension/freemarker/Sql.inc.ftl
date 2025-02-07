@@ -29,11 +29,15 @@
 </#macro>
 
 <#macro sql_field_argument_name field>
-    ${field.name}_<#t>
+    ${field.name?uncap_first}_<#t>
 </#macro>
 
 <#macro sql_row_member_name field>
     ${field.name?uncap_first}<#t>
+</#macro>
+
+<#macro sql_field_bit_size_name field>
+    ${field.name?uncap_first}BitSize<#t>
 </#macro>
 
 <#macro sql_row_view_field_type_name field>

@@ -600,8 +600,11 @@ bool ${name}::validateBlob${field.name?cap_first}(::zserio::IValidationObserver&
         row.<@sql_row_member_name field/>.emplace(get_allocator_ref());
         auto blobView = ::zserio::detail::read(reader, *row.<@sql_row_member_name field/><#rt>
                 <#lt><@view_parameters field, "parameterProvider"/>);
-        auto bitBuffer = ::zserio::serialize(blobView);
-        if (reader.getBitPosition() != bitBuffer.getBitSize())
+        const ::zserio::BitSize blobBitSize = ::zserio::detail::bitSizeOf(blobView);
+        ${types.bitBuffer.name} bitBuffer(blobBitSize, get_allocator_ref());
+        ::zserio::BitStreamWriter writer(bitBuffer);
+        ::zserio::detail::write(writer, blobView);
+        if (reader.getBitPosition() != writer.getBitPosition())
         {
             const auto rowKeyValuesHolder = getRowKeyValuesHolder(statement);
             ${types.string.name} errorMessage = ${types.string.name}(
@@ -780,31 +783,45 @@ void ${name}::writeRow(<#if needsParameterProvider>IParameterProvider& parameter
     int result = SQLITE_ERROR;
 
     ::zserio::View rowView(row<#if needsParameterProvider>, parameterProvider</#if>);
+<#list fields as field>
+    <#if field.sqlTypeData.isBlob>
+    ::zserio::BitSize <@sql_field_bit_size_name field/> = 0;
+    if (columnsMapping[${field?index}] && rowView.${field.getterName}())
+    {
+        auto blobView = *rowView.${field.getterName}();
+        ::zserio::detail::validate(blobView);
+        <@sql_field_bit_size_name field/> = ::zserio::detail::initializeOffsets(blobView, 0);
+    }
+    </#if>
+</#list>
+
     int index = 1;
 <#list fields as field>
     // field ${field.name}
     if (columnsMapping[${field?index}])
     {
-        if (!row.<@sql_row_member_name field/>)
+        if (!rowView.${field.getterName}())
         {
             result = sqlite3_bind_null(&statement, index);
         }
         else
         {
     <#if field.sqlTypeData.isBlob>
-            const ${field.typeInfo.typeFullName}& blob = *row.<@sql_row_member_name field/>;
-            auto bitBuffer = ::zserio::serialize(blob, get_allocator_ref()<@view_parameters field, "parameterProvider"/>);
+            ${types.bitBuffer.name} bitBuffer(<@sql_field_bit_size_name field/>, get_allocator_ref());
+            ::zserio::BitStreamWriter writer(bitBuffer);
+            ::zserio::detail::write(writer, *rowView.${field.getterName}());
             result = sqlite3_bind_blob(&statement, index, bitBuffer.getBuffer(),
                     static_cast<int>(bitBuffer.getByteSize()), SQLITE_TRANSIENT);
     <#elseif field.sqlTypeData.isInteger>
-            const int64_t intValue = static_cast<int64_t>(row.<@sql_row_member_name field/><#if field.typeInfo.isBitmask>->getValue()<#else>.value()</#if>);
+            const int64_t intValue = static_cast<int64_t>(rowView.${field.getterName}()<#if field.typeInfo.isBitmask>->getValue()<#else>.value()</#if>);
             result = sqlite3_bind_int64(&statement, index, intValue);
     <#elseif field.sqlTypeData.isReal>
-            const ${field.typeInfo.typeFullName} realValue = *row.<@sql_row_member_name field/>;
+            const ${field.typeInfo.typeFullName} realValue = *rowView.${field.getterName}();
             result = sqlite3_bind_double(&statement, index, static_cast<double>(realValue));
     <#else>
-            const ${field.typeInfo.typeFullName}& stringValue = *row.<@sql_row_member_name field/>;
-            result = sqlite3_bind_text(&statement, index, stringValue.c_str(), -1, SQLITE_TRANSIENT);
+            ::std::string_view stringValue = *rowView.${field.getterName}();
+            result = sqlite3_bind_text(&statement, index, stringValue.data(),
+                    static_cast<int>(stringValue.size()), SQLITE_TRANSIENT);
     </#if>
         }
         if (result != SQLITE_OK)
