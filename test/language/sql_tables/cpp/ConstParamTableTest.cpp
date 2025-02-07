@@ -162,5 +162,13 @@ TEST_F(ConstParamTableTest, update)
     checkConstParamTableRow(updateRow, readRows[0]);
 }
 
+TEST_F(ConstParamTableTest, columnNames)
+{
+    ASSERT_EQ(3, ConstParamTable::columnNames.size());
+    ASSERT_EQ("blobId", ConstParamTable::columnNames[0]);
+    ASSERT_EQ("name", ConstParamTable::columnNames[1]);
+    ASSERT_EQ("blob", ConstParamTable::columnNames[2]);
+}
+
 } // namespace const_param_table
 } // namespace sql_tables

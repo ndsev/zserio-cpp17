@@ -318,5 +318,14 @@ TEST_F(BlobParamTableTest, updateWithColumns)
     }
 }
 
+TEST_F(BlobParamTableTest, columnNames)
+{
+    ASSERT_EQ(4, BlobParamTable::columnNames.size());
+    ASSERT_EQ("blobId", BlobParamTable::columnNames[0]);
+    ASSERT_EQ("name", BlobParamTable::columnNames[1]);
+    ASSERT_EQ("parameters", BlobParamTable::columnNames[2]);
+    ASSERT_EQ("blob", BlobParamTable::columnNames[3]);
+}
+
 } // namespace blob_param_table
 } // namespace sql_tables

@@ -51,5 +51,11 @@ TEST_F(SubtypedTableTest, testSubtypedTable)
     ASSERT_EQ(&studentsAsTestTable, &studentsAsSubtypedTable);
 }
 
+TEST_F(SubtypedTableTest, columnNames)
+{
+    ASSERT_EQ(1, SubtypedTable::columnNames.size());
+    ASSERT_EQ("student", SubtypedTable::columnNames[0]);
+}
+
 } // namespace subtyped_table
 } // namespace sql_tables

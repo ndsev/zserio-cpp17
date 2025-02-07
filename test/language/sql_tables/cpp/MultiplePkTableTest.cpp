@@ -158,5 +158,13 @@ TEST_F(MultiplePkTableTest, update)
     checkMultiplePkTableRow(updateRow, readRows[0]);
 }
 
+TEST_F(MultiplePkTableTest, columnNames)
+{
+    ASSERT_EQ(3, MultiplePkTable::columnNames.size());
+    ASSERT_EQ("blobId", MultiplePkTable::columnNames[0]);
+    ASSERT_EQ("age", MultiplePkTable::columnNames[1]);
+    ASSERT_EQ("name", MultiplePkTable::columnNames[2]);
+}
+
 } // namespace multiple_pk_table
 } // namespace sql_tables

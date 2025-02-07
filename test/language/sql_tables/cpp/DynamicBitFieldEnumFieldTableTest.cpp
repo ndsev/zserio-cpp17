@@ -96,5 +96,12 @@ TEST_F(DynamicBitFieldEnumFieldTableTest, readWithoutCondition)
     checkRows(rows, readRows);
 }
 
+TEST_F(DynamicBitFieldEnumFieldTableTest, columnNames)
+{
+    ASSERT_EQ(2, DynamicBitFieldEnumFieldTable::columnNames.size());
+    ASSERT_EQ("id", DynamicBitFieldEnumFieldTable::columnNames[0]);
+    ASSERT_EQ("enumField", DynamicBitFieldEnumFieldTable::columnNames[1]);
+}
+
 } // namespace dynamic_bit_field_enum_field_table
 } // namespace sql_tables

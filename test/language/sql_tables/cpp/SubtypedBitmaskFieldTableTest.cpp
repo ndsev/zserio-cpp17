@@ -97,5 +97,12 @@ TEST_F(SubtypedBitmaskFieldTableTest, readWithoutCondition)
     checkRows(rows, readRows);
 }
 
+TEST_F(SubtypedBitmaskFieldTableTest, columnNames)
+{
+    ASSERT_EQ(2, SubtypedBitmaskFieldTable::columnNames.size());
+    ASSERT_EQ("id", SubtypedBitmaskFieldTable::columnNames[0]);
+    ASSERT_EQ("bitmaskField", SubtypedBitmaskFieldTable::columnNames[1]);
+}
+
 } // namespace subtyped_bitmask_field_table
 } // namespace sql_tables

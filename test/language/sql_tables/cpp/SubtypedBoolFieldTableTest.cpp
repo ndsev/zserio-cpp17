@@ -95,5 +95,12 @@ TEST_F(SubtypedBoolFieldTableTest, readWithoutCondition)
     checkRows(rows, readRows);
 }
 
+TEST_F(SubtypedBoolFieldTableTest, columnNames)
+{
+    ASSERT_EQ(2, SubtypedBoolFieldTable::columnNames.size());
+    ASSERT_EQ("id", SubtypedBoolFieldTable::columnNames[0]);
+    ASSERT_EQ("boolField", SubtypedBoolFieldTable::columnNames[1]);
+}
+
 } // namespace subtyped_bool_field_table
 } // namespace sql_tables

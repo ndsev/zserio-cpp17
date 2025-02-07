@@ -95,5 +95,12 @@ TEST_F(SubtypedEnumFieldTableTest, readWithoutCondition)
     checkRows(rows, readRows);
 }
 
+TEST_F(SubtypedEnumFieldTableTest, columnNames)
+{
+    ASSERT_EQ(2, SubtypedEnumFieldTable::columnNames.size());
+    ASSERT_EQ("id", SubtypedEnumFieldTable::columnNames[0]);
+    ASSERT_EQ("enumField", SubtypedEnumFieldTable::columnNames[1]);
+}
+
 } // namespace subtyped_enum_field_table
 } // namespace sql_tables

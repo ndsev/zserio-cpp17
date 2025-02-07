@@ -156,5 +156,12 @@ TEST_F(WithoutPkTableTest, update)
     checkWithoutPkTableRow(updateRow, readRows[0]);
 }
 
+TEST_F(WithoutPkTableTest, columnNames)
+{
+    ASSERT_EQ(2, WithoutPkTable::columnNames.size());
+    ASSERT_EQ("identifier", WithoutPkTable::columnNames[0]);
+    ASSERT_EQ("name", WithoutPkTable::columnNames[1]);
+}
+
 } // namespace without_pk_table
 } // namespace sql_tables

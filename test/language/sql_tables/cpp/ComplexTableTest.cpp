@@ -260,5 +260,20 @@ TEST_F(ComplexTableTest, update)
     checkComplexTableRow(updateRow, readRows[0]);
 }
 
+TEST_F(ComplexTableTest, columnNames)
+{
+    ASSERT_EQ(9, ComplexTable::columnNames.size());
+
+    ASSERT_EQ("blobId", ComplexTable::columnNames[0]);
+    ASSERT_EQ("age", ComplexTable::columnNames[1]);
+    ASSERT_EQ("name", ComplexTable::columnNames[2]);
+    ASSERT_EQ("isValid", ComplexTable::columnNames[3]);
+    ASSERT_EQ("salary", ComplexTable::columnNames[4]);
+    ASSERT_EQ("bonus", ComplexTable::columnNames[5]);
+    ASSERT_EQ("value", ComplexTable::columnNames[6]);
+    ASSERT_EQ("color", ComplexTable::columnNames[7]);
+    ASSERT_EQ("blob", ComplexTable::columnNames[8]);
+}
+
 } // namespace complex_table
 } // namespace sql_tables
