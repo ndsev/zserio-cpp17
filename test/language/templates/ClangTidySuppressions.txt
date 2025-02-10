@@ -14,6 +14,24 @@ bugprone-exception-escape:gen/templates/union_templated_field/TemplatedUnion_uin
 bugprone-reserved-identifier:gen/templates/struct_long_template_argument/TemplatedStruct_ThisIsVeryVeryVeryLongNamedStructure_ThisIsVery_.h
 bugprone-reserved-identifier:gen/templates/struct_long_template_argument_clash/ThisIsVeryVeryVeryLongNamedStructure_.h
 
+cppcoreguidelines-pro-type-member-init:gen/templates/instantiate_sql_table/U32Table.cpp
+cppcoreguidelines-pro-type-member-init:gen/templates/instantiate_type_as_sql_database_field/StringTable.cpp
+cppcoreguidelines-pro-type-member-init:gen/templates/instantiate_type_as_sql_table_field/Test32Table.cpp
+cppcoreguidelines-pro-type-member-init:gen/templates/sql_table_templated_field/TemplatedTable_Union.cpp
+cppcoreguidelines-pro-type-member-init:gen/templates/sql_table_templated_field/TemplatedTable_uint32.cpp
+
+cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/instantiate_sql_table/U32Table.cpp
+cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/instantiate_type_as_sql_database_field/StringTable.cpp
+cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/instantiate_type_as_sql_table_field/Test32Table.cpp
+cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/sql_table_templated_field/TemplatedTable_Union.cpp
+cppcoreguidelines-pro-type-reinterpret-cast:gen/templates/sql_table_templated_field/TemplatedTable_uint32.cpp
+
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/instantiate_sql_table/U32Table.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/instantiate_type_as_sql_database_field/StringTable.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/instantiate_type_as_sql_table_field/Test32Table.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/sql_table_templated_field/TemplatedTable_Union.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/templates/sql_table_templated_field/TemplatedTable_uint32.cpp
+
 google-explicit-constructor:gen/templates/expression_bitmask_template_argument/Permission.h
 
 misc-no-recursion # reports also tested_release and some system headers
@@ -61,4 +79,3 @@ performance-move-const-arg:gen/templates/subtype_template_with_compound/TestStru
 performance-move-const-arg:gen/templates/union_templated_field/Compound_Compound_uint16.cpp
 
 readability-simplify-boolean-expr:gen/templates/instantiate_type_as_choice_field/InstantiateTypeAsChoiceField.cpp
-

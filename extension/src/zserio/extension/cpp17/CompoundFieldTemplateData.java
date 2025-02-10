@@ -611,13 +611,11 @@ public final class CompoundFieldTemplateData
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType elementNativeType = cppNativeMapper.getCppType(elementTypeInstantiation);
 
-            return NativeTypeInfoTemplateDataCreator.create(
-                    context, elementNativeType, elementTypeInstantiation, includeCollector);
+            return NativeTypeInfoTemplateDataCreator.create(elementNativeType, elementTypeInstantiation);
         }
         else
         {
-            return NativeTypeInfoTemplateDataCreator.create(
-                    context, nativeType, typeInstantiation, includeCollector);
+            return NativeTypeInfoTemplateDataCreator.create(nativeType, typeInstantiation);
         }
     }
 
@@ -736,8 +734,8 @@ public final class CompoundFieldTemplateData
 
         final String lowerBound = nativeType.formatLiteral(zserioLowerBound);
         final String upperBound = nativeType.formatLiteral(zserioUpperBound);
-        final NativeTypeInfoTemplateData typeInfo = NativeTypeInfoTemplateDataCreator.create(
-                context, nativeType, typeInstantiation, includeCollector);
+        final NativeTypeInfoTemplateData typeInfo =
+                NativeTypeInfoTemplateDataCreator.create(nativeType, typeInstantiation);
 
         return new IntegerRange(checkLowerBound, lowerBound, upperBound, typeInfo, bitFieldLength);
     }

@@ -4,3 +4,6 @@
 [submodule "test/data"]
 	path = test/data
 	url = https://github.com/ndsev/zserio-test-data.git
+[submodule "3rdparty/cpp/sqlite3"]
+	path = 3rdparty/cpp/sqlite3
+	url = https://github.com/ndsev/zserio-sqlite3

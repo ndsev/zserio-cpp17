@@ -22,6 +22,12 @@ public final class TypesContext
             bytes = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Bytes", false, false, "zserio/Bytes.h");
             string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "String", false, false, "zserio/String.h");
             vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Vector", true, false, "zserio/Vector.h");
+            map = new NativeTypeDefinition(STD_PACKAGE_NAME, "map", true, false, "map");
+            set = new NativeTypeDefinition(STD_PACKAGE_NAME, "set", true, false, "set");
+            optional =
+                    new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Optional", true, false, "zserio/Optional.h");
+            uniquePtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "unique_ptr", true, false, "zserio/UniquePtr.h");
             service = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IService", false, false, "zserio/IService.h");
             serviceClient = new NativeTypeDefinition(
@@ -47,6 +53,12 @@ public final class TypesContext
                     ZSERIO_PMR_PACKAGE_NAME, "String", false, false, "zserio/pmr/String.h");
             vector = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "Vector", true, false, "zserio/pmr/Vector.h");
+            map = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "map", true, false, "zserio/pmr/Map.h");
+            set = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "set", true, false, "zserio/pmr/Set.h");
+            optional = new NativeTypeDefinition(
+                    ZSERIO_PMR_PACKAGE_NAME, "Optional", true, false, "zserio/pmr/Optional.h");
+            uniquePtr = new NativeTypeDefinition(
+                    ZSERIO_PMR_PACKAGE_NAME, "unique_ptr", true, false, "zserio/pmr/UniquePtr.h");
             service = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "IService", false, false, "zserio/pmr/IService.h");
             serviceClient = new NativeTypeDefinition(
@@ -67,8 +79,15 @@ public final class TypesContext
             bitBufferView = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BasicBitBufferView", true, true, "zserio/BitBuffer.h");
             bytes = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "BasicBytes", true, true, "zserio/Bytes.h");
-            string = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "String", true, true, "zserio/String.h");
+            string =
+                    new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "BasicString", true, true, "zserio/String.h");
             vector = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Vector", true, true, "zserio/Vector.h");
+            map = new NativeTypeDefinition(STD_PACKAGE_NAME, "map", true, true, "map");
+            set = new NativeTypeDefinition(STD_PACKAGE_NAME, "set", true, true, "set");
+            optional = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "BasicOptional", true, true, "zserio/Optional.h");
+            uniquePtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "unique_ptr", true, true, "zserio/UniquePtr.h");
             service = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IBasicService", true, true, "zserio/IService.h");
             serviceClient = new NativeTypeDefinition(
@@ -112,6 +131,26 @@ public final class TypesContext
     public NativeTypeDefinition getVector()
     {
         return vector;
+    }
+
+    public NativeTypeDefinition getMap()
+    {
+        return map;
+    }
+
+    public NativeTypeDefinition getSet()
+    {
+        return set;
+    }
+
+    public NativeTypeDefinition getOptional()
+    {
+        return optional;
+    }
+
+    public NativeTypeDefinition getUniquePtr()
+    {
+        return uniquePtr;
     }
 
     public NativeTypeDefinition getService()
@@ -229,6 +268,10 @@ public final class TypesContext
     private final NativeTypeDefinition bytes;
     private final NativeTypeDefinition string;
     private final NativeTypeDefinition vector;
+    private final NativeTypeDefinition map;
+    private final NativeTypeDefinition set;
+    private final NativeTypeDefinition optional;
+    private final NativeTypeDefinition uniquePtr;
 
     private final NativeTypeDefinition service;
     private final NativeTypeDefinition serviceClient;
@@ -242,6 +285,7 @@ public final class TypesContext
     public static final AllocatorDefinition STD_ALLOCATOR =
             new AllocatorDefinition("::std::allocator", "memory");
 
+    private static final PackageName STD_PACKAGE_NAME = new PackageName.Builder().addId("std").get();
     private static final PackageName ZSERIO_PACKAGE_NAME = new PackageName.Builder().addId("zserio").get();
     private static final PackageName ZSERIO_PMR_PACKAGE_NAME =
             new PackageName.Builder().addId("zserio").addId("pmr").get();

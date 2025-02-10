@@ -55,6 +55,8 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/HashCodeUtil.h
     zserio/IPubsub.h
     zserio/IService.h
+    zserio/ISqliteDatabase.h
+    zserio/IValidationObserver.h
     zserio/MissedOptionalException.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
@@ -66,6 +68,9 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/SizeConvertUtil.cpp
     zserio/SizeConvertUtil.h
     zserio/Span.h
+    zserio/SqliteConnection.h
+    zserio/SqliteException.h
+    zserio/SqliteFinalizer.h
     zserio/String.cpp
     zserio/String.h
     zserio/StringConvertUtil.h
@@ -73,8 +78,10 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/Types.cpp
     zserio/Types.h
     zserio/UnionCaseException.h
+    zserio/UniquePtr.h
     zserio/ValidationException.h
     zserio/Variant.h
+    zserio/ValidationSqliteUtil.h
     zserio/Vector.h
     zserio/View.h
 )

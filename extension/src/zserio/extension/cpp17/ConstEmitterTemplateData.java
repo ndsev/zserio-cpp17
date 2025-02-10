@@ -40,8 +40,7 @@ public final class ConstEmitterTemplateData extends CppTemplateData
             final CppNativeType nativeTargetType = cppNativeMapper.getCppType(constantTypeInstantation);
             addHeaderIncludesForType(nativeTargetType);
 
-            typeInfo = NativeTypeInfoTemplateDataCreator.create(
-                    context, nativeTargetType, constantTypeInstantation, this);
+            typeInfo = NativeTypeInfoTemplateDataCreator.create(nativeTargetType, constantTypeInstantation);
         }
 
         value = cppExpressionFormatter.formatGetter(constant.getValueExpression());

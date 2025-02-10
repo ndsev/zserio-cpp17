@@ -96,7 +96,7 @@ private:
 
 // template argument deduction guide for DataView constructor
 template <typename T, typename... ARGS>
-DataView(T, ARGS...) -> DataView<T>;
+DataView(T, ARGS&&...) -> DataView<T>;
 
 } // namespace zserio
 

@@ -11,10 +11,13 @@ set(ZSERIO_CPP_TEST_UTILS_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/HashTest.h
     ${CMAKE_CURRENT_SOURCE_DIR}/LocalServiceClient.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ReadTest.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/SqlUtility.h
     ${CMAKE_CURRENT_SOURCE_DIR}/TestPubsub.h
     ${CMAKE_CURRENT_SOURCE_DIR}/TestUtility.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/ValidationObservers.h
     ${CMAKE_CURRENT_SOURCE_DIR}/WriteReadFileTest.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/WriteReadTest.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/WriteReadTest.h
+)
 
 clang_format_add_custom_target(${PROJECT_NAME}-clang-format
     SOURCES "${ZSERIO_CPP_TEST_UTILS_SOURCES}"

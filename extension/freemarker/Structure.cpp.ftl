@@ -192,7 +192,7 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
 <#macro structure_field_view_getter_inner field, indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#lt><@structure_field_view_type_name field/>{
-${I}        <#if field.optional??>std::in_place, <#rt>
+${I}        <#if field.optional??>::std::in_place, <#rt>
             m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator(), </#if><#t>
             <#if field.isExtended>*</#if><#if field.optional??>*</#if><#t>
             m_data-><@field_data_member_name field/><@field_view_parameters field/>}<#t>

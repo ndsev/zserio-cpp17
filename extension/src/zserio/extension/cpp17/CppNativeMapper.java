@@ -61,6 +61,12 @@ public final class CppNativeMapper
         stringType = new NativeAllocType(typesContext.getString(), allocatorDefinition, "char");
         vectorType = new NativeAllocType(typesContext.getVector(), allocatorDefinition);
 
+        mapType = new NativeAllocType(typesContext.getMap(), allocatorDefinition);
+        setType = new NativeAllocType(typesContext.getSet(), allocatorDefinition);
+
+        optionalType = new NativeAllocType(typesContext.getOptional(), allocatorDefinition);
+        uniquePtrType = new NativeAllocType(typesContext.getUniquePtr(), allocatorDefinition);
+
         serviceType = new NativeAllocType(typesContext.getService(), allocatorDefinition, "uint8_t");
         serviceClientType =
                 new NativeAllocType(typesContext.getServiceClient(), allocatorDefinition, "uint8_t");
@@ -110,10 +116,6 @@ public final class CppNativeMapper
     {
         final TypeMapperVisitor visitor = new TypeMapperVisitor();
         type.accept(visitor);
-
-        final ZserioExtensionException thrownException = visitor.getThrownException();
-        if (thrownException != null)
-            throw thrownException;
 
         final CppNativeType nativeType = visitor.getCppType();
         if (nativeType == null)
@@ -176,6 +178,26 @@ public final class CppNativeMapper
         return vectorType;
     }
 
+    public NativeAllocType getMapType()
+    {
+        return mapType;
+    }
+
+    public NativeAllocType getSetType()
+    {
+        return setType;
+    }
+
+    public NativeAllocType getOptionalType()
+    {
+        return optionalType;
+    }
+
+    public NativeAllocType getUniquePtrType()
+    {
+        return uniquePtrType;
+    }
+
     public NativeAllocType getServiceType()
     {
         return serviceType;
@@ -204,6 +226,16 @@ public final class CppNativeMapper
     public NativeAllocType getRawServiceDataViewType()
     {
         return rawServiceDataViewType;
+    }
+
+    public NativeIntegralType getUInt64Type()
+    {
+        return uint64Type;
+    }
+
+    public NativeIntegralType getInt64Type()
+    {
+        return int64Type;
     }
 
     private CppNativeType mapArray(ArrayInstantiation instantiation) throws ZserioExtensionException
@@ -538,11 +570,6 @@ public final class CppNativeMapper
             return cppType;
         }
 
-        public ZserioExtensionException getThrownException()
-        {
-            return thrownException;
-        }
-
         @Override
         public void visitStdIntegerType(StdIntegerType type)
         {
@@ -675,13 +702,19 @@ public final class CppNativeMapper
         @Override
         public void visitSqlDatabaseType(SqlDatabaseType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            final PackageName packageName = type.getPackage().getPackageName();
+            final String name = type.getName();
+            final String includeFileName = getIncludePath(packageName, name);
+            cppType = new NativeUserType(packageName, name, includeFileName);
         }
 
         @Override
         public void visitSqlTableType(SqlTableType type)
         {
-            thrownException = new ZserioExtensionException("TODO Unhandled type '" + type.getClass().getName());
+            final PackageName packageName = type.getPackage().getPackageName();
+            final String name = type.getName();
+            final String includeFileName = getIncludePath(packageName, name);
+            cppType = new NativeUserType(packageName, name, includeFileName);
         }
 
         @Override
@@ -744,7 +777,6 @@ public final class CppNativeMapper
         }
 
         private CppNativeType cppType = null;
-        private ZserioExtensionException thrownException = null;
     }
 
     private final static String INCLUDE_DIR_SEPARATOR = "/";
@@ -756,6 +788,10 @@ public final class CppNativeMapper
     private final NativeAllocType bytesType;
     private final NativeAllocType stringType;
     private final NativeAllocType vectorType;
+    private final NativeAllocType mapType;
+    private final NativeAllocType setType;
+    private final NativeAllocType optionalType;
+    private final NativeAllocType uniquePtrType;
 
     private final NativeAllocType serviceType;
     private final NativeAllocType serviceClientType;

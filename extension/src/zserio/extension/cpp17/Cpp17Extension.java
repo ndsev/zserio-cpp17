@@ -85,15 +85,17 @@ public final class Cpp17Extension implements Extension
                 new TemplateDataContext(cppParameters, packedTypesCollector, offsetFieldsCollector);
 
         final List<CppDefaultEmitter> emitters = new ArrayList<CppDefaultEmitter>();
-        emitters.add(new ConstEmitter(outputFileManager, cppParameters, context));
         emitters.add(new BitmaskEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new ConstEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new ChoiceEmitter(outputFileManager, cppParameters, context));
         emitters.add(new EnumerationEmitter(outputFileManager, cppParameters, context));
-        emitters.add(new PubsubEmitter(outputFileManager, cppParameters, context));
         emitters.add(new ServiceEmitter(outputFileManager, cppParameters, context));
         emitters.add(new StructureEmitter(outputFileManager, cppParameters, context));
-        emitters.add(new ChoiceEmitter(outputFileManager, cppParameters, context));
-        emitters.add(new UnionEmitter(outputFileManager, cppParameters, context));
         emitters.add(new SubtypeEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new SqlDatabaseEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new SqlTableEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new PubsubEmitter(outputFileManager, cppParameters, context));
+        emitters.add(new UnionEmitter(outputFileManager, cppParameters, context));
 
         // emit C++ code
         for (CppDefaultEmitter emitter : emitters)

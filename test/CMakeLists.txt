@@ -68,8 +68,8 @@ include(gtest_utils)
 gtest_add_library(${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest)
 
 # add SQLite3 for testing
-#include(sqlite_utils)
-#sqlite_add_library(${ZSERIO_CPP17_PROJECT_ROOT})
+include(sqlite_utils)
+sqlite_add_library(${ZSERIO_CPP17_PROJECT_ROOT})
 
 compiler_set_warnings()
 compiler_set_warnings_as_errors()
