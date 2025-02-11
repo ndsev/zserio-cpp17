@@ -6,6 +6,7 @@
 
 <@runtime_version_check generatorVersion/>
 
+<@type_includes types.string/>
 #include <zserio/Bitmasks.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>

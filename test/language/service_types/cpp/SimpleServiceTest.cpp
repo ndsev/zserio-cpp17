@@ -19,7 +19,7 @@ using AllocatorType = SimpleService::Client::AllocatorType;
 using LocalServiceClient = test_utils::LocalServiceClient<AllocatorType>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 namespace
 {
@@ -131,7 +131,7 @@ TEST_F(SimpleServiceTest, powerOfTwoRaw)
     auto requestData = zserio::serialize(request);
     auto responseData = client.powerOfTwoRawMethod(requestData.getBytes());
     Response response;
-    zserio::deserialize(BitBuffer(responseData), response);
+    zserio::deserialize(BitBufferType(responseData), response);
     ASSERT_EQ(169, response.value);
 }
 

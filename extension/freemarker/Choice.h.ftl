@@ -11,8 +11,8 @@
 
 #include <memory>
 
+<@type_includes types.variant/>
 #include <zserio/ChoiceTag.h>
-#include <zserio/Variant.h>
 #include <zserio/View.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
@@ -40,7 +40,7 @@ struct ChoiceTag<${fullName}>
 <#if docComments??>
 <@doc_comments docComments/>
 </#if>
-struct ${name} : ::zserio::Variant<::zserio::detail::ChoiceTag<${name}>::Tag,
+struct ${name} : <@variant_type_name_begin/>::zserio::detail::ChoiceTag<${name}>::Tag,
         ::std::monostate<#rt>
 <#list fieldList as field>
         <#lt>,
@@ -49,7 +49,7 @@ struct ${name} : ::zserio::Variant<::zserio::detail::ChoiceTag<${name}>::Tag,
         <#lt>>
 {
     using ChoiceTag = ::zserio::detail::ChoiceTag<${name}>::Tag;
-    using Base = ::zserio::Variant<ChoiceTag,
+    using Base = <@variant_type_name_begin/>ChoiceTag,
             ::std::monostate<#rt>
 <#list fieldList as field>
             <#lt>,

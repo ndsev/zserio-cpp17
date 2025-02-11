@@ -41,19 +41,20 @@
 </#macro>
 
 <#macro sql_row_view_field_type_name field>
-    Optional<<#t>
-    <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
-        ${field.typeInfo.typeFullName}<#t>
-    <#elseif field.typeInfo.isString>
-        StringView<#t>
-    <#elseif field.typeInfo.isExtern>
-        ${types.bitBufferView.name}<#t>
-    <#elseif field.typeInfo.isBytes>
-        BytesView<#t>
-    <#else>
-        View<${field.typeInfo.typeFullName}><#t>
-    </#if>
-    ><#t>
+    <#local fieldViewTypeName>
+        <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
+            ${field.typeInfo.typeFullName}<#t>
+        <#elseif field.typeInfo.isString>
+            StringView<#t>
+        <#elseif field.typeInfo.isExtern>
+            ${types.bitBufferView.name}<#t>
+        <#elseif field.typeInfo.isBytes>
+            BytesView<#t>
+        <#else>
+            View<${field.typeInfo.typeFullName}><#t>
+        </#if>
+    </#local>
+    <@optional_type_name fieldViewTypeName/>
 </#macro>
 
 <#macro sql_parameter_provider_getter_name parameter>

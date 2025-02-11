@@ -65,6 +65,7 @@ public final class CppNativeMapper
         setType = new NativeAllocType(typesContext.getSet(), allocatorDefinition);
 
         optionalType = new NativeAllocType(typesContext.getOptional(), allocatorDefinition);
+        variantType = new NativeAllocType(typesContext.getVariant(), allocatorDefinition);
         uniquePtrType = new NativeAllocType(typesContext.getUniquePtr(), allocatorDefinition);
 
         serviceType = new NativeAllocType(typesContext.getService(), allocatorDefinition, "uint8_t");
@@ -191,6 +192,11 @@ public final class CppNativeMapper
     public NativeAllocType getOptionalType()
     {
         return optionalType;
+    }
+
+    public NativeAllocType getVariantType()
+    {
+        return variantType;
     }
 
     public NativeAllocType getUniquePtrType()
@@ -791,6 +797,7 @@ public final class CppNativeMapper
     private final NativeAllocType mapType;
     private final NativeAllocType setType;
     private final NativeAllocType optionalType;
+    private final NativeAllocType variantType;
     private final NativeAllocType uniquePtrType;
 
     private final NativeAllocType serviceType;

@@ -10,7 +10,7 @@ namespace pmr
 {
 
 /**
- * Typedef to zserio::UniquePtr provided for convenience - using PropagatingPolymorphicAllocator.
+ * Typedef to zserio::UniquePtr provided for convenience - using PropagatingPolymorphicAllocator<uint8_t>.
  */
 template <typename T>
 using UniquePtr = zserio::UniquePtr<T, PropagatingPolymorphicAllocator<T>>;

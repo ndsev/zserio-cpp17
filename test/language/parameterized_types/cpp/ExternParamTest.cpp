@@ -10,11 +10,11 @@ namespace extern_param
 using AllocatorType = ExternParam::AllocatorType;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 TEST(ExternParamTest, writeRead)
 {
-    ExternParam data(BitBuffer(VectorType<uint8_t>{{0xCA, 0xFE}}, 15), Parameterized(13));
+    ExternParam data(BitBufferType(VectorType<uint8_t>{{0xCA, 0xFE}}, 15), Parameterized(13));
 
     test_utils::writeReadTest(data);
 }

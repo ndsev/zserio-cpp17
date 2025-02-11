@@ -2,11 +2,15 @@
 #include "identifiers/structure_name_clashing_with_java/StructureNameClashingWithJava.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/RebindAlloc.h"
 
 namespace identifiers
 {
 namespace structure_name_clashing_with_java
 {
+
+using AllocatorType = StructureNameClashingWithJava::AllocatorType;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class StructureNameClashingWithJavaTest : public ::testing::Test
 {
@@ -66,7 +70,7 @@ TEST_F(StructureNameClashingWithJavaTest, bitSizeOf)
 {
     StructureNameClashingWithJava data{Byte{zserio::Int8(0)}, Short{zserio::Int16(0)},
             Integer{zserio::Int32(0)}, Long{zserio::Int64(0)}, BigInteger{zserio::UInt64(0)},
-            Float{zserio::Float32(0.0F)}, Double{zserio::Float64(0.0)}, String{zserio::String("")}};
+            Float{zserio::Float32(0.0F)}, Double{zserio::Float64(0.0)}, String{StringType("")}};
     zserio::View view(data);
 
     ASSERT_EQ(BIT_SIZE, zserio::detail::bitSizeOf(view));

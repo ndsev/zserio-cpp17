@@ -7,9 +7,7 @@ namespace zserio
 {
 
 /**
- * Typedef to std::vector provided for convenience - using std::allocator<uint8_t>.
- *
- * Automatically rebinds the given allocator.
+ * Typedef to std::vector provided for convenience - using std::allocator.
  */
 template <typename T, typename ALLOC = std::allocator<T>>
 using Vector = std::vector<T, ALLOC>;

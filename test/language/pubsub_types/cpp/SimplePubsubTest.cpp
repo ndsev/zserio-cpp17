@@ -16,7 +16,7 @@ namespace simple_pubsub
 
 using AllocatorType = SimplePubsub::AllocatorType;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 class SimplePubsubTest : public ::testing::Test
 {
@@ -202,7 +202,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawClientAndProvider)
             const uint64_t absValue =
                     value.value > 0 ? static_cast<uint64_t>(value.value) : static_cast<uint64_t>(-value.value);
             UInt64Value result{absValue * absValue};
-            const BitBuffer resultBitBuffer = zserio::serialize(result);
+            const BitBufferType resultBitBuffer = zserio::serialize(result);
             simplePubsubProvider.publishPowerOfTwoRaw(
                     ::zserio::Span<const uint8_t>{resultBitBuffer.getBuffer(), resultBitBuffer.getByteSize()});
         }
@@ -232,7 +232,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawClientAndProvider)
     simplePubsubClient.subscribePowerOfTwoRaw(powerOfTwoRawCallback);
 
     Int32Value request{13};
-    const BitBuffer requestBitBuffer = zserio::serialize(request);
+    const BitBufferType requestBitBuffer = zserio::serialize(request);
     simplePubsubClient.publishRequestRaw(
             zserio::Span<const uint8_t>(requestBitBuffer.getBuffer(), requestBitBuffer.getByteSize()));
     ASSERT_EQ(169, powerOfTwoRawCallback->result);
@@ -254,7 +254,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawSimplePubsub)
             const uint64_t absValue =
                     value.value > 0 ? static_cast<uint64_t>(value.value) : static_cast<uint64_t>(-value.value);
             UInt64Value result{absValue * absValue};
-            const BitBuffer resultBitBuffer = zserio::serialize(result);
+            const BitBufferType resultBitBuffer = zserio::serialize(result);
             simplePubsub.publishPowerOfTwoRaw(
                     zserio::Span<const uint8_t>{resultBitBuffer.getBuffer(), resultBitBuffer.getByteSize()});
         }
@@ -282,7 +282,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawSimplePubsub)
     simplePubsub.subscribePowerOfTwoRaw(powerOfTwoRawCallback);
 
     Int32Value request{13};
-    const BitBuffer requestBitBuffer = zserio::serialize(request);
+    const BitBufferType requestBitBuffer = zserio::serialize(request);
     simplePubsub.publishRequestRaw(
             zserio::Span<const uint8_t>(requestBitBuffer.getBuffer(), requestBitBuffer.getByteSize()));
     ASSERT_EQ(169, powerOfTwoRawCallback->result);

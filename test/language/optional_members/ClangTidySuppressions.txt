@@ -1,3 +1,4 @@
+bugprone-exception-escape:gen/optional_members/optional_array_recursion/Employee.h
 bugprone-exception-escape:gen/optional_members/optional_recursion/Block.h
 
 misc-no-recursion # reports also tested_release

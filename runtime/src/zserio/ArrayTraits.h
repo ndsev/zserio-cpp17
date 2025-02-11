@@ -163,12 +163,13 @@ struct ArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
 template <typename ALLOC>
 struct ArrayTraits<BasicBytes<ALLOC>>
 {
-    static constexpr BytesView at(const detail::DummyArrayOwner&, const Bytes& element, size_t)
+    static constexpr BytesView at(const detail::DummyArrayOwner&, const BasicBytes<ALLOC>& element, size_t)
     {
         return element;
     }
 
-    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, Bytes& element, size_t)
+    static void read(
+            BitStreamReader& reader, const detail::DummyArrayOwner&, BasicBytes<ALLOC>& element, size_t)
     {
         detail::read(reader, element);
     }

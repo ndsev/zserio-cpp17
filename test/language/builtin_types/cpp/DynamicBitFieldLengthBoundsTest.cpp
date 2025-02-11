@@ -8,7 +8,7 @@ namespace dynamic_bitfield_length_bounds
 {
 
 using AllocatorType = Container::AllocatorType;
-using BitBuffer = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 class DynamicBitFieldLengthBoundsTest : public ::testing::Test
 {
@@ -68,7 +68,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, unsignedBitLengthZero)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
@@ -85,7 +85,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, unsignedBitLengthZeroValueZero)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
@@ -102,7 +102,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, unsignedBigBitLengthZero)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
@@ -117,7 +117,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, unsignedBigBitLengthZeroValueZero)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
@@ -135,7 +135,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, unsignedBigBitLengthOverMax)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
@@ -153,7 +153,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, signedBitLengthZero)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
@@ -170,7 +170,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, signedBitLengthZeroValueZero)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
@@ -188,7 +188,7 @@ TEST_F(DynamicBitFieldLengthBoundsTest, signedBitLengthOverMax)
 
     zserio::View view(data);
     zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
-    zserio::BitBuffer bitBuffer(bitSize);
+    BitBufferType bitBuffer(bitSize);
     zserio::BitStreamWriter writer(bitBuffer);
     writeData(writer, data);
 
