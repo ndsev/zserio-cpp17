@@ -1,6 +1,9 @@
 bugprone-exception-escape:gen/parameterized_types/grand_child_param/GrandChildParam.h
 bugprone-exception-escape:gen/parameterized_types/grand_child_param/ItemChoice.h
 bugprone-exception-escape:gen/parameterized_types/grand_child_param/ItemChoiceHolder.h
+bugprone-exception-escape:gen/parameterized_types/param_with_optional/Holder.h
+bugprone-exception-escape:gen/parameterized_types/param_with_optional/Value.h
+bugprone-exception-escape:gen/parameterized_types/param_with_optional/Value.h
 
 google-explicit-constructor:gen/parameterized_types/fixed_and_variable_param/Access.h
 
