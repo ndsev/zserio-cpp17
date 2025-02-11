@@ -16,7 +16,8 @@ using AllocatorType = Extended2::AllocatorType;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBuffer = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
+using BytesType = zserio::BasicBytes<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 class MultipleExtendedFieldsVariousTypesTest : public ::testing::Test
 {
@@ -120,8 +121,8 @@ protected:
 
     static constexpr zserio::Int7 VALUE = -13;
     static constexpr zserio::UInt32 EXTENDED_VALUE1 = 42;
-    static const BitBuffer EXTENDED_VALUE2;
-    static const zserio::Bytes EXTENDED_VALUE3;
+    static const BitBufferType EXTENDED_VALUE2;
+    static const BytesType EXTENDED_VALUE3;
     static constexpr zserio::VarSize EXTENDED_VALUE5 = 3;
     static const VectorType<StringType> EXTENDED_VALUE6;
     static constexpr zserio::DynUInt64<> EXTENDED_VALUE9 = 7; // bit<EXTENDED_VALUE5>
@@ -129,8 +130,8 @@ protected:
     static constexpr size_t ORIGINAL_BIT_SIZE = 7;
 };
 
-const BitBuffer MultipleExtendedFieldsVariousTypesTest::EXTENDED_VALUE2 = BitBuffer({0xCA, 0xFE}, 16);
-const zserio::Bytes MultipleExtendedFieldsVariousTypesTest::EXTENDED_VALUE3 = {0xDE, 0xAD};
+const BitBufferType MultipleExtendedFieldsVariousTypesTest::EXTENDED_VALUE2 = BitBufferType({0xCA, 0xFE}, 16);
+const BytesType MultipleExtendedFieldsVariousTypesTest::EXTENDED_VALUE3 = {0xDE, 0xAD};
 const VectorType<StringType> MultipleExtendedFieldsVariousTypesTest::EXTENDED_VALUE6 = {"this", "is", "test"};
 
 TEST_F(MultipleExtendedFieldsVariousTypesTest, defaultConstructor)
@@ -143,7 +144,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, defaultConstructor)
 
     // default initialized
     ASSERT_FALSE(data.extendedValue1->has_value());
-    ASSERT_EQ(BitBuffer(), *data.extendedValue2);
+    ASSERT_EQ(BitBufferType(), *data.extendedValue2);
     ASSERT_EQ(VectorType<uint8_t>(), *data.extendedValue3);
     ASSERT_FALSE(data.extendedValue4->has_value());
     ASSERT_EQ(0, *data.extendedValue5);
@@ -153,7 +154,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, defaultConstructor)
     ASSERT_FALSE(data.extendedValue9->has_value());
 
     ASSERT_FALSE(view.extendedValue1()->has_value());
-    ASSERT_EQ(BitBuffer(), *view.extendedValue2());
+    ASSERT_EQ(BitBufferType(), *view.extendedValue2());
     ASSERT_EQ(VectorType<uint8_t>(), *view.extendedValue3());
     ASSERT_FALSE(view.extendedValue4()->has_value());
     ASSERT_EQ(0, *view.extendedValue5());
@@ -242,7 +243,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, writeOriginalReadExtended2)
 
     // extended fields are default constructed
     ASSERT_FALSE(readViewExtended2.extendedValue1()->has_value());
-    ASSERT_EQ(BitBuffer(), *readViewExtended2.extendedValue2());
+    ASSERT_EQ(BitBufferType(), *readViewExtended2.extendedValue2());
     ASSERT_EQ(VectorType<uint8_t>(), *readViewExtended2.extendedValue3());
     ASSERT_FALSE(readViewExtended2.extendedValue4()->has_value());
     ASSERT_EQ(0, *readViewExtended2.extendedValue5());

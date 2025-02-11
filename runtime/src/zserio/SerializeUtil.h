@@ -32,12 +32,12 @@ namespace zserio
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     SomeZserioObject objectData;
- *     const zserio::BasicBitBuffer<zserio::pmr::PolymorphicAllocator<>> bitBuffer =
+ *     const zserio::BasicBitBuffer<zserio::pmr::PropagatingPolymorphicAllocator<>> bitBuffer =
  *             zserio::serialize(objectData, allocator);
  * \endcode
  *
@@ -65,13 +65,13 @@ BasicBitBuffer<ALLOC> serialize(const T& data, const ALLOC& allocator, ARGS&&...
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     SomeZserioObject objectData(allocator);
  *     zserio::View<SomeZserioObject> objectView(objectData);
- *     const zserio::vector<uint8_t, zserio::pmr::PolymorphicAllocator<>> buffer =
+ *     const zserio::vector<uint8_t, zserio::pmr::PropagatingPolymorphicAllocator<>> buffer =
  *             zserio::serializeToBytes(objectView, allocator);
  * \endcode
  *
@@ -128,13 +128,13 @@ BasicBitBuffer<typename T::AllocatorType> serialize(const T& data, ARGS&&... arg
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     SomeZserioObject objectData(allocator);
  *     zserio::View<SomeZserioObject> objectView(objectData);
- *     const zserio::vector<uint8_t, zserio::pmr::PolymorphicAllocator<>> buffer =
+ *     const zserio::vector<uint8_t, zserio::pmr::PropagatingPolymorphicAllocator<>> buffer =
  *             zserio::serializeToBytes(objectView, allocator);
  * \endcode
  *
@@ -215,13 +215,13 @@ View<T> deserializeFromBytes(Span<const uint8_t> buffer, T& data, ARGS&&... argu
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     SomeZserioObject objectData;
  *     zserio::View<SomeZserioObject> objectView(objectData);
- *     const zserio::BasicBitBuffer<zserio::pmr::PolymorphicAllocator<>> bitBuffer =
+ *     const zserio::BasicBitBuffer<zserio::pmr::PropagatingPolymorphicAllocator<>> bitBuffer =
  *             zserio::serialize(objectView, allocator);
  * \endcode
  *
@@ -252,13 +252,13 @@ BasicBitBuffer<ALLOC> serialize(const View<T>& view, const ALLOC& allocator)
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     SomeZserioObject objectData(allocator);
  *     zserio::View<SomeZserioObject> objectView(objectData);
- *     const zserio::vector<uint8_t, zserio::pmr::PolymorphicAllocator<>> buffer =
+ *     const zserio::vector<uint8_t, zserio::pmr::PropagatingPolymorphicAllocator<>> buffer =
  *             zserio::serializeToBytes(objectView, allocator);
  * \endcode
  *
@@ -344,13 +344,13 @@ Vector<uint8_t, typename T::AllocatorType> serializeToBytes(const View<T>& view)
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     SomeZserioObject objectData;
  *     zserio::DataView<SomeZserioObject> objectDataView(objectData);
- *     const zserio::BasicBitBuffer<zserio::pmr::PolymorphicAllocator<>> bitBuffer =
+ *     const zserio::BasicBitBuffer<zserio::pmr::PropagatingPolymorphicAllocator<>> bitBuffer =
  *             zserio::serialize(objectDataView, allocator);
  * \endcode
  *
@@ -381,10 +381,10 @@ BasicBitBuffer<ALLOC> serialize(const DataView<T>& dataView, const ALLOC& alloca
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     SomeZserioObject objectData(allocator);
  *     zserio::DataView<SomeZserioObject> objectView(objectData);
  *     const auto buffer = zserio::serializeToBytes(objectView, allocator);
@@ -469,10 +469,10 @@ Vector<uint8_t, typename T::AllocatorType> serializeToBytes(const DataView<T>& d
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     const auto bitBuffer = zserio::serialize(objectData, allocator);
  *     zserio::DataView<SomeZserioObject> objectView = zserio::deserialize(bitBuffer, allocator);
  * \endcode
@@ -500,10 +500,10 @@ DataView<T> deserialize(
  *
  * Example:
  * \code{.cpp}
- *     #include <zserio/pmr/PolymorphicAllocator.h>
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
  *     #include <zserio/SerializeUtil.h>
  *
- *     const zserio::pmr::PolymorphicAllocator<> allocator;
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     const auto buffer = zserio::serializeToBytes(objectData, allocator);
  *     zserio::DataView<SomeZserioObject> objectView = zserio::deserializeFromBytes(buffer, allocator);
  * \endcode

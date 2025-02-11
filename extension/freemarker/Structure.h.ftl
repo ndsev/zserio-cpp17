@@ -12,9 +12,10 @@
 #include <zserio/DeltaContext.h>
 </#if>
 <#if structure_has_optional_field(fieldList)>
-#include <zserio/Optional.h>
+<@type_includes types.optional/>
 </#if>
 #include <zserio/View.h>
+<@type_includes types.allocator/>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>

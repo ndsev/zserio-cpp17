@@ -11,7 +11,6 @@ namespace auto_array_offset
 using AllocatorType = AutoArrayHolder::AllocatorType;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
 
 class AutoArrayOffsetTest : public ::testing::Test
 {

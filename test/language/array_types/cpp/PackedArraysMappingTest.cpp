@@ -11,8 +11,6 @@ using AllocatorType = PackedArraysMapping::AllocatorType;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
-
 class PackedArraysMappingTest : public ::testing::Test
 {
 protected:

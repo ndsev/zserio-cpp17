@@ -10,11 +10,11 @@
 #include <memory>
 #include <sqlite3.h>
 #include <string_view>
+<@type_includes types.optional/>
 <@type_includes types.vector/>
 <@type_includes types.string/>
 #include <zserio/AllocatorHolder.h>
 #include <zserio/IValidationObserver.h>
-#include <zserio/Optional.h>
 #include <zserio/Span.h>
 #include <zserio/SqliteConnection.h>
 #include <zserio/SqliteFinalizer.h>
@@ -62,7 +62,7 @@ public:
     struct Row
     {
 <#list fieldList as field>
-        ${types.optional.name}<${field.typeInfo.typeFullName}> <@sql_row_member_name field/>;
+        <@optional_type_name field.typeInfo.typeFullName/> <@sql_row_member_name field/>;
 </#list>
     };
 
@@ -183,7 +183,7 @@ public:
             <#lt>::std::string_view condition = ::std::string_view()) const;
 
     Reader createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-            <#lt>::zserio::Span<const ::std::string> columns,
+            <#lt>::zserio::Span<const ${types.string.name}> columns,
             ::std::string_view condition = ::std::string_view()) const;
     /** \} */
 
@@ -197,7 +197,7 @@ public:
      * \param columns Column names to write. If omitted or empty, all columns are used.
      */
     void write(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-            <#lt>::zserio::Span<Row> rows, ::zserio::Span<const ::std::string> columns = {});
+            <#lt>::zserio::Span<Row> rows, ::zserio::Span<const ${types.string.name}> columns = {});
 
     /**
      * Updates row of the table.
@@ -214,7 +214,7 @@ public:
             <#lt>::std::string_view whereCondition);
 
     void update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
-             ::zserio::Span<const ::std::string> columns, ::std::string_view whereCondition);
+             ::zserio::Span<const ${types.string.name}> columns, ::std::string_view whereCondition);
     /** \} */
 
     /**

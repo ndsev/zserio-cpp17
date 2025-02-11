@@ -17,7 +17,7 @@ using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
-using BitBuffer = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 class AllBuiltInTypesTest : public ::testing::Test
 {
@@ -30,7 +30,7 @@ public:
     }
 
 protected:
-    static BitBuffer getExternalBitBuffer()
+    static BitBufferType getExternalBitBuffer()
     {
         ExternalStructure externalStructure(0xCD, 0x03);
         return zserio::serialize(externalStructure);
@@ -391,7 +391,7 @@ TEST_F(AllBuiltInTypesTest, stringType)
 
 TEST_F(AllBuiltInTypesTest, externType)
 {
-    const BitBuffer testExtern = getExternalBitBuffer();
+    const BitBufferType testExtern = getExternalBitBuffer();
     m_data.externType = testExtern;
     ASSERT_EQ(testExtern, m_data.externType);
     ASSERT_EQ(testExtern, m_view.externType());

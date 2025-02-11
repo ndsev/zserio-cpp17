@@ -26,8 +26,9 @@ public final class TypesContext
             set = new NativeTypeDefinition(STD_PACKAGE_NAME, "set", true, false, "set");
             optional =
                     new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Optional", true, false, "zserio/Optional.h");
+            variant = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Variant", true, false, "zserio/Variant.h");
             uniquePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "unique_ptr", true, false, "zserio/UniquePtr.h");
+                    ZSERIO_PACKAGE_NAME, "UniquePtr", true, false, "zserio/UniquePtr.h");
             service = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IService", false, false, "zserio/IService.h");
             serviceClient = new NativeTypeDefinition(
@@ -53,12 +54,14 @@ public final class TypesContext
                     ZSERIO_PMR_PACKAGE_NAME, "String", false, false, "zserio/pmr/String.h");
             vector = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "Vector", true, false, "zserio/pmr/Vector.h");
-            map = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "map", true, false, "zserio/pmr/Map.h");
-            set = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "set", true, false, "zserio/pmr/Set.h");
+            map = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "Map", true, false, "zserio/pmr/Map.h");
+            set = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "Set", true, false, "zserio/pmr/Set.h");
             optional = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "Optional", true, false, "zserio/pmr/Optional.h");
+            variant = new NativeTypeDefinition(
+                    ZSERIO_PMR_PACKAGE_NAME, "Variant", true, false, "zserio/pmr/Variant.h");
             uniquePtr = new NativeTypeDefinition(
-                    ZSERIO_PMR_PACKAGE_NAME, "unique_ptr", true, false, "zserio/pmr/UniquePtr.h");
+                    ZSERIO_PMR_PACKAGE_NAME, "UniquePtr", true, false, "zserio/pmr/UniquePtr.h");
             service = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "IService", false, false, "zserio/pmr/IService.h");
             serviceClient = new NativeTypeDefinition(
@@ -86,8 +89,10 @@ public final class TypesContext
             set = new NativeTypeDefinition(STD_PACKAGE_NAME, "set", true, true, "set");
             optional = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BasicOptional", true, true, "zserio/Optional.h");
+            variant = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "BasicVariant", true, true, "zserio/Variant.h");
             uniquePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "unique_ptr", true, true, "zserio/UniquePtr.h");
+                    ZSERIO_PACKAGE_NAME, "UniquePtr", true, true, "zserio/UniquePtr.h");
             service = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IBasicService", true, true, "zserio/IService.h");
             serviceClient = new NativeTypeDefinition(
@@ -146,6 +151,11 @@ public final class TypesContext
     public NativeTypeDefinition getOptional()
     {
         return optional;
+    }
+
+    public NativeTypeDefinition getVariant()
+    {
+        return variant;
     }
 
     public NativeTypeDefinition getUniquePtr()
@@ -271,6 +281,7 @@ public final class TypesContext
     private final NativeTypeDefinition map;
     private final NativeTypeDefinition set;
     private final NativeTypeDefinition optional;
+    private final NativeTypeDefinition variant;
     private final NativeTypeDefinition uniquePtr;
 
     private final NativeTypeDefinition service;
@@ -281,7 +292,7 @@ public final class TypesContext
     private final NativeTypeDefinition rawServiceDataView;
 
     public static final AllocatorDefinition PROPAGATING_POLYMORPHIC_ALLOCATOR = new AllocatorDefinition(
-            "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PolymorphicAllocator.h", "");
+            "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PropagatingPolymorphicAllocator.h");
     public static final AllocatorDefinition STD_ALLOCATOR =
             new AllocatorDefinition("::std::allocator", "memory");
 

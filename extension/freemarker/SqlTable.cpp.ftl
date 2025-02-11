@@ -20,7 +20,7 @@
 namespace
 {
 
-::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ::std::string> columns)
+::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ${types.string.name}> columns)
 {
     if (columns.empty())
     {
@@ -30,7 +30,7 @@ namespace
     }
 
     ::std::array<bool, ${fieldList?size}> columnsMapping = {};
-    for (const ::std::string& columnName : columns)
+    for (const auto& columnName : columns)
     {
         const auto it = ::std::find(${name}::columnNames.begin(), ${name}::columnNames.end(), columnName);
         if (it == ${name}::columnNames.end())
@@ -162,7 +162,7 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
 }
 
 ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-        <#lt>::zserio::Span<const ::std::string> columns,
+        <#lt>::zserio::Span<const ${types.string.name}> columns,
         ::std::string_view condition) const
 {
     const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
@@ -288,7 +288,7 @@ void ${name}::Reader::makeStep()
 
 void ${name}::write(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
         <#lt>::zserio::Span<Row> rows,
-        ::zserio::Span<const ::std::string> columns)
+        ::zserio::Span<const ${types.string.name}> columns)
 {
     // assemble sql query
     const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
@@ -340,7 +340,7 @@ void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterPr
 }
 
 void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
-        ::zserio::Span<const ::std::string> columns, ::std::string_view whereCondition)
+        ::zserio::Span<const ${types.string.name}> columns, ::std::string_view whereCondition)
 {
     // assemble sql query
     const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
