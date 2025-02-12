@@ -10,6 +10,7 @@ set(ZSERIO_CPP_TEST_UTILS_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/ComparisonOperatorsTest.h
     ${CMAKE_CURRENT_SOURCE_DIR}/HashTest.h
     ${CMAKE_CURRENT_SOURCE_DIR}/LocalServiceClient.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/MemoryResources.h
     ${CMAKE_CURRENT_SOURCE_DIR}/ReadTest.h
     ${CMAKE_CURRENT_SOURCE_DIR}/SqlUtility.h
     ${CMAKE_CURRENT_SOURCE_DIR}/TestPubsub.h

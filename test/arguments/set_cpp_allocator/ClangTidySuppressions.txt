@@ -1,0 +1,10 @@
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/allocation_choice/AllocationChoice.h
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/allocation_struct_optional/AllocationStructOptional.h
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/allocation_union/AllocationUnion.h
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/MainStructure.h
+
+google-build-using-namespace:cpp/ComplexAllocationTest.cpp
+
+misc-no-recursion # reports also tested_release and some system headers
+
+readability-simplify-boolean-expr:gen_complex_allocation/complex_allocation/allocation_choice/AllocationChoice.cpp
