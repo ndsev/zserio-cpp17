@@ -73,7 +73,7 @@ jobs:
     - name: Install clang format
       shell: bash
       run: |
-        choco install llvm --version=14.0.0 --allow-downgrade
+        choco install llvm --version=18.1.8 --allow-downgrade
 
     - name: Checkout
       uses: actions/checkout@v4
