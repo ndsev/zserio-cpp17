@@ -71,8 +71,8 @@ add_custom_test(set_cpp_allocator
         sql_allocation_zs
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ComplexAllocationTest.cpp
-        #${CMAKE_CURRENT_SOURCE_DIR}/cpp/PubsubAllocationTest.cpp
-        #${CMAKE_CURRENT_SOURCE_DIR}/cpp/ServiceAllocationTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PubsubAllocationTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ServiceAllocationTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SqlAllocationTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES_COMPLEX_ALLOCATION}
