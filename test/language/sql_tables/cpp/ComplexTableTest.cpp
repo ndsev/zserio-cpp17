@@ -40,7 +40,7 @@ public:
     ComplexTableTest& operator=(ComplexTableTest&&) = delete;
 
 protected:
-    static void fillComplexTableRowWithNullValues(ComplexTable::Row& row, uint64_t blobId)
+    static void fillRowWithNullValues(ComplexTable::Row& row, uint64_t blobId)
     {
         row.blobId = blobId;
         row.age = std::numeric_limits<int64_t>::max();
@@ -53,18 +53,18 @@ protected:
         row.blob.reset();
     }
 
-    static void fillComplexTableRowsWithNullValues(VectorType<ComplexTable::Row>& rows)
+    static void fillRowsWithNullValues(VectorType<ComplexTable::Row>& rows)
     {
         rows.clear();
         for (uint64_t blobId = 0; blobId < NUM_COMPLEX_TABLE_ROWS; ++blobId)
         {
             ComplexTable::Row row;
-            fillComplexTableRowWithNullValues(row, blobId);
+            fillRowWithNullValues(row, blobId);
             rows.push_back(row);
         }
     }
 
-    static void fillComplexTableRow(ComplexTable::Row& row, uint64_t blobId, const StringType& name)
+    static void fillRow(ComplexTable::Row& row, uint64_t blobId, const StringType& name)
     {
         row.blobId = blobId;
         row.age = std::numeric_limits<int64_t>::max();
@@ -85,19 +85,19 @@ protected:
         row.blob = testBlob;
     }
 
-    static void fillComplexTableRows(VectorType<ComplexTable::Row>& rows)
+    static void fillRows(VectorType<ComplexTable::Row>& rows)
     {
         rows.clear();
         for (uint64_t blobId = 0; blobId < NUM_COMPLEX_TABLE_ROWS; ++blobId)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(blobId);
             ComplexTable::Row row;
-            fillComplexTableRow(row, blobId, name);
+            fillRow(row, blobId, name);
             rows.push_back(row);
         }
     }
 
-    static void checkComplexTableRow(const ComplexTable::Row& row1, const ComplexTable::Row& row2)
+    static void checkRow(const ComplexTable::Row& row1, const ComplexTable::Row& row2)
     {
         ASSERT_EQ(row1.blobId, row2.blobId);
 
@@ -111,17 +111,17 @@ protected:
         ASSERT_EQ(row1.blob, row2.blob);
     }
 
-    static void checkComplexTableRows(
+    static void checkRows(
             const VectorType<ComplexTable::Row>& rows1, const VectorType<ComplexTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkComplexTableRow(rows1[i], rows2[i]);
+            checkRow(rows1[i], rows2[i]);
         }
     }
 
-    static void checkComplexTableRowWithNullValues(const ComplexTable::Row& row1, const ComplexTable::Row& row2)
+    static void checkRowWithNullValues(const ComplexTable::Row& row1, const ComplexTable::Row& row2)
     {
         ASSERT_EQ(row1.blobId, row2.blobId);
         ASSERT_EQ(row1.age, row2.age);
@@ -134,13 +134,13 @@ protected:
         ASSERT_EQ(row1.blob, row2.blob);
     }
 
-    static void checkComplexTableRowsWithNullValues(
+    static void checkRowsWithNullValues(
             const VectorType<ComplexTable::Row>& rows1, const VectorType<ComplexTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkComplexTableRowWithNullValues(rows1[i], rows2[i]);
+            checkRowWithNullValues(rows1[i], rows2[i]);
         }
     }
 
@@ -178,7 +178,7 @@ TEST_F(ComplexTableTest, readWithoutCondition)
     ComplexTableParameterProvider parameterProvider;
 
     VectorType<ComplexTable::Row> writtenRows;
-    fillComplexTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(parameterProvider, writtenRows);
 
     VectorType<ComplexTable::Row> readRows;
@@ -188,7 +188,7 @@ TEST_F(ComplexTableTest, readWithoutCondition)
         reader.next(readRows.emplace_back());
     }
 
-    checkComplexTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(ComplexTableTest, readWithoutConditionWithNullValues)
@@ -197,7 +197,7 @@ TEST_F(ComplexTableTest, readWithoutConditionWithNullValues)
     ComplexTableParameterProvider parameterProvider;
 
     VectorType<ComplexTable::Row> writtenRows;
-    fillComplexTableRowsWithNullValues(writtenRows);
+    fillRowsWithNullValues(writtenRows);
     testTable.write(parameterProvider, writtenRows);
 
     VectorType<ComplexTable::Row> readRows;
@@ -207,7 +207,7 @@ TEST_F(ComplexTableTest, readWithoutConditionWithNullValues)
         reader.next(readRows.emplace_back());
     }
 
-    checkComplexTableRowsWithNullValues(writtenRows, readRows);
+    checkRowsWithNullValues(writtenRows, readRows);
 }
 
 TEST_F(ComplexTableTest, readWithCondition)
@@ -216,7 +216,7 @@ TEST_F(ComplexTableTest, readWithCondition)
     ComplexTableParameterProvider parameterProvider;
 
     VectorType<ComplexTable::Row> writtenRows;
-    fillComplexTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(parameterProvider, writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -230,7 +230,7 @@ TEST_F(ComplexTableTest, readWithCondition)
     ASSERT_EQ(1, readRows.size());
 
     const size_t expectedRowNum = 1;
-    checkComplexTableRow(writtenRows[expectedRowNum], readRows[0]);
+    checkRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
 TEST_F(ComplexTableTest, update)
@@ -239,12 +239,12 @@ TEST_F(ComplexTableTest, update)
     ComplexTableParameterProvider parameterProvider;
 
     VectorType<ComplexTable::Row> writtenRows;
-    fillComplexTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(parameterProvider, writtenRows);
 
     const uint64_t updateRowId = 3;
     ComplexTable::Row updateRow;
-    fillComplexTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(parameterProvider, updateRow, updateCondition);
 
@@ -257,7 +257,7 @@ TEST_F(ComplexTableTest, update)
 
     ASSERT_EQ(1, readRows.size());
 
-    checkComplexTableRow(updateRow, readRows[0]);
+    checkRow(updateRow, readRows[0]);
 }
 
 TEST_F(ComplexTableTest, columnNames)

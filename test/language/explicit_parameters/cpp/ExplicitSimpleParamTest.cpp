@@ -54,7 +54,7 @@ protected:
         }
     };
 
-    void fillSimpleParamTableRow(SimpleParamTable::Row& row, uint32_t id, const StringType& name)
+    void fillRow(SimpleParamTable::Row& row, uint32_t id, const StringType& name)
     {
         row.id = id;
         row.name = name;
@@ -84,19 +84,19 @@ protected:
         row.blob3 = testBlob3;
     }
 
-    void fillSimpleParamTableRows(VectorType<SimpleParamTable::Row>& rows)
+    void fillRows(VectorType<SimpleParamTable::Row>& rows)
     {
         rows.clear();
         for (uint32_t id = 0; id < NUM_SIMPLE_PARAM_TABLE_ROWS; ++id)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             SimpleParamTable::Row row;
-            fillSimpleParamTableRow(row, id, name);
+            fillRow(row, id, name);
             rows.push_back(row);
         }
     }
 
-    static void checkSimpleParamTableRow(SimpleParamTableParameterProvider& parameterProvider,
+    static void checkRow(SimpleParamTableParameterProvider& parameterProvider,
             const SimpleParamTable::Row& row1, const SimpleParamTable::Row& row2)
     {
         zserio::View rowView1(row1, parameterProvider);
@@ -112,13 +112,13 @@ protected:
         ASSERT_EQ(rowView2.blob1()->count(), rowView2.blob3()->count());
     }
 
-    static void checkSimpleParamTableRows(SimpleParamTableParameterProvider& parameterProvider,
+    static void checkRows(SimpleParamTableParameterProvider& parameterProvider,
             const VectorType<SimpleParamTable::Row>& rows1, const VectorType<SimpleParamTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkSimpleParamTableRow(parameterProvider, rows1[i], rows2[i]);
+            checkRow(parameterProvider, rows1[i], rows2[i]);
         }
     }
 
@@ -138,7 +138,7 @@ TEST_F(ExplicitSimpleParamTest, readWithoutCondition)
 
     SimpleParamTableParameterProvider parameterProvider;
     VectorType<SimpleParamTable::Row> writtenRows;
-    fillSimpleParamTableRows(writtenRows);
+    fillRows(writtenRows);
     simpleParamTable.write(parameterProvider, writtenRows);
 
     SimpleParamTable::Reader reader = simpleParamTable.createReader(parameterProvider);
@@ -148,7 +148,7 @@ TEST_F(ExplicitSimpleParamTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkSimpleParamTableRows(parameterProvider, writtenRows, readRows);
+    checkRows(parameterProvider, writtenRows, readRows);
 }
 
 TEST_F(ExplicitSimpleParamTest, readWithCondition)
@@ -157,7 +157,7 @@ TEST_F(ExplicitSimpleParamTest, readWithCondition)
 
     SimpleParamTableParameterProvider parameterProvider;
     VectorType<SimpleParamTable::Row> writtenRows;
-    fillSimpleParamTableRows(writtenRows);
+    fillRows(writtenRows);
     simpleParamTable.write(parameterProvider, writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -169,7 +169,7 @@ TEST_F(ExplicitSimpleParamTest, readWithCondition)
     ASSERT_FALSE(reader.hasNext());
 
     const size_t expectedRowNum = 1;
-    checkSimpleParamTableRow(parameterProvider, writtenRows[expectedRowNum], readRow);
+    checkRow(parameterProvider, writtenRows[expectedRowNum], readRow);
 }
 
 TEST_F(ExplicitSimpleParamTest, update)
@@ -178,12 +178,12 @@ TEST_F(ExplicitSimpleParamTest, update)
 
     SimpleParamTableParameterProvider parameterProvider;
     VectorType<SimpleParamTable::Row> writtenRows;
-    fillSimpleParamTableRows(writtenRows);
+    fillRows(writtenRows);
     simpleParamTable.write(parameterProvider, writtenRows);
 
     const uint64_t updateRowId = 3;
     SimpleParamTable::Row updateRow;
-    fillSimpleParamTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     simpleParamTable.update(parameterProvider, updateRow, updateCondition);
 
@@ -193,7 +193,7 @@ TEST_F(ExplicitSimpleParamTest, update)
     SimpleParamTable::Row readRow;
     reader.next(readRow);
     ASSERT_FALSE(reader.hasNext());
-    checkSimpleParamTableRow(parameterProvider, updateRow, readRow);
+    checkRow(parameterProvider, updateRow, readRow);
 }
 
 } // namespace explicit_simple_param

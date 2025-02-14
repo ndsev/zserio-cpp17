@@ -54,7 +54,7 @@ protected:
         }
     };
 
-    void fillBitmaskParamTableRow(BitmaskParamTable::Row& row, uint32_t id, const StringType& name)
+    void fillRow(BitmaskParamTable::Row& row, uint32_t id, const StringType& name)
     {
         row.id = id;
         row.name = name;
@@ -84,19 +84,19 @@ protected:
         row.blob3 = testBlob3;
     }
 
-    void fillBitmaskParamTableRows(VectorType<BitmaskParamTable::Row>& rows)
+    void fillRows(VectorType<BitmaskParamTable::Row>& rows)
     {
         rows.clear();
         for (uint32_t id = 0; id < NUM_BITMASK_PARAM_TABLE_ROWS; ++id)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             BitmaskParamTable::Row row;
-            fillBitmaskParamTableRow(row, id, name);
+            fillRow(row, id, name);
             rows.push_back(row);
         }
     }
 
-    static void checkBitmaskParamTableRow(BitmaskParamTableParameterProvider& parameterProvider,
+    static void checkRow(BitmaskParamTableParameterProvider& parameterProvider,
             const BitmaskParamTable::Row& row1, const BitmaskParamTable::Row& row2)
     {
         zserio::View rowView1(row1, parameterProvider);
@@ -112,13 +112,13 @@ protected:
         ASSERT_EQ(rowView2.blob1()->count(), rowView2.blob3()->count());
     }
 
-    static void checkBitmaskParamTableRows(BitmaskParamTableParameterProvider& parameterProvider,
+    static void checkRows(BitmaskParamTableParameterProvider& parameterProvider,
             const VectorType<BitmaskParamTable::Row>& rows1, const VectorType<BitmaskParamTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkBitmaskParamTableRow(parameterProvider, rows1[i], rows2[i]);
+            checkRow(parameterProvider, rows1[i], rows2[i]);
         }
     }
 
@@ -138,7 +138,7 @@ TEST_F(ExplicitBitmaskParamTest, readWithoutCondition)
 
     BitmaskParamTableParameterProvider parameterProvider;
     VectorType<BitmaskParamTable::Row> writtenRows;
-    fillBitmaskParamTableRows(writtenRows);
+    fillRows(writtenRows);
     bitmaskParamTable.write(parameterProvider, writtenRows);
 
     BitmaskParamTable::Reader reader = bitmaskParamTable.createReader(parameterProvider);
@@ -148,7 +148,7 @@ TEST_F(ExplicitBitmaskParamTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkBitmaskParamTableRows(parameterProvider, writtenRows, readRows);
+    checkRows(parameterProvider, writtenRows, readRows);
 }
 
 TEST_F(ExplicitBitmaskParamTest, readWithCondition)
@@ -157,7 +157,7 @@ TEST_F(ExplicitBitmaskParamTest, readWithCondition)
 
     BitmaskParamTableParameterProvider parameterProvider;
     VectorType<BitmaskParamTable::Row> writtenRows;
-    fillBitmaskParamTableRows(writtenRows);
+    fillRows(writtenRows);
     bitmaskParamTable.write(parameterProvider, writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -169,7 +169,7 @@ TEST_F(ExplicitBitmaskParamTest, readWithCondition)
     ASSERT_FALSE(reader.hasNext());
 
     const size_t expectedRowNum = 1;
-    checkBitmaskParamTableRow(parameterProvider, writtenRows[expectedRowNum], readRow);
+    checkRow(parameterProvider, writtenRows[expectedRowNum], readRow);
 }
 
 TEST_F(ExplicitBitmaskParamTest, update)
@@ -178,12 +178,12 @@ TEST_F(ExplicitBitmaskParamTest, update)
 
     BitmaskParamTableParameterProvider parameterProvider;
     VectorType<BitmaskParamTable::Row> writtenRows;
-    fillBitmaskParamTableRows(writtenRows);
+    fillRows(writtenRows);
     bitmaskParamTable.write(parameterProvider, writtenRows);
 
     const uint64_t updateRowId = 3;
     BitmaskParamTable::Row updateRow;
-    fillBitmaskParamTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     bitmaskParamTable.update(parameterProvider, updateRow, updateCondition);
 
@@ -193,7 +193,7 @@ TEST_F(ExplicitBitmaskParamTest, update)
     BitmaskParamTable::Row readRow;
     reader.next(readRow);
     ASSERT_FALSE(reader.hasNext());
-    checkBitmaskParamTableRow(parameterProvider, updateRow, readRow);
+    checkRow(parameterProvider, updateRow, readRow);
 }
 
 } // namespace explicit_bitmask_param

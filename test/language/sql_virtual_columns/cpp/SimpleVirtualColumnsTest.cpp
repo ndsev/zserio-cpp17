@@ -42,36 +42,35 @@ public:
     SimpleVirtualColumnsTest& operator=(SimpleVirtualColumnsTest&&) = delete;
 
 protected:
-    static void fillSimpleVirtualColumnsTableRow(SimpleVirtualColumnsTable::Row& row, const StringType& content)
+    static void fillRow(SimpleVirtualColumnsTable::Row& row, const StringType& content)
     {
         row.content = content;
     }
 
-    static void fillSimpleVirtualColumnsTableRows(VectorType<SimpleVirtualColumnsTable::Row>& rows)
+    static void fillRows(VectorType<SimpleVirtualColumnsTable::Row>& rows)
     {
         rows.clear();
         for (int32_t id = 0; id < NUM_TABLE_ROWS; ++id)
         {
             const StringType content = "Content" + zserio::toString<AllocatorType>(id);
             SimpleVirtualColumnsTable::Row row;
-            fillSimpleVirtualColumnsTableRow(row, content);
+            fillRow(row, content);
             rows.push_back(row);
         }
     }
 
-    static void checkSimpleVirtualColumnsTableRow(
-            const SimpleVirtualColumnsTable::Row& row1, const SimpleVirtualColumnsTable::Row& row2)
+    static void checkRow(const SimpleVirtualColumnsTable::Row& row1, const SimpleVirtualColumnsTable::Row& row2)
     {
         ASSERT_EQ(row1.content, row2.content);
     }
 
-    static void checkSimpleVirtualColumnsTableRows(const VectorType<SimpleVirtualColumnsTable::Row>& rows1,
+    static void checkRows(const VectorType<SimpleVirtualColumnsTable::Row>& rows1,
             const VectorType<SimpleVirtualColumnsTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkSimpleVirtualColumnsTableRow(rows1[i], rows2[i]);
+            checkRow(rows1[i], rows2[i]);
         }
     }
 
@@ -99,7 +98,7 @@ TEST_F(SimpleVirtualColumnsTest, readWithoutCondition)
     SimpleVirtualColumnsTable& testTable = m_database->getSimpleVirtualColumnsTable();
 
     VectorType<SimpleVirtualColumnsTable::Row> writtenRows;
-    fillSimpleVirtualColumnsTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     VectorType<SimpleVirtualColumnsTable::Row> readRows;
@@ -108,7 +107,7 @@ TEST_F(SimpleVirtualColumnsTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkSimpleVirtualColumnsTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(SimpleVirtualColumnsTest, readWithCondition)
@@ -116,7 +115,7 @@ TEST_F(SimpleVirtualColumnsTest, readWithCondition)
     SimpleVirtualColumnsTable& testTable = m_database->getSimpleVirtualColumnsTable();
 
     VectorType<SimpleVirtualColumnsTable::Row> writtenRows;
-    fillSimpleVirtualColumnsTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType condition = "content='Content1'";
@@ -129,7 +128,7 @@ TEST_F(SimpleVirtualColumnsTest, readWithCondition)
     ASSERT_EQ(1, readRows.size());
 
     const size_t expectedRowNum = 1;
-    checkSimpleVirtualColumnsTableRow(writtenRows[expectedRowNum], readRows[0]);
+    checkRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
 TEST_F(SimpleVirtualColumnsTest, update)
@@ -137,12 +136,12 @@ TEST_F(SimpleVirtualColumnsTest, update)
     SimpleVirtualColumnsTable& testTable = m_database->getSimpleVirtualColumnsTable();
 
     VectorType<SimpleVirtualColumnsTable::Row> writtenRows;
-    fillSimpleVirtualColumnsTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType updateContent = "UpdatedContent";
     SimpleVirtualColumnsTable::Row updateRow;
-    fillSimpleVirtualColumnsTableRow(updateRow, updateContent);
+    fillRow(updateRow, updateContent);
     const StringType updateCondition = "content='Content3'";
     testTable.update(updateRow, updateCondition);
 
@@ -155,7 +154,7 @@ TEST_F(SimpleVirtualColumnsTest, update)
     }
     ASSERT_EQ(1, readRows.size());
 
-    checkSimpleVirtualColumnsTableRow(updateRow, readRows[0]);
+    checkRow(updateRow, readRows[0]);
 }
 
 TEST_F(SimpleVirtualColumnsTest, checkVirtualColumn)

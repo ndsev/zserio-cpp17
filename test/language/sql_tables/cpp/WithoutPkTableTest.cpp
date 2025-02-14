@@ -40,37 +40,37 @@ public:
     WithoutPkTableTest& operator=(WithoutPkTableTest&&) = delete;
 
 protected:
-    static void fillWithoutPkTableRow(WithoutPkTable::Row& row, int32_t identifier, const StringType& name)
+    static void fillRow(WithoutPkTable::Row& row, int32_t identifier, const StringType& name)
     {
         row.identifier = identifier;
         row.name = name;
     }
 
-    static void fillWithoutPkTableRows(VectorType<WithoutPkTable::Row>& rows)
+    static void fillRows(VectorType<WithoutPkTable::Row>& rows)
     {
         rows.clear();
         for (int32_t identifier = 0; identifier < NUM_WITHOUT_PK_TABLE_ROWS; ++identifier)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(identifier);
             WithoutPkTable::Row row;
-            fillWithoutPkTableRow(row, identifier, name);
+            fillRow(row, identifier, name);
             rows.push_back(row);
         }
     }
 
-    static void checkWithoutPkTableRow(const WithoutPkTable::Row& row1, const WithoutPkTable::Row& row2)
+    static void checkRow(const WithoutPkTable::Row& row1, const WithoutPkTable::Row& row2)
     {
         ASSERT_EQ(row1.identifier, row2.identifier);
         ASSERT_EQ(row1.name, row2.name);
     }
 
-    static void checkWithoutPkTableRows(
+    static void checkRows(
             const VectorType<WithoutPkTable::Row>& rows1, const VectorType<WithoutPkTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkWithoutPkTableRow(rows1[i], rows2[i]);
+            checkRow(rows1[i], rows2[i]);
         }
     }
 
@@ -97,7 +97,7 @@ TEST_F(WithoutPkTableTest, readWithoutCondition)
     WithoutPkTable& testTable = m_database->getWithoutPkTable();
 
     VectorType<WithoutPkTable::Row> writtenRows;
-    fillWithoutPkTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     VectorType<WithoutPkTable::Row> readRows;
@@ -107,7 +107,7 @@ TEST_F(WithoutPkTableTest, readWithoutCondition)
         reader.next(readRows.emplace_back());
     }
 
-    checkWithoutPkTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(WithoutPkTableTest, readWithCondition)
@@ -115,7 +115,7 @@ TEST_F(WithoutPkTableTest, readWithCondition)
     WithoutPkTable& testTable = m_database->getWithoutPkTable();
 
     VectorType<WithoutPkTable::Row> writtenRows;
-    fillWithoutPkTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -128,7 +128,7 @@ TEST_F(WithoutPkTableTest, readWithCondition)
     ASSERT_EQ(1, readRows.size());
 
     const size_t expectedRowNum = 1;
-    checkWithoutPkTableRow(writtenRows[expectedRowNum], readRows[0]);
+    checkRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
 TEST_F(WithoutPkTableTest, update)
@@ -136,12 +136,12 @@ TEST_F(WithoutPkTableTest, update)
     WithoutPkTable& testTable = m_database->getWithoutPkTable();
 
     VectorType<WithoutPkTable::Row> writtenRows;
-    fillWithoutPkTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const int32_t updateRowId = 3;
     WithoutPkTable::Row updateRow;
-    fillWithoutPkTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "identifier=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
@@ -153,7 +153,7 @@ TEST_F(WithoutPkTableTest, update)
     }
     ASSERT_EQ(1, readRows.size());
 
-    checkWithoutPkTableRow(updateRow, readRows[0]);
+    checkRow(updateRow, readRows[0]);
 }
 
 TEST_F(WithoutPkTableTest, columnNames)

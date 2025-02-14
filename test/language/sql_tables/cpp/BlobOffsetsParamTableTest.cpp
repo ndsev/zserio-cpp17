@@ -44,8 +44,7 @@ public:
     BlobOffsetsParamTableTest& operator=(BlobOffsetsParamTableTest&&) = delete;
 
 protected:
-    static void fillBlobOffsetsParamTableRow(
-            BlobOffsetsParamTable::Row& row, uint32_t blobId, const StringType& name)
+    static void fillRow(BlobOffsetsParamTable::Row& row, uint32_t blobId, const StringType& name)
     {
         row.blobId = blobId;
         row.name = name;
@@ -62,19 +61,18 @@ protected:
         }
     }
 
-    static void fillBlobOffsetsParamTableRows(VectorType<BlobOffsetsParamTable::Row>& rows)
+    static void fillRows(VectorType<BlobOffsetsParamTable::Row>& rows)
     {
         rows.clear();
         rows.resize(NUM_BLOB_OFFSETS_PARAM_TABLE_ROWS);
         for (uint32_t blobId = 0; blobId < NUM_BLOB_OFFSETS_PARAM_TABLE_ROWS; ++blobId)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(blobId);
-            fillBlobOffsetsParamTableRow(rows[blobId], blobId, name);
+            fillRow(rows[blobId], blobId, name);
         }
     }
 
-    static void checkBlobOffsetsParamTableRow(
-            const BlobOffsetsParamTable::Row& row1, const BlobOffsetsParamTable::Row& row2)
+    static void checkRow(const BlobOffsetsParamTable::Row& row1, const BlobOffsetsParamTable::Row& row2)
     {
         ASSERT_EQ(row1.blobId, row2.blobId);
         ASSERT_EQ(row1.name, row2.name);
@@ -82,13 +80,13 @@ protected:
         ASSERT_EQ(row1.blob, row2.blob);
     }
 
-    static void checkBlobOffsetsParamTableRows(const VectorType<BlobOffsetsParamTable::Row>& rows1,
+    static void checkRows(const VectorType<BlobOffsetsParamTable::Row>& rows1,
             const VectorType<BlobOffsetsParamTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkBlobOffsetsParamTableRow(rows1[i], rows2[i]);
+            checkRow(rows1[i], rows2[i]);
         }
     }
 
@@ -117,7 +115,7 @@ TEST_F(BlobOffsetsParamTableTest, readWithoutCondition)
     BlobOffsetsParamTable& testTable = m_database->getBlobOffsetsParamTable();
 
     VectorType<BlobOffsetsParamTable::Row> writtenRows;
-    fillBlobOffsetsParamTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     VectorType<BlobOffsetsParamTable::Row> readRows;
@@ -127,7 +125,7 @@ TEST_F(BlobOffsetsParamTableTest, readWithoutCondition)
         reader.next(readRows.emplace_back());
     }
 
-    checkBlobOffsetsParamTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(BlobOffsetsParamTableTest, readWithCondition)
@@ -135,7 +133,7 @@ TEST_F(BlobOffsetsParamTableTest, readWithCondition)
     BlobOffsetsParamTable& testTable = m_database->getBlobOffsetsParamTable();
 
     VectorType<BlobOffsetsParamTable::Row> writtenRows;
-    fillBlobOffsetsParamTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -148,7 +146,7 @@ TEST_F(BlobOffsetsParamTableTest, readWithCondition)
     ASSERT_EQ(1, readRows.size());
 
     const size_t expectedRowNum = 1;
-    checkBlobOffsetsParamTableRow(writtenRows[expectedRowNum], readRows[0]);
+    checkRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
 TEST_F(BlobOffsetsParamTableTest, update)
@@ -156,12 +154,12 @@ TEST_F(BlobOffsetsParamTableTest, update)
     BlobOffsetsParamTable& testTable = m_database->getBlobOffsetsParamTable();
 
     VectorType<BlobOffsetsParamTable::Row> writtenRows;
-    fillBlobOffsetsParamTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const uint64_t updateRowId = 3;
     BlobOffsetsParamTable::Row updateRow;
-    fillBlobOffsetsParamTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
@@ -173,7 +171,7 @@ TEST_F(BlobOffsetsParamTableTest, update)
     }
     ASSERT_EQ(1, readRows.size());
 
-    checkBlobOffsetsParamTableRow(updateRow, readRows[0]);
+    checkRow(updateRow, readRows[0]);
 }
 
 TEST_F(BlobOffsetsParamTableTest, columnNames)

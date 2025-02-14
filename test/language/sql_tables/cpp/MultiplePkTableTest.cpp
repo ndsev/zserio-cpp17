@@ -40,39 +40,39 @@ public:
     MultiplePkTableTest& operator=(MultiplePkTableTest&&) = delete;
 
 protected:
-    static void fillMultiplePkTableRow(MultiplePkTable::Row& row, int32_t blobId, const StringType& name)
+    static void fillRow(MultiplePkTable::Row& row, int32_t blobId, const StringType& name)
     {
         row.blobId = blobId;
         row.age = 10;
         row.name = name;
     }
 
-    static void fillMultiplePkTableRows(VectorType<MultiplePkTable::Row>& rows)
+    static void fillRows(VectorType<MultiplePkTable::Row>& rows)
     {
         rows.clear();
         for (int32_t blobId = 0; blobId < NUM_MULTIPLE_PK_TABLE_ROWS; ++blobId)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(blobId);
             MultiplePkTable::Row row;
-            fillMultiplePkTableRow(row, blobId, name);
+            fillRow(row, blobId, name);
             rows.push_back(row);
         }
     }
 
-    static void checkMultiplePkTableRow(const MultiplePkTable::Row& row1, const MultiplePkTable::Row& row2)
+    static void checkRow(const MultiplePkTable::Row& row1, const MultiplePkTable::Row& row2)
     {
         ASSERT_EQ(row1.blobId, row2.blobId);
         ASSERT_EQ(row1.age, row2.age);
         ASSERT_EQ(row1.name, row2.name);
     }
 
-    static void checkMultiplePkTableRows(
+    static void checkRows(
             const VectorType<MultiplePkTable::Row>& rows1, const VectorType<MultiplePkTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkMultiplePkTableRow(rows1[i], rows2[i]);
+            checkRow(rows1[i], rows2[i]);
         }
     }
 
@@ -99,7 +99,7 @@ TEST_F(MultiplePkTableTest, readWithoutCondition)
     MultiplePkTable& testTable = m_database->getMultiplePkTable();
 
     VectorType<MultiplePkTable::Row> writtenRows;
-    fillMultiplePkTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     VectorType<MultiplePkTable::Row> readRows;
@@ -109,7 +109,7 @@ TEST_F(MultiplePkTableTest, readWithoutCondition)
         reader.next(readRows.emplace_back());
     }
 
-    checkMultiplePkTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(MultiplePkTableTest, readWithCondition)
@@ -117,7 +117,7 @@ TEST_F(MultiplePkTableTest, readWithCondition)
     MultiplePkTable& testTable = m_database->getMultiplePkTable();
 
     VectorType<MultiplePkTable::Row> writtenRows;
-    fillMultiplePkTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -130,7 +130,7 @@ TEST_F(MultiplePkTableTest, readWithCondition)
     ASSERT_EQ(1, readRows.size());
 
     const size_t expectedRowNum = 1;
-    checkMultiplePkTableRow(writtenRows[expectedRowNum], readRows[0]);
+    checkRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
 TEST_F(MultiplePkTableTest, update)
@@ -138,12 +138,12 @@ TEST_F(MultiplePkTableTest, update)
     MultiplePkTable& testTable = m_database->getMultiplePkTable();
 
     VectorType<MultiplePkTable::Row> writtenRows;
-    fillMultiplePkTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const int32_t updateRowId = 3;
     MultiplePkTable::Row updateRow;
-    fillMultiplePkTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
@@ -155,7 +155,7 @@ TEST_F(MultiplePkTableTest, update)
     }
     ASSERT_EQ(1, readRows.size());
 
-    checkMultiplePkTableRow(updateRow, readRows[0]);
+    checkRow(updateRow, readRows[0]);
 }
 
 TEST_F(MultiplePkTableTest, columnNames)

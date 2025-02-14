@@ -61,6 +61,9 @@ public:
     /** Class which describes one row in the table. Contains only data. See View<Row> for View. */
     struct Row
     {
+        Row();
+        explicit Row(const AllocatorType& allocator);
+
 <#list fieldList as field>
         <@optional_type_name field.typeInfo.typeFullName/> <@sql_row_member_name field/>;
 </#list>

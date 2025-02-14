@@ -54,7 +54,7 @@ protected:
         }
     };
 
-    void fillEnumParamTableRow(EnumParamTable::Row& row, uint32_t id, const StringType& name)
+    void fillRow(EnumParamTable::Row& row, uint32_t id, const StringType& name)
     {
         row.id = id;
         row.name = name;
@@ -84,20 +84,20 @@ protected:
         row.blob3 = testBlob3;
     }
 
-    void fillEnumParamTableRows(VectorType<EnumParamTable::Row>& rows)
+    void fillRows(VectorType<EnumParamTable::Row>& rows)
     {
         rows.clear();
         for (uint32_t id = 0; id < NUM_ENUM_PARAM_TABLE_ROWS; ++id)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             EnumParamTable::Row row;
-            fillEnumParamTableRow(row, id, name);
+            fillRow(row, id, name);
             rows.push_back(row);
         }
     }
 
-    static void checkEnumParamTableRow(EnumParamTableParameterProvider& parameterProvider,
-            const EnumParamTable::Row& row1, const EnumParamTable::Row& row2)
+    static void checkRow(EnumParamTableParameterProvider& parameterProvider, const EnumParamTable::Row& row1,
+            const EnumParamTable::Row& row2)
     {
         zserio::View rowView1(row1, parameterProvider);
         zserio::View rowView2(row2, parameterProvider);
@@ -112,13 +112,13 @@ protected:
         ASSERT_EQ(rowView2.blob1()->count(), rowView2.blob3()->count());
     }
 
-    static void checkEnumParamTableRows(EnumParamTableParameterProvider& parameterProvider,
+    static void checkRows(EnumParamTableParameterProvider& parameterProvider,
             const VectorType<EnumParamTable::Row>& rows1, const VectorType<EnumParamTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkEnumParamTableRow(parameterProvider, rows1[i], rows2[i]);
+            checkRow(parameterProvider, rows1[i], rows2[i]);
         }
     }
 
@@ -137,7 +137,7 @@ TEST_F(ExplicitEnumParamTest, readWithoutCondition)
 
     EnumParamTableParameterProvider parameterProvider;
     VectorType<EnumParamTable::Row> writtenRows;
-    fillEnumParamTableRows(writtenRows);
+    fillRows(writtenRows);
     enumParamTable.write(parameterProvider, writtenRows);
 
     EnumParamTable::Reader reader = enumParamTable.createReader(parameterProvider);
@@ -147,7 +147,7 @@ TEST_F(ExplicitEnumParamTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkEnumParamTableRows(parameterProvider, writtenRows, readRows);
+    checkRows(parameterProvider, writtenRows, readRows);
 }
 
 TEST_F(ExplicitEnumParamTest, readWithCondition)
@@ -156,7 +156,7 @@ TEST_F(ExplicitEnumParamTest, readWithCondition)
 
     EnumParamTableParameterProvider parameterProvider;
     VectorType<EnumParamTable::Row> writtenRows;
-    fillEnumParamTableRows(writtenRows);
+    fillRows(writtenRows);
     enumParamTable.write(parameterProvider, writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -168,7 +168,7 @@ TEST_F(ExplicitEnumParamTest, readWithCondition)
     ASSERT_FALSE(reader.hasNext());
 
     const size_t expectedRowNum = 1;
-    checkEnumParamTableRow(parameterProvider, writtenRows[expectedRowNum], readRow);
+    checkRow(parameterProvider, writtenRows[expectedRowNum], readRow);
 }
 
 TEST_F(ExplicitEnumParamTest, update)
@@ -177,12 +177,12 @@ TEST_F(ExplicitEnumParamTest, update)
 
     EnumParamTableParameterProvider parameterProvider;
     VectorType<EnumParamTable::Row> writtenRows;
-    fillEnumParamTableRows(writtenRows);
+    fillRows(writtenRows);
     enumParamTable.write(parameterProvider, writtenRows);
 
     const uint64_t updateRowId = 3;
     EnumParamTable::Row updateRow;
-    fillEnumParamTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     enumParamTable.update(parameterProvider, updateRow, updateCondition);
 
@@ -192,7 +192,7 @@ TEST_F(ExplicitEnumParamTest, update)
     EnumParamTable::Row readRow;
     reader.next(readRow);
     ASSERT_FALSE(reader.hasNext());
-    checkEnumParamTableRow(parameterProvider, updateRow, readRow);
+    checkRow(parameterProvider, updateRow, readRow);
 }
 
 } // namespace explicit_enum_param

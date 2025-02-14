@@ -155,6 +155,16 @@ void ${name}::deleteTable()
     m_db.executeUpdate(sqlQuery);
 }
 
+${name}::Row::Row() :
+        Row(AllocatorType())
+{}
+
+${name}::Row::Row(const AllocatorType& allocator) :
+<#list fieldList as field>
+        <@sql_row_member_name field/>(allocator)<#if field?has_next>,</#if>
+</#list>
+{}
+
 ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
         <#lt>::std::string_view condition) const
 {
@@ -401,7 +411,7 @@ bool ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
             }
     </#list>
 
-            Row row;
+            Row row(get_allocator_ref());
     <#list fieldList as field>
         <#if field.sqlTypeData.isBlob>
             if (!validateBlob${field.name?cap_first}(validationObserver, statement.get(), row<#rt>
