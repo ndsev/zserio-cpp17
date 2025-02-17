@@ -40,14 +40,13 @@ public:
     Fts5VirtualTableTest& operator=(Fts5VirtualTableTest&&) = delete;
 
 protected:
-    static void fillFts5VirtualTableRow(
-            Fts5VirtualTable::Row& row, const StringType& title, const StringType& body)
+    static void fillRow(Fts5VirtualTable::Row& row, const StringType& title, const StringType& body)
     {
         row.title = title;
         row.body = body;
     }
 
-    static void fillFts5VirtualTableRows(VectorType<Fts5VirtualTable::Row>& rows)
+    static void fillRows(VectorType<Fts5VirtualTable::Row>& rows)
     {
         rows.clear();
         for (int32_t id = 0; id < NUM_VIRTUAL_TABLE_ROWS; ++id)
@@ -55,24 +54,24 @@ protected:
             const StringType title = "Title" + zserio::toString<AllocatorType>(id);
             const StringType body = "Body" + zserio::toString<AllocatorType>(id);
             Fts5VirtualTable::Row row;
-            fillFts5VirtualTableRow(row, title, body);
+            fillRow(row, title, body);
             rows.push_back(row);
         }
     }
 
-    static void checkFts5VirtualTableRow(const Fts5VirtualTable::Row& row1, const Fts5VirtualTable::Row& row2)
+    static void checkRow(const Fts5VirtualTable::Row& row1, const Fts5VirtualTable::Row& row2)
     {
         ASSERT_EQ(row1.title, row2.title);
         ASSERT_EQ(row1.body, row2.body);
     }
 
-    static void checkFts5VirtualTableRows(
+    static void checkRows(
             const VectorType<Fts5VirtualTable::Row>& rows1, const VectorType<Fts5VirtualTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkFts5VirtualTableRow(rows1[i], rows2[i]);
+            checkRow(rows1[i], rows2[i]);
         }
     }
 
@@ -99,7 +98,7 @@ TEST_F(Fts5VirtualTableTest, readWithoutCondition)
     Fts5VirtualTable& testTable = m_database->getFts5VirtualTable();
 
     VectorType<Fts5VirtualTable::Row> writtenRows;
-    fillFts5VirtualTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     VectorType<Fts5VirtualTable::Row> readRows;
@@ -108,7 +107,7 @@ TEST_F(Fts5VirtualTableTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkFts5VirtualTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(Fts5VirtualTableTest, readWithCondition)
@@ -116,7 +115,7 @@ TEST_F(Fts5VirtualTableTest, readWithCondition)
     Fts5VirtualTable& testTable = m_database->getFts5VirtualTable();
 
     VectorType<Fts5VirtualTable::Row> writtenRows;
-    fillFts5VirtualTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType condition = "body='Body1'";
@@ -129,7 +128,7 @@ TEST_F(Fts5VirtualTableTest, readWithCondition)
     ASSERT_EQ(1, readRows.size());
 
     const size_t expectedRowNum = 1;
-    checkFts5VirtualTableRow(writtenRows[expectedRowNum], readRows[0]);
+    checkRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
 TEST_F(Fts5VirtualTableTest, update)
@@ -137,12 +136,12 @@ TEST_F(Fts5VirtualTableTest, update)
     Fts5VirtualTable& testTable = m_database->getFts5VirtualTable();
 
     VectorType<Fts5VirtualTable::Row> writtenRows;
-    fillFts5VirtualTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType updateTitle = "Title3";
     Fts5VirtualTable::Row updateRow;
-    fillFts5VirtualTableRow(updateRow, updateTitle, "UpdatedName");
+    fillRow(updateRow, updateTitle, "UpdatedName");
     const StringType updateCondition = "title='" + updateTitle + "'";
     testTable.update(updateRow, updateCondition);
 
@@ -154,7 +153,7 @@ TEST_F(Fts5VirtualTableTest, update)
     }
     ASSERT_EQ(1, readRows.size());
 
-    checkFts5VirtualTableRow(updateRow, readRows[0]);
+    checkRow(updateRow, readRows[0]);
 }
 
 } // namespace fts5_virtual_table

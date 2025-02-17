@@ -1,0 +1,15 @@
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/allocation_choice/AllocationChoice.h
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/allocation_struct_optional/AllocationStructOptional.h
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/allocation_union/AllocationUnion.h
+bugprone-exception-escape:gen_complex_allocation/complex_allocation/MainStructure.h
+
+google-build-using-namespace:cpp/ComplexAllocationTest.cpp
+google-build-using-namespace:cpp/PubsubAllocationTest.cpp
+google-build-using-namespace:cpp/ServiceAllocationTest.cpp
+google-build-using-namespace:cpp/SqlAllocationTest.cpp
+
+google-explicit-constructor:gen_sql_allocation/sql_allocation/Role.h
+
+misc-no-recursion # reports also tested_release and some system headers
+
+readability-simplify-boolean-expr:gen_complex_allocation/complex_allocation/allocation_choice/AllocationChoice.cpp

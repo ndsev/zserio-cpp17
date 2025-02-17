@@ -44,7 +44,7 @@ public:
     BlobParamTableTest& operator=(BlobParamTableTest&&) = delete;
 
 protected:
-    static void fillBlobParamTableRowWithNullValues(BlobParamTable::Row& row, uint32_t blobId)
+    static void fillRowWithNullValues(BlobParamTable::Row& row, uint32_t blobId)
     {
         row.blobId = blobId;
         row.name.reset();
@@ -52,17 +52,17 @@ protected:
         row.blob.reset();
     }
 
-    static void fillBlobParamTableRowsWithNullValues(VectorType<BlobParamTable::Row>& rows)
+    static void fillRowsWithNullValues(VectorType<BlobParamTable::Row>& rows)
     {
         rows.clear();
         rows.resize(NUM_BLOB_PARAM_TABLE_ROWS);
         for (uint32_t blobId = 0; blobId < NUM_BLOB_PARAM_TABLE_ROWS; ++blobId)
         {
-            fillBlobParamTableRowWithNullValues(rows[blobId], blobId);
+            fillRowWithNullValues(rows[blobId], blobId);
         }
     }
 
-    static void fillBlobParamTableRow(BlobParamTable::Row& row, uint32_t blobId, const StringType& name)
+    static void fillRow(BlobParamTable::Row& row, uint32_t blobId, const StringType& name)
     {
         row.blobId = blobId;
         row.name = name;
@@ -81,17 +81,17 @@ protected:
         row.blob = parameterizedBlob;
     }
 
-    static void fillBlobParamTableRows(VectorType<BlobParamTable::Row>& rows)
+    static void fillRows(VectorType<BlobParamTable::Row>& rows)
     {
         rows.clear();
         rows.resize(NUM_BLOB_PARAM_TABLE_ROWS);
         for (uint32_t blobId = 0; blobId < NUM_BLOB_PARAM_TABLE_ROWS; ++blobId)
         {
-            fillBlobParamTableRow(rows[blobId], blobId, "Name" + zserio::toString<AllocatorType>(blobId));
+            fillRow(rows[blobId], blobId, "Name" + zserio::toString<AllocatorType>(blobId));
         }
     }
 
-    static void checkBlobParamTableRow(const BlobParamTable::Row& row1, const BlobParamTable::Row& row2)
+    static void checkRow(const BlobParamTable::Row& row1, const BlobParamTable::Row& row2)
     {
         ASSERT_EQ(row1.blobId, row2.blobId);
         ASSERT_EQ(row1.name, row2.name);
@@ -99,13 +99,13 @@ protected:
         ASSERT_EQ(row1.blob, row2.blob);
     }
 
-    static void checkBlobParamTableRows(
+    static void checkRows(
             const VectorType<BlobParamTable::Row>& rows1, const VectorType<BlobParamTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkBlobParamTableRow(rows1[i], rows2[i]);
+            checkRow(rows1[i], rows2[i]);
         }
     }
 
@@ -138,7 +138,7 @@ TEST_F(BlobParamTableTest, readWithoutCondition)
     BlobParamTable& testTable = m_database->getBlobParamTable();
 
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     VectorType<BlobParamTable::Row> readRows;
@@ -148,7 +148,7 @@ TEST_F(BlobParamTableTest, readWithoutCondition)
         reader.next(readRows.emplace_back());
     }
 
-    checkBlobParamTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(BlobParamTableTest, readWithoutConditionWithNullValues)
@@ -156,7 +156,7 @@ TEST_F(BlobParamTableTest, readWithoutConditionWithNullValues)
     BlobParamTable& testTable = m_database->getBlobParamTable();
 
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRowsWithNullValues(writtenRows);
+    fillRowsWithNullValues(writtenRows);
     testTable.write(writtenRows);
 
     VectorType<BlobParamTable::Row> readRows;
@@ -166,7 +166,7 @@ TEST_F(BlobParamTableTest, readWithoutConditionWithNullValues)
         reader.next(readRows.emplace_back());
     }
 
-    checkBlobParamTableRows(writtenRows, readRows);
+    checkRows(writtenRows, readRows);
 }
 
 TEST_F(BlobParamTableTest, readWithCondition)
@@ -174,7 +174,7 @@ TEST_F(BlobParamTableTest, readWithCondition)
     BlobParamTable& testTable = m_database->getBlobParamTable();
 
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -187,7 +187,7 @@ TEST_F(BlobParamTableTest, readWithCondition)
     ASSERT_EQ(1, readRows.size());
 
     const size_t expectedRowNum = 1;
-    checkBlobParamTableRow(writtenRows[expectedRowNum], readRows[0]);
+    checkRow(writtenRows[expectedRowNum], readRows[0]);
 }
 
 TEST_F(BlobParamTableTest, readWithColumns)
@@ -195,7 +195,7 @@ TEST_F(BlobParamTableTest, readWithColumns)
     BlobParamTable& testTable = m_database->getBlobParamTable();
 
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     {
@@ -237,12 +237,12 @@ TEST_F(BlobParamTableTest, update)
     BlobParamTable& testTable = m_database->getBlobParamTable();
 
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
     testTable.write(writtenRows);
 
     const uint64_t updateRowId = 3;
     BlobParamTable::Row updateRow;
-    fillBlobParamTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
@@ -254,7 +254,7 @@ TEST_F(BlobParamTableTest, update)
     }
     ASSERT_EQ(1, readRows.size());
 
-    checkBlobParamTableRow(updateRow, readRows[0]);
+    checkRow(updateRow, readRows[0]);
 }
 
 TEST_F(BlobParamTableTest, updateWithColumns)
@@ -262,7 +262,7 @@ TEST_F(BlobParamTableTest, updateWithColumns)
     BlobParamTable& testTable = m_database->getBlobParamTable();
 
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
 
     // write all columns except name
     {

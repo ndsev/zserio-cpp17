@@ -20,7 +20,7 @@
 namespace
 {
 
-::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ::std::string> columns)
+::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ${types.string.name}> columns)
 {
     if (columns.empty())
     {
@@ -30,7 +30,7 @@ namespace
     }
 
     ::std::array<bool, ${fieldList?size}> columnsMapping = {};
-    for (const ::std::string& columnName : columns)
+    for (const auto& columnName : columns)
     {
         const auto it = ::std::find(${name}::columnNames.begin(), ${name}::columnNames.end(), columnName);
         if (it == ${name}::columnNames.end())
@@ -155,6 +155,16 @@ void ${name}::deleteTable()
     m_db.executeUpdate(sqlQuery);
 }
 
+${name}::Row::Row() :
+        Row(AllocatorType())
+{}
+
+${name}::Row::Row(const AllocatorType& allocator) :
+<#list fieldList as field>
+        <@sql_row_member_name field/>(allocator)<#if field?has_next>,</#if>
+</#list>
+{}
+
 ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
         <#lt>::std::string_view condition) const
 {
@@ -162,7 +172,7 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
 }
 
 ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-        <#lt>::zserio::Span<const ::std::string> columns,
+        <#lt>::zserio::Span<const ${types.string.name}> columns,
         ::std::string_view condition) const
 {
     const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
@@ -288,7 +298,7 @@ void ${name}::Reader::makeStep()
 
 void ${name}::write(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
         <#lt>::zserio::Span<Row> rows,
-        ::zserio::Span<const ::std::string> columns)
+        ::zserio::Span<const ${types.string.name}> columns)
 {
     // assemble sql query
     const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
@@ -340,7 +350,7 @@ void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterPr
 }
 
 void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if>Row& row,
-        ::zserio::Span<const ::std::string> columns, ::std::string_view whereCondition)
+        ::zserio::Span<const ${types.string.name}> columns, ::std::string_view whereCondition)
 {
     // assemble sql query
     const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
@@ -401,7 +411,7 @@ bool ${name}::validate(::zserio::IValidationObserver& validationObserver<#rt>
             }
     </#list>
 
-            Row row;
+            Row row(get_allocator_ref());
     <#list fieldList as field>
         <#if field.sqlTypeData.isBlob>
             if (!validateBlob${field.name?cap_first}(validationObserver, statement.get(), row<#rt>

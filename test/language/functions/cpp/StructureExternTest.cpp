@@ -11,17 +11,17 @@ namespace structure_extern
 using AllocatorType = TestStructure::AllocatorType;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 class StructureExternTest : public ::testing::Test
 {
 protected:
-    static const BitBuffer FIELD;
-    static const BitBuffer CHILD_FIELD;
+    static const BitBufferType FIELD;
+    static const BitBufferType CHILD_FIELD;
 };
 
-const BitBuffer StructureExternTest::FIELD = BitBuffer{VectorType<uint8_t>{{0xAB, 0xE0}}, 11};
-const BitBuffer StructureExternTest::CHILD_FIELD = BitBuffer{VectorType<uint8_t>{{0xCA, 0xFE}}, 15};
+const BitBufferType StructureExternTest::FIELD = BitBufferType{VectorType<uint8_t>{{0xAB, 0xE0}}, 11};
+const BitBufferType StructureExternTest::CHILD_FIELD = BitBufferType{VectorType<uint8_t>{{0xCA, 0xFE}}, 15};
 
 TEST_F(StructureExternTest, getField)
 {

@@ -102,6 +102,10 @@ google-explicit-constructor:src/zserio/Span.h:150
 google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
 
+# PropagatingPolymorphicAllocator follows std::polymorphic:_allocator so the ctors should be implicit.
+google-explicit-constructor:src/zserio/pmr/PropagatingPolymorphicAllocator.h:35
+google-explicit-constructor:src/zserio/pmr/PropagatingPolymorphicAllocator.h:62
+
 # This is requirement on type wrappers in Zserio C++17 extension.
 google-explicit-constructor:src/zserio/Types.h:59
 google-explicit-constructor:src/zserio/Types.h:66
@@ -129,3 +133,5 @@ google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:83
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:91
+performance-move-const-arg:test/zserio/pmr/PropagatingPolymorphicAllocatorTest.cpp:56
+performance-move-const-arg:test/zserio/pmr/PropagatingPolymorphicAllocatorTest.cpp:73

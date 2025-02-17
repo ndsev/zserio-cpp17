@@ -20,21 +20,27 @@
 </#function>
 
 <#macro structure_field_ctor_type_name field>
-    <#if field.optional??>
-        ::zserio::Optional<<@field_data_type_name field/>><#t>
-    <#else>
+    <#local fieldTypeName>
         <@field_data_type_name field/><#t>
+    </#local>
+    <#if field.optional??>
+        <@optional_type_name fieldTypeName/><#t>
+    <#else>
+        ${fieldTypeName}<#t>
     </#if>
 </#macro>
 
 <#macro structure_field_data_type_name field>
+    <#local fieldTypeName>
+        <@field_data_type_name field/><#t>
+    </#local>
     <#if field.isExtended>
         ::zserio::Extended<<#t>
     </#if>
     <#if field.optional??>
-        ::zserio::Optional<<@field_data_type_name field/>><#t>
+        <@optional_type_name fieldTypeName/><#t>
     <#else>
-        <@field_data_type_name field/><#t>
+        ${fieldTypeName}<#t>
     </#if>
     <#if field.isExtended>
         ><#t>
@@ -42,13 +48,16 @@
 </#macro>
 
 <#macro structure_field_view_type_name field>
+    <#local fieldViewTypeName>
+        <@field_view_type_name field/><#t>
+    </#local>
     <#if field.isExtended>
         ::zserio::Extended<<#t>
     </#if>
     <#if field.optional??>
-        ::zserio::Optional<<@field_view_type_name field/>><#t>
+        <@optional_type_name fieldViewTypeName/><#t>
     <#else>
-        <@field_view_type_name field/><#t>
+        ${fieldViewTypeName}<#t>
     </#if>
     <#if field.isExtended>
         ><#t>
@@ -56,13 +65,16 @@
 </#macro>
 
 <#macro structure_field_view_type_full_name compoundName field>
+    <#local fieldViewTypeFullName>
+        <@field_view_type_full_name compoundName, field/><#t>
+    </#local>
     <#if field.isExtended>
         ::zserio::Extended<<#t>
     </#if>
     <#if field.optional??>
-        ::zserio::Optional<<@field_view_type_full_name compoundName, field/>><#t>
+        <@optional_type_name fieldViewTypeFullName/><#t>
     <#else>
-        <@field_view_type_full_name compoundName, field/><#t>
+        ${fieldViewTypeFullName}<#t>
     </#if>
     <#if field.isExtended>
         ><#t>

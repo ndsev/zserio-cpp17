@@ -1,1 +1,4 @@
+bugprone-exception-escape:gen/indexed_offsets/optional_indexed_offset_array/OptionalIndexedOffsetArray.h
+bugprone-exception-escape:gen/indexed_offsets/optional_nested_indexed_offset_array/OptionalNestedIndexedOffsetArray.h
+
 readability-simplify-boolean-expr:gen/indexed_offsets/optional_indexed_offset_array/OptionalIndexedOffsetArray.cpp

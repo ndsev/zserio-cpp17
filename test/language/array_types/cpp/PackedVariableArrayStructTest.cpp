@@ -11,7 +11,7 @@ namespace packed_variable_array_struct
 using AllocatorType = PackedVariableArray::AllocatorType;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 class PackedVariableArrayStructTest : public ::testing::Test
 {
@@ -35,7 +35,7 @@ protected:
         TestStructure testStructure;
         testStructure.id = index;
         testStructure.name = "name" + zserio::toString<AllocatorType>(index);
-        testStructure.data = BitBuffer{VectorType<uint8_t>{{0xCD, 0xC0}}, 10};
+        testStructure.data = BitBufferType{VectorType<uint8_t>{{0xCD, 0xC0}}, 10};
         testStructure.bytesData = VectorType<uint8_t>{{0xCD, 0xC0}};
         testStructure.testChoice = createTestChoice(index);
         testStructure.testUnion = createTestUnion(index);

@@ -12,7 +12,7 @@ using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
-using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 class ArraysMappingTest : public ::testing::Test
 {
@@ -118,7 +118,7 @@ TEST_F(ArraysMappingTest, stringArray)
 TEST_F(ArraysMappingTest, externArray)
 {
     ArraysMapping arraysMapping;
-    arraysMapping.externArray = VectorType<BitBuffer>(FIXED_ARRAY_LENGTH);
+    arraysMapping.externArray = VectorType<BitBufferType>(FIXED_ARRAY_LENGTH);
 }
 
 TEST_F(ArraysMappingTest, bytesArray)

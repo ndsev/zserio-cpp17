@@ -65,7 +65,7 @@ protected:
         Header m_blob;
     };
 
-    void fillBlobParamTableRow(BlobParamTable::Row& row, uint32_t id, const StringType& name)
+    void fillRow(BlobParamTable::Row& row, uint32_t id, const StringType& name)
     {
         row.id = id;
         row.name = name;
@@ -95,19 +95,19 @@ protected:
         row.blob3 = testBlob3;
     }
 
-    void fillBlobParamTableRows(VectorType<BlobParamTable::Row>& rows)
+    void fillRows(VectorType<BlobParamTable::Row>& rows)
     {
         rows.clear();
         rows.resize(NUM_BLOB_PARAM_TABLE_ROWS);
         for (uint32_t id = 0; id < NUM_BLOB_PARAM_TABLE_ROWS; ++id)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(id);
-            fillBlobParamTableRow(rows[id], id, name);
+            fillRow(rows[id], id, name);
         }
     }
 
-    static void checkBlobParamTableRow(BlobParamTableParameterProvider& parameterProvider,
-            const BlobParamTable::Row& row1, const BlobParamTable::Row& row2)
+    static void checkRow(BlobParamTableParameterProvider& parameterProvider, const BlobParamTable::Row& row1,
+            const BlobParamTable::Row& row2)
     {
         zserio::View rowView1(row1, parameterProvider);
         zserio::View rowView2(row2, parameterProvider);
@@ -124,13 +124,13 @@ protected:
         ASSERT_EQ(rowView2.blob1()->blob(), rowView2.blob3()->blob());
     }
 
-    static void checkBlobParamTableRows(BlobParamTableParameterProvider& parameterProvider,
+    static void checkRows(BlobParamTableParameterProvider& parameterProvider,
             const VectorType<BlobParamTable::Row>& rows1, const VectorType<BlobParamTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkBlobParamTableRow(parameterProvider, rows1[i], rows2[i]);
+            checkRow(parameterProvider, rows1[i], rows2[i]);
         }
     }
 
@@ -149,7 +149,7 @@ TEST_F(ExplicitBlobParamTest, readWithoutCondition)
 
     BlobParamTableParameterProvider parameterProvider;
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
     blobParamTable.write(parameterProvider, writtenRows);
 
     BlobParamTable::Reader reader = blobParamTable.createReader(parameterProvider);
@@ -159,7 +159,7 @@ TEST_F(ExplicitBlobParamTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkBlobParamTableRows(parameterProvider, writtenRows, readRows);
+    checkRows(parameterProvider, writtenRows, readRows);
 }
 
 TEST_F(ExplicitBlobParamTest, readWithCondition)
@@ -168,7 +168,7 @@ TEST_F(ExplicitBlobParamTest, readWithCondition)
 
     BlobParamTableParameterProvider parameterProvider;
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
     blobParamTable.write(parameterProvider, writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -180,7 +180,7 @@ TEST_F(ExplicitBlobParamTest, readWithCondition)
     ASSERT_FALSE(reader.hasNext());
 
     const size_t expectedRowNum = 1;
-    checkBlobParamTableRow(parameterProvider, writtenRows[expectedRowNum], readRow);
+    checkRow(parameterProvider, writtenRows[expectedRowNum], readRow);
 }
 
 TEST_F(ExplicitBlobParamTest, update)
@@ -189,12 +189,12 @@ TEST_F(ExplicitBlobParamTest, update)
 
     BlobParamTableParameterProvider parameterProvider;
     VectorType<BlobParamTable::Row> writtenRows;
-    fillBlobParamTableRows(writtenRows);
+    fillRows(writtenRows);
     blobParamTable.write(parameterProvider, writtenRows);
 
     const uint64_t updateRowId = 3;
     BlobParamTable::Row updateRow;
-    fillBlobParamTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     blobParamTable.update(parameterProvider, updateRow, updateCondition);
 
@@ -203,7 +203,7 @@ TEST_F(ExplicitBlobParamTest, update)
     BlobParamTable::Row readRow;
     reader.next(readRow);
     ASSERT_FALSE(reader.hasNext());
-    checkBlobParamTableRow(parameterProvider, updateRow, readRow);
+    checkRow(parameterProvider, updateRow, readRow);
 }
 
 } // namespace explicit_blob_param

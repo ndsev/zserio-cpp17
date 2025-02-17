@@ -77,6 +77,17 @@ namespace ${namespace}
     </#if>
 </#macro>
 
+<#macro optional_type_name typeName>
+    ${types.optional.name}<<#t>
+            <#if types.optional.needsAllocatorArgument>${types.allocator.name}<${typeName}>, </#if><#t>
+            ${typeName}><#t>
+</#macro>
+
+<#macro variant_type_name_begin>
+    ${types.variant.name}<<#t>
+            <#if types.optional.needsAllocatorArgument>${types.allocator.default}, </#if><#t>
+</#macro>
+
 <#macro vector_type_name typeName>
     ${types.vector.name}<${typeName}<#t>
             <#if types.vector.needsAllocatorArgument>, ${types.allocator.name}<${typeName}></#if>><#t>

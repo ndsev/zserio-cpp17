@@ -9,7 +9,6 @@ namespace param_structure_subtype
 {
 
 using AllocatorType = ParameterizedSubtypeStruct::AllocatorType;
-
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
@@ -33,17 +32,17 @@ TEST(ParamStructureSubtypeTest, testSubtype)
     ASSERT_STRING_IN_FILE_PRESENT(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
             "::subtypes::param_structure_subtype::ParameterizedSubtype parameterizedSubtype");
-    ASSERT_STRING_IN_FILE_PRESENT(
+    ASSERT_REGEX_MATCH_IN_FILE(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
-            "::zserio::Vector<::subtypes::param_structure_subtype::AnotherParameterizedSubtype> "
+            "::zserio.*Vector<::subtypes::param_structure_subtype::AnotherParameterizedSubtype> "
             "anotherParameterizedSubtypeArray");
 
     ASSERT_STRING_IN_FILE_PRESENT(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
             "View<::subtypes::param_structure_subtype::ParameterizedSubtype> parameterizedSubtype() const");
-    ASSERT_STRING_IN_FILE_PRESENT(
+    ASSERT_REGEX_MATCH_IN_FILE(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
-            "Array<::zserio::Vector<::subtypes::param_structure_subtype::AnotherParameterizedSubtype>, "
+            "Array<::zserio.*Vector<::subtypes::param_structure_subtype::AnotherParameterizedSubtype>, "
             "ArrayType::AUTO, ::zserio::ArrayStorage::IMMUTABLE, "
             "ZserioAnotherParameterizedSubtypeArrayArrayTraits> anotherParameterizedSubtypeArray");
 }

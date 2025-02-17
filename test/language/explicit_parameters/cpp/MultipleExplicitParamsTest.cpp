@@ -59,7 +59,7 @@ protected:
         }
     };
 
-    void fillMultipleParamsTableRow(MultipleParamsTable::Row& row, uint32_t id, const StringType& name)
+    void fillRow(MultipleParamsTable::Row& row, uint32_t id, const StringType& name)
     {
         row.id = id;
         row.name = name;
@@ -104,19 +104,19 @@ protected:
         row.blob3 = testBlob3;
     }
 
-    void fillMultipleParamsTableRows(VectorType<MultipleParamsTable::Row>& rows)
+    void fillRows(VectorType<MultipleParamsTable::Row>& rows)
     {
         rows.clear();
         for (uint32_t id = 0; id < NUM_MULTIPLE_PARAMS_ROWS; ++id)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             MultipleParamsTable::Row row;
-            fillMultipleParamsTableRow(row, id, name);
+            fillRow(row, id, name);
             rows.push_back(row);
         }
     }
 
-    static void checkMultipleParamsTableRow(MultipleParamsTableParameterProvider& parameterProvider,
+    static void checkRow(MultipleParamsTableParameterProvider& parameterProvider,
             const MultipleParamsTable::Row& row1, const MultipleParamsTable::Row& row2)
     {
         zserio::View rowView1(row1, parameterProvider);
@@ -134,14 +134,14 @@ protected:
         ASSERT_EQ(rowView2.blob2()->count8(), rowView2.blob2()->count16());
     }
 
-    static void checkMultipleParamsTableRows(MultipleParamsTableParameterProvider& parameterProvider,
+    static void checkRows(MultipleParamsTableParameterProvider& parameterProvider,
             const VectorType<MultipleParamsTable::Row>& rows1,
             const VectorType<MultipleParamsTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkMultipleParamsTableRow(parameterProvider, rows1[i], rows2[i]);
+            checkRow(parameterProvider, rows1[i], rows2[i]);
         }
     }
 
@@ -169,7 +169,7 @@ TEST_F(MultipleExplicitParamsTest, readWithoutCondition)
 
     MultipleParamsTableParameterProvider parameterProvider;
     VectorType<MultipleParamsTable::Row> writtenRows;
-    fillMultipleParamsTableRows(writtenRows);
+    fillRows(writtenRows);
     multipleParamsTable.write(parameterProvider, writtenRows);
 
     MultipleParamsTable::Reader reader = multipleParamsTable.createReader(parameterProvider);
@@ -179,7 +179,7 @@ TEST_F(MultipleExplicitParamsTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkMultipleParamsTableRows(parameterProvider, writtenRows, readRows);
+    checkRows(parameterProvider, writtenRows, readRows);
 }
 
 TEST_F(MultipleExplicitParamsTest, readWithCondition)
@@ -188,7 +188,7 @@ TEST_F(MultipleExplicitParamsTest, readWithCondition)
 
     MultipleParamsTableParameterProvider parameterProvider;
     VectorType<MultipleParamsTable::Row> writtenRows;
-    fillMultipleParamsTableRows(writtenRows);
+    fillRows(writtenRows);
     multipleParamsTable.write(parameterProvider, writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -200,7 +200,7 @@ TEST_F(MultipleExplicitParamsTest, readWithCondition)
     ASSERT_FALSE(reader.hasNext());
 
     const size_t expectedRowNum = 1;
-    checkMultipleParamsTableRow(parameterProvider, writtenRows[expectedRowNum], readRow);
+    checkRow(parameterProvider, writtenRows[expectedRowNum], readRow);
 }
 
 TEST_F(MultipleExplicitParamsTest, update)
@@ -209,12 +209,12 @@ TEST_F(MultipleExplicitParamsTest, update)
 
     MultipleParamsTableParameterProvider parameterProvider;
     VectorType<MultipleParamsTable::Row> writtenRows;
-    fillMultipleParamsTableRows(writtenRows);
+    fillRows(writtenRows);
     multipleParamsTable.write(parameterProvider, writtenRows);
 
     const uint64_t updateRowId = 3;
     MultipleParamsTable::Row updateRow;
-    fillMultipleParamsTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     multipleParamsTable.update(parameterProvider, updateRow, updateCondition);
 
@@ -223,7 +223,7 @@ TEST_F(MultipleExplicitParamsTest, update)
     MultipleParamsTable::Row readRow;
     reader.next(readRow);
     ASSERT_FALSE(reader.hasNext());
-    checkMultipleParamsTableRow(parameterProvider, updateRow, readRow);
+    checkRow(parameterProvider, updateRow, readRow);
 }
 
 } // namespace multiple_explicit_params

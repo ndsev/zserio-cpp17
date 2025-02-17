@@ -22,6 +22,7 @@ if (SANITIZERS_ENABLED)
 endif ()
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
+    zserio/pmr/PropagatingPolymorphicAllocatorTest.cpp
     zserio/AllocatorHolderTest.cpp
     zserio/ArrayLengthExceptionTest.cpp
     zserio/ArrayTest.cpp

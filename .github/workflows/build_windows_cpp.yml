@@ -73,7 +73,7 @@ jobs:
     - name: Install clang format
       shell: bash
       run: |
-        choco install llvm --version=14.0.0 --allow-downgrade
+        choco install llvm --version=18.1.8 --allow-downgrade
 
     - name: Checkout
       uses: actions/checkout@v4
@@ -115,6 +115,12 @@ jobs:
       shell: bash
       run: |
         scripts/test.sh cpp-${PACKAGE}
+
+    - name: Run Zserio integration tests with extra arguments
+      shell: bash
+      run: |
+        export ZSERIO_EXTRA_ARGS="-setCppAllocator polymorphic"
+        scripts/test.sh -p cpp-${PACKAGE}
 
     - name: Run Zserio custom integration test
       shell: bash

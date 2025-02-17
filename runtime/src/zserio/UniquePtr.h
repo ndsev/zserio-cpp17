@@ -86,7 +86,7 @@ struct UniquePtrDeleter : public AllocatorHolder<ALLOC_T>
  * Uses custom deleter to ensure proper deallocation.
  */
 template <typename T, typename ALLOC = std::allocator<T>>
-using unique_ptr = std::unique_ptr<T, detail::UniquePtrDeleter<ALLOC>>;
+using UniquePtr = std::unique_ptr<T, detail::UniquePtrDeleter<ALLOC>>;
 
 /**
  * Allocates memory for an object of type T using given allocator and constructs it passing args to its
@@ -95,10 +95,10 @@ using unique_ptr = std::unique_ptr<T, detail::UniquePtrDeleter<ALLOC>>;
  * \param allocator Allocator to use.
  * \param args      List of elements passed to T's constructor.
  *
- * \return Object of type zserio::unique_ptr<T, ALLOC> that owns and stores a pointer to the constructed object.
+ * \return Object of type UniquePtr<T, ALLOC> that owns and stores a pointer to the constructed object.
  */
 template <typename T, typename ALLOC, class... Args>
-zserio::unique_ptr<T, RebindAlloc<ALLOC, T>> allocate_unique(const ALLOC& allocator, Args&&... args)
+UniquePtr<T, RebindAlloc<ALLOC, T>> allocate_unique(const ALLOC& allocator, Args&&... args)
 {
     using Allocator = RebindAlloc<ALLOC, T>;
     using AllocTraits = std::allocator_traits<Allocator>;
@@ -108,7 +108,7 @@ zserio::unique_ptr<T, RebindAlloc<ALLOC, T>> allocate_unique(const ALLOC& alloca
     try
     {
         AllocTraits::construct(typedAllocator, std::addressof(*ptr), std::forward<Args>(args)...);
-        return zserio::unique_ptr<T, Allocator>(std::addressof(*ptr), typedAllocator);
+        return UniquePtr<T, Allocator>(std::addressof(*ptr), typedAllocator);
     }
     catch (...)
     {

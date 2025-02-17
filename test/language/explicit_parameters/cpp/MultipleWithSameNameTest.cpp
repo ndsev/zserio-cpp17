@@ -54,8 +54,7 @@ protected:
         }
     };
 
-    void fillMultipleWithSameNameTableRow(
-            MultipleWithSameNameTable::Row& row, uint32_t id, const StringType& name)
+    void fillRow(MultipleWithSameNameTable::Row& row, uint32_t id, const StringType& name)
     {
         row.id = id;
         row.name = name;
@@ -64,19 +63,19 @@ protected:
         row.parameterized2 = Parameterized2(static_cast<float>(id) * 1.5F);
     }
 
-    void fillMultipleWithSameNameTableRows(VectorType<MultipleWithSameNameTable::Row>& rows)
+    void fillRows(VectorType<MultipleWithSameNameTable::Row>& rows)
     {
         rows.clear();
         for (uint32_t id = 0; id < NUM_ROWS; ++id)
         {
             const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             MultipleWithSameNameTable::Row row;
-            fillMultipleWithSameNameTableRow(row, id, name);
+            fillRow(row, id, name);
             rows.push_back(row);
         }
     }
 
-    static void checkMultipleWithSameNameTableRow(MultipleParamsTableParameterProvider& parameterProvider,
+    static void checkRow(MultipleParamsTableParameterProvider& parameterProvider,
             const MultipleWithSameNameTable::Row& row1, const MultipleWithSameNameTable::Row& row2)
     {
         zserio::View rowView1(row1, parameterProvider);
@@ -88,14 +87,14 @@ protected:
         ASSERT_EQ(rowView1.parameterized2(), rowView2.parameterized2());
     }
 
-    static void checkMultipleWithSameNameTableRows(MultipleParamsTableParameterProvider& parameterProvider,
+    static void checkRows(MultipleParamsTableParameterProvider& parameterProvider,
             const VectorType<MultipleWithSameNameTable::Row>& rows1,
             const VectorType<MultipleWithSameNameTable::Row>& rows2)
     {
         ASSERT_EQ(rows1.size(), rows2.size());
         for (size_t i = 0; i < rows1.size(); ++i)
         {
-            checkMultipleWithSameNameTableRow(parameterProvider, rows1[i], rows2[i]);
+            checkRow(parameterProvider, rows1[i], rows2[i]);
         }
     }
 
@@ -115,7 +114,7 @@ TEST_F(MultipleWithSameNameTest, readWithoutCondition)
 
     MultipleParamsTableParameterProvider parameterProvider;
     VectorType<MultipleWithSameNameTable::Row> writtenRows;
-    fillMultipleWithSameNameTableRows(writtenRows);
+    fillRows(writtenRows);
     multipleWithSameNameTable.write(parameterProvider, writtenRows);
 
     MultipleWithSameNameTable::Reader reader = multipleWithSameNameTable.createReader(parameterProvider);
@@ -125,7 +124,7 @@ TEST_F(MultipleWithSameNameTest, readWithoutCondition)
     {
         reader.next(readRows.emplace_back());
     }
-    checkMultipleWithSameNameTableRows(parameterProvider, writtenRows, readRows);
+    checkRows(parameterProvider, writtenRows, readRows);
 }
 
 TEST_F(MultipleWithSameNameTest, readWithCondition)
@@ -134,7 +133,7 @@ TEST_F(MultipleWithSameNameTest, readWithCondition)
 
     MultipleParamsTableParameterProvider parameterProvider;
     VectorType<MultipleWithSameNameTable::Row> writtenRows;
-    fillMultipleWithSameNameTableRows(writtenRows);
+    fillRows(writtenRows);
     multipleWithSameNameTable.write(parameterProvider, writtenRows);
 
     const StringType condition = "name='Name1'";
@@ -147,7 +146,7 @@ TEST_F(MultipleWithSameNameTest, readWithCondition)
     ASSERT_FALSE(reader.hasNext());
 
     const size_t expectedRowNum = 1;
-    checkMultipleWithSameNameTableRow(parameterProvider, writtenRows[expectedRowNum], readRow);
+    checkRow(parameterProvider, writtenRows[expectedRowNum], readRow);
 }
 
 TEST_F(MultipleWithSameNameTest, update)
@@ -156,12 +155,12 @@ TEST_F(MultipleWithSameNameTest, update)
 
     MultipleParamsTableParameterProvider parameterProvider;
     VectorType<MultipleWithSameNameTable::Row> writtenRows;
-    fillMultipleWithSameNameTableRows(writtenRows);
+    fillRows(writtenRows);
     multipleWithSameNameTable.write(parameterProvider, writtenRows);
 
     const uint64_t updateRowId = 3;
     MultipleWithSameNameTable::Row updateRow;
-    fillMultipleWithSameNameTableRow(updateRow, updateRowId, "UpdatedName");
+    fillRow(updateRow, updateRowId, "UpdatedName");
     const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     multipleWithSameNameTable.update(parameterProvider, updateRow, updateCondition);
 
@@ -171,7 +170,7 @@ TEST_F(MultipleWithSameNameTest, update)
     MultipleWithSameNameTable::Row readRow;
     reader.next(readRow);
     ASSERT_FALSE(reader.hasNext());
-    checkMultipleWithSameNameTableRow(parameterProvider, updateRow, readRow);
+    checkRow(parameterProvider, updateRow, readRow);
 }
 
 } // namespace multiple_with_same_name

@@ -10,10 +10,10 @@ namespace pmr
 {
 
 /**
- * Typedef to std::unique_ptr provided for convenience - using PropagatingPolymorphicAllocator<uint8_t>.
+ * Typedef to zserio::UniquePtr provided for convenience - using PropagatingPolymorphicAllocator.
  */
 template <typename T>
-using unique_ptr = zserio::unique_ptr<T, PropagatingPolymorphicAllocator<T>>;
+using UniquePtr = zserio::UniquePtr<T, PropagatingPolymorphicAllocator<T>>;
 
 } // namespace pmr
 } // namespace zserio

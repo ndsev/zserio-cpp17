@@ -127,7 +127,7 @@ TEST_F(OptionalArrayRecursionTest, writeReadFileEmployee)
 {
     Employee employee;
     fillEmployee(employee, EMPLOYEE_DEVELOPER1_NAME, EMPLOYEE_DEVELOPER1_SALARY, Title::DEVELOPER);
-    const std::string fileName = StringType(BLOB_NAME_BASE) + "employee.blob";
+    const StringType fileName = StringType(BLOB_NAME_BASE) + "employee.blob";
 
     test_utils::writeReadFileTest(fileName, employee);
 }
@@ -136,7 +136,7 @@ TEST_F(OptionalArrayRecursionTest, writeReadFileTeamLead)
 {
     Employee teamLead;
     fillTeamLead(teamLead);
-    const std::string fileName = StringType(BLOB_NAME_BASE) + "team_lead.blob";
+    const StringType fileName = StringType(BLOB_NAME_BASE) + "team_lead.blob";
 
     test_utils::writeReadFileTest(fileName, teamLead);
 }

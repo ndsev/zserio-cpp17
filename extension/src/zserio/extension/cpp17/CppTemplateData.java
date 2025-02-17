@@ -176,6 +176,8 @@ public abstract class CppTemplateData implements IncludeCollector
                     nativeMapper.getSetType(), nativeMapper.getSetType().needsAllocatorArgument());
             optional = new TypeTemplateData(
                     nativeMapper.getOptionalType(), nativeMapper.getOptionalType().needsAllocatorArgument());
+            variant = new TypeTemplateData(
+                    nativeMapper.getVariantType(), nativeMapper.getVariantType().needsAllocatorArgument());
             uniquePtr = new TypeTemplateData(
                     nativeMapper.getUniquePtrType(), nativeMapper.getUniquePtrType().needsAllocatorArgument());
             service = new TypeTemplateData(nativeMapper.getServiceType());
@@ -229,6 +231,11 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getOptional()
         {
             return optional;
+        }
+
+        public TypeTemplateData getVariant()
+        {
+            return variant;
         }
 
         public TypeTemplateData getUniquePtr()
@@ -361,6 +368,7 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData map;
         private final TypeTemplateData set;
         private final TypeTemplateData optional;
+        private final TypeTemplateData variant;
         private final TypeTemplateData uniquePtr;
         private final TypeTemplateData service;
         private final TypeTemplateData serviceClient;

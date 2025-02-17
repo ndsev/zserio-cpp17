@@ -18,6 +18,17 @@ cmake_minimum_required(VERSION 3.15.0)
 project(ZserioCpp17Runtime)
 
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
+    zserio/pmr/BitBuffer.h
+    zserio/pmr/Bytes.h
+    zserio/pmr/IService.h
+    zserio/pmr/Map.h
+    zserio/pmr/Optional.h
+    zserio/pmr/PropagatingPolymorphicAllocator.h
+    zserio/pmr/Set.h
+    zserio/pmr/String.h
+    zserio/pmr/UniquePtr.h
+    zserio/pmr/Variant.h
+    zserio/pmr/Vector.h
     zserio/AllocatorHolder.h
     zserio/Array.h
     zserio/ArrayLengthException.h

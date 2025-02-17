@@ -320,7 +320,8 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 <#macro choice_read_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>();
+${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>(<#rt>
+        <#lt><#if member.field.typeInfo.needsAllocator>data.get_allocator()</#if>);
 ${I}<#if member.field.compound??>(void)</#if>read<@array_packed_suffix member.field, packed/><#rt>
         <#if member.field.array??><<@array_type_full_name fullName, member.field/>></#if>(<#t>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>

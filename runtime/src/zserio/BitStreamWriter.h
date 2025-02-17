@@ -233,7 +233,7 @@ public:
      * \param bitBuffer Bit buffer to write.
      */
     template <typename ALLOC>
-    void writeBitBuffer(const BasicBitBuffer<ALLOC> bitBuffer)
+    void writeBitBuffer(const BasicBitBuffer<ALLOC>& bitBuffer)
     {
         const VarSize bitSize = fromCheckedValue<VarSize>(convertSizeToUInt32(bitBuffer.getBitSize()));
         writeVarSize(bitSize);
