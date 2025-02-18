@@ -21,6 +21,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/BitBuffer.h
     zserio/pmr/Bytes.h
     zserio/pmr/IService.h
+    zserio/pmr/ITypeInfo.h
     zserio/pmr/Map.h
     zserio/pmr/Optional.h
     zserio/pmr/PropagatingPolymorphicAllocator.h
@@ -66,6 +67,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/HashCodeUtil.h
     zserio/IPubsub.h
     zserio/IService.h
+    zserio/ITypeInfo.h
     zserio/ISqliteDatabase.h
     zserio/IValidationObserver.h
     zserio/MissedOptionalException.h
@@ -86,6 +88,9 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/String.h
     zserio/StringConvertUtil.h
     zserio/Traits.h
+    zserio/TypeInfo.h
+    zserio/TypeInfoUtil.cpp
+    zserio/TypeInfoUtil.h
     zserio/Types.cpp
     zserio/Types.h
     zserio/UnionCaseException.h

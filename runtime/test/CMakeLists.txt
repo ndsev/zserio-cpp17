@@ -59,6 +59,8 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/StringTest.cpp
     zserio/TrackingAllocator.h
     zserio/TraitsTest.cpp
+    zserio/TypeInfoTest.cpp
+    zserio/TypeInfoUtilTest.cpp
     zserio/TypesTest.cpp
     zserio/UnionCaseExceptionTest.cpp
     zserio/ValidationExceptionTest.cpp
