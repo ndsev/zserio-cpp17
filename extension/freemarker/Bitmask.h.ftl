@@ -6,8 +6,12 @@
 
 <@runtime_version_check generatorVersion/>
 
-<@type_includes types.string/>
+<@type_includes types.allocator/>
 #include <zserio/Bitmasks.h>
+<@type_includes types.string/>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+</#if>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>
@@ -325,6 +329,16 @@ inline ${name} operator^=(${name}& lhs, const ${name}& rhs)
     return lhs;
 }
 <@namespace_end package.path/>
+<#if withReflectionCode>
+<@namespace_begin ["zserio", "detail"]/>
+
+template <>
+struct TypeInfo<${fullName}, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
+};
+<@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 template <>

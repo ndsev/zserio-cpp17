@@ -20,7 +20,7 @@ public abstract class CppTemplateData implements IncludeCollector
         generatorVersion = new GeneratorVersionTemplateData(
                 context.getGeneratorVersionString(), context.getGeneratorVersionNumber());
 
-        withReflectionCode = context.getWithReflectionCode();
+        withTypeInfoCode = context.getWithTypeInfoCode();
 
         headerSystemIncludes = new TreeSet<String>();
         headerUserIncludes = new TreeSet<String>();
@@ -40,9 +40,9 @@ public abstract class CppTemplateData implements IncludeCollector
         return generatorVersion;
     }
 
-    public boolean getWithReflectionCode()
+    public boolean getWithTypeInfoCode()
     {
-        return withReflectionCode;
+        return withTypeInfoCode;
     }
 
     public Iterable<String> getHeaderSystemIncludes()
@@ -186,6 +186,7 @@ public abstract class CppTemplateData implements IncludeCollector
             objectServiceData = new TypeTemplateData(nativeMapper.getObjectServiceDataType());
             rawServiceDataHolder = new TypeTemplateData(nativeMapper.getRawServiceDataHolderType());
             rawServiceDataView = new TypeTemplateData(nativeMapper.getRawServiceDataViewType());
+            typeInfo = new TypeTemplateData(nativeMapper.getTypeInfoType());
         }
 
         public AllocatorTemplateData getAllocator()
@@ -271,6 +272,11 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getRawServiceDataView()
         {
             return rawServiceDataView;
+        }
+
+        public TypeTemplateData getTypeInfo()
+        {
+            return typeInfo;
         }
 
         public static final class AllocatorTemplateData
@@ -376,12 +382,13 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData objectServiceData;
         private final TypeTemplateData rawServiceDataHolder;
         private final TypeTemplateData rawServiceDataView;
+        private final TypeTemplateData typeInfo;
     }
 
     private final String generatorDescription;
     private final GeneratorVersionTemplateData generatorVersion;
 
-    private final boolean withReflectionCode;
+    private final boolean withTypeInfoCode;
 
     private final TreeSet<String> headerSystemIncludes;
     private final TreeSet<String> headerUserIncludes;

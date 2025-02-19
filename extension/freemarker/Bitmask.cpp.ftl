@@ -1,8 +1,12 @@
 <#include "FileHeader.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
+<#if withTypeInfoCode>
+#include <zserio/TypeInfo.h>
+</#if>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -33,6 +37,25 @@ ${types.string.name} ${name}::toString(const ${types.string.name}::allocator_typ
             static_cast<ZserioType::ValueType>(m_value), allocator) + "[" + result + "]";
 }
 <@namespace_end package.path/>
+<#if withReflectionCode>
+<@namespace_begin ["zserio", "detail"]/>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    <@item_info_array_var "values", values/>
+
+    static const ::zserio::detail::BitmaskTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}",
+        <@type_info underlyingTypeInfo/>,
+        values
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}& value) const

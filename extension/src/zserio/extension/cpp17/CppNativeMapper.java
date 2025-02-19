@@ -79,6 +79,8 @@ public final class CppNativeMapper
                 new NativeAllocType(typesContext.getRawServiceDataHolder(), allocatorDefinition, "uint8_t");
         rawServiceDataViewType =
                 new NativeAllocType(typesContext.getRawServiceDataView(), allocatorDefinition, "uint8_t");
+
+        typeInfoType = new NativeAllocType(typesContext.getTypeInfo(), allocatorDefinition, "uint8_t");
     }
 
     public CppNativeSymbol getCppSymbol(AstNode symbol) throws ZserioExtensionException
@@ -232,6 +234,11 @@ public final class CppNativeMapper
     public NativeAllocType getRawServiceDataViewType()
     {
         return rawServiceDataViewType;
+    }
+
+    public NativeAllocType getTypeInfoType()
+    {
+        return typeInfoType;
     }
 
     public NativeIntegralType getUInt64Type()
@@ -806,6 +813,8 @@ public final class CppNativeMapper
     private final NativeAllocType objectServiceDataType;
     private final NativeAllocType rawServiceDataHolderType;
     private final NativeAllocType rawServiceDataViewType;
+
+    private final NativeAllocType typeInfoType;
 
     private final static NativeNumericWrapperType booleanType = new NativeNumericWrapperType("Bool", "bool");
     private final static NativeNumericWrapperType float16Type =

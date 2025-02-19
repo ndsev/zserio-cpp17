@@ -1,9 +1,13 @@
 <#include "FileHeader.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
+<#if withTypeInfoCode>
+#include <zserio/TypeInfo.h>
+</#if>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -38,6 +42,23 @@ ${fullName} valueToEnum(${underlyingTypeInfo.typeFullName} rawValue)
         throw ::zserio::CppRuntimeException("Unknown value for enumeration ${name}: ") << rawValue << "!";
     }
 }
+<@namespace_begin ["detail"]/>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    <@item_info_array_var "items", items/>
+
+    static const ::zserio::detail::EnumTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}",
+        <@type_info underlyingTypeInfo/>,
+        items
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["detail"]/>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
 

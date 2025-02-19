@@ -229,6 +229,8 @@ public final class CompoundFieldTemplateData
         public Offset(TemplateDataContext context, Expression offsetExpression,
                 IncludeCollector includeCollector) throws ZserioExtensionException
         {
+            final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
+            getter= cppExpressionFormatter.formatGetter(offsetExpression);
             final ExpressionFormatter cppViewIndirectExpressionFormatter =
                     context.getIndirectExpressionFormatter(includeCollector, "view");
             viewIndirectSetter = cppViewIndirectExpressionFormatter.formatSetter(offsetExpression);
@@ -240,6 +242,11 @@ public final class CompoundFieldTemplateData
             final CppNativeType nativeType = cppNativeMapper.getCppType(offsetExprZserioType);
             typeInfo = NativeTypeInfoTemplateDataCreator.create(nativeType, offsetExprZserioType);
             containsIndex = offsetExpression.containsIndex();
+        }
+
+        public String getGetter()
+        {
+            return getter;
         }
 
         public String getViewIndirectSetter()
@@ -262,6 +269,7 @@ public final class CompoundFieldTemplateData
             return containsIndex;
         }
 
+        private final String getter;
         private final String viewIndirectSetter;
         private final String ownerIndirectSetter;
         private final NativeTypeInfoTemplateData typeInfo;

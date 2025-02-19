@@ -14,6 +14,9 @@
 <#if structure_has_optional_field(fieldList)>
 <@type_includes types.optional/>
 </#if>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+</#if>
 #include <zserio/View.h>
 <@type_includes types.allocator/>
 <@system_includes headerSystemIncludes/>
@@ -163,6 +166,14 @@ struct OffsetsInitializer<${fullName}>
     static BitSize initialize(PackingContext<${fullName}>& packingContext,
             const View<${fullName}>& view, BitSize bitPosition);
     </#if>
+};
+</#if>
+<#if withTypeInfoCode>
+
+template <>
+struct TypeInfo<${fullName}, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
 };
 </#if>
 <@namespace_end ["zserio", "detail"]/>
