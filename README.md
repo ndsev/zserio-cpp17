@@ -64,8 +64,8 @@ design.
 
 The generator fully supports the Zserio language and has the following limitations:
 
-- Templates are generated as instantiations without usage of native C++ templates.
-- No support for generic programming, including JSON export and import.
+- Templates are generated as instantiations without usage of native C++ templates
+- No support for generic programming, including JSON export and import
 
 ### How to Get the latest C++17 Generator
 
