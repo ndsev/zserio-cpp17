@@ -60,21 +60,12 @@ Although newer C++ compilers are not tested, they should work as well as long as
 ## Current State
 
 The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator
-design and is updated regularly.
+design.
 
-Current state (10.12.2024):
+The generator fully supports the Zserio language and has the following limitations:
 
-- The generator fully supports the following Zserio types:
-  - Enumeration types
-  - Bitmask types
-  - Constants
-  - Structure types
-  - Choice types
-  - Union types
-- Extended members are not implemented and are always generated as regular compound fields
-- Templates are generated as instantiations without usage of native C++ templates
-- Offsets, Service Types, Pubsub Types, SQL databases and SQL tables are silently ignored
-- No support for generic programming, including JSON export and import
+- Templates are generated as instantiations without usage of native C++ templates.
+- No support for generic programming, including JSON export and import.
 
 ### How to Get the latest C++17 Generator
 
