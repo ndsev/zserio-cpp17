@@ -105,7 +105,7 @@ ${I}    <#if field.initializer??>"${field.initializer?j_string}"<#else>{}</#if>,
 ${I}    <#if field.optional??>true<#else>false</#if>, // isOptional
 ${I}    <#if field.optional?? && field.optional.clause??><#rt>
                 <#lt>"${field.optional.clause?j_string}"<#else>{}</#if>, // optionalClause
-${I}    <#if field.constraint??>"${field.constraint.writeConstraint?j_string}"<#else>{}</#if>, // constraint
+${I}    <#if field.constraint??>"${field.constraint.expression?j_string}"<#else>{}</#if>, // constraint
 ${I}    <#if field.array??>true<#else>false</#if>, // isArray
 ${I}    <#if field.array?? && field.array.length??><#rt>
                 <#lt>"${field.array.length?j_string}"<#else>{}</#if>, // arrayLength
@@ -120,10 +120,10 @@ ${I}}<#if comma>,</#if>
 
 <#macro field_info_recursive_type_info_var field>
     <#if field.optional?? && field.optional.isRecursive>
-    static const ::zserio::RecursiveTypeInfo<AllocatorType> <@field_info_recursive_type_info_var_name field/>(
+    static const ::zserio::detail::RecursiveTypeInfo<AllocatorType> <@field_info_recursive_type_info_var_name field/>(
             &typeInfo<${field.typeInfo.typeFullName}, AllocatorType>);
     <#elseif field.array?? && field.array.isRecursive>
-    static const ::zserio::RecursiveTypeInfo<AllocatorType> <@field_info_recursive_type_info_var_name field/>(
+    static const ::zserio::detail::RecursiveTypeInfo<AllocatorType> <@field_info_recursive_type_info_var_name field/>(
             &typeInfo<${field.typeInfo.typeFullName}, AllocatorType>);
     </#if>
 </#macro>
@@ -243,7 +243,7 @@ ${I}}<#if comma>,</#if>
 </#macro>
 
 <#function column_info_type_arguments_count field>
-    <#if field.bitSize?? && field.bitSize.isDynamicBitField>
+    <#if field.typeInfo.isDynamicBitField>
         <#return 1/>
     <#else>
         <#return field.typeParameters?size/>
@@ -255,8 +255,8 @@ ${I}}<#if comma>,</#if>
     <#local count=column_info_type_arguments_count(field)>
     <#if count != 0>
 ${I}static const ::std::array<::std::string_view, ${count}> <@field_info_type_arguments_var_name field/> = {
-        <#if field.bitSize?? && field.bitSize.isDynamicBitField>
-${I}    "${field.bitSize.value?j_string}"
+        <#if field.typeInfo.isDynamicBitField>
+${I}    "${field.dynamicBitFieldLength.expression?j_string}"
         <#else>
         <@column_info_compound_type_arguments field.typeParameters, indent+1/>
         </#if>

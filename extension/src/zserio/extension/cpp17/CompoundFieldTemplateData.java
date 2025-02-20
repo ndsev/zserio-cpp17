@@ -210,10 +210,16 @@ public final class CompoundFieldTemplateData
 
     public static final class Constraint
     {
-        public Constraint(Expression constraintExpression, ExpressionFormatter viewIndirectExpressionFormatter)
-                throws ZserioExtensionException
+        public Constraint(Expression constraintExpression, ExpressionFormatter cppExpressionFormatter,
+                ExpressionFormatter viewIndirectExpressionFormatter) throws ZserioExtensionException
         {
+            expression = cppExpressionFormatter.formatGetter(constraintExpression);
             viewIndirectExpression = viewIndirectExpressionFormatter.formatGetter(constraintExpression);
+        }
+
+        public String getExpression()
+        {
+            return expression;
         }
 
         public String getViewIndirectExpression()
@@ -221,6 +227,7 @@ public final class CompoundFieldTemplateData
             return viewIndirectExpression;
         }
 
+        private final String expression;
         private final String viewIndirectExpression;
     }
 
@@ -593,9 +600,10 @@ public final class CompoundFieldTemplateData
             return null;
 
         includeCollector.addCppSystemIncludes(Arrays.asList("zserio/ConstraintException.h"));
+        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
         final ExpressionFormatter viewIndirectExpressionFormatter =
                 context.getIndirectExpressionFormatter(includeCollector, "view");
-        return new Constraint(constraintExpression, viewIndirectExpressionFormatter);
+        return new Constraint(constraintExpression, cppExpressionFormatter, viewIndirectExpressionFormatter);
     }
 
     private static Offset createOffset(TemplateDataContext context, Field field,

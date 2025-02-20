@@ -13,6 +13,9 @@
 
 <@type_includes types.variant/>
 #include <zserio/ChoiceTag.h>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+</#if>
 #include <zserio/View.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
@@ -175,6 +178,14 @@ struct OffsetsInitializer<${fullName}>
     static BitSize initialize(PackingConext<${fullName}>& packingContext,
             const View<${fullName}>& view, , BitSize bitPosition);
     </#if>
+};
+</#if>
+<#if withTypeInfoCode>
+
+template <>
+struct TypeInfo<${fullName}, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
 };
 </#if>
 <@namespace_end ["zserio", "detail"]/>

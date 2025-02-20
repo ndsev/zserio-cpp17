@@ -2,11 +2,15 @@
 <#include "CompoundField.inc.ftl">
 <#include "CompoundFunction.inc.ftl">
 <#include "CompoundParameter.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/ChoiceCaseException.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
+<#if withTypeInfoCode>
+#include <zserio/TypeInfo.h>
+</#if>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -460,6 +464,45 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
         </#if>
 }
     </#if>
+</#if>
+<#if withTypeInfoCode>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    <@template_info_template_name_var "templateName", templateInstantiation!/>
+    <@template_info_template_arguments_var "templateArguments", templateInstantiation!/>
+
+    <#list fieldList as field>
+    <@field_info_recursive_type_info_var field/>
+    <@field_info_type_arguments_var field/>
+    </#list>
+    <@field_info_array_var "fields", fieldList/>
+
+    <@parameter_info_array_var "parameters", parameterList/>
+
+    <@function_info_array_var "functions", functionList/>
+
+    <#list caseMemberList as caseMember>
+    <@case_info_case_expressions_var caseMember caseMember?index/>
+    </#list>
+    <@case_info_array_var "cases" caseMemberList defaultMember!/>
+
+    static const ::zserio::detail::ChoiceTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}", nullptr,
+    <#-- TODO[Mi-L@]: Update when reflections are implemented!
+        [](const allocator_type& allocator) -> ${types.reflectablePtr.name}
+        {
+            return std::allocate_shared<::zserio::ReflectableOwner<${name}>>(allocator, allocator);
+        },
+    -->
+        templateName, templateArguments,
+        fields, parameters, functions, "${selectorExpression?j_string}", cases
+    };
+
+    return typeInfo;
+}
 </#if>
 <@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
