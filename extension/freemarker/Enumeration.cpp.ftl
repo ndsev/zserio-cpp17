@@ -42,6 +42,7 @@ ${fullName} valueToEnum(${underlyingTypeInfo.typeFullName} rawValue)
         throw ::zserio::CppRuntimeException("Unknown value for enumeration ${name}: ") << rawValue << "!";
     }
 }
+<#if withTypeInfoCode>
 <@namespace_begin ["detail"]/>
 
 const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
@@ -59,6 +60,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
     return typeInfo;
 }
 <@namespace_end ["detail"]/>
+</#if>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
 

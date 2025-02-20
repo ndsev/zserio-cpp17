@@ -60,6 +60,7 @@ size_t enumToOrdinal<${fullName}>(${fullName} value);
 
 template <>
 ${fullName} valueToEnum<${fullName}>(${underlyingTypeInfo.typeFullName} rawValue);
+<#if withTypeInfoCode>
 <@namespace_begin ["detail"]/>
 
 template <>
@@ -68,6 +69,7 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
     static const ${types.typeInfo.name}& get();
 };
 <@namespace_end ["detail"]/>
+</#if>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
 
