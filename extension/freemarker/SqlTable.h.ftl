@@ -10,15 +10,18 @@
 #include <memory>
 #include <sqlite3.h>
 #include <string_view>
-<@type_includes types.optional/>
-<@type_includes types.vector/>
-<@type_includes types.string/>
 #include <zserio/AllocatorHolder.h>
 #include <zserio/IValidationObserver.h>
+<@type_includes types.optional/>
 #include <zserio/Span.h>
 #include <zserio/SqliteConnection.h>
 #include <zserio/SqliteFinalizer.h>
+<@type_includes types.string/>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+</#if>
 #include <zserio/ValidationSqliteUtil.h>
+<@type_includes types.vector/>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>
@@ -317,6 +320,16 @@ private:
     ${fullName}::IParameterProvider& m_parameterProvider;
 </#if>
 };
+<#if withTypeInfoCode>
+<@namespace_begin ["detail"]/>
+
+template <>
+struct TypeInfo<${fullName}, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
+};
+<@namespace_end ["detail"]/>
+</#if>
 <@namespace_end ["zserio"]/>
 
 <@include_guard_end package.path, name/>

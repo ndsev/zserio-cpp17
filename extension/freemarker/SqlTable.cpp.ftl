@@ -1,16 +1,20 @@
 <#include "FileHeader.inc.ftl">
 <#include "Sql.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
-#include <zserio/CppRuntimeException.h>
-#include <zserio/SerializeUtil.h>
-#include <zserio/SqliteException.h>
 <#assign hasNonVirtualField=sql_table_has_non_virtual_field(fieldList)/>
 <#if hasNonVirtualField>
 #include <algorithm>
 #include <zserio/BitFieldUtil.h>
 </#if>
 <@type_includes types.bitBuffer/>
+#include <zserio/CppRuntimeException.h>
+#include <zserio/SerializeUtil.h>
+#include <zserio/SqliteException.h>
+<#if withTypeInfoCode>
+#include <zserio/TypeInfo.h>
+</#if>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -911,4 +915,53 @@ const ${fullName}::Row& View<${fullName}::Row>::zserioData() const
 {
     return *m_row;
 }
+<#if withTypeInfoCode>
+<@namespace_begin ["detail"]/>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    <@template_info_template_name_var "templateName", templateInstantiation!/>
+    <@template_info_template_arguments_var "templateArguments", templateInstantiation!/>
+
+    <#list fieldList as field>
+    <@column_info_type_arguments_var field/>
+    </#list>
+    static const <@info_array_type "::zserio::BasicColumnInfo<AllocatorType>", fieldList?size/> columns<#rt>
+    <#if fieldList?has_content>
+        <#lt> = {
+        <#list fieldList as field>
+        <@column_info field field?has_next/>
+        </#list>
+    };
+    <#else>
+        <#lt>;
+    </#if>
+
+    static const ::std::string_view sqlConstraint<#rt>
+    <#if sqlConstraint??>
+        <#lt> = ${sqlConstraint};
+    <#else>
+        <#lt>;
+    </#if>
+
+    static const ::std::string_view virtualTableUsing<#rt>
+    <#if virtualTableUsing??>
+        <#lt> = "${virtualTableUsing}";
+    <#else>
+        <#lt>;
+    </#if>
+
+    static const bool isWithoutRowId = <#if isWithoutRowId>true<#else>false</#if>;
+
+    static const ::zserio::detail::SqlTableTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}", templateName, templateArguments,
+        columns, sqlConstraint, virtualTableUsing, isWithoutRowId
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["detail"]/>
+</#if>
 <@namespace_end ["zserio"]/>

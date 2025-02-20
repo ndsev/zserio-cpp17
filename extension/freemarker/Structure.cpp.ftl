@@ -1,6 +1,6 @@
 <#include "FileHeader.inc.ftl">
 <#include "Structure.inc.ftl">
-<#include "TypeInfo.inc.ftl"> 
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/BitPositionUtil.h>

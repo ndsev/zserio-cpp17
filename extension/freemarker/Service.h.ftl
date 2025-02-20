@@ -166,7 +166,7 @@ struct TypeInfo<${fullName}::Service, ${types.allocator.default}>
 template <>
 struct TypeInfo<${fullName}::Client, ${types.allocator.default}> :
         TypeInfo<${fullName}::Service, ${types.allocator.default}>
-{}; 
+{};
 <@namespace_end ["zserio", "detail"]/>
 </#if>
 

@@ -168,7 +168,7 @@ ${I}}<#if comma>,</#if>
 
 <#macro field_info_compound_type_arguments parameters>
     <#list parameters as parameter>
-        "${parameter.expression?j_string}"<#if parameter?has_next>, </#if>
+        "${parameter.expression?j_string}"<#if parameter?has_next>,</#if>
     </#list>
 </#macro>
 

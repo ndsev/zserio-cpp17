@@ -1,9 +1,13 @@
 <#include "FileHeader.inc.ftl">
 <#include "Sql.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 <#assign needsParameterProvider = sql_db_needs_parameter_provider(fieldList)/>
 
 #include <zserio/SqliteException.h>
+<#if withTypeInfoCode>
+#include <zserio/TypeInfo.h>
+</#if>
 #include <zserio/ValidationSqliteUtil.h>
 
 <@user_include package.path, "${name}.h"/>
@@ -209,3 +213,24 @@ void ${name}::detachDatabases()
     m_attachedDbList.clear();
 }
 <@namespace_end package.path/>
+<#if withTypeInfoCode>
+<@namespace_begin ["zserio", "detail"]/>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    static const std::array<::zserio::BasicTableInfo<AllocatorType>, ${fieldList?size}> tables = {
+    <#list fieldList as field>
+        <@table_info field field?has_next/>
+    </#list>
+    };
+
+    static const ::zserio::detail::SqlDatabaseTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}", tables
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["zserio", "detail"]/>
+</#if>
