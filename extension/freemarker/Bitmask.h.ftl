@@ -329,7 +329,7 @@ inline ${name} operator^=(${name}& lhs, const ${name}& rhs)
     return lhs;
 }
 <@namespace_end package.path/>
-<#if withReflectionCode>
+<#if withTypeInfoCode>
 <@namespace_begin ["zserio", "detail"]/>
 
 template <>

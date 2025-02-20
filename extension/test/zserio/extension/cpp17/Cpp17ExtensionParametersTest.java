@@ -18,9 +18,9 @@ public class Cpp17ExtensionParametersTest
     public void checkUnknownSetCppAllocator()
     {
         final String setCppAllocator = "unknown";
-        final boolean withReflectionCode = false;
+        final boolean withTypeInfoCode = false;
         final TestExtensionParameters extensionParameters =
-                new TestExtensionParameters(setCppAllocator, withReflectionCode);
+                new TestExtensionParameters(setCppAllocator, withTypeInfoCode);
         assertThrows(ZserioExtensionException.class, () -> Cpp17ExtensionParameters.check(extensionParameters));
     }
 
@@ -28,9 +28,9 @@ public class Cpp17ExtensionParametersTest
     public void checkStdSetCppAllocator()
     {
         final String setCppAllocator = "std";
-        final boolean withReflectionCode = false;
+        final boolean withTypeInfoCode = false;
         final TestExtensionParameters extensionParameters =
-                new TestExtensionParameters(setCppAllocator, withReflectionCode);
+                new TestExtensionParameters(setCppAllocator, withTypeInfoCode);
         assertDoesNotThrow(() -> Cpp17ExtensionParameters.check(extensionParameters));
     }
 
@@ -38,35 +38,35 @@ public class Cpp17ExtensionParametersTest
     public void checkPolymorphicSetCppAllocator()
     {
         final String setCppAllocator = "polymorphic";
-        final boolean withReflectionCode = false;
+        final boolean withTypeInfoCode = false;
         final TestExtensionParameters extensionParameters =
-                new TestExtensionParameters(setCppAllocator, withReflectionCode);
+                new TestExtensionParameters(setCppAllocator, withTypeInfoCode);
         assertDoesNotThrow(() -> Cpp17ExtensionParameters.check(extensionParameters));
     }
 
     @Test
-    public void checkWithReflectionCode()
+    public void checkWithTypeInfoCode()
     {
         final String setCppAllocator = "std";
-        final boolean withReflectionCode = true;
+        final boolean withTypeInfoCode = true;
         final TestExtensionParameters extensionParameters =
-                new TestExtensionParameters(setCppAllocator, withReflectionCode);
+                new TestExtensionParameters(setCppAllocator, withTypeInfoCode);
         assertDoesNotThrow(() -> Cpp17ExtensionParameters.check(extensionParameters));
     }
 
     private static class TestExtensionParameters implements ExtensionParameters
     {
-        public TestExtensionParameters(String setCppAllocator, boolean withReflectionCode)
+        public TestExtensionParameters(String setCppAllocator, boolean withTypeInfoCode)
         {
             this.setCppAllocator = setCppAllocator;
-            this.withReflectionCode = withReflectionCode;
+            this.withTypeInfoCode = withTypeInfoCode;
         }
 
         @Override
         public boolean argumentExists(String argumentName)
         {
-            if (argumentName.equals("withReflectionCode"))
-                return withReflectionCode;
+            if (argumentName.equals("withTypeInfoCode"))
+                return withTypeInfoCode;
 
             fail("TestExtensionParameters: argumentExists failure!");
 
@@ -169,6 +169,6 @@ public class Cpp17ExtensionParametersTest
         }
 
         private final String setCppAllocator;
-        private final boolean withReflectionCode;
+        private final boolean withTypeInfoCode;
     }
 }

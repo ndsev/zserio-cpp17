@@ -37,7 +37,7 @@ ${types.string.name} ${name}::toString(const ${types.string.name}::allocator_typ
             static_cast<ZserioType::ValueType>(m_value), allocator) + "[" + result + "]";
 }
 <@namespace_end package.path/>
-<#if withReflectionCode>
+<#if withTypeInfoCode>
 <@namespace_begin ["zserio", "detail"]/>
 
 const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
