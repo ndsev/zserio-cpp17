@@ -230,7 +230,7 @@ public final class CompoundFieldTemplateData
                 IncludeCollector includeCollector) throws ZserioExtensionException
         {
             final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
-            getter= cppExpressionFormatter.formatGetter(offsetExpression);
+            getter = cppExpressionFormatter.formatGetter(offsetExpression);
             final ExpressionFormatter cppViewIndirectExpressionFormatter =
                     context.getIndirectExpressionFormatter(includeCollector, "view");
             viewIndirectSetter = cppViewIndirectExpressionFormatter.formatSetter(offsetExpression);

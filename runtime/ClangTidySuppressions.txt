@@ -79,8 +79,6 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:50
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:56
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/TypeInfo.h:1422
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/TypeInfo.h:1500
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19
