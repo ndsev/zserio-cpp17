@@ -98,6 +98,7 @@ TEST_F(TypeInfoTest, builtinTypeInfo)
     checkBuiltinTypeInfo(typeInfo<Float64>(), "float64", SchemaType::FLOAT64, CppType::DOUBLE, 64);
 
     checkBuiltinTypeInfo(typeInfo<String>(), "string", SchemaType::STRING, CppType::STRING);
+    checkBuiltinTypeInfo(typeInfo<StringView>(), "string", SchemaType::STRING, CppType::STRING);
 
     checkBuiltinTypeInfo(typeInfo<BitBuffer>(), "extern", SchemaType::EXTERN, CppType::BIT_BUFFER);
 

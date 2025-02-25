@@ -1469,6 +1469,16 @@ struct TypeInfo<BasicString<ALLOC>, RebindAlloc<ALLOC, uint8_t>>
 };
 
 template <typename ALLOC>
+struct TypeInfo<StringView, ALLOC>
+{
+    static const IBasicTypeInfo<ALLOC>& get()
+    {
+        static const BuiltinTypeInfo<ALLOC> typeInfo = {"string", SchemaType::STRING, CppType::STRING};
+        return typeInfo;
+    }
+};
+
+template <typename ALLOC>
 struct TypeInfo<BasicBitBuffer<ALLOC>, ALLOC>
 {
     static const IBasicTypeInfo<ALLOC>& get()
