@@ -4,21 +4,12 @@
 #include <memory> // TODO[Mi-L@]: Remove include once proper IReflectable is implemented.
 #include <string_view>
 
+#include "zserio/IReflectable.h"
 #include "zserio/Span.h"
 #include "zserio/Traits.h"
 
 namespace zserio
 {
-
-// TODO[Mi-L@]: Remove once proper IReflectable is implemented.
-template <typename ALLOC>
-class IBasicReflectable
-{
-    virtual ~IBasicReflectable() = default;
-};
-
-template <typename ALLOC>
-using IBasicReflectablePtr = std::shared_ptr<IBasicReflectable<ALLOC>>;
 
 /** Enumeration which specifies C++ type used in type information. */
 enum class CppType
@@ -459,18 +450,7 @@ public:
      *
      * \throw CppRuntimeException If the zserio type is not compound type.
      */
-    virtual IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator) const = 0;
-
-    /**
-     * Creates new instance of the zserio compound type.
-     *
-     * \note Default constructed allocator is used for allocation of new instance.
-     *
-     * \return New instance of zserio compound type.
-     *
-     * \throw CppRuntimeException If the zserio type is not compound type.
-     */
-    virtual IBasicReflectablePtr<ALLOC> createInstance() const = 0;
+    virtual IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator = ALLOC()) const = 0;
 };
 
 /**

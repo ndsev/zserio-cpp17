@@ -31,6 +31,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/Variant.h
     zserio/pmr/Vector.h
     zserio/AllocatorHolder.h
+    zserio/Any.h
     zserio/Array.h
     zserio/ArrayLengthException.h
     zserio/ArrayTraits.h
@@ -66,9 +67,10 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/FloatUtil.h
     zserio/HashCodeUtil.h
     zserio/IPubsub.h
+    zserio/IReflectable.h
     zserio/IService.h
-    zserio/ITypeInfo.h
     zserio/ISqliteDatabase.h
+    zserio/ITypeInfo.h
     zserio/IValidationObserver.h
     zserio/MissedOptionalException.h
     zserio/Optional.h
