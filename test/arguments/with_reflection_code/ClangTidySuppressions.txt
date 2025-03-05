@@ -1,0 +1,5 @@
+google-explicit-constructor:gen/with_reflection_code/Bitmask.h
+
+performance-move-const-arg:gen/with_reflection_code/Struct.cpp
+
+readability-simplify-boolean-expr:gen/with_reflection_code/Struct.cpp
