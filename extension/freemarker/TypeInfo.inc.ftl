@@ -209,12 +209,12 @@ ${I}};
     <#list caseMemberList as caseMember>
 ${I}::zserio::BasicCaseInfo<AllocatorType>{
 ${I}    <@case_info_case_expressions_var_name caseMember?index/>,
-${I}    <#if caseMember.compoundField??>&fields[${fieldIndex}]<#local fieldIndex+=1><#else>nullptr</#if>
+${I}    <#if caseMember.field??>&fields[${fieldIndex}]<#local fieldIndex+=1><#else>nullptr</#if>
 ${I}}<#if caseMember?has_next || defaultMember?has_content>,</#if>
     </#list>
     <#if defaultMember?has_content>
 ${I}::zserio::BasicCaseInfo<AllocatorType>{
-${I}    {}, <#if defaultMember.compoundField??>&fields[${fieldIndex}]<#local fieldIndex+=1><#else>nullptr</#if>
+${I}    {}, <#if defaultMember.field??>&fields[${fieldIndex}]<#local fieldIndex+=1><#else>nullptr</#if>
 ${I}}
     </#if>
 </#macro>
