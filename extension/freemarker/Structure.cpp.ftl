@@ -373,7 +373,7 @@ ${I}}
 <#macro structure_bitsizeof_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
+${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endBitPosition);
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
@@ -435,7 +435,7 @@ ${I}}
 <#macro structure_write_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}writer.alignTo(${field.alignmentValue});
+${I}writer.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}writer.alignTo(8);
@@ -494,7 +494,7 @@ ${I}}
 <#macro structure_read_field_inner compoundName field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}reader.alignTo(${field.alignmentValue});
+${I}reader.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}reader.alignTo(8);
@@ -628,7 +628,7 @@ ${I}}
 <#macro structure_initialize_offsets_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
+${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endBitPosition);
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
