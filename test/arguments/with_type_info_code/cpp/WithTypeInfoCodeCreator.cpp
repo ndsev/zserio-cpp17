@@ -11,6 +11,7 @@ template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
+using BytesType = zserio::BasicBytes<AllocatorType>;
 
 static void fillSimpleStruct(SimpleStruct& simpleStruct)
 {
@@ -73,7 +74,7 @@ static void fillComplexStruct(ComplexStruct& complexStruct, bool createOptionals
                 TestBitmask::Values::RED | TestBitmask::Values::_Green | TestBitmask::Values::ColorBlue;
         const VectorType<uint8_t> buffer = {0xCB, 0xF0};
         complexStruct.optionalExtern = BitBufferType(buffer, 12);
-        complexStruct.optionalBytes = zserio::Bytes{{0xAB, 0xCD}};
+        complexStruct.optionalBytes = BytesType{{0xAB, 0xCD}};
     }
 
     VectorType<TestEnum> enumArray;
@@ -174,12 +175,12 @@ void fillWithTypeInfoCode(WithTypeInfoCode& withTypeInfoCode, bool createOptiona
     withTypeInfoCode.externData = externData;
     const VectorType<BitBufferType> externArray = {externData, externData};
     withTypeInfoCode.externArray = externArray;
-    withTypeInfoCode.bytesData = zserio::Bytes{{0xAB, 0xCD}};
-    const VectorType<zserio::Bytes> bytesArray{{
-            zserio::Bytes{{0xAB, 0xCD}},
-            zserio::Bytes{{0xAB, 0xCD}},
+    withTypeInfoCode.bytesData = BytesType{{0xAB, 0xCD}};
+    const VectorType<BytesType> bytesArray{{
+            BytesType{{0xAB, 0xCD}},
+            BytesType{{0xAB, 0xCD}},
     }};
-    withTypeInfoCode.bytesArray = zserio::Extended<VectorType<zserio::Bytes>>(bytesArray);
+    withTypeInfoCode.bytesArray = zserio::Extended<VectorType<BytesType>>(bytesArray);
     const VectorType<zserio::UInt32> implicitArray = {1, 4, 6, 4, 6, 1};
     withTypeInfoCode.implicitArray = zserio::Extended<VectorType<zserio::UInt32>>(implicitArray);
 }
