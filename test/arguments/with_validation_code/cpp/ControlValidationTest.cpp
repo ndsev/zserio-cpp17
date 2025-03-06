@@ -1,5 +1,6 @@
 #include <map>
 #include <memory>
+#include <string_view>
 
 #include "gtest/gtest.h"
 #include "test_utils/ValidationObservers.h"
@@ -112,21 +113,21 @@ protected:
                 m_numberOfErrorsInRowsToSkipRestOfTheTable(numberOfErrorsInRowsToSkipRestOfTheTable)
         {}
 
-        bool beginTable(zserio::StringView tableName, size_t numberOfTableRows) override
+        bool beginTable(std::string_view tableName, size_t numberOfTableRows) override
         {
             ValidationObserver::beginTable(tableName, numberOfTableRows);
             return (m_tablesToSkip.count(zserio::toString(tableName)) == 0);
         }
 
-        bool endTable(zserio::StringView tableName, size_t numberOfValidatedTableRows) override
+        bool endTable(std::string_view tableName, size_t numberOfValidatedTableRows) override
         {
             ValidationObserver::endTable(tableName, numberOfValidatedTableRows);
-            return (zserio::StringView(m_tableToStopAfter) != tableName);
+            return (std::string_view(m_tableToStopAfter) != tableName);
         }
 
-        bool reportError(zserio::StringView tableName, zserio::StringView fieldName,
-                zserio::Span<const zserio::StringView> primaryKeyValues, ErrorType errorType,
-                zserio::StringView message) override
+        bool reportError(std::string_view tableName, std::string_view fieldName,
+                zserio::Span<const std::string_view> primaryKeyValues, ErrorType errorType,
+                std::string_view message) override
         {
             ValidationObserver::reportError(tableName, fieldName, primaryKeyValues, errorType, message);
             if (errorType >= zserio::IValidationObserver::VALUE_OUT_OF_RANGE)
@@ -408,15 +409,15 @@ TEST_F(ControlValidationTest, validateSkipTableAndTerminateValidationAfterFirstS
     class SkipAndTerminateObserver : public ValidationObserver
     {
     public:
-        bool endTable(zserio::StringView tableName, size_t numberOfValidatedTableRows) override
+        bool endTable(std::string_view tableName, size_t numberOfValidatedTableRows) override
         {
             ValidationObserver::endTable(tableName, numberOfValidatedTableRows);
             return !m_wasSchemaError; // terminate if an schema error occurred
         }
 
-        bool reportError(zserio::StringView tableName, zserio::StringView fieldName,
-                zserio::Span<const zserio::StringView> primaryKeyValues, ErrorType errorType,
-                zserio::StringView message) override
+        bool reportError(std::string_view tableName, std::string_view fieldName,
+                zserio::Span<const std::string_view> primaryKeyValues, ErrorType errorType,
+                std::string_view message) override
         {
             ValidationObserver::reportError(tableName, fieldName, primaryKeyValues, errorType, message);
             if (errorType < zserio::IValidationObserver::VALUE_OUT_OF_RANGE)

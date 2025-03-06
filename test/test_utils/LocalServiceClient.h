@@ -1,6 +1,8 @@
 #ifndef TEST_UTILS_LOCAL_SERVICE_CLIENT_H_INC
 #define TEST_UTILS_LOCAL_SERVICE_CLIENT_H_INC
 
+#include <string_view>
+
 #include "zserio/AllocatorHolder.h"
 #include "zserio/IService.h"
 
@@ -19,7 +21,7 @@ public:
             m_service(service)
     {}
 
-    std::vector<uint8_t, ALLOC> callMethod(zserio::StringView methodName,
+    std::vector<uint8_t, ALLOC> callMethod(std::string_view methodName,
             const zserio::IBasicServiceData<ALLOC>& requestData, void* context) override
     {
         return callMethodOnService(methodName, requestData.getData(), context);
@@ -27,7 +29,7 @@ public:
 
 private:
     virtual std::vector<uint8_t, ALLOC> callMethodOnService(
-            zserio::StringView methodName, zserio::Span<const uint8_t> requestBytes, void* context)
+            std::string_view methodName, zserio::Span<const uint8_t> requestBytes, void* context)
     {
         auto responseData = m_service.callMethod(methodName, requestBytes, context);
         zserio::Span<const uint8_t> responseBytes = responseData->getData();

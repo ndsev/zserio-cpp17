@@ -88,7 +88,7 @@ protected:
                 m_allocator(allocator)
         {}
 
-        void operator()(zserio::StringView topic, const Name& name) override
+        void operator()(std::string_view topic, const Name& name) override
         {
             ASSERT_EQ("pubsub_allocation/name_to_use_for_greeting"sv, topic);
             Greeting greeting{prepareGreeting(name.name)};
@@ -115,7 +115,7 @@ protected:
                 greeting(allocator)
         {}
 
-        void operator()(zserio::StringView topic, const Greeting& providedGreeting) override
+        void operator()(std::string_view topic, const Greeting& providedGreeting) override
         {
             ASSERT_EQ("pubsub_allocation/greeting_generated_for_name"sv, topic);
             greeting = providedGreeting.greeting;

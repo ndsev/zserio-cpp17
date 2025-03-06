@@ -84,7 +84,7 @@ TEST_F(SimplePubsubTest, powerOfTwoClientAndProvider)
                 simplePubsubProvider(provider)
         {}
 
-        void operator()(zserio::StringView topic, const Int32Value& value) override
+        void operator()(std::string_view topic, const Int32Value& value) override
         {
             ASSERT_EQ("simple_pubsub/request"sv, topic);
             const uint64_t absValue =
@@ -101,7 +101,7 @@ TEST_F(SimplePubsubTest, powerOfTwoClientAndProvider)
 
     struct PowerOfTwoCallback : public SimplePubsubClient::SimplePubsubClientCallback<UInt64Value>
     {
-        void operator()(zserio::StringView topic, const UInt64Value& value) override
+        void operator()(std::string_view topic, const UInt64Value& value) override
         {
             ASSERT_EQ("simple_pubsub/power_of_two"sv, topic);
             result = value.value;
@@ -139,7 +139,7 @@ TEST_F(SimplePubsubTest, powerOfTwoSimplePubsub)
                 simplePubsub(pubsub)
         {}
 
-        void operator()(zserio::StringView topic, const Int32Value& value) override
+        void operator()(std::string_view topic, const Int32Value& value) override
         {
             ASSERT_EQ("simple_pubsub/request"sv, topic);
             const uint64_t absValue =
@@ -155,7 +155,7 @@ TEST_F(SimplePubsubTest, powerOfTwoSimplePubsub)
 
     struct PowerOfTwoCallback : public SimplePubsub::SimplePubsubCallback<UInt64Value>
     {
-        void operator()(zserio::StringView topic, const UInt64Value& value) override
+        void operator()(std::string_view topic, const UInt64Value& value) override
         {
             ASSERT_EQ("simple_pubsub/power_of_two"sv, topic);
             result = value.value;
@@ -194,7 +194,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawClientAndProvider)
                 simplePubsubProvider(provider)
         {}
 
-        void operator()(zserio::StringView topic, const zserio::Span<const uint8_t>& valueData) override
+        void operator()(std::string_view topic, const zserio::Span<const uint8_t>& valueData) override
         {
             ASSERT_EQ("simple_pubsub/request_raw"sv, topic);
             Int32Value value;
@@ -216,7 +216,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawClientAndProvider)
     struct PowerOfTwoRawCallback
             : public SimplePubsubClient::SimplePubsubClientCallback<zserio::Span<const uint8_t>>
     {
-        void operator()(zserio::StringView topic, const zserio::Span<const uint8_t>& valueData) override
+        void operator()(std::string_view topic, const zserio::Span<const uint8_t>& valueData) override
         {
             ASSERT_EQ("simple_pubsub/power_of_two_raw"sv, topic);
             UInt64Value value;
@@ -246,7 +246,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawSimplePubsub)
                 simplePubsub(pubsub)
         {}
 
-        void operator()(zserio::StringView topic, const zserio::Span<const uint8_t>& valueData) override
+        void operator()(std::string_view topic, const zserio::Span<const uint8_t>& valueData) override
         {
             ASSERT_EQ("simple_pubsub/request_raw"sv, topic);
             Int32Value value;
@@ -266,7 +266,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawSimplePubsub)
 
     struct PowerOfTwoRawCallback : public SimplePubsub::SimplePubsubCallback<zserio::Span<const uint8_t>>
     {
-        void operator()(zserio::StringView topic, const zserio::Span<const uint8_t>& valueData) override
+        void operator()(std::string_view topic, const zserio::Span<const uint8_t>& valueData) override
         {
             ASSERT_EQ("simple_pubsub/power_of_two_raw"sv, topic);
             UInt64Value value;
@@ -304,7 +304,7 @@ TEST_F(SimplePubsubTest, subscribeRequestWithContext)
 
     struct RequestCallback : public SimplePubsub::SimplePubsubCallback<Int32Value>
     {
-        void operator()(zserio::StringView, const Int32Value&) override
+        void operator()(std::string_view, const Int32Value&) override
         {}
     };
 
@@ -320,7 +320,7 @@ TEST_F(SimplePubsubTest, unsubscribe)
                 simplePubsub(pubsub)
         {}
 
-        void operator()(zserio::StringView topic, const Int32Value& value) override
+        void operator()(std::string_view topic, const Int32Value& value) override
         {
             ASSERT_EQ("simple_pubsub/request"sv, topic);
             const uint64_t absValue =
@@ -337,7 +337,7 @@ TEST_F(SimplePubsubTest, unsubscribe)
 
     struct PowerOfTwoCallback : public SimplePubsub::SimplePubsubCallback<UInt64Value>
     {
-        void operator()(zserio::StringView topic, const UInt64Value& value) override
+        void operator()(std::string_view topic, const UInt64Value& value) override
         {
             ASSERT_EQ("simple_pubsub/power_of_two"sv, topic);
             result = value.value;

@@ -1,4 +1,5 @@
 #include <string>
+#include <string_view>
 
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
@@ -26,7 +27,7 @@ protected:
 
     static constexpr zserio::Int8 CASE1_FIELD = 13;
     static constexpr zserio::UInt16 CASE2_FIELD = 65535;
-    static constexpr zserio::StringView CASE3_FIELD = "SimpleUnion";
+    static constexpr std::string_view CASE3_FIELD = "SimpleUnion";
     static constexpr zserio::Int8 CASE4_FIELD = 42;
 };
 

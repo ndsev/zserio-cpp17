@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <string_view>
 
 #include "zserio/IValidationObserver.h"
 #include "zserio/StringConvertUtil.h"
@@ -23,20 +24,20 @@ public:
         m_numberOfValidatedTables += numberOfValidatedTables;
     }
 
-    bool beginTable(zserio::StringView, size_t numberOfRows) override
+    bool beginTable(std::string_view, size_t numberOfRows) override
     {
         m_numberOfRows += numberOfRows;
         return true;
     }
 
-    bool endTable(zserio::StringView, size_t numberOfValidatedRows) override
+    bool endTable(std::string_view, size_t numberOfValidatedRows) override
     {
         m_numberOfValidatedRows += numberOfValidatedRows;
         return true;
     }
 
-    bool reportError(zserio::StringView, zserio::StringView, zserio::Span<const zserio::StringView>, ErrorType,
-            zserio::StringView) override
+    bool reportError(std::string_view, std::string_view, zserio::Span<const std::string_view>, ErrorType,
+            std::string_view) override
     {
         m_numberOfErrors++;
         return true;
@@ -78,16 +79,16 @@ public:
 
     struct Error
     {
-        Error(zserio::StringView tableNameView, zserio::StringView fieldNameView,
-                zserio::Span<const zserio::StringView> primaryKeyValuesSpan, ErrorType error,
-                zserio::StringView messageView) :
+        Error(std::string_view tableNameView, std::string_view fieldNameView,
+                zserio::Span<const std::string_view> primaryKeyValuesSpan, ErrorType error,
+                std::string_view messageView) :
                 tableName(zserio::toString(tableNameView)),
                 fieldName(zserio::toString(fieldNameView)),
                 errorType(error),
                 message(zserio::toString(messageView))
         {
             std::transform(primaryKeyValuesSpan.begin(), primaryKeyValuesSpan.end(),
-                    std::back_inserter(this->primaryKeyValues), [](zserio::StringView msg) -> std::string {
+                    std::back_inserter(this->primaryKeyValues), [](std::string_view msg) -> std::string {
                         return ::zserio::toString(msg);
                     });
         }
@@ -109,21 +110,21 @@ public:
         m_numberOfValidatedTables = numberOfValidatedTables;
     }
 
-    bool beginTable(zserio::StringView tableName, size_t numberOfRows) override
+    bool beginTable(std::string_view tableName, size_t numberOfRows) override
     {
         m_rowCountsMap[zserio::toString(tableName)] = std::make_tuple(numberOfRows, static_cast<size_t>(0));
         return true;
     }
 
-    bool endTable(zserio::StringView tableName, size_t numberOfValidatedRows) override
+    bool endTable(std::string_view tableName, size_t numberOfValidatedRows) override
     {
         std::get<1>(m_rowCountsMap[zserio::toString(tableName)]) = numberOfValidatedRows;
         return true;
     }
 
-    bool reportError(zserio::StringView tableName, zserio::StringView fieldName,
-            zserio::Span<const zserio::StringView> primaryKeyValues, ErrorType errorType,
-            zserio::StringView message) override
+    bool reportError(std::string_view tableName, std::string_view fieldName,
+            zserio::Span<const std::string_view> primaryKeyValues, ErrorType errorType,
+            std::string_view message) override
     {
         m_errors.emplace_back(tableName, fieldName, primaryKeyValues, errorType, message);
         return true;
@@ -139,12 +140,12 @@ public:
         return m_numberOfValidatedTables;
     }
 
-    size_t getNumberOfTableRows(zserio::StringView tableName) const
+    size_t getNumberOfTableRows(std::string_view tableName) const
     {
         return std::get<0>(getTableRowCounts(tableName));
     }
 
-    size_t getNumberOfValidatedTableRows(zserio::StringView tableName) const
+    size_t getNumberOfValidatedTableRows(std::string_view tableName) const
     {
         return std::get<1>(getTableRowCounts(tableName));
     }
@@ -172,7 +173,7 @@ public:
     }
 
 private:
-    RowCounts getTableRowCounts(zserio::StringView tableName) const
+    RowCounts getTableRowCounts(std::string_view tableName) const
     {
         auto search = m_rowCountsMap.find(zserio::toString(tableName));
 

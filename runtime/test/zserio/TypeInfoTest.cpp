@@ -33,7 +33,7 @@ public:
 class TypeInfoTest : public ::testing::Test
 {
 protected:
-    void checkBuiltinTypeInfo(const ITypeInfo& typeInfo, StringView schemaName, SchemaType schemaType,
+    void checkBuiltinTypeInfo(const ITypeInfo& typeInfo, std::string_view schemaName, SchemaType schemaType,
             CppType cppType, uint8_t bitSize = 0)
     {
         ASSERT_EQ(schemaName, typeInfo.getSchemaName());
@@ -98,7 +98,7 @@ TEST_F(TypeInfoTest, builtinTypeInfo)
     checkBuiltinTypeInfo(typeInfo<Float64>(), "float64", SchemaType::FLOAT64, CppType::DOUBLE, 64);
 
     checkBuiltinTypeInfo(typeInfo<String>(), "string", SchemaType::STRING, CppType::STRING);
-    checkBuiltinTypeInfo(typeInfo<StringView>(), "string", SchemaType::STRING, CppType::STRING);
+    checkBuiltinTypeInfo(typeInfo<std::string_view>(), "string", SchemaType::STRING, CppType::STRING);
 
     checkBuiltinTypeInfo(typeInfo<BitBuffer>(), "extern", SchemaType::EXTERN, CppType::BIT_BUFFER);
 

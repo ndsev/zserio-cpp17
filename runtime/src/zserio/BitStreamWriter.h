@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <string_view>
 #include <type_traits>
 
 #include "zserio/BitBuffer.h"
@@ -225,7 +226,7 @@ public:
      *
      * \param data String view to write.
      */
-    void writeString(StringView data);
+    void writeString(std::string_view data);
 
     /**
      * Writes bit buffer.
@@ -469,7 +470,7 @@ inline void write(BitStreamWriter& writer, BytesView value)
     writer.writeBytes(value);
 }
 
-inline void write(BitStreamWriter& writer, StringView value)
+inline void write(BitStreamWriter& writer, std::string_view value)
 {
     writer.writeString(value);
 }

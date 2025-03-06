@@ -3,6 +3,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -125,7 +126,7 @@ TEST_F(SimpleDbTest, tableNames)
 {
     VectorType<StringType> tableNames;
     std::transform(WorldDb::tableNames.begin(), WorldDb::tableNames.end(), std::back_inserter(tableNames),
-            [](zserio::StringView name) -> StringType {
+            [](std::string_view name) -> StringType {
                 return zserio::toString(name, AllocatorType());
             });
 

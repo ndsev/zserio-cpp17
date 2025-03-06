@@ -145,7 +145,7 @@ public:
      * \throw ServiceException if the call fails.
      */
     virtual IBasicServiceDataPtr<ALLOC> callMethod(
-            StringView methodName, Span<const uint8_t> requestData, void* context) = 0;
+            std::string_view methodName, Span<const uint8_t> requestData, void* context) = 0;
 };
 
 /**
@@ -169,7 +169,7 @@ public:
      * \throw ServiceException if the call fails.
      */
     virtual Vector<uint8_t, ALLOC> callMethod(
-            StringView methodName, const IBasicServiceData<ALLOC>& requestData, void* context) = 0;
+            std::string_view methodName, const IBasicServiceData<ALLOC>& requestData, void* context) = 0;
 };
 
 /** Typedef to service interface provided for convenience - using default std::allocator<uint8_t>. */

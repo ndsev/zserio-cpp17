@@ -2,6 +2,7 @@
 #define ZSERIO_ARRAY_TRAIT_H_INC
 
 #include <cstddef>
+#include <string_view>
 #include <type_traits>
 
 #include "zserio/BitStreamReader.h"
@@ -194,7 +195,7 @@ struct ArrayTraits<BasicBitBuffer<ALLOC>>
 template <typename ALLOC>
 struct ArrayTraits<BasicString<ALLOC>>
 {
-    static constexpr StringView at(const detail::DummyArrayOwner&, StringView element, size_t)
+    static constexpr std::string_view at(const detail::DummyArrayOwner&, std::string_view element, size_t)
     {
         return element;
     }

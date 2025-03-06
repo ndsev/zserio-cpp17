@@ -1,4 +1,5 @@
 #include <limits>
+#include <string_view>
 
 #include "constants/BITFIELD8_MAX_CONSTANT.h"
 #include "constants/BITFIELD8_MIN_CONSTANT.h"
@@ -491,7 +492,7 @@ TEST(ConstantsTest, subtypeToStringConstant)
 
     ASSERT_EQ("Subtype string constant"sv, SUBTYPE_STRING_CONSTANT);
     const StringSubtype expectedValue = "Subtype string constant";
-    ASSERT_EQ(zserio::StringView(expectedValue), SUBTYPE_STRING_CONSTANT);
+    ASSERT_EQ(std::string_view(expectedValue), SUBTYPE_STRING_CONSTANT);
 }
 
 TEST(ConstantsTest, subtypeToEnumConstant)

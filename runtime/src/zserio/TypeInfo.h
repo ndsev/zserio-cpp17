@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <string_view>
 
 #include "zserio/BitBuffer.h"
 #include "zserio/Bytes.h"
@@ -1469,7 +1470,7 @@ struct TypeInfo<BasicString<ALLOC>, RebindAlloc<ALLOC, uint8_t>>
 };
 
 template <typename ALLOC>
-struct TypeInfo<StringView, ALLOC>
+struct TypeInfo<std::string_view, ALLOC>
 {
     static const IBasicTypeInfo<ALLOC>& get()
     {

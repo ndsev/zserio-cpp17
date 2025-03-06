@@ -45,7 +45,7 @@
         <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
             ${field.typeInfo.typeFullName}<#t>
         <#elseif field.typeInfo.isString>
-            StringView<#t>
+            ::std::string_view<#t>
         <#elseif field.typeInfo.isExtern>
             ${types.bitBufferView.name}<#t>
         <#elseif field.typeInfo.isBytes>
@@ -65,7 +65,7 @@
     <#if parameter.typeInfo.isSimple && !parameter.typeInfo.isDynamicBitField>
         ${parameter.typeInfo.typeFullName}<#t>
     <#elseif parameter.typeInfo.isString>
-        StringView<#t>
+        ::std::string_view<#t>
     <#elseif parameter.typeInfo.isExtern>
         ${types.bitBufferView.name}<#t>
     <#elseif parameter.typeInfo.isBytes>
