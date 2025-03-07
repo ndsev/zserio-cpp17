@@ -45,6 +45,9 @@ cppcoreguidelines-macro-usage:src/zserio/CppRuntimeVersion.h:8
 # This is necessary for convenient usage of CppRuntimeException.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeException.h:193
 
+# This is necessary for implementation of low level zserio::Any abstraction.
+cppcoreguidelines-pro-type-union-access:src/zserio/Any.h
+
 # Optional follows std::optional so passing value by const & is correct.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:582
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:599
@@ -79,6 +82,12 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:50
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:56
+
+# This is necessary for implementation of low level zserio::Any abstraction.
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:580
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:586
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:616
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:623
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19

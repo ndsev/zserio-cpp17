@@ -450,7 +450,18 @@ public:
      *
      * \throw CppRuntimeException If the zserio type is not compound type.
      */
-    virtual IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator = ALLOC()) const = 0;
+    virtual IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator) const = 0;
+
+    /**
+     * Creates new instance of the zserio compound type.
+     *
+     * \note Default constructed allocator is used for allocation of new instance.
+     *
+     * \return New instance of zserio compound type.
+     *
+     * \throw CppRuntimeException If the zserio type is not compound type.
+     */
+    virtual IBasicReflectablePtr<ALLOC> createInstance() const = 0;
 };
 
 /**
