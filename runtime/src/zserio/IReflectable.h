@@ -9,7 +9,6 @@
 #include "zserio/BitStreamWriter.h"
 #include "zserio/RebindAlloc.h"
 #include "zserio/Span.h"
-#include "zserio/String.h"
 #include "zserio/Vector.h"
 
 namespace zserio
@@ -128,8 +127,8 @@ public:
      *                            the given name doesn't exist or when the field getter itself throws.
      */
     /** \{ */
-    virtual ConstPtr getField(StringView name) const = 0;
-    virtual Ptr getField(StringView name) = 0;
+    virtual ConstPtr getField(std::string_view name) const = 0;
+    virtual Ptr getField(std::string_view name) = 0;
     /** \} */
 
     /**
@@ -145,7 +144,7 @@ public:
      *                            the given name doesn't exist or when the provided value is of a wrong type
      *                            or when the field setter itself throws.
      */
-    virtual void setField(StringView name, const BasicAny<ALLOC>& value) = 0;
+    virtual void setField(std::string_view name, const BasicAny<ALLOC>& value) = 0;
 
     /**
      * Creates a default constructed field within current object and returns reflectable pointer to it.
@@ -159,7 +158,7 @@ public:
      * \throw CppRuntimeException When the reflected object is not a compound type or when the field with
      *                            the given name doesn't exists.
      */
-    virtual Ptr createField(StringView name) = 0;
+    virtual Ptr createField(std::string_view name) = 0;
 
     /**
      * Gets reflectable view to the parameter (i.e. member) with the given schema name.
@@ -174,8 +173,8 @@ public:
      *                            the given name doesn't exist or when the parameter getter itself throws.
      */
     /** \{ */
-    virtual ConstPtr getParameter(StringView name) const = 0;
-    virtual Ptr getParameter(StringView name) = 0;
+    virtual ConstPtr getParameter(std::string_view name) const = 0;
+    virtual Ptr getParameter(std::string_view name) = 0;
     /** \} */
 
     /**
@@ -192,8 +191,8 @@ public:
      *                            the given name doesn't exist or the the function call itself throws.
      */
     /** \{ */
-    virtual ConstPtr callFunction(StringView name) const = 0;
-    virtual Ptr callFunction(StringView name) = 0;
+    virtual ConstPtr callFunction(std::string_view name) const = 0;
+    virtual Ptr callFunction(std::string_view name) = 0;
     /** \} */
 
     /**
@@ -205,7 +204,7 @@ public:
      *
      * \throw CppRuntimeException When the reflected object is not a choice type (or union).
      */
-    virtual StringView getChoice() const = 0;
+    virtual std::string_view getChoice() const = 0;
 
     /**
      * Universal accessor to zserio entities within the zserio sub-tree represented by the reflected object.
@@ -224,8 +223,8 @@ public:
      *         or when the requested operation throws CppRuntimeException.
      */
     /** \{ */
-    virtual ConstPtr find(StringView path) const = 0;
-    virtual Ptr find(StringView path) = 0;
+    virtual ConstPtr find(std::string_view path) const = 0;
+    virtual Ptr find(std::string_view path) = 0;
     /** \} */
 
     /**
@@ -234,8 +233,8 @@ public:
      * Overloaded method provided for convenience.
      */
     /** \{ */
-    virtual ConstPtr operator[](StringView path) const = 0;
-    virtual Ptr operator[](StringView path) = 0;
+    virtual ConstPtr operator[](std::string_view path) const = 0;
+    virtual Ptr operator[](std::string_view path) = 0;
     /** \} */
 
     /**
@@ -309,7 +308,7 @@ public:
      *
      * For builtin types, enums and bitmasks the value is "returned by value" - i.e. it's copied
      * into the any holder, but note that for bytes the any holder contains Span,
-     * for string the any holder contains an appropriate StringView and for compounds, bit buffers and arrays
+     * for string the any holder contains an appropriate string_view and for compounds, bit buffers and arrays
      * the value is "returned by reference" - i.e. the any holder contains std::reference_wrapper<T> with the
      * reference to the compound type or the raw array type.
      *
@@ -429,7 +428,7 @@ public:
      * \return Reference to the string value.
      * \throw CppRuntimeException When the reflected object is not a string type.
      */
-    virtual StringView getStringView() const = 0;
+    virtual std::string_view getStringView() const = 0;
 
     /**
      * Gets reference to the reflected bit buffer.
