@@ -75,6 +75,8 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/JsonDecoder.h
     zserio/JsonEncoder.cpp
     zserio/JsonEncoder.h
+    zserio/JsonTokenizer.cpp
+    zserio/JsonTokenizer.h
     zserio/MissedOptionalException.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
