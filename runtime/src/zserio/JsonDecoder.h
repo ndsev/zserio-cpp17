@@ -415,34 +415,39 @@ typename BasicJsonDecoder<ALLOC>::DecoderResult BasicJsonDecoder<ALLOC>::decodeN
 template <typename ALLOC>
 typename BasicJsonDecoder<ALLOC>::DecoderResult BasicJsonDecoder<ALLOC>::decodeSigned(std::string_view input)
 {
+    const char* pBegin = &input.front();
     char* pEnd = nullptr;
     errno = 0; // no library function sets its value back to zero once changed
-    const int64_t value = std::strtoll(input.begin(), &pEnd, 10);
+    const int64_t value = std::strtoll(pBegin, &pEnd, 10);
 
     const bool overflow = (errno == ERANGE);
+    const size_t numRead = static_cast<size_t>(pEnd - pBegin);
 
-    return DecoderResult(static_cast<size_t>(pEnd - input.begin()), value, overflow, get_allocator());
+    return DecoderResult(numRead, value, overflow, get_allocator());
 }
 
 template <typename ALLOC>
 typename BasicJsonDecoder<ALLOC>::DecoderResult BasicJsonDecoder<ALLOC>::decodeUnsigned(std::string_view input)
 {
+    const char* pBegin = &input.front();
     char* pEnd = nullptr;
     errno = 0; // no library function sets its value back to zero once changed
-    const uint64_t value = std::strtoull(input.begin(), &pEnd, 10);
+    const uint64_t value = std::strtoull(pBegin, &pEnd, 10);
 
     const bool overflow = (errno == ERANGE);
+    const size_t numRead = static_cast<size_t>(pEnd - pBegin);
 
-    return DecoderResult(static_cast<size_t>(pEnd - input.begin()), value, overflow, get_allocator());
+    return DecoderResult(numRead, value, overflow, get_allocator());
 }
 
 template <typename ALLOC>
 typename BasicJsonDecoder<ALLOC>::DecoderResult BasicJsonDecoder<ALLOC>::decodeDouble(
         std::string_view input, size_t numChars)
 {
+    const char* pBegin = &input.front();
     char* pEnd = nullptr;
-    const double value = std::strtod(input.begin(), &pEnd);
-    if (static_cast<size_t>(pEnd - input.begin()) != numChars)
+    const double value = std::strtod(pBegin, &pEnd);
+    if (static_cast<size_t>(pEnd - pBegin) != numChars)
     {
         return DecoderResult(numChars, get_allocator());
     }
