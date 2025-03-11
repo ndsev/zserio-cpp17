@@ -72,6 +72,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ISqliteDatabase.h
     zserio/ITypeInfo.h
     zserio/IValidationObserver.h
+    zserio/JsonDecoder.h
     zserio/MissedOptionalException.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
