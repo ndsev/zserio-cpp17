@@ -82,6 +82,8 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:50
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:56
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:97
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:98
 
 # This is necessary for implementation of low level zserio::Any abstraction.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:580

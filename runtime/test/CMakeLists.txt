@@ -48,6 +48,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/FloatUtilTest.cpp
     zserio/HashCodeUtilTest.cpp
     zserio/JsonDecoderTest.cpp
+    zserio/JsonEncoderTest.cpp
     zserio/MissedOptionalExceptionTest.cpp
     zserio/OptionalTest.cpp
     zserio/OutOfRangeExceptionTest.cpp
