@@ -145,6 +145,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/OptionalTest.cpp
     zserio/OutOfRangeExceptionTest.cpp
     zserio/PubsubExceptionTest.cpp
+    zserio/ReflectableTest.cpp
     zserio/SerializeUtilTest.cpp
     zserio/ServiceExceptionTest.cpp
     zserio/SizeConvertUtilTest.cpp

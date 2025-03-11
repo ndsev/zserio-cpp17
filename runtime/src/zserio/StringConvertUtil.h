@@ -22,8 +22,7 @@ namespace detail
  *
  * \return Beginning of the resulting string which is null-terminated.
  */
-template <typename T,
-        typename std::enable_if<std::is_unsigned<T>::value && !std::is_same<T, bool>::value, int>::type = 0>
+template <typename T, std::enable_if_t<std::is_unsigned_v<T> && !std::is_same_v<T, bool>, int> = 0>
 const char* convertIntToString(std::array<char, 24>& buffer, T value, bool isNegative)
 {
     static const std::array<char, 201> DIGITS_100_10 = {
@@ -76,7 +75,7 @@ const char* convertIntToString(std::array<char, 24>& buffer, T value, bool isNeg
  *
  * \return Pointer to the beginning of the resulting string.
  */
-template <typename T, typename std::enable_if<std::is_unsigned<T>::value, int>::type = 0>
+template <typename T, std::enable_if_t<std::is_unsigned_v<T>, int> = 0>
 const char* convertIntToString(std::array<char, 24>& buffer, T value)
 {
     return detail::convertIntToString(buffer, value, false);
@@ -92,10 +91,10 @@ const char* convertIntToString(std::array<char, 24>& buffer, T value)
  *
  * \return Pointer to the beginning of the resulting string.
  */
-template <typename T, typename std::enable_if<std::is_signed<T>::value, int>::type = 0>
+template <typename T, std::enable_if_t<std::is_signed_v<T>, int> = 0>
 const char* convertIntToString(std::array<char, 24>& buffer, T value)
 {
-    using UnsignedType = typename std::make_unsigned<T>::type;
+    using UnsignedType = typename std::make_unsigned_t<T>;
     UnsignedType absValue = static_cast<UnsignedType>(value);
     const bool isNegative = value < 0;
     if (isNegative)
@@ -167,6 +166,29 @@ BasicString<RebindAlloc<ALLOC, char>> toString(T value, const ALLOC& allocator =
 {
     std::array<char, 24> buffer = {};
     return BasicString<RebindAlloc<ALLOC, char>>(convertIntToString(buffer, value), allocator);
+}
+
+/**
+ * Converts an integral value to string using the given allocator. Defined for convenience.
+ *
+ * \param value     Value to convert.
+ * \param allocator Allocator to use for the string allocation.
+ *
+ * \return String representation of the given integral value.
+ */
+template <typename ALLOC, typename T, std::enable_if_t<std::is_integral_v<typename T::ValueType>, int> = 0>
+BasicString<RebindAlloc<ALLOC, char>> toString(T value, const ALLOC& allocator = ALLOC())
+{
+    if constexpr (std::is_same_v<bool, typename T::ValueType>)
+    {
+        return BasicString<RebindAlloc<ALLOC, char>>(convertBoolToString(value), allocator);
+    }
+    else
+    {
+        std::array<char, 24> buffer = {};
+        return BasicString<RebindAlloc<ALLOC, char>>(
+                convertIntToString(buffer, static_cast<typename T::ValueType>(value)), allocator);
+    }
 }
 
 /**

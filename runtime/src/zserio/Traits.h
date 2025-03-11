@@ -6,6 +6,10 @@
 namespace zserio
 {
 
+// forward declarations
+template <typename, std::size_t>
+class Span;
+
 /**
  * Trait used to check whether the type T is an allocator.
  * \{
@@ -89,6 +93,24 @@ struct is_bitmask<T, std::void_t<decltype(std::declval<T>().getValue()), typenam
 
 template <typename T, typename V = void>
 inline constexpr bool is_bitmask_v = is_bitmask<T, V>::value;
+/**
+ * \}
+ */
+
+/**
+ * Trait used to check whether the type T is a Span.
+ * \{
+ */
+template <typename>
+struct is_span : std::false_type
+{};
+
+template <typename T, size_t Extent>
+struct is_span<Span<T, Extent>> : std::true_type
+{};
+
+template <typename T>
+inline constexpr bool is_span_v = is_span<T>::value;
 /**
  * \}
  */

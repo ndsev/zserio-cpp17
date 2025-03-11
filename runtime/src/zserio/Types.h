@@ -877,21 +877,6 @@ CppRuntimeException& operator<<(CppRuntimeException& exception, detail::NumericT
     return exception << static_cast<VALUE_TYPE>(value);
 }
 
-// TODO[Mi-L@]: Implement for all wrapper types.
-template <typename ALLOC, typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
-BasicString<RebindAlloc<ALLOC, char>> toString(T value, const ALLOC& allocator = ALLOC())
-{
-    return toString(static_cast<typename T::ValueType>(value), allocator);
-}
-
-// template <typename ALLOC, typename VALUE_TYPE>
-// BasicString<RebindAlloc<ALLOC, char>> toString(
-//         detail::NumericTypeWrapper<VALUE_TYPE> value, const ALLOC& allocator = ALLOC())
-// {
-//     return toString(static_cast<VALUE_TYPE>(value), allocator);
-// }
-
 namespace detail
 {
 

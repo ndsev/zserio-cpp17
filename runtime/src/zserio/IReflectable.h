@@ -420,7 +420,7 @@ public:
      * \return Bytes value as a span.
      * \throw CppRuntimeException When the reflected object is not a bytes type.
      */
-    virtual Span<const uint8_t> getBytes() const = 0;
+    virtual BytesView getBytes() const = 0;
 
     /**
      * Gets reference to the string value of the string reflectable.
@@ -436,7 +436,7 @@ public:
      * \return Reference to the bit buffer.
      * \throw CppRuntimeException When the reflected object is not a bit buffer (i.e. extern type).
      */
-    virtual const BasicBitBuffer<ALLOC>& getBitBuffer() const = 0;
+    virtual const BasicBitBuffer<ALLOC>& getBitBuffer() const = 0; // TODO[Mi-L@]: return BitBufferView?
 
     /**
      * Converts any signed integral value to 64-bit signed integer.
@@ -483,8 +483,8 @@ public:
      * \return String value representing the reflected object.
      */
     /** \{ */
-    virtual BasicString<ALLOC> toString(const ALLOC& allocator) const = 0;
-    virtual BasicString<ALLOC> toString() const = 0;
+    virtual BasicString<RebindAlloc<ALLOC, char>> toString(const ALLOC& allocator) const = 0;
+    virtual BasicString<RebindAlloc<ALLOC, char>> toString() const = 0;
     /** \} */
 };
 
@@ -512,8 +512,9 @@ using IReflectableConstPtr = IBasicReflectableConstPtr<>;
  *
  * \return Enum reflectable view.
  */
-template <typename T, typename ALLOC = std::allocator<uint8_t>>
-IBasicReflectablePtr<ALLOC> enumReflectable(T value, const ALLOC& allocator = ALLOC());
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<is_allocator_v<ALLOC>, int> = 0>
+IBasicReflectablePtr<ALLOC> reflectable(T value, const ALLOC& allocator = ALLOC());
 
 } // namespace zserio
 
