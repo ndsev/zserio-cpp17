@@ -128,6 +128,14 @@ google-readability-casting:src/zserio/Variant.h:66
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
 google-explicit-constructor:src/zserio/View.h:133
 
+# This is necessary because of implementation. Zserio naturally supports recursion.
+misc-no-recursion:src/zserio/JsonParser.h:186
+misc-no-recursion:src/zserio/JsonParser.h:209
+misc-no-recursion:src/zserio/JsonParser.h:224
+misc-no-recursion:src/zserio/JsonParser.h:235
+misc-no-recursion:src/zserio/JsonParser.h:253
+misc-no-recursion:src/zserio/JsonParser.h:268
+
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
