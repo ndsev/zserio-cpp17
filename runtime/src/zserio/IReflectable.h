@@ -18,42 +18,20 @@ namespace zserio
 template <typename ALLOC>
 class IBasicTypeInfo;
 
-/**
- * Interface for reflectable view to instances of zserio objects.
- *
- * \note Users are responsible to maintain life-time of reflected objects which must exist
- * as long as the views are used.
- *
- * \note The object in this context may be also an instance of a built-in type.
- */
 template <typename ALLOC = std::allocator<uint8_t>>
-class IBasicReflectable
+class IBasicInspectable
 {
 public:
-    /** Shared pointer to the reflectable interface. */
-    using Ptr = std::shared_ptr<IBasicReflectable>;
-
-    /** Shared pointer to the constant reflectable interface. */
-    using ConstPtr = std::shared_ptr<const IBasicReflectable>;
-
     /**
      * Destructor.
      */
-    virtual ~IBasicReflectable() = default;
+    virtual ~IBasicInspectable() = default;
 
-    /**
-     * Gets type info for the current zserio object.
-     *
-     * \return Reference to the static instance of type info.
-     */
-    virtual const IBasicTypeInfo<ALLOC>& getTypeInfo() const = 0;
+    /** Shared pointer to the reflectable interface. */
+    using Ptr = std::shared_ptr<IBasicInspectable>;
 
-    /**
-     * Gets whether the reflected object is an array.
-     *
-     * \return True when the object is an array, false otherwise.
-     */
-    virtual bool isArray() const = 0;
+    /** Shared pointer to the constant reflectable interface. */
+    using ConstPtr = std::shared_ptr<const IBasicInspectable>;
 
     /**
      * Initializes indexed offsets of the reflected compound object.
@@ -113,52 +91,6 @@ public:
      * \throw CppRuntimeException When the reflected object is an array.
      */
     virtual void write(BitStreamWriter& writer) const = 0;
-
-    /**
-     * Gets reflectable view to the field (i.e. member) with the given schema name.
-     *
-     * \note Can be called only when the reflected object is a zserio compound type.
-     *
-     * \param name Field schema name.
-     *
-     * \return Reflectable view to the requested field.
-     *
-     * \throw CppRuntimeException When the reflected object is not a compound type or when the field with
-     *                            the given name doesn't exist or when the field getter itself throws.
-     */
-    /** \{ */
-    virtual ConstPtr getField(std::string_view name) const = 0;
-    virtual Ptr getField(std::string_view name) = 0;
-    /** \} */
-
-    /**
-     * Sets the field (i.e. member) with the given schema name.
-     *
-     * \note For optional fields, the value can be also nullptr of type std::nullptr_t which allows
-     *       to reset an optional field.
-     *
-     * \param name Field schema name.
-     * \param value Value to set. The type must exactly match the type of the zserio field mapped to C++!
-     *
-     * \throw CppRuntimeException When the reflected object is not a compound type or when the field with
-     *                            the given name doesn't exist or when the provided value is of a wrong type
-     *                            or when the field setter itself throws.
-     */
-    virtual void setField(std::string_view name, const BasicAny<ALLOC>& value) = 0;
-
-    /**
-     * Creates a default constructed field within current object and returns reflectable pointer to it.
-     *
-     * \note When the field already exists, it's reset with the new default constructed value.
-     *
-     * \param name Name of the optional field to create.
-     *
-     * \return Reflectable to just created object.
-     *
-     * \throw CppRuntimeException When the reflected object is not a compound type or when the field with
-     *                            the given name doesn't exists.
-     */
-    virtual Ptr createField(std::string_view name) = 0;
 
     /**
      * Gets reflectable view to the parameter (i.e. member) with the given schema name.
@@ -236,6 +168,90 @@ public:
     virtual ConstPtr operator[](std::string_view path) const = 0;
     virtual Ptr operator[](std::string_view path) = 0;
     /** \} */
+};
+
+/**
+ * Interface for reflectable view to instances of zserio objects.
+ *
+ * \note Users are responsible to maintain life-time of reflected objects which must exist
+ * as long as the views are used.
+ *
+ * \note The object in this context may be also an instance of a built-in type.
+ */
+template <typename ALLOC = std::allocator<uint8_t>>
+class IBasicReflectable
+{
+public:
+    /** Shared pointer to the reflectable interface. */
+    using Ptr = std::shared_ptr<IBasicReflectable>;
+
+    /** Shared pointer to the constant reflectable interface. */
+    using ConstPtr = std::shared_ptr<const IBasicReflectable>;
+
+    /**
+     * Destructor.
+     */
+    virtual ~IBasicReflectable() = default;
+
+    /**
+     * Gets type info for the current zserio object.
+     *
+     * \return Reference to the static instance of type info.
+     */
+    virtual const IBasicTypeInfo<ALLOC>& getTypeInfo() const = 0;
+
+    /**
+     * Gets whether the reflected object is an array.
+     *
+     * \return True when the object is an array, false otherwise.
+     */
+    virtual bool isArray() const = 0;
+
+    /**
+     * Gets reflectable view to the field (i.e. member) with the given schema name.
+     *
+     * \note Can be called only when the reflected object is a zserio compound type.
+     *
+     * \param name Field schema name.
+     *
+     * \return Reflectable view to the requested field.
+     *
+     * \throw CppRuntimeException When the reflected object is not a compound type or when the field with
+     *                            the given name doesn't exist or when the field getter itself throws.
+     */
+    /** \{ */
+    virtual ConstPtr getField(std::string_view name) const = 0;
+    virtual Ptr getField(std::string_view name) = 0;
+    /** \} */
+
+    /**
+     * Sets the field (i.e. member) with the given schema name.
+     *
+     * \note For optional fields, the value can be also nullptr of type std::nullptr_t which allows
+     *       to reset an optional field.
+     *
+     * \param name Field schema name.
+     * \param value Value to set. The type must exactly match the type of the zserio field mapped to C++!
+     *
+     * \throw CppRuntimeException When the reflected object is not a compound type or when the field with
+     *                            the given name doesn't exist or when the provided value is of a wrong type
+     *                            or when the field setter itself throws.
+     */
+    virtual void setField(std::string_view name, const BasicAny<ALLOC>& value) = 0;
+
+    /**
+     * Creates a default constructed field within current object and returns reflectable pointer to it.
+     *
+     * \note When the field already exists, it's reset with the new default constructed value.
+     *
+     * \param name Name of the optional field to create.
+     *
+     * \return Reflectable to just created object.
+     *
+     * \throw CppRuntimeException When the reflected object is not a compound type or when the field with
+     *                            the given name doesn't exists.
+     */
+    virtual Ptr createField(std::string_view name) = 0;
 
     /**
      * Gets size of the reflected array.
@@ -487,6 +503,22 @@ public:
     virtual BasicString<RebindAlloc<ALLOC, char>> toString() const = 0;
     /** \} */
 };
+
+/** Typedef to inspectable smart pointer needed for convenience in generated code. */
+/** \{ */
+template <typename ALLOC = std::allocator<uint8_t>>
+using IBasicInspectablePtr = typename IBasicInspectable<ALLOC>::Ptr;
+
+template <typename ALLOC = std::allocator<uint8_t>>
+using IBasicInspectableConstPtr = typename IBasicInspectable<ALLOC>::ConstPtr;
+/** \} */
+
+/** Typedef to inspectable interface provided for convenience - using default std::allocator<uint8_t>. */
+/** \{ */
+using IInspectable = IBasicInspectable<>;
+using IInspectablePtr = IBasicInspectablePtr<>;
+using IInspectableConstPtr = IBasicInspectableConstPtr<>;
+/** \} */
 
 /** Typedef to reflectable smart pointer needed for convenience in generated code. */
 /** \{ */

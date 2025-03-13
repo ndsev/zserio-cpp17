@@ -136,8 +136,8 @@ public:
     }
 
 private:
-    const detail::DynIntWrapper<VALUE_TYPE, 0> m_value;
-    const uint8_t m_numBits;
+    detail::DynIntWrapper<VALUE_TYPE, 0> m_value;
+    uint8_t m_numBits;
 };
 
 template <typename VALUE_TYPE>
