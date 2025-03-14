@@ -139,6 +139,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/JsonEncoderTest.cpp
     zserio/JsonParserTest.cpp
     zserio/JsonTokenizerTest.cpp
+    zserio/JsonWriterTest.cpp
     zserio/MissedOptionalExceptionTest.cpp
     zserio/OptionalTest.cpp
     zserio/OutOfRangeExceptionTest.cpp

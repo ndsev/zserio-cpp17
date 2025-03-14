@@ -72,12 +72,14 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ISqliteDatabase.h
     zserio/ITypeInfo.h
     zserio/IValidationObserver.h
+    zserio/IWalkObserver.h
     zserio/JsonDecoder.h
     zserio/JsonEncoder.cpp
     zserio/JsonEncoder.h
     zserio/JsonParser.h
     zserio/JsonTokenizer.cpp
     zserio/JsonTokenizer.h
+    zserio/JsonWriter.h
     zserio/MissedOptionalException.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
@@ -108,6 +110,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ValidationSqliteUtil.h
     zserio/Vector.h
     zserio/View.h
+    zserio/WalkerConst.h
 )
 
 add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
