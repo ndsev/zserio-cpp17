@@ -18,17 +18,17 @@ namespace zserio
 {
 
 template <typename ALLOC>
-class InspectableBase : public IBasicInspectable<ALLOC>
+class IntrospectableBase : public IBasicIntrospectable<ALLOC>
 {
     /**
      * Constructor.
      *
      * \param typeInfo Type info of the reflected object.
      */
-    explicit InspectableBase(const IBasicTypeInfo<ALLOC>& typeInfo);
+    explicit IntrospectableBase(const IBasicTypeInfo<ALLOC>& typeInfo);
 
     /** Destructor. */
-    ~InspectableBase() override = 0;
+    ~IntrospectableBase() override = 0;
 
     // TODO[Mi-L@]: Common inspectable interface (same in reflectable)
     const IBasicTypeInfo<ALLOC>& getTypeInfo() const override;
@@ -40,14 +40,14 @@ class InspectableBase : public IBasicInspectable<ALLOC>
     size_t bitSizeOf() const override;
     void write(BitStreamWriter& writer) const override;
 
-    IBasicInspectableConstPtr<ALLOC> getField(std::string_view name) const override;
-    IBasicInspectableConstPtr<ALLOC> getParameter(std::string_view name) const override;
-    IBasicInspectableConstPtr<ALLOC> callFunction(std::string_view name) const override;
+    IBasicIntrospectableConstPtr<ALLOC> getField(std::string_view name) const override;
+    IBasicIntrospectableConstPtr<ALLOC> getParameter(std::string_view name) const override;
+    IBasicIntrospectableConstPtr<ALLOC> callFunction(std::string_view name) const override;
 
     std::string_view getChoice() const override; // TODO[Mi-L@]: Will be needed somehow also in reflectable?
 
-    IBasicInspectableConstPtr<ALLOC> find(std::string_view path) const override;
-    IBasicInspectableConstPtr<ALLOC> operator[](std::string_view path) const override;
+    IBasicIntrospectableConstPtr<ALLOC> find(std::string_view path) const override;
+    IBasicIntrospectableConstPtr<ALLOC> operator[](std::string_view path) const override;
 
 private:
     const IBasicTypeInfo<ALLOC>& m_typeInfo;
@@ -861,8 +861,7 @@ IBasicReflectablePtr<ALLOC> reflectable(Bool value, const ALLOC& allocator = ALL
     return std::allocate_shared<BoolReflectable<ALLOC>>(allocator, value);
 }
 
-template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>,
-        std::enable_if_t<is_allocator_v<ALLOC>, int> = 0>
+template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectablePtr<ALLOC> reflectable(detail::IntWrapper<T, BIT_SIZE> value, const ALLOC& allocator = ALLOC())
 {
     using Type = detail::IntWrapper<T, BIT_SIZE>;
@@ -907,8 +906,7 @@ IBasicReflectablePtr<ALLOC> reflectable(detail::IntWrapper<T, BIT_SIZE> value, c
     }
 }
 
-template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>,
-        std::enable_if_t<is_allocator_v<ALLOC>, int> = 0>
+template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectablePtr<ALLOC> reflectable(
         detail::DynIntWrapper<T, BIT_SIZE> value, const ALLOC& allocator = ALLOC())
 {
@@ -1202,81 +1200,81 @@ IBasicReflectablePtr<ALLOC> reflectableArray(
 // implementation of base classes methods
 
 template <typename ALLOC>
-InspectableBase<ALLOC>::InspectableBase(const IBasicTypeInfo<ALLOC>& typeInfo) :
+IntrospectableBase<ALLOC>::IntrospectableBase(const IBasicTypeInfo<ALLOC>& typeInfo) :
         m_typeInfo(typeInfo)
 {}
 
 template <typename ALLOC>
-InspectableBase<ALLOC>::~InspectableBase() = default;
+IntrospectableBase<ALLOC>::~IntrospectableBase() = default;
 
 template <typename ALLOC>
-const IBasicTypeInfo<ALLOC>& InspectableBase<ALLOC>::getTypeInfo() const
+const IBasicTypeInfo<ALLOC>& IntrospectableBase<ALLOC>::getTypeInfo() const
 {
     return m_typeInfo;
 }
 
 template <typename ALLOC>
-bool InspectableBase<ALLOC>::isArray() const
+bool IntrospectableBase<ALLOC>::isArray() const
 {
     return false;
 }
 
 template <typename ALLOC>
-size_t InspectableBase<ALLOC>::initializeOffsets(size_t)
+size_t IntrospectableBase<ALLOC>::initializeOffsets(size_t)
 {
     throw CppRuntimeException("Type '") << getTypeInfo().getSchemaName() << "' is not a compound type!";
 }
 
 template <typename ALLOC>
-size_t InspectableBase<ALLOC>::initializeOffsets()
+size_t IntrospectableBase<ALLOC>::initializeOffsets()
 {
     return initializeOffsets(0);
 }
 
 template <typename ALLOC>
-size_t InspectableBase<ALLOC>::bitSizeOf(size_t) const
+size_t IntrospectableBase<ALLOC>::bitSizeOf(size_t) const
 {
     throw CppRuntimeException("Type '") << getTypeInfo().getSchemaName() << "' is not implemented!";
 }
 
 template <typename ALLOC>
-size_t InspectableBase<ALLOC>::bitSizeOf() const
+size_t IntrospectableBase<ALLOC>::bitSizeOf() const
 {
     return bitSizeOf(0);
 }
 
 template <typename ALLOC>
-void InspectableBase<ALLOC>::write(BitStreamWriter&) const
+void IntrospectableBase<ALLOC>::write(BitStreamWriter&) const
 {
     throw CppRuntimeException("Type '") << getTypeInfo().getSchemaName() << "' is not implemented!";
 }
 
 template <typename ALLOC>
-IBasicInspectableConstPtr<ALLOC> InspectableBase<ALLOC>::getParameter(std::string_view) const
+IBasicIntrospectableConstPtr<ALLOC> IntrospectableBase<ALLOC>::getParameter(std::string_view) const
 {
     throw CppRuntimeException("Type '") << getTypeInfo().getSchemaName() << "' has no parameters to get!";
 }
 
 template <typename ALLOC>
-IBasicInspectableConstPtr<ALLOC> InspectableBase<ALLOC>::callFunction(std::string_view) const
+IBasicIntrospectableConstPtr<ALLOC> IntrospectableBase<ALLOC>::callFunction(std::string_view) const
 {
     throw CppRuntimeException("Type '") << getTypeInfo().getSchemaName() << "' has no functions to call!";
 }
 
 template <typename ALLOC>
-std::string_view InspectableBase<ALLOC>::getChoice() const
+std::string_view IntrospectableBase<ALLOC>::getChoice() const
 {
     throw CppRuntimeException("Type '") << getTypeInfo().getSchemaName() << "' is neither choice nor union!";
 }
 
 template <typename ALLOC>
-IBasicInspectableConstPtr<ALLOC> InspectableBase<ALLOC>::find(std::string_view path) const
+IBasicIntrospectableConstPtr<ALLOC> IntrospectableBase<ALLOC>::find(std::string_view path) const
 {
     return detail::getFromObject(*this, path, 0);
 }
 
 template <typename ALLOC>
-IBasicInspectableConstPtr<ALLOC> InspectableBase<ALLOC>::operator[](std::string_view path) const
+IBasicIntrospectableConstPtr<ALLOC> IntrospectableBase<ALLOC>::operator[](std::string_view path) const
 {
     return find(path);
 }

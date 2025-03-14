@@ -15,6 +15,7 @@ public final class TypesContext
 
         if (allocator.equals(STD_ALLOCATOR))
         {
+            any = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "Any", false, false, "zserio/Any.h");
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BitBuffer", false, false, "zserio/BitBuffer.h");
             bitBufferView = new NativeTypeDefinition(
@@ -43,9 +44,14 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "RawServiceDataView", false, false, "zserio/IService.h");
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ITypeInfo", false, false, "zserio/ITypeInfo.h");
+            reflectablePtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", false, false, "zserio/IReflectable.h");
+            reflectableConstPtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", false, false, "zserio/IReflectable.h");
         }
         else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
         {
+            any = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "Any", false, false, "zserio/pmr/Any.h");
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "BitBuffer", false, false, "zserio/pmr/BitBuffer.h");
             bitBufferView = new NativeTypeDefinition(
@@ -78,9 +84,14 @@ public final class TypesContext
                     ZSERIO_PMR_PACKAGE_NAME, "RawServiceDataView", false, false, "zserio/pmr/IService.h");
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "ITypeInfo", false, false, "zserio/pmr/ITypeInfo.h");
+            reflectablePtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", false, false, "zserio/pmr/IReflectable.h");
+            reflectableConstPtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", false, false, "zserio/pmr/IReflectable.h");
         }
         else
         {
+            any = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "BasicAny", true, true, "zserio/Any.h");
             bitBuffer = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BasicBitBuffer", true, true, "zserio/BitBuffer.h");
             bitBufferView = new NativeTypeDefinition(
@@ -111,12 +122,21 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "BasicRawServiceDataView", true, true, "zserio/IService.h");
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ITypeInfo", true, true, "zserio/ITypeInfo.h");
+            reflectablePtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", true, true, "zserio/IReflectable.h");
+            reflectableConstPtr = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", true, true, "zserio/IReflectable.h");
         }
     }
 
     public AllocatorDefinition getAllocatorDefinition()
     {
         return allocator;
+    }
+
+    public NativeTypeDefinition getAny()
+    {
+        return any;
     }
 
     public NativeTypeDefinition getBitBuffer()
@@ -204,6 +224,16 @@ public final class TypesContext
         return typeInfo;
     }
 
+    public NativeTypeDefinition getReflectablePtr()
+    {
+        return reflectablePtr;
+    }
+
+    public NativeTypeDefinition getReflectableConstPtr()
+    {
+        return reflectableConstPtr;
+    }
+
     public static final class AllocatorDefinition
     {
         public AllocatorDefinition(String allocatorType, String allocatorSystemInclude)
@@ -284,6 +314,7 @@ public final class TypesContext
     }
 
     private final AllocatorDefinition allocator;
+    private final NativeTypeDefinition any;
     private final NativeTypeDefinition bitBuffer;
     private final NativeTypeDefinition bitBufferView;
     private final NativeTypeDefinition bytes;
@@ -303,6 +334,8 @@ public final class TypesContext
     private final NativeTypeDefinition rawServiceDataView;
 
     private final NativeTypeDefinition typeInfo;
+    private final NativeTypeDefinition reflectablePtr;
+    private final NativeTypeDefinition reflectableConstPtr;
 
     public static final AllocatorDefinition PROPAGATING_POLYMORPHIC_ALLOCATOR = new AllocatorDefinition(
             "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PropagatingPolymorphicAllocator.h");

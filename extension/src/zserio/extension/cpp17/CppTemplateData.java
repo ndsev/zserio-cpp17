@@ -160,6 +160,8 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypesTemplateData(TypesContext typesContext, CppNativeMapper nativeMapper)
         {
             allocator = new AllocatorTemplateData(typesContext);
+            any = new TypeTemplateData(
+                    nativeMapper.getAnyType(), nativeMapper.getAnyType().needsAllocatorArgument());
             bitBuffer = new TypeTemplateData(
                     nativeMapper.getBitBufferType(), nativeMapper.getBitBufferType().needsAllocatorArgument());
             bitBufferView = new TypeTemplateData(nativeMapper.getBitBufferViewType(),
@@ -187,11 +189,18 @@ public abstract class CppTemplateData implements IncludeCollector
             rawServiceDataHolder = new TypeTemplateData(nativeMapper.getRawServiceDataHolderType());
             rawServiceDataView = new TypeTemplateData(nativeMapper.getRawServiceDataViewType());
             typeInfo = new TypeTemplateData(nativeMapper.getTypeInfoType());
+            reflectablePtr = new TypeTemplateData(nativeMapper.getReflectablePtrType());
+            reflectableConstPtr = new TypeTemplateData(nativeMapper.getReflectableConstPtrType());
         }
 
         public AllocatorTemplateData getAllocator()
         {
             return allocator;
+        }
+
+        public TypeTemplateData getAny()
+        {
+            return any;
         }
 
         public TypeTemplateData getBitBuffer()
@@ -277,6 +286,16 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getTypeInfo()
         {
             return typeInfo;
+        }
+
+        public TypeTemplateData getReflectablePtr()
+        {
+            return reflectablePtr;
+        }
+
+        public TypeTemplateData getReflectableConstPtr()
+        {
+            return reflectableConstPtr;
         }
 
         public static final class AllocatorTemplateData
@@ -366,6 +385,7 @@ public abstract class CppTemplateData implements IncludeCollector
         }
 
         private final AllocatorTemplateData allocator;
+        private final TypeTemplateData any;
         private final TypeTemplateData bitBuffer;
         private final TypeTemplateData bitBufferView;
         private final TypeTemplateData bytes;
@@ -383,6 +403,8 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData rawServiceDataHolder;
         private final TypeTemplateData rawServiceDataView;
         private final TypeTemplateData typeInfo;
+        private final TypeTemplateData reflectablePtr;
+        private final TypeTemplateData reflectableConstPtr;
     }
 
     private final String generatorDescription;

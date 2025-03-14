@@ -7,6 +7,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
 #include <zserio/TypeInfo.h>
+#include <zserio/Reflectable.h>
 
 #include <test_object/std_allocator/ReflectableUtilEnum.h>
 
@@ -63,6 +64,55 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectablePtr reflectable(::test_object::std_allocator::ReflectableUtilEnum value, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableBase<::std::allocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::std_allocator::ReflectableUtilEnum value) :
+                ::zserio::ReflectableBase<::std::allocator<uint8_t>>(
+                        typeInfo<::test_object::std_allocator::ReflectableUtilEnum, ::std::allocator<uint8_t>>()),
+                m_value(value)
+        {}
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(m_value, alloc);
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) override
+        {
+            return ::zserio::Any(m_value, alloc);
+        }
+
+        ::zserio::Int8::ValueType getInt8() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::std_allocator::ReflectableUtilEnum>::type>(m_value);
+        }
+
+        int64_t toInt() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::std_allocator::ReflectableUtilEnum>::type>(m_value);
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toInt());
+        }
+
+        ::zserio::String toString(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::String(::zserio::enumToString(m_value), alloc);
+        }
+
+    private:
+        ::test_object::std_allocator::ReflectableUtilEnum m_value;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, value);
+}
 
 } // namespace zserio
 

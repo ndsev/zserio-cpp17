@@ -17,6 +17,7 @@
 #include <memory>
 #include <zserio/Enums.h>
 #include <zserio/ITypeInfo.h>
+#include <zserio/IReflectable.h>
 #include <zserio/Types.h>
 
 namespace test_object
@@ -76,6 +77,9 @@ struct TypeInfo<::test_object::std_allocator::ReflectableEnum, ::std::allocator<
 };
 
 } // namespace detail
+
+template <>
+::zserio::IReflectablePtr reflectable(::test_object::std_allocator::ReflectableEnum value, const ::std::allocator<uint8_t>& allocator);
 
 } // namespace zserio
 

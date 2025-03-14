@@ -19,19 +19,19 @@ template <typename ALLOC>
 class IBasicTypeInfo;
 
 template <typename ALLOC = std::allocator<uint8_t>>
-class IBasicInspectable
+class IBasicIntrospectable
 {
 public:
     /**
      * Destructor.
      */
-    virtual ~IBasicInspectable() = default;
+    virtual ~IBasicIntrospectable() = default;
 
     /** Shared pointer to the reflectable interface. */
-    using Ptr = std::shared_ptr<IBasicInspectable>;
+    using Ptr = std::shared_ptr<IBasicIntrospectable>;
 
     /** Shared pointer to the constant reflectable interface. */
-    using ConstPtr = std::shared_ptr<const IBasicInspectable>;
+    using ConstPtr = std::shared_ptr<const IBasicIntrospectable>;
 
     /**
      * Initializes indexed offsets of the reflected compound object.
@@ -507,17 +507,17 @@ public:
 /** Typedef to inspectable smart pointer needed for convenience in generated code. */
 /** \{ */
 template <typename ALLOC = std::allocator<uint8_t>>
-using IBasicInspectablePtr = typename IBasicInspectable<ALLOC>::Ptr;
+using IBasicIntrospectablePtr = typename IBasicIntrospectable<ALLOC>::Ptr;
 
 template <typename ALLOC = std::allocator<uint8_t>>
-using IBasicInspectableConstPtr = typename IBasicInspectable<ALLOC>::ConstPtr;
+using IBasicIntrospectableConstPtr = typename IBasicIntrospectable<ALLOC>::ConstPtr;
 /** \} */
 
 /** Typedef to inspectable interface provided for convenience - using default std::allocator<uint8_t>. */
 /** \{ */
-using IInspectable = IBasicInspectable<>;
-using IInspectablePtr = IBasicInspectablePtr<>;
-using IInspectableConstPtr = IBasicInspectableConstPtr<>;
+using IIntrospectable = IBasicIntrospectable<>;
+using IIntrospectablePtr = IBasicIntrospectablePtr<>;
+using IIntrospectableConstPtr = IBasicIntrospectableConstPtr<>;
 /** \} */
 
 /** Typedef to reflectable smart pointer needed for convenience in generated code. */
@@ -544,8 +544,7 @@ using IReflectableConstPtr = IBasicReflectableConstPtr<>;
  *
  * \return Enum reflectable view.
  */
-template <typename T, typename ALLOC = std::allocator<uint8_t>,
-        std::enable_if_t<is_allocator_v<ALLOC>, int> = 0>
+template <typename T, typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectablePtr<ALLOC> reflectable(T value, const ALLOC& allocator = ALLOC());
 
 } // namespace zserio

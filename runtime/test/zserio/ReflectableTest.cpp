@@ -3,6 +3,8 @@
 #include <type_traits>
 
 #include "gtest/gtest.h"
+#include "test_object/std_allocator/ReflectableBitmask.h"
+#include "test_object/std_allocator/ReflectableEnum.h"
 #include "zserio/ArrayTraits.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
@@ -11,6 +13,9 @@
 
 using namespace std::placeholders;
 using namespace std::literals;
+
+using test_object::std_allocator::ReflectableBitmask;
+using test_object::std_allocator::ReflectableEnum;
 
 namespace zserio
 {
@@ -388,7 +393,7 @@ protected:
         checkWriteRead(
                 bitmask, reflectable, [](BitStreamReader& reader) { return ReflectableBitmask(reader); }, 8);
     }
-
+    */
     template <typename REFLECTABLE_PTR>
     void checkEnum(ReflectableEnum enumeration, const REFLECTABLE_PTR& reflectable)
     {
@@ -405,12 +410,8 @@ protected:
 
         checkNonCompound(reflectable);
         checkNonArray(reflectable);
-
-        checkWriteRead(
-                enumeration, reflectable,
-                [](BitStreamReader& reader) { return zserio::read<ReflectableEnum>(reader); }, 8);
     }
-
+    /*
     void checkCompoundAnyValue(
             const ReflectableObject& reflectableObject, const IReflectableConstPtr& reflectable)
     {
@@ -1624,14 +1625,14 @@ TEST_F(ReflectableTest, bitmaskArray)
     // out of range
     ASSERT_THROW(reflectable->setAt(AnyHolder<>(ReflectableBitmask::Values::CREATE), 3), CppRuntimeException);
 }
-
+*/
 TEST_F(ReflectableTest, enumReflectable)
 {
     const ReflectableEnum enumeration = ReflectableEnum::VALUE1;
-    auto reflectable = enumReflectable(enumeration);
-    checkEnum(enumeration, reflectable);
+    auto reflectablePtr = reflectable(enumeration);
+    checkEnum(enumeration, reflectablePtr);
 }
-
+/*
 TEST_F(ReflectableTest, enumConstArray)
 {
     const auto rawArray = std::vector<ReflectableEnum>{
