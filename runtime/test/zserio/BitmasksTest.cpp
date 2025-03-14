@@ -75,4 +75,10 @@ TEST(BitmasksTest, writeRead)
     ASSERT_EQ(readBitmask, bitmask);
 }
 
+TEST(BitmasksTest, cppRuntimeExceptionOperator)
+{
+    CppRuntimeException exception = CppRuntimeException() << TestBitmask(TestBitmask::Values::WRITE);
+    ASSERT_STREQ("2", exception.what());
+}
+
 } // namespace zserio

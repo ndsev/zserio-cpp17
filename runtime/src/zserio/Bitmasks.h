@@ -7,6 +7,7 @@
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
 #include "zserio/DeltaContext.h"
+#include "zserio/Traits.h"
 
 namespace zserio
 {
@@ -67,6 +68,21 @@ std::enable_if_t<zserio::is_bitmask_v<T>> read(DeltaContext& deltaContext, BitSt
 }
 
 } // namespace detail
+
+/**
+ * Appends any bitmask value to the exception's description.
+ *
+ * \param exception Exception to modify.
+ * \param value Bitmask value to append.
+ *
+ * \return Reference to the exception to allow operator chaining.
+ */
+template <typename T, typename std::enable_if<is_bitmask<T>::value, int>::type = 0>
+CppRuntimeException& operator<<(CppRuntimeException& exception, T value)
+{
+    exception << value.getValue(); // note that toString() allocates and exception cannot allocate!
+    return exception;
+}
 
 } // namespace zserio
 
