@@ -160,6 +160,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/ValidationExceptionTest.cpp
     zserio/ValidationSqliteUtilTest.cpp
     zserio/VariantTest.cpp
+    zserio/ZserioTreeCreatorTest.cpp
 )
 
 add_executable(${PROJECT_NAME} ${TEST_OBJECT_SRCS} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})

@@ -61,6 +61,12 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1025
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 
+# This is necessary to filter out because all of the following can easily happen if the template parameter
+# is a raw pointer (e.g. 'const char*').
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:384
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:386
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:388
+
 # The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
 # would only bring the performance drop.
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:301
@@ -135,6 +141,9 @@ misc-no-recursion:src/zserio/JsonParser.h:224
 misc-no-recursion:src/zserio/JsonParser.h:235
 misc-no-recursion:src/zserio/JsonParser.h:253
 misc-no-recursion:src/zserio/JsonParser.h:268
+misc-no-recursion:src/zserio/ZserioTreeCreator.h:221
+misc-no-recursion:src/zserio/ZserioTreeCreator.h:350
+misc-no-recursion:src/zserio/ZserioTreeCreator.h:357
 
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75

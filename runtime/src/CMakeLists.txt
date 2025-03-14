@@ -111,6 +111,8 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/Vector.h
     zserio/View.h
     zserio/WalkerConst.h
+    zserio/ZserioTreeCreator.cpp
+    zserio/ZserioTreeCreator.h
 )
 
 add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
