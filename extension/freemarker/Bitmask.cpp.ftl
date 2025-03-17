@@ -6,6 +6,7 @@
 #include <zserio/StringConvertUtil.h>
 <#if withTypeInfoCode>
 #include <zserio/TypeInfo.h>
+#include <zserio/Reflectable.h>
 </#if>
 <@system_includes cppSystemIncludes/>
 
@@ -54,7 +55,57 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 
     return typeInfo;
 }
-<@namespace_end ["zserio", "detail"]/>
+<@namespace_end ["detail"]/>
+
+template <>
+${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.allocator.default}& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableBase<${types.allocator.default}>
+    {
+    public:
+        explicit Reflectable(${fullName} bitmask) :
+                ::zserio::ReflectableBase<${types.allocator.default}>(typeInfo<${fullName}>()),
+                m_bitmask(bitmask)
+        {}
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
+        {
+            return ${types.any.name}(m_bitmask, alloc);
+        }
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) override
+        {
+            return ${types.any.name}(m_bitmask, alloc);
+        }
+
+        <#-- bitmask is always unsigned -->
+        ${fullName}::ZserioType::ValueType getUInt${numBits}() const override
+        {
+            return m_bitmask.getValue();
+        }
+
+        uint64_t toUInt() const override
+        {
+            return m_bitmask.getValue();
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toUInt());
+        }
+
+        ${types.string.name} toString(const ${types.allocator.default}& alloc) const override
+        {
+            return m_bitmask.toString(alloc);
+        }
+
+    private:
+        ${fullName} m_bitmask;
+    };
+
+    return ::std::allocate_shared<Reflectable>(allocator, value);
+}
+<@namespace_end ["zserio"]/>
 </#if>
 <@namespace_begin ["std"]/>
 

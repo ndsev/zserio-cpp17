@@ -6,6 +6,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
 #include <zserio/TypeInfo.h>
+#include <zserio/Reflectable.h>
 
 #include <test_object/std_allocator/ReflectableUtilBitmask.h>
 
@@ -57,6 +58,55 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectablePtr reflectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableBase<::std::allocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::std_allocator::ReflectableUtilBitmask bitmask) :
+                ::zserio::ReflectableBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilBitmask>()),
+                m_bitmask(bitmask)
+        {}
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(m_bitmask, alloc);
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) override
+        {
+            return ::zserio::Any(m_bitmask, alloc);
+        }
+
+        ::test_object::std_allocator::ReflectableUtilBitmask::ZserioType::ValueType getUInt8() const override
+        {
+            return m_bitmask.getValue();
+        }
+
+        uint64_t toUInt() const override
+        {
+            return m_bitmask.getValue();
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toUInt());
+        }
+
+        ::zserio::String toString(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return m_bitmask.toString(alloc);
+        }
+
+    private:
+        ::test_object::std_allocator::ReflectableUtilBitmask m_bitmask;
+    };
+
+    return ::std::allocate_shared<Reflectable>(allocator, value);
+}
+
 } // namespace zserio
 
 namespace std

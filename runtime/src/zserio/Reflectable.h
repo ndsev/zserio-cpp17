@@ -1133,11 +1133,11 @@ public:
             }
             else if (value.template isType<ElementZserioType>())
             {
-                m_rawArray[index] = value.template get<ElementZserioType>();
+                m_rawArray[index] = ElementType(value.template get<ElementZserioType>());
             }
             else
             {
-                m_rawArray[index] = valueToEnum<ElementType>(value.template get<ElementUnderlyingType>());
+                m_rawArray[index] = ElementType(value.template get<ElementUnderlyingType>());
             }
         }
         else if constexpr (std::is_enum_v<ElementType>)
@@ -1179,11 +1179,11 @@ public:
             }
             else if (value.template isType<ElementZserioType>())
             {
-                m_rawArray.push_back(value.template get<ElementZserioType>());
+                m_rawArray.push_back(ElementType(value.template get<ElementZserioType>()));
             }
             else
             {
-                m_rawArray.push_back(valueToEnum<ElementType>(value.template get<ElementUnderlyingType>()));
+                m_rawArray.push_back(ElementType(value.template get<ElementUnderlyingType>()));
             }
         }
         else if constexpr (std::is_enum_v<ElementType>)

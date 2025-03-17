@@ -16,6 +16,7 @@
 #include <zserio/Bitmasks.h>
 #include <zserio/String.h>
 #include <zserio/ITypeInfo.h>
+#include <zserio/IReflectable.h>
 #include <zserio/Types.h>
 
 namespace test_object
@@ -345,6 +346,10 @@ struct TypeInfo<::test_object::std_allocator::ReflectableBitmask, ::std::allocat
 };
 
 } // namespace detail
+
+template <>
+::zserio::IReflectablePtr reflectable(::test_object::std_allocator::ReflectableBitmask value, const ::std::allocator<uint8_t>& allocator);
+
 } // namespace zserio
 
 namespace std

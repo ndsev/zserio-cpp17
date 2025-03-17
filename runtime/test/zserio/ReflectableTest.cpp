@@ -372,7 +372,7 @@ protected:
                 std::bind(&BitStreamReader::readBytes<>, _1, std::allocator<uint8_t>()),
                 detail::bitSizeOf(VarSize(convertSizeToUInt32(bitSize))) + bitSize);
     }
-    /*
+
     template <typename REFLECTABLE_PTR>
     void checkBitmask(ReflectableBitmask bitmask, const REFLECTABLE_PTR& reflectable)
     {
@@ -389,11 +389,8 @@ protected:
 
         checkNonCompound(reflectable);
         checkNonArray(reflectable);
-
-        checkWriteRead(
-                bitmask, reflectable, [](BitStreamReader& reader) { return ReflectableBitmask(reader); }, 8);
     }
-    */
+
     template <typename REFLECTABLE_PTR>
     void checkEnum(ReflectableEnum enumeration, const REFLECTABLE_PTR& reflectable)
     {
@@ -1562,32 +1559,32 @@ TEST_F(ReflectableTest, bytesArray)
     // out of range
     ASSERT_THROW(reflectablePtr->setAt(Any(Bytes()), 2), CppRuntimeException);
 }
-/*
+
 TEST_F(ReflectableTest, bitmaskConstReflectable)
 {
     const ReflectableBitmask bitmask = ReflectableBitmask::Values::WRITE;
-    auto reflectable = bitmask.reflectable();
-    checkBitmask(bitmask, reflectable);
+    auto reflectablePtr = reflectable(bitmask);
+    checkBitmask(bitmask, reflectablePtr);
 }
 
 TEST_F(ReflectableTest, bitmaskReflectable)
 {
     ReflectableBitmask bitmask = ReflectableBitmask::Values::WRITE;
-    auto reflectable = bitmask.reflectable();
-    checkBitmask(bitmask, reflectable);
+    auto reflectablePtr = reflectable(bitmask);
+    checkBitmask(bitmask, reflectablePtr);
 }
 
 TEST_F(ReflectableTest, bitmaskConstArray)
 {
     const auto rawArray = std::vector<ReflectableBitmask>{{ReflectableBitmask::Values::WRITE,
             ReflectableBitmask::Values::CREATE, ReflectableBitmask::Values::READ}};
-    auto reflectable = ReflectableFactory::getBitmaskArray(rawArray);
-    checkArray(rawArray, reflectable,
+    auto reflectablePtr = reflectableArray(rawArray);
+    checkArray(rawArray, reflectablePtr,
             [&](ReflectableBitmask value, const IReflectableConstPtr& elementReflectable) {
                 checkBitmask(value, elementReflectable);
             });
 
-    auto nonConstReflectable = std::const_pointer_cast<IReflectable>(reflectable);
+    auto nonConstReflectable = std::const_pointer_cast<IReflectable>(reflectablePtr);
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
@@ -1595,37 +1592,38 @@ TEST_F(ReflectableTest, bitmaskArray)
 {
     auto rawArray = std::vector<ReflectableBitmask>{{ReflectableBitmask::Values::WRITE,
             ReflectableBitmask::Values::CREATE, ReflectableBitmask::Values::READ}};
-    auto reflectable = ReflectableFactory::getBitmaskArray(rawArray);
-    checkArray(rawArray, reflectable, [&](ReflectableBitmask value, const IReflectablePtr& elementReflectable) {
-        checkBitmask(value, elementReflectable);
-    });
-    checkArray(rawArray, static_cast<IReflectableConstPtr>(reflectable),
+    auto reflectablePtr = reflectableArray(rawArray);
+    checkArray(
+            rawArray, reflectablePtr, [&](ReflectableBitmask value, const IReflectablePtr& elementReflectable) {
+                checkBitmask(value, elementReflectable);
+            });
+    checkArray(rawArray, static_cast<IReflectableConstPtr>(reflectablePtr),
             [&](ReflectableBitmask value, const IReflectableConstPtr& elementReflectable) {
                 checkBitmask(value, elementReflectable);
             });
 
-    reflectable->resize(0);
-    ASSERT_EQ(0, reflectable->size());
-    reflectable->append(AnyHolder<>(ReflectableBitmask(ReflectableBitmask::Values::READ)));
-    ASSERT_EQ(1, reflectable->size());
-    ASSERT_EQ(ReflectableBitmask::Values::READ, ReflectableBitmask(reflectable->at(0)->getUInt8()));
-    reflectable->setAt(AnyHolder<>(ReflectableBitmask(ReflectableBitmask::Values::CREATE)), 0);
-    ASSERT_EQ(1, reflectable->size());
-    ASSERT_EQ(ReflectableBitmask::Values::CREATE, ReflectableBitmask(reflectable->at(0)->getUInt8()));
-    reflectable->resize(2);
-    ASSERT_EQ(2, reflectable->size());
+    reflectablePtr->resize(0);
+    ASSERT_EQ(0, reflectablePtr->size());
+    reflectablePtr->append(Any(ReflectableBitmask(ReflectableBitmask::Values::READ)));
+    ASSERT_EQ(1, reflectablePtr->size());
+    ASSERT_EQ(ReflectableBitmask::Values::READ, ReflectableBitmask(reflectablePtr->at(0)->getUInt8()));
+    reflectablePtr->setAt(Any(ReflectableBitmask(ReflectableBitmask::Values::CREATE)), 0);
+    ASSERT_EQ(1, reflectablePtr->size());
+    ASSERT_EQ(ReflectableBitmask::Values::CREATE, ReflectableBitmask(reflectablePtr->at(0)->getUInt8()));
+    reflectablePtr->resize(2);
+    ASSERT_EQ(2, reflectablePtr->size());
 
-    reflectable->append(AnyHolder<>(ReflectableBitmask(ReflectableBitmask::Values::WRITE).getValue()));
-    ASSERT_EQ(3, reflectable->size());
-    ASSERT_EQ(ReflectableBitmask::Values::WRITE, ReflectableBitmask(reflectable->at(2)->getUInt8()));
-    reflectable->setAt(AnyHolder<>(ReflectableBitmask(ReflectableBitmask::Values::READ).getValue()), 2);
-    ASSERT_EQ(3, reflectable->size());
-    ASSERT_EQ(ReflectableBitmask::Values::READ, ReflectableBitmask(reflectable->at(2)->getUInt8()));
+    reflectablePtr->append(Any(ReflectableBitmask(ReflectableBitmask::Values::WRITE).getValue()));
+    ASSERT_EQ(3, reflectablePtr->size());
+    ASSERT_EQ(ReflectableBitmask::Values::WRITE, ReflectableBitmask(reflectablePtr->at(2)->getUInt8()));
+    reflectablePtr->setAt(Any(ReflectableBitmask(ReflectableBitmask::Values::READ).getValue()), 2);
+    ASSERT_EQ(3, reflectablePtr->size());
+    ASSERT_EQ(ReflectableBitmask::Values::READ, ReflectableBitmask(reflectablePtr->at(2)->getUInt8()));
 
     // out of range
-    ASSERT_THROW(reflectable->setAt(AnyHolder<>(ReflectableBitmask::Values::CREATE), 3), CppRuntimeException);
+    ASSERT_THROW(reflectablePtr->setAt(Any(ReflectableBitmask::Values::CREATE), 3), CppRuntimeException);
 }
-*/
+
 TEST_F(ReflectableTest, enumReflectable)
 {
     const ReflectableEnum enumeration = ReflectableEnum::VALUE1;
@@ -1697,7 +1695,7 @@ TEST_F(ReflectableTest, compoundConst)
 
     IReflectablePtr nonConstReflectable = std::const_pointer_cast<IReflectable>(reflectable);
     ASSERT_THROW(nonConstReflectable->initializeChildren(), CppRuntimeException);
-    ASSERT_THROW(nonConstReflectable->initialize(vector<AnyHolder<>>()), CppRuntimeException);
+    ASSERT_THROW(nonConstReflectable->initialize(vector<Any>()), CppRuntimeException);
     ASSERT_NO_THROW(reflectable->getField("reflectableNested"));
     ASSERT_THROW(nonConstReflectable->getField("reflectableNested"), CppRuntimeException);
     ASSERT_NO_THROW(reflectable->getAnyValue());
@@ -1705,7 +1703,7 @@ TEST_F(ReflectableTest, compoundConst)
 
     IReflectableConstPtr childReflectable = reflectable->getField("reflectableNested");
     IReflectablePtr nonConstChildReflectable = std::const_pointer_cast<IReflectable>(childReflectable);
-    ASSERT_THROW(nonConstChildReflectable->setField("value", AnyHolder<>(static_cast<uint32_t>(11))),
+    ASSERT_THROW(nonConstChildReflectable->setField("value", Any(static_cast<uint32_t>(11))),
             CppRuntimeException);
     ASSERT_NO_THROW(childReflectable->getParameter("dummyParam"));
     ASSERT_THROW(nonConstChildReflectable->getParameter("dummyParam"), CppRuntimeException);

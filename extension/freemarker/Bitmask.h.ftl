@@ -11,6 +11,7 @@
 <@type_includes types.string/>
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
+<@type_includes types.reflectablePtr/>
 </#if>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
@@ -337,7 +338,11 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
 {
     static const ${types.typeInfo.name}& get();
 };
-<@namespace_end ["zserio", "detail"]/>
+<@namespace_end ["detail"]/>
+
+template <>
+${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.allocator.default}& allocator);
+<@namespace_end ["zserio"]/>
 </#if>
 <@namespace_begin ["std"]/>
 
