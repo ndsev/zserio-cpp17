@@ -1632,18 +1632,18 @@ TEST_F(ReflectableTest, enumReflectable)
     auto reflectablePtr = reflectable(enumeration);
     checkEnum(enumeration, reflectablePtr);
 }
-/*
+
 TEST_F(ReflectableTest, enumConstArray)
 {
     const auto rawArray = std::vector<ReflectableEnum>{
             {ReflectableEnum::VALUE1, ReflectableEnum::VALUE2, ReflectableEnum::VALUE3}};
-    auto reflectable = ReflectableFactory::getEnumArray(rawArray);
-    checkArray(
-            rawArray, reflectable, [&](ReflectableEnum value, const IReflectableConstPtr& elementReflectable) {
+    auto reflectablePtr = reflectableArray(rawArray);
+    checkArray(rawArray, reflectablePtr,
+            [&](ReflectableEnum value, const IReflectableConstPtr& elementReflectable) {
                 checkEnum(value, elementReflectable);
             });
 
-    auto nonConstReflectable = std::const_pointer_cast<IReflectable>(reflectable);
+    auto nonConstReflectable = std::const_pointer_cast<IReflectable>(reflectablePtr);
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
@@ -1651,37 +1651,37 @@ TEST_F(ReflectableTest, enumArray)
 {
     auto rawArray = std::vector<ReflectableEnum>{
             {ReflectableEnum::VALUE1, ReflectableEnum::VALUE2, ReflectableEnum::VALUE3}};
-    auto reflectable = ReflectableFactory::getEnumArray(rawArray);
-    checkArray(rawArray, reflectable, [&](ReflectableEnum value, const IReflectablePtr& elementReflectable) {
+    auto reflectablePtr = reflectableArray(rawArray);
+    checkArray(rawArray, reflectablePtr, [&](ReflectableEnum value, const IReflectablePtr& elementReflectable) {
         checkEnum(value, elementReflectable);
     });
-    checkArray(rawArray, static_cast<IReflectableConstPtr>(reflectable),
+    checkArray(rawArray, static_cast<IReflectableConstPtr>(reflectablePtr),
             [&](ReflectableEnum value, const IReflectableConstPtr& elementReflectable) {
                 checkEnum(value, elementReflectable);
             });
 
-    reflectable->resize(0);
-    ASSERT_EQ(0, reflectable->size());
-    reflectable->append(Any(ReflectableEnum::VALUE3));
-    ASSERT_EQ(1, reflectable->size());
-    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE3), reflectable->at(0)->getInt8());
-    reflectable->setAt(Any(ReflectableEnum::VALUE2), 0);
-    ASSERT_EQ(1, reflectable->size());
-    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE2), reflectable->at(0)->getInt8());
-    reflectable->resize(2);
-    ASSERT_EQ(2, reflectable->size());
+    reflectablePtr->resize(0);
+    ASSERT_EQ(0, reflectablePtr->size());
+    reflectablePtr->append(Any(ReflectableEnum(ReflectableEnum::VALUE3)));
+    ASSERT_EQ(1, reflectablePtr->size());
+    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE3), reflectablePtr->at(0)->getInt8());
+    reflectablePtr->setAt(Any(ReflectableEnum(ReflectableEnum::VALUE2)), 0);
+    ASSERT_EQ(1, reflectablePtr->size());
+    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE2), reflectablePtr->at(0)->getInt8());
+    reflectablePtr->resize(2);
+    ASSERT_EQ(2, reflectablePtr->size());
 
-    reflectable->append(Any(enumToValue(ReflectableEnum::VALUE1)));
-    ASSERT_EQ(3, reflectable->size());
-    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE1), reflectable->at(2)->getInt8());
-    reflectable->setAt(Any(enumToValue(ReflectableEnum::VALUE2)), 2);
-    ASSERT_EQ(3, reflectable->size());
-    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE2), reflectable->at(2)->getInt8());
+    reflectablePtr->append(Any(enumToValue(ReflectableEnum::VALUE1)));
+    ASSERT_EQ(3, reflectablePtr->size());
+    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE1), reflectablePtr->at(2)->getInt8());
+    reflectablePtr->setAt(Any(enumToValue(ReflectableEnum::VALUE2)), 2);
+    ASSERT_EQ(3, reflectablePtr->size());
+    ASSERT_EQ(enumToValue(ReflectableEnum::VALUE2), reflectablePtr->at(2)->getInt8());
 
     // out of range
-    ASSERT_THROW(reflectable->setAt(Any(ReflectableEnum::VALUE2), 3), CppRuntimeException);
+    ASSERT_THROW(reflectablePtr->setAt(Any(ReflectableEnum(ReflectableEnum::VALUE2)), 3), CppRuntimeException);
 }
-
+/*
 TEST_F(ReflectableTest, compoundConst)
 {
     {
