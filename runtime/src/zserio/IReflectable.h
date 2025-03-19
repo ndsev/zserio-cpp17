@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string_view>
+#include <type_traits>
 
 #include "zserio/Any.h"
 #include "zserio/BitBuffer.h"
@@ -365,15 +366,16 @@ using IReflectablePtr = IBasicReflectablePtr<>;
 using IReflectableConstPtr = IBasicReflectableConstPtr<>;
 /** \} */
 
-/**
- * Gets reflectable view for the given enum item.
- *
- * \param value Enum value to reflect.
- * \param allocator Allocator to use for reflectable allocation.
- *
- * \return Enum reflectable view.
- */
-template <typename T, typename ALLOC = std::allocator<uint8_t>>
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<has_zs_allocator_v<std::decay_t<T>>, int> = 0>
+IBasicReflectableConstPtr<ALLOC> reflectable(const T& value, const ALLOC& allocator = ALLOC());
+
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<has_zs_allocator_v<std::decay_t<T>>, int> = 0>
+IBasicReflectablePtr<ALLOC> reflectable(T& value, const ALLOC& allocator = ALLOC());
+
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<!has_zs_allocator_v<std::decay_t<T>>, int> = 0>
 IBasicReflectablePtr<ALLOC> reflectable(T value, const ALLOC& allocator = ALLOC());
 
 } // namespace zserio

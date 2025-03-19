@@ -737,8 +737,6 @@ public:
 
     IBasicReflectablePtr<ALLOC> getField(std::string_view name) override;
     void setField(std::string_view name, const BasicAny<ALLOC>& value) override;
-    IBasicReflectablePtr<ALLOC> getParameter(std::string_view name) override;
-    IBasicReflectablePtr<ALLOC> callFunction(std::string_view name) override;
 
     BasicAny<ALLOC> getAnyValue(const ALLOC& allocator) override;
 };
@@ -1011,7 +1009,14 @@ IBasicReflectablePtr<ALLOC> reflectable(std::string_view value, const ALLOC& all
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
-IBasicReflectablePtr<ALLOC> reflectable(const BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
+IBasicReflectablePtr<ALLOC> reflectable(BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<BitBufferReflectable<ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicReflectableConstPtr<ALLOC> reflectable(
+        const BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<BitBufferReflectable<ALLOC>>(allocator, value);
 }
@@ -1484,18 +1489,6 @@ IBasicReflectablePtr<ALLOC> ReflectableConstAllocatorHolderBase<ALLOC>::getField
 
 template <typename ALLOC>
 void ReflectableConstAllocatorHolderBase<ALLOC>::setField(std::string_view, const BasicAny<ALLOC>&)
-{
-    throw CppRuntimeException("Reflectable '") << getTypeInfo().getSchemaName() << "' is constant!";
-}
-
-template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> ReflectableConstAllocatorHolderBase<ALLOC>::getParameter(std::string_view)
-{
-    throw CppRuntimeException("Reflectable '") << getTypeInfo().getSchemaName() << "' is constant!";
-}
-
-template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> ReflectableConstAllocatorHolderBase<ALLOC>::callFunction(std::string_view)
 {
     throw CppRuntimeException("Reflectable '") << getTypeInfo().getSchemaName() << "' is constant!";
 }

@@ -1,6 +1,7 @@
 <#include "FileHeader.inc.ftl">
 <#include "Structure.inc.ftl">
 <#include "TypeInfo.inc.ftl">
+<#include "Reflectable.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/BitPositionUtil.h>
@@ -8,6 +9,7 @@
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 <#if withTypeInfoCode>
+#include <zserio/Reflectable.h>
 #include <zserio/TypeInfo.h>
 </#if>
 <@system_includes cppSystemIncludes/>
@@ -722,7 +724,67 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
     return typeInfo;
 }
 </#if>
-<@namespace_end ["zserio", "detail"]/>
+<@namespace_end ["detail"]/>
+
+<#macro structure_reflectable isConst>
+    class Reflectable : public ::zserio::Reflectable<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
+    {
+    public:
+    <#if isConst>
+        using ::zserio::ReflectableConstAllocatorHolderBase<${types.allocator.default}>::getField;
+        using ::zserio::ReflectableConstAllocatorHolderBase<${types.allocator.default}>::getAnyValue;
+
+    </#if>
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object_, const ${types.allocator.default}& alloc) :
+                ::zserio::Reflectable<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
+                        <#lt>typeInfo<${fullName}>(), alloc),
+                m_object(object_)
+        {}
+    <#if fieldList?has_content>
+
+        <@reflectable_get_field name, fieldList, true/>
+        <#if !isConst>
+
+        <@reflectable_get_field name, fieldList, false/>
+
+        <@reflectable_set_field name, fieldList/>
+
+        <@reflectable_create_field name, fieldList/>
+        </#if>
+    </#if>
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
+        {
+            return ${types.any.name}(::std::cref(m_object), alloc);
+        }
+    <#if !isConst>
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) override
+        {
+            return ${types.any.name}(::std::ref(m_object), alloc);
+        }
+    </#if>
+
+    private:
+        <#if isConst>const </#if>${fullName}& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+</#macro>
+template <>
+${types.reflectableConstPtr.name} reflectable(
+        const ${fullName}& object, const ${types.allocator.default}& allocator)
+{
+    <@structure_reflectable true/>
+}
+
+template <>
+${types.reflectablePtr.name} reflectable(
+        ${fullName}& object, const ${types.allocator.default}& allocator)
+{
+    <@structure_reflectable false/>
+}
+<@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> data</#if>) const

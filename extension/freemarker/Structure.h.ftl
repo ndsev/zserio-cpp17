@@ -16,6 +16,7 @@
 </#if>
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
+<@type_includes types.reflectablePtr/>
 </#if>
 #include <zserio/View.h>
 <@type_includes types.allocator/>
@@ -176,7 +177,14 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
     static const ${types.typeInfo.name}& get();
 };
 </#if>
-<@namespace_end ["zserio", "detail"]/>
+<@namespace_end ["detail"]/>
+
+template <>
+${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator);
+
+template <>
+${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
+<@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
 
 template <>
