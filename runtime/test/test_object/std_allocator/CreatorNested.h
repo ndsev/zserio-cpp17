@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <zserio/ITypeInfo.h>
+#include <zserio/IReflectable.h>
 #include <zserio/View.h>
 #include <memory>
 #include <zserio/BitBuffer.h>
@@ -121,6 +122,13 @@ struct TypeInfo<::test_object::std_allocator::CreatorNested, ::std::allocator<ui
 };
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableConstPtr reflectable(const ::test_object::std_allocator::CreatorNested& value, const ::std::allocator<uint8_t>& allocator);
+
+template <>
+::zserio::IReflectablePtr reflectable(::test_object::std_allocator::CreatorNested& value, const ::std::allocator<uint8_t>& allocator);
+
 } // namespace zserio
 
 namespace std

@@ -492,13 +492,11 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
     <@case_info_array_var "cases" caseMemberList defaultMember!/>
 
     static const ::zserio::detail::ChoiceTypeInfo<AllocatorType> typeInfo = {
-        "${schemaTypeName}", nullptr,
-    <#-- TODO[Mi-L@]: Update when reflections are implemented!
-        [](const allocator_type& allocator) -> ${types.reflectablePtr.name}
+        "${schemaTypeName}",
+        [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
         {
-            return std::allocate_shared<::zserio::ReflectableOwner<${name}>>(allocator, allocator);
+            return std::allocate_shared<::zserio::ReflectableOwner<${fullName}>>(allocator, allocator);
         },
-    -->
         templateName, templateArguments,
         fields, parameters, functions, "${selectorExpression?j_string}", cases
     };

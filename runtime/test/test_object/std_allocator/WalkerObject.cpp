@@ -7,6 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/Reflectable.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/MissedOptionalException.h>
 
@@ -485,7 +486,11 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerObject, 
     static const ::zserio::Span<::zserio::BasicFunctionInfo<AllocatorType>> functions;
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
-        "test_object.std_allocator.WalkerObject", nullptr,
+        "test_object.std_allocator.WalkerObject",
+        [](const AllocatorType& allocator) -> ::zserio::IReflectablePtr
+        {
+            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::std_allocator::WalkerObject>>(allocator, allocator);
+        },
         templateName, templateArguments, fields, parameters, functions
     };
 
@@ -493,6 +498,298 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerObject, 
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableConstPtr reflectable(
+        const ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>
+    {
+    public:
+        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
+        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+
+        explicit Reflectable(const ::test_object::std_allocator::WalkerObject& object_, const ::std::allocator<uint8_t>& alloc) :
+                ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "identifier")
+            {
+                return ::zserio::reflectable(m_object.identifier, get_allocator());
+            }
+            if (name == "nested")
+            {
+                if (!m_object.nested.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "unionArray")
+            {
+                return ::zserio::reflectableArray(m_object.unionArray, get_allocator());
+            }
+            if (name == "optionalUnionArray")
+            {
+                if (!m_object.optionalUnionArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.optionalUnionArray, get_allocator());
+            }
+            if (name == "choiceSelector")
+            {
+                return ::zserio::reflectable(m_object.choiceSelector, get_allocator());
+            }
+            if (name == "choiceField")
+            {
+                return ::zserio::reflectable(m_object.choiceField, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(::std::cref(m_object), alloc);
+        }
+
+    private:
+        const ::test_object::std_allocator::WalkerObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
+template <>
+::zserio::IReflectablePtr reflectable(
+        ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::std_allocator::WalkerObject& object_, const ::std::allocator<uint8_t>& alloc) :
+                ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "identifier")
+            {
+                return ::zserio::reflectable(m_object.identifier, get_allocator());
+            }
+            if (name == "nested")
+            {
+                if (!m_object.nested.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "unionArray")
+            {
+                return ::zserio::reflectableArray(m_object.unionArray, get_allocator());
+            }
+            if (name == "optionalUnionArray")
+            {
+                if (!m_object.optionalUnionArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.optionalUnionArray, get_allocator());
+            }
+            if (name == "choiceSelector")
+            {
+                return ::zserio::reflectable(m_object.choiceSelector, get_allocator());
+            }
+            if (name == "choiceField")
+            {
+                return ::zserio::reflectable(m_object.choiceField, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
+        }
+
+        ::zserio::IReflectablePtr getField(::std::string_view name) override
+        {
+            if (name == "identifier")
+            {
+                return ::zserio::reflectable(m_object.identifier, get_allocator());
+            }
+            if (name == "nested")
+            {
+                if (!m_object.nested.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "unionArray")
+            {
+                return ::zserio::reflectableArray(m_object.unionArray, get_allocator());
+            }
+            if (name == "optionalUnionArray")
+            {
+                if (!m_object.optionalUnionArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.optionalUnionArray, get_allocator());
+            }
+            if (name == "choiceSelector")
+            {
+                return ::zserio::reflectable(m_object.choiceSelector, get_allocator());
+            }
+            if (name == "choiceField")
+            {
+                return ::zserio::reflectable(m_object.choiceField, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
+        }
+
+        void setField(::std::string_view name, const ::zserio::Any& value) override
+        {
+            if (name == "identifier")
+            {
+                m_object.identifier =
+                        value.get<::zserio::UInt32>();
+                return;
+            }
+            if (name == "nested")
+            {
+                if (value.isType<::std::nullptr_t>())
+                {
+                    m_object.nested.reset();
+                    return;
+                }
+
+                m_object.nested =
+                        value.get<::test_object::std_allocator::WalkerNested>();
+                return;
+            }
+            if (name == "text")
+            {
+                m_object.text =
+                        value.get<::zserio::String>();
+                return;
+            }
+            if (name == "unionArray")
+            {
+                m_object.unionArray =
+                        value.get<::zserio::Vector<::test_object::std_allocator::WalkerUnion>>();
+                return;
+            }
+            if (name == "optionalUnionArray")
+            {
+                if (value.isType<::std::nullptr_t>())
+                {
+                    m_object.optionalUnionArray.reset();
+                    return;
+                }
+
+                m_object.optionalUnionArray =
+                        value.get<::zserio::Vector<::test_object::std_allocator::WalkerUnion>>();
+                return;
+            }
+            if (name == "choiceSelector")
+            {
+                m_object.choiceSelector =
+                        value.get<::zserio::UInt8>();
+                return;
+            }
+            if (name == "choiceField")
+            {
+                m_object.choiceField =
+                        value.get<::test_object::std_allocator::WalkerChoice>();
+                return;
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
+        }
+
+        ::zserio::IReflectablePtr createField(::std::string_view name) override
+        {
+            if (name == "identifier")
+            {
+                m_object.identifier =
+                        ::zserio::UInt32();
+                return ::zserio::reflectable(m_object.identifier, get_allocator());
+            }
+            if (name == "nested")
+            {
+                m_object.nested =
+                        ::test_object::std_allocator::WalkerNested(get_allocator());
+                return ::zserio::reflectable(*m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                m_object.text =
+                        ::zserio::String(get_allocator());
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "unionArray")
+            {
+                m_object.unionArray =
+                        ::zserio::Vector<::test_object::std_allocator::WalkerUnion>(get_allocator());
+                return ::zserio::reflectableArray(m_object.unionArray, get_allocator());
+            }
+            if (name == "optionalUnionArray")
+            {
+                m_object.optionalUnionArray =
+                        ::zserio::Vector<::test_object::std_allocator::WalkerUnion>(get_allocator());
+                return ::zserio::reflectableArray(*m_object.optionalUnionArray, get_allocator());
+            }
+            if (name == "choiceSelector")
+            {
+                m_object.choiceSelector =
+                        ::zserio::UInt8();
+                return ::zserio::reflectable(m_object.choiceSelector, get_allocator());
+            }
+            if (name == "choiceField")
+            {
+                m_object.choiceField =
+                        ::test_object::std_allocator::WalkerChoice(get_allocator());
+                return ::zserio::reflectable(m_object.choiceField, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(::std::cref(m_object), alloc);
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) override
+        {
+            return ::zserio::Any(::std::ref(m_object), alloc);
+        }
+
+    private:
+        ::test_object::std_allocator::WalkerObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
 } // namespace zserio
 
 namespace std

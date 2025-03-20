@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <zserio/ITypeInfo.h>
+#include <zserio/IReflectable.h>
 #include <zserio/View.h>
 #include <memory>
 #include <zserio/String.h>
@@ -95,6 +96,13 @@ struct TypeInfo<::test_object::std_allocator::WalkerNested, ::std::allocator<uin
 };
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableConstPtr reflectable(const ::test_object::std_allocator::WalkerNested& value, const ::std::allocator<uint8_t>& allocator);
+
+template <>
+::zserio::IReflectablePtr reflectable(::test_object::std_allocator::WalkerNested& value, const ::std::allocator<uint8_t>& allocator);
+
 } // namespace zserio
 
 namespace std

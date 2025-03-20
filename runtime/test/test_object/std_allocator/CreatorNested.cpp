@@ -7,6 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/Reflectable.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/CreatorNested.h>
@@ -410,7 +411,11 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::CreatorNested,
     static const ::zserio::Span<::zserio::BasicFunctionInfo<AllocatorType>> functions;
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
-        "test_object.std_allocator.CreatorNested", nullptr,
+        "test_object.std_allocator.CreatorNested",
+        [](const AllocatorType& allocator) -> ::zserio::IReflectablePtr
+        {
+            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::std_allocator::CreatorNested>>(allocator, allocator);
+        },
         templateName, templateArguments, fields, parameters, functions
     };
 
@@ -418,6 +423,258 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::CreatorNested,
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableConstPtr reflectable(
+        const ::test_object::std_allocator::CreatorNested& object, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>
+    {
+    public:
+        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
+        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+
+        explicit Reflectable(const ::test_object::std_allocator::CreatorNested& object_, const ::std::allocator<uint8_t>& alloc) :
+                ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::CreatorNested>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "externData")
+            {
+                return ::zserio::reflectable(m_object.externData, get_allocator());
+            }
+            if (name == "bytesData")
+            {
+                return ::zserio::reflectable(m_object.bytesData, get_allocator());
+            }
+            if (name == "creatorEnum")
+            {
+                return ::zserio::reflectable(m_object.creatorEnum, get_allocator());
+            }
+            if (name == "creatorBitmask")
+            {
+                return ::zserio::reflectable(m_object.creatorBitmask, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorNested'!";
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(::std::cref(m_object), alloc);
+        }
+
+    private:
+        const ::test_object::std_allocator::CreatorNested& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
+template <>
+::zserio::IReflectablePtr reflectable(
+        ::test_object::std_allocator::CreatorNested& object, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::std_allocator::CreatorNested& object_, const ::std::allocator<uint8_t>& alloc) :
+                ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::CreatorNested>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "externData")
+            {
+                return ::zserio::reflectable(m_object.externData, get_allocator());
+            }
+            if (name == "bytesData")
+            {
+                return ::zserio::reflectable(m_object.bytesData, get_allocator());
+            }
+            if (name == "creatorEnum")
+            {
+                return ::zserio::reflectable(m_object.creatorEnum, get_allocator());
+            }
+            if (name == "creatorBitmask")
+            {
+                return ::zserio::reflectable(m_object.creatorBitmask, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorNested'!";
+        }
+
+        ::zserio::IReflectablePtr getField(::std::string_view name) override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "externData")
+            {
+                return ::zserio::reflectable(m_object.externData, get_allocator());
+            }
+            if (name == "bytesData")
+            {
+                return ::zserio::reflectable(m_object.bytesData, get_allocator());
+            }
+            if (name == "creatorEnum")
+            {
+                return ::zserio::reflectable(m_object.creatorEnum, get_allocator());
+            }
+            if (name == "creatorBitmask")
+            {
+                return ::zserio::reflectable(m_object.creatorBitmask, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorNested'!";
+        }
+
+        void setField(::std::string_view name, const ::zserio::Any& value) override
+        {
+            if (name == "value")
+            {
+                m_object.value =
+                        value.get<::zserio::UInt32>();
+                return;
+            }
+            if (name == "text")
+            {
+                m_object.text =
+                        value.get<::zserio::String>();
+                return;
+            }
+            if (name == "externData")
+            {
+                m_object.externData =
+                        value.get<::zserio::BitBuffer>();
+                return;
+            }
+            if (name == "bytesData")
+            {
+                m_object.bytesData =
+                        value.get<::zserio::Bytes>();
+                return;
+            }
+            if (name == "creatorEnum")
+            {
+                if (value.isType<::test_object::std_allocator::CreatorEnum>())
+                {
+                    m_object.creatorEnum =
+                            value.get<::test_object::std_allocator::CreatorEnum>();
+                }
+                else if (value.isType<typename EnumTraits<::test_object::std_allocator::CreatorEnum>::ZserioType>())
+                {
+                    m_object.creatorEnum =
+                            valueToEnum<::test_object::std_allocator::CreatorEnum>(value.get<typename EnumTraits<::test_object::std_allocator::CreatorEnum>::ZserioType>());
+                }
+                else
+                {
+                    m_object.creatorEnum =
+                            valueToEnum<::test_object::std_allocator::CreatorEnum>(value.get<std::underlying_type_t<::test_object::std_allocator::CreatorEnum>>());
+                }
+                return;
+            }
+            if (name == "creatorBitmask")
+            {
+                if (value.isType<::test_object::std_allocator::CreatorBitmask>())
+                {
+                    m_object.creatorBitmask =
+                            value.get<::test_object::std_allocator::CreatorBitmask>();
+                }
+                else if (value.isType<::test_object::std_allocator::CreatorBitmask::ZserioType>())
+                {
+                    m_object.creatorBitmask =
+                            ::test_object::std_allocator::CreatorBitmask(value.get<::test_object::std_allocator::CreatorBitmask::ZserioType>());
+                }
+                else
+                {
+                    m_object.creatorBitmask =
+                            ::test_object::std_allocator::CreatorBitmask(value.get<::test_object::std_allocator::CreatorBitmask::ZserioType::ValueType>());
+                }
+                return;
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorNested'!";
+        }
+
+        ::zserio::IReflectablePtr createField(::std::string_view name) override
+        {
+            if (name == "value")
+            {
+                m_object.value =
+                        ::zserio::UInt32();
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "text")
+            {
+                m_object.text =
+                        ::zserio::String(get_allocator());
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "externData")
+            {
+                m_object.externData =
+                        ::zserio::BitBuffer(get_allocator());
+                return ::zserio::reflectable(m_object.externData, get_allocator());
+            }
+            if (name == "bytesData")
+            {
+                m_object.bytesData =
+                        ::zserio::Bytes(get_allocator());
+                return ::zserio::reflectable(m_object.bytesData, get_allocator());
+            }
+            if (name == "creatorEnum")
+            {
+                m_object.creatorEnum =
+                        ::test_object::std_allocator::CreatorEnum();
+                return ::zserio::reflectable(m_object.creatorEnum, get_allocator());
+            }
+            if (name == "creatorBitmask")
+            {
+                m_object.creatorBitmask =
+                        ::test_object::std_allocator::CreatorBitmask();
+                return ::zserio::reflectable(m_object.creatorBitmask, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorNested'!";
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(::std::cref(m_object), alloc);
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) override
+        {
+            return ::zserio::Any(::std::ref(m_object), alloc);
+        }
+
+    private:
+        ::test_object::std_allocator::CreatorNested& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
 } // namespace zserio
 
 namespace std

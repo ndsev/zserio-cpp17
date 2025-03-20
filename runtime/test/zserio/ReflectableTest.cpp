@@ -496,7 +496,7 @@ protected:
         checkCompoundConstMethods(reflectableObject, static_cast<IReflectableConstPtr>(reflectable));
 
         // setter
-        reflectable->getField("reflectableNested")->setField("value", Any(static_cast<uint32_t>(11)));
+        reflectable->getField("reflectableNested")->setField("value", Any(zserio::UInt31(11)));
         ASSERT_EQ(11, reflectableObject.reflectableNested.value);
         ASSERT_THROW(reflectable->setField("nonexistent", Any()), CppRuntimeException);
         // ASSERT_THROW(reflectable->find("reflectableNested")->setField("nonexistent", Any()),
@@ -1674,47 +1674,33 @@ TEST_F(ReflectableTest, compoundConst)
     ASSERT_THROW(
             nonConstChildReflectable->setField("value", Any(static_cast<uint32_t>(11))), CppRuntimeException);
 }
-/*
+
 TEST_F(ReflectableTest, compound)
 {
-    {
-        ReflectableObject reflectableObjectUninitialized = ReflectableObject{"test", ReflectableNested{13}};
-        auto reflectablePtr = reflectable(reflectableObjectUninitialized);
-        ASSERT_FALSE(reflectablePtr->find("reflectableNested.stringParam"));
-    }
-
     ReflectableObject reflectableObject = ReflectableObject{"test", ReflectableNested{13}};
     auto reflectablePtr = reflectable(reflectableObject);
 
-    // not initialized
-    ASSERT_THROW(reflectablePtr->getField("reflectableNested")->getParameter("dummyParam"),
-CppRuntimeException); ASSERT_THROW(reflectablePtr->getField("reflectableNested")->getParameter("stringParam"),
-CppRuntimeException);
-    ASSERT_FALSE(static_cast<IReflectableConstPtr>(reflectablePtr)->find("reflectableNested.stringParam"));
-
-    reflectablePtr->initializeChildren();
     checkCompound(reflectableObject, reflectablePtr);
 }
 
 TEST_F(ReflectableTest, compoundConstArray)
 {
-    ReflectableObject reflectableObject1;
-    reflectableObject1 = createInitializedReflectableObject("1", 13); // to cover assignment operator
+    ReflectableObject reflectableObject1("1", ReflectableNested(13));
     const auto rawArray =
-            std::vector<ReflectableObject>{{reflectableObject1, createInitializedReflectableObject("2", 42)}};
-    auto reflectable = ReflectableFactory::getCompoundArray(rawArray);
-    checkArray(rawArray, reflectable,
+            std::vector<ReflectableObject>{{reflectableObject1, ReflectableObject("2", ReflectableNested(42))}};
+    auto reflectablePtr = reflectableArray(rawArray);
+    checkArray(rawArray, reflectablePtr,
             [&](const ReflectableObject& value, const IReflectableConstPtr& elementReflectable) {
                 checkCompound(value, elementReflectable);
             });
 
-    IReflectablePtr nonConstReflectable = std::const_pointer_cast<IReflectable>(reflectable);
+    IReflectablePtr nonConstReflectable = std::const_pointer_cast<IReflectable>(reflectablePtr);
     ASSERT_THROW(nonConstReflectable->at(0), CppRuntimeException);
     ASSERT_THROW((*nonConstReflectable)[0], CppRuntimeException);
     ASSERT_THROW(nonConstReflectable->resize(nonConstReflectable->size() + 1), CppRuntimeException);
-    ASSERT_THROW(nonConstReflectable->setAt(AnyHolder<>(ReflectableObject{"test", ReflectableNested{0}}), 0),
+    ASSERT_THROW(nonConstReflectable->setAt(Any(ReflectableObject{"test", ReflectableNested{0}}), 0),
             CppRuntimeException);
-    ASSERT_THROW(nonConstReflectable->append(AnyHolder<>(ReflectableObject{"test", ReflectableNested{0}})),
+    ASSERT_THROW(nonConstReflectable->append(Any(ReflectableObject{"test", ReflectableNested{0}})),
             CppRuntimeException);
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
@@ -1722,30 +1708,31 @@ TEST_F(ReflectableTest, compoundConstArray)
 TEST_F(ReflectableTest, compoundArray)
 {
     auto rawArray = std::vector<ReflectableObject>{
-            {createInitializedReflectableObject("1", 13), createInitializedReflectableObject("2", 42)}};
-    auto reflectable = ReflectableFactory::getCompoundArray(rawArray);
-    checkArray(rawArray, reflectable,
+            {ReflectableObject("1", ReflectableNested(13)), ReflectableObject("2", ReflectableNested(42))}};
+    auto reflectablePtr = reflectableArray(rawArray);
+    checkArray(rawArray, reflectablePtr,
             [&](const ReflectableObject& value, const IReflectablePtr& elementReflectable) {
                 checkCompound(value, elementReflectable);
             });
-    checkArray(rawArray, static_cast<IReflectableConstPtr>(reflectable),
+    checkArray(rawArray, static_cast<IReflectableConstPtr>(reflectablePtr),
             [&](const ReflectableObject& value, const IReflectableConstPtr& elementReflectable) {
                 checkCompound(value, elementReflectable);
             });
 
-    reflectable->resize(reflectable->size() + 1);
-    IReflectablePtr newCompound = reflectable->at(reflectable->size() - 1);
+    reflectablePtr->resize(reflectablePtr->size() + 1);
+    IReflectablePtr newCompound = reflectablePtr->at(reflectablePtr->size() - 1);
     ASSERT_TRUE(newCompound);
 
-    reflectable->setAt(AnyHolder<>(ReflectableObject{"test", ReflectableNested{0}}), 0);
-    ASSERT_EQ(0, reflectable->at(0)->find("reflectableNested.value")->getUInt32());
-    reflectable->append(AnyHolder<>(ReflectableObject{"test|", ReflectableNested{1}}));
-    ASSERT_EQ(1, reflectable->at(reflectable->size() - 1)->find("reflectableNested.value")->getUInt32());
+    reflectablePtr->setAt(Any(ReflectableObject{"test", ReflectableNested{0}}), 0);
+    // ASSERT_EQ(0, reflectablePtr->at(0)->find("reflectableNested.value")->getUInt32());
+    reflectablePtr->append(Any(ReflectableObject{"test|", ReflectableNested{1}}));
+    // ASSERT_EQ(1, reflectablePtr->at(reflectablePtr->size() -
+    // 1)->find("reflectableNested.value")->getUInt32());
 
-    const size_t size = reflectable->size();
-    ASSERT_THROW(reflectable->setAt(AnyHolder<>(), size), CppRuntimeException); // out of range
+    const size_t size = reflectablePtr->size();
+    ASSERT_THROW(reflectablePtr->setAt(Any(), size), CppRuntimeException); // out of range
 }
-
+/*
 TEST_F(ReflectableTest, defaultUnimplementedMethods)
 {
     class Reflectable : public ReflectableBase<std::allocator<uint8_t>>
@@ -1768,43 +1755,31 @@ TEST_F(ReflectableTest, defaultUnimplementedMethods)
 
     ASSERT_THROW(reflectable.parsingInfo(), CppRuntimeException);
 }
-
+*/
 TEST_F(ReflectableTest, reflectableOwner)
 {
-    auto reflectable = ReflectableObject::typeInfo().createInstance();
-
-    // must be as the first one to initialize object
-    ASSERT_NO_THROW(reflectable->initializeChildren());
+    auto reflectable = typeInfo<ReflectableObject>().createInstance();
 
     IReflectableConstPtr constReflectable = reflectable;
 
-    // same as default initialized
     ReflectableObject defaultReflectableObject;
-    defaultReflectableObject.initializeChildren();
     ASSERT_EQ(defaultReflectableObject,
             reflectable->getAnyValue().template get<std::reference_wrapper<ReflectableObject>>().get());
     ASSERT_EQ(defaultReflectableObject,
             constReflectable->getAnyValue().template get<std::reference_wrapper<ReflectableObject>>().get());
 
-    // has no type arguments
-    ASSERT_THROW(reflectable->initialize(std::vector<AnyHolder<>>()), CppRuntimeException);
-
     ASSERT_TRUE(TypeInfoUtil::isCompound(reflectable->getTypeInfo().getSchemaType()));
     ASSERT_FALSE(reflectable->isArray());
-    reflectable->setField("reflectableNested", AnyHolder<>(ReflectableNested{42}));
+    reflectable->setField("reflectableNested", Any(ReflectableNested{42}));
     ASSERT_EQ(42, reflectable->getField("reflectableNested")->getField("value")->getUInt32());
     ASSERT_EQ(42, constReflectable->getField("reflectableNested")->getField("value")->getUInt32());
     ASSERT_THROW(reflectable->createField("nonexistent"), CppRuntimeException);
-    ASSERT_THROW(reflectable->getParameter("nonexistent"), CppRuntimeException);
-    ASSERT_THROW(constReflectable->getParameter("nonexistent"), CppRuntimeException);
-    ASSERT_THROW(reflectable->callFunction("nonexistent"), CppRuntimeException);
-    ASSERT_THROW(constReflectable->callFunction("nonexistent"), CppRuntimeException);
-    ASSERT_THROW(reflectable->getChoice(), CppRuntimeException);
-    ASSERT_THROW(constReflectable->getChoice(), CppRuntimeException);
-    ASSERT_FALSE(reflectable->find("nonexistent"));
-    ASSERT_FALSE(constReflectable->find("nonexistent"));
-    ASSERT_FALSE((*reflectable)["nonexistent"]);
-    ASSERT_FALSE((*constReflectable)["nonexistent"]);
+    // ASSERT_THROW(reflectable->getChoice(), CppRuntimeException);
+    // ASSERT_THROW(constReflectable->getChoice(), CppRuntimeException);
+    // ASSERT_FALSE(reflectable->find("nonexistent"));
+    // ASSERT_FALSE(constReflectable->find("nonexistent"));
+    // ASSERT_FALSE((*reflectable)["nonexistent"]);
+    // ASSERT_FALSE((*constReflectable)["nonexistent"]);
 
     ASSERT_THROW(reflectable->size(), CppRuntimeException); // not an array
     ASSERT_THROW(reflectable->resize(0), CppRuntimeException); // not an array
@@ -1812,8 +1787,8 @@ TEST_F(ReflectableTest, reflectableOwner)
     ASSERT_THROW(constReflectable->at(0), CppRuntimeException); // not an array
     ASSERT_THROW((*reflectable)[0], CppRuntimeException); // not an array
     ASSERT_THROW((*constReflectable)[0], CppRuntimeException); // not an array
-    ASSERT_THROW(reflectable->setAt(AnyHolder<>(), 0), CppRuntimeException); // not an array
-    ASSERT_THROW(reflectable->append(AnyHolder<>()), CppRuntimeException); // not an array
+    ASSERT_THROW(reflectable->setAt(Any(), 0), CppRuntimeException); // not an array
+    ASSERT_THROW(reflectable->append(Any()), CppRuntimeException); // not an array
 
     ASSERT_THROW(reflectable->getBool(), CppRuntimeException);
     ASSERT_THROW(reflectable->getInt8(), CppRuntimeException);
@@ -1834,20 +1809,6 @@ TEST_F(ReflectableTest, reflectableOwner)
     ASSERT_THROW(reflectable->toUInt(), CppRuntimeException);
     ASSERT_THROW(reflectable->toDouble(), CppRuntimeException);
     ASSERT_THROW(reflectable->toString(), CppRuntimeException);
-
-    ASSERT_EQ(reflectable->bitSizeOf(), reflectable->initializeOffsets());
-
-    ASSERT_NO_THROW(reflectable->initializeChildren());
-
-    const size_t bitSizeOfValue = reflectable->bitSizeOf();
-    BitBuffer bitBuffer(bitSizeOfValue);
-    BitStreamWriter writer(bitBuffer);
-    reflectable->write(writer);
-    ASSERT_EQ(bitSizeOfValue, writer.getBitPosition());
-
-    const ParsingInfo& parsingInfo = reflectable->parsingInfo();
-    ASSERT_THROW(parsingInfo.getBitPosition(), CppRuntimeException);
-    ASSERT_THROW(parsingInfo.getBitSize(), CppRuntimeException);
 }
-*/
+
 } // namespace zserio

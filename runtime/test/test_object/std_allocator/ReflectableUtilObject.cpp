@@ -7,6 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/Reflectable.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/ReflectableUtilObject.h>
@@ -234,7 +235,11 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
     static const ::zserio::Span<::zserio::BasicFunctionInfo<AllocatorType>> functions;
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
-        "test_object.std_allocator.ReflectableUtilObject", nullptr,
+        "test_object.std_allocator.ReflectableUtilObject",
+        [](const AllocatorType& allocator) -> ::zserio::IReflectablePtr
+        {
+            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::std_allocator::ReflectableUtilObject>>(allocator, allocator);
+        },
         templateName, templateArguments, fields, parameters, functions
     };
 
@@ -242,6 +247,136 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableConstPtr reflectable(
+        const ::test_object::std_allocator::ReflectableUtilObject& object, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>
+    {
+    public:
+        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
+        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+
+        explicit Reflectable(const ::test_object::std_allocator::ReflectableUtilObject& object_, const ::std::allocator<uint8_t>& alloc) :
+                ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "choiceParam")
+            {
+                return ::zserio::reflectable(m_object.choiceParam, get_allocator());
+            }
+            if (name == "reflectableUtilChoice")
+            {
+                return ::zserio::reflectable(m_object.reflectableUtilChoice, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(::std::cref(m_object), alloc);
+        }
+
+    private:
+        const ::test_object::std_allocator::ReflectableUtilObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
+template <>
+::zserio::IReflectablePtr reflectable(
+        ::test_object::std_allocator::ReflectableUtilObject& object, const ::std::allocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::std_allocator::ReflectableUtilObject& object_, const ::std::allocator<uint8_t>& alloc) :
+                ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "choiceParam")
+            {
+                return ::zserio::reflectable(m_object.choiceParam, get_allocator());
+            }
+            if (name == "reflectableUtilChoice")
+            {
+                return ::zserio::reflectable(m_object.reflectableUtilChoice, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
+        }
+
+        ::zserio::IReflectablePtr getField(::std::string_view name) override
+        {
+            if (name == "choiceParam")
+            {
+                return ::zserio::reflectable(m_object.choiceParam, get_allocator());
+            }
+            if (name == "reflectableUtilChoice")
+            {
+                return ::zserio::reflectable(m_object.reflectableUtilChoice, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
+        }
+
+        void setField(::std::string_view name, const ::zserio::Any& value) override
+        {
+            if (name == "choiceParam")
+            {
+                m_object.choiceParam =
+                        value.get<::zserio::UInt8>();
+                return;
+            }
+            if (name == "reflectableUtilChoice")
+            {
+                m_object.reflectableUtilChoice =
+                        value.get<::test_object::std_allocator::ReflectableUtilChoice>();
+                return;
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
+        }
+
+        ::zserio::IReflectablePtr createField(::std::string_view name) override
+        {
+            if (name == "choiceParam")
+            {
+                m_object.choiceParam =
+                        ::zserio::UInt8();
+                return ::zserio::reflectable(m_object.choiceParam, get_allocator());
+            }
+            if (name == "reflectableUtilChoice")
+            {
+                m_object.reflectableUtilChoice =
+                        ::test_object::std_allocator::ReflectableUtilChoice(get_allocator());
+                return ::zserio::reflectable(m_object.reflectableUtilChoice, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::Any(::std::cref(m_object), alloc);
+        }
+
+        ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) override
+        {
+            return ::zserio::Any(::std::ref(m_object), alloc);
+        }
+
+    private:
+        ::test_object::std_allocator::ReflectableUtilObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
 } // namespace zserio
 
 namespace std

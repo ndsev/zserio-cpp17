@@ -441,13 +441,11 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
     <@function_info_array_var "functions", functionList/>
 
     static const ::zserio::detail::UnionTypeInfo<AllocatorType> typeInfo = {
-        "${schemaTypeName}", nullptr,
-    <#-- TODO[Mi-L@]: Update when reflections are implemented!
-        [](const allocator_type& allocator) -> ${types.reflectablePtr.name}
+        "${schemaTypeName}",
+        [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
         {
-            return std::allocate_shared<::zserio::ReflectableOwner<${name}>>(allocator, allocator);
+            return std::allocate_shared<::zserio::ReflectableOwner<${fullName}>>(allocator, allocator);
         },
-    -->
         templateName, templateArguments, fields, parameters, functions
     };
 
