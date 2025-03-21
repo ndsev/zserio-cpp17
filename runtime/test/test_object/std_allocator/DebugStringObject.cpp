@@ -277,8 +277,7 @@ template <>
         {
             if (name == "text")
             {
-                m_object.text =
-                        value.get<::zserio::String>();
+                m_object.text = value.get<::zserio::String>();
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'DebugStringObject'!";
@@ -288,8 +287,7 @@ template <>
         {
             if (name == "text")
             {
-                m_object.text =
-                        ::zserio::String(get_allocator());
+                m_object.text = ::zserio::String(get_allocator());
                 return ::zserio::reflectable(m_object.text, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'DebugStringObject'!";

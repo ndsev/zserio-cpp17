@@ -334,15 +334,18 @@ template <>
         {
             if (name == "value")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
             }
             if (name == "text")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
-                return ::zserio::reflectableArray(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+                return ::zserio::reflectableArray(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
@@ -374,15 +377,18 @@ template <>
         {
             if (name == "value")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
             }
             if (name == "text")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
-                return ::zserio::reflectableArray(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+                return ::zserio::reflectableArray(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
@@ -391,15 +397,18 @@ template <>
         {
             if (name == "value")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
             }
             if (name == "text")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
-                return ::zserio::reflectableArray(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+                return ::zserio::reflectableArray(
+                        get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
@@ -408,23 +417,28 @@ template <>
         {
             if (name == "value")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
-                        value.get<::zserio::UInt32>()
-                );
+                if (value.isType<::zserio::UInt32>())
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
+                            value.get<::zserio::UInt32>());
+                }
+                else
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
+                            value.get<::zserio::UInt32::ValueType>());
+                }
                 return;
             }
             if (name == "text")
             {
                 m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(
-                        value.get<::zserio::String>()
-                );
+                        value.get<::zserio::String>());
                 return;
             }
             if (name == "nestedArray")
             {
                 m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
-                        value.get<::zserio::Vector<::test_object::std_allocator::WalkerNested>>()
-                );
+                        value.get<::zserio::Vector<::test_object::std_allocator::WalkerNested>>());
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
@@ -434,23 +448,17 @@ template <>
         {
             if (name == "value")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
-                        
-                );
+                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>();
                 return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
             }
             if (name == "text")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(
-                        get_allocator()
-                );
+                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(get_allocator());
                 return ::zserio::reflectable(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
-                        get_allocator()
-                );
+                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(get_allocator());
                 return ::zserio::reflectableArray(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";

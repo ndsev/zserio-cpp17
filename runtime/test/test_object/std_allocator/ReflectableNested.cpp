@@ -327,8 +327,14 @@ template <>
         {
             if (name == "value")
             {
-                m_object.value =
-                        value.get<::zserio::UInt31>();
+                if (value.isType<::zserio::UInt31>())
+                {
+                    m_object.value = value.get<::zserio::UInt31>();
+                }
+                else
+                {
+                    m_object.value = value.get<::zserio::UInt31::ValueType>();
+                }
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableNested'!";
@@ -338,8 +344,7 @@ template <>
         {
             if (name == "value")
             {
-                m_object.value =
-                        ::zserio::UInt31();
+                m_object.value = ::zserio::UInt31();
                 return ::zserio::reflectable(m_object.value, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableNested'!";

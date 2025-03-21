@@ -332,14 +332,12 @@ template <>
         {
             if (name == "stringField")
             {
-                m_object.stringField =
-                        value.get<::zserio::String>();
+                m_object.stringField = value.get<::zserio::String>();
                 return;
             }
             if (name == "reflectableNested")
             {
-                m_object.reflectableNested =
-                        value.get<::test_object::std_allocator::ReflectableNested>();
+                m_object.reflectableNested = value.get<::test_object::std_allocator::ReflectableNested>();
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
@@ -349,14 +347,12 @@ template <>
         {
             if (name == "stringField")
             {
-                m_object.stringField =
-                        ::zserio::String(get_allocator());
+                m_object.stringField = ::zserio::String(get_allocator());
                 return ::zserio::reflectable(m_object.stringField, get_allocator());
             }
             if (name == "reflectableNested")
             {
-                m_object.reflectableNested =
-                        ::test_object::std_allocator::ReflectableNested(get_allocator());
+                m_object.reflectableNested = ::test_object::std_allocator::ReflectableNested(get_allocator());
                 return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";

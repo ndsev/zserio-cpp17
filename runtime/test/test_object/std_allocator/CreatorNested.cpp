@@ -554,34 +554,36 @@ template <>
         {
             if (name == "value")
             {
-                m_object.value =
-                        value.get<::zserio::UInt32>();
+                if (value.isType<::zserio::UInt32>())
+                {
+                    m_object.value = value.get<::zserio::UInt32>();
+                }
+                else
+                {
+                    m_object.value = value.get<::zserio::UInt32::ValueType>();
+                }
                 return;
             }
             if (name == "text")
             {
-                m_object.text =
-                        value.get<::zserio::String>();
+                m_object.text = value.get<::zserio::String>();
                 return;
             }
             if (name == "externData")
             {
-                m_object.externData =
-                        value.get<::zserio::BitBuffer>();
+                m_object.externData = value.get<::zserio::BitBuffer>();
                 return;
             }
             if (name == "bytesData")
             {
-                m_object.bytesData =
-                        value.get<::zserio::Bytes>();
+                m_object.bytesData = value.get<::zserio::Bytes>();
                 return;
             }
             if (name == "creatorEnum")
             {
                 if (value.isType<::test_object::std_allocator::CreatorEnum>())
                 {
-                    m_object.creatorEnum =
-                            value.get<::test_object::std_allocator::CreatorEnum>();
+                    m_object.creatorEnum = value.get<::test_object::std_allocator::CreatorEnum>();
                 }
                 else if (value.isType<typename EnumTraits<::test_object::std_allocator::CreatorEnum>::ZserioType>())
                 {
@@ -599,8 +601,7 @@ template <>
             {
                 if (value.isType<::test_object::std_allocator::CreatorBitmask>())
                 {
-                    m_object.creatorBitmask =
-                            value.get<::test_object::std_allocator::CreatorBitmask>();
+                    m_object.creatorBitmask = value.get<::test_object::std_allocator::CreatorBitmask>();
                 }
                 else if (value.isType<::test_object::std_allocator::CreatorBitmask::ZserioType>())
                 {
@@ -621,38 +622,32 @@ template <>
         {
             if (name == "value")
             {
-                m_object.value =
-                        ::zserio::UInt32();
+                m_object.value = ::zserio::UInt32();
                 return ::zserio::reflectable(m_object.value, get_allocator());
             }
             if (name == "text")
             {
-                m_object.text =
-                        ::zserio::String(get_allocator());
+                m_object.text = ::zserio::String(get_allocator());
                 return ::zserio::reflectable(m_object.text, get_allocator());
             }
             if (name == "externData")
             {
-                m_object.externData =
-                        ::zserio::BitBuffer(get_allocator());
+                m_object.externData = ::zserio::BitBuffer(get_allocator());
                 return ::zserio::reflectable(m_object.externData, get_allocator());
             }
             if (name == "bytesData")
             {
-                m_object.bytesData =
-                        ::zserio::Bytes(get_allocator());
+                m_object.bytesData = ::zserio::Bytes(get_allocator());
                 return ::zserio::reflectable(m_object.bytesData, get_allocator());
             }
             if (name == "creatorEnum")
             {
-                m_object.creatorEnum =
-                        ::test_object::std_allocator::CreatorEnum();
+                m_object.creatorEnum = ::test_object::std_allocator::CreatorEnum();
                 return ::zserio::reflectable(m_object.creatorEnum, get_allocator());
             }
             if (name == "creatorBitmask")
             {
-                m_object.creatorBitmask =
-                        ::test_object::std_allocator::CreatorBitmask();
+                m_object.creatorBitmask = ::test_object::std_allocator::CreatorBitmask();
                 return ::zserio::reflectable(m_object.creatorBitmask, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorNested'!";

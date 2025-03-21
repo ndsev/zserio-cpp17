@@ -868,32 +868,34 @@ template <>
         {
             if (name == "value")
             {
-                m_object.value =
-                        value.get<::zserio::UInt32>();
+                if (value.isType<::zserio::UInt32>())
+                {
+                    m_object.value = value.get<::zserio::UInt32>();
+                }
+                else
+                {
+                    m_object.value = value.get<::zserio::UInt32::ValueType>();
+                }
                 return;
             }
             if (name == "nested")
             {
-                m_object.nested =
-                        value.get<::test_object::std_allocator::CreatorNested>();
+                m_object.nested = value.get<::test_object::std_allocator::CreatorNested>();
                 return;
             }
             if (name == "text")
             {
-                m_object.text =
-                        value.get<::zserio::String>();
+                m_object.text = value.get<::zserio::String>();
                 return;
             }
             if (name == "nestedArray")
             {
-                m_object.nestedArray =
-                        value.get<::zserio::Vector<::test_object::std_allocator::CreatorNested>>();
+                m_object.nestedArray = value.get<::zserio::Vector<::test_object::std_allocator::CreatorNested>>();
                 return;
             }
             if (name == "textArray")
             {
-                m_object.textArray =
-                        value.get<::zserio::Vector<::zserio::String>>();
+                m_object.textArray = value.get<::zserio::Vector<::zserio::String>>();
                 return;
             }
             if (name == "externArray")
@@ -904,8 +906,7 @@ template <>
                     return;
                 }
 
-                m_object.externArray =
-                        value.get<::zserio::Vector<::zserio::BitBuffer>>();
+                m_object.externArray = value.get<::zserio::Vector<::zserio::BitBuffer>>();
                 return;
             }
             if (name == "bytesArray")
@@ -916,8 +917,7 @@ template <>
                     return;
                 }
 
-                m_object.bytesArray =
-                        value.get<::zserio::Vector<::zserio::Bytes>>();
+                m_object.bytesArray = value.get<::zserio::Vector<::zserio::Bytes>>();
                 return;
             }
             if (name == "optionalBool")
@@ -928,8 +928,14 @@ template <>
                     return;
                 }
 
-                m_object.optionalBool =
-                        value.get<::zserio::Bool>();
+                if (value.isType<::zserio::Bool>())
+                {
+                    m_object.optionalBool = value.get<::zserio::Bool>();
+                }
+                else
+                {
+                    m_object.optionalBool = value.get<::zserio::Bool::ValueType>();
+                }
                 return;
             }
             if (name == "optionalNested")
@@ -940,8 +946,7 @@ template <>
                     return;
                 }
 
-                m_object.optionalNested =
-                        value.get<::test_object::std_allocator::CreatorNested>();
+                m_object.optionalNested = value.get<::test_object::std_allocator::CreatorNested>();
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";
@@ -951,56 +956,47 @@ template <>
         {
             if (name == "value")
             {
-                m_object.value =
-                        ::zserio::UInt32();
+                m_object.value = ::zserio::UInt32();
                 return ::zserio::reflectable(m_object.value, get_allocator());
             }
             if (name == "nested")
             {
-                m_object.nested =
-                        ::test_object::std_allocator::CreatorNested(get_allocator());
+                m_object.nested = ::test_object::std_allocator::CreatorNested(get_allocator());
                 return ::zserio::reflectable(m_object.nested, get_allocator());
             }
             if (name == "text")
             {
-                m_object.text =
-                        ::zserio::String(get_allocator());
+                m_object.text = ::zserio::String(get_allocator());
                 return ::zserio::reflectable(m_object.text, get_allocator());
             }
             if (name == "nestedArray")
             {
-                m_object.nestedArray =
-                        ::zserio::Vector<::test_object::std_allocator::CreatorNested>(get_allocator());
+                m_object.nestedArray = ::zserio::Vector<::test_object::std_allocator::CreatorNested>(get_allocator());
                 return ::zserio::reflectableArray(m_object.nestedArray, get_allocator());
             }
             if (name == "textArray")
             {
-                m_object.textArray =
-                        ::zserio::Vector<::zserio::String>(get_allocator());
+                m_object.textArray = ::zserio::Vector<::zserio::String>(get_allocator());
                 return ::zserio::reflectableArray(m_object.textArray, get_allocator());
             }
             if (name == "externArray")
             {
-                m_object.externArray =
-                        ::zserio::Vector<::zserio::BitBuffer>(get_allocator());
+                m_object.externArray = ::zserio::Vector<::zserio::BitBuffer>(get_allocator());
                 return ::zserio::reflectableArray(*m_object.externArray, get_allocator());
             }
             if (name == "bytesArray")
             {
-                m_object.bytesArray =
-                        ::zserio::Vector<::zserio::Bytes>(get_allocator());
+                m_object.bytesArray = ::zserio::Vector<::zserio::Bytes>(get_allocator());
                 return ::zserio::reflectableArray(*m_object.bytesArray, get_allocator());
             }
             if (name == "optionalBool")
             {
-                m_object.optionalBool =
-                        ::zserio::Bool();
+                m_object.optionalBool = ::zserio::Bool();
                 return ::zserio::reflectable(*m_object.optionalBool, get_allocator());
             }
             if (name == "optionalNested")
             {
-                m_object.optionalNested =
-                        ::test_object::std_allocator::CreatorNested(get_allocator());
+                m_object.optionalNested = ::test_object::std_allocator::CreatorNested(get_allocator());
                 return ::zserio::reflectable(*m_object.optionalNested, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";

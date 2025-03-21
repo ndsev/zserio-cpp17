@@ -445,19 +445,23 @@ template <>
         {
             if (name == "value8")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
@@ -489,19 +493,23 @@ template <>
         {
             if (name == "value8")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
@@ -510,19 +518,23 @@ template <>
         {
             if (name == "value8")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
-                return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
@@ -531,30 +543,58 @@ template <>
         {
             if (name == "value8")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
-                        value.get<::zserio::UInt8>()
-                );
+                if (value.isType<::zserio::UInt8>())
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
+                            value.get<::zserio::UInt8>());
+                }
+                else
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
+                            value.get<::zserio::UInt8::ValueType>());
+                }
                 return;
             }
             if (name == "value16")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
-                        value.get<::zserio::UInt16>()
-                );
+                if (value.isType<::zserio::UInt16>())
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
+                            value.get<::zserio::UInt16>());
+                }
+                else
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
+                            value.get<::zserio::UInt16::ValueType>());
+                }
                 return;
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
-                        value.get<::zserio::UInt32>()
-                );
+                if (value.isType<::zserio::UInt32>())
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
+                            value.get<::zserio::UInt32>());
+                }
+                else
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
+                            value.get<::zserio::UInt32::ValueType>());
+                }
                 return;
             }
             if (name == "value64")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
-                        value.get<::zserio::UInt64>()
-                );
+                if (value.isType<::zserio::UInt64>())
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
+                            value.get<::zserio::UInt64>());
+                }
+                else
+                {
+                    m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
+                            value.get<::zserio::UInt64::ValueType>());
+                }
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
@@ -564,30 +604,22 @@ template <>
         {
             if (name == "value8")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
-                        
-                );
+                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>();
                 return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
-                        
-                );
+                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>();
                 return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
-                        
-                );
+                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>();
                 return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
-                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
-                        
-                );
+                m_object.emplace<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>();
                 return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";

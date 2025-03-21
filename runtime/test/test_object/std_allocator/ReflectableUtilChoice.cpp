@@ -299,7 +299,8 @@ template <>
         {
             if (name == "array")
             {
-                return ::zserio::reflectableArray(get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
+                return ::zserio::reflectableArray(
+                        get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
         }
@@ -331,7 +332,8 @@ template <>
         {
             if (name == "array")
             {
-                return ::zserio::reflectableArray(get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
+                return ::zserio::reflectableArray(
+                        get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
         }
@@ -340,7 +342,8 @@ template <>
         {
             if (name == "array")
             {
-                return ::zserio::reflectableArray(get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
+                return ::zserio::reflectableArray(
+                        get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
         }
@@ -349,9 +352,16 @@ template <>
         {
             if (name == "array")
             {
-                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
-                        value.get<::zserio::Vector<::zserio::UInt32>>()
-                );
+                if (value.isType<::zserio::UInt32>())
+                {
+                    m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
+                            value.get<::zserio::UInt32>());
+                }
+                else
+                {
+                    m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
+                            value.get<::zserio::UInt32::ValueType>());
+                }
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
@@ -361,9 +371,7 @@ template <>
         {
             if (name == "array")
             {
-                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
-                        get_allocator()
-                );
+                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(get_allocator());
                 return ::zserio::reflectableArray(get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";

@@ -522,14 +522,14 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         {}
     <#if fieldList?has_content>
 
-        <@reflectable_get_field name, fieldList, true, true/>
+        <@reflectable_variant_get_field name, fieldList, true/>
         <#if !isConst>
 
-        <@reflectable_get_field name, fieldList, false, true/>
+        <@reflectable_variant_get_field name, fieldList, false/>
 
-        <@reflectable_set_field name, fieldList, true/>
+        <@reflectable_variant_set_field name, fieldList/>
 
-        <@reflectable_create_field name, fieldList, true/>
+        <@reflectable_variant_create_field name, fieldList/>
         </#if>
     </#if>
 

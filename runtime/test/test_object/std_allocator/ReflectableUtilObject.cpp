@@ -330,14 +330,19 @@ template <>
         {
             if (name == "choiceParam")
             {
-                m_object.choiceParam =
-                        value.get<::zserio::UInt8>();
+                if (value.isType<::zserio::UInt8>())
+                {
+                    m_object.choiceParam = value.get<::zserio::UInt8>();
+                }
+                else
+                {
+                    m_object.choiceParam = value.get<::zserio::UInt8::ValueType>();
+                }
                 return;
             }
             if (name == "reflectableUtilChoice")
             {
-                m_object.reflectableUtilChoice =
-                        value.get<::test_object::std_allocator::ReflectableUtilChoice>();
+                m_object.reflectableUtilChoice = value.get<::test_object::std_allocator::ReflectableUtilChoice>();
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
@@ -347,14 +352,12 @@ template <>
         {
             if (name == "choiceParam")
             {
-                m_object.choiceParam =
-                        ::zserio::UInt8();
+                m_object.choiceParam = ::zserio::UInt8();
                 return ::zserio::reflectable(m_object.choiceParam, get_allocator());
             }
             if (name == "reflectableUtilChoice")
             {
-                m_object.reflectableUtilChoice =
-                        ::test_object::std_allocator::ReflectableUtilChoice(get_allocator());
+                m_object.reflectableUtilChoice = ::test_object::std_allocator::ReflectableUtilChoice(get_allocator());
                 return ::zserio::reflectable(m_object.reflectableUtilChoice, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
