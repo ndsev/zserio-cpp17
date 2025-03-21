@@ -10,7 +10,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 <#if withTypeInfoCode>
-#include <zserio/Reflectable.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 </#if>
 <@system_includes cppSystemIncludes/>

@@ -45,9 +45,9 @@ public final class TypesContext
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ITypeInfo", false, false, "zserio/ITypeInfo.h");
             reflectablePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", false, false, "zserio/IReflectable.h");
+                    ZSERIO_PACKAGE_NAME, "IReflectableDataPtr", false, false, "zserio/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", false, false, "zserio/IReflectable.h");
+                    ZSERIO_PACKAGE_NAME, "IReflectableDataConstPtr", false, false, "zserio/IReflectableData.h");
         }
         else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
         {
@@ -85,9 +85,9 @@ public final class TypesContext
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "ITypeInfo", false, false, "zserio/pmr/ITypeInfo.h");
             reflectablePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", false, false, "zserio/pmr/IReflectable.h");
-            reflectableConstPtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", false, false, "zserio/pmr/IReflectable.h");
+                    ZSERIO_PACKAGE_NAME, "IReflectableDataPtr", false, false, "zserio/pmr/IReflectableData.h");
+            reflectableConstPtr = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "IReflectableDataConstPtr",
+                    false, false, "zserio/pmr/IReflectableData.h");
         }
         else
         {
@@ -123,9 +123,9 @@ public final class TypesContext
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ITypeInfo", true, true, "zserio/ITypeInfo.h");
             reflectablePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", true, true, "zserio/IReflectable.h");
+                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", true, true, "zserio/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", true, true, "zserio/IReflectable.h");
+                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", true, true, "zserio/IReflectableData.h");
         }
     }
 

@@ -7,7 +7,7 @@
 #include <zserio/StringConvertUtil.h>
 <#if withTypeInfoCode>
 #include <zserio/TypeInfo.h>
-#include <zserio/Reflectable.h>
+#include <zserio/ReflectableData.h>
 </#if>
 <@system_includes cppSystemIncludes/>
 

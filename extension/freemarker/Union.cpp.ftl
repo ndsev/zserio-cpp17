@@ -10,7 +10,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
 <#if withTypeInfoCode>
-#include <zserio/Reflectable.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 </#if>
 #include <zserio/UnionCaseException.h>
