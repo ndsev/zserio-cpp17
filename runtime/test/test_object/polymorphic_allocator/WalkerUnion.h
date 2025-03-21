@@ -141,10 +141,10 @@ struct TypeInfo<::test_object::polymorphic_allocator::WalkerUnion, ::zserio::pmr
 } // namespace detail
 
 template <>
-::zserio::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerUnion& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerUnion& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerUnion& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerUnion& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

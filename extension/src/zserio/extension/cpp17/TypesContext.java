@@ -84,9 +84,9 @@ public final class TypesContext
                     ZSERIO_PMR_PACKAGE_NAME, "RawServiceDataView", false, false, "zserio/pmr/IService.h");
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "ITypeInfo", false, false, "zserio/pmr/ITypeInfo.h");
-            reflectablePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectableDataPtr", false, false, "zserio/pmr/IReflectableData.h");
-            reflectableConstPtr = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME, "IReflectableDataConstPtr",
+            reflectablePtr = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "IReflectableDataPtr", false,
+                    false, "zserio/pmr/IReflectableData.h");
+            reflectableConstPtr = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "IReflectableDataConstPtr",
                     false, false, "zserio/pmr/IReflectableData.h");
         }
         else

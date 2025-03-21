@@ -236,9 +236,9 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
         "test_object.polymorphic_allocator.ReflectableUtilObject",
-        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
+        [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::polymorphic_allocator::ReflectableUtilObject>>(allocator, allocator);
+            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableUtilObject>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -249,21 +249,21 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 } // namespace detail
 
 template <>
-::zserio::IReflectableDataConstPtr reflectable(
+::zserio::pmr::IReflectableDataConstPtr reflectable(
         const ::test_object::polymorphic_allocator::ReflectableUtilObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
-        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilObject>(), alloc),
+                ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilObject>(), alloc),
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "choiceParam")
             {
@@ -289,18 +289,21 @@ template <>
 }
 
 template <>
-::zserio::IReflectableDataPtr reflectable(
+::zserio::pmr::IReflectableDataPtr reflectable(
         ::test_object::polymorphic_allocator::ReflectableUtilObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
+        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+
         explicit Reflectable(::test_object::polymorphic_allocator::ReflectableUtilObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilObject>(), alloc),
+                ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilObject>(), alloc),
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "choiceParam")
             {
@@ -313,7 +316,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
         }
 
-        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
+        ::zserio::pmr::IReflectableDataPtr getField(::std::string_view name) override
         {
             if (name == "choiceParam")
             {
@@ -330,31 +333,34 @@ template <>
         {
             if (name == "choiceParam")
             {
-                m_object.choiceParam =
-                        value.get<::zserio::UInt8>();
+                if (value.isType<::zserio::UInt8>())
+                {
+                    m_object.choiceParam = value.get<::zserio::UInt8>();
+                }
+                else
+                {
+                    m_object.choiceParam = value.get<::zserio::UInt8::ValueType>();
+                }
                 return;
             }
             if (name == "reflectableUtilChoice")
             {
-                m_object.reflectableUtilChoice =
-                        value.get<::test_object::polymorphic_allocator::ReflectableUtilChoice>();
+                m_object.reflectableUtilChoice = value.get<::test_object::polymorphic_allocator::ReflectableUtilChoice>();
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";
         }
 
-        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
+        ::zserio::pmr::IReflectableDataPtr createField(::std::string_view name) override
         {
             if (name == "choiceParam")
             {
-                m_object.choiceParam =
-                        ::zserio::UInt8();
+                m_object.choiceParam = ::zserio::UInt8();
                 return ::zserio::reflectable(m_object.choiceParam, get_allocator());
             }
             if (name == "reflectableUtilChoice")
             {
-                m_object.reflectableUtilChoice =
-                        ::test_object::polymorphic_allocator::ReflectableUtilChoice(get_allocator());
+                m_object.reflectableUtilChoice = ::test_object::polymorphic_allocator::ReflectableUtilChoice(get_allocator());
                 return ::zserio::reflectable(m_object.reflectableUtilChoice, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";

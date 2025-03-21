@@ -444,7 +444,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         "${schemaTypeName}",
         [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
         {
-            return std::allocate_shared<::zserio::ReflectableOwner<${fullName}>>(allocator, allocator);
+            return std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -455,16 +455,14 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 <@namespace_end ["detail"]/>
 
 <#macro union_reflectable isConst>
-    class Reflectable : public ::zserio::Reflectable<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
+    class Reflectable : public ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
     {
     public:
-    <#if isConst>
-        using ::zserio::ReflectableConstAllocatorHolderBase<${types.allocator.default}>::getField;
-        using ::zserio::ReflectableConstAllocatorHolderBase<${types.allocator.default}>::getAnyValue;
+        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
+        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
 
-    </#if>
         explicit Reflectable(<#if isConst>const </#if>${fullName}& object_, const ${types.allocator.default}& alloc) :
-                ::zserio::Reflectable<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(typeInfo<${fullName}>(), alloc),
+                ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(typeInfo<${fullName}>(), alloc),
                 m_object(object_)
         {}
     <#if fieldList?has_content>

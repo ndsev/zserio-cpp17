@@ -489,7 +489,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerObject, 
         "test_object.std_allocator.WalkerObject",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::std_allocator::WalkerObject>>(allocator, allocator);
+            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::WalkerObject>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -503,14 +503,14 @@ template <>
 ::zserio::IReflectableDataConstPtr reflectable(
         const ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
-        using ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(const ::test_object::std_allocator::WalkerObject& object_, const ::std::allocator<uint8_t>& alloc) :
-                ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
+                ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
                 m_object(object_)
         {}
 
@@ -573,11 +573,14 @@ template <>
 ::zserio::IReflectableDataPtr reflectable(
         ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>
     {
     public:
+        using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+
         explicit Reflectable(::test_object::std_allocator::WalkerObject& object_, const ::std::allocator<uint8_t>& alloc) :
-                ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
+                ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
                 m_object(object_)
         {}
 

@@ -275,7 +275,7 @@ TEST(ZserioTreeCreatorTest, createObject)
 {
     ZserioTreeCreator creator(typeInfo<CreatorObject>());
     creator.beginRoot();
-    IReflectablePtr reflectable = creator.endRoot();
+    IReflectableDataPtr reflectable = creator.endRoot();
     ASSERT_TRUE(reflectable);
     ASSERT_EQ(CppType::STRUCT, reflectable->getTypeInfo().getCppType());
 }
@@ -286,7 +286,7 @@ TEST(ZserioTreeCreatorTest, createObjectSetFields)
     creator.beginRoot();
     creator.setValue("value", 13);
     creator.setValue("text", "test");
-    IReflectablePtr reflectable = creator.endRoot();
+    IReflectableDataPtr reflectable = creator.endRoot();
     ASSERT_TRUE(reflectable);
 
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());
@@ -300,7 +300,7 @@ TEST(ZserioTreeCreatorTest, createObjectResetFields)
     creator.setValue("value", 13);
     creator.setValue("text", nullptr);
     creator.setValue("text", "test");
-    IReflectablePtr reflectable = creator.endRoot();
+    IReflectableDataPtr reflectable = creator.endRoot();
     ASSERT_TRUE(reflectable);
 
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());
@@ -346,7 +346,7 @@ TEST(ZserioTreeCreatorTest, createObjectFull)
     creator.beginCompound("optionalNested");
     creator.setValue("text", "optionalNested");
     creator.endCompound();
-    IReflectablePtr reflectable = creator.endRoot();
+    IReflectableDataPtr reflectable = creator.endRoot();
     ASSERT_TRUE(reflectable);
 
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());

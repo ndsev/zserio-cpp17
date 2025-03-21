@@ -65,13 +65,16 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 } // namespace detail
 
 template <>
-::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
+        using ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+
         explicit Reflectable(::test_object::polymorphic_allocator::ReflectableBitmask bitmask) :
-                ::zserio::ReflectableBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableBitmask>()),
+                ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                        typeInfo<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>()),
                 m_bitmask(bitmask)
         {}
 

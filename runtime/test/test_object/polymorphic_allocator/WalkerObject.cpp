@@ -487,9 +487,9 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::W
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
         "test_object.polymorphic_allocator.WalkerObject",
-        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
+        [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::polymorphic_allocator::WalkerObject>>(allocator, allocator);
+            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::WalkerObject>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -500,21 +500,21 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::W
 } // namespace detail
 
 template <>
-::zserio::IReflectableDataConstPtr reflectable(
+::zserio::pmr::IReflectableDataConstPtr reflectable(
         const ::test_object::polymorphic_allocator::WalkerObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
-        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(const ::test_object::polymorphic_allocator::WalkerObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::WalkerObject>(), alloc),
+                ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::WalkerObject>(), alloc),
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "identifier")
             {
@@ -570,18 +570,21 @@ template <>
 }
 
 template <>
-::zserio::IReflectableDataPtr reflectable(
+::zserio::pmr::IReflectableDataPtr reflectable(
         ::test_object::polymorphic_allocator::WalkerObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
+        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+
         explicit Reflectable(::test_object::polymorphic_allocator::WalkerObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::WalkerObject>(), alloc),
+                ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::WalkerObject>(), alloc),
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "identifier")
             {
@@ -624,7 +627,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
         }
 
-        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
+        ::zserio::pmr::IReflectableDataPtr getField(::std::string_view name) override
         {
             if (name == "identifier")
             {
@@ -671,8 +674,14 @@ template <>
         {
             if (name == "identifier")
             {
-                m_object.identifier =
-                        value.get<::zserio::UInt32>();
+                if (value.isType<::zserio::UInt32>())
+                {
+                    m_object.identifier = value.get<::zserio::UInt32>();
+                }
+                else
+                {
+                    m_object.identifier = value.get<::zserio::UInt32::ValueType>();
+                }
                 return;
             }
             if (name == "nested")
@@ -683,20 +692,17 @@ template <>
                     return;
                 }
 
-                m_object.nested =
-                        value.get<::test_object::polymorphic_allocator::WalkerNested>();
+                m_object.nested = value.get<::test_object::polymorphic_allocator::WalkerNested>();
                 return;
             }
             if (name == "text")
             {
-                m_object.text =
-                        value.get<::zserio::pmr::String>();
+                m_object.text = value.get<::zserio::pmr::String>();
                 return;
             }
             if (name == "unionArray")
             {
-                m_object.unionArray =
-                        value.get<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>>();
+                m_object.unionArray = value.get<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>>();
                 return;
             }
             if (name == "optionalUnionArray")
@@ -707,67 +713,64 @@ template <>
                     return;
                 }
 
-                m_object.optionalUnionArray =
-                        value.get<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>>();
+                m_object.optionalUnionArray = value.get<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>>();
                 return;
             }
             if (name == "choiceSelector")
             {
-                m_object.choiceSelector =
-                        value.get<::zserio::UInt8>();
+                if (value.isType<::zserio::UInt8>())
+                {
+                    m_object.choiceSelector = value.get<::zserio::UInt8>();
+                }
+                else
+                {
+                    m_object.choiceSelector = value.get<::zserio::UInt8::ValueType>();
+                }
                 return;
             }
             if (name == "choiceField")
             {
-                m_object.choiceField =
-                        value.get<::test_object::polymorphic_allocator::WalkerChoice>();
+                m_object.choiceField = value.get<::test_object::polymorphic_allocator::WalkerChoice>();
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
         }
 
-        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
+        ::zserio::pmr::IReflectableDataPtr createField(::std::string_view name) override
         {
             if (name == "identifier")
             {
-                m_object.identifier =
-                        ::zserio::UInt32();
+                m_object.identifier = ::zserio::UInt32();
                 return ::zserio::reflectable(m_object.identifier, get_allocator());
             }
             if (name == "nested")
             {
-                m_object.nested =
-                        ::test_object::polymorphic_allocator::WalkerNested(get_allocator());
+                m_object.nested = ::test_object::polymorphic_allocator::WalkerNested(get_allocator());
                 return ::zserio::reflectable(*m_object.nested, get_allocator());
             }
             if (name == "text")
             {
-                m_object.text =
-                        ::zserio::pmr::String(get_allocator());
+                m_object.text = ::zserio::pmr::String(get_allocator());
                 return ::zserio::reflectable(m_object.text, get_allocator());
             }
             if (name == "unionArray")
             {
-                m_object.unionArray =
-                        ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>(get_allocator());
+                m_object.unionArray = ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>(get_allocator());
                 return ::zserio::reflectableArray(m_object.unionArray, get_allocator());
             }
             if (name == "optionalUnionArray")
             {
-                m_object.optionalUnionArray =
-                        ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>(get_allocator());
+                m_object.optionalUnionArray = ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>(get_allocator());
                 return ::zserio::reflectableArray(*m_object.optionalUnionArray, get_allocator());
             }
             if (name == "choiceSelector")
             {
-                m_object.choiceSelector =
-                        ::zserio::UInt8();
+                m_object.choiceSelector = ::zserio::UInt8();
                 return ::zserio::reflectable(m_object.choiceSelector, get_allocator());
             }
             if (name == "choiceField")
             {
-                m_object.choiceField =
-                        ::test_object::polymorphic_allocator::WalkerChoice(get_allocator());
+                m_object.choiceField = ::test_object::polymorphic_allocator::WalkerChoice(get_allocator());
                 return ::zserio::reflectable(m_object.choiceField, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";

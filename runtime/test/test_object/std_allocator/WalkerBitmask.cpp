@@ -57,11 +57,14 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerBitmask,
 template <>
 ::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::WalkerBitmask value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableBase<::std::allocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataBase<::std::allocator<uint8_t>>
     {
     public:
+        using ::zserio::ReflectableDataBase<::std::allocator<uint8_t>>::getAnyValue;
+
         explicit Reflectable(::test_object::std_allocator::WalkerBitmask bitmask) :
-                ::zserio::ReflectableBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerBitmask>()),
+                ::zserio::ReflectableDataBase<::std::allocator<uint8_t>>(
+                        typeInfo<::test_object::std_allocator::WalkerBitmask, ::std::allocator<uint8_t>>()),
                 m_bitmask(bitmask)
         {}
 

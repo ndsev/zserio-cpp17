@@ -200,8 +200,19 @@ using IReflectableDataConstPtr = IBasicReflectableDataConstPtr<>;
  *
  * \return Reflectable to the given object.
  */
-template <typename T, typename ALLOC = std::allocator<uint8_t>>
+/** \{ */
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<has_zs_allocator_v<std::decay_t<T>>, int> = 0>
+IBasicReflectableDataConstPtr<ALLOC> reflectable(const T& value, const ALLOC& allocator = ALLOC());
+
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<has_zs_allocator_v<std::decay_t<T>>, int> = 0>
+IBasicReflectableDataPtr<ALLOC> reflectable(T& value, const ALLOC& allocator = ALLOC());
+
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<!has_zs_allocator_v<std::decay_t<T>>, int> = 0>
 IBasicReflectableDataPtr<ALLOC> reflectable(T value, const ALLOC& allocator = ALLOC());
+/** \} */
 
 } // namespace zserio
 

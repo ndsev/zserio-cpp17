@@ -347,7 +347,7 @@ struct TypeInfo<::test_object::polymorphic_allocator::ReflectableUtilBitmask, ::
 } // namespace detail
 
 template <>
-::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableUtilBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableUtilBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

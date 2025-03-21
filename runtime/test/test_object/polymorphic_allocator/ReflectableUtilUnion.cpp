@@ -304,9 +304,9 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 
     static const ::zserio::detail::UnionTypeInfo<AllocatorType> typeInfo = {
         "test_object.polymorphic_allocator.ReflectableUtilUnion",
-        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
+        [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::polymorphic_allocator::ReflectableUtilUnion>>(allocator, allocator);
+            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableUtilUnion>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -317,32 +317,35 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 } // namespace detail
 
 template <>
-::zserio::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
-        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilUnion& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilUnion>(), alloc),
+                ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilUnion>(), alloc),
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "reflectableUtilEnum")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(m_object), get_allocator());
             }
             if (name == "reflectableUtilBitmask")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(m_object), get_allocator());
             }
             if (name == "reflectableUtilObject")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";
         }
@@ -360,46 +363,55 @@ template <>
 }
 
 template <>
-::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
+        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+
         explicit Reflectable(::test_object::polymorphic_allocator::ReflectableUtilUnion& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilUnion>(), alloc),
+                ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilUnion>(), alloc),
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "reflectableUtilEnum")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(m_object), get_allocator());
             }
             if (name == "reflectableUtilBitmask")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(m_object), get_allocator());
             }
             if (name == "reflectableUtilObject")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";
         }
 
-        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
+        ::zserio::pmr::IReflectableDataPtr getField(::std::string_view name) override
         {
             if (name == "reflectableUtilEnum")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(m_object), get_allocator());
             }
             if (name == "reflectableUtilBitmask")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(m_object), get_allocator());
             }
             if (name == "reflectableUtilObject")
             {
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
+                return ::zserio::reflectable(
+                        get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";
         }
@@ -411,20 +423,17 @@ template <>
                 if (value.isType<::test_object::polymorphic_allocator::ReflectableUtilEnum>())
                 {
                     m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
-                            value.get<::test_object::polymorphic_allocator::ReflectableUtilEnum>()
-                    );
+                            value.get<::test_object::polymorphic_allocator::ReflectableUtilEnum>());
                 }
                 else if (value.isType<typename EnumTraits<::test_object::polymorphic_allocator::ReflectableUtilEnum>::ZserioType>())
                 {
                     m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
-                            valueToEnum<::test_object::polymorphic_allocator::ReflectableUtilEnum>(value.get<typename EnumTraits<::test_object::polymorphic_allocator::ReflectableUtilEnum>::ZserioType>())
-                    );
+                            valueToEnum<::test_object::polymorphic_allocator::ReflectableUtilEnum>(value.get<typename EnumTraits<::test_object::polymorphic_allocator::ReflectableUtilEnum>::ZserioType>()));
                 }
                 else
                 {
                     m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
-                            valueToEnum<::test_object::polymorphic_allocator::ReflectableUtilEnum>(value.get<std::underlying_type_t<::test_object::polymorphic_allocator::ReflectableUtilEnum>>())
-                    );
+                            valueToEnum<::test_object::polymorphic_allocator::ReflectableUtilEnum>(value.get<std::underlying_type_t<::test_object::polymorphic_allocator::ReflectableUtilEnum>>()));
                 }
                 return;
             }
@@ -433,54 +442,44 @@ template <>
                 if (value.isType<::test_object::polymorphic_allocator::ReflectableUtilBitmask>())
                 {
                     m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-                            value.get<::test_object::polymorphic_allocator::ReflectableUtilBitmask>()
-                    );
+                            value.get<::test_object::polymorphic_allocator::ReflectableUtilBitmask>());
                 }
                 else if (value.isType<::test_object::polymorphic_allocator::ReflectableUtilBitmask::ZserioType>())
                 {
                     m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-                            ::test_object::polymorphic_allocator::ReflectableUtilBitmask(value.get<::test_object::polymorphic_allocator::ReflectableUtilBitmask::ZserioType>())
-                    );
+                            ::test_object::polymorphic_allocator::ReflectableUtilBitmask(value.get<::test_object::polymorphic_allocator::ReflectableUtilBitmask::ZserioType>()));
                 }
                 else
                 {
                     m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-                            ::test_object::polymorphic_allocator::ReflectableUtilBitmask(value.get<::test_object::polymorphic_allocator::ReflectableUtilBitmask::ZserioType::ValueType>())
-                    );
+                            ::test_object::polymorphic_allocator::ReflectableUtilBitmask(value.get<::test_object::polymorphic_allocator::ReflectableUtilBitmask::ZserioType::ValueType>()));
                 }
                 return;
             }
             if (name == "reflectableUtilObject")
             {
                 m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(
-                        value.get<::test_object::polymorphic_allocator::ReflectableUtilObject>()
-                );
+                        value.get<::test_object::polymorphic_allocator::ReflectableUtilObject>());
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";
         }
 
-        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
+        ::zserio::pmr::IReflectableDataPtr createField(::std::string_view name) override
         {
             if (name == "reflectableUtilEnum")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
-                        
-                );
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>();
                 return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(m_object), get_allocator());
             }
             if (name == "reflectableUtilBitmask")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-                        
-                );
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>();
                 return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(m_object), get_allocator());
             }
             if (name == "reflectableUtilObject")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(
-                        get_allocator()
-                );
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(get_allocator());
                 return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";

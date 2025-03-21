@@ -60,11 +60,14 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 template <>
 ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.allocator.default}& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableBase<${types.allocator.default}>
+    class Reflectable : public ::zserio::ReflectableDataBase<${types.allocator.default}>
     {
     public:
+        using ::zserio::ReflectableDataBase<${types.allocator.default}>::getAnyValue;
+
         explicit Reflectable(${fullName} bitmask) :
-                ::zserio::ReflectableBase<${types.allocator.default}>(typeInfo<${fullName}>()),
+                ::zserio::ReflectableDataBase<${types.allocator.default}>(
+                        typeInfo<${fullName}, ${types.allocator.default}>()),
                 m_bitmask(bitmask)
         {}
 
