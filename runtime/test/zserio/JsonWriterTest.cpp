@@ -5,7 +5,7 @@
 
     #include "gtest/gtest.h"
     #include "zserio/JsonWriter.h"
-    #include "zserio/Reflectable.h"
+    #include "zserio/ReflectableData.h"
     #include "zserio/TypeInfo.h"
 
 namespace zserio

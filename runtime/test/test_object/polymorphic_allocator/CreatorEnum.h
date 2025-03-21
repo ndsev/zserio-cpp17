@@ -17,6 +17,7 @@
 #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Enums.h>
 #include <zserio/pmr/ITypeInfo.h>
+#include <zserio/pmr/IReflectableData.h>
 #include <zserio/Types.h>
 
 namespace test_object
@@ -76,6 +77,9 @@ struct TypeInfo<::test_object::polymorphic_allocator::CreatorEnum, ::zserio::pmr
 };
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::CreatorEnum value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

@@ -83,8 +83,8 @@ public:
     Span<const BasicMessageInfo<ALLOC>> getMessages() const override;
     Span<const BasicMethodInfo<ALLOC>> getMethods() const override;
 
-    IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator) const override;
-    IBasicReflectablePtr<ALLOC> createInstance() const override;
+    IBasicReflectableDataPtr<ALLOC> createInstance(const ALLOC& allocator) const override;
+    IBasicReflectableDataPtr<ALLOC> createInstance() const override;
 
 private:
     std::string_view m_schemaName;
@@ -182,7 +182,7 @@ class CompoundTypeInfoBase : public TemplatableTypeInfoBase<ALLOC>
 {
 public:
     using TypeInfoBase<ALLOC>::getSchemaName;
-    using CreateInstanceFunc = IBasicReflectablePtr<ALLOC> (*)(const ALLOC&);
+    using CreateInstanceFunc = IBasicReflectableDataPtr<ALLOC> (*)(const ALLOC&);
 
     /**
      * Constructor.
@@ -214,7 +214,7 @@ public:
     Span<const BasicParameterInfo<ALLOC>> getParameters() const override;
     Span<const BasicFunctionInfo<ALLOC>> getFunctions() const override;
 
-    IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator) const override;
+    IBasicReflectableDataPtr<ALLOC> createInstance(const ALLOC& allocator) const override;
 
 private:
     CreateInstanceFunc m_createInstanceFunc;
@@ -540,8 +540,8 @@ public:
     Span<const BasicMessageInfo<ALLOC>> getMessages() const override;
     Span<const BasicMethodInfo<ALLOC>> getMethods() const override;
 
-    IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator) const override;
-    IBasicReflectablePtr<ALLOC> createInstance() const override;
+    IBasicReflectableDataPtr<ALLOC> createInstance(const ALLOC& allocator) const override;
+    IBasicReflectableDataPtr<ALLOC> createInstance() const override;
 
 private:
     TypeInfoFunc m_typeInfoFunc;
@@ -684,13 +684,13 @@ Span<const BasicMethodInfo<ALLOC>> TypeInfoBase<ALLOC>::getMethods() const
 }
 
 template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> TypeInfoBase<ALLOC>::createInstance(const ALLOC&) const
+IBasicReflectableDataPtr<ALLOC> TypeInfoBase<ALLOC>::createInstance(const ALLOC&) const
 {
     throw CppRuntimeException("Type '") << getSchemaName() << "' is not a compound type!";
 }
 
 template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> TypeInfoBase<ALLOC>::createInstance() const
+IBasicReflectableDataPtr<ALLOC> TypeInfoBase<ALLOC>::createInstance() const
 {
     return createInstance(ALLOC());
 }
@@ -984,7 +984,7 @@ Span<const BasicFunctionInfo<ALLOC>> CompoundTypeInfoBase<ALLOC>::getFunctions()
 }
 
 template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> CompoundTypeInfoBase<ALLOC>::createInstance(const ALLOC& allocator) const
+IBasicReflectableDataPtr<ALLOC> CompoundTypeInfoBase<ALLOC>::createInstance(const ALLOC& allocator) const
 {
     if (!m_createInstanceFunc)
     {
@@ -1279,13 +1279,13 @@ Span<const BasicMethodInfo<ALLOC>> RecursiveTypeInfo<ALLOC>::getMethods() const
 }
 
 template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> RecursiveTypeInfo<ALLOC>::createInstance(const ALLOC& allocator) const
+IBasicReflectableDataPtr<ALLOC> RecursiveTypeInfo<ALLOC>::createInstance(const ALLOC& allocator) const
 {
     return m_typeInfoFunc().createInstance(allocator);
 }
 
 template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> RecursiveTypeInfo<ALLOC>::createInstance() const
+IBasicReflectableDataPtr<ALLOC> RecursiveTypeInfo<ALLOC>::createInstance() const
 {
     return createInstance(ALLOC());
 }

@@ -7,6 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/polymorphic_allocator/CreatorObject.h>
@@ -628,7 +629,11 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::C
     static const ::zserio::Span<::zserio::BasicFunctionInfo<AllocatorType>> functions;
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
-        "test_object.polymorphic_allocator.CreatorObject", nullptr,
+        "test_object.polymorphic_allocator.CreatorObject",
+        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
+        {
+            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::polymorphic_allocator::CreatorObject>>(allocator, allocator);
+        },
         templateName, templateArguments, fields, parameters, functions
     };
 
@@ -636,6 +641,388 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::C
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableDataConstPtr reflectable(
+        const ::test_object::polymorphic_allocator::CreatorObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+
+        explicit Reflectable(const ::test_object::polymorphic_allocator::CreatorObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+                ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::CreatorObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "nested")
+            {
+                return ::zserio::reflectable(m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::reflectableArray(m_object.nestedArray, get_allocator());
+            }
+            if (name == "textArray")
+            {
+                return ::zserio::reflectableArray(m_object.textArray, get_allocator());
+            }
+            if (name == "externArray")
+            {
+                if (!m_object.externArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.externArray, get_allocator());
+            }
+            if (name == "bytesArray")
+            {
+                if (!m_object.bytesArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.bytesArray, get_allocator());
+            }
+            if (name == "optionalBool")
+            {
+                if (!m_object.optionalBool.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.optionalBool, get_allocator());
+            }
+            if (name == "optionalNested")
+            {
+                if (!m_object.optionalNested.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.optionalNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::Any(::std::cref(m_object), alloc);
+        }
+
+    private:
+        const ::test_object::polymorphic_allocator::CreatorObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
+template <>
+::zserio::IReflectableDataPtr reflectable(
+        ::test_object::polymorphic_allocator::CreatorObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::polymorphic_allocator::CreatorObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+                ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::CreatorObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "nested")
+            {
+                return ::zserio::reflectable(m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::reflectableArray(m_object.nestedArray, get_allocator());
+            }
+            if (name == "textArray")
+            {
+                return ::zserio::reflectableArray(m_object.textArray, get_allocator());
+            }
+            if (name == "externArray")
+            {
+                if (!m_object.externArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.externArray, get_allocator());
+            }
+            if (name == "bytesArray")
+            {
+                if (!m_object.bytesArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.bytesArray, get_allocator());
+            }
+            if (name == "optionalBool")
+            {
+                if (!m_object.optionalBool.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.optionalBool, get_allocator());
+            }
+            if (name == "optionalNested")
+            {
+                if (!m_object.optionalNested.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.optionalNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";
+        }
+
+        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "nested")
+            {
+                return ::zserio::reflectable(m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::reflectableArray(m_object.nestedArray, get_allocator());
+            }
+            if (name == "textArray")
+            {
+                return ::zserio::reflectableArray(m_object.textArray, get_allocator());
+            }
+            if (name == "externArray")
+            {
+                if (!m_object.externArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.externArray, get_allocator());
+            }
+            if (name == "bytesArray")
+            {
+                if (!m_object.bytesArray.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectableArray(*m_object.bytesArray, get_allocator());
+            }
+            if (name == "optionalBool")
+            {
+                if (!m_object.optionalBool.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.optionalBool, get_allocator());
+            }
+            if (name == "optionalNested")
+            {
+                if (!m_object.optionalNested.has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::reflectable(*m_object.optionalNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";
+        }
+
+        void setField(::std::string_view name, const ::zserio::pmr::Any& value) override
+        {
+            if (name == "value")
+            {
+                m_object.value =
+                        value.get<::zserio::UInt32>();
+                return;
+            }
+            if (name == "nested")
+            {
+                m_object.nested =
+                        value.get<::test_object::polymorphic_allocator::CreatorNested>();
+                return;
+            }
+            if (name == "text")
+            {
+                m_object.text =
+                        value.get<::zserio::pmr::String>();
+                return;
+            }
+            if (name == "nestedArray")
+            {
+                m_object.nestedArray =
+                        value.get<::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested>>();
+                return;
+            }
+            if (name == "textArray")
+            {
+                m_object.textArray =
+                        value.get<::zserio::pmr::Vector<::zserio::pmr::String>>();
+                return;
+            }
+            if (name == "externArray")
+            {
+                if (value.isType<::std::nullptr_t>())
+                {
+                    m_object.externArray.reset();
+                    return;
+                }
+
+                m_object.externArray =
+                        value.get<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>>();
+                return;
+            }
+            if (name == "bytesArray")
+            {
+                if (value.isType<::std::nullptr_t>())
+                {
+                    m_object.bytesArray.reset();
+                    return;
+                }
+
+                m_object.bytesArray =
+                        value.get<::zserio::pmr::Vector<::zserio::pmr::Bytes>>();
+                return;
+            }
+            if (name == "optionalBool")
+            {
+                if (value.isType<::std::nullptr_t>())
+                {
+                    m_object.optionalBool.reset();
+                    return;
+                }
+
+                m_object.optionalBool =
+                        value.get<::zserio::Bool>();
+                return;
+            }
+            if (name == "optionalNested")
+            {
+                if (value.isType<::std::nullptr_t>())
+                {
+                    m_object.optionalNested.reset();
+                    return;
+                }
+
+                m_object.optionalNested =
+                        value.get<::test_object::polymorphic_allocator::CreatorNested>();
+                return;
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";
+        }
+
+        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
+        {
+            if (name == "value")
+            {
+                m_object.value =
+                        ::zserio::UInt32();
+                return ::zserio::reflectable(m_object.value, get_allocator());
+            }
+            if (name == "nested")
+            {
+                m_object.nested =
+                        ::test_object::polymorphic_allocator::CreatorNested(get_allocator());
+                return ::zserio::reflectable(m_object.nested, get_allocator());
+            }
+            if (name == "text")
+            {
+                m_object.text =
+                        ::zserio::pmr::String(get_allocator());
+                return ::zserio::reflectable(m_object.text, get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                m_object.nestedArray =
+                        ::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested>(get_allocator());
+                return ::zserio::reflectableArray(m_object.nestedArray, get_allocator());
+            }
+            if (name == "textArray")
+            {
+                m_object.textArray =
+                        ::zserio::pmr::Vector<::zserio::pmr::String>(get_allocator());
+                return ::zserio::reflectableArray(m_object.textArray, get_allocator());
+            }
+            if (name == "externArray")
+            {
+                m_object.externArray =
+                        ::zserio::pmr::Vector<::zserio::pmr::BitBuffer>(get_allocator());
+                return ::zserio::reflectableArray(*m_object.externArray, get_allocator());
+            }
+            if (name == "bytesArray")
+            {
+                m_object.bytesArray =
+                        ::zserio::pmr::Vector<::zserio::pmr::Bytes>(get_allocator());
+                return ::zserio::reflectableArray(*m_object.bytesArray, get_allocator());
+            }
+            if (name == "optionalBool")
+            {
+                m_object.optionalBool =
+                        ::zserio::Bool();
+                return ::zserio::reflectable(*m_object.optionalBool, get_allocator());
+            }
+            if (name == "optionalNested")
+            {
+                m_object.optionalNested =
+                        ::test_object::polymorphic_allocator::CreatorNested(get_allocator());
+                return ::zserio::reflectable(*m_object.optionalNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::Any(::std::cref(m_object), alloc);
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) override
+        {
+            return ::zserio::pmr::Any(::std::ref(m_object), alloc);
+        }
+
+    private:
+        ::test_object::polymorphic_allocator::CreatorObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
 } // namespace zserio
 
 namespace std

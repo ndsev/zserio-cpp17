@@ -17,7 +17,7 @@
 #include <zserio/Variant.h>
 #include <zserio/ChoiceTag.h>
 #include <zserio/ITypeInfo.h>
-#include <zserio/IReflectable.h>
+#include <zserio/IReflectableData.h>
 #include <zserio/View.h>
 #include <zserio/Array.h>
 #include <zserio/Types.h>
@@ -135,10 +135,10 @@ struct TypeInfo<::test_object::std_allocator::ReflectableUtilChoice, ::std::allo
 } // namespace detail
 
 template <>
-::zserio::IReflectableConstPtr reflectable(const ::test_object::std_allocator::ReflectableUtilChoice& value, const ::std::allocator<uint8_t>& allocator);
+::zserio::IReflectableDataConstPtr reflectable(const ::test_object::std_allocator::ReflectableUtilChoice& value, const ::std::allocator<uint8_t>& allocator);
 
 template <>
-::zserio::IReflectablePtr reflectable(::test_object::std_allocator::ReflectableUtilChoice& value, const ::std::allocator<uint8_t>& allocator);
+::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::ReflectableUtilChoice& value, const ::std::allocator<uint8_t>& allocator);
 
 } // namespace zserio
 

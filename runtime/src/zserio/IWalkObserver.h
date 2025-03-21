@@ -1,7 +1,7 @@
 #ifndef ZSERIO_I_WALK_OBSERVER_H_INC
 #define ZSERIO_I_WALK_OBSERVER_H_INC
 
-#include "zserio/IReflectable.h"
+#include "zserio/IReflectableData.h"
 #include "zserio/ITypeInfo.h"
 #include "zserio/WalkerConst.h"
 
@@ -23,14 +23,14 @@ public:
      *
      * \param compound Reflectable root compound zserio object.
      */
-    virtual void beginRoot(const IBasicReflectableConstPtr<ALLOC>& compound) = 0;
+    virtual void beginRoot(const IBasicReflectableDataConstPtr<ALLOC>& compound) = 0;
 
     /**
      * Called at the end of just walked root compound zserio object.
      *
      * \param compound Reflectable root compound zserio object.
      */
-    virtual void endRoot(const IBasicReflectableConstPtr<ALLOC>& compound) = 0;
+    virtual void endRoot(const IBasicReflectableDataConstPtr<ALLOC>& compound) = 0;
 
     /**
      * Called at the beginning of an array.
@@ -42,7 +42,7 @@ public:
      * \param fieldInfo Array field info.
      */
     virtual void beginArray(
-            const IBasicReflectableConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) = 0;
+            const IBasicReflectableDataConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) = 0;
 
     /**
      * Called at the end of an array.
@@ -51,7 +51,7 @@ public:
      * \param fieldInfo Array field info.
      */
     virtual void endArray(
-            const IBasicReflectableConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) = 0;
+            const IBasicReflectableDataConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) = 0;
 
     /**
      * Called at the beginning of an compound field object.
@@ -63,7 +63,7 @@ public:
      * \param fieldInfo Compound field info.
      * \param elementIndex Element index in array or WALKER_NOT_ELEMENT if the compound is not in array.
      */
-    virtual void beginCompound(const IBasicReflectableConstPtr<ALLOC>& compound,
+    virtual void beginCompound(const IBasicReflectableDataConstPtr<ALLOC>& compound,
             const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex) = 0;
 
     /**
@@ -73,7 +73,7 @@ public:
      * \param fieldInfo Compound field info.
      * \param elementIndex Element index in array or WALKER_NOT_ELEMENT if the compound is not in array.
      */
-    virtual void endCompound(const IBasicReflectableConstPtr<ALLOC>& compound,
+    virtual void endCompound(const IBasicReflectableDataConstPtr<ALLOC>& compound,
             const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex) = 0;
 
     /**
@@ -83,7 +83,7 @@ public:
      * \param fieldInfo Field info.
      * \param elementIndex Element index in array or WALKER_NOT_ELEMENT if the value is not in array.
      */
-    virtual void visitValue(const IBasicReflectableConstPtr<ALLOC>& value,
+    virtual void visitValue(const IBasicReflectableDataConstPtr<ALLOC>& value,
             const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex) = 0;
 };
 

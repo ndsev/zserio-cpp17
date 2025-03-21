@@ -17,6 +17,7 @@
 #include <zserio/pmr/Variant.h>
 #include <zserio/ChoiceTag.h>
 #include <zserio/pmr/ITypeInfo.h>
+#include <zserio/pmr/IReflectableData.h>
 #include <zserio/View.h>
 #include <zserio/Types.h>
 
@@ -142,6 +143,13 @@ struct TypeInfo<::test_object::polymorphic_allocator::WalkerChoice, ::zserio::pm
 };
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerChoice& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
+template <>
+::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerChoice& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
 } // namespace zserio
 
 namespace std

@@ -7,7 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
-#include <zserio/Reflectable.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/WalkerNested.h>
@@ -194,7 +194,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerNested, 
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
         "test_object.std_allocator.WalkerNested",
-        [](const AllocatorType& allocator) -> ::zserio::IReflectablePtr
+        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
             return std::allocate_shared<::zserio::ReflectableOwner<::test_object::std_allocator::WalkerNested>>(allocator, allocator);
         },
@@ -207,7 +207,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerNested, 
 } // namespace detail
 
 template <>
-::zserio::IReflectableConstPtr reflectable(
+::zserio::IReflectableDataConstPtr reflectable(
         const ::test_object::std_allocator::WalkerNested& object, const ::std::allocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>
@@ -221,7 +221,7 @@ template <>
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "text")
             {
@@ -243,7 +243,7 @@ template <>
 }
 
 template <>
-::zserio::IReflectablePtr reflectable(
+::zserio::IReflectableDataPtr reflectable(
         ::test_object::std_allocator::WalkerNested& object, const ::std::allocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>
@@ -254,7 +254,7 @@ template <>
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "text")
             {
@@ -263,7 +263,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerNested'!";
         }
 
-        ::zserio::IReflectablePtr getField(::std::string_view name) override
+        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
         {
             if (name == "text")
             {
@@ -283,7 +283,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerNested'!";
         }
 
-        ::zserio::IReflectablePtr createField(::std::string_view name) override
+        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
         {
             if (name == "text")
             {

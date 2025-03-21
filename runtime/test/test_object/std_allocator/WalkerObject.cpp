@@ -7,7 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
-#include <zserio/Reflectable.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/MissedOptionalException.h>
 
@@ -487,7 +487,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerObject, 
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
         "test_object.std_allocator.WalkerObject",
-        [](const AllocatorType& allocator) -> ::zserio::IReflectablePtr
+        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
             return std::allocate_shared<::zserio::ReflectableOwner<::test_object::std_allocator::WalkerObject>>(allocator, allocator);
         },
@@ -500,7 +500,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerObject, 
 } // namespace detail
 
 template <>
-::zserio::IReflectableConstPtr reflectable(
+::zserio::IReflectableDataConstPtr reflectable(
         const ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>
@@ -514,7 +514,7 @@ template <>
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "identifier")
             {
@@ -570,7 +570,7 @@ template <>
 }
 
 template <>
-::zserio::IReflectablePtr reflectable(
+::zserio::IReflectableDataPtr reflectable(
         ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>
@@ -581,7 +581,7 @@ template <>
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "identifier")
             {
@@ -624,7 +624,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
         }
 
-        ::zserio::IReflectablePtr getField(::std::string_view name) override
+        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
         {
             if (name == "identifier")
             {
@@ -726,7 +726,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";
         }
 
-        ::zserio::IReflectablePtr createField(::std::string_view name) override
+        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
         {
             if (name == "identifier")
             {

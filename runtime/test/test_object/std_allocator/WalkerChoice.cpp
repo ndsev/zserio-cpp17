@@ -6,7 +6,7 @@
 #include <zserio/ChoiceCaseException.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
-#include <zserio/Reflectable.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/WalkerChoice.h>
@@ -414,7 +414,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerChoice, 
 
     static const ::zserio::detail::ChoiceTypeInfo<AllocatorType> typeInfo = {
         "test_object.std_allocator.WalkerChoice",
-        [](const AllocatorType& allocator) -> ::zserio::IReflectablePtr
+        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
             return std::allocate_shared<::zserio::ReflectableOwner<::test_object::std_allocator::WalkerChoice>>(allocator, allocator);
         },
@@ -428,7 +428,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerChoice, 
 } // namespace detail
 
 template <>
-::zserio::IReflectableConstPtr reflectable(const ::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& allocator)
+::zserio::IReflectableDataConstPtr reflectable(const ::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::std::allocator<uint8_t>>
     {
@@ -441,7 +441,7 @@ template <>
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "value8")
             {
@@ -475,7 +475,7 @@ template <>
 }
 
 template <>
-::zserio::IReflectablePtr reflectable(::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& allocator)
+::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::std::allocator<uint8_t>>
     {
@@ -485,7 +485,7 @@ template <>
                 m_object(object_)
         {}
 
-        ::zserio::IReflectableConstPtr getField(::std::string_view name) const override
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
         {
             if (name == "value8")
             {
@@ -506,7 +506,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
 
-        ::zserio::IReflectablePtr getField(::std::string_view name) override
+        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
         {
             if (name == "value8")
             {
@@ -560,7 +560,7 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
 
-        ::zserio::IReflectablePtr createField(::std::string_view name) override
+        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
         {
             if (name == "value8")
             {

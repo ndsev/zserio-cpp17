@@ -7,6 +7,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
 #include <zserio/TypeInfo.h>
+#include <zserio/ReflectableData.h>
 
 #include <test_object/polymorphic_allocator/CreatorEnum.h>
 
@@ -67,6 +68,55 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::C
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::CreatorEnum value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::polymorphic_allocator::CreatorEnum value) :
+                ::zserio::ReflectableBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                        typeInfo<::test_object::polymorphic_allocator::CreatorEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>()),
+                m_value(value)
+        {}
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::Any(m_value, alloc);
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) override
+        {
+            return ::zserio::pmr::Any(m_value, alloc);
+        }
+
+        ::zserio::Int8::ValueType getInt8() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::polymorphic_allocator::CreatorEnum>::type>(m_value);
+        }
+
+        int64_t toInt() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::polymorphic_allocator::CreatorEnum>::type>(m_value);
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toInt());
+        }
+
+        ::zserio::pmr::String toString(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::String(::zserio::enumToString(m_value), alloc);
+        }
+
+    private:
+        ::test_object::polymorphic_allocator::CreatorEnum m_value;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, value);
+}
 
 } // namespace zserio
 

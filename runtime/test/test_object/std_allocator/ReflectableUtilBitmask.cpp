@@ -6,7 +6,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
 #include <zserio/TypeInfo.h>
-#include <zserio/Reflectable.h>
+#include <zserio/ReflectableData.h>
 
 #include <test_object/std_allocator/ReflectableUtilBitmask.h>
 
@@ -60,7 +60,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
 } // namespace detail
 
 template <>
-::zserio::IReflectablePtr reflectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator)
+::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableBase<::std::allocator<uint8_t>>
     {

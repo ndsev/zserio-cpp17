@@ -6,6 +6,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/UnionCaseException.h>
 
@@ -302,7 +303,11 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::W
     static const ::zserio::Span<::zserio::BasicFunctionInfo<AllocatorType>> functions;
 
     static const ::zserio::detail::UnionTypeInfo<AllocatorType> typeInfo = {
-        "test_object.polymorphic_allocator.WalkerUnion", nullptr,
+        "test_object.polymorphic_allocator.WalkerUnion",
+        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
+        {
+            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::polymorphic_allocator::WalkerUnion>>(allocator, allocator);
+        },
         templateName, templateArguments, fields, parameters, functions
     };
 
@@ -310,6 +315,164 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::W
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+
+        explicit Reflectable(const ::test_object::polymorphic_allocator::WalkerUnion& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+                ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::WalkerUnion>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::reflectableArray(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::Any(::std::cref(m_object), alloc);
+        }
+
+    private:
+        const ::test_object::polymorphic_allocator::WalkerUnion& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
+template <>
+::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::polymorphic_allocator::WalkerUnion& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+                ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::WalkerUnion>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::reflectableArray(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
+        }
+
+        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
+        {
+            if (name == "value")
+            {
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::reflectableArray(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
+        }
+
+        void setField(::std::string_view name, const ::zserio::pmr::Any& value) override
+        {
+            if (name == "value")
+            {
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
+                        value.get<::zserio::UInt32>()
+                );
+                return;
+            }
+            if (name == "text")
+            {
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(
+                        value.get<::zserio::pmr::String>()
+                );
+                return;
+            }
+            if (name == "nestedArray")
+            {
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
+                        value.get<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerNested>>()
+                );
+                return;
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
+        }
+
+        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
+        {
+            if (name == "value")
+            {
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
+                        
+                );
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+            }
+            if (name == "text")
+            {
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(
+                        get_allocator()
+                );
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
+                        get_allocator()
+                );
+                return ::zserio::reflectableArray(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::Any(::std::cref(m_object), alloc);
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) override
+        {
+            return ::zserio::pmr::Any(::std::ref(m_object), alloc);
+        }
+
+    private:
+        ::test_object::polymorphic_allocator::WalkerUnion& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
 } // namespace zserio
 
 namespace std

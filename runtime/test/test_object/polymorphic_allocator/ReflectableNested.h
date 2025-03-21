@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <zserio/pmr/ITypeInfo.h>
+#include <zserio/pmr/IReflectableData.h>
 #include <zserio/View.h>
 #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Types.h>
@@ -107,6 +108,13 @@ struct TypeInfo<::test_object::polymorphic_allocator::ReflectableNested, ::zseri
 };
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
+template <>
+::zserio::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
 } // namespace zserio
 
 namespace std

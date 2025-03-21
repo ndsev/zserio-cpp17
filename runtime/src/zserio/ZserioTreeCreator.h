@@ -10,7 +10,7 @@
 #include "zserio/Any.h"
 #include "zserio/BitBuffer.h"
 #include "zserio/CppRuntimeException.h"
-#include "zserio/IReflectable.h"
+#include "zserio/IReflectableData.h"
 #include "zserio/ITypeInfo.h"
 #include "zserio/RebindAlloc.h"
 #include "zserio/Span.h"
@@ -443,7 +443,7 @@ public:
      *
      * \throw CppRuntimeException When the creator is not in state of building the root object.
      */
-    IBasicReflectablePtr<ALLOC> endRoot();
+    IBasicReflectableDataPtr<ALLOC> endRoot();
 
     /**
      * Creates an array field within the current compound.
@@ -558,7 +558,7 @@ private:
 
     const IBasicTypeInfo<ALLOC>& m_typeInfo;
     Vector<BasicFieldInfoRef, RebindAlloc<ALLOC, BasicFieldInfoRef>> m_fieldInfoStack;
-    Vector<IBasicReflectablePtr<ALLOC>, RebindAlloc<ALLOC, IBasicReflectablePtr<ALLOC>>> m_valueStack;
+    Vector<IBasicReflectableDataPtr<ALLOC>, RebindAlloc<ALLOC, IBasicReflectableDataPtr<ALLOC>>> m_valueStack;
     detail::CreatorState m_state = detail::CreatorState::BEFORE_ROOT;
 };
 
@@ -587,7 +587,7 @@ void BasicZserioTreeCreator<ALLOC>::beginRoot()
 }
 
 template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> BasicZserioTreeCreator<ALLOC>::endRoot()
+IBasicReflectableDataPtr<ALLOC> BasicZserioTreeCreator<ALLOC>::endRoot()
 {
     if (m_state != detail::CreatorState::IN_COMPOUND || m_valueStack.size() != 1)
     {

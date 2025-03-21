@@ -149,7 +149,7 @@ public:
     {}
 
     void setType(const IBasicTypeInfo<ALLOC>& typeInfo);
-    IBasicReflectablePtr<ALLOC> get() const;
+    IBasicReflectableDataPtr<ALLOC> get() const;
 
     void beginObject() override;
     void endObject() override;
@@ -172,7 +172,7 @@ private:
 
     Optional<BasicZserioTreeCreator<ALLOC>> m_creator;
     vector<string<ALLOC>, ALLOC> m_keyStack;
-    IBasicReflectablePtr<ALLOC> m_object;
+    IBasicReflectableDataPtr<ALLOC> m_object;
     unique_ptr<IObjectValueAdapter<ALLOC>, RebindAlloc<ALLOC, IObjectValueAdapter<ALLOC>>> m_objectValueAdapter;
 };
 
@@ -206,7 +206,7 @@ public:
      * \return Zserio object tree initialized using the JSON data.
      * \throw CppRuntimeException When the JSON doesn't contain expected zserio object tree.
      */
-    IBasicReflectablePtr<ALLOC> read(const IBasicTypeInfo<ALLOC>& typeInfo)
+    IBasicReflectableDataPtr<ALLOC> read(const IBasicTypeInfo<ALLOC>& typeInfo)
     {
         m_creatorAdapter.setType(typeInfo);
 
@@ -492,7 +492,7 @@ void CreatorAdapter<ALLOC>::setType(const IBasicTypeInfo<ALLOC>& typeInfo)
 }
 
 template <typename ALLOC>
-IBasicReflectablePtr<ALLOC> CreatorAdapter<ALLOC>::get() const
+IBasicReflectableDataPtr<ALLOC> CreatorAdapter<ALLOC>::get() const
 {
     if (!m_object)
     {

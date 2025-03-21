@@ -18,13 +18,16 @@ cmake_minimum_required(VERSION 3.15.0)
 project(ZserioCpp17Runtime)
 
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
+    zserio/pmr/Any.h
     zserio/pmr/BitBuffer.h
     zserio/pmr/Bytes.h
+    zserio/pmr/IReflectableData.h
     zserio/pmr/IService.h
     zserio/pmr/ITypeInfo.h
     zserio/pmr/Map.h
     zserio/pmr/Optional.h
     zserio/pmr/PropagatingPolymorphicAllocator.h
+    zserio/pmr/ReflectableData.h
     zserio/pmr/Set.h
     zserio/pmr/String.h
     zserio/pmr/UniquePtr.h
@@ -66,10 +69,12 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
     zserio/HashCodeUtil.h
-    zserio/IIntrospectable.h
-    zserio/Introspectable.h
+    zserio/IIntrospectableData.h
+    zserio/IIntrospectableView.h
+    zserio/IntrospectableDataBase.h
+    zserio/IntrospectableView.h
     zserio/IPubsub.h
-    zserio/IReflectable.h
+    zserio/IReflectableData.h
     zserio/IService.h
     zserio/ISqliteDatabase.h
     zserio/ITypeInfo.h
@@ -88,6 +93,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/OutOfRangeException.h
     zserio/PubsubException.h
     zserio/RebindAlloc.h
+    zserio/ReflectableData.h
     zserio/RuntimeArch.h
     zserio/SerializeUtil.h
     zserio/ServiceException.h

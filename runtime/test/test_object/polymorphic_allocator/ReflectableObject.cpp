@@ -7,6 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/ReflectableData.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/polymorphic_allocator/ReflectableObject.h>
@@ -236,7 +237,11 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
     static const ::zserio::Span<::zserio::BasicFunctionInfo<AllocatorType>> functions;
 
     static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
-        "test_object.polymorphic_allocator.ReflectableObject", nullptr,
+        "test_object.polymorphic_allocator.ReflectableObject",
+        [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
+        {
+            return std::allocate_shared<::zserio::ReflectableOwner<::test_object::polymorphic_allocator::ReflectableObject>>(allocator, allocator);
+        },
         templateName, templateArguments, fields, parameters, functions
     };
 
@@ -244,6 +249,136 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 }
 
 } // namespace detail
+
+template <>
+::zserio::IReflectableDataConstPtr reflectable(
+        const ::test_object::polymorphic_allocator::ReflectableObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+
+        explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+                ::zserio::ReflectableConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "stringField")
+            {
+                return ::zserio::reflectable(m_object.stringField, get_allocator());
+            }
+            if (name == "reflectableNested")
+            {
+                return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::Any(::std::cref(m_object), alloc);
+        }
+
+    private:
+        const ::test_object::polymorphic_allocator::ReflectableObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
+template <>
+::zserio::IReflectableDataPtr reflectable(
+        ::test_object::polymorphic_allocator::ReflectableObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Reflectable : public ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        explicit Reflectable(::test_object::polymorphic_allocator::ReflectableObject& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+                ::zserio::ReflectableAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableObject>(), alloc),
+                m_object(object_)
+        {}
+
+        ::zserio::IReflectableDataConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "stringField")
+            {
+                return ::zserio::reflectable(m_object.stringField, get_allocator());
+            }
+            if (name == "reflectableNested")
+            {
+                return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
+        }
+
+        ::zserio::IReflectableDataPtr getField(::std::string_view name) override
+        {
+            if (name == "stringField")
+            {
+                return ::zserio::reflectable(m_object.stringField, get_allocator());
+            }
+            if (name == "reflectableNested")
+            {
+                return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
+        }
+
+        void setField(::std::string_view name, const ::zserio::pmr::Any& value) override
+        {
+            if (name == "stringField")
+            {
+                m_object.stringField =
+                        value.get<::zserio::pmr::String>();
+                return;
+            }
+            if (name == "reflectableNested")
+            {
+                m_object.reflectableNested =
+                        value.get<::test_object::polymorphic_allocator::ReflectableNested>();
+                return;
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
+        }
+
+        ::zserio::IReflectableDataPtr createField(::std::string_view name) override
+        {
+            if (name == "stringField")
+            {
+                m_object.stringField =
+                        ::zserio::pmr::String(get_allocator());
+                return ::zserio::reflectable(m_object.stringField, get_allocator());
+            }
+            if (name == "reflectableNested")
+            {
+                m_object.reflectableNested =
+                        ::test_object::polymorphic_allocator::ReflectableNested(get_allocator());
+                return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::Any(::std::cref(m_object), alloc);
+        }
+
+        ::zserio::pmr::Any getAnyValue(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) override
+        {
+            return ::zserio::pmr::Any(::std::ref(m_object), alloc);
+        }
+
+    private:
+        ::test_object::polymorphic_allocator::ReflectableObject& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+}
+
 } // namespace zserio
 
 namespace std

@@ -4,7 +4,7 @@
 #include <memory> // TODO[Mi-L@]: Remove include once proper IReflectable is implemented.
 #include <string_view>
 
-#include "zserio/IReflectable.h"
+#include "zserio/IReflectableData.h"
 #include "zserio/Span.h"
 #include "zserio/Traits.h"
 
@@ -450,7 +450,7 @@ public:
      *
      * \throw CppRuntimeException If the zserio type is not compound type.
      */
-    virtual IBasicReflectablePtr<ALLOC> createInstance(const ALLOC& allocator) const = 0;
+    virtual IBasicReflectableDataPtr<ALLOC> createInstance(const ALLOC& allocator) const = 0;
 
     /**
      * Creates new instance of the zserio compound type.
@@ -461,7 +461,7 @@ public:
      *
      * \throw CppRuntimeException If the zserio type is not compound type.
      */
-    virtual IBasicReflectablePtr<ALLOC> createInstance() const = 0;
+    virtual IBasicReflectableDataPtr<ALLOC> createInstance() const = 0;
 };
 
 /**
