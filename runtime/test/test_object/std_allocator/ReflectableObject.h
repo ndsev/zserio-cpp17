@@ -20,7 +20,10 @@
 #include <zserio/String.h>
 #include <zserio/Types.h>
 
+#include <test_object/std_allocator/ReflectableChoice.h>
+#include <test_object/std_allocator/ReflectableEnum.h>
 #include <test_object/std_allocator/ReflectableNested.h>
+#include <test_object/std_allocator/ReflectableUnion.h>
 
 namespace test_object
 {
@@ -36,10 +39,16 @@ struct ReflectableObject
 
     explicit ReflectableObject(
             ::zserio::String stringField_,
-            ::test_object::std_allocator::ReflectableNested reflectableNested_);
+            ::test_object::std_allocator::ReflectableNested reflectableNested_,
+            ::test_object::std_allocator::ReflectableEnum reflectableEnum_,
+            ::test_object::std_allocator::ReflectableChoice reflectableChoice_,
+            ::test_object::std_allocator::ReflectableUnion reflectableUnion_);
 
         ::zserio::String stringField;
         ::test_object::std_allocator::ReflectableNested reflectableNested;
+        ::test_object::std_allocator::ReflectableEnum reflectableEnum;
+        ::test_object::std_allocator::ReflectableChoice reflectableChoice;
+        ::test_object::std_allocator::ReflectableUnion reflectableUnion;
 };
 
 bool operator==(const ::test_object::std_allocator::ReflectableObject& lhs, const ::test_object::std_allocator::ReflectableObject& rhs);
@@ -63,6 +72,9 @@ public:
 
     ::std::string_view stringField() const;
     View<::test_object::std_allocator::ReflectableNested> reflectableNested() const;
+    ::test_object::std_allocator::ReflectableEnum reflectableEnum() const;
+    View<::test_object::std_allocator::ReflectableChoice> reflectableChoice() const;
+    View<::test_object::std_allocator::ReflectableUnion> reflectableUnion() const;
 
     const ::test_object::std_allocator::ReflectableObject& zserioData() const;
 

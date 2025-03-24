@@ -466,6 +466,23 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
 
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8:
+                return "value8";
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16:
+                return "value16";
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32:
+                return "value32";
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64:
+                return "value64";
+            default:
+                return "";
+            }
+        }
+
         ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
         {
             return ::zserio::Any(::std::cref(m_object), alloc);
@@ -626,6 +643,23 @@ template <>
                 return ::zserio::reflectable(get<::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
+        }
+
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value8:
+                return "value8";
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value16:
+                return "value16";
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value32:
+                return "value32";
+            case ::test_object::std_allocator::WalkerChoice::ChoiceTag::CHOICE_value64:
+                return "value64";
+            default:
+                return "";
+            }
         }
 
         ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override

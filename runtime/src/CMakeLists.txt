@@ -27,7 +27,6 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/Map.h
     zserio/pmr/Optional.h
     zserio/pmr/PropagatingPolymorphicAllocator.h
-    zserio/pmr/ReflectableData.h
     zserio/pmr/Set.h
     zserio/pmr/String.h
     zserio/pmr/UniquePtr.h

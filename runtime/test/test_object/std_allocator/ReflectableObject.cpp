@@ -23,34 +23,55 @@ ReflectableObject::ReflectableObject() noexcept :
 
 ReflectableObject::ReflectableObject(const AllocatorType& allocator) noexcept :
         stringField(allocator),
-        reflectableNested(allocator)
+        reflectableNested(allocator),
+        reflectableEnum(),
+        reflectableChoice(allocator),
+        reflectableUnion(allocator)
 {}
 
 ReflectableObject::ReflectableObject(
         ::zserio::String stringField_,
-        ::test_object::std_allocator::ReflectableNested reflectableNested_) :
+        ::test_object::std_allocator::ReflectableNested reflectableNested_,
+        ::test_object::std_allocator::ReflectableEnum reflectableEnum_,
+        ::test_object::std_allocator::ReflectableChoice reflectableChoice_,
+        ::test_object::std_allocator::ReflectableUnion reflectableUnion_) :
         stringField(::std::move(stringField_)),
-        reflectableNested(::std::move(reflectableNested_))
+        reflectableNested(::std::move(reflectableNested_)),
+        reflectableEnum(reflectableEnum_),
+        reflectableChoice(::std::move(reflectableChoice_)),
+        reflectableUnion(::std::move(reflectableUnion_))
 {}
 
 bool operator==(const ::test_object::std_allocator::ReflectableObject& lhs, const ::test_object::std_allocator::ReflectableObject& rhs)
 {
     return ::std::tie(
             lhs.stringField,
-            lhs.reflectableNested)
+            lhs.reflectableNested,
+            lhs.reflectableEnum,
+            lhs.reflectableChoice,
+            lhs.reflectableUnion)
             == ::std::tie(
             rhs.stringField,
-            rhs.reflectableNested);
+            rhs.reflectableNested,
+            rhs.reflectableEnum,
+            rhs.reflectableChoice,
+            rhs.reflectableUnion);
 }
 
 bool operator<(const ::test_object::std_allocator::ReflectableObject& lhs, const ::test_object::std_allocator::ReflectableObject& rhs)
 {
     return ::std::tie(
             lhs.stringField,
-            lhs.reflectableNested)
+            lhs.reflectableNested,
+            lhs.reflectableEnum,
+            lhs.reflectableChoice,
+            lhs.reflectableUnion)
             < ::std::tie(
             rhs.stringField,
-            rhs.reflectableNested);
+            rhs.reflectableNested,
+            rhs.reflectableEnum,
+            rhs.reflectableChoice,
+            rhs.reflectableUnion);
 }
 
 bool operator!=(const ::test_object::std_allocator::ReflectableObject& lhs, const ::test_object::std_allocator::ReflectableObject& rhs)
@@ -100,6 +121,23 @@ View<::test_object::std_allocator::ReflectableNested> View<::test_object::std_al
             m_data->reflectableNested, ::zserio::Int31(static_cast<::zserio::Int31::ValueType>(13)), stringField()};
 }
 
+::test_object::std_allocator::ReflectableEnum View<::test_object::std_allocator::ReflectableObject>::reflectableEnum() const
+{
+    return m_data->reflectableEnum;
+}
+
+View<::test_object::std_allocator::ReflectableChoice> View<::test_object::std_allocator::ReflectableObject>::reflectableChoice() const
+{
+    return View<::test_object::std_allocator::ReflectableChoice>{
+            m_data->reflectableChoice, reflectableEnum()};
+}
+
+View<::test_object::std_allocator::ReflectableUnion> View<::test_object::std_allocator::ReflectableObject>::reflectableUnion() const
+{
+    return View<::test_object::std_allocator::ReflectableUnion>{
+            m_data->reflectableUnion};
+}
+
 const ::test_object::std_allocator::ReflectableObject& View<::test_object::std_allocator::ReflectableObject>::zserioData() const
 {
     return *m_data;
@@ -108,7 +146,10 @@ const ::test_object::std_allocator::ReflectableObject& View<::test_object::std_a
 bool operator==(const View<::test_object::std_allocator::ReflectableObject>& lhs, const View<::test_object::std_allocator::ReflectableObject>& rhs)
 {
     return lhs.stringField() == rhs.stringField() &&
-            lhs.reflectableNested() == rhs.reflectableNested();
+            lhs.reflectableNested() == rhs.reflectableNested() &&
+            lhs.reflectableEnum() == rhs.reflectableEnum() &&
+            lhs.reflectableChoice() == rhs.reflectableChoice() &&
+            lhs.reflectableUnion() == rhs.reflectableUnion();
 }
 
 bool operator<(const View<::test_object::std_allocator::ReflectableObject>& lhs, const View<::test_object::std_allocator::ReflectableObject>& rhs)
@@ -120,6 +161,18 @@ bool operator<(const View<::test_object::std_allocator::ReflectableObject>& lhs,
     if (lhs.reflectableNested() != rhs.reflectableNested())
     {
         return lhs.reflectableNested() < rhs.reflectableNested();
+    }
+    if (lhs.reflectableEnum() != rhs.reflectableEnum())
+    {
+        return lhs.reflectableEnum() < rhs.reflectableEnum();
+    }
+    if (lhs.reflectableChoice() != rhs.reflectableChoice())
+    {
+        return lhs.reflectableChoice() < rhs.reflectableChoice();
+    }
+    if (lhs.reflectableUnion() != rhs.reflectableUnion())
+    {
+        return lhs.reflectableUnion() < rhs.reflectableUnion();
     }
 
     return false;
@@ -153,6 +206,9 @@ void validate(const View<::test_object::std_allocator::ReflectableObject>& view,
 {
     validate(view.stringField(), "'ReflectableObject.stringField'");
     validate(view.reflectableNested(), "'ReflectableObject.reflectableNested'");
+    validate(view.reflectableEnum(), "'ReflectableObject.reflectableEnum'");
+    validate(view.reflectableChoice(), "'ReflectableObject.reflectableChoice'");
+    validate(view.reflectableUnion(), "'ReflectableObject.reflectableUnion'");
 }
 
 template <>
@@ -164,6 +220,12 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableObject>& v
     endBitPosition += bitSizeOf(stringField_, endBitPosition);
     auto reflectableNested_ = view.reflectableNested();
     endBitPosition += bitSizeOf(reflectableNested_, endBitPosition);
+    auto reflectableEnum_ = view.reflectableEnum();
+    endBitPosition += bitSizeOf(reflectableEnum_, endBitPosition);
+    auto reflectableChoice_ = view.reflectableChoice();
+    endBitPosition += bitSizeOf(reflectableChoice_, endBitPosition);
+    auto reflectableUnion_ = view.reflectableUnion();
+    endBitPosition += bitSizeOf(reflectableUnion_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
@@ -175,6 +237,12 @@ void write(BitStreamWriter& writer, const View<::test_object::std_allocator::Ref
     write(writer, stringField_);
     auto reflectableNested_ = view.reflectableNested();
     write(writer, reflectableNested_);
+    auto reflectableEnum_ = view.reflectableEnum();
+    write(writer, reflectableEnum_);
+    auto reflectableChoice_ = view.reflectableChoice();
+    write(writer, reflectableChoice_);
+    auto reflectableUnion_ = view.reflectableUnion();
+    write(writer, reflectableUnion_);
 }
 
 template <>
@@ -183,6 +251,9 @@ View<::test_object::std_allocator::ReflectableObject> read(BitStreamReader& read
     View<::test_object::std_allocator::ReflectableObject> view(data);
     read(reader, data.stringField);
     (void)read(reader, data.reflectableNested, ::zserio::Int31(static_cast<::zserio::Int31::ValueType>(13)), view.stringField());
+    read(reader, data.reflectableEnum);
+    (void)read(reader, data.reflectableChoice, view.reflectableEnum());
+    (void)read(reader, data.reflectableUnion);
     return view;
 }
 
@@ -197,7 +268,10 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableObj
         "13",
         "stringField()"
     };
-    static const ::std::array<::zserio::BasicFieldInfo<AllocatorType>, 2> fields = {
+    static const ::std::array<::std::string_view, 1> reflectableChoiceTypeArguments = {
+        "reflectableEnum()"
+    };
+    static const ::std::array<::zserio::BasicFieldInfo<AllocatorType>, 5> fields = {
         ::zserio::BasicFieldInfo<AllocatorType>{
             "stringField", // schemaName
             ::zserio::typeInfo<::zserio::String, ::std::allocator<uint8_t>>(), // typeInfo
@@ -218,6 +292,54 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableObj
             "reflectableNested", // schemaName
             ::zserio::typeInfo<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>(), // typeInfo
             reflectableNestedTypeArguments, // typeArguments
+            false, // isExtended
+            {}, // alignment
+            {}, // offset
+            {}, // initializer
+            false, // isOptional
+            {}, // optionalClause
+            {}, // constraint
+            false, // isArray
+            {}, // arrayLength
+            false, // isPacked
+            false // isImplicit
+        },
+        ::zserio::BasicFieldInfo<AllocatorType>{
+            "reflectableEnum", // schemaName
+            ::zserio::typeInfo<::test_object::std_allocator::ReflectableEnum, ::std::allocator<uint8_t>>(), // typeInfo
+            {}, // typeArguments
+            false, // isExtended
+            {}, // alignment
+            {}, // offset
+            {}, // initializer
+            false, // isOptional
+            {}, // optionalClause
+            {}, // constraint
+            false, // isArray
+            {}, // arrayLength
+            false, // isPacked
+            false // isImplicit
+        },
+        ::zserio::BasicFieldInfo<AllocatorType>{
+            "reflectableChoice", // schemaName
+            ::zserio::typeInfo<::test_object::std_allocator::ReflectableChoice, ::std::allocator<uint8_t>>(), // typeInfo
+            reflectableChoiceTypeArguments, // typeArguments
+            false, // isExtended
+            {}, // alignment
+            {}, // offset
+            {}, // initializer
+            false, // isOptional
+            {}, // optionalClause
+            {}, // constraint
+            false, // isArray
+            {}, // arrayLength
+            false, // isPacked
+            false // isImplicit
+        },
+        ::zserio::BasicFieldInfo<AllocatorType>{
+            "reflectableUnion", // schemaName
+            ::zserio::typeInfo<::test_object::std_allocator::ReflectableUnion, ::std::allocator<uint8_t>>(), // typeInfo
+            {}, // typeArguments
             false, // isExtended
             {}, // alignment
             {}, // offset
@@ -275,6 +397,18 @@ template <>
             {
                 return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
             }
+            if (name == "reflectableEnum")
+            {
+                return ::zserio::reflectable(m_object.reflectableEnum, get_allocator());
+            }
+            if (name == "reflectableChoice")
+            {
+                return ::zserio::reflectable(m_object.reflectableChoice, get_allocator());
+            }
+            if (name == "reflectableUnion")
+            {
+                return ::zserio::reflectable(m_object.reflectableUnion, get_allocator());
+            }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
         }
 
@@ -315,6 +449,18 @@ template <>
             {
                 return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
             }
+            if (name == "reflectableEnum")
+            {
+                return ::zserio::reflectable(m_object.reflectableEnum, get_allocator());
+            }
+            if (name == "reflectableChoice")
+            {
+                return ::zserio::reflectable(m_object.reflectableChoice, get_allocator());
+            }
+            if (name == "reflectableUnion")
+            {
+                return ::zserio::reflectable(m_object.reflectableUnion, get_allocator());
+            }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
         }
 
@@ -327,6 +473,18 @@ template <>
             if (name == "reflectableNested")
             {
                 return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
+            }
+            if (name == "reflectableEnum")
+            {
+                return ::zserio::reflectable(m_object.reflectableEnum, get_allocator());
+            }
+            if (name == "reflectableChoice")
+            {
+                return ::zserio::reflectable(m_object.reflectableChoice, get_allocator());
+            }
+            if (name == "reflectableUnion")
+            {
+                return ::zserio::reflectable(m_object.reflectableUnion, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
         }
@@ -343,6 +501,34 @@ template <>
                 m_object.reflectableNested = value.get<::test_object::std_allocator::ReflectableNested>();
                 return;
             }
+            if (name == "reflectableEnum")
+            {
+                if (value.isType<::test_object::std_allocator::ReflectableEnum>())
+                {
+                    m_object.reflectableEnum = value.get<::test_object::std_allocator::ReflectableEnum>();
+                }
+                else if (value.isType<typename EnumTraits<::test_object::std_allocator::ReflectableEnum>::ZserioType>())
+                {
+                    m_object.reflectableEnum =
+                            valueToEnum<::test_object::std_allocator::ReflectableEnum>(value.get<typename EnumTraits<::test_object::std_allocator::ReflectableEnum>::ZserioType>());
+                }
+                else
+                {
+                    m_object.reflectableEnum =
+                            valueToEnum<::test_object::std_allocator::ReflectableEnum>(value.get<std::underlying_type_t<::test_object::std_allocator::ReflectableEnum>>());
+                }
+                return;
+            }
+            if (name == "reflectableChoice")
+            {
+                m_object.reflectableChoice = value.get<::test_object::std_allocator::ReflectableChoice>();
+                return;
+            }
+            if (name == "reflectableUnion")
+            {
+                m_object.reflectableUnion = value.get<::test_object::std_allocator::ReflectableUnion>();
+                return;
+            }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
         }
 
@@ -357,6 +543,21 @@ template <>
             {
                 m_object.reflectableNested = ::test_object::std_allocator::ReflectableNested(get_allocator());
                 return ::zserio::reflectable(m_object.reflectableNested, get_allocator());
+            }
+            if (name == "reflectableEnum")
+            {
+                m_object.reflectableEnum = ::test_object::std_allocator::ReflectableEnum();
+                return ::zserio::reflectable(m_object.reflectableEnum, get_allocator());
+            }
+            if (name == "reflectableChoice")
+            {
+                m_object.reflectableChoice = ::test_object::std_allocator::ReflectableChoice(get_allocator());
+                return ::zserio::reflectable(m_object.reflectableChoice, get_allocator());
+            }
+            if (name == "reflectableUnion")
+            {
+                m_object.reflectableUnion = ::test_object::std_allocator::ReflectableUnion(get_allocator());
+                return ::zserio::reflectable(m_object.reflectableUnion, get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";
         }
@@ -388,6 +589,9 @@ size_t hash<::test_object::std_allocator::ReflectableObject>::operator()(const :
     uint32_t result = ::zserio::HASH_SEED;
     result = ::zserio::calcHashCode(result, data.stringField);
     result = ::zserio::calcHashCode(result, data.reflectableNested);
+    result = ::zserio::calcHashCode(result, data.reflectableEnum);
+    result = ::zserio::calcHashCode(result, data.reflectableChoice);
+    result = ::zserio::calcHashCode(result, data.reflectableUnion);
     return static_cast<size_t>(result);
 }
 
@@ -396,6 +600,9 @@ size_t hash<::zserio::View<::test_object::std_allocator::ReflectableObject>>::op
     uint32_t result = ::zserio::HASH_SEED;
     result = ::zserio::calcHashCode(result, view.stringField());
     result = ::zserio::calcHashCode(result, view.reflectableNested());
+    result = ::zserio::calcHashCode(result, view.reflectableEnum());
+    result = ::zserio::calcHashCode(result, view.reflectableChoice());
+    result = ::zserio::calcHashCode(result, view.reflectableUnion());
     return static_cast<size_t>(result);
 }
 

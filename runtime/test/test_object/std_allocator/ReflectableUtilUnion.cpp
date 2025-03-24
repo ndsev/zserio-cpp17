@@ -350,6 +350,21 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";
         }
 
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+            case ::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum:
+                return "reflectableUtilEnum";
+            case ::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask:
+                return "reflectableUtilBitmask";
+            case ::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject:
+                return "reflectableUtilObject";
+            default:
+                return "";
+            }
+        }
+
         ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
         {
             return ::zserio::Any(::std::cref(m_object), alloc);
@@ -483,6 +498,21 @@ template <>
                 return ::zserio::reflectable(get<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";
+        }
+
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+            case ::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum:
+                return "reflectableUtilEnum";
+            case ::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask:
+                return "reflectableUtilBitmask";
+            case ::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject:
+                return "reflectableUtilObject";
+            default:
+                return "";
+            }
         }
 
         ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override

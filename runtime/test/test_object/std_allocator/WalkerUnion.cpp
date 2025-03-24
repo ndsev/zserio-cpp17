@@ -350,6 +350,21 @@ template <>
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
 
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+            case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+                return "value";
+            case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+                return "text";
+            case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+                return "nestedArray";
+            default:
+                return "";
+            }
+        }
+
         ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override
         {
             return ::zserio::Any(::std::cref(m_object), alloc);
@@ -465,6 +480,21 @@ template <>
                 return ::zserio::reflectableArray(get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
+        }
+
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+            case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+                return "value";
+            case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+                return "text";
+            case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+                return "nestedArray";
+            default:
+                return "";
+            }
         }
 
         ::zserio::Any getAnyValue(const ::std::allocator<uint8_t>& alloc) const override

@@ -117,10 +117,29 @@ struct ReflectableNested(int:31 dummyParam, string stringParam)
     }
 };
 
+choice ReflectableChoice(ReflectableEnum param) on param
+{
+    case VALUE1:
+        string valueStr;
+    case VALUE2:
+        uint32 value32;
+    default:
+        ;
+};
+
+union ReflectableUnion
+{
+    uint32 value32;
+    string valueStr;
+};
+
 struct ReflectableObject
 {
     string stringField;
     ReflectableNested(13, stringField) reflectableNested;
+    ReflectableEnum reflectableEnum;
+    ReflectableChoice(reflectableEnum) reflectableChoice;
+    ReflectableUnion reflectableUnion;
 };
 
 bitmask uint8 ReflectableUtilBitmask

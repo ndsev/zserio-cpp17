@@ -68,7 +68,7 @@ public:
      *
      * \note Applicable only on zserio unions and choices.
      *
-     * \return Name of the active field (i.e. currently selected choice).
+     * \return Name of the active field (i.e. currently selected choice). Returns empty string for empty cases.
      *
      * \throw CppRuntimeException When the introspectable object is not a choice type (or union).
      */

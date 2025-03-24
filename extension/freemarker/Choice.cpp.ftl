@@ -531,6 +531,19 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         </#if>
     </#if>
 
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+    <#list fieldList as field>
+            case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+                return "${field.name}";
+    </#list>
+            default:
+                return "";
+            }
+        }
+
         ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
         {
             return ${types.any.name}(::std::cref(m_object), alloc);
