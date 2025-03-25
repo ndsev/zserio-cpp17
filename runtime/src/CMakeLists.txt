@@ -93,6 +93,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/PubsubException.h
     zserio/RebindAlloc.h
     zserio/ReflectableData.h
+    zserio/ReflectableUtil.h
     zserio/RuntimeArch.h
     zserio/SerializeUtil.h
     zserio/ServiceException.h

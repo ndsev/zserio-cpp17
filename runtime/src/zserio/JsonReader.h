@@ -23,7 +23,7 @@ template <typename ALLOC>
 class IObjectValueAdapter : public BasicJsonParser<ALLOC>::IObserver
 {
 public:
-    virtual AnyHolder<ALLOC> get() const = 0;
+    virtual BasicAny<ALLOC> get() const = 0;
 };
 
 template <typename ALLOC>
@@ -56,7 +56,7 @@ public:
         return *this;
     }
 
-    AnyHolder<ALLOC> get() const override;
+    BasicAny<ALLOC> get() const override;
 
     void beginObject() override;
     void endObject() override;
@@ -80,7 +80,7 @@ private:
     };
 
     State m_state;
-    Optional<vector<uint8_t, ALLOC>> m_buffer;
+    Optional<Vector<uint8_t, ALLOC>> m_buffer;
     Optional<size_t> m_bitSize;
 };
 
@@ -112,7 +112,7 @@ public:
         return *this;
     }
 
-    AnyHolder<ALLOC> get() const override;
+    BasicAny<ALLOC> get() const override;
 
     void beginObject() override;
     void endObject() override;
@@ -135,7 +135,7 @@ private:
     };
 
     State m_state;
-    Optional<vector<uint8_t, ALLOC>> m_buffer;
+    Optional<Vector<uint8_t, ALLOC>> m_buffer;
 };
 
 template <typename ALLOC>
@@ -171,9 +171,10 @@ private:
     void convertValue(T&& value) const;
 
     Optional<BasicZserioTreeCreator<ALLOC>> m_creator;
-    vector<string<ALLOC>, ALLOC> m_keyStack;
+    using StringType = BasicString<RebindAlloc<ALLOC, char>>;
+    Vector<StringType, RebindAlloc<ALLOC, StringType>> m_keyStack;
     IBasicReflectableDataPtr<ALLOC> m_object;
-    unique_ptr<IObjectValueAdapter<ALLOC>, RebindAlloc<ALLOC, IObjectValueAdapter<ALLOC>>> m_objectValueAdapter;
+    UniquePtr<IObjectValueAdapter<ALLOC>, RebindAlloc<ALLOC, IObjectValueAdapter<ALLOC>>> m_objectValueAdapter;
 };
 
 } // namespace detail
@@ -239,14 +240,14 @@ namespace detail
 {
 
 template <typename ALLOC>
-AnyHolder<ALLOC> BitBufferAdapter<ALLOC>::get() const
+BasicAny<ALLOC> BitBufferAdapter<ALLOC>::get() const
 {
-    if (m_state != VISIT_KEY || !m_buffer.hasValue() || !m_bitSize.hasValue())
+    if (m_state != VISIT_KEY || !m_buffer.has_value() || !m_bitSize.has_value())
     {
         throw CppRuntimeException("JsonReader: Unexpected end in BitBuffer!");
     }
 
-    return AnyHolder<ALLOC>(BasicBitBuffer<ALLOC>(m_buffer.value(), m_bitSize.value()), get_allocator());
+    return BasicAny<ALLOC>(BasicBitBuffer<ALLOC>(m_buffer.value(), m_bitSize.value()), get_allocator());
 }
 
 template <typename ALLOC>
@@ -267,7 +268,7 @@ void BitBufferAdapter<ALLOC>::beginArray()
     if (m_state == BEGIN_ARRAY_BUFFER)
     {
         m_state = VISIT_VALUE_BUFFER;
-        m_buffer = vector<uint8_t, ALLOC>(get_allocator());
+        m_buffer = Vector<uint8_t, ALLOC>(get_allocator());
     }
     else
     {
@@ -367,14 +368,14 @@ void BitBufferAdapter<ALLOC>::visitValue(std::string_view)
 }
 
 template <typename ALLOC>
-AnyHolder<ALLOC> BytesAdapter<ALLOC>::get() const
+BasicAny<ALLOC> BytesAdapter<ALLOC>::get() const
 {
-    if (m_state != VISIT_KEY || !m_buffer.hasValue())
+    if (m_state != VISIT_KEY || !m_buffer.has_value())
     {
         throw CppRuntimeException("JsonReader: Unexpected end in bytes!");
     }
 
-    return AnyHolder<ALLOC>(m_buffer.value(), get_allocator());
+    return BasicAny<ALLOC>(m_buffer.value(), get_allocator());
 }
 
 template <typename ALLOC>
@@ -395,7 +396,7 @@ void BytesAdapter<ALLOC>::beginArray()
     if (m_state == BEGIN_ARRAY_BUFFER)
     {
         m_state = VISIT_VALUE_BUFFER;
-        m_buffer = vector<uint8_t, ALLOC>(get_allocator());
+        m_buffer = Vector<uint8_t, ALLOC>(get_allocator());
     }
     else
     {

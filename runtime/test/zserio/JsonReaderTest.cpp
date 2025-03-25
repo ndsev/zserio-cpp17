@@ -1,12 +1,10 @@
-#if 0 // TODO[mikir] Implement it as soon as reflections are ready!
-
-    #include "gtest/gtest.h"
-    #include "test_object/std_allocator/CreatorBitmask.h"
-    #include "test_object/std_allocator/CreatorEnum.h"
-    #include "test_object/std_allocator/CreatorNested.h"
-    #include "test_object/std_allocator/CreatorObject.h"
-    #include "zserio/JsonReader.h"
-    #include "zserio/ReflectableUtil.h"
+#include "gtest/gtest.h"
+#include "test_object/std_allocator/CreatorBitmask.h"
+#include "test_object/std_allocator/CreatorEnum.h"
+#include "test_object/std_allocator/CreatorNested.h"
+#include "test_object/std_allocator/CreatorObject.h"
+#include "zserio/JsonReader.h"
+#include "zserio/ReflectableUtil.h"
 
 using test_object::std_allocator::CreatorBitmask;
 using test_object::std_allocator::CreatorEnum;
@@ -31,7 +29,7 @@ void checkReadStringifiedEnum(const char* stringValue, CreatorEnum expectedValue
            "}";
 
     JsonReader jsonReader(str);
-    auto reflectable = jsonReader.read(CreatorObject::typeInfo());
+    auto reflectable = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(reflectable);
 
     ASSERT_EQ(expectedValue, ReflectableUtil::getValue<CreatorEnum>(reflectable->find("nested.creatorEnum")));
@@ -53,7 +51,7 @@ void checkReadStringifiedEnumThrows(const char* stringValue, const char* expecte
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -76,7 +74,7 @@ void checkReadStringifiedBitmask(const char* stringValue, CreatorBitmask expecte
            "}";
 
     JsonReader jsonReader(str);
-    auto reflectable = jsonReader.read(CreatorObject::typeInfo());
+    auto reflectable = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(reflectable);
 
     ASSERT_EQ(expectedValue,
@@ -98,7 +96,7 @@ void checkReadStringifiedBitmaskThrows(const char* stringValue, const char* expe
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -183,15 +181,12 @@ TEST(JsonReaderTest, readObjectWithoutOptional)
             "}");
 
     JsonReader jsonReader(str);
-    IReflectablePtr reflectable = jsonReader.read(CreatorObject::typeInfo());
+    IReflectableDataPtr reflectable = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(reflectable);
 
-    reflectable->initializeChildren();
-
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());
-    ASSERT_EQ(13, reflectable->getField("nested")->getParameter("param")->getUInt32());
     ASSERT_EQ(10, reflectable->find("nested.value")->getUInt32());
-    ASSERT_EQ("nested"_sv, reflectable->find("nested.text")->getStringView());
+    ASSERT_EQ("nested"sv, reflectable->find("nested.text")->getStringView());
     ASSERT_EQ(BitBuffer({0xCB, 0xF0}, 12), reflectable->find("nested.externData")->getBitBuffer());
     const Span<const uint8_t> bytesData = reflectable->find("nested.bytesData")->getBytes();
     ASSERT_EQ(2, bytesData.size());
@@ -200,10 +195,10 @@ TEST(JsonReaderTest, readObjectWithoutOptional)
     ASSERT_EQ(enumToValue(CreatorEnum::ONE), reflectable->find("nested.creatorEnum")->getInt8());
     ASSERT_EQ(CreatorBitmask(CreatorBitmask::Values::READ).getValue(),
             reflectable->find("nested.creatorBitmask")->getUInt8());
-    ASSERT_EQ("test"_sv, reflectable->getField("text")->getStringView());
+    ASSERT_EQ("test"sv, reflectable->getField("text")->getStringView());
     ASSERT_EQ(1, reflectable->getField("nestedArray")->size());
     ASSERT_EQ(5, reflectable->getField("nestedArray")->at(0)->getField("value")->getUInt32());
-    ASSERT_EQ("nestedArray"_sv, reflectable->getField("nestedArray")->at(0)->getField("text")->getStringView());
+    ASSERT_EQ("nestedArray"sv, reflectable->getField("nestedArray")->at(0)->getField("text")->getStringView());
     ASSERT_EQ(BitBuffer({0xCA, 0xFE}, 15),
             reflectable->getField("nestedArray")->at(0)->getField("externData")->getBitBuffer());
     const Span<const uint8_t> nestedBytesData =
@@ -216,10 +211,10 @@ TEST(JsonReaderTest, readObjectWithoutOptional)
     ASSERT_EQ(CreatorBitmask(CreatorBitmask::Values::WRITE).getValue(),
             reflectable->getField("nestedArray")->at(0)->getField("creatorBitmask")->getUInt8());
     ASSERT_EQ(4, reflectable->getField("textArray")->size());
-    ASSERT_EQ("this"_sv, reflectable->getField("textArray")->at(0)->getStringView());
-    ASSERT_EQ("is"_sv, reflectable->getField("textArray")->at(1)->getStringView());
-    ASSERT_EQ("text"_sv, reflectable->getField("textArray")->at(2)->getStringView());
-    ASSERT_EQ("array"_sv, reflectable->getField("textArray")->at(3)->getStringView());
+    ASSERT_EQ("this"sv, reflectable->getField("textArray")->at(0)->getStringView());
+    ASSERT_EQ("is"sv, reflectable->getField("textArray")->at(1)->getStringView());
+    ASSERT_EQ("text"sv, reflectable->getField("textArray")->at(2)->getStringView());
+    ASSERT_EQ("array"sv, reflectable->getField("textArray")->at(3)->getStringView());
     ASSERT_EQ(1, reflectable->getField("externArray")->size());
     ASSERT_EQ(BitBuffer({0xDE, 0xD1}, 13), reflectable->getField("externArray")->at(0)->getBitBuffer());
     ASSERT_EQ(1, reflectable->getField("bytesArray")->size());
@@ -302,15 +297,12 @@ TEST(JsonReaderTest, readObjectWithOptional)
             "}");
 
     JsonReader jsonReader(str);
-    IReflectablePtr reflectable = jsonReader.read(CreatorObject::typeInfo());
+    IReflectableDataPtr reflectable = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(reflectable);
 
-    reflectable->initializeChildren();
-
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());
-    ASSERT_EQ(13, reflectable->getField("nested")->getParameter("param")->getUInt32());
     ASSERT_EQ(10, reflectable->find("nested.value")->getUInt32());
-    ASSERT_EQ("nested"_sv, reflectable->find("nested.text")->getStringView());
+    ASSERT_EQ("nested"sv, reflectable->find("nested.text")->getStringView());
     ASSERT_EQ(BitBuffer({0xCB, 0xF0}, 12), reflectable->find("nested.externData")->getBitBuffer());
     const Span<const uint8_t> bytesData = reflectable->find("nested.bytesData")->getBytes();
     ASSERT_EQ(2, bytesData.size());
@@ -319,10 +311,10 @@ TEST(JsonReaderTest, readObjectWithOptional)
     ASSERT_EQ(enumToValue(CreatorEnum::ONE), reflectable->find("nested.creatorEnum")->getInt8());
     ASSERT_EQ(CreatorBitmask(CreatorBitmask::Values::READ).getValue(),
             reflectable->find("nested.creatorBitmask")->getUInt8());
-    ASSERT_EQ("test"_sv, reflectable->getField("text")->getStringView());
+    ASSERT_EQ("test"sv, reflectable->getField("text")->getStringView());
     ASSERT_EQ(1, reflectable->getField("nestedArray")->size());
     ASSERT_EQ(5, reflectable->getField("nestedArray")->at(0)->getField("value")->getUInt32());
-    ASSERT_EQ("nestedArray"_sv, reflectable->getField("nestedArray")->at(0)->getField("text")->getStringView());
+    ASSERT_EQ("nestedArray"sv, reflectable->getField("nestedArray")->at(0)->getField("text")->getStringView());
     ASSERT_EQ(BitBuffer({0xCA, 0xFE}, 15),
             reflectable->getField("nestedArray")->at(0)->getField("externData")->getBitBuffer());
     const Span<const uint8_t> nestedBytesData =
@@ -335,10 +327,10 @@ TEST(JsonReaderTest, readObjectWithOptional)
     ASSERT_EQ(CreatorBitmask(CreatorBitmask::Values::WRITE).getValue(),
             reflectable->getField("nestedArray")->at(0)->getField("creatorBitmask")->getUInt8());
     ASSERT_EQ(4, reflectable->getField("textArray")->size());
-    ASSERT_EQ("this"_sv, reflectable->getField("textArray")->at(0)->getStringView());
-    ASSERT_EQ("is"_sv, reflectable->getField("textArray")->at(1)->getStringView());
-    ASSERT_EQ("text"_sv, reflectable->getField("textArray")->at(2)->getStringView());
-    ASSERT_EQ("array"_sv, reflectable->getField("textArray")->at(3)->getStringView());
+    ASSERT_EQ("this"sv, reflectable->getField("textArray")->at(0)->getStringView());
+    ASSERT_EQ("is"sv, reflectable->getField("textArray")->at(1)->getStringView());
+    ASSERT_EQ("text"sv, reflectable->getField("textArray")->at(2)->getStringView());
+    ASSERT_EQ("array"sv, reflectable->getField("textArray")->at(3)->getStringView());
     ASSERT_EQ(1, reflectable->getField("externArray")->size());
     ASSERT_EQ(BitBuffer({0xDE, 0xD1}, 13), reflectable->getField("externArray")->at(0)->getBitBuffer());
     ASSERT_EQ(1, reflectable->getField("bytesArray")->size());
@@ -357,15 +349,15 @@ TEST(JsonReaderTest, readTwoObjects)
 
     JsonReader jsonReader(str);
 
-    auto obj1 = jsonReader.read(CreatorObject::typeInfo());
+    auto obj1 = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(obj1);
     ASSERT_EQ(13, obj1->getField("value")->getUInt32());
-    ASSERT_EQ(""_sv, obj1->getField("text")->getStringView());
+    ASSERT_EQ(""sv, obj1->getField("text")->getStringView());
 
-    auto obj2 = jsonReader.read(CreatorObject::typeInfo());
+    auto obj2 = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(obj2);
     ASSERT_EQ(42, obj2->getField("value")->getUInt32());
-    ASSERT_EQ("test"_sv, obj2->getField("text")->getStringView());
+    ASSERT_EQ("test"sv, obj2->getField("text")->getStringView());
 }
 
 TEST(JsonReaderTest, readParameterizedObject)
@@ -392,11 +384,7 @@ TEST(JsonReaderTest, readParameterizedObject)
             "}\n");
 
     JsonReader jsonReader(str);
-    auto reflectable = jsonReader.read(CreatorNested::typeInfo());
-
-    reflectable->initialize(vector<AnyHolder<>>{AnyHolder<>{static_cast<uint32_t>(13)}});
-
-    ASSERT_EQ(13, reflectable->getParameter("param")->getUInt32());
+    auto reflectable = jsonReader.read(typeInfo<CreatorNested>());
     ASSERT_EQ(10, reflectable->getField("value")->getUInt32());
 }
 
@@ -427,15 +415,12 @@ TEST(JsonReaderTest, readUnorderedBitBuffer)
             "}");
 
     JsonReader jsonReader(str);
-    auto reflectable = jsonReader.read(CreatorObject::typeInfo());
+    auto reflectable = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(reflectable);
 
-    reflectable->initializeChildren();
-
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());
-    ASSERT_EQ(13, reflectable->getField("nested")->getParameter("param")->getUInt32());
     ASSERT_EQ(10, reflectable->find("nested.value")->getUInt32());
-    ASSERT_EQ("nested"_sv, reflectable->find("nested.text")->getStringView());
+    ASSERT_EQ("nested"sv, reflectable->find("nested.text")->getStringView());
     ASSERT_EQ(BitBuffer({0xCB, 0xF0}, 12), reflectable->find("nested.externData")->getBitBuffer());
     const Span<const uint8_t> bytesData = reflectable->find("nested.bytesData")->getBytes();
     ASSERT_EQ(2, bytesData.size());
@@ -471,15 +456,12 @@ TEST(JsonReaderTest, readEmptyBitBuffer)
             "}");
 
     JsonReader jsonReader(str);
-    auto reflectable = jsonReader.read(CreatorObject::typeInfo());
+    auto reflectable = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(reflectable);
 
-    reflectable->initializeChildren();
-
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());
-    ASSERT_EQ(13, reflectable->getField("nested")->getParameter("param")->getUInt32());
     ASSERT_EQ(10, reflectable->find("nested.value")->getUInt32());
-    ASSERT_EQ("nested"_sv, reflectable->find("nested.text")->getStringView());
+    ASSERT_EQ("nested"sv, reflectable->find("nested.text")->getStringView());
     ASSERT_EQ(BitBuffer(), reflectable->find("nested.externData")->getBitBuffer());
     const Span<const uint8_t> bytesData = reflectable->find("nested.bytesData")->getBytes();
     ASSERT_EQ(2, bytesData.size());
@@ -513,15 +495,12 @@ TEST(JsonReaderTest, readEmptyBytes)
             "}");
 
     JsonReader jsonReader(str);
-    auto reflectable = jsonReader.read(CreatorObject::typeInfo());
+    auto reflectable = jsonReader.read(typeInfo<CreatorObject>());
     ASSERT_TRUE(reflectable);
 
-    reflectable->initializeChildren();
-
     ASSERT_EQ(13, reflectable->getField("value")->getUInt32());
-    ASSERT_EQ(13, reflectable->getField("nested")->getParameter("param")->getUInt32());
     ASSERT_EQ(10, reflectable->find("nested.value")->getUInt32());
-    ASSERT_EQ("nested"_sv, reflectable->find("nested.text")->getStringView());
+    ASSERT_EQ("nested"sv, reflectable->find("nested.text")->getStringView());
     ASSERT_EQ(BitBuffer(), reflectable->find("nested.externData")->getBitBuffer());
     const Span<const uint8_t> bytesData = reflectable->find("nested.bytesData")->getBytes();
     ASSERT_EQ(0, bytesData.size());
@@ -587,7 +566,7 @@ TEST(JsonReaderTest, jsonParserException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const JsonParserException& e)
                 {
@@ -607,7 +586,7 @@ TEST(JsonReaderTest, wrongKeyException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -629,7 +608,7 @@ TEST(JsonReaderTest, wrongValueTypeException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -666,7 +645,7 @@ TEST(JsonReaderTest, wrongBitBufferException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -700,7 +679,7 @@ TEST(JsonReaderTest, partialBitBufferException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -730,7 +709,7 @@ TEST(JsonReaderTest, bigBitBufferByteValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -762,7 +741,7 @@ TEST(JsonReaderTest, negativeBitBufferByteValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -793,7 +772,7 @@ TEST(JsonReaderTest, wrongBitBufferSizeValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -823,7 +802,7 @@ TEST(JsonReaderTest, wrongBitBufferNullPtrValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -854,7 +833,7 @@ TEST(JsonReaderTest, wrongBitBufferBoolValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -885,7 +864,7 @@ TEST(JsonReaderTest, wrongBitBufferDoubleValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -916,7 +895,7 @@ TEST(JsonReaderTest, wrongBitBufferStringValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -954,7 +933,7 @@ TEST(JsonReaderTest, wrongBytesException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -983,7 +962,7 @@ TEST(JsonReaderTest, negativeBytesByteValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -1000,7 +979,7 @@ TEST(JsonReaderTest, jsonArrayException)
     std::stringstream str("[1, 2]");
     JsonReader jsonReader(str);
 
-    ASSERT_THROW(jsonReader.read(CreatorObject::typeInfo()), CppRuntimeException);
+    ASSERT_THROW(jsonReader.read(typeInfo<CreatorObject>()), CppRuntimeException);
 }
 
 TEST(JsonReaderTest, jsonValueException)
@@ -1008,7 +987,7 @@ TEST(JsonReaderTest, jsonValueException)
     std::stringstream str("\"text\"");
     JsonReader jsonReader(str);
 
-    ASSERT_THROW(jsonReader.read(CreatorObject::typeInfo()), CppRuntimeException);
+    ASSERT_THROW(jsonReader.read(typeInfo<CreatorObject>()), CppRuntimeException);
 }
 
 TEST(JsonReaderTest, bigLongValueException)
@@ -1023,7 +1002,7 @@ TEST(JsonReaderTest, bigLongValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -1048,7 +1027,7 @@ TEST(JsonReaderTest, floatLongValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -1079,7 +1058,7 @@ TEST(JsonReaderTest, bigBytesByteValueException)
             {
                 try
                 {
-                    jsonReader.read(CreatorObject::typeInfo());
+                    jsonReader.read(typeInfo<CreatorObject>());
                 }
                 catch (const CppRuntimeException& e)
                 {
@@ -1100,17 +1079,17 @@ TEST(JsonReaderTest, bytesAdapterUninitializedCalls)
     ASSERT_THROW(bytesAdapter.endObject(), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.beginArray(), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.endArray(), CppRuntimeException);
-    ASSERT_THROW(bytesAdapter.visitKey("nonexisting"_sv), CppRuntimeException);
+    ASSERT_THROW(bytesAdapter.visitKey("nonexisting"sv), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.visitValue(static_cast<uint64_t>(10)), CppRuntimeException);
-    bytesAdapter.visitKey("buffer"_sv);
+    bytesAdapter.visitKey("buffer"sv);
     ASSERT_THROW(bytesAdapter.get(), CppRuntimeException);
-    ASSERT_THROW(bytesAdapter.visitKey("nonexisting"_sv), CppRuntimeException);
+    ASSERT_THROW(bytesAdapter.visitKey("nonexisting"sv), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.visitValue(nullptr), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.visitValue(true), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.visitValue(static_cast<int64_t>(-1)), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.visitValue(static_cast<uint64_t>(1)), CppRuntimeException);
     ASSERT_THROW(bytesAdapter.visitValue(0.0), CppRuntimeException);
-    ASSERT_THROW(bytesAdapter.visitValue("BadValue"_sv), CppRuntimeException);
+    ASSERT_THROW(bytesAdapter.visitValue("BadValue"sv), CppRuntimeException);
 }
 
 TEST(JsonReaderTest, bitBufferAdapterUninitializedCalls)
@@ -1122,17 +1101,17 @@ TEST(JsonReaderTest, bitBufferAdapterUninitializedCalls)
     ASSERT_THROW(bitBufferAdapter.endObject(), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.beginArray(), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.endArray(), CppRuntimeException);
-    ASSERT_THROW(bitBufferAdapter.visitKey("nonexisting"_sv), CppRuntimeException);
+    ASSERT_THROW(bitBufferAdapter.visitKey("nonexisting"sv), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.visitValue(static_cast<uint64_t>(10)), CppRuntimeException);
-    bitBufferAdapter.visitKey("buffer"_sv);
+    bitBufferAdapter.visitKey("buffer"sv);
     ASSERT_THROW(bitBufferAdapter.get(), CppRuntimeException);
-    ASSERT_THROW(bitBufferAdapter.visitKey("nonexisting"_sv), CppRuntimeException);
+    ASSERT_THROW(bitBufferAdapter.visitKey("nonexisting"sv), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.visitValue(nullptr), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.visitValue(true), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.visitValue(static_cast<int64_t>(-1)), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.visitValue(static_cast<uint64_t>(1)), CppRuntimeException);
     ASSERT_THROW(bitBufferAdapter.visitValue(0.0), CppRuntimeException);
-    ASSERT_THROW(bitBufferAdapter.visitValue("BadValue"_sv), CppRuntimeException);
+    ASSERT_THROW(bitBufferAdapter.visitValue("BadValue"sv), CppRuntimeException);
 }
 
 TEST(JsonReaderTest, creatorAdapter)
@@ -1144,15 +1123,13 @@ TEST(JsonReaderTest, creatorAdapter)
     ASSERT_THROW(creatorAdapter.endObject(), CppRuntimeException);
     ASSERT_THROW(creatorAdapter.beginArray(), CppRuntimeException);
     ASSERT_THROW(creatorAdapter.endArray(), CppRuntimeException);
-    ASSERT_THROW(creatorAdapter.visitKey("nonexistent"_sv), CppRuntimeException);
+    ASSERT_THROW(creatorAdapter.visitKey("nonexistent"sv), CppRuntimeException);
     ASSERT_THROW(creatorAdapter.visitValue(nullptr), CppRuntimeException);
     ASSERT_THROW(creatorAdapter.visitValue(true), CppRuntimeException);
     ASSERT_THROW(creatorAdapter.visitValue(static_cast<int64_t>(-1)), CppRuntimeException);
     ASSERT_THROW(creatorAdapter.visitValue(static_cast<uint64_t>(1)), CppRuntimeException);
     ASSERT_THROW(creatorAdapter.visitValue(0.0), CppRuntimeException);
-    ASSERT_THROW(creatorAdapter.visitValue("BadValue"_sv), CppRuntimeException);
+    ASSERT_THROW(creatorAdapter.visitValue("BadValue"sv), CppRuntimeException);
 }
 
 } // namespace zserio
-
-#endif
