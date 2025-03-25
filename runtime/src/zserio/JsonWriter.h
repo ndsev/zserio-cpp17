@@ -139,20 +139,20 @@ public:
      */
     void setEnumerableFormat(EnumerableFormat enumerableFormat);
 
-    void beginRoot(const IBasicReflectableConstPtr<ALLOC>& compound) override;
-    void endRoot(const IBasicReflectableConstPtr<ALLOC>& compound) override;
+    void beginRoot(const IBasicReflectableDataConstPtr<ALLOC>& compound) override;
+    void endRoot(const IBasicReflectableDataConstPtr<ALLOC>& compound) override;
 
     void beginArray(
-            const IBasicReflectableConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) override;
+            const IBasicReflectableDataConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) override;
     void endArray(
-            const IBasicReflectableConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) override;
+            const IBasicReflectableDataConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo) override;
 
-    void beginCompound(const IBasicReflectableConstPtr<ALLOC>& compound, const BasicFieldInfo<ALLOC>& fieldInfo,
-            size_t elementIndex) override;
-    void endCompound(const IBasicReflectableConstPtr<ALLOC>& compound, const BasicFieldInfo<ALLOC>& fieldInfo,
-            size_t elementIndex) override;
+    void beginCompound(const IBasicReflectableDataConstPtr<ALLOC>& compound,
+            const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex) override;
+    void endCompound(const IBasicReflectableDataConstPtr<ALLOC>& compound,
+            const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex) override;
 
-    void visitValue(const IBasicReflectableConstPtr<ALLOC>& value, const BasicFieldInfo<ALLOC>& fieldInfo,
+    void visitValue(const IBasicReflectableDataConstPtr<ALLOC>& value, const BasicFieldInfo<ALLOC>& fieldInfo,
             size_t elementIndex) override;
 
 private:
@@ -168,11 +168,11 @@ private:
 
     void writeIndent();
     void writeKey(std::string_view key);
-    void writeValue(const IBasicReflectableConstPtr<ALLOC>& reflectable);
+    void writeValue(const IBasicReflectableDataConstPtr<ALLOC>& reflectable);
     void writeBitBuffer(const BasicBitBuffer<ALLOC>& bitBuffer);
     void writeBytes(Span<const uint8_t> value);
-    void writeStringifiedEnum(const IBasicReflectableConstPtr<ALLOC>& reflectable);
-    void writeStringifiedBitmask(const IBasicReflectableConstPtr<ALLOC>& reflectable);
+    void writeStringifiedEnum(const IBasicReflectableDataConstPtr<ALLOC>& reflectable);
+    void writeStringifiedBitmask(const IBasicReflectableDataConstPtr<ALLOC>& reflectable);
 
     std::ostream& m_out;
     Optional<BasicString<RebindAlloc<ALLOC, char>>> m_indent;
@@ -212,7 +212,7 @@ BasicJsonWriter<ALLOC>::BasicJsonWriter(std::ostream& out,
         m_out(out),
         m_indent(optionalIndent),
         m_itemSeparator(
-                m_indent.hasValue() ? DEFAULT_ITEM_SEPARATOR_WITH_INDENT : DEFAULT_ITEM_SEPARATOR, allocator),
+                m_indent.has_value() ? DEFAULT_ITEM_SEPARATOR_WITH_INDENT : DEFAULT_ITEM_SEPARATOR, allocator),
         m_keySeparator(DEFAULT_KEY_SEPARATOR, allocator)
 {}
 
@@ -235,13 +235,13 @@ void BasicJsonWriter<ALLOC>::setEnumerableFormat(EnumerableFormat enumerableForm
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::beginRoot(const IBasicReflectableConstPtr<ALLOC>&)
+void BasicJsonWriter<ALLOC>::beginRoot(const IBasicReflectableDataConstPtr<ALLOC>&)
 {
     beginObject();
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::endRoot(const IBasicReflectableConstPtr<ALLOC>&)
+void BasicJsonWriter<ALLOC>::endRoot(const IBasicReflectableDataConstPtr<ALLOC>&)
 {
     endObject();
     m_out.flush();
@@ -249,7 +249,7 @@ void BasicJsonWriter<ALLOC>::endRoot(const IBasicReflectableConstPtr<ALLOC>&)
 
 template <typename ALLOC>
 void BasicJsonWriter<ALLOC>::beginArray(
-        const IBasicReflectableConstPtr<ALLOC>&, const BasicFieldInfo<ALLOC>& fieldInfo)
+        const IBasicReflectableDataConstPtr<ALLOC>&, const BasicFieldInfo<ALLOC>& fieldInfo)
 {
     beginItem();
 
@@ -259,7 +259,7 @@ void BasicJsonWriter<ALLOC>::beginArray(
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::endArray(const IBasicReflectableConstPtr<ALLOC>&, const BasicFieldInfo<ALLOC>&)
+void BasicJsonWriter<ALLOC>::endArray(const IBasicReflectableDataConstPtr<ALLOC>&, const BasicFieldInfo<ALLOC>&)
 {
     endArray();
 
@@ -267,8 +267,8 @@ void BasicJsonWriter<ALLOC>::endArray(const IBasicReflectableConstPtr<ALLOC>&, c
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::beginCompound(
-        const IBasicReflectableConstPtr<ALLOC>&, const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex)
+void BasicJsonWriter<ALLOC>::beginCompound(const IBasicReflectableDataConstPtr<ALLOC>&,
+        const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex)
 {
     beginItem();
 
@@ -282,7 +282,7 @@ void BasicJsonWriter<ALLOC>::beginCompound(
 
 template <typename ALLOC>
 void BasicJsonWriter<ALLOC>::endCompound(
-        const IBasicReflectableConstPtr<ALLOC>&, const BasicFieldInfo<ALLOC>&, size_t)
+        const IBasicReflectableDataConstPtr<ALLOC>&, const BasicFieldInfo<ALLOC>&, size_t)
 {
     endObject();
 
@@ -290,7 +290,7 @@ void BasicJsonWriter<ALLOC>::endCompound(
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::visitValue(const IBasicReflectableConstPtr<ALLOC>& value,
+void BasicJsonWriter<ALLOC>::visitValue(const IBasicReflectableDataConstPtr<ALLOC>& value,
         const BasicFieldInfo<ALLOC>& fieldInfo, size_t elementIndex)
 {
     beginItem();
@@ -313,7 +313,7 @@ void BasicJsonWriter<ALLOC>::beginItem()
         m_out.write(m_itemSeparator.data(), static_cast<std::streamsize>(m_itemSeparator.size()));
     }
 
-    if (m_indent.hasValue())
+    if (m_indent.has_value())
     {
         m_out.put('\n');
     }
@@ -339,7 +339,7 @@ void BasicJsonWriter<ALLOC>::beginObject()
 template <typename ALLOC>
 void BasicJsonWriter<ALLOC>::endObject()
 {
-    if (m_indent.hasValue())
+    if (m_indent.has_value())
     {
         m_out.put('\n');
     }
@@ -363,7 +363,7 @@ void BasicJsonWriter<ALLOC>::beginArray()
 template <typename ALLOC>
 void BasicJsonWriter<ALLOC>::endArray()
 {
-    if (m_indent.hasValue())
+    if (m_indent.has_value())
     {
         m_out.put('\n');
     }
@@ -378,7 +378,7 @@ void BasicJsonWriter<ALLOC>::endArray()
 template <typename ALLOC>
 void BasicJsonWriter<ALLOC>::writeIndent()
 {
-    if (m_indent.hasValue())
+    if (m_indent.has_value())
     {
         const auto& indent = m_indent.value();
         if (!indent.empty())
@@ -400,7 +400,7 @@ void BasicJsonWriter<ALLOC>::writeKey(std::string_view key)
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::writeValue(const IBasicReflectableConstPtr<ALLOC>& reflectable)
+void BasicJsonWriter<ALLOC>::writeValue(const IBasicReflectableDataConstPtr<ALLOC>& reflectable)
 {
     if (!reflectable)
     {
@@ -515,7 +515,7 @@ void BasicJsonWriter<ALLOC>::writeBytes(Span<const uint8_t> value)
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::writeStringifiedEnum(const IBasicReflectableConstPtr<ALLOC>& reflectable)
+void BasicJsonWriter<ALLOC>::writeStringifiedEnum(const IBasicReflectableDataConstPtr<ALLOC>& reflectable)
 {
     const auto& typeInfo = reflectable->getTypeInfo();
     const uint64_t enumValue = TypeInfoUtil::isSigned(typeInfo.getUnderlyingType().getCppType())
@@ -541,7 +541,7 @@ void BasicJsonWriter<ALLOC>::writeStringifiedEnum(const IBasicReflectableConstPt
 }
 
 template <typename ALLOC>
-void BasicJsonWriter<ALLOC>::writeStringifiedBitmask(const IBasicReflectableConstPtr<ALLOC>& reflectable)
+void BasicJsonWriter<ALLOC>::writeStringifiedBitmask(const IBasicReflectableDataConstPtr<ALLOC>& reflectable)
 {
     BasicString<RebindAlloc<ALLOC, char>> stringValue(get_allocator());
     const auto& typeInfo = reflectable->getTypeInfo();
