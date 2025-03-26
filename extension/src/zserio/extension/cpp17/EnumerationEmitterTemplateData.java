@@ -32,7 +32,7 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
         underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.create(nativeType, enumTypeInstantiation);
 
         isSigned = nativeType.isSigned();
-        numBits = nativeType.getNumBits();
+        nativeNumBits = NativeIntegralType.getNativeNumbits(nativeType.getNumBits());
 
         final List<EnumItem> enumItems = enumType.getItems();
         items = new ArrayList<EnumItemData>(enumItems.size());
@@ -55,9 +55,9 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
         return isSigned;
     }
 
-    public int getNumBits()
+    public int getNativeNumBits()
     {
-        return numBits;
+        return nativeNumBits;
     }
 
     public Iterable<EnumItemData> getItems()
@@ -127,6 +127,6 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
     private final boolean usedInPackedArray;
     private final NativeTypeInfoTemplateData underlyingTypeInfo;
     private final boolean isSigned;
-    private final int numBits;
+    private final int nativeNumBits;
     private final List<EnumItemData> items;
 }

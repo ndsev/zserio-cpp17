@@ -86,7 +86,7 @@ ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.alloca
             return ${types.any.name}(m_value, alloc);
         }
 
-        ${underlyingTypeInfo.typeFullName}::ValueType get<#if !isSigned>U</#if>Int${numBits}() const override
+        ${underlyingTypeInfo.typeFullName}::ValueType get<#if !isSigned>U</#if>Int${nativeNumBits}() const override
         {
             return static_cast<typename ::std::underlying_type<${fullName}>::type>(m_value);
         }

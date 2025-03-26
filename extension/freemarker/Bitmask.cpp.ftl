@@ -82,7 +82,7 @@ ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.alloca
         }
 
         <#-- bitmask is always unsigned -->
-        ${fullName}::ZserioType::ValueType getUInt${numBits}() const override
+        ${fullName}::ZserioType::ValueType getUInt${nativeNumBits}() const override
         {
             return m_bitmask.getValue();
         }

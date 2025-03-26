@@ -29,7 +29,7 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
         addHeaderIncludesForType(nativeType);
 
         underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.create(nativeType, bitmaskTypeInstantiation);
-        numBits = nativeType.getNumBits();
+        nativeNumBits = NativeIntegralType.getNativeNumbits(nativeType.getNumBits());
 
         final List<BitmaskValue> bitmaskValues = bitmaskType.getValues();
         values = new ArrayList<BitmaskValueData>(bitmaskValues.size());
@@ -47,9 +47,9 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
         return underlyingTypeInfo;
     }
 
-    public int getNumBits()
+    public int getNativeNumBits()
     {
-        return numBits;
+        return nativeNumBits;
     }
 
     public Iterable<BitmaskValueData> getValues()
@@ -113,6 +113,6 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
 
     private final boolean usedInPackedArray;
     private final NativeTypeInfoTemplateData underlyingTypeInfo;
-    private final int numBits;
+    private final int nativeNumBits;
     private final List<BitmaskValueData> values;
 }
