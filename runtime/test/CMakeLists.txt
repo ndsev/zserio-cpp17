@@ -137,6 +137,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/CppRuntimeVersionTest.cpp
     zserio/ConstraintExceptionTest.cpp
     zserio/DataViewTest.cpp
+    zserio/DebugStringUtilTest.cpp
     zserio/EnumsTest.cpp
     zserio/ExtendedFieldExceptionTest.cpp
     zserio/ExtendedTest.cpp
@@ -171,6 +172,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/ValidationExceptionTest.cpp
     zserio/ValidationSqliteUtilTest.cpp
     zserio/VariantTest.cpp
+    zserio/WalkerTest.cpp
     zserio/ZserioTreeCreatorTest.cpp
 )
 

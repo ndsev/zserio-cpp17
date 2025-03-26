@@ -59,6 +59,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
     zserio/DataView.h
+    zserio/DebugStringUtil.h
     zserio/DeltaContext.h
     zserio/Enums.h
     zserio/Extended.h
@@ -78,6 +79,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ISqliteDatabase.h
     zserio/ITypeInfo.h
     zserio/IValidationObserver.h
+    zserio/IWalkFilter.h
     zserio/IWalkObserver.h
     zserio/JsonDecoder.h
     zserio/JsonEncoder.cpp
@@ -119,6 +121,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ValidationSqliteUtil.h
     zserio/Vector.h
     zserio/View.h
+    zserio/Walker.h
     zserio/WalkerConst.h
     zserio/ZserioTreeCreator.cpp
     zserio/ZserioTreeCreator.h
