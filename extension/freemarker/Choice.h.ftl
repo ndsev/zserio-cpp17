@@ -188,7 +188,6 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
 {
     static const ${types.typeInfo.name}& get();
 };
-</#if>
 <@namespace_end ["detail"]/>
 
 template <>
@@ -197,6 +196,9 @@ ${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${
 template <>
 ${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
 <@namespace_end ["zserio"]/>
+<#else>
+<@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 template <>

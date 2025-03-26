@@ -451,7 +451,6 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 
     return typeInfo;
 }
-</#if>
 <@namespace_end ["detail"]/>
 
 <#macro union_reflectable isConst>
@@ -521,6 +520,9 @@ ${types.reflectablePtr.name} reflectable(${fullName}& object, const ${types.allo
     <@union_reflectable false/>
 }
 <@namespace_end ["zserio"]/>
+<#else>
+<@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> value</#if>) const
