@@ -453,7 +453,7 @@ private:
 
 public:
     explicit StringReflectableData(std::string_view value) :
-            Base(typeInfo<BasicString<ALLOC>>(), value)
+            Base(typeInfo<BasicString<RebindAlloc<ALLOC, char>>>(), value)
     {}
 
     std::string_view getStringView() const override
