@@ -317,7 +317,7 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilUnion& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
@@ -325,9 +325,9 @@ template <>
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilUnion& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
                 ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilUnion>(), alloc),
-                m_object(object_)
+                m_object(object)
         {}
 
         ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
@@ -374,11 +374,11 @@ template <>
         const ::test_object::polymorphic_allocator::ReflectableUtilUnion& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+    return std::allocate_shared<Reflectable>(allocator, value, allocator);
 }
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableUtilUnion& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
     class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
@@ -386,9 +386,9 @@ template <>
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::polymorphic_allocator::ReflectableUtilUnion& object_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::polymorphic_allocator::ReflectableUtilUnion& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
                 ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableUtilUnion>(), alloc),
-                m_object(object_)
+                m_object(object)
         {}
 
         ::zserio::pmr::IReflectableDataConstPtr getField(::std::string_view name) const override
@@ -529,7 +529,7 @@ template <>
         ::test_object::polymorphic_allocator::ReflectableUtilUnion& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+    return std::allocate_shared<Reflectable>(allocator, value, allocator);
 }
 
 } // namespace zserio
