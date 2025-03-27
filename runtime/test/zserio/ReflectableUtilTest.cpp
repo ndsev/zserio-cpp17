@@ -331,7 +331,7 @@ TEST(ReflectableUtilTest, getValueString)
 TEST(ReflectableUtilTest, getValueBitBuffer)
 {
     const BitBuffer bitBuffer;
-    auto reflectablePtr = reflectable(BitBuffer(bitBuffer));
+    auto reflectablePtr = reflectable(bitBuffer);
     const BitBuffer& bitBufferRef = ReflectableUtil::getValue<BitBuffer>(reflectablePtr);
     ASSERT_EQ(bitBuffer, bitBufferRef);
 }

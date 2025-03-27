@@ -692,7 +692,7 @@ TEST_F(ReflectableTest, fixedUnsignedBitField9) // mapped to uint16_t
 
 TEST_F(ReflectableTest, fixedUnsignedBitField31) // mapped to uint32_t
 {
-    const UInt31 value = UINT32_MAX >> 1;
+    const UInt31 value = UINT32_MAX >> 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 31), 31);
@@ -765,7 +765,7 @@ TEST_F(ReflectableTest, dynamicUnsignedBitField9) // mapped to uint16_t
 TEST_F(ReflectableTest, dynamicUnsignedBitField31) // mapped to uint32_t
 {
     const uint8_t numBits = 31;
-    const DynUInt32<> value = UINT32_MAX >> 1;
+    const DynUInt32<> value = UINT32_MAX >> 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
@@ -846,7 +846,7 @@ TEST_F(ReflectableTest, varuintReflectable)
 
 TEST_F(ReflectableTest, varsizeReflectable)
 {
-    const VarSize value = (UINT32_C(1) << (7 + 7 + 7 + 7 + 3)) - 1;
+    const VarSize value = (UINT32_C(1) << (7U + 7 + 7 + 7 + 3)) - 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
             std::bind(&BitStreamReader::readVarSize, _1), zserio::detail::bitSizeOf(value));

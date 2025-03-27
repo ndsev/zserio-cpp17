@@ -1,3 +1,5 @@
+bugprone-exception-escape::gen/gif/gif_data/SubBlock.h
+bugprone-exception-escape::gen/gif/gif_data/ZippedSubBlock.h
 bugprone-exception-escape:gen/gif/gif_data/BlockData.h
 bugprone-exception-escape:gen/gif/gif_data/BlockTypes.h
 bugprone-exception-escape:gen/gif/gif_data/BlockTypes.h
@@ -6,7 +8,9 @@ bugprone-exception-escape:gen/gif/gif_data/ExtensionTypes.h
 bugprone-exception-escape:gen/gif/gif_data/GifData.h
 bugprone-exception-escape:gen/gif/gif_data/ImageDescriptor.h
 bugprone-exception-escape:gen/gif/gif_data/RasterData.h
+bugprone-exception-escape:gen/gif/gif_data/SubBlock.h
 bugprone-exception-escape:gen/gif/gif_data/ZippedBlockData.h
+bugprone-exception-escape:gen/gif/gif_data/ZippedSubBlock.h
 bugprone-exception-escape:gen/gif/screen_descriptor/ScreenDescriptor.h
 
 bugprone-misplaced-widening-cast:gen/gif/gif_data/ImageDescriptor.cpp

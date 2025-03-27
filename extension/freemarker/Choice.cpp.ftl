@@ -512,10 +512,10 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
         using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
 
-        explicit Reflectable(<#if isConst>const </#if>${fullName}& object_, const ${types.allocator.default}& alloc) :
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc) :
                 ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
                         <#lt>typeInfo<${fullName}>(), alloc),
-                m_object(object_)
+                m_object(object)
         {}
     <#if fieldList?has_content>
 
@@ -559,16 +559,16 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         <#if isConst>const </#if>${fullName}& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, object, allocator);
+    return std::allocate_shared<Reflectable>(allocator, value, allocator);
 </#macro>
 template <>
-${types.reflectableConstPtr.name} reflectable(const ${fullName}& object, const ${types.allocator.default}& allocator)
+${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
 {
     <@choice_reflectable true/>
 }
 
 template <>
-${types.reflectablePtr.name} reflectable(${fullName}& object, const ${types.allocator.default}& allocator)
+${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator)
 {
     <@choice_reflectable false/>
 }

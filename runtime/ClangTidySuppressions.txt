@@ -83,11 +83,11 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:655
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:83
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:96
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:45
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:50
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:54
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:55
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:56
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:97
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:98
 
@@ -105,6 +105,9 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:49
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:99
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:100
 
+# This multiple inheritance is intended and we think that to avoid it would mean much more obscure design.
+fuchsia-multiple-inheritance:src/zserio/ReflectableData.h:495
+
 # Optional follows std::optional so the ctors should be implicit.
 google-explicit-constructor:src/zserio/Optional.h:122
 google-explicit-constructor:src/zserio/Optional.h:132
@@ -118,6 +121,10 @@ google-explicit-constructor:src/zserio/Span.h:138
 google-explicit-constructor:src/zserio/Span.h:150
 google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
+
+# This is necessary for low level implementation of UniquePtrDeleter
+google-explicit-constructor:src/zserio/UniquePtr.h:57
+google-explicit-constructor:src/zserio/UniquePtr.h:68
 
 # PropagatingPolymorphicAllocator follows std::polymorphic:_allocator so the ctors should be implicit.
 google-explicit-constructor:src/zserio/pmr/PropagatingPolymorphicAllocator.h:35
@@ -141,6 +148,14 @@ misc-no-recursion:src/zserio/JsonParser.h:224
 misc-no-recursion:src/zserio/JsonParser.h:235
 misc-no-recursion:src/zserio/JsonParser.h:253
 misc-no-recursion:src/zserio/JsonParser.h:268
+misc-no-recursion:src/zserio/ReflectableData.h:1368
+misc-no-recursion:src/zserio/ReflectableData.h:1412
+misc-no-recursion:src/zserio/ReflectableUtil.h:154
+misc-no-recursion:src/zserio/ReflectableUtil.h:190
+misc-no-recursion:src/zserio/ReflectableUtil.h:210
+misc-no-recursion:src/zserio/Walker.h:485
+misc-no-recursion:src/zserio/Walker.h:518
+misc-no-recursion:src/zserio/Walker.h:544
 misc-no-recursion:src/zserio/ZserioTreeCreator.h:221
 misc-no-recursion:src/zserio/ZserioTreeCreator.h:350
 misc-no-recursion:src/zserio/ZserioTreeCreator.h:357
@@ -148,6 +163,7 @@ misc-no-recursion:src/zserio/ZserioTreeCreator.h:357
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
+google-build-using-namespace:test/zserio/ReflectableTest.cpp:17
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
