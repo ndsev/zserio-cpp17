@@ -94,7 +94,7 @@ set_global_cpp_variables()
 
     MAKE_CMAKE_GENERATOR="${MAKE_CMAKE_GENERATOR:-Unix Makefiles}"
     MSVC_CMAKE_GENERATOR="${MSVC_CMAKE_GENERATOR:-Visual Studio 17 2022}"
-    MSVC_CMAKE_TOOLSET="${MSVC_CMAKE_TOOLSET:-v141}"
+    MSVC_CMAKE_TOOLSET="${MSVC_CMAKE_TOOLSET:-v143}"
 
     # Extra arguments to be passed by CMake to a native build tool
     CMAKE_BUILD_OPTIONS="${CMAKE_BUILD_OPTIONS:-""}"
