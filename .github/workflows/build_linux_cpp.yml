@@ -132,7 +132,9 @@ jobs:
 
     - name: Run Zserio integration tests with extra arguments
       run: |
-        export ZSERIO_EXTRA_ARGS="-setCppAllocator polymorphic"
+        export ZSERIO_EXTRA_ARGS="-setCppAllocator pmr"
+        scripts/test.sh -p cpp-${PACKAGE}
+        export ZSERIO_EXTRA_ARGS="-setCppAllocator ppmr"
         scripts/test.sh -p cpp-${PACKAGE}
 
     - name: Run Zserio custom integration test
