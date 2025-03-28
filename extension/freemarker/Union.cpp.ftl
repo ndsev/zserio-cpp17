@@ -11,6 +11,7 @@
 #include <zserio/SizeConvertUtil.h>
 <#if withTypeInfoCode>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 </#if>
 #include <zserio/UnionCaseException.h>

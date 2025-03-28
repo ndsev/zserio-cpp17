@@ -8,6 +8,7 @@
 #include <string_view>
 
 #include "zserio/CppRuntimeException.h"
+#include "zserio/Enums.h"
 #include "zserio/IReflectableData.h"
 #include "zserio/ITypeInfo.h"
 #include "zserio/Traits.h"
@@ -19,17 +20,11 @@ namespace zserio
 namespace detail
 {
 
-template <typename T, typename = void>
+template <typename T>
 struct gets_value_by_value
         : std::integral_constant<bool,
-                  std::is_arithmetic<T>::value || std::is_same<std::string_view, T>::value ||
-                          std::is_enum<T>::value || is_bitmask<T>::value>
-{};
-
-template <typename T>
-struct gets_value_by_value<T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>>>
-        : std::true_type
+                  std::is_arithmetic_v<T> || std::is_same_v<std::string_view, T> || std::is_enum_v<T> ||
+                          is_bitmask_v<T> || is_numeric_wrapper_v<T>>
 {};
 
 } // namespace detail
@@ -124,7 +119,7 @@ public:
      *
      * \return Constant reference to the bit buffer value.
      *
-     * \throw CppRuntimeException When wrong type is requested ("Bad type in AnyHolder").
+     * \throw CppRuntimeException When wrong type is requested ("Bad type in BasicAny").
      */
     template <typename T, typename ALLOC = std::allocator<uint8_t>,
             typename std::enable_if<std::is_same<BasicBitBuffer<ALLOC>, T>::value, int>::type = 0>
@@ -133,6 +128,18 @@ public:
     {
         return reflectable->getAnyValue(allocator).template get<std::reference_wrapper<const T>>().get();
     }
+
+    /**
+     * Gets a zserio type T from any value.
+     *
+     * \param any Any value.
+     *
+     * \return Zserio type T from a value stored in the any.
+     *
+     * \throw CppRuntimeException When wrong type is present in the any value ("Bad type in BasicAny").
+     */
+    template <typename T, typename ALLOC>
+    static T fromAny(const BasicAny<ALLOC>& any);
 
 private:
     template <typename ALLOC>
@@ -301,6 +308,62 @@ inline bool ReflectableUtil::doubleValuesAlmostEqual(double lhs, double rhs)
     // see: https://en.cppreference.com/w/cpp/types/numeric_limits/epsilon
     return std::fabs(lhs - rhs) <= std::numeric_limits<double>::epsilon() * std::fabs(lhs + rhs) ||
             std::fabs(lhs - rhs) < std::numeric_limits<double>::min();
+}
+
+template <typename T, typename ALLOC>
+T ReflectableUtil::fromAny(const BasicAny<ALLOC>& any)
+{
+    if constexpr (is_bitmask_v<T>)
+    {
+        using ZserioType = typename T::ZserioType;
+        using UnderlyingType = typename ZserioType::ValueType;
+
+        if (any.template isType<T>())
+        {
+            return any.template get<T>();
+        }
+        else if (any.template isType<ZserioType>())
+        {
+            return T(any.template get<ZserioType>());
+        }
+        else
+        {
+            return T(any.template get<UnderlyingType>());
+        }
+    }
+    else if constexpr (std::is_enum_v<T>)
+    {
+        using ZserioType = typename EnumTraits<T>::ZserioType;
+        using UnderlyingType = std::underlying_type_t<T>;
+
+        if (any.template isType<T>())
+        {
+            return any.template get<T>();
+        }
+        else if (any.template isType<ZserioType>())
+        {
+            return valueToEnum<T>(any.template get<ZserioType>());
+        }
+        else
+        {
+            return valueToEnum<T>(any.template get<UnderlyingType>());
+        }
+    }
+    else if constexpr (is_numeric_wrapper_v<T>)
+    {
+        if (any.template isType<T>())
+        {
+            return any.template get<T>();
+        }
+        else
+        {
+            return any.template get<typename T::ValueType>();
+        }
+    }
+    else
+    {
+        return any.template get<T>();
+    }
 }
 
 } // namespace zserio

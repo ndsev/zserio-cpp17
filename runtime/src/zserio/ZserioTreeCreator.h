@@ -27,33 +27,32 @@ namespace detail
 template <typename T, typename ALLOC>
 BasicAny<ALLOC> makeAnyValue(const IBasicTypeInfo<ALLOC>& typeInfo, T&& value, const ALLOC& allocator);
 
-template <typename T, typename U,
-        typename std::enable_if<std::is_unsigned<typename std::decay<U>::type>::value, int>::type = 0>
+template <typename T, typename U, std::enable_if_t<std::is_integral_v<std::decay_t<U>>, int> = 0>
 bool checkArithmeticValueRanges(U value)
 {
-    // value is unsigned
-    return (value <= static_cast<U>(std::numeric_limits<T>::max()));
+    if constexpr (std::is_unsigned_v<std::decay_t<U>>)
+    {
+        // value is unsigned
+        return (value <= static_cast<U>(std::numeric_limits<T>::max()));
+    }
+    else if constexpr (std::is_signed_v<std::decay_t<U>> && std::is_signed_v<std::decay_t<T>>)
+    {
+        // value is signed and it is converted to signed value
+        return (static_cast<int64_t>(value) >= static_cast<int64_t>(std::numeric_limits<T>::min()) &&
+                static_cast<int64_t>(value) <= static_cast<int64_t>(std::numeric_limits<T>::max()));
+    }
+    else if constexpr (std::is_signed_v<std::decay_t<U>> && std::is_unsigned_v<std::decay_t<T>>)
+    {
+        // value is signed and it is converted to unsigned value
+        return (value >= 0 &&
+                static_cast<uint64_t>(value) <= static_cast<uint64_t>(std::numeric_limits<T>::max()));
+    }
 }
 
-template <typename T, typename U,
-        typename std::enable_if<std::is_signed<typename std::decay<U>::type>::value &&
-                        std::is_signed<typename std::decay<T>::type>::value,
-                int>::type = 0>
+template <typename T, typename U, std::enable_if_t<is_numeric_wrapper_v<std::decay_t<U>>, int> = 0>
 bool checkArithmeticValueRanges(U value)
 {
-    // value is signed and it is converted to signed value
-    return (static_cast<int64_t>(value) >= static_cast<int64_t>(std::numeric_limits<T>::min()) &&
-            static_cast<int64_t>(value) <= static_cast<int64_t>(std::numeric_limits<T>::max()));
-}
-
-template <typename T, typename U,
-        typename std::enable_if<std::is_signed<typename std::decay<U>::type>::value &&
-                        std::is_unsigned<typename std::decay<T>::type>::value,
-                int>::type = 0>
-bool checkArithmeticValueRanges(U value)
-{
-    // value is signed and it is converted to unsigned value
-    return (value >= 0 && static_cast<uint64_t>(value) <= static_cast<uint64_t>(std::numeric_limits<T>::max()));
+    return checkArithmeticValueRanges<T>(static_cast<typename U::ValueType>(value));
 }
 
 template <typename T, typename ALLOC>
@@ -75,27 +74,27 @@ BasicAny<ALLOC> makeAnyIntegralValue(bool value, const ALLOC&)
             << value << "' cannot be converted to integral type!";
 }
 
-template <typename T, typename U, typename ALLOC,
-        typename std::enable_if<std::is_integral<typename std::decay<U>::type>::value, int>::type = 0>
+template <typename T, typename U, typename ALLOC>
 BasicAny<ALLOC> makeAnyIntegralValue(U value, const ALLOC& allocator)
 {
-    // check ranges of integers
-    if (!checkArithmeticValueRanges<T>(value))
+    using Type = std::decay_t<U>;
+    if constexpr (std::is_integral_v<Type> || is_numeric_wrapper_v<Type>)
     {
-        throw CppRuntimeException("ZserioTreeCreator: Integral value '")
-                << value << "' overflow (<" << std::numeric_limits<T>::min() << ", "
-                << std::numeric_limits<T>::max() << ">)!";
+        // check ranges of integers
+        if (!checkArithmeticValueRanges<T>(value))
+        {
+            throw CppRuntimeException("ZserioTreeCreator: Integral value '")
+                    << value << "' overflow (<" << std::numeric_limits<T>::min() << ", "
+                    << std::numeric_limits<T>::max() << ">)!";
+        }
+
+        return BasicAny<ALLOC>(static_cast<T>(value), allocator);
     }
-
-    return BasicAny<ALLOC>(static_cast<T>(value), allocator);
-}
-
-template <typename T, typename U, typename ALLOC,
-        typename std::enable_if<!std::is_integral<typename std::decay<U>::type>::value, int>::type = 0>
-BasicAny<ALLOC> makeAnyIntegralValue(const U& value, const ALLOC&)
-{
-    throw CppRuntimeException("ZserioTreeCreator: Value '")
-            << value << "' cannot be converted to integral value!";
+    else
+    {
+        throw CppRuntimeException("ZserioTreeCreator: Value '")
+                << value << "' cannot be converted to integral value!";
+    }
 }
 
 template <typename T, typename ALLOC>
@@ -105,20 +104,20 @@ BasicAny<ALLOC> makeAnyFloatingValue(bool value, const ALLOC&)
             << value << "' cannot be converted to floating type!";
 }
 
-template <typename T, typename U, typename ALLOC,
-        typename std::enable_if<std::is_arithmetic<typename std::decay<U>::type>::value, int>::type = 0>
+template <typename T, typename U, typename ALLOC>
 BasicAny<ALLOC> makeAnyFloatingValue(U value, const ALLOC& allocator)
 {
-    // allow conversion integers to floats
-    return BasicAny<ALLOC>(static_cast<T>(value), allocator);
-}
-
-template <typename T, typename U, typename ALLOC,
-        typename std::enable_if<!std::is_arithmetic<typename std::decay<U>::type>::value, int>::type = 0>
-BasicAny<ALLOC> makeAnyFloatingValue(const U& value, const ALLOC&)
-{
-    throw CppRuntimeException("ZserioTreeCreator: Value '")
-            << value << "' cannot be converted to floating value!";
+    using Type = std::decay_t<U>;
+    if constexpr (std::is_arithmetic_v<Type> || is_numeric_wrapper_v<Type>)
+    {
+        // allow conversion of integers to floats
+        return BasicAny<ALLOC>(static_cast<T>(value), allocator);
+    }
+    else
+    {
+        throw CppRuntimeException("ZserioTreeCreator: Value '")
+                << value << "' cannot be converted to floating value!";
+    }
 }
 
 template <typename ALLOC>

@@ -100,59 +100,8 @@ ${I}            return;
 ${I}        }
 
         </#if>
-        <#if field.array??>
 ${I}        <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <#rt>
-                    <#lt>value.get<<@field_data_type_name field/>>();
-        <#elseif field.typeInfo.isBitmask>
-${I}        if (value.isType<${field.typeInfo.typeFullName}>())
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <#rt>
-                        <#lt>value.get<${field.typeInfo.typeFullName}>();
-${I}        }
-${I}        else if (value.isType<${field.typeInfo.typeFullName}::ZserioType>())
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> =
-${I}                    ${field.typeInfo.typeFullName}(value.get<${field.typeInfo.typeFullName}::ZserioType>());
-${I}        }
-${I}        else
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> =
-${I}                    ${field.typeInfo.typeFullName}(<#rt>
-                                <#lt>value.get<${field.typeInfo.typeFullName}::ZserioType::ValueType>());
-${I}        }
-        <#elseif field.typeInfo.isEnum>
-${I}        if (value.isType<${field.typeInfo.typeFullName}>())
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <#rt>
-                        <#lt>value.get<${field.typeInfo.typeFullName}>();
-${I}        }
-${I}        else if (value.isType<typename EnumTraits<${field.typeInfo.typeFullName}>::ZserioType>())
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> =
-${I}                    valueToEnum<${field.typeInfo.typeFullName}>(<#rt>
-                                <#lt>value.get<typename EnumTraits<${field.typeInfo.typeFullName}>::ZserioType>());
-${I}        }
-${I}        else
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> =
-${I}                    valueToEnum<${field.typeInfo.typeFullName}>(<#rt>
-                                <#lt>value.get<std::underlying_type_t<${field.typeInfo.typeFullName}>>());
-${I}        }
-        <#elseif field.typeInfo.isNumeric>
-${I}        if (value.isType<${field.typeInfo.typeFullName}>())
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <#rt>
-                        <#lt>value.get<${field.typeInfo.typeFullName}>();
-${I}        }
-${I}        else
-${I}        {
-${I}            <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <#rt>
-                        <#lt>value.get<${field.typeInfo.typeFullName}::ValueType>();
-${I}        }
-        <#else>
-${I}        <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <#rt>
-                    <#lt>value.get<<@field_data_type_name field/>>();
-        </#if>
+                    <#lt>::zserio::ReflectableUtil::fromAny<<@field_data_type_name field/>>(value);
 ${I}        return;
 ${I}    }
     </#list>
@@ -167,59 +116,8 @@ ${I}{
     <#list fieldList as field>
 ${I}    if (name == "${field.name}")
 ${I}    {
-        <#if field.array??>
 ${I}        m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                value.get<<@field_data_type_name field/>>());
-        <#elseif field.typeInfo.isBitmask>
-${I}        if (value.isType<${field.typeInfo.typeFullName}>())
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    value.get<${field.typeInfo.typeFullName}>());
-${I}        }
-${I}        else if (value.isType<${field.typeInfo.typeFullName}::ZserioType>())
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    ${field.typeInfo.typeFullName}(value.get<${field.typeInfo.typeFullName}::ZserioType>()));
-${I}        }
-${I}        else
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    ${field.typeInfo.typeFullName}(<#rt>
-                                <#lt>value.get<${field.typeInfo.typeFullName}::ZserioType::ValueType>()));
-${I}        }
-        <#elseif field.typeInfo.isEnum>
-${I}        if (value.isType<${field.typeInfo.typeFullName}>())
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    value.get<${field.typeInfo.typeFullName}>());
-${I}        }
-${I}        else if (value.isType<typename EnumTraits<${field.typeInfo.typeFullName}>::ZserioType>())
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    valueToEnum<${field.typeInfo.typeFullName}>(<#rt>
-                                <#lt>value.get<typename EnumTraits<${field.typeInfo.typeFullName}>::ZserioType>()));
-${I}        }
-${I}        else
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    valueToEnum<${field.typeInfo.typeFullName}>(<#rt>
-                                <#lt>value.get<std::underlying_type_t<${field.typeInfo.typeFullName}>>()));
-${I}        }
-        <#elseif field.typeInfo.isNumeric>
-${I}        if (value.isType<${field.typeInfo.typeFullName}>())
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    value.get<${field.typeInfo.typeFullName}>());
-${I}        }
-${I}        else
-${I}        {
-${I}            m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                    value.get<${field.typeInfo.typeFullName}::ValueType>());
-${I}        }
-        <#else>
-${I}        m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
-${I}                value.get<<@field_data_type_name field/>>());
-        </#if>
+${I}                ::zserio::ReflectableUtil::fromAny<<@field_data_type_name field/>>(value));
 ${I}        return;
 ${I}    }
     </#list>

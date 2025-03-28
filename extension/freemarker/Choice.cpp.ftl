@@ -11,6 +11,7 @@
 #include <zserio/HashCodeUtil.h>
 <#if withTypeInfoCode>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 </#if>
 <@system_includes cppSystemIncludes/>

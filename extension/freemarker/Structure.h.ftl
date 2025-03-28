@@ -46,7 +46,7 @@ struct ${name}
 <#list fieldList>
 
     <#items as field>
-        <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
+    <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
     </#items>
 </#list>
 };

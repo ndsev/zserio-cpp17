@@ -3,6 +3,7 @@
 
 #include "zserio/Enums.h"
 #include "zserio/IReflectableData.h"
+#include "zserio/ReflectableUtil.h"
 #include "zserio/TypeInfoUtil.h"
 
 #include "IntrospectableDataBase.h"
@@ -908,94 +909,12 @@ public:
                     << "' of size " << size() << "!";
         }
 
-        using ElementType = typename RAW_ARRAY::value_type;
-
-        if constexpr (is_bitmask_v<ElementType>)
-        {
-            using ElementZserioType = typename ElementType::ZserioType;
-            using ElementUnderlyingType = typename ElementZserioType::ValueType;
-
-            if (value.template isType<ElementType>())
-            {
-                m_rawArray[index] = value.template get<ElementType>();
-            }
-            else if (value.template isType<ElementZserioType>())
-            {
-                m_rawArray[index] = ElementType(value.template get<ElementZserioType>());
-            }
-            else
-            {
-                m_rawArray[index] = ElementType(value.template get<ElementUnderlyingType>());
-            }
-        }
-        else if constexpr (std::is_enum_v<ElementType>)
-        {
-            using ElementZserioType = typename EnumTraits<ElementType>::ZserioType;
-            using ElementUnderlyingType = std::underlying_type_t<ElementType>;
-
-            if (value.template isType<ElementType>())
-            {
-                m_rawArray[index] = value.template get<ElementType>();
-            }
-            else if (value.template isType<ElementZserioType>())
-            {
-                m_rawArray[index] = valueToEnum<ElementType>(value.template get<ElementZserioType>());
-            }
-            else
-            {
-                m_rawArray[index] = valueToEnum<ElementType>(value.template get<ElementUnderlyingType>());
-            }
-        }
-        else
-        {
-            m_rawArray[index] = value.template get<ElementType>();
-        }
+        m_rawArray[index] = ReflectableUtil::fromAny<typename RAW_ARRAY::value_type>(value);
     }
 
     void append(const BasicAny<ALLOC>& value) override
     {
-        using ElementType = typename RAW_ARRAY::value_type;
-
-        if constexpr (is_bitmask_v<ElementType>)
-        {
-            using ElementZserioType = typename ElementType::ZserioType;
-            using ElementUnderlyingType = typename ElementZserioType::ValueType;
-
-            if (value.template isType<ElementType>())
-            {
-                m_rawArray.push_back(value.template get<ElementType>());
-            }
-            else if (value.template isType<ElementZserioType>())
-            {
-                m_rawArray.push_back(ElementType(value.template get<ElementZserioType>()));
-            }
-            else
-            {
-                m_rawArray.push_back(ElementType(value.template get<ElementUnderlyingType>()));
-            }
-        }
-        else if constexpr (std::is_enum_v<ElementType>)
-        {
-            using ElementZserioType = typename EnumTraits<ElementType>::ZserioType;
-            using ElementUnderlyingType = std::underlying_type_t<ElementType>;
-
-            if (value.template isType<ElementType>())
-            {
-                m_rawArray.push_back(value.template get<ElementType>());
-            }
-            else if (value.template isType<ElementZserioType>())
-            {
-                m_rawArray.push_back(valueToEnum<ElementType>(value.template get<ElementZserioType>()));
-            }
-            else
-            {
-                m_rawArray.push_back(valueToEnum<ElementType>(value.template get<ElementUnderlyingType>()));
-            }
-        }
-        else
-        {
-            m_rawArray.push_back(value.template get<ElementType>());
-        }
+        m_rawArray.push_back(ReflectableUtil::fromAny<typename RAW_ARRAY::value_type>(value));
     }
 
     BasicAny<ALLOC> getAnyValue(const ALLOC& allocator) const override

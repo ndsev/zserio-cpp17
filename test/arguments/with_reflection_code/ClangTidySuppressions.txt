@@ -1,4 +1,8 @@
 bugprone-exception-escape:gen/with_reflection_code/Child.h
+bugprone-exception-escape:gen/with_reflection_code/Struct.h
+bugprone-exception-escape:gen/with_reflection_code/Union.h
+
+cppcoreguidelines-pro-bounds-pointer-arithmetic:cpp/WithReflectionCodeTest.cpp
 
 google-explicit-constructor:gen/with_reflection_code/Bitmask.h
 
