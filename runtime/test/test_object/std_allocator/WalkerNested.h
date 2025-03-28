@@ -34,7 +34,7 @@ struct WalkerNested
     explicit WalkerNested(
             ::zserio::String text_);
 
-        ::zserio::String text;
+    ::zserio::String text;
 };
 
 bool operator==(const ::test_object::std_allocator::WalkerNested& lhs, const ::test_object::std_allocator::WalkerNested& rhs);

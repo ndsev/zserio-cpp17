@@ -50,15 +50,15 @@ struct CreatorObject
             ::zserio::Optional<::zserio::Bool> optionalBool_,
             ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested_);
 
-        ::zserio::UInt32 value;
-        ::test_object::std_allocator::CreatorNested nested;
-        ::zserio::String text;
-        ::zserio::Vector<::test_object::std_allocator::CreatorNested> nestedArray;
-        ::zserio::Vector<::zserio::String> textArray;
-        ::zserio::Optional<::zserio::Vector<::zserio::BitBuffer>> externArray;
-        ::zserio::Optional<::zserio::Vector<::zserio::Bytes>> bytesArray;
-        ::zserio::Optional<::zserio::Bool> optionalBool;
-        ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested;
+    ::zserio::UInt32 value;
+    ::test_object::std_allocator::CreatorNested nested;
+    ::zserio::String text;
+    ::zserio::Vector<::test_object::std_allocator::CreatorNested> nestedArray;
+    ::zserio::Vector<::zserio::String> textArray;
+    ::zserio::Optional<::zserio::Vector<::zserio::BitBuffer>> externArray;
+    ::zserio::Optional<::zserio::Vector<::zserio::Bytes>> bytesArray;
+    ::zserio::Optional<::zserio::Bool> optionalBool;
+    ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested;
 };
 
 bool operator==(const ::test_object::std_allocator::CreatorObject& lhs, const ::test_object::std_allocator::CreatorObject& rhs);

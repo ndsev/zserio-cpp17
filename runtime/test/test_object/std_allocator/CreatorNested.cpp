@@ -8,6 +8,7 @@
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/CreatorNested.h>
@@ -557,65 +558,32 @@ template <>
         {
             if (name == "value")
             {
-                if (value.isType<::zserio::UInt32>())
-                {
-                    m_object.value = value.get<::zserio::UInt32>();
-                }
-                else
-                {
-                    m_object.value = value.get<::zserio::UInt32::ValueType>();
-                }
+                m_object.value = ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value);
                 return;
             }
             if (name == "text")
             {
-                m_object.text = value.get<::zserio::String>();
+                m_object.text = ::zserio::ReflectableUtil::fromAny<::zserio::String>(value);
                 return;
             }
             if (name == "externData")
             {
-                m_object.externData = value.get<::zserio::BitBuffer>();
+                m_object.externData = ::zserio::ReflectableUtil::fromAny<::zserio::BitBuffer>(value);
                 return;
             }
             if (name == "bytesData")
             {
-                m_object.bytesData = value.get<::zserio::Bytes>();
+                m_object.bytesData = ::zserio::ReflectableUtil::fromAny<::zserio::Bytes>(value);
                 return;
             }
             if (name == "creatorEnum")
             {
-                if (value.isType<::test_object::std_allocator::CreatorEnum>())
-                {
-                    m_object.creatorEnum = value.get<::test_object::std_allocator::CreatorEnum>();
-                }
-                else if (value.isType<typename EnumTraits<::test_object::std_allocator::CreatorEnum>::ZserioType>())
-                {
-                    m_object.creatorEnum =
-                            valueToEnum<::test_object::std_allocator::CreatorEnum>(value.get<typename EnumTraits<::test_object::std_allocator::CreatorEnum>::ZserioType>());
-                }
-                else
-                {
-                    m_object.creatorEnum =
-                            valueToEnum<::test_object::std_allocator::CreatorEnum>(value.get<std::underlying_type_t<::test_object::std_allocator::CreatorEnum>>());
-                }
+                m_object.creatorEnum = ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::CreatorEnum>(value);
                 return;
             }
             if (name == "creatorBitmask")
             {
-                if (value.isType<::test_object::std_allocator::CreatorBitmask>())
-                {
-                    m_object.creatorBitmask = value.get<::test_object::std_allocator::CreatorBitmask>();
-                }
-                else if (value.isType<::test_object::std_allocator::CreatorBitmask::ZserioType>())
-                {
-                    m_object.creatorBitmask =
-                            ::test_object::std_allocator::CreatorBitmask(value.get<::test_object::std_allocator::CreatorBitmask::ZserioType>());
-                }
-                else
-                {
-                    m_object.creatorBitmask =
-                            ::test_object::std_allocator::CreatorBitmask(value.get<::test_object::std_allocator::CreatorBitmask::ZserioType::ValueType>());
-                }
+                m_object.creatorBitmask = ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::CreatorBitmask>(value);
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorNested'!";

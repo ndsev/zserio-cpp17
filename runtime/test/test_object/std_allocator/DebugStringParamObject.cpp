@@ -8,6 +8,7 @@
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 #include <string_view>
 
@@ -301,7 +302,7 @@ template <>
         {
             if (name == "text")
             {
-                m_object.text = value.get<::zserio::String>();
+                m_object.text = ::zserio::ReflectableUtil::fromAny<::zserio::String>(value);
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'DebugStringParamObject'!";

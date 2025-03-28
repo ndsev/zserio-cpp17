@@ -45,12 +45,12 @@ struct CreatorNested
             ::test_object::std_allocator::CreatorEnum creatorEnum_,
             ::test_object::std_allocator::CreatorBitmask creatorBitmask_);
 
-        ::zserio::UInt32 value;
-        ::zserio::String text;
-        ::zserio::BitBuffer externData;
-        ::zserio::Bytes bytesData;
-        ::test_object::std_allocator::CreatorEnum creatorEnum;
-        ::test_object::std_allocator::CreatorBitmask creatorBitmask;
+    ::zserio::UInt32 value;
+    ::zserio::String text;
+    ::zserio::BitBuffer externData;
+    ::zserio::Bytes bytesData;
+    ::test_object::std_allocator::CreatorEnum creatorEnum;
+    ::test_object::std_allocator::CreatorBitmask creatorBitmask;
 };
 
 bool operator==(const ::test_object::std_allocator::CreatorNested& lhs, const ::test_object::std_allocator::CreatorNested& rhs);

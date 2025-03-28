@@ -7,6 +7,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/UnionCaseException.h>
 
@@ -435,46 +436,20 @@ template <>
         {
             if (name == "reflectableUtilEnum")
             {
-                if (value.isType<::test_object::std_allocator::ReflectableUtilEnum>())
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
-                            value.get<::test_object::std_allocator::ReflectableUtilEnum>());
-                }
-                else if (value.isType<typename EnumTraits<::test_object::std_allocator::ReflectableUtilEnum>::ZserioType>())
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
-                            valueToEnum<::test_object::std_allocator::ReflectableUtilEnum>(value.get<typename EnumTraits<::test_object::std_allocator::ReflectableUtilEnum>::ZserioType>()));
-                }
-                else
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
-                            valueToEnum<::test_object::std_allocator::ReflectableUtilEnum>(value.get<std::underlying_type_t<::test_object::std_allocator::ReflectableUtilEnum>>()));
-                }
+                m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(
+                        ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::ReflectableUtilEnum>(value));
                 return;
             }
             if (name == "reflectableUtilBitmask")
             {
-                if (value.isType<::test_object::std_allocator::ReflectableUtilBitmask>())
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-                            value.get<::test_object::std_allocator::ReflectableUtilBitmask>());
-                }
-                else if (value.isType<::test_object::std_allocator::ReflectableUtilBitmask::ZserioType>())
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-                            ::test_object::std_allocator::ReflectableUtilBitmask(value.get<::test_object::std_allocator::ReflectableUtilBitmask::ZserioType>()));
-                }
-                else
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-                            ::test_object::std_allocator::ReflectableUtilBitmask(value.get<::test_object::std_allocator::ReflectableUtilBitmask::ZserioType::ValueType>()));
-                }
+                m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
+                        ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::ReflectableUtilBitmask>(value));
                 return;
             }
             if (name == "reflectableUtilObject")
             {
                 m_object.emplace<::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(
-                        value.get<::test_object::std_allocator::ReflectableUtilObject>());
+                        ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::ReflectableUtilObject>(value));
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilUnion'!";

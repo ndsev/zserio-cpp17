@@ -8,6 +8,7 @@
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/polymorphic_allocator/ReflectableObject.h>
@@ -493,40 +494,27 @@ template <>
         {
             if (name == "stringField")
             {
-                m_object.stringField = value.get<::zserio::pmr::String>();
+                m_object.stringField = ::zserio::ReflectableUtil::fromAny<::zserio::pmr::String>(value);
                 return;
             }
             if (name == "reflectableNested")
             {
-                m_object.reflectableNested = value.get<::test_object::polymorphic_allocator::ReflectableNested>();
+                m_object.reflectableNested = ::zserio::ReflectableUtil::fromAny<::test_object::polymorphic_allocator::ReflectableNested>(value);
                 return;
             }
             if (name == "reflectableEnum")
             {
-                if (value.isType<::test_object::polymorphic_allocator::ReflectableEnum>())
-                {
-                    m_object.reflectableEnum = value.get<::test_object::polymorphic_allocator::ReflectableEnum>();
-                }
-                else if (value.isType<typename EnumTraits<::test_object::polymorphic_allocator::ReflectableEnum>::ZserioType>())
-                {
-                    m_object.reflectableEnum =
-                            valueToEnum<::test_object::polymorphic_allocator::ReflectableEnum>(value.get<typename EnumTraits<::test_object::polymorphic_allocator::ReflectableEnum>::ZserioType>());
-                }
-                else
-                {
-                    m_object.reflectableEnum =
-                            valueToEnum<::test_object::polymorphic_allocator::ReflectableEnum>(value.get<std::underlying_type_t<::test_object::polymorphic_allocator::ReflectableEnum>>());
-                }
+                m_object.reflectableEnum = ::zserio::ReflectableUtil::fromAny<::test_object::polymorphic_allocator::ReflectableEnum>(value);
                 return;
             }
             if (name == "reflectableChoice")
             {
-                m_object.reflectableChoice = value.get<::test_object::polymorphic_allocator::ReflectableChoice>();
+                m_object.reflectableChoice = ::zserio::ReflectableUtil::fromAny<::test_object::polymorphic_allocator::ReflectableChoice>(value);
                 return;
             }
             if (name == "reflectableUnion")
             {
-                m_object.reflectableUnion = value.get<::test_object::polymorphic_allocator::ReflectableUnion>();
+                m_object.reflectableUnion = ::zserio::ReflectableUtil::fromAny<::test_object::polymorphic_allocator::ReflectableUnion>(value);
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableObject'!";

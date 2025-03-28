@@ -48,13 +48,13 @@ struct WalkerObject
             ::zserio::UInt8 choiceSelector_,
             ::test_object::polymorphic_allocator::WalkerChoice choiceField_);
 
-        ::zserio::UInt32 identifier;
-        ::zserio::pmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested;
-        ::zserio::pmr::String text;
-        ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion> unionArray;
-        ::zserio::pmr::Optional<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray;
-        ::zserio::UInt8 choiceSelector;
-        ::test_object::polymorphic_allocator::WalkerChoice choiceField;
+    ::zserio::UInt32 identifier;
+    ::zserio::pmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested;
+    ::zserio::pmr::String text;
+    ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion> unionArray;
+    ::zserio::pmr::Optional<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray;
+    ::zserio::UInt8 choiceSelector;
+    ::test_object::polymorphic_allocator::WalkerChoice choiceField;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::WalkerObject& lhs, const ::test_object::polymorphic_allocator::WalkerObject& rhs);

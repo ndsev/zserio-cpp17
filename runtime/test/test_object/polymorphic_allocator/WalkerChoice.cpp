@@ -7,6 +7,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/polymorphic_allocator/WalkerChoice.h>
@@ -563,58 +564,26 @@ template <>
         {
             if (name == "value8")
             {
-                if (value.isType<::zserio::UInt8>())
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
-                            value.get<::zserio::UInt8>());
-                }
-                else
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
-                            value.get<::zserio::UInt8::ValueType>());
-                }
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
+                        ::zserio::ReflectableUtil::fromAny<::zserio::UInt8>(value));
                 return;
             }
             if (name == "value16")
             {
-                if (value.isType<::zserio::UInt16>())
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
-                            value.get<::zserio::UInt16>());
-                }
-                else
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
-                            value.get<::zserio::UInt16::ValueType>());
-                }
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
+                        ::zserio::ReflectableUtil::fromAny<::zserio::UInt16>(value));
                 return;
             }
             if (name == "value32")
             {
-                if (value.isType<::zserio::UInt32>())
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
-                            value.get<::zserio::UInt32>());
-                }
-                else
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
-                            value.get<::zserio::UInt32::ValueType>());
-                }
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
+                        ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "value64")
             {
-                if (value.isType<::zserio::UInt64>())
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
-                            value.get<::zserio::UInt64>());
-                }
-                else
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
-                            value.get<::zserio::UInt64::ValueType>());
-                }
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
+                        ::zserio::ReflectableUtil::fromAny<::zserio::UInt64>(value));
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";

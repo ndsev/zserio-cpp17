@@ -7,6 +7,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/UnionCaseException.h>
 
@@ -380,22 +381,14 @@ template <>
         {
             if (name == "value32")
             {
-                if (value.isType<::zserio::UInt32>())
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(
-                            value.get<::zserio::UInt32>());
-                }
-                else
-                {
-                    m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(
-                            value.get<::zserio::UInt32::ValueType>());
-                }
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(
+                        ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "valueStr")
             {
                 m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(
-                        value.get<::zserio::pmr::String>());
+                        ::zserio::ReflectableUtil::fromAny<::zserio::pmr::String>(value));
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUnion'!";

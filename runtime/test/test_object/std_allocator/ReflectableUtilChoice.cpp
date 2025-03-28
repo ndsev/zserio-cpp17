@@ -7,6 +7,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/ReflectableUtilChoice.h>
@@ -367,7 +368,7 @@ template <>
             if (name == "array")
             {
                 m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
-                        value.get<::zserio::Vector<::zserio::UInt32>>());
+                        ::zserio::ReflectableUtil::fromAny<::zserio::Vector<::zserio::UInt32>>(value));
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";

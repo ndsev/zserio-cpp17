@@ -63,9 +63,19 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
 
 # This is necessary to filter out because all of the following can easily happen if the template parameter
 # is a raw pointer (e.g. 'const char*').
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:384
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:386
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:388
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:363
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:365
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:367
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:369
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:371
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:373
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:375
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:377
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:379
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:381
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:383
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:385
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator.h:387
 
 # The following is filtered out because bounds are checked naturally by implementation. Therefore method 'at'
 # would only bring the performance drop.
@@ -106,7 +116,7 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:99
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:100
 
 # This multiple inheritance is intended and we think that to avoid it would mean much more obscure design.
-fuchsia-multiple-inheritance:src/zserio/ReflectableData.h:495
+fuchsia-multiple-inheritance:src/zserio/ReflectableData.h:496
 
 # Optional follows std::optional so the ctors should be implicit.
 google-explicit-constructor:src/zserio/Optional.h:122
@@ -131,8 +141,8 @@ google-explicit-constructor:src/zserio/pmr/PropagatingPolymorphicAllocator.h:35
 google-explicit-constructor:src/zserio/pmr/PropagatingPolymorphicAllocator.h:62
 
 # This is requirement on type wrappers in Zserio C++17 extension.
-google-explicit-constructor:src/zserio/Types.h:59
-google-explicit-constructor:src/zserio/Types.h:66
+google-explicit-constructor:src/zserio/Types.h:60
+google-explicit-constructor:src/zserio/Types.h:67
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
 google-readability-casting:src/zserio/Variant.h:45
@@ -148,17 +158,17 @@ misc-no-recursion:src/zserio/JsonParser.h:224
 misc-no-recursion:src/zserio/JsonParser.h:235
 misc-no-recursion:src/zserio/JsonParser.h:253
 misc-no-recursion:src/zserio/JsonParser.h:268
-misc-no-recursion:src/zserio/ReflectableData.h:1368
-misc-no-recursion:src/zserio/ReflectableData.h:1412
-misc-no-recursion:src/zserio/ReflectableUtil.h:154
-misc-no-recursion:src/zserio/ReflectableUtil.h:190
-misc-no-recursion:src/zserio/ReflectableUtil.h:210
+misc-no-recursion:src/zserio/ReflectableData.h:1287
+misc-no-recursion:src/zserio/ReflectableData.h:1331
+misc-no-recursion:src/zserio/ReflectableUtil.h:161
+misc-no-recursion:src/zserio/ReflectableUtil.h:197
+misc-no-recursion:src/zserio/ReflectableUtil.h:217
 misc-no-recursion:src/zserio/Walker.h:485
 misc-no-recursion:src/zserio/Walker.h:518
 misc-no-recursion:src/zserio/Walker.h:544
-misc-no-recursion:src/zserio/ZserioTreeCreator.h:221
-misc-no-recursion:src/zserio/ZserioTreeCreator.h:350
-misc-no-recursion:src/zserio/ZserioTreeCreator.h:357
+misc-no-recursion:src/zserio/ZserioTreeCreator.h:220
+misc-no-recursion:src/zserio/ZserioTreeCreator.h:349
+misc-no-recursion:src/zserio/ZserioTreeCreator.h:356
 
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75

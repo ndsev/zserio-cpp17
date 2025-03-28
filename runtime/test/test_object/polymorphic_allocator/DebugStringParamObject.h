@@ -35,7 +35,7 @@ struct DebugStringParamObject
     explicit DebugStringParamObject(
             ::zserio::pmr::String text_);
 
-        ::zserio::pmr::String text;
+    ::zserio::pmr::String text;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::DebugStringParamObject& lhs, const ::test_object::polymorphic_allocator::DebugStringParamObject& rhs);

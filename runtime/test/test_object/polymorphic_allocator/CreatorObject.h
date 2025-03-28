@@ -50,15 +50,15 @@ struct CreatorObject
             ::zserio::pmr::Optional<::zserio::Bool> optionalBool_,
             ::zserio::pmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested_);
 
-        ::zserio::UInt32 value;
-        ::test_object::polymorphic_allocator::CreatorNested nested;
-        ::zserio::pmr::String text;
-        ::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested> nestedArray;
-        ::zserio::pmr::Vector<::zserio::pmr::String> textArray;
-        ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>> externArray;
-        ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::Bytes>> bytesArray;
-        ::zserio::pmr::Optional<::zserio::Bool> optionalBool;
-        ::zserio::pmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested;
+    ::zserio::UInt32 value;
+    ::test_object::polymorphic_allocator::CreatorNested nested;
+    ::zserio::pmr::String text;
+    ::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested> nestedArray;
+    ::zserio::pmr::Vector<::zserio::pmr::String> textArray;
+    ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>> externArray;
+    ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::Bytes>> bytesArray;
+    ::zserio::pmr::Optional<::zserio::Bool> optionalBool;
+    ::zserio::pmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::CreatorObject& lhs, const ::test_object::polymorphic_allocator::CreatorObject& rhs);

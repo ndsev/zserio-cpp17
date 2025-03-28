@@ -35,7 +35,7 @@ struct ReflectableNested
     explicit ReflectableNested(
             ::zserio::UInt31 value_);
 
-        ::zserio::UInt31 value;
+    ::zserio::UInt31 value;
 };
 
 bool operator==(const ::test_object::std_allocator::ReflectableNested& lhs, const ::test_object::std_allocator::ReflectableNested& rhs);

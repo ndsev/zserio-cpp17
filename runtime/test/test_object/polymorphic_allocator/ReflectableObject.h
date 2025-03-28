@@ -44,11 +44,11 @@ struct ReflectableObject
             ::test_object::polymorphic_allocator::ReflectableChoice reflectableChoice_,
             ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion_);
 
-        ::zserio::pmr::String stringField;
-        ::test_object::polymorphic_allocator::ReflectableNested reflectableNested;
-        ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum;
-        ::test_object::polymorphic_allocator::ReflectableChoice reflectableChoice;
-        ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion;
+    ::zserio::pmr::String stringField;
+    ::test_object::polymorphic_allocator::ReflectableNested reflectableNested;
+    ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum;
+    ::test_object::polymorphic_allocator::ReflectableChoice reflectableChoice;
+    ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::ReflectableObject& lhs, const ::test_object::polymorphic_allocator::ReflectableObject& rhs);

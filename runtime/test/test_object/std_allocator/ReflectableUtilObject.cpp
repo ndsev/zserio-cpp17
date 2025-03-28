@@ -8,6 +8,7 @@
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/ReflectableUtilObject.h>
@@ -333,19 +334,12 @@ template <>
         {
             if (name == "choiceParam")
             {
-                if (value.isType<::zserio::UInt8>())
-                {
-                    m_object.choiceParam = value.get<::zserio::UInt8>();
-                }
-                else
-                {
-                    m_object.choiceParam = value.get<::zserio::UInt8::ValueType>();
-                }
+                m_object.choiceParam = ::zserio::ReflectableUtil::fromAny<::zserio::UInt8>(value);
                 return;
             }
             if (name == "reflectableUtilChoice")
             {
-                m_object.reflectableUtilChoice = value.get<::test_object::std_allocator::ReflectableUtilChoice>();
+                m_object.reflectableUtilChoice = ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::ReflectableUtilChoice>(value);
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilObject'!";

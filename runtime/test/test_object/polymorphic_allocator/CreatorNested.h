@@ -45,12 +45,12 @@ struct CreatorNested
             ::test_object::polymorphic_allocator::CreatorEnum creatorEnum_,
             ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask_);
 
-        ::zserio::UInt32 value;
-        ::zserio::pmr::String text;
-        ::zserio::pmr::BitBuffer externData;
-        ::zserio::pmr::Bytes bytesData;
-        ::test_object::polymorphic_allocator::CreatorEnum creatorEnum;
-        ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask;
+    ::zserio::UInt32 value;
+    ::zserio::pmr::String text;
+    ::zserio::pmr::BitBuffer externData;
+    ::zserio::pmr::Bytes bytesData;
+    ::test_object::polymorphic_allocator::CreatorEnum creatorEnum;
+    ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::CreatorNested& lhs, const ::test_object::polymorphic_allocator::CreatorNested& rhs);

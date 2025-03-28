@@ -8,6 +8,7 @@
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/MissedOptionalException.h>
 
@@ -674,14 +675,7 @@ template <>
         {
             if (name == "identifier")
             {
-                if (value.isType<::zserio::UInt32>())
-                {
-                    m_object.identifier = value.get<::zserio::UInt32>();
-                }
-                else
-                {
-                    m_object.identifier = value.get<::zserio::UInt32::ValueType>();
-                }
+                m_object.identifier = ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value);
                 return;
             }
             if (name == "nested")
@@ -692,17 +686,17 @@ template <>
                     return;
                 }
 
-                m_object.nested = value.get<::test_object::std_allocator::WalkerNested>();
+                m_object.nested = ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::WalkerNested>(value);
                 return;
             }
             if (name == "text")
             {
-                m_object.text = value.get<::zserio::String>();
+                m_object.text = ::zserio::ReflectableUtil::fromAny<::zserio::String>(value);
                 return;
             }
             if (name == "unionArray")
             {
-                m_object.unionArray = value.get<::zserio::Vector<::test_object::std_allocator::WalkerUnion>>();
+                m_object.unionArray = ::zserio::ReflectableUtil::fromAny<::zserio::Vector<::test_object::std_allocator::WalkerUnion>>(value);
                 return;
             }
             if (name == "optionalUnionArray")
@@ -713,24 +707,17 @@ template <>
                     return;
                 }
 
-                m_object.optionalUnionArray = value.get<::zserio::Vector<::test_object::std_allocator::WalkerUnion>>();
+                m_object.optionalUnionArray = ::zserio::ReflectableUtil::fromAny<::zserio::Vector<::test_object::std_allocator::WalkerUnion>>(value);
                 return;
             }
             if (name == "choiceSelector")
             {
-                if (value.isType<::zserio::UInt8>())
-                {
-                    m_object.choiceSelector = value.get<::zserio::UInt8>();
-                }
-                else
-                {
-                    m_object.choiceSelector = value.get<::zserio::UInt8::ValueType>();
-                }
+                m_object.choiceSelector = ::zserio::ReflectableUtil::fromAny<::zserio::UInt8>(value);
                 return;
             }
             if (name == "choiceField")
             {
-                m_object.choiceField = value.get<::test_object::std_allocator::WalkerChoice>();
+                m_object.choiceField = ::zserio::ReflectableUtil::fromAny<::test_object::std_allocator::WalkerChoice>(value);
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerObject'!";

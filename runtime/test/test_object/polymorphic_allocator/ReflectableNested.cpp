@@ -8,6 +8,7 @@
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/polymorphic_allocator/ReflectableNested.h>
@@ -330,14 +331,7 @@ template <>
         {
             if (name == "value")
             {
-                if (value.isType<::zserio::UInt31>())
-                {
-                    m_object.value = value.get<::zserio::UInt31>();
-                }
-                else
-                {
-                    m_object.value = value.get<::zserio::UInt31::ValueType>();
-                }
+                m_object.value = ::zserio::ReflectableUtil::fromAny<::zserio::UInt31>(value);
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableNested'!";

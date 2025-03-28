@@ -7,6 +7,7 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/UnionCaseException.h>
 
@@ -435,28 +436,20 @@ template <>
         {
             if (name == "value")
             {
-                if (value.isType<::zserio::UInt32>())
-                {
-                    m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
-                            value.get<::zserio::UInt32>());
-                }
-                else
-                {
-                    m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
-                            value.get<::zserio::UInt32::ValueType>());
-                }
+                m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
+                        ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "text")
             {
                 m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(
-                        value.get<::zserio::String>());
+                        ::zserio::ReflectableUtil::fromAny<::zserio::String>(value));
                 return;
             }
             if (name == "nestedArray")
             {
                 m_object.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
-                        value.get<::zserio::Vector<::test_object::std_allocator::WalkerNested>>());
+                        ::zserio::ReflectableUtil::fromAny<::zserio::Vector<::test_object::std_allocator::WalkerNested>>(value));
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";

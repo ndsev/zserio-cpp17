@@ -7,6 +7,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/ReflectableChoice.h>
@@ -428,21 +429,13 @@ template <>
             if (name == "valueStr")
             {
                 m_object.emplace<::test_object::std_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(
-                        value.get<::zserio::String>());
+                        ::zserio::ReflectableUtil::fromAny<::zserio::String>(value));
                 return;
             }
             if (name == "value32")
             {
-                if (value.isType<::zserio::UInt32>())
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(
-                            value.get<::zserio::UInt32>());
-                }
-                else
-                {
-                    m_object.emplace<::test_object::std_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(
-                            value.get<::zserio::UInt32::ValueType>());
-                }
+                m_object.emplace<::test_object::std_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(
+                        ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableChoice'!";

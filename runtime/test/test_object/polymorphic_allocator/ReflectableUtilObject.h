@@ -37,8 +37,8 @@ struct ReflectableUtilObject
             ::zserio::UInt8 choiceParam_,
             ::test_object::polymorphic_allocator::ReflectableUtilChoice reflectableUtilChoice_);
 
-        ::zserio::UInt8 choiceParam;
-        ::test_object::polymorphic_allocator::ReflectableUtilChoice reflectableUtilChoice;
+    ::zserio::UInt8 choiceParam;
+    ::test_object::polymorphic_allocator::ReflectableUtilChoice reflectableUtilChoice;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::ReflectableUtilObject& lhs, const ::test_object::polymorphic_allocator::ReflectableUtilObject& rhs);
