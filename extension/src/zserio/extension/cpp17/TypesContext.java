@@ -7,6 +7,7 @@ import zserio.ast.PackageName;
  *
  * Currently only types which depends on allocators are configurable.
  */
+
 public final class TypesContext
 {
     public TypesContext(AllocatorDefinition allocator)
@@ -41,6 +42,41 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "RawServiceDataHolder", false, false, "zserio/IService.h");
             rawServiceDataView = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "RawServiceDataView", false, false, "zserio/IService.h");
+        }
+        else if (allocator.equals(STD_POLYMORPHIC_ALLOCATOR))
+        {
+            bitBuffer = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "BitBuffer", false, false, "zserio/std_pmr/BitBuffer.h");
+            bitBufferView = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "BitBufferView", false, false, "zserio/std_pmr/BitBuffer.h");
+            bytes = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "Bytes", false, false, "zserio/std_pmr/Bytes.h");
+            string = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "String", false, false, "zserio/std_pmr/String.h");
+            vector = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "Vector", true, false, "zserio/std_pmr/Vector.h");
+            map = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "Map", true, false, "zserio/std_pmr/Map.h");
+            set = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "Set", true, false, "zserio/std_pmr/Set.h");
+            optional = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "Optional", true, false, "zserio/std_pmr/Optional.h");
+            variant = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "Variant", true, false, "zserio/std_pmr/Variant.h");
+            uniquePtr = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "UniquePtr", true, false, "zserio/std_pmr/UniquePtr.h");
+            service = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "IService", false, false, "zserio/std_pmr/IService.h");
+            serviceClient = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "IServiceClient", false, false, "zserio/std_pmr/IService.h");
+            serviceDataPtr = new NativeTypeDefinition(
+                    ZSERIO_STD_PMR_PACKAGE_NAME, "IServiceDataPtr", false, false, "zserio/std_pmr/IService.h");
+            objectServiceData = new NativeTypeDefinition(ZSERIO_STD_PMR_PACKAGE_NAME, "ObjectServiceData",
+                    false, false, "zserio/std_pmr/IService.h");
+            rawServiceDataHolder = new NativeTypeDefinition(ZSERIO_STD_PMR_PACKAGE_NAME, "RawServiceDataHolder",
+                    false, false, "zserio/std_pmr/IService.h");
+            rawServiceDataView = new NativeTypeDefinition(ZSERIO_STD_PMR_PACKAGE_NAME, "RawServiceDataView",
+                    false, false, "zserio/std_pmr/IService.h");
         }
         else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
         {
@@ -295,9 +331,13 @@ public final class TypesContext
             "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PropagatingPolymorphicAllocator.h");
     public static final AllocatorDefinition STD_ALLOCATOR =
             new AllocatorDefinition("::std::allocator", "memory");
+    public static final AllocatorDefinition STD_POLYMORPHIC_ALLOCATOR =
+            new AllocatorDefinition("::std::pmr::polymorphic_allocator", "memory_resource");
 
     private static final PackageName STD_PACKAGE_NAME = new PackageName.Builder().addId("std").get();
     private static final PackageName ZSERIO_PACKAGE_NAME = new PackageName.Builder().addId("zserio").get();
     private static final PackageName ZSERIO_PMR_PACKAGE_NAME =
             new PackageName.Builder().addId("zserio").addId("pmr").get();
+    private static final PackageName ZSERIO_STD_PMR_PACKAGE_NAME =
+            new PackageName.Builder().addId("zserio").addId("std_pmr").get();
 }
