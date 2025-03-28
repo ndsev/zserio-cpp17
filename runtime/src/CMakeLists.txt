@@ -32,6 +32,16 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/UniquePtr.h
     zserio/pmr/Variant.h
     zserio/pmr/Vector.h
+    zserio/std_pmr/BitBuffer.h
+    zserio/std_pmr/Bytes.h
+    zserio/std_pmr/IService.h
+    zserio/std_pmr/Map.h
+    zserio/std_pmr/Optional.h
+    zserio/std_pmr/Set.h
+    zserio/std_pmr/String.h
+    zserio/std_pmr/UniquePtr.h
+    zserio/std_pmr/Variant.h
+    zserio/std_pmr/Vector.h
     zserio/AllocatorHolder.h
     zserio/Any.h
     zserio/ArrayView.h
@@ -128,6 +138,8 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
 )
 
 add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/zserio FILES ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
