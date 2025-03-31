@@ -144,6 +144,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/FileUtilTest.cpp
     zserio/FloatUtilTest.cpp
     zserio/HashCodeUtilTest.cpp
+    zserio/IntrospectableViewTest.cpp
     zserio/JsonDecoderTest.cpp
     zserio/JsonEncoderTest.cpp
     zserio/JsonParserTest.cpp
