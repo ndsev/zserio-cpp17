@@ -3,10 +3,9 @@
 
 #include "zserio/Enums.h"
 #include "zserio/IReflectableData.h"
+#include "zserio/IntrospectableDataBase.h"
 #include "zserio/ReflectableUtil.h"
 #include "zserio/TypeInfoUtil.h"
-
-#include "IntrospectableDataBase.h"
 
 namespace zserio
 {
@@ -116,10 +115,7 @@ private:
 /**
  * Base class for integral reflectables.
  *
- * Implements toString() and toDouble() conversions, implements write() for all integral builtin types.
- *
- * Hold dynamic bit size even though it has sense only for dynamic bit fields (otherwise it's always set to 0).
- * This solution was chosen for simplicity.
+ * Implements toString() and toDouble() conversions.
  */
 template <typename T, typename ALLOC>
 class IntegralReflectableDataBase : public BuiltinReflectableDataBase<T, ALLOC>
@@ -141,7 +137,7 @@ public:
 
     BasicString<RebindAlloc<ALLOC, char>> toString(const ALLOC& allocator) const override
     {
-        return ::zserio::toString<ALLOC>(Base::getValue(), allocator);
+        return zserio::toString<ALLOC>(Base::getValue(), allocator);
     }
 };
 
@@ -231,6 +227,9 @@ public:
     }
 };
 
+/**
+ * Reflectable for int16 type.
+ */
 template <typename T, typename ALLOC>
 class Int16ReflectableData : public SignedReflectableDataBase<T, ALLOC>
 {
@@ -250,6 +249,9 @@ public:
     }
 };
 
+/**
+ * Reflectable for int32 type.
+ */
 template <typename T, typename ALLOC>
 class Int32ReflectableData : public SignedReflectableDataBase<T, ALLOC>
 {
@@ -269,6 +271,9 @@ public:
     }
 };
 
+/**
+ * Reflectable for int64 type.
+ */
 template <typename T, typename ALLOC>
 class Int64ReflectableData : public SignedReflectableDataBase<T, ALLOC>
 {
@@ -288,6 +293,9 @@ public:
     }
 };
 
+/**
+ * Reflectable for uint8 type.
+ */
 template <typename T, typename ALLOC>
 class UInt8ReflectableData : public UnsignedReflectableDataBase<T, ALLOC>
 {
@@ -307,6 +315,9 @@ public:
     }
 };
 
+/**
+ * Reflectable for uint16 type.
+ */
 template <typename T, typename ALLOC>
 class UInt16ReflectableData : public UnsignedReflectableDataBase<T, ALLOC>
 {
@@ -326,6 +337,9 @@ public:
     }
 };
 
+/**
+ * Reflectable for uint32 type.
+ */
 template <typename T, typename ALLOC>
 class UInt32ReflectableData : public UnsignedReflectableDataBase<T, ALLOC>
 {
@@ -345,6 +359,9 @@ public:
     }
 };
 
+/**
+ * Reflectable for uint64 type.
+ */
 template <typename T, typename ALLOC>
 class UInt64ReflectableData : public UnsignedReflectableDataBase<T, ALLOC>
 {

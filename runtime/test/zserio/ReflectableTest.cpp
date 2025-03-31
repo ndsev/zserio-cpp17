@@ -1,4 +1,3 @@
-#include <functional>
 #include <string>
 #include <type_traits>
 
@@ -14,7 +13,6 @@
 #include "zserio/ReflectableData.h"
 #include "zserio/Vector.h"
 
-using namespace std::placeholders;
 using namespace std::literals;
 
 using test_object::std_allocator::ReflectableBitmask;
@@ -105,33 +103,12 @@ protected:
         checkNonCompound(reflectable);
     }
 
-    template <typename T, typename REFLECTABLE_PTR, typename READ_FUNC>
-    void checkWriteRead(
-            T value, const REFLECTABLE_PTR& reflectable, const READ_FUNC& readFunc, size_t bitBufferSize)
-    {
-        (void)value;
-        (void)reflectable;
-        (void)readFunc;
-        (void)bitBufferSize;
-        /*
-        BitBuffer bitBuffer(bitBufferSize);
-        BitStreamWriter writer(bitBuffer);
-        reflectable->write(writer);
-        const size_t bitSizeOfValue = reflectable->bitSizeOf();
-        ASSERT_EQ(bitSizeOfValue, writer.getBitPosition());
-
-        BitStreamReader reader(bitBuffer);
-        ASSERT_EQ(value, readFunc(reader));
-        ASSERT_EQ(bitSizeOfValue, reader.getBitPosition());
-        */
-    }
-
     void checkNonArray(const IReflectableDataConstPtr& reflectable)
     {
         ASSERT_FALSE(reflectable->isArray());
         ASSERT_THROW(reflectable->size(), CppRuntimeException);
         ASSERT_THROW(reflectable->at(0), CppRuntimeException);
-        // ASSERT_THROW((*reflectable)[0], CppRuntimeException);
+        ASSERT_THROW((*reflectable)[0], CppRuntimeException);
     }
 
     void checkNonArray(const IReflectableDataPtr& reflectable)
@@ -254,9 +231,8 @@ protected:
         checkCppTypeGetter(value, reflectablePtr, &IReflectableData::getBitBuffer, testName, "getBitBuffer");
     }
 
-    template <typename T, typename REFLECTABLE_PTR, typename GETTER, typename READ_FUNC>
-    void checkFloatingPoint(T value, const REFLECTABLE_PTR& reflectable, const GETTER& getter,
-            const READ_FUNC& readFunc, size_t bitSize = sizeof(T) * 8)
+    template <typename T, typename REFLECTABLE_PTR, typename GETTER>
+    void checkFloatingPoint(T value, const REFLECTABLE_PTR& reflectable, const GETTER& getter)
     {
         ASSERT_DOUBLE_EQ(value, ((*reflectable).*getter)());
 
@@ -269,13 +245,11 @@ protected:
 
         checkNonCompound(reflectable);
         checkNonArray(reflectable);
-
-        checkWriteRead(value, reflectable, readFunc, bitSize);
     }
 
-    template <typename T, typename REFLECTABLE_PTR, typename GETTER, typename READ_FUNC>
-    void checkIntegral(T value, const REFLECTABLE_PTR& reflectablePtr, const GETTER& getter,
-            const READ_FUNC& readFunc, size_t bitSize, const char* testName)
+    template <typename T, typename REFLECTABLE_PTR, typename GETTER>
+    void checkIntegral(
+            T value, const REFLECTABLE_PTR& reflectablePtr, const GETTER& getter, const char* testName)
     {
         ASSERT_EQ(value, ((*reflectablePtr).*getter)());
 
@@ -289,28 +263,24 @@ protected:
         checkNonCompound(reflectablePtr);
 
         checkNonArray(reflectablePtr);
-
-        checkWriteRead(value, reflectablePtr, readFunc, bitSize);
     }
 
-    template <typename T, typename REFLECTABLE_PTR, typename GETTER, typename READ_FUNC>
-    void checkSignedIntegral(T value, const REFLECTABLE_PTR& reflectablePtr, const GETTER& getter,
-            const READ_FUNC& readFunc, size_t bitSize = sizeof(T) * 8)
+    template <typename T, typename REFLECTABLE_PTR, typename GETTER>
+    void checkSignedIntegral(T value, const REFLECTABLE_PTR& reflectablePtr, const GETTER& getter)
     {
         ASSERT_EQ(value, reflectablePtr->toInt());
         ASSERT_THROW(reflectablePtr->toUInt(), CppRuntimeException);
 
-        checkIntegral(value, reflectablePtr, getter, readFunc, bitSize, "checkSignedIntegral");
+        checkIntegral(value, reflectablePtr, getter, "checkSignedIntegral");
     }
 
-    template <typename T, typename REFLECTABLE_PTR, typename GETTER, typename READ_FUNC>
-    void checkUnsignedIntegral(T value, const REFLECTABLE_PTR& reflectablePtr, const GETTER& getter,
-            const READ_FUNC& readFunc, size_t bitSize = sizeof(T) * 8)
+    template <typename T, typename REFLECTABLE_PTR, typename GETTER>
+    void checkUnsignedIntegral(T value, const REFLECTABLE_PTR& reflectablePtr, const GETTER& getter)
     {
         ASSERT_EQ(value, reflectablePtr->toUInt());
         ASSERT_THROW(reflectablePtr->toInt(), CppRuntimeException);
 
-        checkIntegral(value, reflectablePtr, getter, readFunc, bitSize, "checkUnsignedIntegral");
+        checkIntegral(value, reflectablePtr, getter, "checkUnsignedIntegral");
     }
 
     template <typename REFLECTABLE_PTR>
@@ -327,10 +297,6 @@ protected:
 
         checkNonCompound(reflectable);
         checkNonArray(reflectable);
-
-        checkWriteRead(toString(value), reflectable,
-                std::bind(&BitStreamReader::readString<>, _1, std::allocator<uint8_t>()),
-                detail::bitSizeOf(VarSize(convertSizeToUInt32(value.size()))) + value.size() * 8);
     }
 
     template <typename REFLECTABLE_PTR>
@@ -348,10 +314,6 @@ protected:
 
         checkNonCompound(reflectable);
         checkNonArray(reflectable);
-
-        checkWriteRead(value, reflectable,
-                std::bind(&BitStreamReader::readBitBuffer<>, _1, std::allocator<uint8_t>()),
-                detail::bitSizeOf(VarSize(convertSizeToUInt32(value.getBitSize()))) + value.getBitSize());
     }
 
     template <typename REFLECTABLE_PTR>
@@ -372,11 +334,6 @@ protected:
 
         checkNonCompound(reflectable);
         checkNonArray(reflectable);
-
-        const size_t bitSize = value.size() * 8;
-        checkWriteRead(value, reflectable,
-                std::bind(&BitStreamReader::readBytes<>, _1, std::allocator<uint8_t>()),
-                detail::bitSizeOf(VarSize(convertSizeToUInt32(bitSize))) + bitSize);
     }
 
     template <typename REFLECTABLE_PTR>
@@ -574,154 +531,133 @@ TEST_F(ReflectableTest, boolReflectable)
 {
     const Bool value = true;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(
-            value, reflectablePtr, &IReflectableData::getBool, std::bind(&BitStreamReader::readBool, _1));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getBool);
 }
 
 TEST_F(ReflectableTest, int8Reflectable)
 {
     const Int8 value = -12;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8,
-            std::bind(&BitStreamReader::readSignedBits32, _1, 8));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8);
 }
 
 TEST_F(ReflectableTest, int16Reflectable)
 {
     const Int16 value = -1234;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16,
-            std::bind(&BitStreamReader::readSignedBits32, _1, 16));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
 TEST_F(ReflectableTest, int32Reflectable)
 {
     const Int32 value = -123456;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32,
-            std::bind(&BitStreamReader::readSignedBits32, _1, 32));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
 TEST_F(ReflectableTest, int64Reflectable)
 {
     const Int64 value = -1234567890;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64,
-            std::bind(&BitStreamReader::readSignedBits64, _1, 64));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
 TEST_F(ReflectableTest, uint8Reflectable)
 {
     const UInt8 value = 0xFF;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8);
 }
 
 TEST_F(ReflectableTest, uint16Reflectable)
 {
     const UInt16 value = 0xFFFF;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
 TEST_F(ReflectableTest, uint32Reflectable)
 {
     const UInt32 value = 0xFFFFFFFF;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
 TEST_F(ReflectableTest, uint64Reflectable)
 {
     const UInt64 value = 0xFFFFFFFFFFFF;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64,
-            std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
 TEST_F(ReflectableTest, fixedSignedBitField5) // mapped to int8_t
 {
     const Int5 value = 15;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8,
-            std::bind(&BitStreamReader::readSignedBits32, _1, 5), 5);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8);
 }
 
 TEST_F(ReflectableTest, fixedSignedBitField15) // mapped to int16_t
 {
     const Int15 value = -15;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16,
-            std::bind(&BitStreamReader::readSignedBits32, _1, 15), 15);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
 TEST_F(ReflectableTest, fixedSignedBitField31) // mapped to int32_t
 {
     const Int31 value = -12345678;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32,
-            std::bind(&BitStreamReader::readSignedBits32, _1, 31), 31);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
 TEST_F(ReflectableTest, fixedSignedBitField60) // mapped to int64_t
 {
     const Int60 value = 1234567890;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64,
-            std::bind(&BitStreamReader::readSignedBits64, _1, 60), 60);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
 TEST_F(ReflectableTest, fixedUnsignedBitField7) // mapped to uint8_t
 {
     const UInt7 value = 0x2F;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, 7), 7);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8);
 }
 
 TEST_F(ReflectableTest, fixedUnsignedBitField9) // mapped to uint16_t
 {
     const UInt9 value = 0x1FF;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, 9), 9);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
 TEST_F(ReflectableTest, fixedUnsignedBitField31) // mapped to uint32_t
 {
     const UInt31 value = UINT32_MAX >> 1U;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, 31), 31);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
 TEST_F(ReflectableTest, fixedUnsignedBitField33) // mapped to uint64_t
 {
     const UInt33 value = static_cast<uint64_t>(UINT32_MAX) << 1U;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64,
-            std::bind(&BitStreamReader::readUnsignedBits64, _1, 33), 33);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
 TEST_F(ReflectableTest, dynamicSignedBitField5) // mapped to int8_t
 {
-    const uint8_t numBits = 5;
     const DynInt8<> value = 15;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8,
-            std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8);
 }
 
 TEST_F(ReflectableTest, dynamicSignedBitField15) // mapped to int16_t
 {
-    const uint8_t numBits = 15;
     const DynInt16<> value = -15;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16,
-            std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
 TEST_F(ReflectableTest, dynamicSignedBitField31) // mapped to int32_t
@@ -730,8 +666,7 @@ TEST_F(ReflectableTest, dynamicSignedBitField31) // mapped to int32_t
     const DynInt32<> value = -12345678;
     const View view(value, numBits);
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32,
-            std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
 TEST_F(ReflectableTest, dynamicSignedBitField60) // mapped to int64_t
@@ -740,140 +675,119 @@ TEST_F(ReflectableTest, dynamicSignedBitField60) // mapped to int64_t
     const DynInt64<> value = 1234567890;
     const View view(value, numBits);
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64,
-            std::bind(&BitStreamReader::readSignedBits64, _1, numBits), numBits);
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
 TEST_F(ReflectableTest, dynamicUnsignedBitField7) // mapped to uint8_t
 {
-    const uint8_t numBits = 7;
     const DynUInt8<> value = 0x2F;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8);
 }
 
 TEST_F(ReflectableTest, dynamicUnsignedBitField9) // mapped to uint16_t
 {
-    const uint8_t numBits = 9;
     const DynUInt16<> value = 0x1FF;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
 TEST_F(ReflectableTest, dynamicUnsignedBitField31) // mapped to uint32_t
 {
-    const uint8_t numBits = 31;
     const DynUInt32<> value = UINT32_MAX >> 1U;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
-            std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
 TEST_F(ReflectableTest, dynamicUnsignedBitField33) // mapped to uint64_t
 {
-    const uint8_t numBits = 33;
     const DynUInt64<> value = static_cast<uint64_t>(UINT32_MAX) << 1U;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64,
-            std::bind(&BitStreamReader::readUnsignedBits64, _1, numBits), numBits);
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
 TEST_F(ReflectableTest, varint16Reflectable)
 {
     const VarInt16 value = -1234;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16,
-            std::bind(&BitStreamReader::readVarInt16, _1), zserio::detail::bitSizeOf(value));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
 TEST_F(ReflectableTest, varint32Reflectable)
 {
     const VarInt32 value = 54321;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32,
-            std::bind(&BitStreamReader::readVarInt32, _1), zserio::detail::bitSizeOf(value));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
 TEST_F(ReflectableTest, varint64Reflectable)
 {
     const VarInt64 value = -87654321;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64,
-            std::bind(&BitStreamReader::readVarInt64, _1), zserio::detail::bitSizeOf(value));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
 TEST_F(ReflectableTest, varintReflectable)
 {
     const VarInt value = INT64_MAX;
     auto reflectablePtr = reflectable(value);
-    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64,
-            std::bind(&BitStreamReader::readVarInt, _1), zserio::detail::bitSizeOf(value));
+    checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
 TEST_F(ReflectableTest, varuint16Reflectable)
 {
     const VarUInt16 value = 1234;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16,
-            std::bind(&BitStreamReader::readVarUInt16, _1), zserio::detail::bitSizeOf(value));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
 TEST_F(ReflectableTest, varuint32Reflectable)
 {
     const VarUInt32 value = 0x1FFFFFFF;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
-            std::bind(&BitStreamReader::readVarUInt32, _1), zserio::detail::bitSizeOf(value));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
 TEST_F(ReflectableTest, varuint64Reflectable)
 {
     const VarUInt64 value = 4242424242;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64,
-            std::bind(&BitStreamReader::readVarUInt64, _1), zserio::detail::bitSizeOf(value));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
 TEST_F(ReflectableTest, varuintReflectable)
 {
     const VarUInt value = UINT64_MAX;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64,
-            std::bind(&BitStreamReader::readVarUInt, _1), zserio::detail::bitSizeOf(value));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
 TEST_F(ReflectableTest, varsizeReflectable)
 {
     const VarSize value = (UINT32_C(1) << (7U + 7 + 7 + 7 + 3)) - 1U;
     auto reflectablePtr = reflectable(value);
-    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32,
-            std::bind(&BitStreamReader::readVarSize, _1), zserio::detail::bitSizeOf(value));
+    checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
 TEST_F(ReflectableTest, float16Reflectable)
 {
     const Float16 value = 2.0F;
     auto reflectablePtr = reflectable(value);
-    checkFloatingPoint(
-            value, reflectablePtr, &IReflectableData::getFloat, std::bind(&BitStreamReader::readFloat16, _1));
+    checkFloatingPoint(value, reflectablePtr, &IReflectableData::getFloat);
 }
 
 TEST_F(ReflectableTest, float32Reflectable)
 {
     const Float32 value = 1.2F;
     auto reflectablePtr = reflectable(value);
-    checkFloatingPoint(
-            value, reflectablePtr, &IReflectableData::getFloat, std::bind(&BitStreamReader::readFloat32, _1));
+    checkFloatingPoint(value, reflectablePtr, &IReflectableData::getFloat);
 }
 
 TEST_F(ReflectableTest, float64Reflectable)
 {
     const Float64 value = 1.2;
     auto reflectablePtr = reflectable(value);
-    checkFloatingPoint(
-            value, reflectablePtr, &IReflectableData::getDouble, std::bind(&BitStreamReader::readFloat64, _1));
+    checkFloatingPoint(value, reflectablePtr, &IReflectableData::getDouble);
 }
 
 TEST_F(ReflectableTest, bytesReflectable)
@@ -909,8 +823,7 @@ TEST_F(ReflectableTest, boolConstArray)
     const auto rawArray = std::vector<Bool>({true, false, true, false});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Bool value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getBool,
-                std::bind(&BitStreamReader::readBool, _1));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getBool);
     });
 }
 
@@ -919,8 +832,7 @@ TEST_F(ReflectableTest, boolArray)
     auto rawArray = std::vector<Bool>({true, false, true, false});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Bool value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getBool,
-                std::bind(&BitStreamReader::readBool, _1));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getBool);
     });
 }
 
@@ -929,8 +841,7 @@ TEST_F(ReflectableTest, int8ConstArray)
     const auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Int8 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 8));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
     });
 
     auto nonConstReflectable = std::const_pointer_cast<IReflectableData>(reflectablePtr);
@@ -942,13 +853,11 @@ TEST_F(ReflectableTest, int8Array)
     auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Int8 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 8));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
     });
     checkArray(rawArray, static_cast<IReflectableDataConstPtr>(reflectablePtr),
             [&](Int8 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                        std::bind(&BitStreamReader::readSignedBits32, _1, 8));
+                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
             });
 
     reflectablePtr->resize(0);
@@ -971,8 +880,7 @@ TEST_F(ReflectableTest, int16ConstArray)
     const auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Int16 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 16));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16);
     });
 }
 
@@ -981,8 +889,7 @@ TEST_F(ReflectableTest, int16Array)
     auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](Int16 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 16));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16);
     });
 }
 
@@ -991,8 +898,7 @@ TEST_F(ReflectableTest, int32ConstArray)
     const auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Int32 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 32));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32);
     });
 }
 
@@ -1001,8 +907,7 @@ TEST_F(ReflectableTest, int32Array)
     auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Int32 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 32));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32);
     });
 }
 
@@ -1011,8 +916,7 @@ TEST_F(ReflectableTest, int64ConstArray)
     const auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](Int64 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64,
-                std::bind(&BitStreamReader::readSignedBits64, _1, 64));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64);
     });
 }
 
@@ -1021,8 +925,7 @@ TEST_F(ReflectableTest, int64Array)
     auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](Int64 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64,
-                std::bind(&BitStreamReader::readSignedBits64, _1, 64));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64);
     });
 }
 
@@ -1031,8 +934,7 @@ TEST_F(ReflectableTest, uint8ConstArray)
     const auto rawArray = std::vector<UInt8>({10, 20, 30, 40});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt8 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
     });
 }
 
@@ -1041,8 +943,7 @@ TEST_F(ReflectableTest, uint8Array)
     auto rawArray = std::vector<UInt8>{{10, 20, 30, 40}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt8 value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
     });
 }
 
@@ -1051,8 +952,7 @@ TEST_F(ReflectableTest, uint16ConstArray)
     const auto rawArray = std::vector<UInt16>({100, 200, 300, 400});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt16 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16);
     });
 }
 
@@ -1061,8 +961,7 @@ TEST_F(ReflectableTest, uint16Array)
     auto rawArray = std::vector<UInt16>{{100, 200, 300, 400}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt16 value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16);
     });
 }
 
@@ -1071,8 +970,7 @@ TEST_F(ReflectableTest, uint32ConstArray)
     const auto rawArray = std::vector<UInt32>({10000, 20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt32 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32);
     });
 }
 
@@ -1081,8 +979,7 @@ TEST_F(ReflectableTest, uint32Array)
     auto rawArray = std::vector<UInt32>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt32 value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32);
     });
 }
 
@@ -1091,8 +988,7 @@ TEST_F(ReflectableTest, uint64ConstArray)
     const auto rawArray = std::vector<UInt64>({10000000, 20000000, 30000000, 40000000});
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt64 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64,
-                std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64);
     });
 }
 
@@ -1101,35 +997,29 @@ TEST_F(ReflectableTest, uint64Array)
     auto rawArray = std::vector<UInt64>{{10000000, 20000000, 30000000, 40000000}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt64 value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64,
-                std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64);
     });
 }
 
 TEST_F(ReflectableTest, fixedSignedBitField5ConstArray)
 {
-    uint8_t numBits = 5;
     const auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Int5 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
     });
 }
 
 TEST_F(ReflectableTest, fixedSignedBitField5Array)
 {
-    uint8_t numBits = 5;
     auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Int5 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
     });
     checkArray(rawArray, static_cast<IReflectableDataConstPtr>(reflectablePtr),
             [&](Int5 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                        std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
             });
 
     reflectablePtr->resize(0);
@@ -1149,35 +1039,29 @@ TEST_F(ReflectableTest, fixedSignedBitField5Array)
 
 TEST_F(ReflectableTest, fixedUnsignedBitField5ConstArray)
 {
-    const uint8_t numBits = 5;
     const auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt5 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
     });
 }
 
 TEST_F(ReflectableTest, fixedUnsignedBitField5Array)
 {
-    const uint8_t numBits = 5;
     auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](UInt5 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
     });
 }
 
 TEST_F(ReflectableTest, dynamicSignedBitField5ConstArray)
 {
-    const uint8_t numBits = 5;
     const auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](DynInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
-                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                        std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
             });
 
     auto nonConstReflectable = std::const_pointer_cast<IReflectableData>(reflectablePtr);
@@ -1186,17 +1070,14 @@ TEST_F(ReflectableTest, dynamicSignedBitField5ConstArray)
 
 TEST_F(ReflectableTest, dynamicSignedBitField5Array)
 {
-    const uint8_t numBits = 5;
     auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](DynInt8<> value, const IReflectableDataPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
     });
     checkArray(rawArray, static_cast<IReflectableDataConstPtr>(reflectablePtr),
             [&](DynInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
-                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8,
-                        std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+                checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
             });
 
     reflectablePtr->resize(0);
@@ -1216,25 +1097,21 @@ TEST_F(ReflectableTest, dynamicSignedBitField5Array)
 
 TEST_F(ReflectableTest, dynamicUnsignedBitField5ConstArray)
 {
-    const uint8_t numBits = 5;
     const auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr,
             [&](DynUInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
-                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8,
-                        std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
             });
 }
 
 TEST_F(ReflectableTest, dynamicUnsignedBitField5Array)
 {
-    const uint8_t numBits = 5;
     auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr,
             [&](DynUInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
-                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8,
-                        std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
             });
 }
 
@@ -1243,8 +1120,7 @@ TEST_F(ReflectableTest, varint16ConstArray)
     const auto rawArray = std::vector<VarInt16>({-10, -20, 30, 40});
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](VarInt16 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16,
-                std::bind(&BitStreamReader::readVarInt16, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16);
     });
 }
 
@@ -1253,8 +1129,7 @@ TEST_F(ReflectableTest, varint16Array)
     auto rawArray = std::vector<VarInt16>{{-10, -20, 30, 40}};
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](VarInt16 value, const IReflectableDataPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16,
-                std::bind(&BitStreamReader::readVarInt16, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt16);
     });
 }
 
@@ -1263,8 +1138,7 @@ TEST_F(ReflectableTest, varint32ConstArray)
     const auto rawArray = std::vector<VarInt32>({-10000, -20000, 30000, 40000});
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](VarInt32 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32,
-                std::bind(&BitStreamReader::readVarInt32, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32);
     });
 }
 
@@ -1273,8 +1147,7 @@ TEST_F(ReflectableTest, varint32Array)
     auto rawArray = std::vector<VarInt32>{{-10000, -20000, 30000, 40000}};
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](VarInt32 value, const IReflectableDataPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32,
-                std::bind(&BitStreamReader::readVarInt32, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt32);
     });
 }
 
@@ -1283,8 +1156,7 @@ TEST_F(ReflectableTest, varint64ConstArray)
     const auto rawArray = std::vector<VarInt64>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](VarInt64 value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64,
-                std::bind(&BitStreamReader::readVarInt64, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64);
     });
 }
 
@@ -1293,8 +1165,7 @@ TEST_F(ReflectableTest, varint64Array)
     auto rawArray = std::vector<VarInt64>{{-10000000, -20000000, 30000000, 40000000}};
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](VarInt64 value, const IReflectableDataPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64,
-                std::bind(&BitStreamReader::readVarInt64, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64);
     });
 }
 
@@ -1303,8 +1174,7 @@ TEST_F(ReflectableTest, varintConstArray)
     const auto rawArray = std::vector<VarInt>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
     checkArray(rawArray, reflectable, [&](VarInt value, const IReflectableDataConstPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64,
-                std::bind(&BitStreamReader::readVarInt, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64);
     });
 }
 
@@ -1313,8 +1183,7 @@ TEST_F(ReflectableTest, varintArray)
     auto rawArray = std::vector<VarInt>{{-10000000, -20000000, 30000000, 40000000}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](VarInt value, const IReflectableDataPtr& elementReflectable) {
-        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64,
-                std::bind(&BitStreamReader::readVarInt, _1));
+        checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt64);
     });
 }
 
@@ -1324,8 +1193,7 @@ TEST_F(ReflectableTest, varuint16ConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](VarUInt16 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16,
-                        std::bind(&BitStreamReader::readVarUInt16, _1));
+                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16);
             });
 }
 
@@ -1334,8 +1202,7 @@ TEST_F(ReflectableTest, varuint16Array)
     auto rawArray = std::vector<VarUInt16>{{10, 20, 30, 40}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](VarUInt16 value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16,
-                std::bind(&BitStreamReader::readVarUInt16, _1));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt16);
     });
 }
 
@@ -1345,8 +1212,7 @@ TEST_F(ReflectableTest, varuint32ConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](VarUInt32 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32,
-                        std::bind(&BitStreamReader::readVarUInt32, _1));
+                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32);
             });
 }
 
@@ -1355,8 +1221,7 @@ TEST_F(ReflectableTest, varuint32Array)
     auto rawArray = std::vector<VarUInt32>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](VarUInt32 value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32,
-                std::bind(&BitStreamReader::readVarUInt32, _1));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32);
     });
 }
 
@@ -1366,8 +1231,7 @@ TEST_F(ReflectableTest, varuint64ConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](VarUInt64 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64,
-                        std::bind(&BitStreamReader::readVarUInt64, _1));
+                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64);
             });
 }
 
@@ -1376,8 +1240,7 @@ TEST_F(ReflectableTest, varuint64Array)
     auto rawArray = std::vector<VarUInt64>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](VarUInt64 value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64,
-                std::bind(&BitStreamReader::readVarUInt64, _1));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64);
     });
 }
 
@@ -1387,8 +1250,7 @@ TEST_F(ReflectableTest, varuintConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](VarUInt64 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64,
-                        std::bind(&BitStreamReader::readVarUInt, _1));
+                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64);
             });
 }
 
@@ -1397,8 +1259,7 @@ TEST_F(ReflectableTest, varuintArray)
     auto rawArray = std::vector<VarUInt>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](VarUInt value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64,
-                std::bind(&BitStreamReader::readVarUInt, _1));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt64);
     });
 }
 
@@ -1408,8 +1269,7 @@ TEST_F(ReflectableTest, varsizeConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](VarSize value, const IReflectableDataConstPtr& elementReflectable) {
-                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32,
-                        std::bind(&BitStreamReader::readVarSize, _1));
+                checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32);
             });
 }
 
@@ -1418,8 +1278,7 @@ TEST_F(ReflectableTest, varsizeArray)
     auto rawArray = std::vector<VarSize>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](VarSize value, const IReflectableDataPtr& elementReflectable) {
-        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32,
-                std::bind(&BitStreamReader::readVarSize, _1));
+        checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt32);
     });
 }
 
@@ -1429,8 +1288,7 @@ TEST_F(ReflectableTest, float16ConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](Float16 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat,
-                        std::bind(&BitStreamReader::readFloat16, _1));
+                checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat);
             });
 }
 
@@ -1439,8 +1297,7 @@ TEST_F(ReflectableTest, float16Array)
     auto rawArray = std::vector<Float16>{{2.0F, 0.0F}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Float16 value, const IReflectableDataPtr& elementReflectable) {
-        checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat,
-                std::bind(&BitStreamReader::readFloat16, _1));
+        checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat);
     });
 }
 
@@ -1450,8 +1307,7 @@ TEST_F(ReflectableTest, float32ConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](Float32 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat,
-                        std::bind(&BitStreamReader::readFloat32, _1));
+                checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat);
             });
 }
 
@@ -1460,8 +1316,7 @@ TEST_F(ReflectableTest, float32Array)
     auto rawArray = std::vector<Float32>{{2.0F, 0.0F, 1.2F}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Float32 value, const IReflectableDataPtr& elementReflectable) {
-        checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat,
-                std::bind(&BitStreamReader::readFloat32, _1));
+        checkFloatingPoint(value, elementReflectable, &IReflectableData::getFloat);
     });
 }
 
@@ -1471,8 +1326,7 @@ TEST_F(ReflectableTest, float64ConstArray)
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
             rawArray, reflectablePtr, [&](Float64 value, const IReflectableDataConstPtr& elementReflectable) {
-                checkFloatingPoint(value, elementReflectable, &IReflectableData::getDouble,
-                        std::bind(&BitStreamReader::readFloat64, _1));
+                checkFloatingPoint(value, elementReflectable, &IReflectableData::getDouble);
             });
 }
 
@@ -1481,8 +1335,7 @@ TEST_F(ReflectableTest, float64Array)
     auto rawArray = std::vector<Float64>{{2.0, 0.0, 1.2}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(rawArray, reflectablePtr, [&](Float64 value, const IReflectableDataPtr& elementReflectable) {
-        checkFloatingPoint(value, elementReflectable, &IReflectableData::getDouble,
-                std::bind(&BitStreamReader::readFloat64, _1));
+        checkFloatingPoint(value, elementReflectable, &IReflectableData::getDouble);
     });
 }
 
