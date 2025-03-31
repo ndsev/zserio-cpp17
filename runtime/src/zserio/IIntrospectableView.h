@@ -4,6 +4,7 @@
 #include <memory>
 #include <string_view>
 
+#include "zserio/BitSize.h"
 #include "zserio/IIntrospectableData.h"
 
 namespace zserio
@@ -25,7 +26,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~IBasicIntrospectableView() = default;
+    ~IBasicIntrospectableView() override = default;
 
     /**
      * Gets introspectable to the parameter (i.e. member) with the given schema name.
@@ -66,7 +67,7 @@ public:
      *
      * \return Updated bit position which points to the first bit after the compound.
      */
-    virtual size_t initializeOffsets(size_t bitPosition) const = 0;
+    virtual BitSize initializeOffsets(BitSize bitPosition) const = 0;
 
     /**
      * Initializes indexed offsets of the introspectable compound object.
@@ -78,7 +79,7 @@ public:
      *
      * \return Updated bit position which points to the first bit after the compound.
      */
-    virtual size_t initializeOffsets() const = 0;
+    virtual BitSize initializeOffsets() const = 0;
 
     /**
      * Gets the number of bits needed for serialization of the introspectable object.
@@ -91,7 +92,7 @@ public:
      *
      * \return The size of the serialized introspectable object in bits.
      */
-    virtual size_t bitSizeOf(size_t bitPosition) const = 0;
+    virtual BitSize bitSizeOf(BitSize bitPosition) const = 0;
 
     /**
      * Gets the number of bits needed for serialization of the introspectable object.
@@ -104,7 +105,7 @@ public:
      *
      * \return The size of the serialized introspectable object in bits.
      */
-    virtual size_t bitSizeOf() const = 0;
+    virtual BitSize bitSizeOf() const = 0;
 
     /**
      * Writes the introspectable object to a bit stream using the given bit stream writer.
