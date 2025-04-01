@@ -34,7 +34,7 @@ TEST(ParamStructureSubtypeTest, testSubtype)
             "::subtypes::param_structure_subtype::ParameterizedSubtype parameterizedSubtype");
     ASSERT_REGEX_MATCH_IN_FILE(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
-            "::zserio.*Vector<::subtypes::param_structure_subtype::AnotherParameterizedSubtype> "
+            "ector<::subtypes::param_structure_subtype::AnotherParameterizedSubtype> "
             "anotherParameterizedSubtypeArray");
 
     ASSERT_STRING_IN_FILE_PRESENT(
@@ -42,8 +42,7 @@ TEST(ParamStructureSubtypeTest, testSubtype)
             "View<::subtypes::param_structure_subtype::ParameterizedSubtype> parameterizedSubtype() const");
     ASSERT_REGEX_MATCH_IN_FILE(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
-            "Array<::zserio.*Vector<::subtypes::param_structure_subtype::AnotherParameterizedSubtype>, "
-            "ArrayType::AUTO, ::zserio::ArrayStorage::IMMUTABLE, "
+            "Array<const ::subtypes::param_structure_subtype::AnotherParameterizedSubtype, "
             "ZserioAnotherParameterizedSubtypeArrayArrayTraits> anotherParameterizedSubtypeArray");
 }
 

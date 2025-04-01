@@ -41,9 +41,9 @@ public:
             m_param(param)
     {}
 
-    Array<Vector<UInt32>, ArrayType::AUTO> array() const
+    Array<const UInt32> array() const
     {
-        return Array<Vector<UInt32>, ArrayType::AUTO>(m_data.array);
+        return Array<const UInt32>(m_data.array);
     }
 
     View<TestParam> param() const
@@ -79,7 +79,7 @@ BitSize bitSizeOf(const zserio::View<TestObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
-    endBitPosition = bitSizeOf(view.array());
+    endBitPosition = bitSizeOf<ArrayType::AUTO>(view.array());
 
     return endBitPosition - bitPosition;
 }

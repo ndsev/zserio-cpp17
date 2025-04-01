@@ -149,22 +149,22 @@ View<::test_object::polymorphic_allocator::WalkerObject>::View(const ::test_obje
             m_data->text};
 }
 
-Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO> View<::test_object::polymorphic_allocator::WalkerObject>::unionArray() const
+Array<const ::test_object::polymorphic_allocator::WalkerUnion> View<::test_object::polymorphic_allocator::WalkerObject>::unionArray() const
 {
-    return Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO>{
+    return Array<const ::test_object::polymorphic_allocator::WalkerUnion>{
             m_data->unionArray};
 }
 
-::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO>> View<::test_object::polymorphic_allocator::WalkerObject>::optionalUnionArray() const
+::zserio::pmr::Optional<Array<const ::test_object::polymorphic_allocator::WalkerUnion>> View<::test_object::polymorphic_allocator::WalkerObject>::optionalUnionArray() const
 {
     if (m_data->optionalUnionArray.has_value())
     {
-        return ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO>>{
+        return ::zserio::pmr::Optional<Array<const ::test_object::polymorphic_allocator::WalkerUnion>>{
                 ::std::in_place, m_data->optionalUnionArray.get_allocator(), *m_data->optionalUnionArray};
     }
     else
     {
-        return ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO>>(::std::nullopt, m_data->optionalUnionArray.get_allocator());
+        return ::zserio::pmr::Optional<Array<const ::test_object::polymorphic_allocator::WalkerUnion>>(::std::nullopt, m_data->optionalUnionArray.get_allocator());
     }
 }
 
@@ -266,10 +266,10 @@ void validate(const View<::test_object::polymorphic_allocator::WalkerObject>& vi
         validate(*view.nested(), "'WalkerObject.nested'");
     }
     validate(view.text(), "'WalkerObject.text'");
-    validate(view.unionArray(), "'WalkerObject.unionArray'");
+    validate<ArrayType::AUTO>(view.unionArray(), "'WalkerObject.unionArray'");
     if (view.optionalUnionArray().has_value())
     {
-        validate(*view.optionalUnionArray(), "'WalkerObject.optionalUnionArray'");
+        validate<ArrayType::AUTO>(*view.optionalUnionArray(), "'WalkerObject.optionalUnionArray'");
     }
     validate(view.choiceSelector(), "'WalkerObject.choiceSelector'");
     validate(view.choiceField(), "'WalkerObject.choiceField'");
@@ -290,12 +290,12 @@ BitSize bitSizeOf(const View<::test_object::polymorphic_allocator::WalkerObject>
     auto text_ = view.text();
     endBitPosition += bitSizeOf(text_, endBitPosition);
     auto unionArray_ = view.unionArray();
-    endBitPosition += bitSizeOf(unionArray_, endBitPosition);
+    endBitPosition += bitSizeOf<ArrayType::AUTO>(unionArray_, endBitPosition);
     auto optionalUnionArray_ = view.optionalUnionArray();
     endBitPosition += bitSizeOf(Bool());
     if (optionalUnionArray_.has_value())
     {
-        endBitPosition += bitSizeOf(*optionalUnionArray_, endBitPosition);
+        endBitPosition += bitSizeOf<ArrayType::AUTO>(*optionalUnionArray_, endBitPosition);
     }
     auto choiceSelector_ = view.choiceSelector();
     endBitPosition += bitSizeOf(choiceSelector_, endBitPosition);
@@ -318,12 +318,12 @@ void write(BitStreamWriter& writer, const View<::test_object::polymorphic_alloca
     auto text_ = view.text();
     write(writer, text_);
     auto unionArray_ = view.unionArray();
-    write(writer, unionArray_);
+    write<ArrayType::AUTO>(writer, unionArray_);
     auto optionalUnionArray_ = view.optionalUnionArray();
     if (optionalUnionArray_.has_value())
     {
         writer.writeBool(true);
-        write(writer, *optionalUnionArray_);
+        write<ArrayType::AUTO>(writer, *optionalUnionArray_);
     }
     else
     {
@@ -346,11 +346,11 @@ View<::test_object::polymorphic_allocator::WalkerObject> read(BitStreamReader& r
         (void)read(reader, *data.nested);
     }
     read(reader, data.text);
-    (void)read<Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO>>(reader, data.unionArray);
+    (void)read<ArrayType::AUTO>(reader, data.unionArray);
     if (reader.readBool())
     {
         data.optionalUnionArray.emplace(data.optionalUnionArray.get_allocator());
-        (void)read<Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO>>(reader, *data.optionalUnionArray);
+        (void)read<ArrayType::AUTO>(reader, *data.optionalUnionArray);
     }
     read(reader, data.choiceSelector);
     (void)read(reader, data.choiceField, ::zserio::UInt8(static_cast<::zserio::UInt8::ValueType>(view.choiceSelector())));

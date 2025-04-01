@@ -261,7 +261,11 @@ ${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << sta
 ${I}            " != " << static_cast<size_t>(${fullName}::ChoiceTag::<@choice_tag_name member.field/>) << ")!";
 ${I}}
     <@field_check_constraint member.field, indent/>
-${I}validate(view.${member.field.getterName}(), "'${name}.${member.field.name}'");
+${I}validate<@array_template_args member.field/>(view.${member.field.getterName}(), "'${name}.${member.field.name}'"<#rt>
+        <#if member.field.array?? && member.field.array.viewIndirectLength??>
+        , static_cast<size_t>(${member.field.array.viewIndirectLength})<#t>
+        </#if>
+        <#lt>);
     <#else>
 ${I}// empty
     </#if>
@@ -284,7 +288,7 @@ void validate(const View<${fullName}>& view, ::std::string_view)
 <#macro choice_bitsizeof_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}endBitPosition += bitSizeOf<@array_packed_suffix member.field, packed/>(<#rt>
+${I}endBitPosition += bitSizeOf<@array_suffix member.field, packed/><@array_template_args member.field/>(<#rt>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         <#lt>view.${member.field.getterName}(), endBitPosition);
     <#else>
@@ -308,7 +312,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 <#macro choice_write_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}write<@array_packed_suffix member.field, packed/>(<#rt>
+${I}write<@array_suffix member.field, packed/><@array_template_args member.field/>(<#rt>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         <#lt>writer, view.${member.field.getterName}());
     <#else>
@@ -329,8 +333,8 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
     <#if member.field??>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>(<#rt>
         <#lt><#if member.field.typeInfo.needsAllocator>data.get_allocator()</#if>);
-${I}<#if member.field.compound??>(void)</#if>read<@array_packed_suffix member.field, packed/><#rt>
-        <#if member.field.array??><<@array_type_full_name fullName, member.field/>></#if>(<#t>
+${I}<#if member.field.compound??>(void)</#if>read<@array_read_suffix member.field, packed/><#rt>
+        <@array_read_template_args fullName, member.field/>(<#t>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters member.field/>);
@@ -430,7 +434,7 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}endBitPosition += <#if member.field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
-        <@array_packed_suffix member.field, packed/>(<#t>
+        <@array_suffix member.field, packed/><@array_template_args member.field/>(<#t>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         <#lt>view.${member.field.getterName}(), endBitPosition);
     <#else>

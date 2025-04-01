@@ -94,10 +94,10 @@ public:
     ::zserio::UInt32 value() const;
     View<::test_object::polymorphic_allocator::CreatorNested> nested() const;
     ::std::string_view text() const;
-    Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested>, ArrayType::AUTO, ::zserio::ArrayStorage::IMMUTABLE, ZserioNestedArrayArrayTraits> nestedArray() const;
-    Array<::zserio::pmr::Vector<::zserio::pmr::String>, ArrayType::AUTO> textArray() const;
-    ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>, ArrayType::AUTO>> externArray() const;
-    ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::Bytes>, ArrayType::AUTO>> bytesArray() const;
+    Array<const ::test_object::polymorphic_allocator::CreatorNested, ZserioNestedArrayArrayTraits> nestedArray() const;
+    Array<const ::zserio::pmr::String> textArray() const;
+    ::zserio::pmr::Optional<Array<const ::zserio::pmr::BitBuffer>> externArray() const;
+    ::zserio::pmr::Optional<Array<const ::zserio::pmr::Bytes>> bytesArray() const;
     ::zserio::pmr::Optional<::zserio::Bool> optionalBool() const;
     ::zserio::pmr::Optional<View<::test_object::polymorphic_allocator::CreatorNested>> optionalNested() const;
 

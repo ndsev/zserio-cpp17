@@ -73,9 +73,9 @@ View<::test_object::std_allocator::WalkerUnion>::View(const ::test_object::std_a
     return ::std::string_view{get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(*m_data)};
 }
 
-Array<::zserio::Vector<::test_object::std_allocator::WalkerNested>, ArrayType::AUTO> View<::test_object::std_allocator::WalkerUnion>::nestedArray() const
+Array<const ::test_object::std_allocator::WalkerNested> View<::test_object::std_allocator::WalkerUnion>::nestedArray() const
 {
-    return Array<::zserio::Vector<::test_object::std_allocator::WalkerNested>, ArrayType::AUTO>{get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(*m_data)};
+    return Array<const ::test_object::std_allocator::WalkerNested>{get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(*m_data)};
 }
 
 ::test_object::std_allocator::WalkerUnion::ChoiceTag View<::test_object::std_allocator::WalkerUnion>::zserioChoiceTag() const
@@ -163,7 +163,7 @@ void validate(const View<::test_object::std_allocator::WalkerUnion>& view, ::std
         validate(view.text(), "'WalkerUnion.text'");
         break;
     case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
-        validate(view.nestedArray(), "'WalkerUnion.nestedArray'");
+        validate<ArrayType::AUTO>(view.nestedArray(), "'WalkerUnion.nestedArray'");
         break;
     default:
         throw UnionCaseException("No case set in union 'WalkerUnion'!");
@@ -184,7 +184,7 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerUnion>& view, B
         endBitPosition += bitSizeOf(view.text(), endBitPosition);
         break;
     case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
-        endBitPosition += bitSizeOf(view.nestedArray(), endBitPosition);
+        endBitPosition += bitSizeOf<ArrayType::AUTO>(view.nestedArray(), endBitPosition);
         break;
     default:
         throw CppRuntimeException("No case set in union ::test_object::std_allocator::WalkerUnion!");
@@ -206,7 +206,7 @@ void write(BitStreamWriter& writer, const View<::test_object::std_allocator::Wal
         write(writer, view.text());
         break;
     case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
-        write(writer, view.nestedArray());
+        write<ArrayType::AUTO>(writer, view.nestedArray());
         break;
     default:
         throw CppRuntimeException("No case set in union ::test_object::std_allocator::WalkerUnion!");
@@ -232,7 +232,7 @@ View<::test_object::std_allocator::WalkerUnion> read(BitStreamReader& reader, ::
         break;
     case ::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
         data.emplace<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(data.get_allocator());
-        (void)read<Array<::zserio::Vector<::test_object::std_allocator::WalkerNested>, ArrayType::AUTO>>(reader, data.get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>());
+        (void)read<ArrayType::AUTO>(reader, data.get<::test_object::std_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>());
         break;
     default:
         throw CppRuntimeException("No case set in union ::test_object::std_allocator::WalkerUnion!");

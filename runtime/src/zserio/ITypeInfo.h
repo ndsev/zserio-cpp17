@@ -1,7 +1,6 @@
 #ifndef ZSERIO_I_TYPE_INFO_INC_H
 #define ZSERIO_I_TYPE_INFO_INC_H
 
-#include <memory> // TODO[Mi-L@]: Remove include once proper IReflectable is implemented.
 #include <string_view>
 
 #include "zserio/IReflectableData.h"

@@ -53,9 +53,6 @@
         <#if array_needs_owner(field)>
             , *this<#t>
         </#if>
-        <#if field.array.length??>
-            , static_cast<size_t>(${field.array.length})<#t>
-        </#if>
     <#else>
         <#if field.compound??>
             <#list field.compound.instantiatedParameters as instantiatedParameter>
@@ -228,24 +225,16 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
 </#macro>
 
 <#macro array_type_name field>
-    Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
-            <#if field.usedAsOffset>, ::zserio::ArrayStorage::MUTABLE</#if><#t>
+    Array<<#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}<#t>
             <#if array_needs_custom_traits(field)>
-                <#if !field.usedAsOffset>
-            , ::zserio::ArrayStorage::IMMUTABLE<#t>
-                </#if>
             , <@array_traits_name field/><#t>
             </#if>
             ><#t>
 </#macro>
 
 <#macro array_type_full_name compoundName field>
-    Array<<@field_data_type_name field/>, <@array_type_enum field/><#t>
-            <#if field.usedAsOffset>, ::zserio::ArrayStorage::MUTABLE</#if><#t>
+    Array<<#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}<#t>
             <#if array_needs_custom_traits(field)>
-                <#if !field.usedAsOffset>
-            , ::zserio::ArrayStorage::IMMUTABLE<#t>
-                </#if>
             , View<${compoundName}>::<@array_traits_name field/><#t>
             </#if>
             ><#t>
@@ -270,9 +259,35 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
     ${arrayType}<#t>
 </#macro>
 
-<#macro array_packed_suffix field packed>
+<#macro array_template_args field>
+    <#if field.array??>
+        <<@array_type_enum field/>><#t>
+    </#if>
+</#macro>
+
+<#macro array_suffix field packed>
     <#if field.array?? && field.isPackable && (packed || field.array.isPacked)>
         Packed<#t>
+    </#if>
+</#macro>
+
+<#macro array_read_template_args compoundName field>
+    <#if field.array??>
+        <<#t>
+        <@array_type_enum field/><#t>
+        <#if array_needs_custom_traits(field)>
+        , View<${compoundName}>::<@array_traits_name field/><#t>
+        </#if>
+        ><#t>
+    </#if>
+</#macro>
+
+<#macro array_read_suffix field packed>
+    <#if field.array?? && field.isPackable && (packed || field.array.isPacked)>
+        Packed<#t>
+    </#if>
+    <#if array_needs_custom_traits(field)>
+        WithTraits<#t>
     </#if>
 </#macro>
 

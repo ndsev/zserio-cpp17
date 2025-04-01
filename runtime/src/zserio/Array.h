@@ -25,87 +25,15 @@ enum ArrayType
     ALIGNED_AUTO /**< Aligned auto zserio array which is auto zserio array with indexed offsets. */
 };
 
-/**
- * Array storage type. Normally all array view's are immutable except for arrays which are used as
- * offsets.
- */
-enum ArrayStorage
-{
-    IMMUTABLE, /**< Immutable array. */
-    MUTABLE /**< Mutable array, used only when the array is used for offsets. */
-};
-
-namespace detail
-{
-
-template <typename RAW_ARRAY, ArrayStorage ARRAY_STORAGE>
-struct array_storage
-{
-    using type = const RAW_ARRAY&;
-};
-
-template <typename RAW_ARRAY>
-struct array_storage<RAW_ARRAY, ArrayStorage::MUTABLE>
-{
-    using type = RAW_ARRAY&;
-};
-
-template <typename RAW_ARRAY, ArrayStorage ARRAY_STORAGE>
-using array_storage_t = typename array_storage<RAW_ARRAY, ARRAY_STORAGE>::type;
-
-} // namespace detail
-
-template <ArrayType ARRAY_TYPE, typename = void>
-class ArrayBase
+template <typename T, typename ARRAY_TRAITS = ArrayTraits<std::remove_cv_t<T>>>
+class Array
 {
 public:
-    static constexpr bool HAS_SCHEMA_SIZE = false;
-};
-
-template <ArrayType ARRAY_TYPE>
-class ArrayBase<ARRAY_TYPE, std::enable_if_t<(ARRAY_TYPE == NORMAL || ARRAY_TYPE == ALIGNED)>>
-{
-public:
-    explicit ArrayBase(size_t schemaSize) :
-            m_schemaSize(schemaSize)
-    {}
-
-    size_t schemaSize() const
-    {
-        return m_schemaSize;
-    }
-
-    static constexpr bool HAS_SCHEMA_SIZE = true;
-
-private:
-    size_t m_schemaSize;
-};
-
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE = ArrayStorage::IMMUTABLE,
-        typename ARRAY_TRAITS = ArrayTraits<typename RAW_ARRAY::value_type>>
-class Array : public ArrayBase<ARRAY_TYPE>
-{
-public:
-    /** Array type. */
-    static constexpr ArrayType TYPE = ARRAY_TYPE;
-
-    /** Array storage type. */
-    static constexpr ArrayStorage STORAGE = ARRAY_STORAGE;
-
-    /** Typedef for the raw array. */
-    using RawArray = RAW_ARRAY;
-
     /** Typedef for the value type. */
-    using ValueType = typename RawArray::value_type;
-
-    /** Typedef for allocator type. */
-    using AllocatorType = typename RawArray::allocator_type;
+    using ValueType = std::remove_cv_t<T>;
 
     /** Typedef for the array traits. */
     using Traits = ARRAY_TRAITS;
-
-    /** Whether the array has defined size in the schema. */
-    static constexpr bool HAS_SCHEMA_SIZE = ArrayBase<ARRAY_TYPE>::HAS_SCHEMA_SIZE;
 
     /** Forward declaration of the Array const iterator. */
     class ConstIterator;
@@ -126,22 +54,9 @@ public:
      * \param rawArray Raw array.
      */
     template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<detail::is_dummy_array_owner_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(detail::array_storage_t<RawArray, STORAGE> rawArray) :
-            m_rawArray(rawArray)
-    {}
-
-    /**
-     * Constructor from l-value raw array.
-     *
-     * \param rawArray Raw array.
-     * \param schemaSize Array size defined by the schema.
-     */
-    template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<detail::is_dummy_array_owner_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(detail::array_storage_t<RawArray, STORAGE> rawArray, size_t schemaSize) :
-            ArrayBase<ARRAY_TYPE>(schemaSize),
-            m_rawArray(rawArray)
+            std::enable_if_t<detail::is_dummy_array_owner_v<OWNER_TYPE_>, int> = 0>
+    explicit Array(Span<T> data) :
+            m_data(data)
     {}
 
     /**
@@ -151,25 +66,9 @@ public:
      * \param owner View to the array's owner.
      */
     template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<!detail::is_dummy_array_owner_v<OWNER_TYPE_> && !HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(detail::array_storage_t<RawArray, STORAGE> rawArray, const OwnerType& owner) :
-            m_rawArray(rawArray),
-            m_owner(owner)
-    {}
-
-    /**
-     * Constructor from l-value raw array.
-     *
-     * \param rawArray Raw array.
-     * \param owner View to the array's owner.
-     * \param schemaSize Array size defined by the schema.
-     */
-    template <typename OWNER_TYPE_ = OwnerType,
-            std::enable_if_t<!detail::is_dummy_array_owner_v<OWNER_TYPE_> && HAS_SCHEMA_SIZE, int> = 0>
-    explicit Array(
-            detail::array_storage_t<RawArray, STORAGE> rawArray, const OwnerType& owner, size_t schemaSize) :
-            ArrayBase<ARRAY_TYPE>(schemaSize),
-            m_rawArray(rawArray),
+            std::enable_if_t<!detail::is_dummy_array_owner_v<OWNER_TYPE_>, int> = 0>
+    explicit Array(Span<T> data, const OwnerType& owner) :
+            m_data(data),
             m_owner(owner)
     {}
 
@@ -193,15 +92,9 @@ public:
      * \return Reference to underlying data array.
      */
     /** \{ */
-    const RawArray& zserioData() const
+    Span<T> zserioData() const
     {
-        return m_rawArray;
-    }
-
-    template <ArrayStorage ARRAY_STORAGE_ = STORAGE>
-    std::enable_if_t<ARRAY_STORAGE_ == ArrayStorage::MUTABLE, RawArray&> zserioData()
-    {
-        return m_rawArray;
+        return m_data;
     }
     /** \} */
 
@@ -214,30 +107,22 @@ public:
      */
     bool operator==(const Array& other) const
     {
-        using AtResult = decltype(std::declval<const Array&>().at(std::declval<size_t>()));
-        if constexpr (std::is_same_v<View<ValueType>, AtResult>)
+        const size_t thisSize = size();
+        const size_t otherSize = other.size();
+        if (thisSize != otherSize)
         {
-            const size_t thisSize = size();
-            const size_t otherSize = other.size();
-            if (thisSize != otherSize)
+            return false;
+        }
+
+        for (size_t i = 0; i < thisSize; ++i)
+        {
+            if ((*this)[i] != other[i])
             {
                 return false;
             }
-
-            for (size_t i = 0; i < thisSize; ++i)
-            {
-                if ((*this)[i] != other[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
-        else
-        {
-            return m_rawArray == other.m_rawArray;
-        }
+
+        return true;
     }
 
     /**
@@ -249,31 +134,23 @@ public:
      */
     bool operator<(const Array& other) const
     {
-        using AtResult = decltype(std::declval<const Array&>().at(std::declval<size_t>()));
-        if constexpr (std::is_same_v<View<ValueType>, AtResult>)
-        {
-            const size_t thisSize = size();
-            const size_t otherSize = other.size();
-            const size_t maxSize = std::max(thisSize, otherSize);
+        const size_t thisSize = size();
+        const size_t otherSize = other.size();
+        const size_t minSize = std::min(thisSize, otherSize);
 
-            for (size_t i = 0; i < maxSize; ++i)
+        for (size_t i = 0; i < minSize; ++i)
+        {
+            if ((*this)[i] < other[i])
             {
-                if ((*this)[i] < other[i])
-                {
-                    return true;
-                }
-                if (other[i] < (*this)[i])
-                {
-                    return false;
-                }
+                return true;
             }
+            if (other[i] < (*this)[i])
+            {
+                return false;
+            }
+        }
 
-            return thisSize < otherSize;
-        }
-        else
-        {
-            return m_rawArray < other.m_rawArray;
-        }
+        return thisSize < otherSize;
     }
 
     /**
@@ -331,7 +208,7 @@ public:
      */
     size_t size() const
     {
-        return m_rawArray.size();
+        return m_data.size();
     }
 
     /**
@@ -341,7 +218,7 @@ public:
      */
     bool empty() const
     {
-        return m_rawArray.empty();
+        return m_data.empty();
     }
 
     /**
@@ -352,13 +229,19 @@ public:
      */
     decltype(auto) at(size_t index) const
     {
+        if (index >= m_data.size())
+        {
+            throw CppRuntimeException("Array: Index ")
+                    << index << " is out of bounds (" << m_data.size() << ")!";
+        }
+
         if constexpr (detail::array_traits_has_at_v<Traits>)
         {
-            return Traits::at(m_owner, m_rawArray.at(index), index);
+            return Traits::at(m_owner, m_data[index], index);
         }
         else
         {
-            return m_rawArray.at(index);
+            return m_data[index];
         }
     }
 
@@ -373,11 +256,11 @@ public:
     {
         if constexpr (detail::array_traits_has_at_v<Traits>)
         {
-            return Traits::at(m_owner, m_rawArray[index], index);
+            return Traits::at(m_owner, m_data[index], index);
         }
         else
         {
-            return m_rawArray[index];
+            return m_data[index];
         }
     }
 
@@ -611,23 +494,22 @@ public:
     };
 
 private:
-    detail::array_storage_t<RawArray, STORAGE> m_rawArray;
+    Span<T> m_data;
     OwnerType m_owner; // view to owner type, parameters are copied by value and that is ok
 };
 
 namespace detail
 {
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
-void validate(
-        const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array, std::string_view fieldName)
+template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
+void validate(const Array<T, ARRAY_TRAITS>& array, std::string_view fieldName, size_t schemaSize = 0)
 {
-    if constexpr (Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>::HAS_SCHEMA_SIZE)
+    if constexpr (ARRAY_TYPE == ArrayType::NORMAL || ARRAY_TYPE == ArrayType::ALIGNED)
     {
-        if (array.size() != array.schemaSize())
+        if (array.size() != schemaSize)
         {
             throw ArrayLengthException("Wrong array length for field '")
-                    << fieldName << "' (" << array.size() << " != " << array.schemaSize() << ")!";
+                    << fieldName << "' (" << array.size() << " != " << schemaSize << ")!";
         }
     }
 
@@ -639,9 +521,8 @@ void validate(
     }
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
-BitSize bitSizeOf(
-        const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
+BitSize bitSizeOf(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
     BitSize endBitPosition = bitPosition;
 
@@ -669,13 +550,11 @@ struct DummyOffsetSetter
     {}
 };
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS,
-        typename OFFSET_SETTER = DummyOffsetSetter>
-BitSize initializeOffsets(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array,
-        BitSize bitPosition, const OFFSET_SETTER& offsetSetter = OFFSET_SETTER())
+template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS, typename OFFSET_SETTER = DummyOffsetSetter>
+BitSize initializeOffsets(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition,
+        const OFFSET_SETTER& offsetSetter = OFFSET_SETTER())
 {
-    using ValueType = typename RAW_ARRAY::value_type;
-    using ArrayT = Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>;
+    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
 
     BitSize endBitPosition = bitPosition;
 
@@ -692,7 +571,7 @@ BitSize initializeOffsets(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRA
             offsetSetter.setOffset(i, endBitPosition / 8);
         }
 
-        using AtResult = decltype(std::declval<const ArrayT&>().at(std::declval<size_t>()));
+        using AtResult = decltype(std::declval<const Array<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
         if constexpr (std::is_same_v<View<ValueType>, AtResult>)
         {
             endBitPosition += initializeOffsets(array[i], endBitPosition);
@@ -706,44 +585,41 @@ BitSize initializeOffsets(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRA
     return endBitPosition - bitPosition;
 }
 
-template <typename ARRAY>
+template <ArrayType ARRAY_TYPE, typename ARRAY_TRAITS>
 size_t readArrayLength(BitStreamReader& reader, size_t arrayLength)
 {
-    if constexpr (ARRAY::TYPE != ArrayType::AUTO && ARRAY::TYPE != ArrayType::ALIGNED_AUTO &&
-            ARRAY::TYPE != ArrayType::IMPLICIT)
+    if constexpr (ARRAY_TYPE == ArrayType::NORMAL || ARRAY_TYPE == ArrayType::ALIGNED)
     {
         return arrayLength;
     }
-    else if constexpr (ARRAY::TYPE == ArrayType::AUTO || ARRAY::TYPE == ArrayType::ALIGNED_AUTO)
+    else if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
     {
         return reader.readVarSize();
     }
     else
     {
-        using ArrayTraits = typename ARRAY::Traits;
-
         const size_t remainingBits = reader.getBufferBitSize() - reader.getBitPosition();
-        return remainingBits / ArrayTraits::bitSizeOf();
+        return remainingBits / ARRAY_TRAITS::bitSizeOf();
     }
 }
 
-template <typename ARRAY>
-void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typename ARRAY::OwnerType& owner,
+template <ArrayType ARRAY_TYPE, typename T, typename ALLOC, typename ARRAY_TRAITS = ArrayTraits<T>>
+void read(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, detail::array_owner_type_t<ARRAY_TRAITS>& owner,
         size_t arrayLength = 0)
 {
-    using ArrayTraits = typename ARRAY::Traits;
+    using ValueType = T;
 
-    const size_t readLength = readArrayLength<ARRAY>(reader, arrayLength);
+    const size_t readLength = readArrayLength<ARRAY_TYPE, ARRAY_TRAITS>(reader, arrayLength);
     rawArray.clear();
     rawArray.reserve(readLength);
     for (size_t i = 0; i < readLength; ++i)
     {
-        if constexpr (ARRAY::TYPE == ArrayType::ALIGNED || ARRAY::TYPE == ArrayType::ALIGNED_AUTO)
+        if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
         {
             reader.alignTo(8);
         }
 
-        if constexpr (has_allocator_v<typename ARRAY::ValueType>)
+        if constexpr (has_allocator_v<ValueType>)
         {
             rawArray.emplace_back(rawArray.get_allocator());
         }
@@ -751,19 +627,35 @@ void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typename 
         {
             rawArray.emplace_back();
         }
-        ArrayTraits::read(reader, owner, rawArray.back(), i);
+        ARRAY_TRAITS::read(reader, owner, rawArray.back(), i);
     }
 }
 
-template <typename ARRAY, std::enable_if_t<is_dummy_array_owner_v<typename ARRAY::OwnerType>, int> = 0>
-void read(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, size_t arrayLength = 0)
+template <ArrayType ARRAY_TYPE, typename T, typename ALLOC,
+        std::enable_if_t<is_dummy_array_owner_v<detail::array_owner_type_t<ArrayTraits<T>>>, int> = 0>
+void read(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, size_t arrayLength = 0)
 {
     DummyArrayOwner owner;
-    read<ARRAY>(reader, rawArray, owner, arrayLength);
+    read<ARRAY_TYPE, T, ALLOC>(reader, rawArray, owner, arrayLength);
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
-void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array)
+template <ArrayType ARRAY_TYPE, typename ARRAY_TRAITS, typename T, typename ALLOC>
+void readWithTraits(BitStreamReader& reader, Vector<T, ALLOC>& rawArray,
+        detail::array_owner_type_t<ARRAY_TRAITS>& owner, size_t arrayLength = 0)
+{
+    read<ARRAY_TYPE, T, ALLOC, ARRAY_TRAITS>(reader, rawArray, owner, arrayLength);
+}
+
+template <ArrayType ARRAY_TYPE, typename ARRAY_TRAITS, typename T, typename ALLOC,
+        std::enable_if_t<is_dummy_array_owner_v<detail::array_owner_type_t<ARRAY_TRAITS>>, int> = 0>
+void readWithTraits(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, size_t arrayLength = 0)
+{
+    DummyArrayOwner owner;
+    readWithTraits<ARRAY_TYPE, ARRAY_TRAITS, T, ALLOC>(reader, rawArray, owner, arrayLength);
+}
+
+template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
+void write(BitStreamWriter& writer, const Array<T, ARRAY_TRAITS>& array)
 {
     if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
     {
@@ -781,10 +673,11 @@ void write(BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STO
     }
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
-BitSize bitSizeOfPacked(
-        const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
+BitSize bitSizeOfPacked(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
+    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
+
     static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
     BitSize endBitPosition = bitPosition;
@@ -797,7 +690,7 @@ BitSize bitSizeOfPacked(
 
     if (arrayLength > 0)
     {
-        detail::packing_context_type_t<typename RAW_ARRAY::value_type> context;
+        detail::packing_context_type_t<ValueType> context;
 
         for (size_t i = 0; i < arrayLength; ++i)
         {
@@ -818,15 +711,13 @@ BitSize bitSizeOfPacked(
     return endBitPosition - bitPosition;
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS,
-        typename OFFSET_SETTER = DummyOffsetSetter>
-BitSize initializeOffsetsPacked(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array,
-        BitSize bitPosition, const OFFSET_SETTER& offsetInitializer = OFFSET_SETTER())
+template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS, typename OFFSET_SETTER = DummyOffsetSetter>
+BitSize initializeOffsetsPacked(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition,
+        const OFFSET_SETTER& offsetInitializer = OFFSET_SETTER())
 {
-    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
+    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
 
-    using ValueType = typename RAW_ARRAY::value_type;
-    using ArrayT = Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>;
+    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
     BitSize endBitPosition = bitPosition;
 
@@ -853,7 +744,7 @@ BitSize initializeOffsetsPacked(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE
                 offsetInitializer.setOffset(i, endBitPosition / 8);
             }
 
-            using AtResult = decltype(std::declval<const ArrayT&>().at(std::declval<size_t>()));
+            using AtResult = decltype(std::declval<const Array<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
             if constexpr (std::is_same_v<View<ValueType>, AtResult>)
             {
                 endBitPosition += initializeOffsets(context, array[i], endBitPosition);
@@ -868,10 +759,11 @@ BitSize initializeOffsetsPacked(const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE
     return endBitPosition - bitPosition;
 }
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
-void writePacked(
-        BitStreamWriter& writer, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array)
+template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
+void writePacked(BitStreamWriter& writer, const Array<T, ARRAY_TRAITS>& array)
 {
+    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
+
     static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
     const size_t arrayLength = array.size();
@@ -882,7 +774,7 @@ void writePacked(
 
     if (arrayLength > 0)
     {
-        detail::packing_context_type_t<typename RAW_ARRAY::value_type> context;
+        detail::packing_context_type_t<ValueType> context;
 
         for (size_t i = 0; i < arrayLength; ++i)
         {
@@ -901,29 +793,29 @@ void writePacked(
     }
 }
 
-template <typename ARRAY>
-void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typename ARRAY::OwnerType& owner,
-        size_t arrayLength = 0)
+template <ArrayType ARRAY_TYPE, typename T, typename ALLOC, typename ARRAY_TRAITS = ArrayTraits<T>>
+void readPacked(BitStreamReader& reader, Vector<T, ALLOC>& rawArray,
+        detail::array_owner_type_t<ARRAY_TRAITS>& owner, size_t arrayLength = 0)
 {
-    using ArrayTraits = typename ARRAY::Traits;
+    using ValueType = T;
 
-    const size_t readLength = readArrayLength<ARRAY>(reader, arrayLength);
+    const size_t readLength = readArrayLength<ARRAY_TYPE, ARRAY_TRAITS>(reader, arrayLength);
     rawArray.clear();
 
     if (readLength > 0)
     {
         rawArray.reserve(readLength);
 
-        detail::packing_context_type_t<typename ARRAY::ValueType> context;
+        detail::packing_context_type_t<ValueType> context;
 
         for (size_t i = 0; i < readLength; ++i)
         {
-            if constexpr (ARRAY::TYPE == ArrayType::ALIGNED || ARRAY::TYPE == ArrayType::ALIGNED_AUTO)
+            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
             {
                 reader.alignTo(8);
             }
 
-            if constexpr (has_allocator_v<typename ARRAY::ValueType>)
+            if constexpr (has_allocator_v<ValueType>)
             {
                 rawArray.emplace_back(rawArray.get_allocator());
             }
@@ -931,23 +823,39 @@ void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, typ
             {
                 rawArray.emplace_back();
             }
-            ArrayTraits::read(context, reader, owner, rawArray.back(), i);
+            ARRAY_TRAITS::read(context, reader, owner, rawArray.back(), i);
         }
     }
 }
 
-template <typename ARRAY, std::enable_if_t<is_dummy_array_owner_v<typename ARRAY::OwnerType>, int> = 0>
-void readPacked(BitStreamReader& reader, typename ARRAY::RawArray& rawArray, size_t arrayLength = 0)
+template <ArrayType ARRAY_TYPE, typename T, typename ALLOC,
+        typename ARRAY_TRAITS = ArrayTraits<std::remove_cv_t<T>>,
+        std::enable_if_t<is_dummy_array_owner_v<detail::array_owner_type_t<ARRAY_TRAITS>>, int> = 0>
+void readPacked(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, size_t arrayLength = 0)
 {
     DummyArrayOwner owner;
-    readPacked<ARRAY>(reader, rawArray, owner, arrayLength);
+    readPacked<ARRAY_TYPE, T, ALLOC, ARRAY_TRAITS>(reader, rawArray, owner, arrayLength);
+}
+
+template <ArrayType ARRAY_TYPE, typename ARRAY_TRAITS, typename T, typename ALLOC>
+void readPackedWithTraits(BitStreamReader& reader, Vector<T, ALLOC>& rawArray,
+        detail::array_owner_type_t<ARRAY_TRAITS>& owner, size_t arrayLength = 0)
+{
+    readPacked<ARRAY_TYPE, T, ALLOC, ARRAY_TRAITS>(reader, rawArray, owner, arrayLength);
+}
+
+template <ArrayType ARRAY_TYPE, typename ARRAY_TRAITS, typename T, typename ALLOC,
+        std::enable_if_t<is_dummy_array_owner_v<detail::array_owner_type_t<ARRAY_TRAITS>>, int> = 0>
+void readPackedWithTraits(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, size_t arrayLength = 0)
+{
+    DummyArrayOwner owner;
+    readPackedWithTraits<ARRAY_TYPE, ARRAY_TRAITS, T, ALLOC>(reader, rawArray, owner, arrayLength);
 }
 
 } // namespace detail
 
-template <typename RAW_ARRAY, ArrayType ARRAY_TYPE, ArrayStorage ARRAY_STORAGE, typename ARRAY_TRAITS>
-uint32_t calcHashCode(
-        uint32_t seedValue, const Array<RAW_ARRAY, ARRAY_TYPE, ARRAY_STORAGE, ARRAY_TRAITS>& array)
+template <typename T, typename ARRAY_TRAITS>
+uint32_t calcHashCode(uint32_t seedValue, const Array<T, ARRAY_TRAITS>& array)
 {
     uint32_t result = seedValue;
     for (size_t i = 0; i < array.size(); ++i)

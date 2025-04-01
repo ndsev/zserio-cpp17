@@ -167,41 +167,41 @@ View<::test_object::polymorphic_allocator::CreatorNested> View<::test_object::po
             m_data->text};
 }
 
-Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested>, ArrayType::AUTO, ::zserio::ArrayStorage::IMMUTABLE, View<::test_object::polymorphic_allocator::CreatorObject>::ZserioNestedArrayArrayTraits> View<::test_object::polymorphic_allocator::CreatorObject>::nestedArray() const
+Array<const ::test_object::polymorphic_allocator::CreatorNested, View<::test_object::polymorphic_allocator::CreatorObject>::ZserioNestedArrayArrayTraits> View<::test_object::polymorphic_allocator::CreatorObject>::nestedArray() const
 {
-    return Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested>, ArrayType::AUTO, ::zserio::ArrayStorage::IMMUTABLE, ZserioNestedArrayArrayTraits>{
+    return Array<const ::test_object::polymorphic_allocator::CreatorNested, ZserioNestedArrayArrayTraits>{
             m_data->nestedArray, *this};
 }
 
-Array<::zserio::pmr::Vector<::zserio::pmr::String>, ArrayType::AUTO> View<::test_object::polymorphic_allocator::CreatorObject>::textArray() const
+Array<const ::zserio::pmr::String> View<::test_object::polymorphic_allocator::CreatorObject>::textArray() const
 {
-    return Array<::zserio::pmr::Vector<::zserio::pmr::String>, ArrayType::AUTO>{
+    return Array<const ::zserio::pmr::String>{
             m_data->textArray};
 }
 
-::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>, ArrayType::AUTO>> View<::test_object::polymorphic_allocator::CreatorObject>::externArray() const
+::zserio::pmr::Optional<Array<const ::zserio::pmr::BitBuffer>> View<::test_object::polymorphic_allocator::CreatorObject>::externArray() const
 {
     if (m_data->externArray.has_value())
     {
-        return ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>, ArrayType::AUTO>>{
+        return ::zserio::pmr::Optional<Array<const ::zserio::pmr::BitBuffer>>{
                 ::std::in_place, m_data->externArray.get_allocator(), *m_data->externArray};
     }
     else
     {
-        return ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>, ArrayType::AUTO>>(::std::nullopt, m_data->externArray.get_allocator());
+        return ::zserio::pmr::Optional<Array<const ::zserio::pmr::BitBuffer>>(::std::nullopt, m_data->externArray.get_allocator());
     }
 }
 
-::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::Bytes>, ArrayType::AUTO>> View<::test_object::polymorphic_allocator::CreatorObject>::bytesArray() const
+::zserio::pmr::Optional<Array<const ::zserio::pmr::Bytes>> View<::test_object::polymorphic_allocator::CreatorObject>::bytesArray() const
 {
     if (m_data->bytesArray.has_value())
     {
-        return ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::Bytes>, ArrayType::AUTO>>{
+        return ::zserio::pmr::Optional<Array<const ::zserio::pmr::Bytes>>{
                 ::std::in_place, m_data->bytesArray.get_allocator(), *m_data->bytesArray};
     }
     else
     {
-        return ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::zserio::pmr::Bytes>, ArrayType::AUTO>>(::std::nullopt, m_data->bytesArray.get_allocator());
+        return ::zserio::pmr::Optional<Array<const ::zserio::pmr::Bytes>>(::std::nullopt, m_data->bytesArray.get_allocator());
     }
 }
 
@@ -312,15 +312,15 @@ void validate(const View<::test_object::polymorphic_allocator::CreatorObject>& v
     validate(view.value(), "'CreatorObject.value'");
     validate(view.nested(), "'CreatorObject.nested'");
     validate(view.text(), "'CreatorObject.text'");
-    validate(view.nestedArray(), "'CreatorObject.nestedArray'");
-    validate(view.textArray(), "'CreatorObject.textArray'");
+    validate<ArrayType::AUTO>(view.nestedArray(), "'CreatorObject.nestedArray'");
+    validate<ArrayType::AUTO>(view.textArray(), "'CreatorObject.textArray'");
     if (view.externArray().has_value())
     {
-        validate(*view.externArray(), "'CreatorObject.externArray'");
+        validate<ArrayType::AUTO>(*view.externArray(), "'CreatorObject.externArray'");
     }
     if (view.bytesArray().has_value())
     {
-        validate(*view.bytesArray(), "'CreatorObject.bytesArray'");
+        validate<ArrayType::AUTO>(*view.bytesArray(), "'CreatorObject.bytesArray'");
     }
     if (view.optionalBool().has_value())
     {
@@ -344,20 +344,20 @@ BitSize bitSizeOf(const View<::test_object::polymorphic_allocator::CreatorObject
     auto text_ = view.text();
     endBitPosition += bitSizeOf(text_, endBitPosition);
     auto nestedArray_ = view.nestedArray();
-    endBitPosition += bitSizeOf(nestedArray_, endBitPosition);
+    endBitPosition += bitSizeOf<ArrayType::AUTO>(nestedArray_, endBitPosition);
     auto textArray_ = view.textArray();
-    endBitPosition += bitSizeOf(textArray_, endBitPosition);
+    endBitPosition += bitSizeOf<ArrayType::AUTO>(textArray_, endBitPosition);
     auto externArray_ = view.externArray();
     endBitPosition += bitSizeOf(Bool());
     if (externArray_.has_value())
     {
-        endBitPosition += bitSizeOf(*externArray_, endBitPosition);
+        endBitPosition += bitSizeOf<ArrayType::AUTO>(*externArray_, endBitPosition);
     }
     auto bytesArray_ = view.bytesArray();
     endBitPosition += bitSizeOf(Bool());
     if (bytesArray_.has_value())
     {
-        endBitPosition += bitSizeOf(*bytesArray_, endBitPosition);
+        endBitPosition += bitSizeOf<ArrayType::AUTO>(*bytesArray_, endBitPosition);
     }
     auto optionalBool_ = view.optionalBool();
     endBitPosition += bitSizeOf(Bool());
@@ -385,14 +385,14 @@ void write(BitStreamWriter& writer, const View<::test_object::polymorphic_alloca
     auto text_ = view.text();
     write(writer, text_);
     auto nestedArray_ = view.nestedArray();
-    write(writer, nestedArray_);
+    write<ArrayType::AUTO>(writer, nestedArray_);
     auto textArray_ = view.textArray();
-    write(writer, textArray_);
+    write<ArrayType::AUTO>(writer, textArray_);
     auto externArray_ = view.externArray();
     if (externArray_.has_value())
     {
         writer.writeBool(true);
-        write(writer, *externArray_);
+        write<ArrayType::AUTO>(writer, *externArray_);
     }
     else
     {
@@ -402,7 +402,7 @@ void write(BitStreamWriter& writer, const View<::test_object::polymorphic_alloca
     if (bytesArray_.has_value())
     {
         writer.writeBool(true);
-        write(writer, *bytesArray_);
+        write<ArrayType::AUTO>(writer, *bytesArray_);
     }
     else
     {
@@ -437,17 +437,17 @@ View<::test_object::polymorphic_allocator::CreatorObject> read(BitStreamReader& 
     read(reader, data.value);
     (void)read(reader, data.nested, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(view.value())));
     read(reader, data.text);
-    (void)read<Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested>, ArrayType::AUTO, ::zserio::ArrayStorage::IMMUTABLE, View<::test_object::polymorphic_allocator::CreatorObject>::ZserioNestedArrayArrayTraits>>(reader, data.nestedArray, view);
-    read<Array<::zserio::pmr::Vector<::zserio::pmr::String>, ArrayType::AUTO>>(reader, data.textArray);
+    (void)readWithTraits<ArrayType::AUTO, View<::test_object::polymorphic_allocator::CreatorObject>::ZserioNestedArrayArrayTraits>(reader, data.nestedArray, view);
+    read<ArrayType::AUTO>(reader, data.textArray);
     if (reader.readBool())
     {
         data.externArray.emplace(data.externArray.get_allocator());
-        read<Array<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>, ArrayType::AUTO>>(reader, *data.externArray);
+        read<ArrayType::AUTO>(reader, *data.externArray);
     }
     if (reader.readBool())
     {
         data.bytesArray.emplace(data.bytesArray.get_allocator());
-        read<Array<::zserio::pmr::Vector<::zserio::pmr::Bytes>, ArrayType::AUTO>>(reader, *data.bytesArray);
+        read<ArrayType::AUTO>(reader, *data.bytesArray);
     }
     if (reader.readBool())
     {

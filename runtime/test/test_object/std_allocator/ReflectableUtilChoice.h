@@ -90,7 +90,7 @@ public:
 
     ::zserio::UInt8 param() const;
 
-    Array<::zserio::Vector<::zserio::UInt32>, ArrayType::AUTO> array() const;
+    Array<const ::zserio::UInt32> array() const;
 
     ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag zserioChoiceTag() const;
     const ::test_object::std_allocator::ReflectableUtilChoice& zserioData() const;

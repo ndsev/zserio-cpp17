@@ -70,9 +70,9 @@ View<::test_object::std_allocator::ReflectableUtilChoice>::View(const ::test_obj
     return m_param_;
 }
 
-Array<::zserio::Vector<::zserio::UInt32>, ArrayType::AUTO> View<::test_object::std_allocator::ReflectableUtilChoice>::array() const
+Array<const ::zserio::UInt32> View<::test_object::std_allocator::ReflectableUtilChoice>::array() const
 {
-    return Array<::zserio::Vector<::zserio::UInt32>, ArrayType::AUTO>{get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(*m_data)};
+    return Array<const ::zserio::UInt32>{get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(*m_data)};
 }
 
 ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag View<::test_object::std_allocator::ReflectableUtilChoice>::zserioChoiceTag() const
@@ -156,7 +156,7 @@ void validate(const View<::test_object::std_allocator::ReflectableUtilChoice>& v
             throw ChoiceCaseException("Wrong case set in choice 'ReflectableUtilChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array) << ")!";
         }
-        validate(view.array(), "'ReflectableUtilChoice.array'");
+        validate<ArrayType::AUTO>(view.array(), "'ReflectableUtilChoice.array'");
         break;
     default:
         // empty
@@ -172,7 +172,7 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilChoice
     {
     case 1:
     case 2:
-        endBitPosition += bitSizeOf(view.array(), endBitPosition);
+        endBitPosition += bitSizeOf<ArrayType::AUTO>(view.array(), endBitPosition);
         break;
     default:
         // empty
@@ -189,7 +189,7 @@ void write(BitStreamWriter& writer, const View<::test_object::std_allocator::Ref
     {
     case 1:
     case 2:
-        write(writer, view.array());
+        write<ArrayType::AUTO>(writer, view.array());
         break;
     default:
         // empty
@@ -208,7 +208,7 @@ View<::test_object::std_allocator::ReflectableUtilChoice> read(BitStreamReader& 
     case 1:
     case 2:
         data.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>();
-        read<Array<::zserio::Vector<::zserio::UInt32>, ArrayType::AUTO>>(reader, data.get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>());
+        read<ArrayType::AUTO>(reader, data.get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>());
         break;
     default:
         // empty

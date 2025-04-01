@@ -150,24 +150,24 @@ TEST(ArrayTest, boolArray)
     Vector<Bool> rawArray1{true, false};
     Vector<Bool> rawArray2{true, true};
 
-    Array<Vector<Bool>, ArrayType::AUTO> array1(rawArray1);
+    Array<const Bool> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<Vector<Bool>, ArrayType::AUTO> array2(rawArray2);
+    Array<const Bool> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<Bool> readRawArray;
-    detail::read<Array<Vector<Bool>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray);
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 }
@@ -175,17 +175,17 @@ TEST(ArrayTest, boolArray)
 TEST(ArrayTest, boolPackedArray)
 {
     Vector<Bool> rawArray{true, false, true, false, true};
-    Array<Vector<Bool>, ArrayType::AUTO> array(rawArray);
+    Array<const Bool> array(rawArray);
 
-    const BitSize packedBitSize = detail::bitSizeOfPacked(array);
+    const BitSize packedBitSize = detail::bitSizeOfPacked<ArrayType::AUTO>(array);
     BitBuffer buffer(packedBitSize);
     BitStreamWriter writer(buffer);
-    detail::writePacked(writer, array);
+    detail::writePacked<ArrayType::AUTO>(writer, array);
     ASSERT_EQ(packedBitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<Bool> readRawArray;
-    detail::readPacked<Array<Vector<Bool>, ArrayType::AUTO>>(reader, readRawArray, rawArray.size());
+    detail::readPacked<ArrayType::AUTO>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
 }
@@ -195,24 +195,24 @@ TEST(ArrayTest, int8Array)
     Vector<Int8> rawArray1{0, 13};
     Vector<Int8> rawArray2{0, 42};
 
-    Array<Vector<Int8>, ArrayType::AUTO> array1(rawArray1);
+    Array<const Int8> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<Vector<Int8>, ArrayType::AUTO> array2(rawArray2);
+    Array<const Int8> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<Int8> readRawArray;
-    detail::read<Array<Vector<Int8>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray);
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 }
@@ -220,31 +220,31 @@ TEST(ArrayTest, int8Array)
 TEST(ArrayTest, int8PackedArray)
 {
     Vector<Int8> rawArray = {-4, -3, -1, 0, 2, 4, 6, 8, 10, 10, 11};
-    Array<Vector<Int8>, ArrayType::NORMAL> array(rawArray, rawArray.size());
+    Array<const Int8> array(rawArray);
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 8 + 10 * (maxBitNumber 2 + 1)
     static constexpr BitSize packedBitSize = 45;
-    ASSERT_EQ(packedBitSize, detail::bitSizeOfPacked(array));
+    ASSERT_EQ(packedBitSize, detail::bitSizeOfPacked<ArrayType::NORMAL>(array));
 
     BitBuffer buffer(packedBitSize);
     BitStreamWriter writer(buffer);
-    detail::writePacked(writer, array);
+    detail::writePacked<ArrayType::NORMAL>(writer, array);
     ASSERT_EQ(packedBitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<Int8> readRawArray;
-    detail::readPacked<Array<Vector<Int8>, ArrayType::NORMAL>>(reader, readRawArray, rawArray.size());
+    detail::readPacked<ArrayType::NORMAL>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(rawArray, readRawArray);
 
     ASSERT_EQ(rawArray.size(), array.size());
     ASSERT_FALSE(array.empty());
 
     Vector<Int8> emptyRawArray;
-    Array<Vector<Int8>, ArrayType::AUTO> emptyArray(emptyRawArray);
+    Array<const Int8> emptyArray(emptyRawArray);
     ASSERT_TRUE(emptyArray.empty());
 
-    ASSERT_THROW(emptyArray.front(), std::out_of_range); // TODO[Mi-L@]: Do we need it to use at() internally?
+    ASSERT_THROW(emptyArray.front(), CppRuntimeException);
 
     ASSERT_EQ(rawArray.front(), array.front());
     ASSERT_EQ(rawArray.back(), array.back());
@@ -317,24 +317,24 @@ TEST(ArrayTest, fixedDynInt16Array)
     Vector<DynInt16<9>> rawArray1{-2, 13};
     Vector<DynInt16<9>> rawArray2{-2, 42};
 
-    Array<Vector<DynInt16<9>>, ArrayType::AUTO> array1(rawArray1);
+    Array<const DynInt16<9>> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<Vector<DynInt16<9>>, ArrayType::AUTO> array2(rawArray2);
+    Array<const DynInt16<9>> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<DynInt16<9>> readRawArray;
-    detail::read<Array<Vector<DynInt16<9>>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 }
@@ -346,26 +346,24 @@ TEST(ArrayTest, variableDynInt16Array)
 
     VarDynInt16Owner owner;
 
-    Array<Vector<DynInt16<>>, ArrayType::AUTO, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits> array1(
-            rawArray1, owner);
+    Array<const DynInt16<>, VarDynInt16ArrayTraits> array1(rawArray1, owner);
     ASSERT_EQ(rawArray1.at(0), array1.at(0).value());
     ASSERT_EQ(rawArray1.at(1), array1.at(1).value());
 
-    Array<Vector<DynInt16<>>, ArrayType::AUTO, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits> array2(
-            rawArray2, owner);
+    Array<const DynInt16<>, VarDynInt16ArrayTraits> array2(rawArray2, owner);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<DynInt16<>> readRawArray;
-    detail::read<Array<Vector<DynInt16<>>, ArrayType::AUTO, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits>>(
+    detail::readWithTraits<ArrayType::AUTO, VarDynInt16ArrayTraits>(
             reader, readRawArray, owner, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
@@ -376,23 +374,21 @@ TEST(ArrayTest, variableDynInt16PackedArray)
     Vector<DynInt16<>> rawArray{-2, 0, 2, 4, 6, 8, 10};
 
     VarDynInt16Owner owner;
-    Array<Vector<DynInt16<>>, ArrayType::NORMAL, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits> array(
-            rawArray, owner, rawArray.size());
+    Array<const DynInt16<>, VarDynInt16ArrayTraits> array(rawArray, owner);
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 10 + 6 * (maxBitNumber 2 + 1)
     const BitSize packedBitSize = 35;
-    ASSERT_EQ(packedBitSize, detail::bitSizeOfPacked(array));
+    ASSERT_EQ(packedBitSize, detail::bitSizeOfPacked<ArrayType::NORMAL>(array));
 
     BitBuffer buffer(packedBitSize);
     BitStreamWriter writer(buffer);
-    detail::writePacked(writer, array);
+    detail::writePacked<ArrayType::NORMAL>(writer, array);
     ASSERT_EQ(packedBitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<DynInt16<>> readRawArray;
-    detail::readPacked<
-            Array<Vector<DynInt16<>>, ArrayType::NORMAL, ArrayStorage::IMMUTABLE, VarDynInt16ArrayTraits>>(
+    detail::readPackedWithTraits<ArrayType::NORMAL, VarDynInt16ArrayTraits>(
             reader, readRawArray, owner, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
@@ -403,24 +399,24 @@ TEST(ArrayTest, varUInt16Array)
     Vector<VarUInt16> rawArray1{0, 13};
     Vector<VarUInt16> rawArray2{0, 42};
 
-    Array<Vector<VarUInt16>, ArrayType::AUTO> array1(rawArray1);
+    Array<const VarUInt16> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<Vector<VarUInt16>, ArrayType::AUTO> array2(rawArray2);
+    Array<const VarUInt16> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<VarUInt16> readRawArray;
-    detail::read<Array<Vector<VarUInt16>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 }
@@ -428,17 +424,17 @@ TEST(ArrayTest, varUInt16Array)
 TEST(ArrayTest, varUInt16PackedArray)
 {
     Vector<VarUInt16> rawArray{0, 2, 4, 6, 8, 10, 12};
-    Array<Vector<VarUInt16>, ArrayType::AUTO> array(rawArray);
+    Array<const VarUInt16> array(rawArray);
 
-    const BitSize packedBitSize = detail::bitSizeOfPacked(array);
+    const BitSize packedBitSize = detail::bitSizeOfPacked<ArrayType::AUTO>(array);
     BitBuffer buffer(packedBitSize);
     BitStreamWriter writer(buffer);
-    detail::writePacked(writer, array);
+    detail::writePacked<ArrayType::AUTO>(writer, array);
     ASSERT_EQ(packedBitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<VarUInt16> readRawArray;
-    detail::readPacked<Array<Vector<VarUInt16>, ArrayType::AUTO>>(reader, readRawArray, rawArray.size());
+    detail::readPacked<ArrayType::AUTO>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
 }
@@ -448,23 +444,23 @@ TEST(ArrayTest, float16Array)
     Vector<Float16> rawArray1{-9.0F, 0.0F, 10.0F};
     Vector<Float16> rawArray2{-9.0F, 0.0F, 10.1F};
 
-    Array<Vector<Float16>, ArrayType::AUTO> array1(rawArray1);
-    Array<Vector<Float16>, ArrayType::AUTO> array2(rawArray2);
+    Array<const Float16> array1(rawArray1);
+    Array<const Float16> array2(rawArray2);
 
     ASSERT_EQ(16, ArrayTraits<Float16>::bitSizeOf());
 
     ASSERT_LT(array1, array2);
     ASSERT_GT(array2, array1);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<Float16> readRawArray;
-    detail::read<Array<Vector<Float16>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 }
@@ -474,10 +470,11 @@ TEST(ArrayTest, bytesArray)
     Vector<Bytes> rawArray1{{{{1, 255}}, {{127, 128}}}};
     Vector<Bytes> rawArray2{{{{1, 255}}, {{127, 129}}}};
 
-    Array<Vector<Bytes>, ArrayType::AUTO> array1(rawArray1);
-    Array<Vector<Bytes>, ArrayType::AUTO> array2(rawArray2);
+    Array<const Bytes> array1(rawArray1);
+    Array<const Bytes> array2(rawArray2);
 
-    ASSERT_EQ(rawArray1, array1.zserioData());
+    ASSERT_TRUE(std::equal(
+            rawArray1.begin(), rawArray1.end(), array1.zserioData().begin(), array1.zserioData().end()));
 
     constexpr bool isSpan = std::is_same_v<Span<const uint8_t>, decltype(array1.at(0))>;
     ASSERT_TRUE(isSpan);
@@ -490,15 +487,15 @@ TEST(ArrayTest, bytesArray)
     ASSERT_NE(array1, array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<Bytes> readRawArray;
-    detail::read<Array<Vector<Bytes>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 }
@@ -508,8 +505,8 @@ TEST(ArrayTest, stringArray)
     Vector<std::string> rawArray1 = {"String0", "String1", "String2"};
     Vector<std::string> rawArray2 = {"String0", "String1", "String3"};
 
-    Array<Vector<std::string>, ArrayType::AUTO> array1(rawArray1);
-    Array<Vector<std::string>, ArrayType::AUTO> array2(rawArray2);
+    Array<const std::string> array1(rawArray1);
+    Array<const std::string> array2(rawArray2);
 
     constexpr bool isStringView = std::is_same_v<std::string_view, decltype(array1.at(0))>;
     ASSERT_TRUE(isStringView);
@@ -521,15 +518,15 @@ TEST(ArrayTest, stringArray)
     ASSERT_NE(array1, array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<std::string> readRawArray;
-    detail::read<Array<Vector<std::string>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 }
@@ -539,25 +536,25 @@ TEST(ArrayTest, testObjectArray)
     Vector<TestObject> rawArray1{TestObject{0}, TestObject{13}};
     Vector<TestObject> rawArray2{TestObject{0}, TestObject{42}};
 
-    Array<Vector<TestObject>, ArrayType::AUTO> array1(rawArray1);
+    Array<const TestObject> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0).field, array1.at(0).field());
     ASSERT_EQ(rawArray1.at(1).field, array1.at(1).field());
 
-    Array<Vector<TestObject>, ArrayType::AUTO> array2(rawArray2);
+    Array<const TestObject> array2(rawArray2);
 
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
 
-    const BitSize bitSize = detail::bitSizeOf(array1);
+    const BitSize bitSize = detail::bitSizeOf<ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
     BitStreamWriter writer(buffer);
-    detail::write(writer, array1);
+    detail::write<ArrayType::AUTO>(writer, array1);
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<TestObject> readRawArray;
-    detail::read<Array<Vector<TestObject>, ArrayType::AUTO>>(reader, readRawArray, rawArray1.size());
+    detail::read<ArrayType::AUTO>(reader, readRawArray);
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
 
@@ -595,21 +592,21 @@ TEST(ArrayTest, testObjectArray)
 TEST(ArrayTest, testObjectPackedArray)
 {
     Vector<TestObject> rawArray{TestObject{0}, TestObject{2}, TestObject{4}, TestObject{6}, TestObject{8}};
-    Array<Vector<TestObject>, ArrayType::NORMAL> array(rawArray, rawArray.size());
+    Array<const TestObject> array(rawArray);
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 32 + 4 * (maxBitNumber 2 + 1)
     const BitSize packedBitSize = 51;
-    ASSERT_EQ(packedBitSize, detail::bitSizeOfPacked(array));
+    ASSERT_EQ(packedBitSize, detail::bitSizeOfPacked<ArrayType::NORMAL>(array));
 
     BitBuffer buffer(packedBitSize);
     BitStreamWriter writer(buffer);
-    detail::writePacked(writer, array);
+    detail::writePacked<ArrayType::NORMAL>(writer, array);
     ASSERT_EQ(packedBitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
     Vector<TestObject> readRawArray;
-    detail::readPacked<Array<Vector<TestObject>, ArrayType::NORMAL>>(reader, readRawArray, rawArray.size());
+    detail::readPacked<ArrayType::NORMAL>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
 }

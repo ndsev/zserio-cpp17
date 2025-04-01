@@ -59,7 +59,7 @@ class Span
 {
 public:
     using element_type = T;
-    using value_type = typename std::remove_cv<T>::type;
+    using value_type = typename std::remove_cv_t<T>;
     using size_type = std::size_t;
     using difference_type = std::ptrdiff_t;
     using pointer = T*;

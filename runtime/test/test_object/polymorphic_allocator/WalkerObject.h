@@ -79,8 +79,8 @@ public:
     ::zserio::UInt32 identifier() const;
     ::zserio::pmr::Optional<View<::test_object::polymorphic_allocator::WalkerNested>> nested() const;
     ::std::string_view text() const;
-    Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO> unionArray() const;
-    ::zserio::pmr::Optional<Array<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>, ArrayType::AUTO>> optionalUnionArray() const;
+    Array<const ::test_object::polymorphic_allocator::WalkerUnion> unionArray() const;
+    ::zserio::pmr::Optional<Array<const ::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray() const;
     ::zserio::UInt8 choiceSelector() const;
     View<::test_object::polymorphic_allocator::WalkerChoice> choiceField() const;
 

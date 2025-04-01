@@ -218,7 +218,11 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 <#macro union_validate_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <@field_check_constraint field, indent/>
-${I}validate(view.${field.getterName}(), "'${name}.${field.name}'");
+${I}validate<@array_template_args field/>(view.${field.getterName}(), "'${name}.${field.name}'"<#rt>
+        <#if field.array?? && field.array.viewIndirectLength??>
+        , static_cast<size_t>(${field.array.viewIndirectLength})<#t>
+        </#if>
+        <#lt>);
 </#macro>
 <#macro union_validate_no_match name indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
@@ -237,7 +241,7 @@ void validate(const View<${fullName}>&<#if fieldList?has_content || parameterLis
 
 <#macro union_bitsizeof_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
+${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
@@ -258,7 +262,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 
 <#macro union_write_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}write<@array_packed_suffix field, packed/>(<#rt>
+${I}write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, view.${field.getterName}());
 </#macro>
@@ -276,8 +280,8 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(<#rt>
         <#lt><#if field.typeInfo.needsAllocator>data.get_allocator()</#if>);
-${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field, packed/><#rt>
-        <#if field.array??><<@array_type_full_name fullName, field/>></#if>(<#t>
+${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#rt>
+        <@array_read_template_args fullName, field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters field/>);
@@ -384,7 +388,7 @@ void read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext
 <#macro union_initialize_offsets_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}endBitPosition += <#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
-        <@array_packed_suffix field, packed/>(<#t>
+        <@array_suffix field, packed/><@array_template_args field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>

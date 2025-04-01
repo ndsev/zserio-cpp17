@@ -334,13 +334,19 @@ ${I}}
 <#macro structure_validate_field_inner field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <@field_check_constraint field, indent/>
-${I}validate(<#if field.isExtended>*</#if><#if field.optional??>*</#if>view.${field.getterName}(), "'${name}.${field.name}'");
+${I}validate<@array_template_args field/>(<#rt>
+        <#if field.isExtended>*</#if><#if field.optional??>*</#if>view.${field.getterName}(), <#t>
+        "'${name}.${field.name}'"<#t>
+        <#if field.array?? && field.array.viewIndirectLength??>
+        , static_cast<size_t>(${field.array.viewIndirectLength})<#t>
+        </#if>
+        <#lt>);
 </#macro>
 template <>
 void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
 <#list parameterList as parameter>
-    validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+    validate<@array_template_args parameter/>(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#list fieldList as field>
     <@structure_validate_field field, 1/>
@@ -381,7 +387,7 @@ ${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endB
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
-${I}endBitPosition += bitSizeOf<@array_packed_suffix field, packed/>(<#rt>
+${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#lt>);
 </#macro>
@@ -443,7 +449,7 @@ ${I}writer.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}writer.alignTo(8);
     </#if>
-${I}write<@array_packed_suffix field, packed/>(<#rt>
+${I}write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>);
 </#macro>
@@ -502,8 +508,8 @@ ${I}reader.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}reader.alignTo(8);
     </#if>
-${I}<#if field.compound??>(void)</#if>read<@array_packed_suffix field, packed/><#rt>
-        <#if field.array??><<@array_type_full_name compoundName, field/>></#if>(<#t>
+${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#rt>
+        <@array_read_template_args fullName, field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, <#if field.isExtended>*</#if><#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
         <#lt><@field_view_view_indirect_parameters field/>);
@@ -645,7 +651,7 @@ ${I}endBitPosition += <#rt>
         <#else>
         bitSizeOf<#t>
         </#if>
-        <@array_packed_suffix field, packed/>(<#t>
+        <@array_suffix field, packed/><@array_template_args field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#t>
         <#if field.offset?? && field.offset.containsIndex>

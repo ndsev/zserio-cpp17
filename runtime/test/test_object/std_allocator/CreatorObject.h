@@ -94,10 +94,10 @@ public:
     ::zserio::UInt32 value() const;
     View<::test_object::std_allocator::CreatorNested> nested() const;
     ::std::string_view text() const;
-    Array<::zserio::Vector<::test_object::std_allocator::CreatorNested>, ArrayType::AUTO, ::zserio::ArrayStorage::IMMUTABLE, ZserioNestedArrayArrayTraits> nestedArray() const;
-    Array<::zserio::Vector<::zserio::String>, ArrayType::AUTO> textArray() const;
-    ::zserio::Optional<Array<::zserio::Vector<::zserio::BitBuffer>, ArrayType::AUTO>> externArray() const;
-    ::zserio::Optional<Array<::zserio::Vector<::zserio::Bytes>, ArrayType::AUTO>> bytesArray() const;
+    Array<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits> nestedArray() const;
+    Array<const ::zserio::String> textArray() const;
+    ::zserio::Optional<Array<const ::zserio::BitBuffer>> externArray() const;
+    ::zserio::Optional<Array<const ::zserio::Bytes>> bytesArray() const;
     ::zserio::Optional<::zserio::Bool> optionalBool() const;
     ::zserio::Optional<View<::test_object::std_allocator::CreatorNested>> optionalNested() const;
 

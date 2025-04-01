@@ -98,7 +98,7 @@ public:
 
     ::zserio::UInt32 value() const;
     ::std::string_view text() const;
-    Array<::zserio::Vector<::test_object::std_allocator::WalkerNested>, ArrayType::AUTO> nestedArray() const;
+    Array<const ::test_object::std_allocator::WalkerNested> nestedArray() const;
 
     ::test_object::std_allocator::WalkerUnion::ChoiceTag zserioChoiceTag() const;
     const ::test_object::std_allocator::WalkerUnion& zserioData() const;

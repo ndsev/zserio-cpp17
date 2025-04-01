@@ -45,8 +45,7 @@ TEST_F(MultipleParamsTest, array5)
     const VectorType<zserio::UInt5> array5 = {1, 10, 15};
     data.array5 = array5;
     zserio::View view(data, static_cast<uint32_t>(array5.size()), 1);
-    zserio::Array<VectorType<zserio::UInt5>, zserio::ArrayType::NORMAL> expectedArray5View(
-            array5, array5.size());
+    zserio::Array<const zserio::UInt5> expectedArray5View(array5);
     ASSERT_EQ(expectedArray5View, view.array5());
 }
 
@@ -60,9 +59,8 @@ TEST_F(MultipleParamsTest, array13)
     };
     data.array13 = array13;
     zserio::View view(data, static_cast<uint32_t>(array13.size()), 1);
-    zserio::Array<VectorType<Data13>, zserio::ArrayType::NORMAL, zserio::ArrayStorage::IMMUTABLE,
-            zserio::View<TestStructure>::ZserioArray13ArrayTraits>
-            expectedArray13View(array13, view, array13.size());
+    zserio::Array<const Data13, zserio::View<TestStructure>::ZserioArray13ArrayTraits> expectedArray13View(
+            array13, view);
     ASSERT_EQ(expectedArray13View, view.array13());
 }
 
