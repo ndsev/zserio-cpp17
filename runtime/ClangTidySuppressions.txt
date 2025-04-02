@@ -157,7 +157,7 @@ misc-no-recursion:src/zserio/JsonParser.h:224
 misc-no-recursion:src/zserio/JsonParser.h:235
 misc-no-recursion:src/zserio/JsonParser.h:253
 misc-no-recursion:src/zserio/JsonParser.h:268
-misc-no-recursion:src/zserio/IntrospectableView.h:806
+misc-no-recursion:src/zserio/IntrospectableView.h:982
 misc-no-recursion:src/zserio/ReflectableData.h:1304
 misc-no-recursion:src/zserio/ReflectableData.h:1348
 misc-no-recursion:src/zserio/ReflectableUtil.h:161
@@ -173,7 +173,7 @@ misc-no-recursion:src/zserio/ZserioTreeCreator.h:356
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
-google-build-using-namespace:test/zserio/IntrospectableViewTest.cpp:6
+google-build-using-namespace:test/zserio/IntrospectableViewTest.cpp:7
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353

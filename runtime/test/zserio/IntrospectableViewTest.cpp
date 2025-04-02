@@ -2,6 +2,7 @@
 
 #include "gtest/gtest.h"
 #include "zserio/IntrospectableView.h"
+#include "zserio/View.h"
 
 using namespace std::placeholders;
 
@@ -190,6 +191,9 @@ protected:
     void checkIntegral(T value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr, const GETTER& getter,
             const READ_FUNC& readFunc, size_t bitSize, const char* testName)
     {
+        (void)readFunc;
+        (void)bitSize;
+        (void)testName;
         ASSERT_EQ(value, ((*introspectableViewPtr).*getter)());
 
         ASSERT_EQ(value, introspectableViewPtr->getAnyValue().template get<T>());
@@ -611,12 +615,11 @@ TEST_F(IntrospectableViewTest, uint64IntrospectableView)
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
 }
-#if 0 // !@#
 
 TEST_F(IntrospectableViewTest, fixedSignedBitField5) // mapped to int8_t
 {
     const Int5 value = 15;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt8,
             std::bind(&BitStreamReader::readSignedBits32, _1, 5), 5);
 }
@@ -624,7 +627,7 @@ TEST_F(IntrospectableViewTest, fixedSignedBitField5) // mapped to int8_t
 TEST_F(IntrospectableViewTest, fixedSignedBitField15) // mapped to int16_t
 {
     const Int15 value = -15;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt16,
             std::bind(&BitStreamReader::readSignedBits32, _1, 15), 15);
 }
@@ -632,7 +635,7 @@ TEST_F(IntrospectableViewTest, fixedSignedBitField15) // mapped to int16_t
 TEST_F(IntrospectableViewTest, fixedSignedBitField31) // mapped to int32_t
 {
     const Int31 value = -12345678;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt32,
             std::bind(&BitStreamReader::readSignedBits32, _1, 31), 31);
 }
@@ -640,7 +643,7 @@ TEST_F(IntrospectableViewTest, fixedSignedBitField31) // mapped to int32_t
 TEST_F(IntrospectableViewTest, fixedSignedBitField60) // mapped to int64_t
 {
     const Int60 value = 1234567890;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readSignedBits64, _1, 60), 60);
 }
@@ -648,7 +651,7 @@ TEST_F(IntrospectableViewTest, fixedSignedBitField60) // mapped to int64_t
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField7) // mapped to uint8_t
 {
     const UInt7 value = 0x2F;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt8,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 7), 7);
 }
@@ -656,7 +659,7 @@ TEST_F(IntrospectableViewTest, fixedUnsignedBitField7) // mapped to uint8_t
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField9) // mapped to uint16_t
 {
     const UInt9 value = 0x1FF;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt16,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 9), 9);
 }
@@ -664,7 +667,7 @@ TEST_F(IntrospectableViewTest, fixedUnsignedBitField9) // mapped to uint16_t
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField31) // mapped to uint32_t
 {
     const UInt31 value = UINT32_MAX >> 1U;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 31), 31);
 }
@@ -672,7 +675,7 @@ TEST_F(IntrospectableViewTest, fixedUnsignedBitField31) // mapped to uint32_t
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField33) // mapped to uint64_t
 {
     const UInt33 value = static_cast<uint64_t>(UINT32_MAX) << 1U;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readUnsignedBits64, _1, 33), 33);
 }
@@ -681,8 +684,9 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField5) // mapped to int8_t
 {
     const uint8_t numBits = 5;
     const DynInt8<> value = 15;
-    auto introspectableViewPtr = introspectableView(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt8,
+    const View view(value, numBits);
+    auto introspectableViewPtr = introspectable(view);
+    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt8,
             std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
 }
 
@@ -690,8 +694,9 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField15) // mapped to int16_t
 {
     const uint8_t numBits = 15;
     const DynInt16<> value = -15;
-    auto introspectableViewPtr = introspectableView(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt16,
+    const View view(value, numBits);
+    auto introspectableViewPtr = introspectable(view);
+    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt16,
             std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
 }
 
@@ -700,8 +705,8 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField31) // mapped to int32_t
     const uint8_t numBits = 31;
     const DynInt32<> value = -12345678;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectableView(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt32,
+    auto introspectableViewPtr = introspectable(view);
+    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt32,
             std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
 }
 
@@ -710,8 +715,8 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField60) // mapped to int64_t
     const uint8_t numBits = 60;
     const DynInt64<> value = 1234567890;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectableView(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
+    auto introspectableViewPtr = introspectable(view);
+    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readSignedBits64, _1, numBits), numBits);
 }
 
@@ -719,8 +724,9 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField7) // mapped to uint8_t
 {
     const uint8_t numBits = 7;
     const DynUInt8<> value = 0x2F;
-    auto introspectableViewPtr = introspectableView(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt8,
+    const View view(value, numBits);
+    auto introspectableViewPtr = introspectable(view);
+    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt8,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
 }
 
@@ -728,8 +734,9 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField9) // mapped to uint16_t
 {
     const uint8_t numBits = 9;
     const DynUInt16<> value = 0x1FF;
-    auto introspectableViewPtr = introspectableView(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt16,
+    const View view(value, numBits);
+    auto introspectableViewPtr = introspectable(view);
+    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt16,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
 }
 
@@ -737,8 +744,9 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField31) // mapped to uint32_t
 {
     const uint8_t numBits = 31;
     const DynUInt32<> value = UINT32_MAX >> 1U;
-    auto introspectableViewPtr = introspectableView(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
+    const View view(value, numBits);
+    auto introspectableViewPtr = introspectable(view);
+    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
 }
 
@@ -746,15 +754,16 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField33) // mapped to uint64_t
 {
     const uint8_t numBits = 33;
     const DynUInt64<> value = static_cast<uint64_t>(UINT32_MAX) << 1U;
-    auto introspectableViewPtr = introspectableView(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
+    const View view(value, numBits);
+    auto introspectableViewPtr = introspectable(view);
+    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readUnsignedBits64, _1, numBits), numBits);
 }
 
 TEST_F(IntrospectableViewTest, varint16IntrospectableView)
 {
     const VarInt16 value = -1234;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt16,
             std::bind(&BitStreamReader::readVarInt16, _1), zserio::detail::bitSizeOf(value));
 }
@@ -762,7 +771,7 @@ TEST_F(IntrospectableViewTest, varint16IntrospectableView)
 TEST_F(IntrospectableViewTest, varint32IntrospectableView)
 {
     const VarInt32 value = 54321;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt32,
             std::bind(&BitStreamReader::readVarInt32, _1), zserio::detail::bitSizeOf(value));
 }
@@ -770,7 +779,7 @@ TEST_F(IntrospectableViewTest, varint32IntrospectableView)
 TEST_F(IntrospectableViewTest, varint64IntrospectableView)
 {
     const VarInt64 value = -87654321;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readVarInt64, _1), zserio::detail::bitSizeOf(value));
 }
@@ -778,7 +787,7 @@ TEST_F(IntrospectableViewTest, varint64IntrospectableView)
 TEST_F(IntrospectableViewTest, varintIntrospectableView)
 {
     const VarInt value = INT64_MAX;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readVarInt, _1), zserio::detail::bitSizeOf(value));
 }
@@ -786,7 +795,7 @@ TEST_F(IntrospectableViewTest, varintIntrospectableView)
 TEST_F(IntrospectableViewTest, varuint16IntrospectableView)
 {
     const VarUInt16 value = 1234;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt16,
             std::bind(&BitStreamReader::readVarUInt16, _1), zserio::detail::bitSizeOf(value));
 }
@@ -794,7 +803,7 @@ TEST_F(IntrospectableViewTest, varuint16IntrospectableView)
 TEST_F(IntrospectableViewTest, varuint32IntrospectableView)
 {
     const VarUInt32 value = 0x1FFFFFFF;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readVarUInt32, _1), zserio::detail::bitSizeOf(value));
 }
@@ -802,7 +811,7 @@ TEST_F(IntrospectableViewTest, varuint32IntrospectableView)
 TEST_F(IntrospectableViewTest, varuint64IntrospectableView)
 {
     const VarUInt64 value = 4242424242;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readVarUInt64, _1), zserio::detail::bitSizeOf(value));
 }
@@ -810,7 +819,7 @@ TEST_F(IntrospectableViewTest, varuint64IntrospectableView)
 TEST_F(IntrospectableViewTest, varuintIntrospectableView)
 {
     const VarUInt value = UINT64_MAX;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readVarUInt, _1), zserio::detail::bitSizeOf(value));
 }
@@ -818,10 +827,12 @@ TEST_F(IntrospectableViewTest, varuintIntrospectableView)
 TEST_F(IntrospectableViewTest, varsizeIntrospectableView)
 {
     const VarSize value = (UINT32_C(1) << (7U + 7 + 7 + 7 + 3)) - 1U;
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readVarSize, _1), zserio::detail::bitSizeOf(value));
 }
+
+#if 0 // !@#
 
 TEST_F(IntrospectableViewTest, float16IntrospectableView)
 {
