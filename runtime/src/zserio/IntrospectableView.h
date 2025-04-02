@@ -374,6 +374,182 @@ public:
 };
 
 /**
+ * Introspectable for dynamic bitfield of int8 type.
+ */
+template <typename T, typename ALLOC>
+class DynInt8IntrospectableView : public SignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = SignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<int8_t, typename T::ValueType>, "T must be based on int8_t!");
+
+public:
+    explicit DynInt8IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    int8_t getInt8() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
+ * Introspectable for dynamic bitfield of int16 type.
+ */
+template <typename T, typename ALLOC>
+class DynInt16IntrospectableView : public SignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = SignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<int16_t, typename T::ValueType>, "T must be based on int16_t!");
+
+public:
+    explicit DynInt16IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    int16_t getInt16() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
+ * Introspectable for dynamic bitfield of int32 type.
+ */
+template <typename T, typename ALLOC>
+class DynInt32IntrospectableView : public SignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = SignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<int32_t, typename T::ValueType>, "T must be based on int32_t!");
+
+public:
+    explicit DynInt32IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    int32_t getInt32() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
+ * Introspectable for dynamic bitfield of int64 type.
+ */
+template <typename T, typename ALLOC>
+class DynInt64IntrospectableView : public SignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = SignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<int64_t, typename T::ValueType>, "T must be based on int64_t!");
+
+public:
+    explicit DynInt64IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    int64_t getInt64() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
+ * Introspectable for dynamic bitfield of uint8 type.
+ */
+template <typename T, typename ALLOC>
+class DynUInt8IntrospectableView : public UnsignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = UnsignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<uint8_t, typename T::ValueType>, "T must be based on uint8_t!");
+
+public:
+    explicit DynUInt8IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    uint8_t getUInt8() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
+ * Introspectable for dynamic bitfield of uint16 type.
+ */
+template <typename T, typename ALLOC>
+class DynUInt16IntrospectableView : public UnsignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = UnsignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<uint16_t, typename T::ValueType>, "T must be based on uint16_t!");
+
+public:
+    explicit DynUInt16IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    uint16_t getUInt16() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
+ * Introspectable for dynamic bitfield of uint32 type.
+ */
+template <typename T, typename ALLOC>
+class DynUInt32IntrospectableView : public UnsignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = UnsignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<uint32_t, typename T::ValueType>, "T must be based on uint32_t!");
+
+public:
+    explicit DynUInt32IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    uint32_t getUInt32() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
+ * Introspectable for dynamic bitfield of uint64 type.
+ */
+template <typename T, typename ALLOC>
+class DynUInt64IntrospectableView : public UnsignedIntrospectableViewBase<View<T>, ALLOC>
+{
+private:
+    using Base = UnsignedIntrospectableViewBase<View<T>, ALLOC>;
+
+    static_assert(std::is_same_v<uint64_t, typename T::ValueType>, "T must be based on uint64_t!");
+
+public:
+    explicit DynUInt64IntrospectableView(const View<T>& value) :
+            Base(typeInfo<T, ALLOC>(), value)
+    {}
+
+    uint64_t getUInt64() const override
+    {
+        return Base::getValue();
+    }
+};
+
+/**
  * Base class for floating point introspectables.
  */
 template <typename T, typename ALLOC>
@@ -887,6 +1063,106 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
             return std::allocate_shared<UInt8IntrospectableView<Type, ALLOC>>(allocator, value);
         }
     }
+}
+
+template <typename T, typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
+        const View<detail::DynIntWrapper<T, 0>>& value, const ALLOC& allocator = ALLOC())
+{
+    using Type = detail::DynIntWrapper<T, 0>;
+
+    if constexpr (std::is_signed_v<T>)
+    {
+        if constexpr (sizeof(T) > 4)
+        {
+            return std::allocate_shared<DynInt64IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+        else if constexpr (sizeof(T) > 2)
+        {
+            return std::allocate_shared<DynInt32IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+        else if constexpr (sizeof(T) > 1)
+        {
+            return std::allocate_shared<DynInt16IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+        else
+        {
+            return std::allocate_shared<DynInt8IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+    }
+    else
+    {
+        if constexpr (sizeof(T) > 4)
+        {
+            return std::allocate_shared<DynUInt64IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+        else if constexpr (sizeof(T) > 2)
+        {
+            return std::allocate_shared<DynUInt32IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+        else if constexpr (sizeof(T) > 1)
+        {
+            return std::allocate_shared<DynUInt16IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+        else
+        {
+            return std::allocate_shared<DynUInt8IntrospectableView<Type, ALLOC>>(allocator, value);
+        }
+    }
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt16 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<Int16IntrospectableView<VarInt16, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt32 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<Int32IntrospectableView<VarInt32, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt64 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<Int64IntrospectableView<VarInt64, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<Int64IntrospectableView<VarInt, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt16 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<UInt16IntrospectableView<VarUInt16, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt32 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<UInt32IntrospectableView<VarUInt32, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt64 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<UInt64IntrospectableView<VarUInt64, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<UInt64IntrospectableView<VarUInt, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarSize value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<UInt32IntrospectableView<VarSize, ALLOC>>(allocator, value);
 }
 
 } // namespace zserio
