@@ -832,60 +832,52 @@ TEST_F(IntrospectableViewTest, varsizeIntrospectableView)
             std::bind(&BitStreamReader::readVarSize, _1), zserio::detail::bitSizeOf(value));
 }
 
-#if 0 // !@#
-
 TEST_F(IntrospectableViewTest, float16IntrospectableView)
 {
     const Float16 value = 2.0F;
-    auto introspectableViewPtr = introspectableView(value);
-    checkFloatingPoint(
-            value, introspectableViewPtr, &IIntrospectableView::getFloat, std::bind(&BitStreamReader::readFloat16, _1));
+    auto introspectableViewPtr = introspectable(value);
+    checkFloatingPoint(value, introspectableViewPtr, &IIntrospectableView::getFloat,
+            std::bind(&BitStreamReader::readFloat16, _1));
 }
 
 TEST_F(IntrospectableViewTest, float32IntrospectableView)
 {
     const Float32 value = 1.2F;
-    auto introspectableViewPtr = introspectableView(value);
-    checkFloatingPoint(
-            value, introspectableViewPtr, &IIntrospectableView::getFloat, std::bind(&BitStreamReader::readFloat32, _1));
+    auto introspectableViewPtr = introspectable(value);
+    checkFloatingPoint(value, introspectableViewPtr, &IIntrospectableView::getFloat,
+            std::bind(&BitStreamReader::readFloat32, _1));
 }
 
 TEST_F(IntrospectableViewTest, float64IntrospectableView)
 {
     const Float64 value = 1.2;
-    auto introspectableViewPtr = introspectableView(value);
-    checkFloatingPoint(
-            value, introspectableViewPtr, &IIntrospectableView::getDouble, std::bind(&BitStreamReader::readFloat64, _1));
+    auto introspectableViewPtr = introspectable(value);
+    checkFloatingPoint(value, introspectableViewPtr, &IIntrospectableView::getDouble,
+            std::bind(&BitStreamReader::readFloat64, _1));
 }
 
 TEST_F(IntrospectableViewTest, bytesIntrospectableView)
 {
     const Bytes value{{0, 127, 128, 255}};
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(BytesView(value.data(), value.size()));
     checkBytes(value, introspectableViewPtr);
 }
 
 TEST_F(IntrospectableViewTest, stringIntrospectableView)
 {
-    const std::string value = "some longer string value to have a chance that some allocation hopefully occurs";
-    auto introspectableViewPtr = introspectableView(value);
-    checkString(value, introspectableViewPtr);
-}
-
-TEST_F(IntrospectableViewTest, stringViewIntrospectableView)
-{
     auto view = std::string_view("some text as a string view");
-    auto introspectableViewPtr = introspectableView(view);
+    auto introspectableViewPtr = introspectable(view);
     checkString(view, introspectableViewPtr);
 }
 
 TEST_F(IntrospectableViewTest, bitBufferIntrospectableView)
 {
     const BitBuffer value = BitBuffer{std::vector<uint8_t>({0xAB, 0xF0}), 12};
-    auto introspectableViewPtr = introspectableView(value);
+    auto introspectableViewPtr = introspectable(value);
     checkBitBuffer(value, introspectableViewPtr);
 }
 
+#if 0 // !@#
 TEST_F(IntrospectableViewTest, boolConstArray)
 {
     const auto rawArray = std::vector<Bool>({true, false, true, false});
