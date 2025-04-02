@@ -592,13 +592,13 @@ public:
  * Introspectable for values of double type.
  */
 template <typename ALLOC>
-class DoubleInstrospectableData : public FloatingPointIntrospectableViewBase<Float64, ALLOC>
+class DoubleIntrospectableView : public FloatingPointIntrospectableViewBase<Float64, ALLOC>
 {
 private:
     using Base = FloatingPointIntrospectableViewBase<Float64, ALLOC>;
 
 public:
-    explicit DoubleInstrospectableData(Float64 value) :
+    explicit DoubleIntrospectableView(Float64 value) :
             Base(typeInfo<Float64, ALLOC>(), value)
     {}
 
@@ -657,14 +657,14 @@ public:
  * Introspectable for values of bit buffer type.
  */
 template <typename ALLOC>
-class BitBufferInstrospectableData
+class BitBufferIntrospectableView
         : public BuiltinIntrospectableViewBase<std::reference_wrapper<const BasicBitBuffer<ALLOC>>, ALLOC>
 {
 private:
     using Base = BuiltinIntrospectableViewBase<std::reference_wrapper<const BasicBitBuffer<ALLOC>>, ALLOC>;
 
 public:
-    explicit BitBufferInstrospectableData(std::reference_wrapper<const BasicBitBuffer<ALLOC>> value) :
+    explicit BitBufferIntrospectableView(std::reference_wrapper<const BasicBitBuffer<ALLOC>> value) :
             Base(typeInfo<BasicBitBuffer<ALLOC>>(), value)
     {}
 
@@ -1163,6 +1163,43 @@ template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarSize value, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<UInt32IntrospectableView<VarSize, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Float16 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<FloatIntrospectableView<Float16, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Float32 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<FloatIntrospectableView<Float32, ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Float64 value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<DoubleIntrospectableView<ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(BytesView value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<BytesIntrospectableView<ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(std::string_view value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<StringIntrospectableView<ALLOC>>(allocator, value);
+}
+
+template <typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
+        const BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<BitBufferIntrospectableView<ALLOC>>(allocator, value);
 }
 
 } // namespace zserio
