@@ -11,10 +11,10 @@ namespace array_types
 namespace variable_array_subtyped_struct
 {
 
-using AllocatorType = VariableArray::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = VariableArray::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class VariableArraySubtypedStructTest : public ::testing::Test
 {
@@ -26,7 +26,7 @@ protected:
         for (size_t i = 0; i < numElements; ++i)
         {
             const ArrayElement arrayElement(
-                    static_cast<uint32_t>(i), StringType("Name") + zserio::toString<AllocatorType>(i));
+                    static_cast<uint32_t>(i), StringType("Name") + zserio::toString<allocator_type>(i));
             compoundArray.push_back(arrayElement);
         }
         return VariableArray(static_cast<uint8_t>(wrong ? numElements + 1 : numElements), compoundArray);

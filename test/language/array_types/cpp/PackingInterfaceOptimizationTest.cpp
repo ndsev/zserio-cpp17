@@ -9,9 +9,9 @@ namespace array_types
 namespace packing_interface_optimization
 {
 
-using AllocatorType = PackingInterfaceOptimization::AllocatorType;
+using allocator_type = PackingInterfaceOptimization::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class PackingInterfaceOptimizationTest : public ::testing::Test
 {

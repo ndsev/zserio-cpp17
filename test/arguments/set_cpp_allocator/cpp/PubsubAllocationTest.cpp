@@ -12,8 +12,8 @@ using namespace test_utils;
 namespace pubsub_allocation
 {
 
-using AllocatorType = GreetingPubsub::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = GreetingPubsub::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 
 class PubsubAllocationTest : public ::testing::Test
 {
@@ -39,7 +39,7 @@ public:
     PubsubAllocationTest(PubsubAllocationTest&&) = delete;
     PubsubAllocationTest& operator=(PubsubAllocationTest&&) = delete;
 
-    const AllocatorType& getAllocator()
+    const allocator_type& getAllocator()
     {
         return m_allocator;
     }
@@ -51,10 +51,10 @@ protected:
         size_t subscribeCount = 0;
     };
 
-    class TestPubsubImpl : public TestPubsub<AllocatorType>
+    class TestPubsubImpl : public TestPubsub<allocator_type>
     {
     public:
-        explicit TestPubsubImpl(const AllocatorType& allocator) :
+        explicit TestPubsubImpl(const allocator_type& allocator) :
                 TestPubsub(allocator)
         {}
 
@@ -83,7 +83,7 @@ protected:
     class NameCallback : public GreetingPubsub::GreetingPubsubCallback<Name>
     {
     public:
-        explicit NameCallback(GreetingPubsub& pubsub, const AllocatorType& allocator) :
+        explicit NameCallback(GreetingPubsub& pubsub, const allocator_type& allocator) :
                 m_greetingPubsub(pubsub),
                 m_allocator(allocator)
         {}
@@ -106,12 +106,12 @@ protected:
         }
 
         GreetingPubsub& m_greetingPubsub;
-        AllocatorType m_allocator;
+        allocator_type m_allocator;
     };
 
     struct GreetingCallback : public GreetingPubsub::GreetingPubsubCallback<Greeting>
     {
-        explicit GreetingCallback(const AllocatorType& allocator) :
+        explicit GreetingCallback(const allocator_type& allocator) :
                 greeting(allocator)
         {}
 
@@ -128,7 +128,7 @@ private:
     InvalidMemoryResource m_invalidMemoryResource;
     MemoryResourceScopedSetter m_invalidMemoryResourceSetter;
     TestMemoryResource<4 * 1024> m_memoryResource;
-    AllocatorType m_allocator;
+    allocator_type m_allocator;
     std::unique_ptr<TestPubsubImpl> m_testPubsub;
 
 protected: // must be behind m_allocator

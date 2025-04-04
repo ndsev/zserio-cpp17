@@ -8,10 +8,10 @@ namespace functions
 namespace structure_extern
 {
 
-using AllocatorType = TestStructure::AllocatorType;
+using allocator_type = TestStructure::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
 
 class StructureExternTest : public ::testing::Test
 {

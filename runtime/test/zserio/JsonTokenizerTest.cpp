@@ -7,7 +7,7 @@ namespace zserio
 {
 
 using JsonTokenizer = BasicJsonTokenizer<>;
-using StringType = BasicString<RebindAlloc<JsonTokenizer::AllocatorType, char>>;
+using StringType = BasicString<RebindAlloc<JsonTokenizer::allocator_type, char>>;
 
 TEST(JsonTokenizerTest, tokens)
 {

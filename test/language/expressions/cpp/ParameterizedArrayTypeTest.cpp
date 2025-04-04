@@ -7,9 +7,9 @@ namespace expressions
 namespace parameterized_array_type
 {
 
-using AllocatorType = ParameterizedArrayTypeExpression::AllocatorType;
+using allocator_type = ParameterizedArrayTypeExpression::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 TEST(ParameterizedArrayTypeTest, bitSizeOfWithOptional)
 {

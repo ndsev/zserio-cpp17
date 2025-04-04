@@ -30,7 +30,7 @@ public:
      * \param pubsub Interface for Pub/Sub client backend.
      * \param allocator Allocator to construct from.
      */
-    explicit ${name}(::zserio::IPubsub& pubsub, const AllocatorType& allocator = AllocatorType());
+    explicit ${name}(::zserio::IPubsub& pubsub, const allocator_type& allocator = {});
 
     /** Default destructor. */
     ~${name}() = default;

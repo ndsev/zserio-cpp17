@@ -9,8 +9,8 @@ namespace identifiers
 namespace structure_name_clashing_with_java
 {
 
-using AllocatorType = StructureNameClashingWithJava::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = StructureNameClashingWithJava::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 
 class StructureNameClashingWithJavaTest : public ::testing::Test
 {

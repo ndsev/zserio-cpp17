@@ -7,7 +7,7 @@ namespace union_types
 namespace empty_union_with_parameter
 {
 
-using AllocatorType = EmptyUnionWithParameter::AllocatorType;
+using allocator_type = EmptyUnionWithParameter::allocator_type;
 using ChoiceTag = EmptyUnionWithParameter::ChoiceTag;
 
 class EmptyUnionWithParameterTest : public ::testing::Test
@@ -27,7 +27,7 @@ TEST_F(EmptyUnionWithParameterTest, emptyConstructor)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyUnionWithParameter data(AllocatorType{});
+        EmptyUnionWithParameter data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

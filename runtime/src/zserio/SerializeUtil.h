@@ -115,9 +115,9 @@ Vector<uint8_t, ALLOC> serializeToBytes(const T& data, const ALLOC& allocator, A
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T, typename... ARGS, typename std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
-BasicBitBuffer<typename T::AllocatorType> serialize(const T& data, ARGS&&... arguments)
+BasicBitBuffer<typename T::allocator_type> serialize(const T& data, ARGS&&... arguments)
 {
-    return serialize(data, typename T::AllocatorType(), std::forward<ARGS>(arguments)...);
+    return serialize(data, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -146,9 +146,9 @@ BasicBitBuffer<typename T::AllocatorType> serialize(const T& data, ARGS&&... arg
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T, typename... ARGS, typename std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
-Vector<uint8_t, typename T::AllocatorType> serializeToBytes(const T& data, ARGS&&... arguments)
+Vector<uint8_t, typename T::allocator_type> serializeToBytes(const T& data, ARGS&&... arguments)
 {
-    return serializeToBytes(data, typename T::AllocatorType(), std::forward<ARGS>(arguments)...);
+    return serializeToBytes(data, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -305,9 +305,9 @@ Vector<uint8_t, ALLOC> serializeToBytes(const View<T>& view, const ALLOC& alloca
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T>
-BasicBitBuffer<typename T::AllocatorType> serialize(const View<T>& view)
+BasicBitBuffer<typename T::allocator_type> serialize(const View<T>& view)
 {
-    return serialize(view, typename T::AllocatorType());
+    return serialize(view, typename T::allocator_type());
 }
 
 /**
@@ -332,9 +332,9 @@ BasicBitBuffer<typename T::AllocatorType> serialize(const View<T>& view)
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T>
-Vector<uint8_t, typename T::AllocatorType> serializeToBytes(const View<T>& view)
+Vector<uint8_t, typename T::allocator_type> serializeToBytes(const View<T>& view)
 {
-    return serializeToBytes(view, typename T::AllocatorType());
+    return serializeToBytes(view, typename T::allocator_type());
 }
 
 /**
@@ -432,9 +432,9 @@ Vector<uint8_t, ALLOC> serializeToBytes(const DataView<T>& dataView, const ALLOC
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T>
-BasicBitBuffer<typename T::AllocatorType> serialize(const DataView<T>& dataView)
+BasicBitBuffer<typename T::allocator_type> serialize(const DataView<T>& dataView)
 {
-    return serialize(dataView, typename T::AllocatorType());
+    return serialize(dataView, typename T::allocator_type());
 }
 
 /**
@@ -459,9 +459,9 @@ BasicBitBuffer<typename T::AllocatorType> serialize(const DataView<T>& dataView)
  * \throw CppRuntimeException When serialization fails.
  */
 template <typename T>
-Vector<uint8_t, typename T::AllocatorType> serializeToBytes(const DataView<T>& dataView)
+Vector<uint8_t, typename T::allocator_type> serializeToBytes(const DataView<T>& dataView)
 {
-    return serializeToBytes(dataView, typename T::AllocatorType());
+    return serializeToBytes(dataView, typename T::allocator_type());
 }
 
 /**
@@ -487,7 +487,7 @@ Vector<uint8_t, typename T::AllocatorType> serializeToBytes(const DataView<T>& d
  */
 template <typename T, typename ALLOC, typename... ARGS>
 DataView<T> deserialize(
-        const BasicBitBuffer<ALLOC>& buffer, const typename T::AllocatorType& allocator, ARGS&&... arguments)
+        const BasicBitBuffer<ALLOC>& buffer, const typename T::allocator_type& allocator, ARGS&&... arguments)
 {
     BitStreamReader reader(buffer);
     T data{allocator};
@@ -518,7 +518,7 @@ DataView<T> deserialize(
  */
 template <typename T, typename... ARGS>
 DataView<T> deserializeFromBytes(
-        Span<const uint8_t> buffer, const typename T::AllocatorType& allocator, ARGS&&... arguments)
+        Span<const uint8_t> buffer, const typename T::allocator_type& allocator, ARGS&&... arguments)
 {
     BitStreamReader reader(buffer);
     T data{allocator};
@@ -550,7 +550,7 @@ template <typename T, typename ALLOC, typename... ARGS,
         std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
 DataView<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, ARGS&&... arguments)
 {
-    return deserialize<T>(buffer, typename T::AllocatorType(), std::forward<ARGS>(arguments)...);
+    return deserialize<T>(buffer, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -574,7 +574,7 @@ DataView<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, ARGS&&... arguments
 template <typename T, typename... ARGS, std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
 DataView<T> deserializeFromBytes(Span<const uint8_t> buffer, ARGS&&... arguments)
 {
-    return deserializeFromBytes<T>(buffer, typename T::AllocatorType(), std::forward<ARGS>(arguments)...);
+    return deserializeFromBytes<T>(buffer, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
 }
 
 /**

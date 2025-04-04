@@ -7,7 +7,7 @@
 namespace zserio
 {
 
-using AllocatorType = std::allocator<uint8_t>;
+// using allocator_type = std::allocator<uint8_t>;
 
 TEST(StringConvertUtilTest, convertInt8)
 {

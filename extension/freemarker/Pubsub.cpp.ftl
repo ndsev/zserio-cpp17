@@ -53,8 +53,8 @@ void ${name}OnRaw<::zserio::Span<const uint8_t>>::operator()(::std::string_view 
 } // namespace
 </#if>
 
-${name}::${name}(::zserio::IPubsub& pubsub, const AllocatorType& allocator) :
-        ::zserio::AllocatorHolder<AllocatorType>(allocator),
+${name}::${name}(::zserio::IPubsub& pubsub, const allocator_type& allocator) :
+        ::zserio::AllocatorHolder<allocator_type>(allocator),
         m_pubsub(pubsub)
 {
 }
