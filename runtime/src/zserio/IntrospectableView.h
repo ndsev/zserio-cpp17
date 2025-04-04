@@ -63,19 +63,17 @@ private:
 };
 
 /**
- * Base class for introspectable numeric (arithmetic) types, string view and span.
- *
- * It holds the value.
+ * Base class for introspectable which holds the value.
  */
 template <typename T, typename ALLOC>
-class BuiltinIntrospectableViewBase : public IntrospectableViewBase<ALLOC>
+class ValueHolderIntrospectableViewBase : public IntrospectableViewBase<ALLOC>
 {
 private:
     using Base = IntrospectableViewBase<ALLOC>;
 
 protected:
-    BuiltinIntrospectableViewBase(const IBasicTypeInfo<ALLOC>& typeInfo, T value) :
-            IntrospectableViewBase<ALLOC>(typeInfo),
+    ValueHolderIntrospectableViewBase(const IBasicTypeInfo<ALLOC>& typeInfo, T value) :
+            Base(typeInfo),
             m_value(value)
     {}
 
@@ -87,21 +85,37 @@ protected:
 public:
     BasicAny<ALLOC> getAnyValue(const ALLOC& allocator) const override
     {
-        return BasicAny<ALLOC>(getValue(), allocator);
-    }
-
-    BitSize bitSizeOf(BitSize bitPosition) const override
-    {
-        return detail::bitSizeOf(m_value, bitPosition);
-    }
-
-    void write(BitStreamWriter& writer) const override
-    {
-        detail::write(writer, m_value);
+        return BasicAny<ALLOC>(m_value, allocator);
     }
 
 private:
     T m_value;
+};
+
+/**
+ * Base class for introspectable numeric (arithmetic) types, string view and span.
+ */
+template <typename T, typename ALLOC>
+class BuiltinIntrospectableViewBase : public ValueHolderIntrospectableViewBase<T, ALLOC>
+{
+private:
+    using Base = ValueHolderIntrospectableViewBase<T, ALLOC>;
+
+protected:
+    BuiltinIntrospectableViewBase(const IBasicTypeInfo<ALLOC>& typeInfo, T value) :
+            Base(typeInfo, value)
+    {}
+
+public:
+    BitSize bitSizeOf(BitSize bitPosition) const override
+    {
+        return detail::bitSizeOf(Base::getValue(), bitPosition);
+    }
+
+    void write(BitStreamWriter& writer) const override
+    {
+        detail::write(writer, Base::getValue());
+    }
 };
 
 /**
@@ -385,7 +399,7 @@ private:
     static_assert(std::is_same_v<int8_t, typename T::ValueType>, "T must be based on int8_t!");
 
 public:
-    explicit DynInt8IntrospectableView(const View<T>& value) :
+    explicit DynInt8IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -407,7 +421,7 @@ private:
     static_assert(std::is_same_v<int16_t, typename T::ValueType>, "T must be based on int16_t!");
 
 public:
-    explicit DynInt16IntrospectableView(const View<T>& value) :
+    explicit DynInt16IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -429,7 +443,7 @@ private:
     static_assert(std::is_same_v<int32_t, typename T::ValueType>, "T must be based on int32_t!");
 
 public:
-    explicit DynInt32IntrospectableView(const View<T>& value) :
+    explicit DynInt32IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -451,7 +465,7 @@ private:
     static_assert(std::is_same_v<int64_t, typename T::ValueType>, "T must be based on int64_t!");
 
 public:
-    explicit DynInt64IntrospectableView(const View<T>& value) :
+    explicit DynInt64IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -473,7 +487,7 @@ private:
     static_assert(std::is_same_v<uint8_t, typename T::ValueType>, "T must be based on uint8_t!");
 
 public:
-    explicit DynUInt8IntrospectableView(const View<T>& value) :
+    explicit DynUInt8IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -495,7 +509,7 @@ private:
     static_assert(std::is_same_v<uint16_t, typename T::ValueType>, "T must be based on uint16_t!");
 
 public:
-    explicit DynUInt16IntrospectableView(const View<T>& value) :
+    explicit DynUInt16IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -517,7 +531,7 @@ private:
     static_assert(std::is_same_v<uint32_t, typename T::ValueType>, "T must be based on uint32_t!");
 
 public:
-    explicit DynUInt32IntrospectableView(const View<T>& value) :
+    explicit DynUInt32IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -539,7 +553,7 @@ private:
     static_assert(std::is_same_v<uint64_t, typename T::ValueType>, "T must be based on uint64_t!");
 
 public:
-    explicit DynUInt64IntrospectableView(const View<T>& value) :
+    explicit DynUInt64IntrospectableView(View<T> value) :
             Base(typeInfo<T, ALLOC>(), value)
     {}
 
@@ -673,345 +687,6 @@ public:
         return Base::getValue();
     }
 };
-
-/**
- * Introspectable for arrays.
- */
-template <typename RAW_ARRAY, typename ALLOC>
-class IntrospectableViewArray : public IntrospectableViewBase<ALLOC>, public AllocatorHolder<ALLOC>
-{
-private:
-    using Base = IntrospectableViewBase<ALLOC>;
-
-public:
-    using Base::getTypeInfo;
-
-    IntrospectableViewArray(const ALLOC& allocator, const RAW_ARRAY& rawArray) :
-            Base(typeInfo<typename RAW_ARRAY::value_type, ALLOC>(), allocator),
-            m_rawArray(rawArray)
-    {}
-
-    bool isArray() const override
-    {
-        return true;
-    }
-
-    IBasicIntrospectableViewConstPtr<ALLOC> getField(std::string_view) const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    std::string_view getChoice() const
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    size_t size() const override
-    {
-        return m_rawArray.size();
-    }
-
-    IBasicIntrospectableViewConstPtr<ALLOC> at(size_t index) const override
-    {
-        if (index >= size())
-        {
-            throw CppRuntimeException("Index ")
-                    << index << " out of range for introspectable array '" << getTypeInfo().getSchemaName()
-                    << "' of size " << size() << "!";
-        }
-
-        return introspectable(m_rawArray[index], Base::get_allocator());
-    }
-
-    IBasicIntrospectableViewConstPtr<ALLOC> operator[](size_t index) const override
-    {
-        return this->at(index);
-    }
-
-    BasicAny<ALLOC> getAnyValue(const ALLOC& allocator) const override
-    {
-        return BasicAny<ALLOC>(std::cref(m_rawArray), allocator);
-    }
-
-    bool getBool() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    int8_t getInt8() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    int16_t getInt16() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    int32_t getInt32() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    int64_t getInt64() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    uint8_t getUInt8() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    uint16_t getUInt16() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    uint32_t getUInt32() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    uint64_t getUInt64() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    float getFloat() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    double getDouble() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    BytesView getBytes() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    std::string_view getStringView() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    const BasicBitBuffer<ALLOC>& getBitBuffer() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    int64_t toInt() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    uint64_t toUInt() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    double toDouble() const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    BasicString<RebindAlloc<ALLOC, char>> toString(const ALLOC&) const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    IBasicIntrospectableViewConstPtr<ALLOC> getParameter(std::string_view) const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    IBasicIntrospectableViewConstPtr<ALLOC> callFunction(std::string_view) const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    BitSize initializeOffsets(BitSize bitPosition) const override
-    {
-        return detail::initializeOffsets(m_rawArray, bitPosition);
-    }
-
-    BitSize bitSizeOf(BitSize bitPosition) const override
-    {
-        return detail::bitSizeOf(m_rawArray, bitPosition);
-    }
-
-    void write(BitStreamWriter& writer) const override
-    {
-        detail::write(writer, m_rawArray);
-    }
-
-private:
-    const RAW_ARRAY& m_rawArray;
-};
-
-// implementation of base classes methods
-
-template <typename ALLOC>
-IntrospectableViewBase<ALLOC>::IntrospectableViewBase(const IBasicTypeInfo<ALLOC>& typeInfo) :
-        IntrospectableDataBase<IBasicIntrospectableView<ALLOC>, ALLOC>(typeInfo)
-{}
-
-template <typename ALLOC>
-IntrospectableViewBase<ALLOC>::~IntrospectableViewBase() = default;
-
-template <typename ALLOC>
-IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::find(std::string_view path) const
-{
-    return getFromObject(*this, path, 0);
-}
-
-template <typename ALLOC>
-IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getParameter(std::string_view) const
-{
-    throw CppRuntimeException("Type '")
-            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' has no parameters to get!";
-}
-
-template <typename ALLOC>
-IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::callFunction(std::string_view) const
-{
-    throw CppRuntimeException("Type '")
-            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' has no functions to call!";
-}
-
-template <typename ALLOC>
-BitSize IntrospectableViewBase<ALLOC>::initializeOffsets(BitSize) const
-{
-    throw CppRuntimeException("Type '")
-            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' is not a compound type!";
-}
-
-template <typename ALLOC>
-BitSize IntrospectableViewBase<ALLOC>::initializeOffsets() const
-{
-    return initializeOffsets(0);
-}
-
-template <typename ALLOC>
-BitSize IntrospectableViewBase<ALLOC>::bitSizeOf(BitSize) const
-{
-    throw CppRuntimeException("Type '")
-            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' is not implemented!";
-}
-
-template <typename ALLOC>
-BitSize IntrospectableViewBase<ALLOC>::bitSizeOf() const
-{
-    return bitSizeOf(0);
-}
-
-template <typename ALLOC>
-void IntrospectableViewBase<ALLOC>::write(BitStreamWriter&) const
-{
-    throw CppRuntimeException("Type '")
-            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' is not implemented!";
-}
-
-template <typename ALLOC>
-IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getFieldFromObject(
-        const IBasicIntrospectableView<ALLOC>& object, std::string_view name) const
-{
-    const auto& typeInfo = object.getTypeInfo();
-    if (TypeInfoUtil::isCompound(typeInfo.getSchemaType()))
-    {
-        const auto& fields = typeInfo.getFields();
-        auto fieldsIt =
-                std::find_if(fields.begin(), fields.end(), [name](const BasicFieldInfo<ALLOC>& fieldInfo) {
-                    return fieldInfo.schemaName == name;
-                });
-        if (fieldsIt != fields.end())
-        {
-            return object.getField(name);
-        }
-    }
-
-    return nullptr;
-}
-
-template <typename ALLOC>
-IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getParameterFromObject(
-        const IBasicIntrospectableView<ALLOC>& object, std::string_view name) const
-{
-    const auto& typeInfo = object.getTypeInfo();
-    if (TypeInfoUtil::isCompound(typeInfo.getSchemaType()))
-    {
-        const auto& parameters = typeInfo.getParameters();
-        auto parametersIt = std::find_if(
-                parameters.begin(), parameters.end(), [name](const BasicParameterInfo<ALLOC>& parameterInfo) {
-                    return parameterInfo.schemaName == name;
-                });
-        if (parametersIt != parameters.end())
-        {
-            return object.getParameter(name);
-        }
-    }
-
-    return nullptr;
-}
-
-template <typename ALLOC>
-IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::callFunctionInObject(
-        const IBasicIntrospectableView<ALLOC>& object, std::string_view name) const
-{
-    const auto& typeInfo = object.getTypeInfo();
-    if (TypeInfoUtil::isCompound(typeInfo.getSchemaType()))
-    {
-        const auto& functions = typeInfo.getFunctions();
-        auto functionsIt = std::find_if(
-                functions.begin(), functions.end(), [name](const BasicFunctionInfo<ALLOC>& functionInfo) {
-                    return functionInfo.schemaName == name;
-                });
-        if (functionsIt != functions.end())
-        {
-            return object.callFunction(name);
-        }
-    }
-
-    return nullptr;
-}
-
-template <typename ALLOC>
-IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getFromObject(
-        const IBasicIntrospectableView<ALLOC>& object, std::string_view path, size_t pos) const
-{
-    try
-    {
-        const size_t dotPos = path.find('.', pos);
-        const bool isLast = dotPos == std::string_view::npos;
-        const std::string_view name =
-                path.substr(pos, dotPos == std::string_view::npos ? std::string_view::npos : dotPos - pos);
-
-        auto field = getFieldFromObject(object, name);
-        if (field)
-        {
-            return isLast ? std::move(field) : getFromObject(*field, path, dotPos + 1);
-        }
-
-        auto parameter = getParameterFromObject(object, name);
-        if (parameter)
-        {
-            return isLast ? std::move(parameter) : getFromObject(*parameter, path, dotPos + 1);
-        }
-
-        auto functionResult = callFunctionInObject(object, name);
-        if (functionResult)
-        {
-            return isLast ? std::move(functionResult) : getFromObject(*functionResult, path, dotPos + 1);
-        }
-    }
-    catch (const CppRuntimeException&)
-    {}
-
-    return nullptr;
-}
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Bool value, const ALLOC& allocator = ALLOC())
@@ -1200,6 +875,347 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
         const BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<BitBufferIntrospectableView<ALLOC>>(allocator, value);
+}
+
+/**
+ * Introspectable for arrays.
+ */
+template <typename ARRAY_VIEW, typename ALLOC>
+class IntrospectableViewArray : public ValueHolderIntrospectableViewBase<ARRAY_VIEW, ALLOC>
+{
+private:
+    using Base = ValueHolderIntrospectableViewBase<ARRAY_VIEW, ALLOC>;
+
+public:
+    using Base::getTypeInfo;
+
+    explicit IntrospectableViewArray(ARRAY_VIEW value) :
+            Base(typeInfo<typename ARRAY_VIEW::value_type, ALLOC>(), value)
+    {}
+
+    bool isArray() const override
+    {
+        return true;
+    }
+
+    IBasicIntrospectableViewConstPtr<ALLOC> getField(std::string_view) const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    std::string_view getChoice() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    size_t size() const override
+    {
+        return Base::getValue().size();
+    }
+
+    IBasicIntrospectableViewConstPtr<ALLOC> at(size_t index) const override
+    {
+        if (index >= size())
+        {
+            throw CppRuntimeException("Index ")
+                    << index << " out of range for introspectable array '" << getTypeInfo().getSchemaName()
+                    << "' of size " << size() << "!";
+        }
+
+        return introspectable(Base::getValue()[index]);
+    }
+
+    IBasicIntrospectableViewConstPtr<ALLOC> operator[](size_t index) const override
+    {
+        return this->at(index);
+    }
+
+    BasicAny<ALLOC> getAnyValue(const ALLOC& allocator) const override
+    {
+        return BasicAny<ALLOC>(Base::getValue(), allocator);
+    }
+
+    bool getBool() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    int8_t getInt8() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    int16_t getInt16() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    int32_t getInt32() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    int64_t getInt64() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    uint8_t getUInt8() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    uint16_t getUInt16() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    uint32_t getUInt32() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    uint64_t getUInt64() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    float getFloat() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    double getDouble() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    BytesView getBytes() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    std::string_view getStringView() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    const BasicBitBuffer<ALLOC>& getBitBuffer() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    int64_t toInt() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    uint64_t toUInt() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    double toDouble() const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    BasicString<RebindAlloc<ALLOC, char>> toString(const ALLOC&) const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    IBasicIntrospectableViewConstPtr<ALLOC> getParameter(std::string_view) const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    IBasicIntrospectableViewConstPtr<ALLOC> callFunction(std::string_view) const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    BitSize initializeOffsets(BitSize) const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    BitSize bitSizeOf(BitSize) const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+
+    void write(BitStreamWriter&) const override
+    {
+        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
+    }
+};
+
+template <typename ARRAY_VIEW, typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(ARRAY_VIEW value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<IntrospectableViewArray<ARRAY_VIEW, ALLOC>>(allocator, value);
+}
+
+// implementation of base classes methods
+
+template <typename ALLOC>
+IntrospectableViewBase<ALLOC>::IntrospectableViewBase(const IBasicTypeInfo<ALLOC>& typeInfo) :
+        IntrospectableDataBase<IBasicIntrospectableView<ALLOC>, ALLOC>(typeInfo)
+{}
+
+template <typename ALLOC>
+IntrospectableViewBase<ALLOC>::~IntrospectableViewBase() = default;
+
+template <typename ALLOC>
+IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::find(std::string_view path) const
+{
+    return getFromObject(*this, path, 0);
+}
+
+template <typename ALLOC>
+IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getParameter(std::string_view) const
+{
+    throw CppRuntimeException("Type '")
+            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' has no parameters to get!";
+}
+
+template <typename ALLOC>
+IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::callFunction(std::string_view) const
+{
+    throw CppRuntimeException("Type '")
+            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' has no functions to call!";
+}
+
+template <typename ALLOC>
+BitSize IntrospectableViewBase<ALLOC>::initializeOffsets(BitSize) const
+{
+    throw CppRuntimeException("Type '")
+            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' is not a compound type!";
+}
+
+template <typename ALLOC>
+BitSize IntrospectableViewBase<ALLOC>::initializeOffsets() const
+{
+    return initializeOffsets(0);
+}
+
+template <typename ALLOC>
+BitSize IntrospectableViewBase<ALLOC>::bitSizeOf(BitSize) const
+{
+    throw CppRuntimeException("Type '")
+            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' is not implemented!";
+}
+
+template <typename ALLOC>
+BitSize IntrospectableViewBase<ALLOC>::bitSizeOf() const
+{
+    return bitSizeOf(0);
+}
+
+template <typename ALLOC>
+void IntrospectableViewBase<ALLOC>::write(BitStreamWriter&) const
+{
+    throw CppRuntimeException("Type '")
+            << IntrospectableViewBase<ALLOC>::getTypeInfo().getSchemaName() << "' is not implemented!";
+}
+
+template <typename ALLOC>
+IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getFieldFromObject(
+        const IBasicIntrospectableView<ALLOC>& object, std::string_view name) const
+{
+    const auto& typeInfo = object.getTypeInfo();
+    if (TypeInfoUtil::isCompound(typeInfo.getSchemaType()))
+    {
+        const auto& fields = typeInfo.getFields();
+        auto fieldsIt =
+                std::find_if(fields.begin(), fields.end(), [name](const BasicFieldInfo<ALLOC>& fieldInfo) {
+                    return fieldInfo.schemaName == name;
+                });
+        if (fieldsIt != fields.end())
+        {
+            return object.getField(name);
+        }
+    }
+
+    return nullptr;
+}
+
+template <typename ALLOC>
+IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getParameterFromObject(
+        const IBasicIntrospectableView<ALLOC>& object, std::string_view name) const
+{
+    const auto& typeInfo = object.getTypeInfo();
+    if (TypeInfoUtil::isCompound(typeInfo.getSchemaType()))
+    {
+        const auto& parameters = typeInfo.getParameters();
+        auto parametersIt = std::find_if(
+                parameters.begin(), parameters.end(), [name](const BasicParameterInfo<ALLOC>& parameterInfo) {
+                    return parameterInfo.schemaName == name;
+                });
+        if (parametersIt != parameters.end())
+        {
+            return object.getParameter(name);
+        }
+    }
+
+    return nullptr;
+}
+
+template <typename ALLOC>
+IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::callFunctionInObject(
+        const IBasicIntrospectableView<ALLOC>& object, std::string_view name) const
+{
+    const auto& typeInfo = object.getTypeInfo();
+    if (TypeInfoUtil::isCompound(typeInfo.getSchemaType()))
+    {
+        const auto& functions = typeInfo.getFunctions();
+        auto functionsIt = std::find_if(
+                functions.begin(), functions.end(), [name](const BasicFunctionInfo<ALLOC>& functionInfo) {
+                    return functionInfo.schemaName == name;
+                });
+        if (functionsIt != functions.end())
+        {
+            return object.callFunction(name);
+        }
+    }
+
+    return nullptr;
+}
+
+template <typename ALLOC>
+IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<ALLOC>::getFromObject(
+        const IBasicIntrospectableView<ALLOC>& object, std::string_view path, size_t pos) const
+{
+    try
+    {
+        const size_t dotPos = path.find('.', pos);
+        const bool isLast = dotPos == std::string_view::npos;
+        const std::string_view name =
+                path.substr(pos, dotPos == std::string_view::npos ? std::string_view::npos : dotPos - pos);
+
+        auto field = getFieldFromObject(object, name);
+        if (field)
+        {
+            return isLast ? std::move(field) : getFromObject(*field, path, dotPos + 1);
+        }
+
+        auto parameter = getParameterFromObject(object, name);
+        if (parameter)
+        {
+            return isLast ? std::move(parameter) : getFromObject(*parameter, path, dotPos + 1);
+        }
+
+        auto functionResult = callFunctionInObject(object, name);
+        if (functionResult)
+        {
+            return isLast ? std::move(functionResult) : getFromObject(*functionResult, path, dotPos + 1);
+        }
+    }
+    catch (const CppRuntimeException&)
+    {}
+
+    return nullptr;
 }
 
 } // namespace zserio

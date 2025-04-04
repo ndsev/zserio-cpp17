@@ -298,12 +298,13 @@ protected:
                 detail::bitSizeOf(VarSize(convertSizeToUInt32(bitSize))) + bitSize);
     }
 
-#if 0 // !@#
     template <typename ARRAY>
     void checkArrayAnyValue(const ARRAY& array, const IIntrospectableViewConstPtr& introspectableView)
     {
-        ASSERT_EQ(array,
-                introspectableView->getAnyValue().template get<std::reference_wrapper<const ARRAY>>().get());
+        (void)array;
+        (void)introspectableView;
+        // !@# Span comparison
+        // ASSERT_EQ(array, introspectableView->getAnyValue().template get<const ARRAY>());
     }
 
     template <typename ARRAY, typename INTROSPECTABLE_VIEW_PTR, typename ELEMENT_CHECKER>
@@ -351,6 +352,7 @@ protected:
 
         checkNonCompound(introspectableView);
     }
+#if 0 // !@#
 
     template <typename INTROSPECTABLE_VIEW_PTR>
     void checkBitmask(IntrospectableViewBitmask bitmask, const INTROSPECTABLE_VIEW_PTR& introspectableView)
@@ -865,9 +867,9 @@ TEST_F(IntrospectableViewTest, bytesIntrospectableView)
 
 TEST_F(IntrospectableViewTest, stringIntrospectableView)
 {
-    auto view = std::string_view("some text as a string view");
-    auto introspectableViewPtr = introspectable(view);
-    checkString(view, introspectableViewPtr);
+    auto value = std::string_view("some text as a string view");
+    auto introspectableViewPtr = introspectable(value);
+    checkString(value, introspectableViewPtr);
 }
 
 TEST_F(IntrospectableViewTest, bitBufferIntrospectableView)
@@ -877,706 +879,346 @@ TEST_F(IntrospectableViewTest, bitBufferIntrospectableView)
     checkBitBuffer(value, introspectableViewPtr);
 }
 
-#if 0 // !@#
 TEST_F(IntrospectableViewTest, boolConstArray)
 {
     const auto rawArray = std::vector<Bool>({true, false, true, false});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Bool value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getBool,
-                std::bind(&BitStreamReader::readBool, _1));
-    });
-}
-
-TEST_F(IntrospectableViewTest, boolArray)
-{
-    auto rawArray = std::vector<Bool>({true, false, true, false});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Bool value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getBool,
-                std::bind(&BitStreamReader::readBool, _1));
-    });
+    const Span<const Bool> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](Bool value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getBool,
+                        std::bind(&BitStreamReader::readBool, _1));
+            });
 }
 
 TEST_F(IntrospectableViewTest, int8ConstArray)
 {
     const auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Int8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 8));
-    });
-
-    auto nonConstIntrospectableView = std::const_pointer_cast<IIntrospectableView>(introspectableViewPtr);
-    ASSERT_THROW(nonConstIntrospectableView->getAnyValue(), CppRuntimeException);
-}
-
-TEST_F(IntrospectableViewTest, int8Array)
-{
-    auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Int8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 8));
-    });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
+    const Span<const Int8> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
             [&](Int8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
                         std::bind(&BitStreamReader::readSignedBits32, _1, 8));
             });
-
-    introspectableViewPtr->resize(0);
-    ASSERT_EQ(0, introspectableViewPtr->size());
-    introspectableViewPtr->append(Any(Int8(13)));
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(13, introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->setAt(Any(Int8(42)), 0);
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(42, introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->resize(2);
-    ASSERT_EQ(2, introspectableViewPtr->size());
-
-    // out of range
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(Int8(-42)), 2), CppRuntimeException);
 }
 
 TEST_F(IntrospectableViewTest, int16ConstArray)
 {
     const auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Int16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 16));
-    });
-}
-
-TEST_F(IntrospectableViewTest, int16Array)
-{
-    auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](Int16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 16));
-    });
+    const Span<const Int16> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](Int16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
+                        std::bind(&BitStreamReader::readSignedBits32, _1, 16));
+            });
 }
 
 TEST_F(IntrospectableViewTest, int32ConstArray)
 {
     const auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Int32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 32));
-    });
-}
-
-TEST_F(IntrospectableViewTest, int32Array)
-{
-    auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Int32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
-                std::bind(&BitStreamReader::readSignedBits32, _1, 32));
-    });
+    const Span<const Int32> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](Int32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
+                        std::bind(&BitStreamReader::readSignedBits32, _1, 32));
+            });
 }
 
 TEST_F(IntrospectableViewTest, int64ConstArray)
 {
     const auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](Int64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
-                std::bind(&BitStreamReader::readSignedBits64, _1, 64));
-    });
-}
-
-TEST_F(IntrospectableViewTest, int64Array)
-{
-    auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](Int64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
-                std::bind(&BitStreamReader::readSignedBits64, _1, 64));
-    });
+    const Span<const Int64> array(rawArray.data(), rawArray.size());
+    auto introspectableView = introspectable(array);
+    checkArray(array, introspectableView,
+            [&](Int64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
+                        std::bind(&BitStreamReader::readSignedBits64, _1, 64));
+            });
 }
 
 TEST_F(IntrospectableViewTest, uint8ConstArray)
 {
     const auto rawArray = std::vector<UInt8>({10, 20, 30, 40});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
-    });
-}
-
-TEST_F(IntrospectableViewTest, uint8Array)
-{
-    auto rawArray = std::vector<UInt8>{{10, 20, 30, 40}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt8 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
-    });
+    const Span<const UInt8> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](UInt8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
+                        std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
+            });
 }
 
 TEST_F(IntrospectableViewTest, uint16ConstArray)
 {
     const auto rawArray = std::vector<UInt16>({100, 200, 300, 400});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt16,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
-    });
-}
-
-TEST_F(IntrospectableViewTest, uint16Array)
-{
-    auto rawArray = std::vector<UInt16>{{100, 200, 300, 400}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt16 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt16,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
-    });
+    const Span<const UInt16> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](UInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt16,
+                        std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
+            });
 }
 
 TEST_F(IntrospectableViewTest, uint32ConstArray)
 {
     const auto rawArray = std::vector<UInt32>({10000, 20000, 30000, 40000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
-    });
-}
-
-TEST_F(IntrospectableViewTest, uint32Array)
-{
-    auto rawArray = std::vector<UInt32>{{10000, 20000, 30000, 40000}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt32 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
-    });
+    const Span<const UInt32> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](UInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
+                        std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
+            });
 }
 
 TEST_F(IntrospectableViewTest, uint64ConstArray)
 {
     const auto rawArray = std::vector<UInt64>({10000000, 20000000, 30000000, 40000000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
-                std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
-    });
-}
-
-TEST_F(IntrospectableViewTest, uint64Array)
-{
-    auto rawArray = std::vector<UInt64>{{10000000, 20000000, 30000000, 40000000}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt64 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
-                std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
-    });
+    const Span<const UInt64> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](UInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
+                        std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
+            });
 }
 
 TEST_F(IntrospectableViewTest, fixedSignedBitField5ConstArray)
 {
     uint8_t numBits = 5;
     const auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Int5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
-    });
-}
-
-TEST_F(IntrospectableViewTest, fixedSignedBitField5Array)
-{
-    uint8_t numBits = 5;
-    auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Int5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
-    });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
+    const Span<const Int5> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
             [&](Int5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
                         std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
             });
-
-    introspectableViewPtr->resize(0);
-    ASSERT_EQ(0, introspectableViewPtr->size());
-    introspectableViewPtr->append(Any(Int5(13)));
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(13, introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->setAt(Any(Int5(42)), 0);
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(42, introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->resize(2);
-    ASSERT_EQ(2, introspectableViewPtr->size());
-
-    // out of range
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(Int5(42)), 2), CppRuntimeException);
 }
 
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField5ConstArray)
 {
     const uint8_t numBits = 5;
     const auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
-    });
+    const Span<const UInt5> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](UInt5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
+                        std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+            });
 }
 
-TEST_F(IntrospectableViewTest, fixedUnsignedBitField5Array)
-{
-    const uint8_t numBits = 5;
-    auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](UInt5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
-                std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
-    });
-}
+#if 0 // !@# TODO
 
 TEST_F(IntrospectableViewTest, dynamicSignedBitField5ConstArray)
 {
     const uint8_t numBits = 5;
     const auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](DynInt8<> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
-                        std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
-            });
-
-    auto nonConstIntrospectableView = std::const_pointer_cast<IIntrospectableView>(introspectableViewPtr);
-    ASSERT_THROW(nonConstIntrospectableView->getAnyValue(), CppRuntimeException);
-}
-
-TEST_F(IntrospectableViewTest, dynamicSignedBitField5Array)
-{
-    const uint8_t numBits = 5;
-    auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](DynInt8<> value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
-                std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
-    });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
+    const Span<const DynInt8<>> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
             [&](DynInt8<> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
                         std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
             });
-
-    introspectableViewPtr->resize(0);
-    ASSERT_EQ(0, introspectableViewPtr->size());
-    introspectableViewPtr->append(Any(DynInt8<>(13)));
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(13, introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->setAt(Any(DynInt8<>(42)), 0);
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(42, introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->resize(2);
-    ASSERT_EQ(2, introspectableViewPtr->size());
-
-    // out of range
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(DynInt8<>(42)), 2), CppRuntimeException);
 }
 
 TEST_F(IntrospectableViewTest, dynamicUnsignedBitField5ConstArray)
 {
     const uint8_t numBits = 5;
     const auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
+    const Span<const DynUInt8<>> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
             [&](DynUInt8<> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
                         std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
             });
 }
 
-TEST_F(IntrospectableViewTest, dynamicUnsignedBitField5Array)
-{
-    const uint8_t numBits = 5;
-    auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](DynUInt8<> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
-                        std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
-            });
-}
+#endif // !@#
 
 TEST_F(IntrospectableViewTest, varint16ConstArray)
 {
     const auto rawArray = std::vector<VarInt16>({-10, -20, 30, 40});
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](VarInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
-                std::bind(&BitStreamReader::readVarInt16, _1));
-    });
-}
-
-TEST_F(IntrospectableViewTest, varint16Array)
-{
-    auto rawArray = std::vector<VarInt16>{{-10, -20, 30, 40}};
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](VarInt16 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
-                std::bind(&BitStreamReader::readVarInt16, _1));
-    });
+    const Span<const VarInt16> array(rawArray.data(), rawArray.size());
+    auto introspectableView = introspectable(array);
+    checkArray(array, introspectableView,
+            [&](VarInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
+                        std::bind(&BitStreamReader::readVarInt16, _1));
+            });
 }
 
 TEST_F(IntrospectableViewTest, varint32ConstArray)
 {
     const auto rawArray = std::vector<VarInt32>({-10000, -20000, 30000, 40000});
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](VarInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
-                std::bind(&BitStreamReader::readVarInt32, _1));
-    });
-}
-
-TEST_F(IntrospectableViewTest, varint32Array)
-{
-    auto rawArray = std::vector<VarInt32>{{-10000, -20000, 30000, 40000}};
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](VarInt32 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
-                std::bind(&BitStreamReader::readVarInt32, _1));
-    });
+    const Span<const VarInt32> array(rawArray.data(), rawArray.size());
+    auto introspectableView = introspectable(array);
+    checkArray(array, introspectableView,
+            [&](VarInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
+                        std::bind(&BitStreamReader::readVarInt32, _1));
+            });
 }
 
 TEST_F(IntrospectableViewTest, varint64ConstArray)
 {
     const auto rawArray = std::vector<VarInt64>({-10000000, -20000000, 30000000, 40000000});
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](VarInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
-                std::bind(&BitStreamReader::readVarInt64, _1));
-    });
-}
-
-TEST_F(IntrospectableViewTest, varint64Array)
-{
-    auto rawArray = std::vector<VarInt64>{{-10000000, -20000000, 30000000, 40000000}};
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](VarInt64 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
-                std::bind(&BitStreamReader::readVarInt64, _1));
-    });
+    const Span<const VarInt64> array(rawArray.data(), rawArray.size());
+    auto introspectableView = introspectable(array);
+    checkArray(array, introspectableView,
+            [&](VarInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
+                        std::bind(&BitStreamReader::readVarInt64, _1));
+            });
 }
 
 TEST_F(IntrospectableViewTest, varintConstArray)
 {
     const auto rawArray = std::vector<VarInt>({-10000000, -20000000, 30000000, 40000000});
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView, [&](VarInt value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
-                std::bind(&BitStreamReader::readVarInt, _1));
-    });
-}
-
-TEST_F(IntrospectableViewTest, varintArray)
-{
-    auto rawArray = std::vector<VarInt>{{-10000000, -20000000, 30000000, 40000000}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](VarInt value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
-                std::bind(&BitStreamReader::readVarInt, _1));
-    });
+    const Span<const VarInt> array(rawArray.data(), rawArray.size());
+    auto introspectableView = introspectable(array);
+    checkArray(array, introspectableView,
+            [&](VarInt value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
+                        std::bind(&BitStreamReader::readVarInt, _1));
+            });
 }
 
 TEST_F(IntrospectableViewTest, varuint16ConstArray)
 {
     const auto rawArray = std::vector<VarUInt16>({10, 20, 30, 40});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](VarUInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const Span<const VarUInt16> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](VarUInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt16,
                         std::bind(&BitStreamReader::readVarUInt16, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, varuint16Array)
-{
-    auto rawArray = std::vector<VarUInt16>{{10, 20, 30, 40}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](VarUInt16 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt16,
-                std::bind(&BitStreamReader::readVarUInt16, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, varuint32ConstArray)
 {
     const auto rawArray = std::vector<VarUInt32>({10000, 20000, 30000, 40000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](VarUInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const Span<const VarUInt32> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](VarUInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
                         std::bind(&BitStreamReader::readVarUInt32, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, varuint32Array)
-{
-    auto rawArray = std::vector<VarUInt32>{{10000, 20000, 30000, 40000}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](VarUInt32 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
-                std::bind(&BitStreamReader::readVarUInt32, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, varuint64ConstArray)
 {
     const auto rawArray = std::vector<VarUInt64>({10000, 20000, 30000, 40000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](VarUInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const Span<const VarUInt64> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](VarUInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
                         std::bind(&BitStreamReader::readVarUInt64, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, varuint64Array)
-{
-    auto rawArray = std::vector<VarUInt64>{{10000, 20000, 30000, 40000}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](VarUInt64 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
-                std::bind(&BitStreamReader::readVarUInt64, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, varuintConstArray)
 {
-    const auto rawArray = std::vector<VarUInt64>({10000, 20000, 30000, 40000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](VarUInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const auto rawArray = std::vector<VarUInt>({10000, 20000, 30000, 40000});
+    const Span<const VarUInt> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](VarUInt value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
                         std::bind(&BitStreamReader::readVarUInt, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, varuintArray)
-{
-    auto rawArray = std::vector<VarUInt>{{10000, 20000, 30000, 40000}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](VarUInt value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
-                std::bind(&BitStreamReader::readVarUInt, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, varsizeConstArray)
 {
     const auto rawArray = std::vector<VarSize>({10000, 20000, 30000, 40000});
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](VarSize value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const Span<const VarSize> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](VarSize value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
                         std::bind(&BitStreamReader::readVarSize, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, varsizeArray)
-{
-    auto rawArray = std::vector<VarSize>{{10000, 20000, 30000, 40000}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](VarSize value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
-                std::bind(&BitStreamReader::readVarSize, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, float16ConstArray)
 {
     const auto rawArray = std::vector<Float16>{{2.0F, 0.0F}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](Float16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const Span<const Float16> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](Float16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getFloat,
                         std::bind(&BitStreamReader::readFloat16, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, float16Array)
-{
-    auto rawArray = std::vector<Float16>{{2.0F, 0.0F}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Float16 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getFloat,
-                std::bind(&BitStreamReader::readFloat16, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, float32ConstArray)
 {
     const auto rawArray = std::vector<Float32>{{2.0F, 0.0F, 1.2F}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](Float32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const Span<const Float32> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](Float32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getFloat,
                         std::bind(&BitStreamReader::readFloat32, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, float32Array)
-{
-    auto rawArray = std::vector<Float32>{{2.0F, 0.0F, 1.2F}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Float32 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getFloat,
-                std::bind(&BitStreamReader::readFloat32, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, float64ConstArray)
 {
     const auto rawArray = std::vector<Float64>{{2.0, 0.0, 1.2}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](Float64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const Span<const Float64> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
+            [&](Float64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getDouble,
                         std::bind(&BitStreamReader::readFloat64, _1));
             });
 }
 
-TEST_F(IntrospectableViewTest, float64Array)
-{
-    auto rawArray = std::vector<Float64>{{2.0, 0.0, 1.2}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr, [&](Float64 value, const IIntrospectableViewPtr& elementIntrospectableView) {
-        checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getDouble,
-                std::bind(&BitStreamReader::readFloat64, _1));
-    });
-}
-
 TEST_F(IntrospectableViewTest, stringConstArray)
 {
     const auto rawArray = std::vector<std::string>{{"one", "two", "three"}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
+    const Span<const std::string> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
             [&](std::string_view value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkString(value, elementIntrospectableView);
             });
-
-    auto nonConstIntrospectableView = std::const_pointer_cast<IIntrospectableView>(introspectableViewPtr);
-    ASSERT_THROW(nonConstIntrospectableView->getAnyValue(), CppRuntimeException);
-}
-
-TEST_F(IntrospectableViewTest, stringArray)
-{
-    auto rawArray = std::vector<std::string>{{"one", "two", "three"}};
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableView, [&](std::string_view value, const IIntrospectableViewPtr& elementIntrospectableView) {
-                checkString(value, elementIntrospectableView);
-            });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableView),
-            [&](std::string_view value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkString(value, elementIntrospectableView);
-            });
-
-    introspectableView->resize(0);
-    ASSERT_EQ(0, introspectableView->size());
-    introspectableView->append(Any(std::string("appended")));
-    ASSERT_EQ(1, introspectableView->size());
-    ASSERT_EQ("appended"sv, introspectableView->at(0)->getStringView());
-    introspectableView->setAt(Any(std::string("set")), 0);
-    ASSERT_EQ(1, introspectableView->size());
-    ASSERT_EQ("set"sv, introspectableView->at(0)->getStringView());
-    introspectableView->resize(2);
-    ASSERT_EQ(2, introspectableView->size());
-
-    // out of range
-    ASSERT_THROW(introspectableView->setAt(Any(std::string("set")), 2), CppRuntimeException);
 }
 
 TEST_F(IntrospectableViewTest, bitBufferConstArray)
 {
     const auto rawArray = std::vector<BitBuffer>{{BitBuffer({0xF8}, 5), BitBuffer({0xAB, 0xCD}, 16)}};
-    auto introspectableView = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableView,
+    const Span<const BitBuffer> array(rawArray.data(), rawArray.size());
+    auto introspectableView = introspectable(array);
+    checkArray(array, introspectableView,
             [&](const BitBuffer& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkBitBuffer(value, elementIntrospectableView);
             });
-}
-
-TEST_F(IntrospectableViewTest, bitBufferArray)
-{
-    auto rawArray = std::vector<BitBuffer>{{BitBuffer({0xF8}, 5), BitBuffer({0xAB, 0xCD}, 16)}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](const BitBuffer& value, const IIntrospectableViewPtr& elementIntrospectableView) {
-                checkBitBuffer(value, elementIntrospectableView);
-            });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
-            [&](const BitBuffer& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkBitBuffer(value, elementIntrospectableView);
-            });
-
-    introspectableViewPtr->resize(0);
-    ASSERT_EQ(0, introspectableViewPtr->size());
-    introspectableViewPtr->append(Any(BitBuffer()));
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(0, introspectableViewPtr->at(0)->getBitBuffer().getBitSize());
-    introspectableViewPtr->setAt(Any(BitBuffer({0xA0}, 4)), 0);
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(4, introspectableViewPtr->at(0)->getBitBuffer().getBitSize());
-    introspectableViewPtr->resize(2);
-    ASSERT_EQ(2, introspectableViewPtr->size());
-
-    // out of range
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(BitBuffer()), 2), CppRuntimeException);
 }
 
 TEST_F(IntrospectableViewTest, bytesConstArray)
 {
     const auto rawArray = std::vector<Bytes>{{{{0x00, 0x01}}, {{0xFF, 0xFE}}}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
+    const Span<const Bytes> array(rawArray.data(), rawArray.size());
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
             [&](const Bytes& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkBytes(value, elementIntrospectableView);
             });
 }
-
-TEST_F(IntrospectableViewTest, bytesArray)
-{
-    auto rawArray = std::vector<Bytes>{{{{0x00, 0x01}}, {{0xFF, 0xFE}}}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(
-            rawArray, introspectableViewPtr, [&](const Bytes& value, const IIntrospectableViewPtr& elementIntrospectableView) {
-                checkBytes(value, elementIntrospectableView);
-            });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
-            [&](const Bytes& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkBytes(value, elementIntrospectableView);
-            });
-
-    introspectableViewPtr->resize(0);
-    ASSERT_EQ(0, introspectableViewPtr->size());
-    introspectableViewPtr->append(Any(Bytes()));
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(0, introspectableViewPtr->at(0)->getBytes().size());
-    introspectableViewPtr->setAt(Any(Bytes{{0xAB, 0xCD}}), 0);
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(2, introspectableViewPtr->at(0)->getBytes().size());
-    introspectableViewPtr->resize(2);
-    ASSERT_EQ(2, introspectableViewPtr->size());
-
-    // out of range
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(Bytes()), 2), CppRuntimeException);
-}
-#endif // !@#
 
 #if 0 // !@#
 TEST_F(IntrospectableViewTest, bitmaskConstIntrospectableView)
