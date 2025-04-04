@@ -7,7 +7,7 @@ namespace union_types
 namespace empty_union
 {
 
-using AllocatorType = EmptyUnion::AllocatorType;
+using allocator_type = EmptyUnion::allocator_type;
 using ChoiceTag = EmptyUnion::ChoiceTag;
 
 TEST(EmptyUnionTest, emptyConstructor)
@@ -21,7 +21,7 @@ TEST(EmptyUnionTest, emptyConstructor)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyUnion data(AllocatorType{});
+        EmptyUnion data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

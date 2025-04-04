@@ -37,14 +37,14 @@ public:
     static_assert(std::is_same<uint8_t, typename ALLOC::value_type>::value,
             "Allocator with uint8_t value_type is required!");
 
-    using AllocatorType = ALLOC;
+    using allocator_type = ALLOC;
 
     /**
      * Get copy of the allocator used for dynamic memory allocations.
      *
      * \return Allocator used for dynamic memory allocations.
      */
-    AllocatorType get_allocator() const
+    ALLOC get_allocator() const
     {
         return m_buffer.get_allocator();
     }
@@ -69,7 +69,7 @@ public:
      * \param bitSize Size in bits of created bit buffer.
      * \param allocator Allocator to use for internal vector allocation.
      */
-    explicit BasicBitBuffer(size_t bitSize, const ALLOC& allocator = ALLOC());
+    explicit BasicBitBuffer(size_t bitSize, const ALLOC& allocator = {});
 
     /**
      * Constructor from span.
@@ -77,7 +77,7 @@ public:
      * \param buffer Span of bytes from which the bit buffer should be created.
      * \param allocator Allocator to use for internal vector allocation.
      */
-    explicit BasicBitBuffer(Span<const uint8_t> buffer, const ALLOC& allocator = ALLOC());
+    explicit BasicBitBuffer(Span<const uint8_t> buffer, const ALLOC& allocator = {});
 
     /**
      * Constructor from span and bit size.
@@ -88,7 +88,7 @@ public:
      *
      * \throw CppRuntimeException If given bit size is out of range for given Span.
      */
-    explicit BasicBitBuffer(Span<const uint8_t> buffer, size_t bitSize, const ALLOC& allocator = ALLOC());
+    explicit BasicBitBuffer(Span<const uint8_t> buffer, size_t bitSize, const ALLOC& allocator = {});
 
     /**
      * Constructor from moved STL vector.

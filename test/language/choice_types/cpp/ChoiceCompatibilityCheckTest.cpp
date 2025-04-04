@@ -8,9 +8,9 @@ namespace choice_types
 namespace choice_compatibility_check
 {
 
-using AllocatorType = ChoiceCompatibilityCheckVersion1::AllocatorType;
+using allocator_type = ChoiceCompatibilityCheckVersion1::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 namespace
 {
@@ -79,7 +79,7 @@ protected:
         }
         else
         {
-            choice.template emplace<ChoiceTag::CHOICE_text>("text" + zserio::toString<AllocatorType>(index));
+            choice.template emplace<ChoiceTag::CHOICE_text>("text" + zserio::toString<allocator_type>(index));
         }
 
         HOLDER holder(selector, std::move(choice));

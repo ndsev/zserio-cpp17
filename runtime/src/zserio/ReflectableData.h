@@ -969,7 +969,7 @@ IBasicReflectableDataPtr<ALLOC> reflectableArray(
  *
  * This is needed in ZserioTreeCreator to be able to generically create the new instance of a zserio object.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType>
+template <typename T, typename ALLOC = typename T::allocator_type>
 class ReflectableDataOwner : public IBasicReflectableData<ALLOC>
 {
 public:

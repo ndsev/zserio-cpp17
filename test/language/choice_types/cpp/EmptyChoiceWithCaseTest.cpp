@@ -8,7 +8,7 @@ namespace empty_choice_with_case
 {
 
 using ChoiceTag = EmptyChoiceWithCase::ChoiceTag;
-using AllocatorType = EmptyChoiceWithCase::AllocatorType;
+using allocator_type = EmptyChoiceWithCase::allocator_type;
 
 TEST(EmptyChoiceWithCaseTest, constructors)
 {
@@ -21,7 +21,7 @@ TEST(EmptyChoiceWithCaseTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyChoiceWithCase data(AllocatorType{});
+        EmptyChoiceWithCase data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

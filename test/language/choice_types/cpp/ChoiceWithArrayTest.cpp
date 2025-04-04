@@ -10,9 +10,9 @@ namespace choice_types
 namespace choice_with_array
 {
 
-using AllocatorType = TestChoice::AllocatorType;
+using allocator_type = TestChoice::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 using ChoiceTag = TestChoice::ChoiceTag;
 
 class ChoiceWithArrayTest : public ::testing::Test

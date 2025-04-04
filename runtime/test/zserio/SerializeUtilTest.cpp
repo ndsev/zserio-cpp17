@@ -15,13 +15,13 @@ namespace
 
 struct SimpleStructure
 {
-    using AllocatorType = std::allocator<uint8_t>;
+    using allocator_type = std::allocator<uint8_t>;
 
     SimpleStructure() noexcept :
-            SimpleStructure(AllocatorType{})
+            SimpleStructure(allocator_type())
     {}
 
-    explicit SimpleStructure(const AllocatorType&) noexcept :
+    explicit SimpleStructure(const allocator_type&) noexcept :
             numberA(),
             numberB(),
             numberC()
@@ -40,13 +40,13 @@ struct SimpleStructure
 
 struct SimpleParameterizedStructure
 {
-    using AllocatorType = std::allocator<uint8_t>;
+    using allocator_type = std::allocator<uint8_t>;
 
     SimpleParameterizedStructure() noexcept :
-            SimpleParameterizedStructure(AllocatorType{})
+            SimpleParameterizedStructure(allocator_type())
     {}
 
-    explicit SimpleParameterizedStructure(const AllocatorType&) noexcept :
+    explicit SimpleParameterizedStructure(const allocator_type&) noexcept :
             numberA(),
             offsetB(),
             numberB(),

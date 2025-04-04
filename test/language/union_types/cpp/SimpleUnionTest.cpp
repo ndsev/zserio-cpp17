@@ -12,8 +12,8 @@ namespace union_types
 namespace simple_union
 {
 
-using AllocatorType = SimpleUnion::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = SimpleUnion::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 using ChoiceTag = SimpleUnion::ChoiceTag;
 
 class SimpleUnionTest : public ::testing::Test
@@ -42,7 +42,7 @@ TEST_F(SimpleUnionTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        SimpleUnion data(AllocatorType{});
+        SimpleUnion data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

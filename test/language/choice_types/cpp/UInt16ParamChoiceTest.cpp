@@ -8,7 +8,7 @@ namespace choice_types
 namespace uint16_param_choice
 {
 
-using AllocatorType = UInt16ParamChoice::AllocatorType;
+using allocator_type = UInt16ParamChoice::allocator_type;
 using ChoiceTag = UInt16ParamChoice::ChoiceTag;
 
 class UInt16ParamChoiceTest : public ::testing::Test
@@ -58,7 +58,7 @@ TEST_F(UInt16ParamChoiceTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        UInt16ParamChoice data(AllocatorType{});
+        UInt16ParamChoice data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

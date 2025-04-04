@@ -134,7 +134,7 @@ fi
 
     cat >> "${SRC_FILE}" << EOF
 
-using AllocatorType = ${BLOB_CLASS_FULL_NAME}::AllocatorType;
+using AllocatorType = ${BLOB_CLASS_FULL_NAME}::allocator_type;
 using BitBuffer = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 static BitBuffer readBlobBuffer(bool inputIsJson, const char* inputPath)

@@ -9,9 +9,9 @@ namespace constraints
 namespace array_lengthof_constraint
 {
 
-using AllocatorType = ArrayLengthofConstraint::AllocatorType;
+using allocator_type = ArrayLengthofConstraint::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class ArrayLengthofConstraintTest : public ::testing::Test
 {

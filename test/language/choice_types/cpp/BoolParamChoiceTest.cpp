@@ -8,7 +8,7 @@ namespace choice_types
 namespace bool_param_choice
 {
 
-using AllocatorType = BoolParamChoice::AllocatorType;
+using allocator_type = BoolParamChoice::allocator_type;
 
 class BoolParamChoiceTest : public ::testing::Test
 {
@@ -39,7 +39,7 @@ TEST_F(BoolParamChoiceTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        BoolParamChoice data(AllocatorType{});
+        BoolParamChoice data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

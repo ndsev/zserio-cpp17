@@ -7,7 +7,7 @@ namespace choice_types
 namespace empty_choice
 {
 
-using AllocatorType = EmptyChoice::AllocatorType;
+using allocator_type = EmptyChoice::allocator_type;
 using ChoiceTag = EmptyChoice::ChoiceTag;
 
 TEST(EmptyChoiceTest, constructors)
@@ -21,7 +21,7 @@ TEST(EmptyChoiceTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyChoice data(AllocatorType{});
+        EmptyChoice data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

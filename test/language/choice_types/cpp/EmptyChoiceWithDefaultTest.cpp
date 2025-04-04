@@ -9,7 +9,7 @@ namespace empty_choice_with_default
 {
 
 using ChoiceTag = EmptyChoiceWithDefault::ChoiceTag;
-using AllocatorType = EmptyChoiceWithDefault::AllocatorType;
+using allocator_type = EmptyChoiceWithDefault::allocator_type;
 
 TEST(EmptyChoiceWithDefaultTest, constructors)
 {
@@ -22,7 +22,7 @@ TEST(EmptyChoiceWithDefaultTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EmptyChoiceWithDefault data(AllocatorType{});
+        EmptyChoiceWithDefault data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

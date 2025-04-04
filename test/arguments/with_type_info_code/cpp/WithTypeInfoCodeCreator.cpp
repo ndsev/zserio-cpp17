@@ -6,7 +6,7 @@
 namespace with_type_info_code
 {
 
-using AllocatorType = WithTypeInfoCode::AllocatorType;
+using AllocatorType = WithTypeInfoCode::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

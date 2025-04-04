@@ -649,13 +649,7 @@ struct type_info_default_alloc
 };
 
 template <typename T>
-struct type_info_default_alloc<T, std::enable_if_t<has_zs_allocator_v<T>>>
-{
-    using type = typename T::AllocatorType;
-};
-
-template <typename T>
-struct type_info_default_alloc<T, std::enable_if_t<has_std_allocator_v<T>>>
+struct type_info_default_alloc<T, std::enable_if_t<has_allocator_v<T>>>
 {
     using type = RebindAlloc<typename T::allocator_type, uint8_t>;
 };

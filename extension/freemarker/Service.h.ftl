@@ -39,7 +39,7 @@ public:
      *
      * \param allocator Allocator to construct from.
      */
-    explicit Service(const AllocatorType& allocator = AllocatorType());
+    explicit Service(const allocator_type& allocator = {});
 
     /** Default destructor. */
     ~Service() override = default;
@@ -115,7 +115,7 @@ public:
      * \param service Interface for service client backend.
      * \param allocator Allocator to construct from.
      */
-    explicit Client(${types.serviceClient.name}& service, const AllocatorType& allocator = AllocatorType());
+    explicit Client(${types.serviceClient.name}& service, const allocator_type& allocator = {});
 
     /** Default destructor. */
     ~Client() = default;

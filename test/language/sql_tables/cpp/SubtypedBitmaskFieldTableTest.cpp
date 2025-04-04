@@ -10,10 +10,10 @@ namespace sql_tables
 namespace subtyped_bitmask_field_table
 {
 
-using AllocatorType = TestDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class SubtypedBitmaskFieldTableTest : public ::testing::Test
 {

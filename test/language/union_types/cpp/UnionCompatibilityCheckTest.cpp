@@ -10,9 +10,9 @@ namespace union_types
 namespace union_compatibility_check
 {
 
-using AllocatorType = UnionCompatibilityCheckVersion1::AllocatorType;
+using allocator_type = UnionCompatibilityCheckVersion1::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class UnionCompatibilityCheckTest : public ::testing::Test
 {
@@ -35,7 +35,7 @@ protected:
         else
         {
             data.template emplace<UNION::ChoiceTag::CHOICE_text>(
-                    "text" + zserio::toString<AllocatorType>(index));
+                    "text" + zserio::toString<allocator_type>(index));
         }
 
         return data;

@@ -120,14 +120,14 @@ void appendUpdateParametersToQuery(${types.string.name}& sqlQuery, const ::std::
     </#if>
 </#list>
 ${name}::${name}(::zserio::SqliteConnection& db, ::std::string_view tableName,
-        ::std::string_view attachedDbName, const AllocatorType& allocator) :
-        ::zserio::AllocatorHolder<AllocatorType>(allocator),
+        ::std::string_view attachedDbName, const allocator_type& allocator) :
+        ::zserio::AllocatorHolder<allocator_type>(allocator),
         m_db(db), m_name(tableName), m_attachedDbName(attachedDbName)
 {
 }
 
 ${name}::${name}(::zserio::SqliteConnection& db, ::std::string_view tableName,
-        const AllocatorType& allocator) :
+        const allocator_type& allocator) :
         ${name}(db, tableName, ::std::string_view(), allocator)
 {
 }
@@ -160,10 +160,10 @@ void ${name}::deleteTable()
 }
 
 ${name}::Row::Row() :
-        Row(AllocatorType())
+        Row(allocator_type())
 {}
 
-${name}::Row::Row(const AllocatorType& allocator) :
+${name}::Row::Row(const allocator_type& allocator) :
 <#list fieldList as field>
         <@sql_row_member_name field/>(allocator)<#if field?has_next>,</#if>
 </#list>
@@ -199,8 +199,8 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
 ${name}::Reader::Reader(::zserio::SqliteConnection& db, <#rt>
         <#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#t>
         <#lt>const ::std::array<bool, ${fieldList?size}>& columnsMapping,
-        ::std::string_view sqlQuery, const AllocatorType& allocator) :
-        ::zserio::AllocatorHolder<AllocatorType>(allocator),
+        ::std::string_view sqlQuery, const allocator_type& allocator) :
+        ::zserio::AllocatorHolder<allocator_type>(allocator),
 <#if needsParameterProvider>
         m_parameterProvider(parameterProvider),
 </#if>

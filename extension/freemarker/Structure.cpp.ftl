@@ -22,7 +22,7 @@
 <@namespace_begin package.path/>
 
 ${name}::${name}() noexcept :
-        ${name}(AllocatorType{})
+        ${name}(allocator_type{})
 {}
 
 <#macro structure_field_initializer field>
@@ -49,7 +49,7 @@ ${name}::${name}() noexcept :
         allocator<#t>
     </#if>
 </#macro>
-${name}::${name}(const AllocatorType&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+${name}::${name}(const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
         <#lt> :
     <#items as field>
