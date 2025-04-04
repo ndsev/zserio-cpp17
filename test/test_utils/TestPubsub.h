@@ -1,6 +1,8 @@
 #ifndef TEST_UTILS_TEST_PUBSUB_H_INC
 #define TEST_UTILS_TEST_PUBSUB_H_INC
 
+#include <string_view>
+
 #include "zserio/AllocatorHolder.h"
 #include "zserio/IPubsub.h"
 #include "zserio/PubsubException.h"
@@ -18,7 +20,7 @@ public:
             m_subscriptions(allocator)
     {}
 
-    void publish(zserio::StringView topic, zserio::Span<const uint8_t> data, void* context) override
+    void publish(std::string_view topic, zserio::Span<const uint8_t> data, void* context) override
     {
         processPublishContext(context);
 
@@ -30,7 +32,7 @@ public:
     }
 
     SubscriptionId subscribe(
-            zserio::StringView topic, const std::shared_ptr<OnTopicCallback>& callback, void* context) override
+            std::string_view topic, const std::shared_ptr<OnTopicCallback>& callback, void* context) override
     {
         processSubscribeContext(context);
 
@@ -57,7 +59,7 @@ private:
 
     struct Subscription
     {
-        zserio::StringView topic;
+        std::string_view topic;
         std::shared_ptr<OnTopicCallback> callback;
     };
 

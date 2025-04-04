@@ -1,11 +1,18 @@
 <#include "FileHeader.inc.ftl">
 <#include "Structure.inc.ftl">
+<#include "TypeInfo.inc.ftl">
+<#include "Reflectable.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/BitPositionUtil.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+<#if withTypeInfoCode>
+#include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
+#include <zserio/TypeInfo.h>
+</#if>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -369,7 +376,7 @@ ${I}}
 <#macro structure_bitsizeof_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
+${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endBitPosition);
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
@@ -431,7 +438,7 @@ ${I}}
 <#macro structure_write_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}writer.alignTo(${field.alignmentValue});
+${I}writer.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}writer.alignTo(8);
@@ -490,7 +497,7 @@ ${I}}
 <#macro structure_read_field_inner compoundName field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}reader.alignTo(${field.alignmentValue});
+${I}reader.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}reader.alignTo(8);
@@ -624,7 +631,7 @@ ${I}}
 <#macro structure_initialize_offsets_field_inner field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.alignmentValue??>
-${I}endBitPosition = alignTo(${field.alignmentValue}, endBitPosition);
+${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endBitPosition);
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
@@ -685,7 +692,98 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
 }
     </#if>
 </#if>
+<#if withTypeInfoCode>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    <@template_info_template_name_var "templateName", templateInstantiation!/>
+    <@template_info_template_arguments_var "templateArguments", templateInstantiation!/>
+
+    <#list fieldList as field>
+    <@field_info_recursive_type_info_var field/>
+    <@field_info_type_arguments_var field/>
+    </#list>
+    <@field_info_array_var "fields", fieldList/>
+
+    <@parameter_info_array_var "parameters", parameterList/>
+
+    <@function_info_array_var "functions", functionList/>
+
+    static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}",
+        [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
+        {
+            return std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator, allocator);
+        },
+        templateName, templateArguments, fields, parameters, functions
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["detail"]/>
+
+<#macro structure_reflectable isConst>
+    class Reflectable : public ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
+    {
+    public:
+        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
+        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
+
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc) :
+                ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
+                        <#lt>typeInfo<${fullName}>(), alloc),
+                m_object(object)
+        {}
+    <#if fieldList?has_content>
+
+        <@reflectable_get_field name, fieldList, true/>
+        <#if !isConst>
+
+        <@reflectable_get_field name, fieldList, false/>
+
+        <@reflectable_set_field name, fieldList/>
+
+        <@reflectable_create_field name, fieldList/>
+        </#if>
+    </#if>
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
+        {
+            return ${types.any.name}(::std::cref(m_object), alloc);
+        }
+    <#if !isConst>
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) override
+        {
+            return ${types.any.name}(::std::ref(m_object), alloc);
+        }
+    </#if>
+
+    private:
+        <#if isConst>const </#if>${fullName}& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+</#macro>
+template <>
+${types.reflectableConstPtr.name} reflectable(
+        const ${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@structure_reflectable true/>
+}
+
+template <>
+${types.reflectablePtr.name} reflectable(
+        ${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@structure_reflectable false/>
+}
+<@namespace_end ["zserio"]/>
+<#else>
 <@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> data</#if>) const

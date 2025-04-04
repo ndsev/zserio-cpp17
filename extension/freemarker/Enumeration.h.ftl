@@ -8,7 +8,12 @@
 
 #include <array>
 
+<@type_includes types.allocator/>
 #include <zserio/Enums.h>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+<@type_includes types.reflectablePtr/>
+</#if>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>
@@ -56,6 +61,19 @@ size_t enumToOrdinal<${fullName}>(${fullName} value);
 
 template <>
 ${fullName} valueToEnum<${fullName}>(${underlyingTypeInfo.typeFullName} rawValue);
+<#if withTypeInfoCode>
+<@namespace_begin ["detail"]/>
+
+template <>
+struct TypeInfo<${fullName}, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
+};
+<@namespace_end ["detail"]/>
+
+template <>
+${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.allocator.default}& allocator);
+</#if>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>
 

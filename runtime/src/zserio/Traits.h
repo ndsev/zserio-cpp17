@@ -6,6 +6,18 @@
 namespace zserio
 {
 
+// forward declarations
+template <typename, std::size_t>
+class Span;
+
+namespace detail
+{
+
+template <typename VALUE_TYPE>
+class NumericTypeWrapper;
+
+} // namespace detail
+
 /**
  * Trait used to check whether the type T is an allocator.
  * \{
@@ -92,6 +104,40 @@ inline constexpr bool is_bitmask_v = is_bitmask<T, V>::value;
 /**
  * \}
  */
+
+/**
+ * Trait used to check whether the type T is a Span.
+ * \{
+ */
+template <typename>
+struct is_span : std::false_type
+{};
+
+template <typename T, size_t Extent>
+struct is_span<Span<T, Extent>> : std::true_type
+{};
+
+template <typename T>
+inline constexpr bool is_span_v = is_span<T>::value;
+/**
+ * \}
+ */
+
+/**
+ * Trait used to check whether the type T is a zserio numeric wrapper.
+ * */
+template <typename T, typename = void>
+struct is_numeric_wrapper : std::false_type
+{};
+
+template <typename T>
+struct is_numeric_wrapper<T,
+        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>>>
+        : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool is_numeric_wrapper_v = is_numeric_wrapper<T, V>::value;
 
 } // namespace zserio
 

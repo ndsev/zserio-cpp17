@@ -14,6 +14,10 @@
 <#if structure_has_optional_field(fieldList)>
 <@type_includes types.optional/>
 </#if>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+<@type_includes types.reflectablePtr/>
+</#if>
 #include <zserio/View.h>
 <@type_includes types.allocator/>
 <@system_includes headerSystemIncludes/>
@@ -42,7 +46,7 @@ struct ${name}
 <#list fieldList>
 
     <#items as field>
-        <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
+    <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
     </#items>
 </#list>
 };
@@ -165,7 +169,24 @@ struct OffsetsInitializer<${fullName}>
     </#if>
 };
 </#if>
+<#if withTypeInfoCode>
+
+template <>
+struct TypeInfo<${fullName}, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
+};
+<@namespace_end ["detail"]/>
+
+template <>
+${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator);
+
+template <>
+${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
+<@namespace_end ["zserio"]/>
+<#else>
 <@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 template <>

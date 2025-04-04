@@ -22,7 +22,7 @@ public final class CompoundFunctionTemplateData
         final ZserioType returnBaseType = returnTypeReference.getBaseTypeReference().getType();
         if (returnBaseType instanceof StringType)
         {
-            // we have to return strings as StringView because we are not able to find out whether
+            // we have to return strings as string_view because we are not able to find out whether
             // the expression always leads to some field or whether it contains any string constant
             // (the expression can contain e.g. another function call, constant, etc.)
             final NativeStringViewType nativeStringViewType = cppNativeMapper.getStringViewType();

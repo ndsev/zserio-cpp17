@@ -2,11 +2,18 @@
 <#include "CompoundField.inc.ftl">
 <#include "CompoundFunction.inc.ftl">
 <#include "CompoundParameter.inc.ftl">
+<#include "TypeInfo.inc.ftl">
+<#include "Reflectable.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
+<#if withTypeInfoCode>
+#include <zserio/ReflectableData.h>
+#include <zserio/ReflectableUtil.h>
+#include <zserio/TypeInfo.h>
+</#if>
 #include <zserio/UnionCaseException.h>
 <@system_includes cppSystemIncludes/>
 
@@ -415,7 +422,108 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
 }
     </#if>
 </#if>
+<#if withTypeInfoCode>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    <@template_info_template_name_var "templateName", templateInstantiation!/>
+    <@template_info_template_arguments_var "templateArguments", templateInstantiation!/>
+
+    <#list fieldList as field>
+    <@field_info_recursive_type_info_var field/>
+    <@field_info_type_arguments_var field/>
+    </#list>
+    <@field_info_array_var "fields", fieldList/>
+
+    <@parameter_info_array_var "parameters", parameterList/>
+
+    <@function_info_array_var "functions", functionList/>
+
+    static const ::zserio::detail::UnionTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}",
+        [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
+        {
+            return std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator, allocator);
+        },
+        templateName, templateArguments, fields, parameters, functions
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["detail"]/>
+
+<#macro union_reflectable isConst>
+    class Reflectable : public ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
+    {
+    public:
+        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
+        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
+
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc) :
+                ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(typeInfo<${fullName}>(), alloc),
+                m_object(object)
+        {}
+    <#if fieldList?has_content>
+
+        <@reflectable_variant_get_field name, fieldList, true/>
+        <#if !isConst>
+
+        <@reflectable_variant_get_field name, fieldList, false/>
+
+        <@reflectable_variant_set_field name, fieldList/>
+
+        <@reflectable_variant_create_field name, fieldList/>
+        </#if>
+    </#if>
+
+        ::std::string_view getChoice() const override
+        {
+            switch (m_object.index())
+            {
+    <#list fieldList as field>
+            case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+                return "${field.name}";
+    </#list>
+            default:
+                return "";
+            }
+        }
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
+        {
+            return ${types.any.name}(::std::cref(m_object), alloc);
+        }
+    <#if !isConst>
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) override
+        {
+            return ${types.any.name}(::std::ref(m_object), alloc);
+        }
+    </#if>
+
+    private:
+        <#if isConst>const </#if>${fullName}& m_object;
+    };
+
+    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+</#macro>
+template <>
+${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@union_reflectable true/>
+}
+
+template <>
+${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@union_reflectable false/>
+}
+<@namespace_end ["zserio"]/>
+<#else>
 <@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> value</#if>) const

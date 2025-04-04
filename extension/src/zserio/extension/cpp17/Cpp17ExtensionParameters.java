@@ -20,7 +20,7 @@ public final class Cpp17ExtensionParameters
     public Cpp17ExtensionParameters(ExtensionParameters parameters)
     {
         outputDir = parameters.getCommandLineArg(OptionCpp17);
-        withReflectionCode = parameters.argumentExists(OptionWithReflectionCode);
+        withTypeInfoCode = parameters.argumentExists(OptionWithTypeInfoCode);
 
         final String cppAllocator = parameters.getCommandLineArg(OptionSetCppAllocator);
         if (cppAllocator == null || cppAllocator.equals(StdAllocator))
@@ -30,8 +30,8 @@ public final class Cpp17ExtensionParameters
 
         final StringJoiner description = new StringJoiner(", ");
 
-        if (withReflectionCode)
-            description.add("reflectionCode");
+        if (withTypeInfoCode)
+            description.add("typeInfoCode");
         addAllocatorDescription(description);
         parametersDescription = description.toString();
 
@@ -43,9 +43,9 @@ public final class Cpp17ExtensionParameters
         return outputDir;
     }
 
-    public boolean getWithReflectionCode()
+    public boolean getWithTypeInfoCode()
     {
-        return withReflectionCode;
+        return withTypeInfoCode;
     }
 
     public TypesContext.AllocatorDefinition getAllocatorDefinition()
@@ -77,9 +77,10 @@ public final class Cpp17ExtensionParameters
         options.addOption(option);
 
         final OptionGroup reflectionGroup = new OptionGroup();
-        option = new Option(OptionWithReflectionCode, false, "enable reflection code");
+        option = new Option(OptionWithTypeInfoCode, false, "enable type info and reflection code");
         reflectionGroup.addOption(option);
-        option = new Option(OptionWithoutReflectionCode, false, "disable reflection code (default)");
+        option =
+                new Option(OptionWithoutTypeInfoCode, false, "disable type info and reflection code (default)");
         reflectionGroup.addOption(option);
         reflectionGroup.setRequired(false);
         options.addOptionGroup(reflectionGroup);
@@ -120,14 +121,14 @@ public final class Cpp17ExtensionParameters
 
     private final static String OptionCpp17 = "cpp17";
     private final static String OptionSetCppAllocator = "setCppAllocator";
-    private final static String OptionWithoutReflectionCode = "withoutReflectionCode";
-    private static final String OptionWithReflectionCode = "withReflectionCode";
+    private final static String OptionWithoutTypeInfoCode = "withoutTypeInfoCode";
+    private static final String OptionWithTypeInfoCode = "withTypeInfoCode";
 
     private final static String StdAllocator = "std";
     private final static String PolymorphicAllocator = "polymorphic";
 
     private final String outputDir;
-    private final boolean withReflectionCode;
+    private final boolean withTypeInfoCode;
     private final TypesContext.AllocatorDefinition allocatorDefinition;
     private final String parametersDescription;
     private final String zserioVersion;

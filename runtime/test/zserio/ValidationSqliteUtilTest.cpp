@@ -63,25 +63,6 @@ TEST_F(ValidationSqliteUtilTest, getNumberOfTableRows)
     ASSERT_THROW(
             Util::getNumberOfTableRows(connection, "NONEXISTING", "test", allocator_type()), SqliteException);
 
-    // TODO[Mi-L@]: Something has changed in new SQLite, check why this doesn't throw anymore!
-    // ASSERT_THROW(
-    //         {
-    //             try
-    //             {
-    //                 Util::getNumberOfTableRows(
-    //                         connection, "", "(SELECT load_extension('unknown'))", allocator_type());
-    //             }
-    //             catch (const SqliteException& e)
-    //             {
-    //                 EXPECT_STREQ("ValidationSqliteUtils.getNumberOfTableRows: sqlite3_step() failed: SQL
-    //                 logic "
-    //                              "error",
-    //                         e.what());
-    //                 throw;
-    //             }
-    //         },
-    //         SqliteException);
-
     connection.executeUpdate("CREATE TABLE test(id INTEGER PRIMARY KEY NOT NULL, value INTEGER NOT NULL)");
     ASSERT_EQ(0, Util::getNumberOfTableRows(connection, "", "test", allocator_type()));
 

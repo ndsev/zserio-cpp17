@@ -9,6 +9,7 @@
 #include "zserio/BitSize.h"
 #include "zserio/OutOfRangeException.h"
 #include "zserio/StringConvertUtil.h"
+#include "zserio/Traits.h"
 
 namespace zserio
 {
@@ -615,8 +616,7 @@ struct NumericLimits<detail::FloatWrapper<double, detail::FloatType::FLOAT64>>
  *
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
-template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+template <typename T, std::enable_if_t<is_numeric_wrapper_v<T>, int> = 0>
 constexpr T fromCheckedValue(typename T::ValueType value) noexcept(!detail::needs_range_check_v<T>)
 {
     if constexpr (detail::needs_range_check_v<T>)
@@ -639,8 +639,7 @@ constexpr T fromCheckedValue(typename T::ValueType value) noexcept(!detail::need
  *
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
-template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+template <typename T, std::enable_if_t<is_numeric_wrapper_v<T>, int> = 0>
 constexpr T fromCheckedValue(typename T::ValueType value, BitSize numBits)
 {
     detail::RangeChecker<T>::check(value, numBits);
@@ -657,8 +656,7 @@ constexpr T fromCheckedValue(typename T::ValueType value, BitSize numBits)
  *
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
-template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+template <typename T, std::enable_if_t<is_numeric_wrapper_v<T>, int> = 0>
 constexpr typename T::ValueType toCheckedValue(T wrapper) noexcept(!detail::needs_range_check_v<T>)
 {
     if constexpr (detail::needs_range_check_v<T>)
@@ -681,8 +679,7 @@ constexpr typename T::ValueType toCheckedValue(T wrapper) noexcept(!detail::need
  *
  * \throw OutOfRangeException when the underlying value is out of range of the zserio numeric type.
  */
-template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+template <typename T, std::enable_if_t<is_numeric_wrapper_v<T>, int> = 0>
 constexpr typename T::ValueType toCheckedValue(T wrapper, BitSize numBits)
 {
     detail::RangeChecker<T>::check(wrapper, numBits);
@@ -877,26 +874,10 @@ CppRuntimeException& operator<<(CppRuntimeException& exception, detail::NumericT
     return exception << static_cast<VALUE_TYPE>(value);
 }
 
-// TODO[Mi-L@]: Implement for all wrapper types.
-template <typename ALLOC, typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
-BasicString<RebindAlloc<ALLOC, char>> toString(T value, const ALLOC& allocator = ALLOC())
-{
-    return toString(static_cast<typename T::ValueType>(value), allocator);
-}
-
-// template <typename ALLOC, typename VALUE_TYPE>
-// BasicString<RebindAlloc<ALLOC, char>> toString(
-//         detail::NumericTypeWrapper<VALUE_TYPE> value, const ALLOC& allocator = ALLOC())
-// {
-//     return toString(static_cast<VALUE_TYPE>(value), allocator);
-// }
-
 namespace detail
 {
 
-template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+template <typename T, std::enable_if_t<is_numeric_wrapper_v<T>, int> = 0>
 void validate(T wrapper, std::string_view fieldName) noexcept(!detail::needs_range_check_v<T>)
 {
     if constexpr (detail::needs_range_check_v<T>)
@@ -905,8 +886,7 @@ void validate(T wrapper, std::string_view fieldName) noexcept(!detail::needs_ran
     }
 }
 
-template <typename T,
-        std::enable_if_t<std::is_base_of_v<detail::NumericTypeWrapper<typename T::ValueType>, T>, int> = 0>
+template <typename T, std::enable_if_t<is_numeric_wrapper_v<T>, int> = 0>
 void validate(T wrapper, BitSize numBits, std::string_view fieldName)
 {
     detail::RangeChecker<T>::check(wrapper, numBits, fieldName);

@@ -8,10 +8,13 @@
 <@runtime_version_check generatorVersion/>
 
 #include <array>
-#include <zserio/Types.h>
-<@type_includes types.service/>
 #include <zserio/AllocatorHolder.h>
+<@type_includes types.service/>
 #include <zserio/ServiceException.h>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+</#if>
+#include <zserio/Types.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
 <@namespace_begin package.path/>
@@ -151,5 +154,20 @@ private:
 };
 <@namespace_end [name]/>
 <@namespace_end package.path/>
+<#if withTypeInfoCode>
+<@namespace_begin ["zserio", "detail"]/>
+
+template <>
+struct TypeInfo<${fullName}::Service, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
+};
+
+template <>
+struct TypeInfo<${fullName}::Client, ${types.allocator.default}> :
+        TypeInfo<${fullName}::Service, ${types.allocator.default}>
+{};
+<@namespace_end ["zserio", "detail"]/>
+</#if>
 
 <@include_guard_end package.path, name/>

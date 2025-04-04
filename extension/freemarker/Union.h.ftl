@@ -13,6 +13,10 @@
 
 <@type_includes types.variant/>
 #include <zserio/ChoiceTag.h>
+<#if withTypeInfoCode>
+<@type_includes types.typeInfo/>
+<@type_includes types.reflectablePtr/>
+</#if>
 #include <zserio/View.h>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
@@ -178,7 +182,24 @@ struct OffsetsInitializer<${fullName}>
     </#if>
 };
 </#if>
+<#if withTypeInfoCode>
+
+template <>
+struct TypeInfo<${fullName}, ${types.allocator.default}>
+{
+    static const ${types.typeInfo.name}& get();
+};
+<@namespace_end ["detail"]/>
+
+template <>
+${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator);
+
+template <>
+${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
+<@namespace_end ["zserio"]/>
+<#else>
 <@namespace_end ["zserio", "detail"]/>
+</#if>
 <@namespace_begin ["std"]/>
 
 template <>

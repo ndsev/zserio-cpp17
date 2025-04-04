@@ -107,7 +107,7 @@ public class NativeIntegralType extends NativeNumericWrapperType
         return buffer.toString();
     }
 
-    private static int getNativeNumbits(int numBits)
+    public static int getNativeNumbits(int numBits)
     {
         if (numBits <= 8)
             return 8;

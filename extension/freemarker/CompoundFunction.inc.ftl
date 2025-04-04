@@ -2,7 +2,7 @@
     <#if function.returnTypeInfo.isSimple && !function.returnTypeInfo.isDynamicBitField>
         ${function.returnTypeInfo.typeFullName}<#t>
     <#elseif function.returnTypeInfo.isString>
-        StringView<#t>
+        ::std::string_view<#t>
     <#elseif function.returnTypeInfo.isExtern>
         ${types.bitBufferView.name}<#t>
     <#elseif function.returnTypeInfo.isBytes>

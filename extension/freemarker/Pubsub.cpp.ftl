@@ -1,10 +1,13 @@
 <#include "FileHeader.inc.ftl">
 <#include "Pubsub.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
-#include <zserio/SerializeUtil.h>
 <@type_includes types.bitBuffer/>
-
+#include <zserio/SerializeUtil.h>
+<#if withTypeInfoCode>
+#include <zserio/TypeInfo.h>
+</#if>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -96,3 +99,29 @@ void ${name}::publish(ZSERIO_MESSAGE& message, ::std::string_view topic, void* c
 }
 </#if>
 <@namespace_end package.path/>
+<#if withTypeInfoCode>
+<@namespace_begin ["zserio", "detail"]/>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    static const <@info_array_type "::zserio::BasicMessageInfo<AllocatorType>", messageList?size/> messages<#rt>
+    <#if messageList?has_content>
+        <#lt> = {
+        <#list messageList as message>
+        <@message_info message message?has_next/>
+        </#list>
+    };
+    <#else>
+        <#lt>;
+    </#if>
+
+    static const ::zserio::detail::PubsubTypeInfo<AllocatorType> typeInfo = {
+        "${schemaTypeName}", messages
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["zserio", "detail"]/>
+</#if>

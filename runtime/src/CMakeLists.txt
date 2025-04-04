@@ -18,9 +18,12 @@ cmake_minimum_required(VERSION 3.15.0)
 project(ZserioCpp17Runtime)
 
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
+    zserio/pmr/Any.h
     zserio/pmr/BitBuffer.h
     zserio/pmr/Bytes.h
+    zserio/pmr/IReflectableData.h
     zserio/pmr/IService.h
+    zserio/pmr/ITypeInfo.h
     zserio/pmr/Map.h
     zserio/pmr/Optional.h
     zserio/pmr/PropagatingPolymorphicAllocator.h
@@ -30,6 +33,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/Variant.h
     zserio/pmr/Vector.h
     zserio/AllocatorHolder.h
+    zserio/Any.h
     zserio/Array.h
     zserio/ArrayLengthException.h
     zserio/ArrayTraits.h
@@ -55,6 +59,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/CppRuntimeException.h
     zserio/CppRuntimeVersion.h
     zserio/DataView.h
+    zserio/DebugStringUtil.h
     zserio/DeltaContext.h
     zserio/Enums.h
     zserio/Extended.h
@@ -64,15 +69,33 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
     zserio/HashCodeUtil.h
+    zserio/IIntrospectableData.h
+    zserio/IIntrospectableView.h
+    zserio/IntrospectableDataBase.h
+    zserio/IntrospectableView.h
     zserio/IPubsub.h
+    zserio/IReflectableData.h
     zserio/IService.h
     zserio/ISqliteDatabase.h
+    zserio/ITypeInfo.h
     zserio/IValidationObserver.h
+    zserio/IWalkFilter.h
+    zserio/IWalkObserver.h
+    zserio/JsonDecoder.h
+    zserio/JsonEncoder.cpp
+    zserio/JsonEncoder.h
+    zserio/JsonParser.h
+    zserio/JsonReader.h
+    zserio/JsonTokenizer.cpp
+    zserio/JsonTokenizer.h
+    zserio/JsonWriter.h
     zserio/MissedOptionalException.h
     zserio/Optional.h
     zserio/OutOfRangeException.h
     zserio/PubsubException.h
     zserio/RebindAlloc.h
+    zserio/ReflectableData.h
+    zserio/ReflectableUtil.h
     zserio/RuntimeArch.h
     zserio/SerializeUtil.h
     zserio/ServiceException.h
@@ -86,6 +109,9 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/String.h
     zserio/StringConvertUtil.h
     zserio/Traits.h
+    zserio/TypeInfo.h
+    zserio/TypeInfoUtil.cpp
+    zserio/TypeInfoUtil.h
     zserio/Types.cpp
     zserio/Types.h
     zserio/UnionCaseException.h
@@ -95,6 +121,10 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ValidationSqliteUtil.h
     zserio/Vector.h
     zserio/View.h
+    zserio/Walker.h
+    zserio/WalkerConst.h
+    zserio/ZserioTreeCreator.cpp
+    zserio/ZserioTreeCreator.h
 )
 
 add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})

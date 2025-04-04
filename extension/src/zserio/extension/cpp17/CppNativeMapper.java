@@ -54,6 +54,7 @@ public final class CppNativeMapper
         final TypesContext.AllocatorDefinition allocatorDefinition = typesContext.getAllocatorDefinition();
 
         stringViewType = new NativeStringViewType();
+        anyType = new NativeAllocType(typesContext.getAny(), allocatorDefinition, "uint8_t");
         bitBufferType = new NativeAllocType(typesContext.getBitBuffer(), allocatorDefinition, "uint8_t");
         bitBufferViewType =
                 new NativeAllocType(typesContext.getBitBufferView(), allocatorDefinition, "uint8_t");
@@ -79,6 +80,12 @@ public final class CppNativeMapper
                 new NativeAllocType(typesContext.getRawServiceDataHolder(), allocatorDefinition, "uint8_t");
         rawServiceDataViewType =
                 new NativeAllocType(typesContext.getRawServiceDataView(), allocatorDefinition, "uint8_t");
+
+        typeInfoType = new NativeAllocType(typesContext.getTypeInfo(), allocatorDefinition, "uint8_t");
+        reflectablePtrType =
+                new NativeAllocType(typesContext.getReflectablePtr(), allocatorDefinition, "uint8_t");
+        reflectableConstPtrType =
+                new NativeAllocType(typesContext.getReflectableConstPtr(), allocatorDefinition, "uint8_t");
     }
 
     public CppNativeSymbol getCppSymbol(AstNode symbol) throws ZserioExtensionException
@@ -152,6 +159,11 @@ public final class CppNativeMapper
     public NativeStringViewType getStringViewType()
     {
         return stringViewType;
+    }
+
+    public NativeAllocType getAnyType()
+    {
+        return anyType;
     }
 
     public NativeAllocType getBitBufferType()
@@ -232,6 +244,21 @@ public final class CppNativeMapper
     public NativeAllocType getRawServiceDataViewType()
     {
         return rawServiceDataViewType;
+    }
+
+    public NativeAllocType getTypeInfoType()
+    {
+        return typeInfoType;
+    }
+
+    public NativeAllocType getReflectablePtrType()
+    {
+        return reflectablePtrType;
+    }
+
+    public NativeAllocType getReflectableConstPtrType()
+    {
+        return reflectableConstPtrType;
     }
 
     public NativeIntegralType getUInt64Type()
@@ -789,6 +816,7 @@ public final class CppNativeMapper
     private final static String HEADER_SUFFIX = ".h";
 
     private final NativeStringViewType stringViewType;
+    private final NativeAllocType anyType;
     private final NativeAllocType bitBufferType;
     private final NativeAllocType bitBufferViewType;
     private final NativeAllocType bytesType;
@@ -806,6 +834,10 @@ public final class CppNativeMapper
     private final NativeAllocType objectServiceDataType;
     private final NativeAllocType rawServiceDataHolderType;
     private final NativeAllocType rawServiceDataViewType;
+
+    private final NativeAllocType typeInfoType;
+    private final NativeAllocType reflectablePtrType;
+    private final NativeAllocType reflectableConstPtrType;
 
     private final static NativeNumericWrapperType booleanType = new NativeNumericWrapperType("Bool", "bool");
     private final static NativeNumericWrapperType float16Type =

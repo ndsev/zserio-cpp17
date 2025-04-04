@@ -1,9 +1,13 @@
 <#include "FileHeader.inc.ftl">
 <#include "Service.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
-#include <zserio/SerializeUtil.h>
 <@type_includes types.bitBuffer/>
+#include <zserio/SerializeUtil.h>
+<#if withTypeInfoCode>
+#include <zserio/TypeInfo.h>
+</#if>
 <@system_includes cppSystemIncludes/>
 
 <@user_include package.path, "${name}.h"/>
@@ -110,3 +114,29 @@ ${method.responseTypeInfo.typeFullName} Client::${method.name}Method(<#rt>
 </#list>
 <@namespace_end [name]/>
 <@namespace_end package.path/>
+<#if withTypeInfoCode>
+<@namespace_begin ["zserio", "detail"]/>
+
+const ${types.typeInfo.name}& TypeInfo<${fullName}::Service, ${types.allocator.default}>::get()
+{
+    using AllocatorType = ${types.allocator.default};
+
+    static const <@info_array_type "::zserio::BasicMethodInfo<AllocatorType>", methodList?size/> methods<#rt>
+    <#if methodList?has_content>
+        <#lt> = {
+        <#list methodList as method>
+        <@method_info method method?has_next/>
+        </#list>
+    };
+    <#else>
+        <#lt>;
+    </#if>
+
+    static const ::zserio::detail::ServiceTypeInfo<${types.allocator.default}> typeInfo = {
+        "${schemaTypeName}", methods
+    };
+
+    return typeInfo;
+}
+<@namespace_end ["zserio", "detail"]/>
+</#if>

@@ -490,7 +490,7 @@ void BitStreamWriter::writeBytes(BytesView data)
     }
 }
 
-void BitStreamWriter::writeString(StringView data)
+void BitStreamWriter::writeString(std::string_view data)
 {
     const VarSize len = fromCheckedValue<VarSize>(convertSizeToUInt32(data.size()));
     writeVarSize(len);

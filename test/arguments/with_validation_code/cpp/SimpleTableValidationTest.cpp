@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <memory>
+#include <string_view>
 
 #include "gtest/gtest.h"
 #include "test_utils/ValidationObservers.h"
@@ -532,7 +533,7 @@ TEST_F(SimpleTableValidationTest, validateSkipTable)
     class SkippingObserver : public ValidationObserver
     {
     public:
-        bool beginTable(zserio::StringView tableName, size_t numberOfTableRows) override
+        bool beginTable(std::string_view tableName, size_t numberOfTableRows) override
         {
             ValidationObserver::beginTable(tableName, numberOfTableRows);
             return false;

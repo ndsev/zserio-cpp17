@@ -2,7 +2,6 @@ package zserio.extension.cpp17;
 
 import zserio.ast.UnionType;
 import zserio.extension.common.OutputFileManager;
-import zserio.extension.common.PackedTypesCollector;
 import zserio.extension.common.ZserioExtensionException;
 
 /**

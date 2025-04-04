@@ -1,0 +1,11 @@
+bugprone-exception-escape:gen/with_reflection_code/Child.h
+bugprone-exception-escape:gen/with_reflection_code/Struct.h
+bugprone-exception-escape:gen/with_reflection_code/Union.h
+
+cppcoreguidelines-pro-bounds-pointer-arithmetic:cpp/WithReflectionCodeTest.cpp
+
+google-explicit-constructor:gen/with_reflection_code/Bitmask.h
+
+performance-move-const-arg:gen/with_reflection_code/Struct.cpp
+
+readability-simplify-boolean-expr:gen/with_reflection_code/Struct.cpp
