@@ -15,8 +15,8 @@
 
 <#assign hasWithoutRowIdTable=sql_db_has_without_rowid_table(fieldList)/>
 ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& tableToDbFileNameRelocationMap,
-        const AllocatorType& allocator) :
-        ::zserio::AllocatorHolder<AllocatorType>(allocator),
+        const allocator_type& allocator) :
+        ::zserio::AllocatorHolder<allocator_type>(allocator),
         m_tableToAttachedDbNameRelocationMap(allocator)
 {
     sqlite3 *internalConnection = nullptr;
@@ -55,20 +55,20 @@ ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& t
     initTables();
 }
 
-${name}::${name}(const ${types.string.name}& dbFileName, const AllocatorType& allocator) :
+${name}::${name}(const ${types.string.name}& dbFileName, const allocator_type& allocator) :
         ${name}(dbFileName, TRelocationMap(allocator), allocator)
 {}
 
 ${name}::${name}(sqlite3* externalConnection, const TRelocationMap& tableToAttachedDbNameRelocationMap,
-        const AllocatorType& allocator) :
-        ::zserio::AllocatorHolder<AllocatorType>(allocator),
+        const allocator_type& allocator) :
+        ::zserio::AllocatorHolder<allocator_type>(allocator),
         m_tableToAttachedDbNameRelocationMap(tableToAttachedDbNameRelocationMap, allocator)
 {
     m_db.reset(externalConnection, ::zserio::SqliteConnection::EXTERNAL_CONNECTION);
     initTables();
 }
 
-${name}::${name}(sqlite3* externalConnection, const AllocatorType& allocator) :
+${name}::${name}(sqlite3* externalConnection, const allocator_type& allocator) :
         ${name}(externalConnection, TRelocationMap(allocator), allocator)
 {}
 

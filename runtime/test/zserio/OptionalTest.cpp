@@ -99,7 +99,7 @@ template <class ALLOC>
 class OptionalTest : public testing::Test
 {
 public:
-    using AllocatorType = ALLOC;
+    using allocator_type = ALLOC;
 
     using BoolOptional = BasicOptional<ALLOC, Bool>;
     using IntOptional = BasicOptional<ALLOC, int>;
@@ -308,7 +308,7 @@ TYPED_TEST(OptionalTest, makeOptional)
 TYPED_TEST(OptionalTest, optionalInOptional)
 {
     using IntOptionalInOptional =
-            BasicOptional<typename TestFixture::AllocatorType, typename TestFixture::IntOptional>;
+            BasicOptional<typename TestFixture::allocator_type, typename TestFixture::IntOptional>;
 
     IntOptionalInOptional intOpt(std::in_place, std::in_place, 2);
     ASSERT_TRUE(intOpt.has_value());
@@ -317,7 +317,7 @@ TYPED_TEST(OptionalTest, optionalInOptional)
     ASSERT_EQ(2, **intOpt);
 
     using BoolOptionalInOptional =
-            BasicOptional<typename TestFixture::AllocatorType, typename TestFixture::BoolOptional>;
+            BasicOptional<typename TestFixture::allocator_type, typename TestFixture::BoolOptional>;
     BoolOptionalInOptional boolOpt(std::in_place, std::in_place, true);
     BoolOptionalInOptional boolOpt2(std::in_place, this->allocator, std::in_place, this->allocator, true);
 

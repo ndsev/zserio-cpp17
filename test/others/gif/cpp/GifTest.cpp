@@ -8,11 +8,11 @@
 namespace gif
 {
 
-using AllocatorType = GifFile::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = GifFile::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
 
 class GifTest : public ::testing::Test
 {

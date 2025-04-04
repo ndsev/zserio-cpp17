@@ -10,8 +10,8 @@ namespace structure_types
 namespace one_string_structure
 {
 
-using AllocatorType = OneStringStructure::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = OneStringStructure::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 
 class OneStringStructureTest : public ::testing::Test
 {
@@ -38,7 +38,7 @@ TEST_F(OneStringStructureTest, emptyConstructor)
         ASSERT_EQ("", data.oneString);
     }
     {
-        OneStringStructure data(AllocatorType{});
+        OneStringStructure data(allocator_type{});
         ASSERT_EQ("", data.oneString);
     }
     {

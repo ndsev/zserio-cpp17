@@ -11,8 +11,8 @@ namespace sql_tables
 namespace subtyped_table
 {
 
-using AllocatorType = TestDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 
 class SubtypedTableTest : public ::testing::Test
 {

@@ -14,9 +14,9 @@ namespace pubsub_types
 namespace simple_pubsub
 {
 
-using AllocatorType = SimplePubsub::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
-using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
+using allocator_type = SimplePubsub::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
 
 class SimplePubsubTest : public ::testing::Test
 {
@@ -28,7 +28,7 @@ public:
     {}
 
 protected:
-    class TestPubsubImpl : public test_utils::TestPubsub<AllocatorType>
+    class TestPubsubImpl : public test_utils::TestPubsub<allocator_type>
     {
     public:
         struct Context
@@ -97,7 +97,7 @@ TEST_F(SimplePubsubTest, powerOfTwoClientAndProvider)
     };
 
     simplePubsubProvider.subscribeRequest(
-            std::allocate_shared<RequestCallback>(AllocatorType(), simplePubsubProvider));
+            std::allocate_shared<RequestCallback>(allocator_type(), simplePubsubProvider));
 
     struct PowerOfTwoCallback : public SimplePubsubClient::SimplePubsubClientCallback<UInt64Value>
     {
@@ -111,7 +111,7 @@ TEST_F(SimplePubsubTest, powerOfTwoClientAndProvider)
     };
 
     std::shared_ptr<PowerOfTwoCallback> powerOfTwoCallback =
-            std::allocate_shared<PowerOfTwoCallback>(AllocatorType());
+            std::allocate_shared<PowerOfTwoCallback>(allocator_type());
     simplePubsubClient.subscribePowerOfTwo(powerOfTwoCallback);
 
     Int32Value request{13};
@@ -151,7 +151,7 @@ TEST_F(SimplePubsubTest, powerOfTwoSimplePubsub)
         SimplePubsub& simplePubsub;
     };
 
-    simplePubsub.subscribeRequest(std::allocate_shared<RequestCallback>(AllocatorType(), simplePubsub));
+    simplePubsub.subscribeRequest(std::allocate_shared<RequestCallback>(allocator_type(), simplePubsub));
 
     struct PowerOfTwoCallback : public SimplePubsub::SimplePubsubCallback<UInt64Value>
     {
@@ -165,7 +165,7 @@ TEST_F(SimplePubsubTest, powerOfTwoSimplePubsub)
     };
 
     std::shared_ptr<PowerOfTwoCallback> powerOfTwoCallback =
-            std::allocate_shared<PowerOfTwoCallback>(AllocatorType());
+            std::allocate_shared<PowerOfTwoCallback>(allocator_type());
     simplePubsub.subscribePowerOfTwo(powerOfTwoCallback);
 
     Int32Value request{13};
@@ -211,7 +211,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawClientAndProvider)
     };
 
     simplePubsubProvider.subscribeRequestRaw(
-            std::allocate_shared<RequestRawCallback>(AllocatorType(), simplePubsubProvider));
+            std::allocate_shared<RequestRawCallback>(allocator_type(), simplePubsubProvider));
 
     struct PowerOfTwoRawCallback
             : public SimplePubsubClient::SimplePubsubClientCallback<zserio::Span<const uint8_t>>
@@ -228,7 +228,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawClientAndProvider)
     };
 
     std::shared_ptr<PowerOfTwoRawCallback> powerOfTwoRawCallback =
-            std::allocate_shared<PowerOfTwoRawCallback>(AllocatorType());
+            std::allocate_shared<PowerOfTwoRawCallback>(allocator_type());
     simplePubsubClient.subscribePowerOfTwoRaw(powerOfTwoRawCallback);
 
     Int32Value request{13};
@@ -262,7 +262,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawSimplePubsub)
         SimplePubsub& simplePubsub;
     };
 
-    simplePubsub.subscribeRequestRaw(std::allocate_shared<RequestRawCallback>(AllocatorType(), simplePubsub));
+    simplePubsub.subscribeRequestRaw(std::allocate_shared<RequestRawCallback>(allocator_type(), simplePubsub));
 
     struct PowerOfTwoRawCallback : public SimplePubsub::SimplePubsubCallback<zserio::Span<const uint8_t>>
     {
@@ -278,7 +278,7 @@ TEST_F(SimplePubsubTest, powerOfTwoRawSimplePubsub)
     };
 
     std::shared_ptr<PowerOfTwoRawCallback> powerOfTwoRawCallback =
-            std::allocate_shared<PowerOfTwoRawCallback>(AllocatorType());
+            std::allocate_shared<PowerOfTwoRawCallback>(allocator_type());
     simplePubsub.subscribePowerOfTwoRaw(powerOfTwoRawCallback);
 
     Int32Value request{13};
@@ -308,7 +308,7 @@ TEST_F(SimplePubsubTest, subscribeRequestWithContext)
         {}
     };
 
-    simplePubsub.subscribeRequest(std::allocate_shared<RequestCallback>(AllocatorType()), &context);
+    simplePubsub.subscribeRequest(std::allocate_shared<RequestCallback>(allocator_type()), &context);
     ASSERT_TRUE(context.seenByPubsub);
 }
 
@@ -332,8 +332,8 @@ TEST_F(SimplePubsubTest, unsubscribe)
         SimplePubsub& simplePubsub;
     };
 
-    auto id0 =
-            simplePubsub.subscribeRequest(std::allocate_shared<RequestCallback>(AllocatorType(), simplePubsub));
+    auto id0 = simplePubsub.subscribeRequest(
+            std::allocate_shared<RequestCallback>(allocator_type(), simplePubsub));
 
     struct PowerOfTwoCallback : public SimplePubsub::SimplePubsubCallback<UInt64Value>
     {
@@ -347,11 +347,11 @@ TEST_F(SimplePubsubTest, unsubscribe)
     };
 
     std::shared_ptr<PowerOfTwoCallback> powerOfTwoCallback1 =
-            std::allocate_shared<PowerOfTwoCallback>(AllocatorType());
+            std::allocate_shared<PowerOfTwoCallback>(allocator_type());
     auto id1 = simplePubsub.subscribePowerOfTwo(powerOfTwoCallback1);
 
     std::shared_ptr<PowerOfTwoCallback> powerOfTwoCallback2 =
-            std::allocate_shared<PowerOfTwoCallback>(AllocatorType());
+            std::allocate_shared<PowerOfTwoCallback>(allocator_type());
     auto id2 = simplePubsub.subscribePowerOfTwo(powerOfTwoCallback2);
 
     Int32Value request{13};

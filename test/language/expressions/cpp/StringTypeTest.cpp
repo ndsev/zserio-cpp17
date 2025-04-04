@@ -9,7 +9,7 @@ namespace expressions
 namespace string_type
 {
 
-using AllocatorType = StringTypeExpression::AllocatorType;
+using allocator_type = StringTypeExpression::allocator_type;
 
 class StringTypeTest : public ::testing::Test
 {
@@ -20,7 +20,7 @@ protected:
         data.hasValue = hasValue;
         if (hasValue)
         {
-            data.value = zserio::toString<AllocatorType>(VALUE);
+            data.value = zserio::toString<allocator_type>(VALUE);
         }
 
         return data;

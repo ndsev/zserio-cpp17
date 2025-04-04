@@ -11,7 +11,7 @@ using namespace std::literals;
 namespace with_reflection_code
 {
 
-using AllocatorType = Choice::AllocatorType;
+using AllocatorType = Choice::allocator_type;
 using StringAllocatorType = zserio::RebindAlloc<AllocatorType, char>;
 using StringType = zserio::BasicString<StringAllocatorType>;
 template <typename T>

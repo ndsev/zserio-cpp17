@@ -57,7 +57,7 @@ template <typename ALLOC = std::allocator<uint8_t>>
 class BasicJsonTokenizer
 {
 public:
-    using AllocatorType = ALLOC;
+    using allocator_type = ALLOC;
 
     /**
      * Constructor.

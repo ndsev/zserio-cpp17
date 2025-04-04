@@ -8,9 +8,9 @@ namespace array_types
 namespace variable_array_ternary_operator
 {
 
-using AllocatorType = VariableArray::AllocatorType;
+using allocator_type = VariableArray::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class VariableArrayTernaryOperator : public ::testing::Test
 {

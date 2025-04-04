@@ -65,7 +65,7 @@ public:
     struct Row
     {
         Row();
-        explicit Row(const AllocatorType& allocator);
+        explicit Row(const allocator_type& allocator);
 
 <#list fieldList as field>
         <@optional_type_name field.typeInfo.typeFullName/> <@sql_row_member_name field/>;
@@ -107,7 +107,7 @@ public:
         explicit Reader(::zserio::SqliteConnection& db, <#rt>
                 <#lt><#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
                 <#lt>const ::std::array<bool, ${fieldList?size}>& columnsMapping,
-                ::std::string_view sqlQuery, const AllocatorType& allocator);
+                ::std::string_view sqlQuery, const allocator_type& allocator);
         friend class ${name};
 
         void makeStep();
@@ -130,7 +130,7 @@ public:
      */
     ${name}(::zserio::SqliteConnection& db, ::std::string_view tableName,
             ::std::string_view attachedDbName = ::std::string_view(),
-            const AllocatorType& allocator = AllocatorType());
+            const allocator_type& allocator = {});
 
     /**
      * Constructor from database connection and table name.
@@ -139,7 +139,7 @@ public:
      * \param tableName Table name.
      * \param allocator Allocator to construct from.
      */
-    ${name}(::zserio::SqliteConnection& db, ::std::string_view tableName, const AllocatorType& allocator);
+    ${name}(::zserio::SqliteConnection& db, ::std::string_view tableName, const allocator_type& allocator);
 
     /** Default destructor. */
     ~${name}() = default;

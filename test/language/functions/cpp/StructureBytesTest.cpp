@@ -7,8 +7,8 @@ namespace functions
 namespace structure_bytes
 {
 
-using AllocatorType = TestStructure::AllocatorType;
-using BytesType = zserio::BasicBytes<AllocatorType>;
+using allocator_type = TestStructure::allocator_type;
+using BytesType = zserio::BasicBytes<allocator_type>;
 
 class StructureBytesTest : public ::testing::Test
 {

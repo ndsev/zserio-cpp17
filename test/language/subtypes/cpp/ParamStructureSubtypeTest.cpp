@@ -8,9 +8,9 @@ namespace subtypes
 namespace param_structure_subtype
 {
 
-using AllocatorType = ParameterizedSubtypeStruct::AllocatorType;
+using allocator_type = ParameterizedSubtypeStruct::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 TEST(ParamStructureSubtypeTest, testSubtype)
 {

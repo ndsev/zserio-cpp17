@@ -11,10 +11,10 @@ namespace sql_tables
 namespace const_param_table
 {
 
-using AllocatorType = TestDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class ConstParamTableTest : public ::testing::Test
 {
@@ -55,7 +55,7 @@ protected:
         rows.clear();
         for (uint32_t blobId = 0; blobId < NUM_CONST_PARAM_TABLE_ROWS; ++blobId)
         {
-            const StringType name = "Name" + zserio::toString<AllocatorType>(blobId);
+            const StringType name = "Name" + zserio::toString<allocator_type>(blobId);
             ConstParamTable::Row row;
             fillRow(row, blobId, name);
             rows.push_back(row);
@@ -148,7 +148,7 @@ TEST_F(ConstParamTableTest, update)
     const uint64_t updateRowId = 3;
     ConstParamTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
+    const StringType updateCondition = "blobId=" + zserio::toString<allocator_type>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
     VectorType<ConstParamTable::Row> readRows;

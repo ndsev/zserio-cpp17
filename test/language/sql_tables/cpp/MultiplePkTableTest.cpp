@@ -11,10 +11,10 @@ namespace sql_tables
 namespace multiple_pk_table
 {
 
-using AllocatorType = TestDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class MultiplePkTableTest : public ::testing::Test
 {
@@ -52,7 +52,7 @@ protected:
         rows.clear();
         for (int32_t blobId = 0; blobId < NUM_MULTIPLE_PK_TABLE_ROWS; ++blobId)
         {
-            const StringType name = "Name" + zserio::toString<AllocatorType>(blobId);
+            const StringType name = "Name" + zserio::toString<allocator_type>(blobId);
             MultiplePkTable::Row row;
             fillRow(row, blobId, name);
             rows.push_back(row);
@@ -144,7 +144,7 @@ TEST_F(MultiplePkTableTest, update)
     const int32_t updateRowId = 3;
     MultiplePkTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
+    const StringType updateCondition = "blobId=" + zserio::toString<allocator_type>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
     VectorType<MultiplePkTable::Row> readRows;

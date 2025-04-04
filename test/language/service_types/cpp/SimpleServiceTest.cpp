@@ -15,11 +15,11 @@ namespace service_types
 namespace simple_service
 {
 
-using AllocatorType = SimpleService::Client::AllocatorType;
-using LocalServiceClient = test_utils::LocalServiceClient<AllocatorType>;
+using allocator_type = SimpleService::Client::allocator_type;
+using LocalServiceClient = test_utils::LocalServiceClient<allocator_type>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
 
 namespace
 {

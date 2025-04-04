@@ -10,9 +10,9 @@ namespace array_types
 namespace auto_array_subtyped_uint8
 {
 
-using AllocatorType = AutoArray::AllocatorType;
+using allocator_type = AutoArray::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class AutoArraySubtypedUInt8Test : public ::testing::Test
 {

@@ -7,9 +7,9 @@ namespace builtin_types
 namespace bitfield_function_length
 {
 
-using AllocatorType = Container::AllocatorType;
+using allocator_type = Container::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class BitFieldFunctionLengthTest : public ::testing::Test
 {

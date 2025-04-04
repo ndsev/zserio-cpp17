@@ -8,9 +8,9 @@ namespace array_types
 namespace packed_auto_array_bitfield_param
 {
 
-using AllocatorType = ParameterizedBitfieldLength::AllocatorType;
+using allocator_type = ParameterizedBitfieldLength::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class PackedAutoArrayBitfieldParamTest : public ::testing::Test
 {

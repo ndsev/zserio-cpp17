@@ -5,7 +5,7 @@ namespace zserio
 {
 
 using JsonDecoder = BasicJsonDecoder<>;
-using StringType = BasicString<RebindAlloc<JsonDecoder::AllocatorType, char>>;
+using StringType = BasicString<RebindAlloc<JsonDecoder::allocator_type, char>>;
 
 class JsonDecoderTest : public ::testing::Test
 {

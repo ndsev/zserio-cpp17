@@ -7,7 +7,7 @@ namespace structure_types
 namespace simple_structure
 {
 
-using AllocatorType = SimpleStructure::AllocatorType;
+using allocator_type = SimpleStructure::allocator_type;
 
 class SimpleStructureTest : public ::testing::Test
 {
@@ -37,7 +37,7 @@ TEST_F(SimpleStructureTest, emptyConstructor)
         ASSERT_EQ(0, data.numberC);
     }
     {
-        SimpleStructure data(AllocatorType{});
+        SimpleStructure data(allocator_type{});
         ASSERT_EQ(0, data.numberA);
         ASSERT_EQ(0, data.numberB);
         ASSERT_EQ(0, data.numberC);

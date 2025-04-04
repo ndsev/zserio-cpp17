@@ -12,10 +12,10 @@ namespace explicit_parameters
 namespace multiple_with_same_name
 {
 
-using AllocatorType = ExplicitParametersDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = ExplicitParametersDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class MultipleWithSameNameTest : public ::testing::Test
 {
@@ -68,7 +68,7 @@ protected:
         rows.clear();
         for (uint32_t id = 0; id < NUM_ROWS; ++id)
         {
-            const StringType name = "Name" + zserio::toString<AllocatorType>(id);
+            const StringType name = "Name" + zserio::toString<allocator_type>(id);
             MultipleWithSameNameTable::Row row;
             fillRow(row, id, name);
             rows.push_back(row);
@@ -161,7 +161,7 @@ TEST_F(MultipleWithSameNameTest, update)
     const uint64_t updateRowId = 3;
     MultipleWithSameNameTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
+    const StringType updateCondition = "id=" + zserio::toString<allocator_type>(updateRowId);
     multipleWithSameNameTable.update(parameterProvider, updateRow, updateCondition);
 
     MultipleWithSameNameTable::Reader reader =

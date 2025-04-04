@@ -7,10 +7,10 @@ namespace parameterized_types
 namespace extern_param
 {
 
-using AllocatorType = ExternParam::AllocatorType;
+using allocator_type = ExternParam::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
 
 TEST(ExternParamTest, writeRead)
 {

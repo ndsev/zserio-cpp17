@@ -7,7 +7,7 @@ namespace optional_members
 namespace auto_optional_bool
 {
 
-using AllocatorType = Container::AllocatorType;
+using allocator_type = Container::allocator_type;
 
 class AutoOptionalBoolTest : public ::testing::Test
 {
@@ -51,7 +51,7 @@ TEST_F(AutoOptionalBoolTest, constructors)
         ASSERT_FALSE(data.autoOptionalBool);
     }
     {
-        const Container data{AllocatorType()};
+        const Container data{allocator_type()};
         ASSERT_FALSE(data.nonOptionalBool);
         ASSERT_FALSE(data.autoOptionalBool);
     }

@@ -17,7 +17,7 @@ namespace sql_databases
 namespace simple_db
 {
 
-using AllocatorType = WorldDb::AllocatorType;
+using AllocatorType = WorldDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

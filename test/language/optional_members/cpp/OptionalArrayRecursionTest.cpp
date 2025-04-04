@@ -11,10 +11,10 @@ namespace optional_members
 namespace optional_array_recursion
 {
 
-using AllocatorType = Employee::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = Employee::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class OptionalArrayRecursionTest : public ::testing::Test
 {

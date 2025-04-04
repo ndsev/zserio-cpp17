@@ -15,10 +15,10 @@ namespace sql_databases
 namespace db_with_relocation
 {
 
-using AllocatorType = EuropeDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = EuropeDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class DbWithRelocationTest : public ::testing::Test
 {
@@ -96,7 +96,7 @@ TEST_F(DbWithRelocationTest, relocatedSlovakiaTable)
     updatedTile.version = 'b';
     updatedTile.data = 'B';
     updateRow.tile = updatedTile;
-    const StringType updateCondition = StringType("tileId=") + zserio::toString<AllocatorType>(updateTileId);
+    const StringType updateCondition = StringType("tileId=") + zserio::toString<allocator_type>(updateTileId);
     relocatedTable.update(updateRow, updateCondition);
 
     // read it back
@@ -136,7 +136,7 @@ TEST_F(DbWithRelocationTest, relocatedCzechiaTable)
     updatedTile.version = 'd';
     updatedTile.data = 'D';
     updateRow.tile = updatedTile;
-    const StringType updateCondition = StringType("tileId=") + zserio::toString<AllocatorType>(updateTileId);
+    const StringType updateCondition = StringType("tileId=") + zserio::toString<allocator_type>(updateTileId);
     relocatedTable.update(updateRow, updateCondition);
 
     // read it back

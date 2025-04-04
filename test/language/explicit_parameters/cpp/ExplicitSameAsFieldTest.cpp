@@ -12,10 +12,10 @@ namespace explicit_parameters
 namespace explicit_same_as_field
 {
 
-using AllocatorType = ExplicitParametersDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = ExplicitParametersDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class ExplicitSameAsFieldTest : public ::testing::Test
 {
@@ -78,7 +78,7 @@ protected:
         rows.reserve(NUM_SAME_AS_FIELD_TABLE_ROWS);
         for (uint32_t id = 0; id < NUM_SAME_AS_FIELD_TABLE_ROWS; ++id)
         {
-            const StringType name = "Name" + zserio::toString<AllocatorType>(id);
+            const StringType name = "Name" + zserio::toString<allocator_type>(id);
             SameAsFieldTable::Row row;
             fillRow(row, id, name);
             rows.push_back(row);
@@ -170,7 +170,7 @@ TEST_F(ExplicitSameAsFieldTest, update)
     const uint64_t updateRowId = 3;
     SameAsFieldTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
+    const StringType updateCondition = "id=" + zserio::toString<allocator_type>(updateRowId);
     sameAsFieldTable.update(parameterProvider, updateRow, updateCondition);
 
     SameAsFieldTable::Reader reader = sameAsFieldTable.createReader(parameterProvider, updateCondition);

@@ -7,7 +7,7 @@ namespace structure_types
 namespace empty_structure
 {
 
-using AllocatorType = EmptyStructure::AllocatorType;
+using allocator_type = EmptyStructure::allocator_type;
 
 TEST(EmptyStructureTest, emptyConstructor)
 {
@@ -20,7 +20,7 @@ TEST(EmptyStructureTest, emptyConstructor)
         (void)data;
     }
     {
-        EmptyStructure data(AllocatorType{});
+        EmptyStructure data(allocator_type{});
         (void)data;
     }
     {
