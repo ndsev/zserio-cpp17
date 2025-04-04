@@ -332,8 +332,8 @@ TEST_F(SimplePubsubTest, unsubscribe)
         SimplePubsub& simplePubsub;
     };
 
-    auto id0 =
-            simplePubsub.subscribeRequest(std::allocate_shared<RequestCallback>(allocator_type(), simplePubsub));
+    auto id0 = simplePubsub.subscribeRequest(
+            std::allocate_shared<RequestCallback>(allocator_type(), simplePubsub));
 
     struct PowerOfTwoCallback : public SimplePubsub::SimplePubsubCallback<UInt64Value>
     {
