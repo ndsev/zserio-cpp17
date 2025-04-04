@@ -173,7 +173,6 @@ misc-no-recursion:src/zserio/ZserioTreeCreator.h:356
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
-google-build-using-namespace:test/zserio/ReflectableTest.cpp:17
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
