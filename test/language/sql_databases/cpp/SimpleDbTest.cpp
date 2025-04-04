@@ -16,12 +16,12 @@ namespace sql_databases
 namespace simple_db
 {
 
-using AllocatorType = WorldDb::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = WorldDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 template <typename T, typename COMPARE = std::less<T>>
-using SetType = std::set<T, COMPARE, zserio::RebindAlloc<AllocatorType, T>>;
+using SetType = std::set<T, COMPARE, zserio::RebindAlloc<allocator_type, T>>;
 
 class SimpleDbTest : public ::testing::Test
 {
@@ -126,7 +126,7 @@ TEST_F(SimpleDbTest, tableNames)
     VectorType<StringType> tableNames;
     std::transform(WorldDb::tableNames.begin(), WorldDb::tableNames.end(), std::back_inserter(tableNames),
             [](zserio::StringView name) -> StringType {
-                return zserio::toString(name, AllocatorType());
+                return zserio::toString(name, allocator_type());
             });
 
     VectorType<StringType> expectedTableNames;

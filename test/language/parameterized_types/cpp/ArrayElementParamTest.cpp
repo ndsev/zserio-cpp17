@@ -7,9 +7,9 @@ namespace parameterized_types
 namespace array_element_param
 {
 
-using AllocatorType = Database::AllocatorType;
+using allocator_type = Database::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class ArrayElementParamTest : public ::testing::Test
 {
@@ -93,7 +93,7 @@ TEST_F(ArrayElementParamTest, constructors)
         ASSERT_TRUE(data.blocks.empty());
     }
     {
-        Database data(AllocatorType{});
+        Database data(allocator_type{});
         ASSERT_EQ(0, data.numBlocks);
         ASSERT_TRUE(data.headers.empty());
         ASSERT_TRUE(data.blocks.empty());

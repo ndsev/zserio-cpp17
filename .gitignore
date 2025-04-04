@@ -6,3 +6,4 @@
 
 # local environment setup
 /scripts/build-env.sh
+/.vscode/

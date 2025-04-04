@@ -9,7 +9,7 @@ namespace choice_types
 namespace full_bitmask_param_choice
 {
 
-using AllocatorType = FullBitmaskParamChoice::AllocatorType;
+using allocator_type = FullBitmaskParamChoice::allocator_type;
 using ChoiceTag = FullBitmaskParamChoice::ChoiceTag;
 
 class FullBitmaskParamChoiceTest : public ::testing::Test
@@ -45,7 +45,7 @@ TEST_F(FullBitmaskParamChoiceTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        FullBitmaskParamChoice data(AllocatorType{});
+        FullBitmaskParamChoice data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

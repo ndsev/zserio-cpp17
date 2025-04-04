@@ -99,7 +99,7 @@ public:
     using ValueType = typename RawArray::value_type;
 
     /** Typedef for allocator type. */
-    using AllocatorType = typename RawArray::allocator_type;
+    using allocator_type = typename RawArray::allocator_type;
 
     /** Typedef for the array traits. */
     using Traits = ARRAY_TRAITS;

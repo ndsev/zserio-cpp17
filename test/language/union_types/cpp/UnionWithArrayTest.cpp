@@ -13,11 +13,11 @@ namespace union_types
 namespace union_with_array
 {
 
-using AllocatorType = TestUnion::AllocatorType;
+using allocator_type = TestUnion::allocator_type;
 using ChoiceTag = TestUnion::ChoiceTag;
 
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class UnionWithArrayTest : public ::testing::Test
 {

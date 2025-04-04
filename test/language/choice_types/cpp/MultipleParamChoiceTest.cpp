@@ -12,11 +12,11 @@ namespace choice_types
 namespace multiple_param_choice
 {
 
-using AllocatorType = TestChoice::AllocatorType;
+using allocator_type = TestChoice::allocator_type;
 using ChoiceTag = TestChoice::ChoiceTag;
 
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class MultipleParamChoiceTest : public ::testing::Test
 {

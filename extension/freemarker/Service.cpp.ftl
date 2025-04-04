@@ -11,7 +11,7 @@
 <@namespace_begin package.path/>
 <@namespace_begin [name]/>
 
-Service::Service(const AllocatorType& allocator) :
+Service::Service(const allocator_type& allocator) :
         ::zserio::AllocatorHolder<${types.allocator.default}>(allocator)
 {}
 
@@ -61,7 +61,7 @@ ${types.serviceDataPtr.name} Service::${method.name}Method(
     class ResponseData : public ${types.serviceDataPtr.name}::element_type
     {
     public:
-        ResponseData(${method.responseTypeInfo.typeFullName}&& response, const AllocatorType& allocator) :
+        ResponseData(${method.responseTypeInfo.typeFullName}&& response, const allocator_type& allocator) :
                 m_serviceData(response, allocator)
         {}
 
@@ -81,7 +81,7 @@ ${types.serviceDataPtr.name} Service::${method.name}Method(
 }
 </#list>
 
-Client::Client(${types.serviceClient.name}& service, const AllocatorType& allocator) :
+Client::Client(${types.serviceClient.name}& service, const allocator_type& allocator) :
         ::zserio::AllocatorHolder<${types.allocator.default}>(allocator),
         m_service(service)
 {

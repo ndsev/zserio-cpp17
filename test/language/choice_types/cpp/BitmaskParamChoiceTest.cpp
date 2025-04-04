@@ -9,7 +9,7 @@ namespace choice_types
 namespace bitmask_param_choice
 {
 
-using AllocatorType = BitmaskParamChoice::AllocatorType;
+using allocator_type = BitmaskParamChoice::allocator_type;
 using ChoiceTag = BitmaskParamChoice::ChoiceTag;
 
 class BitmaskParamChoiceTest : public ::testing::Test
@@ -45,7 +45,7 @@ TEST_F(BitmaskParamChoiceTest, constructors)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        BitmaskParamChoice data(AllocatorType{});
+        BitmaskParamChoice data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

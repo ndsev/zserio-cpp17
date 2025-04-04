@@ -8,10 +8,10 @@ namespace array_types
 namespace packed_variable_array_struct
 {
 
-using AllocatorType = PackedVariableArray::AllocatorType;
+using allocator_type = PackedVariableArray::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
 
 class PackedVariableArrayStructTest : public ::testing::Test
 {
@@ -34,7 +34,7 @@ protected:
     {
         TestStructure testStructure;
         testStructure.id = index;
-        testStructure.name = "name" + zserio::toString<AllocatorType>(index);
+        testStructure.name = "name" + zserio::toString<allocator_type>(index);
         testStructure.data = BitBufferType{VectorType<uint8_t>{{0xCD, 0xC0}}, 10};
         testStructure.bytesData = VectorType<uint8_t>{{0xCD, 0xC0}};
         testStructure.testChoice = createTestChoice(index);

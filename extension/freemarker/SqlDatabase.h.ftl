@@ -71,8 +71,8 @@ public:
      * \param allocator Allocator to construct from.
      */
     explicit ${name}(const ${types.string.name}& dbFileName,
-            const TRelocationMap& tableToDbFileNameRelocationMap = TRelocationMap(),
-            const AllocatorType& allocator = AllocatorType());
+            const TRelocationMap& tableToDbFileNameRelocationMap = {},
+            const allocator_type& allocator = {});
 
     /**
      * Constructor from database file name.
@@ -82,7 +82,7 @@ public:
      * \param dbFileName Database file name to use.
      * \param allocator Allocator to construct from.
      */
-    explicit ${name}(const ${types.string.name}& dbFileName, const AllocatorType& allocator);
+    explicit ${name}(const ${types.string.name}& dbFileName, const allocator_type& allocator);
 
     /**
      * Constructor from external connection and table relocation map.
@@ -96,7 +96,7 @@ public:
      */
     explicit ${name}(sqlite3* externalConnection,
             const TRelocationMap& tableToAttachedDbNameRelocationMap = TRelocationMap(),
-            const AllocatorType& allocator = AllocatorType());
+            const allocator_type& allocator = {});
 
     /**
      * Constructor from external connection.
@@ -106,7 +106,7 @@ public:
      * \param externalConnection Database connection of already open database.
      * \param allocator Allocator to construct from.
      */
-    explicit ${name}(sqlite3* externalConnection, const AllocatorType& allocator);
+    explicit ${name}(sqlite3* externalConnection, const allocator_type& allocator);
 
     /** Default destructor. */
     ~${name}() override;

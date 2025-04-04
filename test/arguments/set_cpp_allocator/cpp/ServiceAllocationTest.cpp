@@ -8,9 +8,9 @@ using namespace test_utils;
 namespace service_allocation
 {
 
-using AllocatorType = GreetingService::Client::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
-using LocalServiceClient = test_utils::LocalServiceClient<AllocatorType>;
+using allocator_type = GreetingService::Client::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using LocalServiceClient = test_utils::LocalServiceClient<allocator_type>;
 
 class ServiceAllocationTest : public ::testing::Test
 {
@@ -36,7 +36,7 @@ public:
     ServiceAllocationTest(ServiceAllocationTest&&) = delete;
     ServiceAllocationTest& operator=(ServiceAllocationTest&&) = delete;
 
-    const AllocatorType& getAllocator()
+    const allocator_type& getAllocator()
     {
         return m_allocator;
     }
@@ -50,7 +50,7 @@ protected:
     class GreetingServiceImpl : public GreetingService::Service
     {
     public:
-        explicit GreetingServiceImpl(const AllocatorType& allocator) :
+        explicit GreetingServiceImpl(const allocator_type& allocator) :
                 GreetingService::Service(allocator)
         {}
 
@@ -79,7 +79,7 @@ private:
     InvalidMemoryResource m_invalidMemoryResource;
     MemoryResourceScopedSetter m_invalidMemoryResourceSetter;
     TestMemoryResource<> m_memoryResource;
-    AllocatorType m_allocator;
+    allocator_type m_allocator;
 
 protected: // must be behind m_allocator
     GreetingServiceImpl greetingService;

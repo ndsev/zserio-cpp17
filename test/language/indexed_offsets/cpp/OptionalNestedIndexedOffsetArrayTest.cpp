@@ -11,10 +11,10 @@ namespace indexed_offsets
 namespace optional_nested_indexed_offset_array
 {
 
-using AllocatorType = OptionalNestedIndexedOffsetArray::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = OptionalNestedIndexedOffsetArray::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
 
 class OptionalNestedIndexedOffsetArrayTest : public ::testing::Test
 {

@@ -106,7 +106,7 @@ class BasicOptional : public AllocatorHolder<ALLOC>
 
 public:
     using AllocatorHolder<ALLOC>::get_allocator_ref;
-    using AllocatorType = ALLOC;
+    using allocator_type = ALLOC;
     using OptionalType = std::optional<typename detail::optional_element<T>::type>;
 
     /**

@@ -7,7 +7,7 @@ namespace parameterized_types
 namespace array_element_param_with_optional
 {
 
-using AllocatorType = Holder::AllocatorType;
+using allocator_type = Holder::allocator_type;
 
 class ArrayElementParamWithOptionalTest : public ::testing::Test
 {
@@ -54,7 +54,7 @@ TEST_F(ArrayElementParamWithOptionalTest, constructors)
     }
 
     {
-        Holder data(AllocatorType{});
+        Holder data(allocator_type{});
         ASSERT_FALSE(data.param.hasExtra);
         ASSERT_FALSE(data.param.extraParam);
         ASSERT_EQ(0, data.values.size());

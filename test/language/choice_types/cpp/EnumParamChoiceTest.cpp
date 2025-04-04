@@ -9,7 +9,7 @@ namespace choice_types
 namespace enum_param_choice
 {
 
-using AllocatorType = EnumParamChoice::AllocatorType;
+using allocator_type = EnumParamChoice::allocator_type;
 using ChoiceTag = EnumParamChoice::ChoiceTag;
 
 class EnumParamChoiceTest : public ::testing::Test
@@ -48,7 +48,7 @@ TEST_F(EnumParamChoiceTest, constructor)
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {
-        EnumParamChoice data(AllocatorType{});
+        EnumParamChoice data(allocator_type{});
         ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
     }
     {

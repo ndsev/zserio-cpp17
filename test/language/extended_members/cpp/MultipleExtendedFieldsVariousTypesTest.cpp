@@ -12,12 +12,12 @@ namespace extended_members
 namespace multiple_extended_fields_various_types
 {
 
-using AllocatorType = Extended2::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using allocator_type = Extended2::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
-using BytesType = zserio::BasicBytes<zserio::RebindAlloc<AllocatorType, uint8_t>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<allocator_type, uint8_t>>;
+using BytesType = zserio::BasicBytes<zserio::RebindAlloc<allocator_type, uint8_t>>;
 
 class MultipleExtendedFieldsVariousTypesTest : public ::testing::Test
 {
