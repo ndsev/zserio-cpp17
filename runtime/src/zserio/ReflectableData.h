@@ -837,7 +837,7 @@ public:
     using Base::operator[];
     using Base::getAnyValue;
 
-    ReflectableDataConstArray(const ALLOC& allocator, const RAW_ARRAY& rawArray) :
+    ReflectableDataConstArray(const RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
             Base(typeInfo<typename RAW_ARRAY::value_type, ALLOC>(), allocator),
             m_rawArray(rawArray)
     {}
@@ -878,7 +878,7 @@ public:
     using Base::getAnyValue;
     using Base::getTypeInfo;
 
-    ReflectableDataArray(const ALLOC& allocator, RAW_ARRAY& rawArray) :
+    ReflectableDataArray(RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
             Base(typeInfo<typename RAW_ARRAY::value_type, ALLOC>(), allocator),
             m_rawArray(rawArray)
     {}
@@ -953,15 +953,14 @@ IBasicReflectableDataConstPtr<ALLOC> reflectableArray(
         const std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<ReflectableDataConstArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
+            allocator, array);
 }
 
 template <typename T, typename VECTOR_ALLOC, typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectableArray(
         std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<ReflectableDataArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
+    return std::allocate_shared<ReflectableDataArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(allocator, array);
 }
 
 /**

@@ -207,7 +207,7 @@ private:
     TRelocationMap m_tableToAttachedDbNameRelocationMap;
 
 <#list fieldList as field>
-    <@unique_ptr_type_name field.typeInfo.typeFullName/> <@sql_field_member_name field/>;
+    ::std::shared_ptr<${field.typeInfo.typeFullName}> <@sql_field_member_name field/>;
 </#list>
 };
 <@namespace_end package.path/>

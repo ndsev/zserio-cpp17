@@ -280,8 +280,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 
 <#macro union_read_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(<#rt>
-        <#lt><#if field.typeInfo.needsAllocator>data.get_allocator()</#if>);
+${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>();
 ${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#rt>
         <@array_read_template_args fullName, field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
@@ -451,7 +450,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         "${schemaTypeName}",
         [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -467,7 +466,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
         using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
 
-        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc) :
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc = {}) :
                 ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(typeInfo<${fullName}>(), alloc),
                 m_object(object)
         {}
@@ -513,7 +512,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         <#if isConst>const </#if>${fullName}& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 </#macro>
 template <>
 ${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
@@ -534,9 +533,9 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
     class Introspectable : public ::zserio::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
     {
     public:
-        Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& allocator) :
+        explicit Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& alloc = {}) :
                 ::zserio::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
-                        view_, allocator)
+                        view_, alloc)
         {}
     <#if fieldList?has_content>
 
@@ -565,7 +564,7 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 <@namespace_end ["zserio"]/>
 <#else>

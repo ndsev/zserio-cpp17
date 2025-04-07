@@ -83,6 +83,8 @@ protected:
     class NameCallback : public GreetingPubsub::GreetingPubsubCallback<Name>
     {
     public:
+        using allocator_type = pubsub_allocation::allocator_type;
+
         explicit NameCallback(GreetingPubsub& pubsub, const allocator_type& allocator) :
                 m_greetingPubsub(pubsub),
                 m_allocator(allocator)
@@ -91,7 +93,7 @@ protected:
         void operator()(std::string_view topic, const Name& name) override
         {
             ASSERT_EQ("pubsub_allocation/name_to_use_for_greeting"sv, topic);
-            Greeting greeting{prepareGreeting(name.name)};
+            Greeting greeting{prepareGreeting(name.name), m_allocator};
             m_greetingPubsub.publishGreeting(greeting);
         }
 
@@ -111,6 +113,8 @@ protected:
 
     struct GreetingCallback : public GreetingPubsub::GreetingPubsubCallback<Greeting>
     {
+        using allocator_type = pubsub_allocation::allocator_type;
+
         explicit GreetingCallback(const allocator_type& allocator) :
                 greeting(allocator)
         {}
@@ -137,14 +141,13 @@ protected: // must be behind m_allocator
 
 TEST_F(PubsubAllocationTest, sendGreetingPubsub)
 {
-    auto idName = greetingPubsub.subscribeName(
-            std::allocate_shared<NameCallback>(getAllocator(), greetingPubsub, getAllocator()));
+    auto idName =
+            greetingPubsub.subscribeName(std::allocate_shared<NameCallback>(getAllocator(), greetingPubsub));
 
-    std::shared_ptr<GreetingCallback> greetingCallback =
-            std::allocate_shared<GreetingCallback>(getAllocator(), getAllocator());
+    std::shared_ptr<GreetingCallback> greetingCallback = std::allocate_shared<GreetingCallback>(getAllocator());
     auto idGreeting = greetingPubsub.subscribeGreeting(greetingCallback);
 
-    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator())};
+    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator()), getAllocator()};
     greetingPubsub.publishName(name);
     ASSERT_EQ("Hello my dear Zserio with long name which is longer than 32B! I hope you are well!",
             greetingCallback->greeting);
@@ -158,16 +161,14 @@ TEST_F(PubsubAllocationTest, sendGreetingPubsubWithContext)
     CountingContext countingContext;
 
     auto idName = greetingPubsub.subscribeName(
-            std::allocate_shared<NameCallback>(getAllocator(), greetingPubsub, getAllocator()),
-            &countingContext);
+            std::allocate_shared<NameCallback>(getAllocator(), greetingPubsub), &countingContext);
     ASSERT_EQ(1, countingContext.subscribeCount);
 
-    std::shared_ptr<GreetingCallback> greetingCallback =
-            std::allocate_shared<GreetingCallback>(getAllocator(), getAllocator());
+    std::shared_ptr<GreetingCallback> greetingCallback = std::allocate_shared<GreetingCallback>(getAllocator());
     auto idGreeting = greetingPubsub.subscribeGreeting(greetingCallback, &countingContext);
     ASSERT_EQ(2, countingContext.subscribeCount);
 
-    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator())};
+    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator()), getAllocator()};
     greetingPubsub.publishName(name, &countingContext);
     ASSERT_EQ(1, countingContext.publishCount);
     ASSERT_EQ("Hello my dear Zserio with long name which is longer than 32B! I hope you are well!",
