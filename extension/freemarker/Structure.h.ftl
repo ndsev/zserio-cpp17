@@ -40,8 +40,9 @@ struct ${name}
 
     explicit ${name}(
     <#items as field>
-            <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>);</#if>
+            <@structure_field_ctor_type_name field/> <@field_data_arg_name field/>,
     </#items>
+            const allocator_type& allocator = {});
 </#list>
 <#list fieldList>
 

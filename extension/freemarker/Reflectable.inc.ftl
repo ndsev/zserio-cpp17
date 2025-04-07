@@ -71,8 +71,7 @@ ${I}{
     <#list fieldList as field>
 ${I}    if (name == "${field.name}")
 ${I}    {
-${I}        m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(<#rt>
-                    <#lt><#if field.typeInfo.needsAllocator || field.array??>get_allocator()</#if>);
+${I}        m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>();
 ${I}        return ::zserio::reflectable<#if field.array??>Array</#if>(<#rt>
                     <#lt>get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_object), get_allocator());
 ${I}    }

@@ -331,8 +331,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 <#macro choice_read_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>(<#rt>
-        <#lt><#if member.field.typeInfo.needsAllocator>data.get_allocator()</#if>);
+${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>();
 ${I}<#if member.field.compound??>(void)</#if>read<@array_read_suffix member.field, packed/><#rt>
         <@array_read_template_args fullName, member.field/>(<#t>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
@@ -517,7 +516,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
         using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
 
-        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc) :
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc = {}) :
                 ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
                         <#lt>typeInfo<${fullName}>(), alloc),
                 m_object(object)
@@ -564,7 +563,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         <#if isConst>const </#if>${fullName}& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return std::allocate_shared<Reflectable>(allocator, value);
 </#macro>
 template <>
 ${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
