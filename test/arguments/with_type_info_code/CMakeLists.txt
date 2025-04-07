@@ -36,6 +36,7 @@ add_custom_test(with_type_info_code
         with_type_info_code_zs
         type_info_string_expressions_zs
     SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/DebugStringTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TypeInfoStringExpressionsTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WithTypeInfoCodeCreator.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WithTypeInfoCodeCreator.h

@@ -55,10 +55,10 @@ BasicString<RebindAlloc<ALLOC, char>> toJsonString(
 }
 
 template <typename T, typename WALK_FILTER, typename ALLOC>
-void toJsonFile(const T& object, const BasicString<RebindAlloc<ALLOC, char>>& fileName, uint8_t indent,
-        WALK_FILTER&& walkFilter, const ALLOC& allocator)
+void toJsonFile(const T& object, std::string_view fileName, uint8_t indent, WALK_FILTER&& walkFilter,
+        const ALLOC& allocator)
 {
-    std::ofstream stream = std::ofstream(fileName.c_str(), std::ios::out | std::ios::trunc);
+    std::ofstream stream = std::ofstream(fileName.data(), std::ios::out | std::ios::trunc);
     if (!stream)
     {
         throw CppRuntimeException("DebugStringUtil.toJsonFile: Failed to open '") << fileName << "'!";
@@ -335,8 +335,7 @@ BasicString<RebindAlloc<ALLOC, char>> toJsonString(
  */
 template <typename T, typename ALLOC = typename T::AllocatorType,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
-void toJsonFile(const T& object, const BasicString<RebindAlloc<ALLOC, char>>& fileName,
-        const ALLOC& allocator = ALLOC())
+void toJsonFile(const T& object, std::string_view fileName, const ALLOC& allocator = ALLOC())
 {
     return detail::toJsonFile(object, fileName, 4, BasicDefaultWalkFilter<ALLOC>(), allocator);
 }
@@ -364,8 +363,7 @@ void toJsonFile(const T& object, const BasicString<RebindAlloc<ALLOC, char>>& fi
  */
 template <typename T, typename ALLOC = typename T::AllocatorType,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
-void toJsonFile(const T& object, const BasicString<RebindAlloc<ALLOC, char>>& fileName, uint8_t indent,
-        const ALLOC& allocator = ALLOC())
+void toJsonFile(const T& object, std::string_view fileName, uint8_t indent, const ALLOC& allocator = ALLOC())
 {
     return detail::toJsonFile(object, fileName, indent, BasicDefaultWalkFilter<ALLOC>(), allocator);
 }
@@ -395,8 +393,8 @@ template <typename T, typename WALK_FILTER, typename ALLOC = typename T::Allocat
         typename std::enable_if<
                 std::is_base_of<IBasicWalkFilter<ALLOC>, typename std::decay<WALK_FILTER>::type>::value,
                 int>::type = 0>
-void toJsonFile(const T& object, const BasicString<RebindAlloc<ALLOC, char>>& fileName,
-        WALK_FILTER&& walkFilter, const ALLOC& allocator = ALLOC())
+void toJsonFile(
+        const T& object, std::string_view fileName, WALK_FILTER&& walkFilter, const ALLOC& allocator = ALLOC())
 {
     return detail::toJsonFile(object, fileName, 4, walkFilter, allocator);
 }
@@ -582,13 +580,12 @@ T fromJsonString(const BasicString<RebindAlloc<ALLOC, char>>& json, const ALLOC&
  */
 template <typename ALLOC = std::allocator<uint8_t>>
 typename detail::DebugStringTraits<ALLOC>::ReflectableDataPtr fromJsonFile(
-        const IBasicTypeInfo<ALLOC>& typeInfo, const BasicString<RebindAlloc<ALLOC, char>>& fileName,
-        const ALLOC& allocator = ALLOC())
+        const IBasicTypeInfo<ALLOC>& typeInfo, std::string_view fileName, const ALLOC& allocator = ALLOC())
 {
-    std::ifstream is = std::ifstream(fileName.c_str());
+    std::ifstream is = std::ifstream(fileName.data());
     if (!is)
     {
-        throw CppRuntimeException("DebugStringUtil.fromJsonFile: Failed to open '") << fileName + "'!";
+        throw CppRuntimeException("DebugStringUtil.fromJsonFile: Failed to open '") << fileName << "'!";
     }
 
     return fromJsonStream(typeInfo, is, allocator);
@@ -618,7 +615,7 @@ typename detail::DebugStringTraits<ALLOC>::ReflectableDataPtr fromJsonFile(
  * \throw CppRuntimeException In case of any error.
  */
 template <typename T, typename ALLOC = typename T::AllocatorType>
-T fromJsonFile(const BasicString<RebindAlloc<ALLOC, char>>& fileName, const ALLOC& allocator = ALLOC())
+T fromJsonFile(std::string_view fileName, const ALLOC& allocator = ALLOC())
 {
     return std::move(ReflectableUtil::getValue<T, ALLOC>(fromJsonFile(typeInfo<T>(), fileName, allocator)));
 }
