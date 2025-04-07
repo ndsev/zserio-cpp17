@@ -256,7 +256,7 @@ bool ${name}::Reader::hasNext() const noexcept
             const int blobDataLength = sqlite3_column_bytes(m_stmt.get(), index);
             ::zserio::Span<const uint8_t> blobData(static_cast<const uint8_t*>(blobDataPtr),
                     static_cast<size_t>(blobDataLength));
-            row.<@sql_row_member_name field/>.emplace(get_allocator_ref());
+            row.<@sql_row_member_name field/>.emplace();
             ::zserio::deserializeFromBytes(blobData, *row.<@sql_row_member_name field/><#rt>
                     <#lt><@view_parameters field, "m_parameterProvider"/>);
     <#elseif field.sqlTypeData.isInteger>
@@ -611,7 +611,7 @@ bool ${name}::validateBlob${field.name?cap_first}(::zserio::IValidationObserver&
         const int blobDataLength = sqlite3_column_bytes(statement, ${field?index});
         ::zserio::BitStreamReader reader(static_cast<const uint8_t*>(blobDataPtr),
                 static_cast<size_t>(blobDataLength));
-        row.<@sql_row_member_name field/>.emplace(get_allocator_ref());
+        row.<@sql_row_member_name field/>.emplace();
         auto blobView = ::zserio::detail::read(reader, *row.<@sql_row_member_name field/><#rt>
                 <#lt><@view_parameters field, "parameterProvider"/>);
         const ::zserio::BitSize blobBitSize = ::zserio::detail::bitSizeOf(blobView);

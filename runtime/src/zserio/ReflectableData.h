@@ -1564,7 +1564,7 @@ IBasicReflectableDataConstPtr<ALLOC> reflectableArray(
         const std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<detail::ReflectableDataConstArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
+            allocator, array);
 }
 
 template <typename T, typename VECTOR_ALLOC, typename ALLOC = std::allocator<uint8_t>>
@@ -1572,7 +1572,7 @@ IBasicReflectableDataPtr<ALLOC> reflectableArray(
         std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<detail::ReflectableDataArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
+            allocator, array);
 }
 
 } // namespace zserio

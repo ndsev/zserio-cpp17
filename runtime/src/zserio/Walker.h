@@ -652,7 +652,7 @@ void appendPathImpl(
 {
     if (elementIndex == WALKER_NOT_ELEMENT)
     {
-        currentPath.emplace_back(fieldInfo.schemaName.data(), fieldInfo.schemaName.size(), allocator);
+        currentPath.emplace_back(fieldInfo.schemaName.data(), fieldInfo.schemaName.size());
     }
     else
     {
@@ -774,7 +774,7 @@ template <typename ALLOC>
 bool BasicRegexWalkFilter<ALLOC>::beforeArray(
         const IBasicReflectableDataConstPtr<ALLOC>& array, const BasicFieldInfo<ALLOC>& fieldInfo)
 {
-    m_currentPath.emplace_back(fieldInfo.schemaName.data(), fieldInfo.schemaName.size(), m_allocator);
+    m_currentPath.emplace_back(fieldInfo.schemaName.data(), fieldInfo.schemaName.size());
 
     if (std::regex_match(getCurrentPath(), m_pathRegex))
     {

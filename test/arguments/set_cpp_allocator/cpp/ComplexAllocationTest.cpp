@@ -157,12 +157,12 @@ protected:
                 BYTES_ARRAY_ELEMENT1_DATA, static_cast<uint8_t>(BYTES_ARRAY_ELEMENT1_VAR_SIZE * 8));
     }
 
-    void fillStringArray(VectorType<StringType>& stringArray, const allocator_type& allocator)
+    void fillStringArray(VectorType<StringType>& stringArray, const allocator_type&)
     {
         stringArray.reserve(STRING_ARRAY_SIZE);
-        stringArray.emplace_back(STRING_ARRAY_ELEMENT0, allocator);
-        stringArray.emplace_back(STRING_ARRAY_ELEMENT1, allocator);
-        stringArray.emplace_back(STRING_ARRAY_ELEMENT2, allocator);
+        stringArray.emplace_back(STRING_ARRAY_ELEMENT0);
+        stringArray.emplace_back(STRING_ARRAY_ELEMENT1);
+        stringArray.emplace_back(STRING_ARRAY_ELEMENT2);
     }
 
     void fillChoiceField(
@@ -239,15 +239,15 @@ protected:
     {
         VectorType<StringType> names0(allocator);
         names0.reserve(STRUCT_OPTIONAL_NAMES0_SIZE);
-        names0.emplace_back(STRUCT_OPTIONAL_NAMES0_ELEMENT0, allocator);
-        names0.emplace_back(STRUCT_OPTIONAL_NAMES0_ELEMENT1, allocator);
+        names0.emplace_back(STRUCT_OPTIONAL_NAMES0_ELEMENT0);
+        names0.emplace_back(STRUCT_OPTIONAL_NAMES0_ELEMENT1);
         structOptionalField.names = std::move(names0);
         structOptionalField.hasNext = true;
 
         allocation_struct_optional::AllocationStructOptional others(allocator);
         VectorType<StringType> names1(allocator);
         names1.reserve(STRUCT_OPTIONAL_NAMES1_SIZE);
-        names1.emplace_back(STRUCT_OPTIONAL_NAMES1_ELEMENT0, allocator);
+        names1.emplace_back(STRUCT_OPTIONAL_NAMES1_ELEMENT0);
         others.names = std::move(names1);
         others.hasNext = false;
         structOptionalField.others = std::move(others);
@@ -261,17 +261,17 @@ protected:
         return BitBufferType(externalFieldData, EXTERNAL_FIELD_VAR_SIZE, allocator);
     }
 
-    void fillExternalArray(VectorType<BitBufferType>& externalArray, const allocator_type& allocator)
+    void fillExternalArray(VectorType<BitBufferType>& externalArray, const allocator_type&)
     {
         externalArray.reserve(EXTERNAL_ARRAY_SIZE);
         externalArray.emplace_back(
                 zserio::Span<const uint8_t>(
                         &EXTERNAL_ARRAY_ELEMENT0_DATA, EXTERNAL_ARRAY_ELEMENT0_VAR_SIZE + 7 / 8),
-                EXTERNAL_ARRAY_ELEMENT0_VAR_SIZE, allocator);
+                EXTERNAL_ARRAY_ELEMENT0_VAR_SIZE);
         const std::array<uint8_t, 2> externalElement1Data = {
                 static_cast<uint8_t>(EXTERNAL_ARRAY_ELEMENT1_DATA >> 8U),
                 static_cast<uint8_t>(EXTERNAL_ARRAY_ELEMENT1_DATA)};
-        externalArray.emplace_back(externalElement1Data, EXTERNAL_ARRAY_ELEMENT1_VAR_SIZE, allocator);
+        externalArray.emplace_back(externalElement1Data, EXTERNAL_ARRAY_ELEMENT1_VAR_SIZE);
     }
 
     VectorType<uint8_t> createBytesField(const allocator_type& allocator)
@@ -281,14 +281,14 @@ protected:
                 allocator);
     }
 
-    void fillBytesArray(VectorType<VectorType<uint8_t>>& bytesArray, const allocator_type& allocator)
+    void fillBytesArray(VectorType<VectorType<uint8_t>>& bytesArray, const allocator_type&)
     {
         bytesArray.reserve(BYTES_ARRAY_SIZE);
         const std::array<uint8_t, 2> bytesArrayElement0Data = {
                 static_cast<uint8_t>(BYTES_ARRAY_ELEMENT0_DATA >> 8U),
                 static_cast<uint8_t>(BYTES_ARRAY_ELEMENT0_DATA)};
-        bytesArray.emplace_back(bytesArrayElement0Data.begin(), bytesArrayElement0Data.end(), allocator);
-        bytesArray.emplace_back(BYTES_ARRAY_ELEMENT1_VAR_SIZE, BYTES_ARRAY_ELEMENT1_DATA, allocator);
+        bytesArray.emplace_back(bytesArrayElement0Data.begin(), bytesArrayElement0Data.end());
+        bytesArray.emplace_back(BYTES_ARRAY_ELEMENT1_VAR_SIZE, BYTES_ARRAY_ELEMENT1_DATA);
     }
 
     void fillData(MainStructure& data, const allocator_type& allocator, bool hasArray)
@@ -584,7 +584,7 @@ protected:
             {
                 MainStructure data(stringField, stringArray, hasArray, choiceField, unionField, structField,
                         structOptionalField, createExternalField(allocator), externalArray,
-                        createBytesField(allocator), bytesArray);
+                        createBytesField(allocator), bytesArray, allocator);
                 ASSERT_EQ(expectedData, data);
 
                 // check memory fragmentation in used memory resource
@@ -595,7 +595,7 @@ protected:
                 MainStructure data(stringField, std::move(stringArray), hasArray, std::move(choiceField),
                         std::move(unionField), std::move(structField), std::move(structOptionalField),
                         createExternalField(allocator), std::move(externalArray), createBytesField(allocator),
-                        std::move(bytesArray));
+                        std::move(bytesArray), allocator);
                 ASSERT_EQ(expectedData, data);
 
                 // check memory fragmentation in used memory resource

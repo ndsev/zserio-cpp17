@@ -171,10 +171,9 @@ void ${name}::initTables()
     relocationIt = m_tableToAttachedDbNameRelocationMap.find(
             ${types.string.name}(tableNames[${field?index}], get_allocator_ref()));
     </#if>
-    <@sql_field_member_name field/> = ::zserio::allocate_unique<${field.typeInfo.typeFullName}>(
+    <@sql_field_member_name field/> = ::std::allocate_shared<${field.typeInfo.typeFullName}>(
             get_allocator_ref(), this->m_db, tableNames[${field?index}],
-            relocationIt != m_tableToAttachedDbNameRelocationMap.end() ? relocationIt->second : EMPTY_STR,
-            get_allocator_ref());
+            relocationIt != m_tableToAttachedDbNameRelocationMap.end() ? relocationIt->second : EMPTY_STR);
     <#if field?has_next>
 
     </#if>

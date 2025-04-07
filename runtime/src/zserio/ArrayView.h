@@ -598,8 +598,6 @@ template <ArrayType ARRAY_TYPE, typename T, typename ALLOC, typename ARRAY_TRAIT
 void read(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, detail::array_owner_type_t<ARRAY_TRAITS>& owner,
         size_t arrayLength = 0)
 {
-    using ValueType = T;
-
     const size_t readLength = readArrayLength<ARRAY_TYPE, ARRAY_TRAITS>(reader, arrayLength);
     rawArray.clear();
     rawArray.reserve(readLength);
@@ -609,15 +607,7 @@ void read(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, detail::array_own
         {
             reader.alignTo(8);
         }
-
-        if constexpr (has_allocator_v<ValueType>)
-        {
-            rawArray.emplace_back(rawArray.get_allocator());
-        }
-        else
-        {
-            rawArray.emplace_back();
-        }
+        rawArray.emplace_back();
         ARRAY_TRAITS::read(reader, owner, rawArray.back(), i);
     }
 }
@@ -806,15 +796,7 @@ void readPacked(BitStreamReader& reader, Vector<T, ALLOC>& rawArray,
             {
                 reader.alignTo(8);
             }
-
-            if constexpr (has_allocator_v<ValueType>)
-            {
-                rawArray.emplace_back(rawArray.get_allocator());
-            }
-            else
-            {
-                rawArray.emplace_back();
-            }
+            rawArray.emplace_back();
             ARRAY_TRAITS::read(context, reader, owner, rawArray.back(), i);
         }
     }

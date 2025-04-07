@@ -32,16 +32,13 @@ ${name}::${name}() noexcept :
             ${field.initializer}<#t>
             <#if field.typeInfo.isNumeric>)</#if><#t>
         </#local>
-        <#local initializer>
-            <#if field.typeInfo.needsAllocator>
-                ${initializer}, allocator<#t>
-            <#else>
-                ${initializer}<#t>
-            </#if>
-        </#local>
         <#if field.optional??>
             <#local initializer>
                 ::std::in_place, allocator, ${initializer}<#t>
+            </#local>
+        <#elseif field.typeInfo.needsAllocator>
+            <#local initializer>
+                ${initializer}, allocator<#t>
             </#local>
         </#if>
         ${initializer}<#t>
@@ -59,16 +56,44 @@ ${name}::${name}(const allocator_type&<#if structure_fields_need_allocator(field
 
 </#list>
 {}
+
+${name}::${name}(${name}&& other, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+<#list fieldList>
+    <#lt> :
+    <#items as field>
+        <@field_data_member_name field/>(std::move(other.<@field_data_member_name field/>)<#rt>
+        <#if structure_field_needs_allocator(field)>, allocator</#if><#t>
+        <#lt>)<#sep>,</#sep>
+    </#items>
+<#else>
+
+</#list>
+{}
+
+${name}::${name}(const ${name}& other, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+<#list fieldList>
+    <#lt> :
+    <#items as field>
+        <@field_data_member_name field/>(other.<@field_data_member_name field/><#rt>
+        <#if structure_field_needs_allocator(field)>, allocator</#if><#t>
+        <#lt>)<#sep>,</#sep>
+    </#items>
+<#else>
+
+</#list>
+{}
+<#rt>
 <#if fieldList?has_content>
 
 ${name}::${name}(
     <#list fieldList as field>
-        <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>) :</#if>
+        <@structure_field_ctor_type_name field/> <@field_data_arg_name field/>,
     </#list>
+        const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) :
     <#list fieldList as field>
         <@field_data_member_name field/>(<#if structure_field_needs_allocator(field)>::std::move(</#if><#rt>
-                <@field_data_arg_name field/>)<#t>
-                <#lt><#if structure_field_needs_allocator(field)>)</#if><#sep>,</#sep>
+                <@field_data_arg_name field/><#t>
+                <#lt><#if structure_field_needs_allocator(field)>), allocator</#if>)<#sep>,</#sep>
     </#list>
 {}
 </#if>
@@ -491,11 +516,7 @@ ${I}if (${field.optional.viewIndirectClause})
 ${I}if (reader.readBool())
             </#if>
 ${I}{
-${I}    data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>emplace(<#rt>
-            <#if field.typeInfo.needsAllocator>
-                data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator()<#t>
-            </#if>
-                <#lt>);
+${I}    data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>emplace();
         <@structure_read_field_inner compoundName, field, indent+1, packed/>
 ${I}}
     <#else>
@@ -723,7 +744,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         "${schemaTypeName}",
         [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
         {
-            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<${fullName}>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<${fullName}>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -739,7 +760,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
         using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
 
-        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc) :
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc = {}) :
                 ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
                         <#lt>typeInfo<${fullName}>(), alloc),
                 m_object(object)
@@ -773,7 +794,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         <#if isConst>const </#if>${fullName}& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 </#macro>
 template <>
 ${types.reflectableConstPtr.name} reflectable(
@@ -796,9 +817,9 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
     {
     public:
-        Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& allocator) :
+        Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
-                        view_, allocator)
+                        view_, alloc)
         {}
     <#if fieldList?has_content>
 
@@ -814,7 +835,7 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
     </#if>
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 <@namespace_end ["zserio"]/>
 <#else>
