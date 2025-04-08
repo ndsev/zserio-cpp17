@@ -3,6 +3,7 @@
 
 #include <istream>
 #include <limits>
+#include <memory>
 #include <string_view>
 
 #include "zserio/AllocatorHolder.h"
@@ -174,7 +175,7 @@ private:
     using StringType = BasicString<RebindAlloc<ALLOC, char>>;
     Vector<StringType, RebindAlloc<ALLOC, StringType>> m_keyStack;
     IBasicReflectableDataPtr<ALLOC> m_object;
-    UniquePtr<IObjectValueAdapter<ALLOC>, RebindAlloc<ALLOC, IObjectValueAdapter<ALLOC>>> m_objectValueAdapter;
+    std::shared_ptr<IObjectValueAdapter<ALLOC>> m_objectValueAdapter;
 };
 
 } // namespace detail
@@ -529,12 +530,12 @@ void CreatorAdapter<ALLOC>::beginObject()
                 if (cppType == CppType::BIT_BUFFER)
                 {
                     m_objectValueAdapter =
-                            allocate_unique<BitBufferAdapter<ALLOC>>(get_allocator(), get_allocator());
+                            std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator(), get_allocator());
                 }
                 else if (cppType == CppType::BYTES)
                 {
                     m_objectValueAdapter =
-                            allocate_unique<BytesAdapter<ALLOC>>(get_allocator(), get_allocator());
+                            std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator(), get_allocator());
                 }
                 else
                 {
@@ -547,12 +548,12 @@ void CreatorAdapter<ALLOC>::beginObject()
                 if (cppType == CppType::BIT_BUFFER)
                 {
                     m_objectValueAdapter =
-                            allocate_unique<BitBufferAdapter<ALLOC>>(get_allocator(), get_allocator());
+                            std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator(), get_allocator());
                 }
                 else if (cppType == CppType::BYTES)
                 {
                     m_objectValueAdapter =
-                            allocate_unique<BytesAdapter<ALLOC>>(get_allocator(), get_allocator());
+                            std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator(), get_allocator());
                 }
                 else
                 {
