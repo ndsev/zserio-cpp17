@@ -1,6 +1,7 @@
 #include <functional>
 
 #include "gtest/gtest.h"
+#include "zserio/Array.h"
 #include "zserio/IntrospectableView.h"
 #include "zserio/View.h"
 
@@ -298,17 +299,20 @@ protected:
                 detail::bitSizeOf(VarSize(convertSizeToUInt32(bitSize))) + bitSize);
     }
 
-    template <typename ARRAY>
-    void checkArrayAnyValue(const ARRAY& array, const IIntrospectableViewConstPtr& introspectableView)
+    template <typename T, typename TRAITS>
+    void checkArrayAnyValue(
+            const Array<T, TRAITS>& array, const IIntrospectableViewConstPtr& introspectableView)
     {
-        (void)array;
-        (void)introspectableView;
-        // !@# Span comparison
-        // ASSERT_EQ(array, introspectableView->getAnyValue().template get<const ARRAY>());
+        auto introArray = introspectableView->getAnyValue().template get<Array<T, TRAITS>>();
+        ASSERT_EQ(array.size(), introArray.size());
+        for (size_t i = 0; i < array.size(); ++i)
+        {
+            EXPECT_EQ(array[i], introArray[i]);
+        }
     }
 
-    template <typename ARRAY, typename INTROSPECTABLE_VIEW_PTR, typename ELEMENT_CHECKER>
-    void checkArray(const ARRAY& array, const INTROSPECTABLE_VIEW_PTR& introspectableView,
+    template <typename T, typename TRAITS, typename INTROSPECTABLE_VIEW_PTR, typename ELEMENT_CHECKER>
+    void checkArray(const Array<T, TRAITS>& array, const INTROSPECTABLE_VIEW_PTR& introspectableView,
             const ELEMENT_CHECKER& elementChecker)
     {
         ASSERT_TRUE(introspectableView->isArray());
@@ -352,6 +356,7 @@ protected:
 
         checkNonCompound(introspectableView);
     }
+
 #if 0 // !@#
 
     template <typename INTROSPECTABLE_VIEW_PTR>
@@ -875,14 +880,15 @@ TEST_F(IntrospectableViewTest, stringIntrospectableView)
 TEST_F(IntrospectableViewTest, bitBufferIntrospectableView)
 {
     const BitBuffer value = BitBuffer{std::vector<uint8_t>({0xAB, 0xF0}), 12};
-    auto introspectableViewPtr = introspectable(value);
+    const BitBufferView view = value;
+    auto introspectableViewPtr = introspectable(view);
     checkBitBuffer(value, introspectableViewPtr);
 }
 
 TEST_F(IntrospectableViewTest, boolConstArray)
 {
     const auto rawArray = std::vector<Bool>({true, false, true, false});
-    const Span<const Bool> array(rawArray.data(), rawArray.size());
+    const Array<const Bool> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Bool value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -894,7 +900,7 @@ TEST_F(IntrospectableViewTest, boolConstArray)
 TEST_F(IntrospectableViewTest, int8ConstArray)
 {
     const auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
-    const Span<const Int8> array(rawArray.data(), rawArray.size());
+    const Array<const Int8> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Int8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -906,7 +912,7 @@ TEST_F(IntrospectableViewTest, int8ConstArray)
 TEST_F(IntrospectableViewTest, int16ConstArray)
 {
     const auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
-    const Span<const Int16> array(rawArray.data(), rawArray.size());
+    const Array<const Int16> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Int16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -918,7 +924,7 @@ TEST_F(IntrospectableViewTest, int16ConstArray)
 TEST_F(IntrospectableViewTest, int32ConstArray)
 {
     const auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
-    const Span<const Int32> array(rawArray.data(), rawArray.size());
+    const Array<const Int32> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Int32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -930,9 +936,9 @@ TEST_F(IntrospectableViewTest, int32ConstArray)
 TEST_F(IntrospectableViewTest, int64ConstArray)
 {
     const auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
-    const Span<const Int64> array(rawArray.data(), rawArray.size());
-    auto introspectableView = introspectable(array);
-    checkArray(array, introspectableView,
+    const Array<const Int64> array(rawArray);
+    auto introspectableViewPtr = introspectable(array);
+    checkArray(array, introspectableViewPtr,
             [&](Int64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
                         std::bind(&BitStreamReader::readSignedBits64, _1, 64));
@@ -942,7 +948,7 @@ TEST_F(IntrospectableViewTest, int64ConstArray)
 TEST_F(IntrospectableViewTest, uint8ConstArray)
 {
     const auto rawArray = std::vector<UInt8>({10, 20, 30, 40});
-    const Span<const UInt8> array(rawArray.data(), rawArray.size());
+    const Array<const UInt8> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](UInt8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -954,7 +960,7 @@ TEST_F(IntrospectableViewTest, uint8ConstArray)
 TEST_F(IntrospectableViewTest, uint16ConstArray)
 {
     const auto rawArray = std::vector<UInt16>({100, 200, 300, 400});
-    const Span<const UInt16> array(rawArray.data(), rawArray.size());
+    const Array<const UInt16> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](UInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -966,7 +972,7 @@ TEST_F(IntrospectableViewTest, uint16ConstArray)
 TEST_F(IntrospectableViewTest, uint32ConstArray)
 {
     const auto rawArray = std::vector<UInt32>({10000, 20000, 30000, 40000});
-    const Span<const UInt32> array(rawArray.data(), rawArray.size());
+    const Array<const UInt32> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](UInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -978,7 +984,7 @@ TEST_F(IntrospectableViewTest, uint32ConstArray)
 TEST_F(IntrospectableViewTest, uint64ConstArray)
 {
     const auto rawArray = std::vector<UInt64>({10000000, 20000000, 30000000, 40000000});
-    const Span<const UInt64> array(rawArray.data(), rawArray.size());
+    const Array<const UInt64> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](UInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -991,7 +997,7 @@ TEST_F(IntrospectableViewTest, fixedSignedBitField5ConstArray)
 {
     uint8_t numBits = 5;
     const auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
-    const Span<const Int5> array(rawArray.data(), rawArray.size());
+    const Array<const Int5> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Int5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1004,7 +1010,7 @@ TEST_F(IntrospectableViewTest, fixedUnsignedBitField5ConstArray)
 {
     const uint8_t numBits = 5;
     const auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
-    const Span<const UInt5> array(rawArray.data(), rawArray.size());
+    const Array<const UInt5> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](UInt5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1013,40 +1019,66 @@ TEST_F(IntrospectableViewTest, fixedUnsignedBitField5ConstArray)
             });
 }
 
-#if 0 // !@# TODO
-
 TEST_F(IntrospectableViewTest, dynamicSignedBitField5ConstArray)
 {
-    const uint8_t numBits = 5;
+    struct ZserioArrayOwner
+    {
+        uint8_t numBits = 5;
+    };
+
+    struct ZserioArrayTraits
+    {
+        using OwnerType = ZserioArrayOwner;
+
+        static View<DynInt8<>> at(const OwnerType& owner, const DynInt8<>& element, size_t)
+        {
+            return View<DynInt8<>>(element, owner.numBits);
+        }
+    };
+
+    ZserioArrayOwner owner;
     const auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
-    const Span<const DynInt8<>> array(rawArray.data(), rawArray.size());
+    const Array<const DynInt8<>, ZserioArrayTraits> array(rawArray, owner);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
-            [&](DynInt8<> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+            [&](View<DynInt8<>> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
-                        std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
+                        std::bind(&BitStreamReader::readSignedBits32, _1, owner.numBits), owner.numBits);
             });
 }
 
 TEST_F(IntrospectableViewTest, dynamicUnsignedBitField5ConstArray)
 {
-    const uint8_t numBits = 5;
+    struct ZserioArrayOwner
+    {
+        uint8_t numBits = 5;
+    };
+
+    struct ZserioArrayTraits
+    {
+        using OwnerType = ZserioArrayOwner;
+
+        static View<DynUInt8<>> at(const OwnerType& owner, const DynUInt8<>& element, size_t)
+        {
+            return View<DynUInt8<>>(element, owner.numBits);
+        }
+    };
+
+    ZserioArrayOwner owner;
     const auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
-    const Span<const DynUInt8<>> array(rawArray.data(), rawArray.size());
+    const Array<const DynUInt8<>, ZserioArrayTraits> array(rawArray, owner);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
-            [&](DynUInt8<> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+            [&](View<DynUInt8<>> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
-                        std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
+                        std::bind(&BitStreamReader::readUnsignedBits32, _1, owner.numBits), owner.numBits);
             });
 }
-
-#endif // !@#
 
 TEST_F(IntrospectableViewTest, varint16ConstArray)
 {
     const auto rawArray = std::vector<VarInt16>({-10, -20, 30, 40});
-    const Span<const VarInt16> array(rawArray.data(), rawArray.size());
+    const Array<const VarInt16> array(rawArray);
     auto introspectableView = introspectable(array);
     checkArray(array, introspectableView,
             [&](VarInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1058,7 +1090,7 @@ TEST_F(IntrospectableViewTest, varint16ConstArray)
 TEST_F(IntrospectableViewTest, varint32ConstArray)
 {
     const auto rawArray = std::vector<VarInt32>({-10000, -20000, 30000, 40000});
-    const Span<const VarInt32> array(rawArray.data(), rawArray.size());
+    const Array<const VarInt32> array(rawArray);
     auto introspectableView = introspectable(array);
     checkArray(array, introspectableView,
             [&](VarInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1070,7 +1102,7 @@ TEST_F(IntrospectableViewTest, varint32ConstArray)
 TEST_F(IntrospectableViewTest, varint64ConstArray)
 {
     const auto rawArray = std::vector<VarInt64>({-10000000, -20000000, 30000000, 40000000});
-    const Span<const VarInt64> array(rawArray.data(), rawArray.size());
+    const Array<const VarInt64> array(rawArray);
     auto introspectableView = introspectable(array);
     checkArray(array, introspectableView,
             [&](VarInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1082,7 +1114,7 @@ TEST_F(IntrospectableViewTest, varint64ConstArray)
 TEST_F(IntrospectableViewTest, varintConstArray)
 {
     const auto rawArray = std::vector<VarInt>({-10000000, -20000000, 30000000, 40000000});
-    const Span<const VarInt> array(rawArray.data(), rawArray.size());
+    const Array<const VarInt> array(rawArray);
     auto introspectableView = introspectable(array);
     checkArray(array, introspectableView,
             [&](VarInt value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1094,7 +1126,7 @@ TEST_F(IntrospectableViewTest, varintConstArray)
 TEST_F(IntrospectableViewTest, varuint16ConstArray)
 {
     const auto rawArray = std::vector<VarUInt16>({10, 20, 30, 40});
-    const Span<const VarUInt16> array(rawArray.data(), rawArray.size());
+    const Array<const VarUInt16> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](VarUInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1106,7 +1138,7 @@ TEST_F(IntrospectableViewTest, varuint16ConstArray)
 TEST_F(IntrospectableViewTest, varuint32ConstArray)
 {
     const auto rawArray = std::vector<VarUInt32>({10000, 20000, 30000, 40000});
-    const Span<const VarUInt32> array(rawArray.data(), rawArray.size());
+    const Array<const VarUInt32> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](VarUInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1118,7 +1150,7 @@ TEST_F(IntrospectableViewTest, varuint32ConstArray)
 TEST_F(IntrospectableViewTest, varuint64ConstArray)
 {
     const auto rawArray = std::vector<VarUInt64>({10000, 20000, 30000, 40000});
-    const Span<const VarUInt64> array(rawArray.data(), rawArray.size());
+    const Array<const VarUInt64> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](VarUInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1130,7 +1162,7 @@ TEST_F(IntrospectableViewTest, varuint64ConstArray)
 TEST_F(IntrospectableViewTest, varuintConstArray)
 {
     const auto rawArray = std::vector<VarUInt>({10000, 20000, 30000, 40000});
-    const Span<const VarUInt> array(rawArray.data(), rawArray.size());
+    const Array<const VarUInt> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](VarUInt value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1142,7 +1174,7 @@ TEST_F(IntrospectableViewTest, varuintConstArray)
 TEST_F(IntrospectableViewTest, varsizeConstArray)
 {
     const auto rawArray = std::vector<VarSize>({10000, 20000, 30000, 40000});
-    const Span<const VarSize> array(rawArray.data(), rawArray.size());
+    const Array<const VarSize> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](VarSize value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1154,7 +1186,7 @@ TEST_F(IntrospectableViewTest, varsizeConstArray)
 TEST_F(IntrospectableViewTest, float16ConstArray)
 {
     const auto rawArray = std::vector<Float16>{{2.0F, 0.0F}};
-    const Span<const Float16> array(rawArray.data(), rawArray.size());
+    const Array<const Float16> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Float16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1166,7 +1198,7 @@ TEST_F(IntrospectableViewTest, float16ConstArray)
 TEST_F(IntrospectableViewTest, float32ConstArray)
 {
     const auto rawArray = std::vector<Float32>{{2.0F, 0.0F, 1.2F}};
-    const Span<const Float32> array(rawArray.data(), rawArray.size());
+    const Array<const Float32> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Float32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1178,7 +1210,7 @@ TEST_F(IntrospectableViewTest, float32ConstArray)
 TEST_F(IntrospectableViewTest, float64ConstArray)
 {
     const auto rawArray = std::vector<Float64>{{2.0, 0.0, 1.2}};
-    const Span<const Float64> array(rawArray.data(), rawArray.size());
+    const Array<const Float64> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](Float64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1190,7 +1222,7 @@ TEST_F(IntrospectableViewTest, float64ConstArray)
 TEST_F(IntrospectableViewTest, stringConstArray)
 {
     const auto rawArray = std::vector<std::string>{{"one", "two", "three"}};
-    const Span<const std::string> array(rawArray.data(), rawArray.size());
+    const Array<const std::string> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
             [&](std::string_view value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
@@ -1201,10 +1233,10 @@ TEST_F(IntrospectableViewTest, stringConstArray)
 TEST_F(IntrospectableViewTest, bitBufferConstArray)
 {
     const auto rawArray = std::vector<BitBuffer>{{BitBuffer({0xF8}, 5), BitBuffer({0xAB, 0xCD}, 16)}};
-    const Span<const BitBuffer> array(rawArray.data(), rawArray.size());
+    const Array<const BitBuffer> array(rawArray);
     auto introspectableView = introspectable(array);
     checkArray(array, introspectableView,
-            [&](const BitBuffer& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+            [&](BitBufferView value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkBitBuffer(value, elementIntrospectableView);
             });
 }
@@ -1212,10 +1244,10 @@ TEST_F(IntrospectableViewTest, bitBufferConstArray)
 TEST_F(IntrospectableViewTest, bytesConstArray)
 {
     const auto rawArray = std::vector<Bytes>{{{{0x00, 0x01}}, {{0xFF, 0xFE}}}};
-    const Span<const Bytes> array(rawArray.data(), rawArray.size());
+    const Array<const Bytes> array(rawArray);
     auto introspectableViewPtr = introspectable(array);
     checkArray(array, introspectableViewPtr,
-            [&](const Bytes& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+            [&](BytesView value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkBytes(value, elementIntrospectableView);
             });
 }

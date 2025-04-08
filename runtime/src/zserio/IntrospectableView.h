@@ -671,14 +671,13 @@ public:
  * Introspectable for values of bit buffer type.
  */
 template <typename ALLOC>
-class BitBufferIntrospectableView
-        : public BuiltinIntrospectableViewBase<std::reference_wrapper<const BasicBitBuffer<ALLOC>>, ALLOC>
+class BitBufferIntrospectableView : public BuiltinIntrospectableViewBase<BasicBitBufferView<ALLOC>, ALLOC>
 {
 private:
-    using Base = BuiltinIntrospectableViewBase<std::reference_wrapper<const BasicBitBuffer<ALLOC>>, ALLOC>;
+    using Base = BuiltinIntrospectableViewBase<BasicBitBufferView<ALLOC>, ALLOC>;
 
 public:
-    explicit BitBufferIntrospectableView(std::reference_wrapper<const BasicBitBuffer<ALLOC>> value) :
+    explicit BitBufferIntrospectableView(BasicBitBufferView<ALLOC> value) :
             Base(typeInfo<BasicBitBuffer<ALLOC>>(), value)
     {}
 
@@ -872,7 +871,7 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(std::string_view value, c
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
-        const BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
+        BasicBitBufferView<ALLOC> value, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<BitBufferIntrospectableView<ALLOC>>(allocator, value);
 }
@@ -890,7 +889,7 @@ public:
     using Base::getTypeInfo;
 
     explicit IntrospectableViewArray(ARRAY_VIEW value) :
-            Base(typeInfo<typename ARRAY_VIEW::value_type, ALLOC>(), value)
+            Base(typeInfo<typename ARRAY_VIEW::ValueType, ALLOC>(), value)
     {}
 
     bool isArray() const override
@@ -922,7 +921,7 @@ public:
                     << "' of size " << size() << "!";
         }
 
-        return introspectable(Base::getValue()[index]);
+        return introspectable(Base::getValue().at(index));
     }
 
     IBasicIntrospectableViewConstPtr<ALLOC> operator[](size_t index) const override
@@ -1051,10 +1050,10 @@ public:
     }
 };
 
-template <typename ARRAY_VIEW, typename ALLOC = std::allocator<uint8_t>>
-IBasicIntrospectableViewConstPtr<ALLOC> introspectable(ARRAY_VIEW value, const ALLOC& allocator = ALLOC())
+template <typename T, typename TRAITS, typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Array<T, TRAITS> value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<IntrospectableViewArray<ARRAY_VIEW, ALLOC>>(allocator, value);
+    return std::allocate_shared<IntrospectableViewArray<Array<T, TRAITS>, ALLOC>>(allocator, value);
 }
 
 // implementation of base classes methods
