@@ -42,7 +42,7 @@ TEST(ParamStructureSubtypeTest, testSubtype)
             "View<::subtypes::param_structure_subtype::ParameterizedSubtype> parameterizedSubtype() const");
     ASSERT_REGEX_MATCH_IN_FILE(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
-            "Array<const ::subtypes::param_structure_subtype::AnotherParameterizedSubtype, "
+            "ArrayView<const ::subtypes::param_structure_subtype::AnotherParameterizedSubtype, "
             "ZserioAnotherParameterizedSubtypeArrayArrayTraits> anotherParameterizedSubtypeArray");
 }
 

@@ -167,41 +167,41 @@ View<::test_object::std_allocator::CreatorNested> View<::test_object::std_alloca
             m_data->text};
 }
 
-Array<const ::test_object::std_allocator::CreatorNested, View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits> View<::test_object::std_allocator::CreatorObject>::nestedArray() const
+ArrayView<const ::test_object::std_allocator::CreatorNested, View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits> View<::test_object::std_allocator::CreatorObject>::nestedArray() const
 {
-    return Array<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits>{
+    return ArrayView<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits>{
             m_data->nestedArray, *this};
 }
 
-Array<const ::zserio::String> View<::test_object::std_allocator::CreatorObject>::textArray() const
+ArrayView<const ::zserio::String> View<::test_object::std_allocator::CreatorObject>::textArray() const
 {
-    return Array<const ::zserio::String>{
+    return ArrayView<const ::zserio::String>{
             m_data->textArray};
 }
 
-::zserio::Optional<Array<const ::zserio::BitBuffer>> View<::test_object::std_allocator::CreatorObject>::externArray() const
+::zserio::Optional<ArrayView<const ::zserio::BitBuffer>> View<::test_object::std_allocator::CreatorObject>::externArray() const
 {
     if (m_data->externArray.has_value())
     {
-        return ::zserio::Optional<Array<const ::zserio::BitBuffer>>{
+        return ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>>{
                 ::std::in_place, m_data->externArray.get_allocator(), *m_data->externArray};
     }
     else
     {
-        return ::zserio::Optional<Array<const ::zserio::BitBuffer>>(::std::nullopt, m_data->externArray.get_allocator());
+        return ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>>(::std::nullopt, m_data->externArray.get_allocator());
     }
 }
 
-::zserio::Optional<Array<const ::zserio::Bytes>> View<::test_object::std_allocator::CreatorObject>::bytesArray() const
+::zserio::Optional<ArrayView<const ::zserio::Bytes>> View<::test_object::std_allocator::CreatorObject>::bytesArray() const
 {
     if (m_data->bytesArray.has_value())
     {
-        return ::zserio::Optional<Array<const ::zserio::Bytes>>{
+        return ::zserio::Optional<ArrayView<const ::zserio::Bytes>>{
                 ::std::in_place, m_data->bytesArray.get_allocator(), *m_data->bytesArray};
     }
     else
     {
-        return ::zserio::Optional<Array<const ::zserio::Bytes>>(::std::nullopt, m_data->bytesArray.get_allocator());
+        return ::zserio::Optional<ArrayView<const ::zserio::Bytes>>(::std::nullopt, m_data->bytesArray.get_allocator());
     }
 }
 

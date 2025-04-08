@@ -18,7 +18,7 @@
 #include <zserio/IReflectableData.h>
 #include <zserio/View.h>
 #include <memory>
-#include <zserio/Array.h>
+#include <zserio/ArrayView.h>
 #include <zserio/BitBuffer.h>
 #include <zserio/Bytes.h>
 #include <zserio/String.h>
@@ -94,10 +94,10 @@ public:
     ::zserio::UInt32 value() const;
     View<::test_object::std_allocator::CreatorNested> nested() const;
     ::std::string_view text() const;
-    Array<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits> nestedArray() const;
-    Array<const ::zserio::String> textArray() const;
-    ::zserio::Optional<Array<const ::zserio::BitBuffer>> externArray() const;
-    ::zserio::Optional<Array<const ::zserio::Bytes>> bytesArray() const;
+    ArrayView<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits> nestedArray() const;
+    ArrayView<const ::zserio::String> textArray() const;
+    ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>> externArray() const;
+    ::zserio::Optional<ArrayView<const ::zserio::Bytes>> bytesArray() const;
     ::zserio::Optional<::zserio::Bool> optionalBool() const;
     ::zserio::Optional<View<::test_object::std_allocator::CreatorNested>> optionalNested() const;
 

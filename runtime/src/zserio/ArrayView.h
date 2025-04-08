@@ -14,7 +14,7 @@ namespace zserio
 {
 
 /**
- * Array type enum which defined type of the underlying array.
+ * ArrayView type enum which defined type of the underlying array.
  */
 enum ArrayType
 {
@@ -26,7 +26,7 @@ enum ArrayType
 };
 
 template <typename T, typename ARRAY_TRAITS = ArrayTraits<std::remove_cv_t<T>>>
-class Array
+class ArrayView
 {
 public:
     /** Typedef for the value type. */
@@ -35,7 +35,7 @@ public:
     /** Typedef for the array traits. */
     using Traits = ARRAY_TRAITS;
 
-    /** Forward declaration of the Array const iterator. */
+    /** Forward declaration of the ArrayView const iterator. */
     class ConstIterator;
 
     using ConstReverseIterator = std::reverse_iterator<ConstIterator>;
@@ -55,7 +55,7 @@ public:
      */
     template <typename OWNER_TYPE_ = OwnerType,
             std::enable_if_t<detail::is_dummy_array_owner_v<OWNER_TYPE_>, int> = 0>
-    explicit Array(Span<T> data) :
+    explicit ArrayView(Span<T> data) :
             m_data(data)
     {}
 
@@ -67,7 +67,7 @@ public:
      */
     template <typename OWNER_TYPE_ = OwnerType,
             std::enable_if_t<!detail::is_dummy_array_owner_v<OWNER_TYPE_>, int> = 0>
-    explicit Array(Span<T> data, const OwnerType& owner) :
+    explicit ArrayView(Span<T> data, const OwnerType& owner) :
             m_data(data),
             m_owner(owner)
     {}
@@ -77,11 +77,11 @@ public:
      *
      * \{
      */
-    ~Array() = default;
-    Array(const Array& other) = default;
-    Array& operator=(const Array& other) = default;
-    Array(Array&& other) = default;
-    Array& operator=(Array&& other) = default;
+    ~ArrayView() = default;
+    ArrayView(const ArrayView& other) = default;
+    ArrayView& operator=(const ArrayView& other) = default;
+    ArrayView(ArrayView&& other) = default;
+    ArrayView& operator=(ArrayView&& other) = default;
     /**
      * \}
      */
@@ -101,11 +101,11 @@ public:
     /**
      * Operator equality.
      *
-     * \param other Array to compare.
+     * \param other ArrayView to compare.
      *
      * \return True when the underlying raw arrays have same contents, false otherwise.
      */
-    bool operator==(const Array& other) const
+    bool operator==(const ArrayView& other) const
     {
         const size_t thisSize = size();
         const size_t otherSize = other.size();
@@ -128,11 +128,11 @@ public:
     /**
      * Operator less than.
      *
-     * \param other Array to compare.
+     * \param other ArrayView to compare.
      *
      * \return True when this array is less than the other array, false otherwise.
      */
-    bool operator<(const Array& other) const
+    bool operator<(const ArrayView& other) const
     {
         const size_t thisSize = size();
         const size_t otherSize = other.size();
@@ -156,11 +156,11 @@ public:
     /**
      * Operator inequality.
      *
-     * \param other Array to compare.
+     * \param other ArrayView to compare.
      *
      * \return True when the arrays have different contents, false otherwise.
      */
-    bool operator!=(const Array& other) const
+    bool operator!=(const ArrayView& other) const
     {
         return !operator==(other);
     }
@@ -168,11 +168,11 @@ public:
     /**
      * Operator greater than.
      *
-     * \param other Array to compare.
+     * \param other ArrayView to compare.
      *
      * \return True when this arrays is greater than the other array, false otherwise.
      */
-    bool operator>(const Array& other) const
+    bool operator>(const ArrayView& other) const
     {
         return other.operator<(*this);
     }
@@ -180,11 +180,11 @@ public:
     /**
      * Operator less than or equal.
      *
-     * \param other Array to compare.
+     * \param other ArrayView to compare.
      *
      * \return True when this arrays is less than or equal to the other array, false otherwise.
      */
-    bool operator<=(const Array& other) const
+    bool operator<=(const ArrayView& other) const
     {
         return !other.operator<(*this);
     }
@@ -192,11 +192,11 @@ public:
     /**
      * Operator greater than or equal.
      *
-     * \param other Array to compare.
+     * \param other ArrayView to compare.
      *
      * \return True when this arrays is greater than or equal to the other array, false otherwise.
      */
-    bool operator>=(const Array& other) const
+    bool operator>=(const ArrayView& other) const
     {
         return !operator<(other);
     }
@@ -231,7 +231,7 @@ public:
     {
         if (index >= m_data.size())
         {
-            throw CppRuntimeException("Array: Index ")
+            throw CppRuntimeException("ArrayView: Index ")
                     << index << " is out of bounds (" << m_data.size() << ")!";
         }
 
@@ -353,13 +353,13 @@ public:
     /** \} */
 
     /**
-     * Implementation of Array constant iterator.
+     * Implementation of ArrayView constant iterator.
      */
     class ConstIterator
     {
     public:
         using iterator_category = std::random_access_iterator_tag;
-        using value_type = decltype(std::declval<Array>().at(std::declval<size_t>()));
+        using value_type = decltype(std::declval<ArrayView>().at(std::declval<size_t>()));
         using difference_type = std::ptrdiff_t;
         using pointer = void;
         using reference = value_type; // we always return by value!
@@ -375,7 +375,7 @@ public:
             value_type value;
         };
 
-        ConstIterator(const Array* array, size_t index) :
+        ConstIterator(const ArrayView* array, size_t index) :
                 m_array(array),
                 m_index(index)
         {}
@@ -489,7 +489,7 @@ public:
         }
 
     private:
-        const Array* m_array;
+        const ArrayView* m_array;
         size_t m_index;
     };
 
@@ -502,7 +502,7 @@ namespace detail
 {
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
-void validate(const Array<T, ARRAY_TRAITS>& array, std::string_view fieldName, size_t schemaSize = 0)
+void validate(const ArrayView<T, ARRAY_TRAITS>& array, std::string_view fieldName, size_t schemaSize = 0)
 {
     if constexpr (ARRAY_TYPE == ArrayType::NORMAL || ARRAY_TYPE == ArrayType::ALIGNED)
     {
@@ -522,7 +522,7 @@ void validate(const Array<T, ARRAY_TRAITS>& array, std::string_view fieldName, s
 }
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
-BitSize bitSizeOf(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+BitSize bitSizeOf(const ArrayView<T, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
     BitSize endBitPosition = bitPosition;
 
@@ -551,10 +551,10 @@ struct DummyOffsetSetter
 };
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS, typename OFFSET_SETTER = DummyOffsetSetter>
-BitSize initializeOffsets(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition,
+BitSize initializeOffsets(const ArrayView<T, ARRAY_TRAITS>& array, BitSize bitPosition,
         const OFFSET_SETTER& offsetSetter = OFFSET_SETTER())
 {
-    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
+    using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
 
     BitSize endBitPosition = bitPosition;
 
@@ -571,7 +571,7 @@ BitSize initializeOffsets(const Array<T, ARRAY_TRAITS>& array, BitSize bitPositi
             offsetSetter.setOffset(i, endBitPosition / 8);
         }
 
-        using AtResult = decltype(std::declval<const Array<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
+        using AtResult = decltype(std::declval<const ArrayView<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
         if constexpr (std::is_same_v<View<ValueType>, AtResult>)
         {
             endBitPosition += initializeOffsets(array[i], endBitPosition);
@@ -655,7 +655,7 @@ void readWithTraits(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, size_t 
 }
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
-void write(BitStreamWriter& writer, const Array<T, ARRAY_TRAITS>& array)
+void write(BitStreamWriter& writer, const ArrayView<T, ARRAY_TRAITS>& array)
 {
     if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
     {
@@ -674,9 +674,9 @@ void write(BitStreamWriter& writer, const Array<T, ARRAY_TRAITS>& array)
 }
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
-BitSize bitSizeOfPacked(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
+BitSize bitSizeOfPacked(const ArrayView<T, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
-    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
+    using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
 
     static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
@@ -712,10 +712,10 @@ BitSize bitSizeOfPacked(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition
 }
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS, typename OFFSET_SETTER = DummyOffsetSetter>
-BitSize initializeOffsetsPacked(const Array<T, ARRAY_TRAITS>& array, BitSize bitPosition,
+BitSize initializeOffsetsPacked(const ArrayView<T, ARRAY_TRAITS>& array, BitSize bitPosition,
         const OFFSET_SETTER& offsetInitializer = OFFSET_SETTER())
 {
-    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
+    using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
 
     static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
@@ -744,7 +744,8 @@ BitSize initializeOffsetsPacked(const Array<T, ARRAY_TRAITS>& array, BitSize bit
                 offsetInitializer.setOffset(i, endBitPosition / 8);
             }
 
-            using AtResult = decltype(std::declval<const Array<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
+            using AtResult =
+                    decltype(std::declval<const ArrayView<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
             if constexpr (std::is_same_v<View<ValueType>, AtResult>)
             {
                 endBitPosition += initializeOffsets(context, array[i], endBitPosition);
@@ -760,9 +761,9 @@ BitSize initializeOffsetsPacked(const Array<T, ARRAY_TRAITS>& array, BitSize bit
 }
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
-void writePacked(BitStreamWriter& writer, const Array<T, ARRAY_TRAITS>& array)
+void writePacked(BitStreamWriter& writer, const ArrayView<T, ARRAY_TRAITS>& array)
 {
-    using ValueType = typename Array<T, ARRAY_TRAITS>::ValueType;
+    using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
 
     static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
@@ -855,7 +856,7 @@ void readPackedWithTraits(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, s
 } // namespace detail
 
 template <typename T, typename ARRAY_TRAITS>
-uint32_t calcHashCode(uint32_t seedValue, const Array<T, ARRAY_TRAITS>& array)
+uint32_t calcHashCode(uint32_t seedValue, const ArrayView<T, ARRAY_TRAITS>& array)
 {
     uint32_t result = seedValue;
     for (size_t i = 0; i < array.size(); ++i)

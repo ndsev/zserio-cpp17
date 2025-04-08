@@ -34,7 +34,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/Vector.h
     zserio/AllocatorHolder.h
     zserio/Any.h
-    zserio/Array.h
+    zserio/ArrayView.h
     zserio/ArrayLengthException.h
     zserio/ArrayTraits.h
     zserio/BitBuffer.h

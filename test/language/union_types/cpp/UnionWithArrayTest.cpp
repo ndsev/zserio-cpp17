@@ -73,7 +73,7 @@ TEST_F(UnionWithArrayTest, array8)
 
     zserio::View view(data);
     ASSERT_THROW(view.array16(), zserio::BadVariantAccess);
-    zserio::Array<const Data8> expectedArray8View(value);
+    zserio::ArrayView<const Data8> expectedArray8View(value);
     ASSERT_EQ(expectedArray8View, view.array8());
 }
 
@@ -87,7 +87,7 @@ TEST_F(UnionWithArrayTest, array16)
 
     zserio::View view(data);
     ASSERT_THROW(view.array8(), zserio::BadVariantAccess);
-    zserio::Array<const zserio::Int16> expectedArray16View(value);
+    zserio::ArrayView<const zserio::Int16> expectedArray16View(value);
     ASSERT_EQ(expectedArray16View, view.array16());
 }
 

@@ -18,7 +18,7 @@
 #include <zserio/pmr/IReflectableData.h>
 #include <zserio/View.h>
 #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
-#include <zserio/Array.h>
+#include <zserio/ArrayView.h>
 #include <zserio/Types.h>
 #include <zserio/pmr/BitBuffer.h>
 #include <zserio/pmr/Bytes.h>
@@ -94,10 +94,10 @@ public:
     ::zserio::UInt32 value() const;
     View<::test_object::polymorphic_allocator::CreatorNested> nested() const;
     ::std::string_view text() const;
-    Array<const ::test_object::polymorphic_allocator::CreatorNested, ZserioNestedArrayArrayTraits> nestedArray() const;
-    Array<const ::zserio::pmr::String> textArray() const;
-    ::zserio::pmr::Optional<Array<const ::zserio::pmr::BitBuffer>> externArray() const;
-    ::zserio::pmr::Optional<Array<const ::zserio::pmr::Bytes>> bytesArray() const;
+    ArrayView<const ::test_object::polymorphic_allocator::CreatorNested, ZserioNestedArrayArrayTraits> nestedArray() const;
+    ArrayView<const ::zserio::pmr::String> textArray() const;
+    ::zserio::pmr::Optional<ArrayView<const ::zserio::pmr::BitBuffer>> externArray() const;
+    ::zserio::pmr::Optional<ArrayView<const ::zserio::pmr::Bytes>> bytesArray() const;
     ::zserio::pmr::Optional<::zserio::Bool> optionalBool() const;
     ::zserio::pmr::Optional<View<::test_object::polymorphic_allocator::CreatorNested>> optionalNested() const;
 

@@ -19,7 +19,7 @@
 #include <zserio/pmr/ITypeInfo.h>
 #include <zserio/pmr/IReflectableData.h>
 #include <zserio/View.h>
-#include <zserio/Array.h>
+#include <zserio/ArrayView.h>
 #include <zserio/Types.h>
 #include <zserio/pmr/Vector.h>
 
@@ -90,7 +90,7 @@ public:
 
     ::zserio::UInt8 param() const;
 
-    Array<const ::zserio::UInt32> array() const;
+    ArrayView<const ::zserio::UInt32> array() const;
 
     ::test_object::polymorphic_allocator::ReflectableUtilChoice::ChoiceTag zserioChoiceTag() const;
     const ::test_object::polymorphic_allocator::ReflectableUtilChoice& zserioData() const;

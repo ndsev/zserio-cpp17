@@ -70,9 +70,9 @@ View<::test_object::std_allocator::ReflectableUtilChoice>::View(const ::test_obj
     return m_param_;
 }
 
-Array<const ::zserio::UInt32> View<::test_object::std_allocator::ReflectableUtilChoice>::array() const
+ArrayView<const ::zserio::UInt32> View<::test_object::std_allocator::ReflectableUtilChoice>::array() const
 {
-    return Array<const ::zserio::UInt32>{get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(*m_data)};
+    return ArrayView<const ::zserio::UInt32>{get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(*m_data)};
 }
 
 ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag View<::test_object::std_allocator::ReflectableUtilChoice>::zserioChoiceTag() const

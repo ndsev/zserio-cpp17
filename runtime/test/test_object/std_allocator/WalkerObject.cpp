@@ -149,22 +149,22 @@ View<::test_object::std_allocator::WalkerObject>::View(const ::test_object::std_
             m_data->text};
 }
 
-Array<const ::test_object::std_allocator::WalkerUnion> View<::test_object::std_allocator::WalkerObject>::unionArray() const
+ArrayView<const ::test_object::std_allocator::WalkerUnion> View<::test_object::std_allocator::WalkerObject>::unionArray() const
 {
-    return Array<const ::test_object::std_allocator::WalkerUnion>{
+    return ArrayView<const ::test_object::std_allocator::WalkerUnion>{
             m_data->unionArray};
 }
 
-::zserio::Optional<Array<const ::test_object::std_allocator::WalkerUnion>> View<::test_object::std_allocator::WalkerObject>::optionalUnionArray() const
+::zserio::Optional<ArrayView<const ::test_object::std_allocator::WalkerUnion>> View<::test_object::std_allocator::WalkerObject>::optionalUnionArray() const
 {
     if (m_data->optionalUnionArray.has_value())
     {
-        return ::zserio::Optional<Array<const ::test_object::std_allocator::WalkerUnion>>{
+        return ::zserio::Optional<ArrayView<const ::test_object::std_allocator::WalkerUnion>>{
                 ::std::in_place, m_data->optionalUnionArray.get_allocator(), *m_data->optionalUnionArray};
     }
     else
     {
-        return ::zserio::Optional<Array<const ::test_object::std_allocator::WalkerUnion>>(::std::nullopt, m_data->optionalUnionArray.get_allocator());
+        return ::zserio::Optional<ArrayView<const ::test_object::std_allocator::WalkerUnion>>(::std::nullopt, m_data->optionalUnionArray.get_allocator());
     }
 }
 

@@ -122,7 +122,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/AllocatorHolderTest.cpp
     zserio/AnyTest.cpp
     zserio/ArrayLengthExceptionTest.cpp
-    zserio/ArrayTest.cpp
+    zserio/ArrayViewTest.cpp
     zserio/BitBufferTest.cpp
     zserio/BitFieldUtilTest.cpp
     zserio/BitPositionUtilTest.cpp

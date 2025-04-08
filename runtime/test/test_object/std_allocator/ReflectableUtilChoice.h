@@ -19,7 +19,7 @@
 #include <zserio/ITypeInfo.h>
 #include <zserio/IReflectableData.h>
 #include <zserio/View.h>
-#include <zserio/Array.h>
+#include <zserio/ArrayView.h>
 #include <zserio/Types.h>
 #include <zserio/Vector.h>
 
@@ -90,7 +90,7 @@ public:
 
     ::zserio::UInt8 param() const;
 
-    Array<const ::zserio::UInt32> array() const;
+    ArrayView<const ::zserio::UInt32> array() const;
 
     ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag zserioChoiceTag() const;
     const ::test_object::std_allocator::ReflectableUtilChoice& zserioData() const;

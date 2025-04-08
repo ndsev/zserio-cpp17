@@ -225,7 +225,7 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
 </#macro>
 
 <#macro array_type_name field>
-    Array<<#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}<#t>
+    ArrayView<<#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}<#t>
             <#if array_needs_custom_traits(field)>
             , <@array_traits_name field/><#t>
             </#if>
@@ -233,7 +233,7 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
 </#macro>
 
 <#macro array_type_full_name compoundName field>
-    Array<<#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}<#t>
+    ArrayView<<#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}<#t>
             <#if array_needs_custom_traits(field)>
             , View<${compoundName}>::<@array_traits_name field/><#t>
             </#if>

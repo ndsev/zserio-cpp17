@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "zserio/Array.h"
+#include "zserio/ArrayView.h"
 #include "zserio/DataView.h"
 
 namespace zserio
@@ -41,9 +41,9 @@ public:
             m_param(param)
     {}
 
-    Array<const UInt32> array() const
+    ArrayView<const UInt32> array() const
     {
-        return Array<const UInt32>(m_data.array);
+        return ArrayView<const UInt32>(m_data.array);
     }
 
     View<TestParam> param() const

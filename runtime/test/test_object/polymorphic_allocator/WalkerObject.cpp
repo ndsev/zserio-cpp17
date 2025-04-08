@@ -149,22 +149,22 @@ View<::test_object::polymorphic_allocator::WalkerObject>::View(const ::test_obje
             m_data->text};
 }
 
-Array<const ::test_object::polymorphic_allocator::WalkerUnion> View<::test_object::polymorphic_allocator::WalkerObject>::unionArray() const
+ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion> View<::test_object::polymorphic_allocator::WalkerObject>::unionArray() const
 {
-    return Array<const ::test_object::polymorphic_allocator::WalkerUnion>{
+    return ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion>{
             m_data->unionArray};
 }
 
-::zserio::pmr::Optional<Array<const ::test_object::polymorphic_allocator::WalkerUnion>> View<::test_object::polymorphic_allocator::WalkerObject>::optionalUnionArray() const
+::zserio::pmr::Optional<ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion>> View<::test_object::polymorphic_allocator::WalkerObject>::optionalUnionArray() const
 {
     if (m_data->optionalUnionArray.has_value())
     {
-        return ::zserio::pmr::Optional<Array<const ::test_object::polymorphic_allocator::WalkerUnion>>{
+        return ::zserio::pmr::Optional<ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion>>{
                 ::std::in_place, m_data->optionalUnionArray.get_allocator(), *m_data->optionalUnionArray};
     }
     else
     {
-        return ::zserio::pmr::Optional<Array<const ::test_object::polymorphic_allocator::WalkerUnion>>(::std::nullopt, m_data->optionalUnionArray.get_allocator());
+        return ::zserio::pmr::Optional<ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion>>(::std::nullopt, m_data->optionalUnionArray.get_allocator());
     }
 }
 

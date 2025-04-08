@@ -1,7 +1,7 @@
 #include <algorithm>
 
 #include "gtest/gtest.h"
-#include "zserio/Array.h"
+#include "zserio/ArrayView.h"
 #include "zserio/Types.h"
 
 namespace zserio
@@ -150,11 +150,11 @@ TEST(ArrayTest, boolArray)
     Vector<Bool> rawArray1{true, false};
     Vector<Bool> rawArray2{true, true};
 
-    Array<const Bool> array1(rawArray1);
+    ArrayView<const Bool> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<const Bool> array2(rawArray2);
+    ArrayView<const Bool> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -175,7 +175,7 @@ TEST(ArrayTest, boolArray)
 TEST(ArrayTest, boolPackedArray)
 {
     Vector<Bool> rawArray{true, false, true, false, true};
-    Array<const Bool> array(rawArray);
+    ArrayView<const Bool> array(rawArray);
 
     const BitSize packedBitSize = detail::bitSizeOfPacked<ArrayType::AUTO>(array);
     BitBuffer buffer(packedBitSize);
@@ -195,11 +195,11 @@ TEST(ArrayTest, int8Array)
     Vector<Int8> rawArray1{0, 13};
     Vector<Int8> rawArray2{0, 42};
 
-    Array<const Int8> array1(rawArray1);
+    ArrayView<const Int8> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<const Int8> array2(rawArray2);
+    ArrayView<const Int8> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -220,7 +220,7 @@ TEST(ArrayTest, int8Array)
 TEST(ArrayTest, int8PackedArray)
 {
     Vector<Int8> rawArray = {-4, -3, -1, 0, 2, 4, 6, 8, 10, 10, 11};
-    Array<const Int8> array(rawArray);
+    ArrayView<const Int8> array(rawArray);
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 8 + 10 * (maxBitNumber 2 + 1)
@@ -241,7 +241,7 @@ TEST(ArrayTest, int8PackedArray)
     ASSERT_FALSE(array.empty());
 
     Vector<Int8> emptyRawArray;
-    Array<const Int8> emptyArray(emptyRawArray);
+    ArrayView<const Int8> emptyArray(emptyRawArray);
     ASSERT_TRUE(emptyArray.empty());
 
     ASSERT_THROW(emptyArray.front(), CppRuntimeException);
@@ -317,11 +317,11 @@ TEST(ArrayTest, fixedDynInt16Array)
     Vector<DynInt16<9>> rawArray1{-2, 13};
     Vector<DynInt16<9>> rawArray2{-2, 42};
 
-    Array<const DynInt16<9>> array1(rawArray1);
+    ArrayView<const DynInt16<9>> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<const DynInt16<9>> array2(rawArray2);
+    ArrayView<const DynInt16<9>> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -346,11 +346,11 @@ TEST(ArrayTest, variableDynInt16Array)
 
     VarDynInt16Owner owner;
 
-    Array<const DynInt16<>, VarDynInt16ArrayTraits> array1(rawArray1, owner);
+    ArrayView<const DynInt16<>, VarDynInt16ArrayTraits> array1(rawArray1, owner);
     ASSERT_EQ(rawArray1.at(0), array1.at(0).value());
     ASSERT_EQ(rawArray1.at(1), array1.at(1).value());
 
-    Array<const DynInt16<>, VarDynInt16ArrayTraits> array2(rawArray2, owner);
+    ArrayView<const DynInt16<>, VarDynInt16ArrayTraits> array2(rawArray2, owner);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -374,7 +374,7 @@ TEST(ArrayTest, variableDynInt16PackedArray)
     Vector<DynInt16<>> rawArray{-2, 0, 2, 4, 6, 8, 10};
 
     VarDynInt16Owner owner;
-    Array<const DynInt16<>, VarDynInt16ArrayTraits> array(rawArray, owner);
+    ArrayView<const DynInt16<>, VarDynInt16ArrayTraits> array(rawArray, owner);
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 10 + 6 * (maxBitNumber 2 + 1)
@@ -399,11 +399,11 @@ TEST(ArrayTest, varUInt16Array)
     Vector<VarUInt16> rawArray1{0, 13};
     Vector<VarUInt16> rawArray2{0, 42};
 
-    Array<const VarUInt16> array1(rawArray1);
+    ArrayView<const VarUInt16> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    Array<const VarUInt16> array2(rawArray2);
+    ArrayView<const VarUInt16> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -424,7 +424,7 @@ TEST(ArrayTest, varUInt16Array)
 TEST(ArrayTest, varUInt16PackedArray)
 {
     Vector<VarUInt16> rawArray{0, 2, 4, 6, 8, 10, 12};
-    Array<const VarUInt16> array(rawArray);
+    ArrayView<const VarUInt16> array(rawArray);
 
     const BitSize packedBitSize = detail::bitSizeOfPacked<ArrayType::AUTO>(array);
     BitBuffer buffer(packedBitSize);
@@ -444,8 +444,8 @@ TEST(ArrayTest, float16Array)
     Vector<Float16> rawArray1{-9.0F, 0.0F, 10.0F};
     Vector<Float16> rawArray2{-9.0F, 0.0F, 10.1F};
 
-    Array<const Float16> array1(rawArray1);
-    Array<const Float16> array2(rawArray2);
+    ArrayView<const Float16> array1(rawArray1);
+    ArrayView<const Float16> array2(rawArray2);
 
     ASSERT_EQ(16, ArrayTraits<Float16>::bitSizeOf());
 
@@ -470,8 +470,8 @@ TEST(ArrayTest, bytesArray)
     Vector<Bytes> rawArray1{{{{1, 255}}, {{127, 128}}}};
     Vector<Bytes> rawArray2{{{{1, 255}}, {{127, 129}}}};
 
-    Array<const Bytes> array1(rawArray1);
-    Array<const Bytes> array2(rawArray2);
+    ArrayView<const Bytes> array1(rawArray1);
+    ArrayView<const Bytes> array2(rawArray2);
 
     ASSERT_TRUE(std::equal(
             rawArray1.begin(), rawArray1.end(), array1.zserioData().begin(), array1.zserioData().end()));
@@ -505,8 +505,8 @@ TEST(ArrayTest, stringArray)
     Vector<std::string> rawArray1 = {"String0", "String1", "String2"};
     Vector<std::string> rawArray2 = {"String0", "String1", "String3"};
 
-    Array<const std::string> array1(rawArray1);
-    Array<const std::string> array2(rawArray2);
+    ArrayView<const std::string> array1(rawArray1);
+    ArrayView<const std::string> array2(rawArray2);
 
     constexpr bool isStringView = std::is_same_v<std::string_view, decltype(array1.at(0))>;
     ASSERT_TRUE(isStringView);
@@ -536,11 +536,11 @@ TEST(ArrayTest, testObjectArray)
     Vector<TestObject> rawArray1{TestObject{0}, TestObject{13}};
     Vector<TestObject> rawArray2{TestObject{0}, TestObject{42}};
 
-    Array<const TestObject> array1(rawArray1);
+    ArrayView<const TestObject> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0).field, array1.at(0).field());
     ASSERT_EQ(rawArray1.at(1).field, array1.at(1).field());
 
-    Array<const TestObject> array2(rawArray2);
+    ArrayView<const TestObject> array2(rawArray2);
 
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
@@ -592,7 +592,7 @@ TEST(ArrayTest, testObjectArray)
 TEST(ArrayTest, testObjectPackedArray)
 {
     Vector<TestObject> rawArray{TestObject{0}, TestObject{2}, TestObject{4}, TestObject{6}, TestObject{8}};
-    Array<const TestObject> array(rawArray);
+    ArrayView<const TestObject> array(rawArray);
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 32 + 4 * (maxBitNumber 2 + 1)

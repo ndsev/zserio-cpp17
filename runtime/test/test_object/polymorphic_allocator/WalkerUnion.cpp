@@ -73,9 +73,9 @@ View<::test_object::polymorphic_allocator::WalkerUnion>::View(const ::test_objec
     return ::std::string_view{get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(*m_data)};
 }
 
-Array<const ::test_object::polymorphic_allocator::WalkerNested> View<::test_object::polymorphic_allocator::WalkerUnion>::nestedArray() const
+ArrayView<const ::test_object::polymorphic_allocator::WalkerNested> View<::test_object::polymorphic_allocator::WalkerUnion>::nestedArray() const
 {
-    return Array<const ::test_object::polymorphic_allocator::WalkerNested>{get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(*m_data)};
+    return ArrayView<const ::test_object::polymorphic_allocator::WalkerNested>{get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(*m_data)};
 }
 
 ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag View<::test_object::polymorphic_allocator::WalkerUnion>::zserioChoiceTag() const

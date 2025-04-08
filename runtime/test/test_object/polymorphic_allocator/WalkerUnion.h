@@ -19,7 +19,7 @@
 #include <zserio/pmr/ITypeInfo.h>
 #include <zserio/pmr/IReflectableData.h>
 #include <zserio/View.h>
-#include <zserio/Array.h>
+#include <zserio/ArrayView.h>
 #include <zserio/Types.h>
 #include <zserio/pmr/String.h>
 #include <zserio/pmr/Vector.h>
@@ -98,7 +98,7 @@ public:
 
     ::zserio::UInt32 value() const;
     ::std::string_view text() const;
-    Array<const ::test_object::polymorphic_allocator::WalkerNested> nestedArray() const;
+    ArrayView<const ::test_object::polymorphic_allocator::WalkerNested> nestedArray() const;
 
     ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag zserioChoiceTag() const;
     const ::test_object::polymorphic_allocator::WalkerUnion& zserioData() const;

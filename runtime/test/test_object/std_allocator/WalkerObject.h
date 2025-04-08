@@ -18,7 +18,7 @@
 #include <zserio/IReflectableData.h>
 #include <zserio/View.h>
 #include <memory>
-#include <zserio/Array.h>
+#include <zserio/ArrayView.h>
 #include <zserio/String.h>
 #include <zserio/Types.h>
 #include <zserio/Vector.h>
@@ -79,8 +79,8 @@ public:
     ::zserio::UInt32 identifier() const;
     ::zserio::Optional<View<::test_object::std_allocator::WalkerNested>> nested() const;
     ::std::string_view text() const;
-    Array<const ::test_object::std_allocator::WalkerUnion> unionArray() const;
-    ::zserio::Optional<Array<const ::test_object::std_allocator::WalkerUnion>> optionalUnionArray() const;
+    ArrayView<const ::test_object::std_allocator::WalkerUnion> unionArray() const;
+    ::zserio::Optional<ArrayView<const ::test_object::std_allocator::WalkerUnion>> optionalUnionArray() const;
     ::zserio::UInt8 choiceSelector() const;
     View<::test_object::std_allocator::WalkerChoice> choiceField() const;
 
