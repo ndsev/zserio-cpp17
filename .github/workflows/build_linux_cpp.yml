@@ -123,7 +123,7 @@ jobs:
     - name: Download Zserio bundle artifact
       uses: actions/download-artifact@v4
       with:
-        name: zserio-java8
+        name: zserio-java11
         path: distr
 
     - name: Run Zserio integration tests
