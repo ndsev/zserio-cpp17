@@ -169,6 +169,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/TypeInfoUtilTest.cpp
     zserio/TypesTest.cpp
     zserio/UnionCaseExceptionTest.cpp
+    zserio/UniquePtrTest.cpp
     zserio/ValidationExceptionTest.cpp
     zserio/ValidationSqliteUtilTest.cpp
     zserio/VariantTest.cpp
