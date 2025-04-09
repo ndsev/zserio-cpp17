@@ -33,17 +33,29 @@ namespace std_allocator
 
 struct ReflectableObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     ReflectableObject() noexcept;
-    explicit ReflectableObject(const AllocatorType& allocator) noexcept;
+    explicit ReflectableObject(const allocator_type& allocator) noexcept;
+
+    ReflectableObject(ReflectableObject&&) = default;
+    ReflectableObject(ReflectableObject&& other_, const allocator_type& allocator);
+
+    ReflectableObject(const ReflectableObject&) = default;
+    ReflectableObject(const ReflectableObject& other_, const allocator_type& allocator);
+
+    ReflectableObject& operator=(ReflectableObject&&) = default;
+    ReflectableObject& operator=(const ReflectableObject&) = default;
+
+    ~ReflectableObject() = default;
 
     explicit ReflectableObject(
             ::zserio::String stringField_,
             ::test_object::std_allocator::ReflectableNested reflectableNested_,
             ::test_object::std_allocator::ReflectableEnum reflectableEnum_,
             ::test_object::std_allocator::ReflectableChoice reflectableChoice_,
-            ::test_object::std_allocator::ReflectableUnion reflectableUnion_);
+            ::test_object::std_allocator::ReflectableUnion reflectableUnion_,
+            const allocator_type& allocator = {});
 
     ::zserio::String stringField;
     ::test_object::std_allocator::ReflectableNested reflectableNested;

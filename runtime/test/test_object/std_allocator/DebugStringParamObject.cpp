@@ -21,16 +21,25 @@ namespace std_allocator
 {
 
 DebugStringParamObject::DebugStringParamObject() noexcept :
-        DebugStringParamObject(AllocatorType{})
+        DebugStringParamObject(allocator_type{})
 {}
 
-DebugStringParamObject::DebugStringParamObject(const AllocatorType& allocator) noexcept :
+DebugStringParamObject::DebugStringParamObject(const allocator_type& allocator) noexcept :
         text(::std::string_view{"test"}, allocator)
 {}
 
+DebugStringParamObject::DebugStringParamObject(DebugStringParamObject&& other_, const allocator_type& allocator) :
+        text(std::move(other_.text), allocator)
+{}
+
+DebugStringParamObject::DebugStringParamObject(const DebugStringParamObject& other_, const allocator_type& allocator) :
+        text(other_.text, allocator)
+{}
+
 DebugStringParamObject::DebugStringParamObject(
-        ::zserio::String text_) :
-        text(::std::move(text_))
+        ::zserio::String text_,
+        const allocator_type& allocator) :
+        text(::std::move(text_), allocator)
 {}
 
 bool operator==(const ::test_object::std_allocator::DebugStringParamObject& lhs, const ::test_object::std_allocator::DebugStringParamObject& rhs)
@@ -220,7 +229,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::DebugStringPar
         "test_object.std_allocator.DebugStringParamObject",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::DebugStringParamObject>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::DebugStringParamObject>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -240,7 +249,7 @@ template <>
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::DebugStringParamObject& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::std_allocator::DebugStringParamObject& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::DebugStringParamObject>(), alloc),
                 m_object(object)
         {}
@@ -263,7 +272,7 @@ template <>
         const ::test_object::std_allocator::DebugStringParamObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -276,7 +285,7 @@ template <>
         using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::DebugStringParamObject& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::std_allocator::DebugStringParamObject& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::DebugStringParamObject>(), alloc),
                 m_object(object)
         {}
@@ -333,7 +342,7 @@ template <>
         ::test_object::std_allocator::DebugStringParamObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -342,9 +351,9 @@ template <>
     class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::DebugStringParamObject, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::DebugStringParamObject>& view_, const ::std::allocator<uint8_t>& allocator) :
+        explicit Introspectable(const ::zserio::View<::test_object::std_allocator::DebugStringParamObject>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::DebugStringParamObject, ::std::allocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -366,7 +375,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

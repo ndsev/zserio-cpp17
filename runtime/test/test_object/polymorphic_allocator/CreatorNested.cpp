@@ -20,10 +20,10 @@ namespace polymorphic_allocator
 {
 
 CreatorNested::CreatorNested() noexcept :
-        CreatorNested(AllocatorType{})
+        CreatorNested(allocator_type{})
 {}
 
-CreatorNested::CreatorNested(const AllocatorType& allocator) noexcept :
+CreatorNested::CreatorNested(const allocator_type& allocator) noexcept :
         value(),
         text(allocator),
         externData(allocator),
@@ -32,17 +32,36 @@ CreatorNested::CreatorNested(const AllocatorType& allocator) noexcept :
         creatorBitmask()
 {}
 
+CreatorNested::CreatorNested(CreatorNested&& other_, const allocator_type& allocator) :
+        value(other_.value),
+        text(std::move(other_.text), allocator),
+        externData(std::move(other_.externData), allocator),
+        bytesData(std::move(other_.bytesData), allocator),
+        creatorEnum(other_.creatorEnum),
+        creatorBitmask(other_.creatorBitmask)
+{}
+
+CreatorNested::CreatorNested(const CreatorNested& other_, const allocator_type& allocator) :
+        value(other_.value),
+        text(other_.text, allocator),
+        externData(other_.externData, allocator),
+        bytesData(other_.bytesData, allocator),
+        creatorEnum(other_.creatorEnum),
+        creatorBitmask(other_.creatorBitmask)
+{}
+
 CreatorNested::CreatorNested(
         ::zserio::UInt32 value_,
         ::zserio::pmr::String text_,
         ::zserio::pmr::BitBuffer externData_,
         ::zserio::pmr::Bytes bytesData_,
         ::test_object::polymorphic_allocator::CreatorEnum creatorEnum_,
-        ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask_) :
+        ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask_,
+        const allocator_type& allocator) :
         value(value_),
-        text(::std::move(text_)),
-        externData(::std::move(externData_)),
-        bytesData(::std::move(bytesData_)),
+        text(::std::move(text_), allocator),
+        externData(::std::move(externData_), allocator),
+        bytesData(::std::move(bytesData_), allocator),
         creatorEnum(creatorEnum_),
         creatorBitmask(creatorBitmask_)
 {}
@@ -416,7 +435,7 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::C
         "test_object.polymorphic_allocator.CreatorNested",
         [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::CreatorNested>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::CreatorNested>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -436,7 +455,7 @@ template <>
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::polymorphic_allocator::CreatorNested& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::polymorphic_allocator::CreatorNested& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::CreatorNested>(), alloc),
                 m_object(object)
         {}
@@ -479,7 +498,7 @@ template <>
         const ::test_object::polymorphic_allocator::CreatorNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -492,7 +511,7 @@ template <>
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::polymorphic_allocator::CreatorNested& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::polymorphic_allocator::CreatorNested& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::CreatorNested>(), alloc),
                 m_object(object)
         {}
@@ -639,7 +658,7 @@ template <>
         ::test_object::polymorphic_allocator::CreatorNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -648,9 +667,9 @@ template <>
     class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::CreatorNested, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::CreatorNested>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator) :
+        explicit Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::CreatorNested>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::CreatorNested, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::pmr::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -692,7 +711,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

@@ -35,10 +35,21 @@ namespace std_allocator
 
 struct WalkerObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     WalkerObject() noexcept;
-    explicit WalkerObject(const AllocatorType& allocator) noexcept;
+    explicit WalkerObject(const allocator_type& allocator) noexcept;
+
+    WalkerObject(WalkerObject&&) = default;
+    WalkerObject(WalkerObject&& other_, const allocator_type& allocator);
+
+    WalkerObject(const WalkerObject&) = default;
+    WalkerObject(const WalkerObject& other_, const allocator_type& allocator);
+
+    WalkerObject& operator=(WalkerObject&&) = default;
+    WalkerObject& operator=(const WalkerObject&) = default;
+
+    ~WalkerObject() = default;
 
     explicit WalkerObject(
             ::zserio::UInt32 identifier_,
@@ -47,7 +58,8 @@ struct WalkerObject
             ::zserio::Vector<::test_object::std_allocator::WalkerUnion> unionArray_,
             ::zserio::Optional<::zserio::Vector<::test_object::std_allocator::WalkerUnion>> optionalUnionArray_,
             ::zserio::UInt8 choiceSelector_,
-            ::test_object::std_allocator::WalkerChoice choiceField_);
+            ::test_object::std_allocator::WalkerChoice choiceField_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 identifier;
     ::zserio::Optional<::test_object::std_allocator::WalkerNested> nested;

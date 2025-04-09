@@ -20,10 +20,10 @@ namespace std_allocator
 {
 
 CreatorObject::CreatorObject() noexcept :
-        CreatorObject(AllocatorType{})
+        CreatorObject(allocator_type{})
 {}
 
-CreatorObject::CreatorObject(const AllocatorType& allocator) noexcept :
+CreatorObject::CreatorObject(const allocator_type& allocator) noexcept :
         value(),
         nested(allocator),
         text(allocator),
@@ -35,6 +35,30 @@ CreatorObject::CreatorObject(const AllocatorType& allocator) noexcept :
         optionalNested(allocator)
 {}
 
+CreatorObject::CreatorObject(CreatorObject&& other_, const allocator_type& allocator) :
+        value(other_.value),
+        nested(std::move(other_.nested), allocator),
+        text(std::move(other_.text), allocator),
+        nestedArray(std::move(other_.nestedArray), allocator),
+        textArray(std::move(other_.textArray), allocator),
+        externArray(std::move(other_.externArray), allocator),
+        bytesArray(std::move(other_.bytesArray), allocator),
+        optionalBool(std::move(other_.optionalBool), allocator),
+        optionalNested(std::move(other_.optionalNested), allocator)
+{}
+
+CreatorObject::CreatorObject(const CreatorObject& other_, const allocator_type& allocator) :
+        value(other_.value),
+        nested(other_.nested, allocator),
+        text(other_.text, allocator),
+        nestedArray(other_.nestedArray, allocator),
+        textArray(other_.textArray, allocator),
+        externArray(other_.externArray, allocator),
+        bytesArray(other_.bytesArray, allocator),
+        optionalBool(other_.optionalBool, allocator),
+        optionalNested(other_.optionalNested, allocator)
+{}
+
 CreatorObject::CreatorObject(
         ::zserio::UInt32 value_,
         ::test_object::std_allocator::CreatorNested nested_,
@@ -44,16 +68,17 @@ CreatorObject::CreatorObject(
         ::zserio::Optional<::zserio::Vector<::zserio::BitBuffer>> externArray_,
         ::zserio::Optional<::zserio::Vector<::zserio::Bytes>> bytesArray_,
         ::zserio::Optional<::zserio::Bool> optionalBool_,
-        ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested_) :
+        ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested_,
+        const allocator_type& allocator) :
         value(value_),
-        nested(::std::move(nested_)),
-        text(::std::move(text_)),
-        nestedArray(::std::move(nestedArray_)),
-        textArray(::std::move(textArray_)),
-        externArray(::std::move(externArray_)),
-        bytesArray(::std::move(bytesArray_)),
-        optionalBool(::std::move(optionalBool_)),
-        optionalNested(::std::move(optionalNested_))
+        nested(::std::move(nested_), allocator),
+        text(::std::move(text_), allocator),
+        nestedArray(::std::move(nestedArray_), allocator),
+        textArray(::std::move(textArray_), allocator),
+        externArray(::std::move(externArray_), allocator),
+        bytesArray(::std::move(bytesArray_), allocator),
+        optionalBool(::std::move(optionalBool_), allocator),
+        optionalNested(::std::move(optionalNested_), allocator)
 {}
 
 bool operator==(const ::test_object::std_allocator::CreatorObject& lhs, const ::test_object::std_allocator::CreatorObject& rhs)
@@ -442,12 +467,12 @@ View<::test_object::std_allocator::CreatorObject> read(BitStreamReader& reader, 
     read<ArrayType::AUTO>(reader, data.textArray);
     if (reader.readBool())
     {
-        data.externArray.emplace(data.externArray.get_allocator());
+        data.externArray.emplace();
         read<ArrayType::AUTO>(reader, *data.externArray);
     }
     if (reader.readBool())
     {
-        data.bytesArray.emplace(data.bytesArray.get_allocator());
+        data.bytesArray.emplace();
         read<ArrayType::AUTO>(reader, *data.bytesArray);
     }
     if (reader.readBool())
@@ -457,7 +482,7 @@ View<::test_object::std_allocator::CreatorObject> read(BitStreamReader& reader, 
     }
     if (reader.readBool())
     {
-        data.optionalNested.emplace(data.optionalNested.get_allocator());
+        data.optionalNested.emplace();
         (void)read(reader, *data.optionalNested, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(view.value())));
     }
     return view;
@@ -634,7 +659,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::CreatorObject,
         "test_object.std_allocator.CreatorObject",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::CreatorObject>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::CreatorObject>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -654,7 +679,7 @@ template <>
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::CreatorObject& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::std_allocator::CreatorObject& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::CreatorObject>(), alloc),
                 m_object(object)
         {}
@@ -729,7 +754,7 @@ template <>
         const ::test_object::std_allocator::CreatorObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -742,7 +767,7 @@ template <>
         using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::CreatorObject& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::std_allocator::CreatorObject& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::CreatorObject>(), alloc),
                 m_object(object)
         {}
@@ -1007,7 +1032,7 @@ template <>
         ::test_object::std_allocator::CreatorObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -1016,9 +1041,9 @@ template <>
     class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::CreatorObject, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::CreatorObject>& view_, const ::std::allocator<uint8_t>& allocator) :
+        explicit Introspectable(const ::zserio::View<::test_object::std_allocator::CreatorObject>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::CreatorObject, ::std::allocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -1083,7 +1108,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

@@ -28,13 +28,25 @@ namespace polymorphic_allocator
 
 struct ReflectableNested
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     ReflectableNested() noexcept;
-    explicit ReflectableNested(const AllocatorType& allocator) noexcept;
+    explicit ReflectableNested(const allocator_type& allocator) noexcept;
+
+    ReflectableNested(ReflectableNested&&) = default;
+    ReflectableNested(ReflectableNested&& other_, const allocator_type& allocator);
+
+    ReflectableNested(const ReflectableNested&) = default;
+    ReflectableNested(const ReflectableNested& other_, const allocator_type& allocator);
+
+    ReflectableNested& operator=(ReflectableNested&&) = default;
+    ReflectableNested& operator=(const ReflectableNested&) = default;
+
+    ~ReflectableNested() = default;
 
     explicit ReflectableNested(
-            ::zserio::UInt31 value_);
+            ::zserio::UInt31 value_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt31 value;
 };

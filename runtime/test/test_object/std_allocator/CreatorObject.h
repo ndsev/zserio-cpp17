@@ -35,10 +35,21 @@ namespace std_allocator
 
 struct CreatorObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     CreatorObject() noexcept;
-    explicit CreatorObject(const AllocatorType& allocator) noexcept;
+    explicit CreatorObject(const allocator_type& allocator) noexcept;
+
+    CreatorObject(CreatorObject&&) = default;
+    CreatorObject(CreatorObject&& other_, const allocator_type& allocator);
+
+    CreatorObject(const CreatorObject&) = default;
+    CreatorObject(const CreatorObject& other_, const allocator_type& allocator);
+
+    CreatorObject& operator=(CreatorObject&&) = default;
+    CreatorObject& operator=(const CreatorObject&) = default;
+
+    ~CreatorObject() = default;
 
     explicit CreatorObject(
             ::zserio::UInt32 value_,
@@ -49,7 +60,8 @@ struct CreatorObject
             ::zserio::Optional<::zserio::Vector<::zserio::BitBuffer>> externArray_,
             ::zserio::Optional<::zserio::Vector<::zserio::Bytes>> bytesArray_,
             ::zserio::Optional<::zserio::Bool> optionalBool_,
-            ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested_);
+            ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 value;
     ::test_object::std_allocator::CreatorNested nested;

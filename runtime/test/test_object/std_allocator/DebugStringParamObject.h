@@ -28,13 +28,25 @@ namespace std_allocator
 
 struct DebugStringParamObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     DebugStringParamObject() noexcept;
-    explicit DebugStringParamObject(const AllocatorType& allocator) noexcept;
+    explicit DebugStringParamObject(const allocator_type& allocator) noexcept;
+
+    DebugStringParamObject(DebugStringParamObject&&) = default;
+    DebugStringParamObject(DebugStringParamObject&& other_, const allocator_type& allocator);
+
+    DebugStringParamObject(const DebugStringParamObject&) = default;
+    DebugStringParamObject(const DebugStringParamObject& other_, const allocator_type& allocator);
+
+    DebugStringParamObject& operator=(DebugStringParamObject&&) = default;
+    DebugStringParamObject& operator=(const DebugStringParamObject&) = default;
+
+    ~DebugStringParamObject() = default;
 
     explicit DebugStringParamObject(
-            ::zserio::String text_);
+            ::zserio::String text_,
+            const allocator_type& allocator = {});
 
     ::zserio::String text;
 };

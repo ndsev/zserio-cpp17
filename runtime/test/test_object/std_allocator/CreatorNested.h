@@ -33,10 +33,21 @@ namespace std_allocator
 
 struct CreatorNested
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     CreatorNested() noexcept;
-    explicit CreatorNested(const AllocatorType& allocator) noexcept;
+    explicit CreatorNested(const allocator_type& allocator) noexcept;
+
+    CreatorNested(CreatorNested&&) = default;
+    CreatorNested(CreatorNested&& other_, const allocator_type& allocator);
+
+    CreatorNested(const CreatorNested&) = default;
+    CreatorNested(const CreatorNested& other_, const allocator_type& allocator);
+
+    CreatorNested& operator=(CreatorNested&&) = default;
+    CreatorNested& operator=(const CreatorNested&) = default;
+
+    ~CreatorNested() = default;
 
     explicit CreatorNested(
             ::zserio::UInt32 value_,
@@ -44,7 +55,8 @@ struct CreatorNested
             ::zserio::BitBuffer externData_,
             ::zserio::Bytes bytesData_,
             ::test_object::std_allocator::CreatorEnum creatorEnum_,
-            ::test_object::std_allocator::CreatorBitmask creatorBitmask_);
+            ::test_object::std_allocator::CreatorBitmask creatorBitmask_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 value;
     ::zserio::String text;

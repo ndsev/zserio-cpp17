@@ -33,17 +33,29 @@ namespace polymorphic_allocator
 
 struct ReflectableObject
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     ReflectableObject() noexcept;
-    explicit ReflectableObject(const AllocatorType& allocator) noexcept;
+    explicit ReflectableObject(const allocator_type& allocator) noexcept;
+
+    ReflectableObject(ReflectableObject&&) = default;
+    ReflectableObject(ReflectableObject&& other_, const allocator_type& allocator);
+
+    ReflectableObject(const ReflectableObject&) = default;
+    ReflectableObject(const ReflectableObject& other_, const allocator_type& allocator);
+
+    ReflectableObject& operator=(ReflectableObject&&) = default;
+    ReflectableObject& operator=(const ReflectableObject&) = default;
+
+    ~ReflectableObject() = default;
 
     explicit ReflectableObject(
             ::zserio::pmr::String stringField_,
             ::test_object::polymorphic_allocator::ReflectableNested reflectableNested_,
             ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum_,
             ::test_object::polymorphic_allocator::ReflectableChoice reflectableChoice_,
-            ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion_);
+            ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion_,
+            const allocator_type& allocator = {});
 
     ::zserio::pmr::String stringField;
     ::test_object::polymorphic_allocator::ReflectableNested reflectableNested;

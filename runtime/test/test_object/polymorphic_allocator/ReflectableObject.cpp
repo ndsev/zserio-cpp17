@@ -20,10 +20,10 @@ namespace polymorphic_allocator
 {
 
 ReflectableObject::ReflectableObject() noexcept :
-        ReflectableObject(AllocatorType{})
+        ReflectableObject(allocator_type{})
 {}
 
-ReflectableObject::ReflectableObject(const AllocatorType& allocator) noexcept :
+ReflectableObject::ReflectableObject(const allocator_type& allocator) noexcept :
         stringField(allocator),
         reflectableNested(allocator),
         reflectableEnum(),
@@ -31,17 +31,34 @@ ReflectableObject::ReflectableObject(const AllocatorType& allocator) noexcept :
         reflectableUnion(allocator)
 {}
 
+ReflectableObject::ReflectableObject(ReflectableObject&& other_, const allocator_type& allocator) :
+        stringField(std::move(other_.stringField), allocator),
+        reflectableNested(std::move(other_.reflectableNested), allocator),
+        reflectableEnum(other_.reflectableEnum),
+        reflectableChoice(std::move(other_.reflectableChoice), allocator),
+        reflectableUnion(std::move(other_.reflectableUnion), allocator)
+{}
+
+ReflectableObject::ReflectableObject(const ReflectableObject& other_, const allocator_type& allocator) :
+        stringField(other_.stringField, allocator),
+        reflectableNested(other_.reflectableNested, allocator),
+        reflectableEnum(other_.reflectableEnum),
+        reflectableChoice(other_.reflectableChoice, allocator),
+        reflectableUnion(other_.reflectableUnion, allocator)
+{}
+
 ReflectableObject::ReflectableObject(
         ::zserio::pmr::String stringField_,
         ::test_object::polymorphic_allocator::ReflectableNested reflectableNested_,
         ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum_,
         ::test_object::polymorphic_allocator::ReflectableChoice reflectableChoice_,
-        ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion_) :
-        stringField(::std::move(stringField_)),
-        reflectableNested(::std::move(reflectableNested_)),
+        ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion_,
+        const allocator_type& allocator) :
+        stringField(::std::move(stringField_), allocator),
+        reflectableNested(::std::move(reflectableNested_), allocator),
         reflectableEnum(reflectableEnum_),
-        reflectableChoice(::std::move(reflectableChoice_)),
-        reflectableUnion(::std::move(reflectableUnion_))
+        reflectableChoice(::std::move(reflectableChoice_), allocator),
+        reflectableUnion(::std::move(reflectableUnion_), allocator)
 {}
 
 bool operator==(const ::test_object::polymorphic_allocator::ReflectableObject& lhs, const ::test_object::polymorphic_allocator::ReflectableObject& rhs)
@@ -364,7 +381,7 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
         "test_object.polymorphic_allocator.ReflectableObject",
         [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableObject>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableObject>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -384,7 +401,7 @@ template <>
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableObject>(), alloc),
                 m_object(object)
         {}
@@ -423,7 +440,7 @@ template <>
         const ::test_object::polymorphic_allocator::ReflectableObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -436,7 +453,7 @@ template <>
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::polymorphic_allocator::ReflectableObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::polymorphic_allocator::ReflectableObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableObject>(), alloc),
                 m_object(object)
         {}
@@ -565,7 +582,7 @@ template <>
         ::test_object::polymorphic_allocator::ReflectableObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -574,9 +591,9 @@ template <>
     class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::ReflectableObject>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator) :
+        explicit Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::ReflectableObject>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::pmr::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -605,7 +622,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

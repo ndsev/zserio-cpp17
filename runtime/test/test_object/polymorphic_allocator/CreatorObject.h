@@ -35,10 +35,21 @@ namespace polymorphic_allocator
 
 struct CreatorObject
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     CreatorObject() noexcept;
-    explicit CreatorObject(const AllocatorType& allocator) noexcept;
+    explicit CreatorObject(const allocator_type& allocator) noexcept;
+
+    CreatorObject(CreatorObject&&) = default;
+    CreatorObject(CreatorObject&& other_, const allocator_type& allocator);
+
+    CreatorObject(const CreatorObject&) = default;
+    CreatorObject(const CreatorObject& other_, const allocator_type& allocator);
+
+    CreatorObject& operator=(CreatorObject&&) = default;
+    CreatorObject& operator=(const CreatorObject&) = default;
+
+    ~CreatorObject() = default;
 
     explicit CreatorObject(
             ::zserio::UInt32 value_,
@@ -49,7 +60,8 @@ struct CreatorObject
             ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>> externArray_,
             ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::Bytes>> bytesArray_,
             ::zserio::pmr::Optional<::zserio::Bool> optionalBool_,
-            ::zserio::pmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested_);
+            ::zserio::pmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 value;
     ::test_object::polymorphic_allocator::CreatorNested nested;

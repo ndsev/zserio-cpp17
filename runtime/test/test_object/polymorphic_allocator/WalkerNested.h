@@ -27,13 +27,25 @@ namespace polymorphic_allocator
 
 struct WalkerNested
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     WalkerNested() noexcept;
-    explicit WalkerNested(const AllocatorType& allocator) noexcept;
+    explicit WalkerNested(const allocator_type& allocator) noexcept;
+
+    WalkerNested(WalkerNested&&) = default;
+    WalkerNested(WalkerNested&& other_, const allocator_type& allocator);
+
+    WalkerNested(const WalkerNested&) = default;
+    WalkerNested(const WalkerNested& other_, const allocator_type& allocator);
+
+    WalkerNested& operator=(WalkerNested&&) = default;
+    WalkerNested& operator=(const WalkerNested&) = default;
+
+    ~WalkerNested() = default;
 
     explicit WalkerNested(
-            ::zserio::pmr::String text_);
+            ::zserio::pmr::String text_,
+            const allocator_type& allocator = {});
 
     ::zserio::pmr::String text;
 };

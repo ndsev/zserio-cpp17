@@ -29,14 +29,26 @@ namespace std_allocator
 
 struct ReflectableUtilObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     ReflectableUtilObject() noexcept;
-    explicit ReflectableUtilObject(const AllocatorType& allocator) noexcept;
+    explicit ReflectableUtilObject(const allocator_type& allocator) noexcept;
+
+    ReflectableUtilObject(ReflectableUtilObject&&) = default;
+    ReflectableUtilObject(ReflectableUtilObject&& other_, const allocator_type& allocator);
+
+    ReflectableUtilObject(const ReflectableUtilObject&) = default;
+    ReflectableUtilObject(const ReflectableUtilObject& other_, const allocator_type& allocator);
+
+    ReflectableUtilObject& operator=(ReflectableUtilObject&&) = default;
+    ReflectableUtilObject& operator=(const ReflectableUtilObject&) = default;
+
+    ~ReflectableUtilObject() = default;
 
     explicit ReflectableUtilObject(
             ::zserio::UInt8 choiceParam_,
-            ::test_object::std_allocator::ReflectableUtilChoice reflectableUtilChoice_);
+            ::test_object::std_allocator::ReflectableUtilChoice reflectableUtilChoice_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt8 choiceParam;
     ::test_object::std_allocator::ReflectableUtilChoice reflectableUtilChoice;

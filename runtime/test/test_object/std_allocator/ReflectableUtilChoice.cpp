@@ -272,7 +272,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
         "test_object.std_allocator.ReflectableUtilChoice",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::ReflectableUtilChoice>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::ReflectableUtilChoice>>(allocator);
         },
         templateName, templateArguments,
         fields, parameters, functions, "param()", cases
@@ -292,7 +292,7 @@ template <>
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::ReflectableUtilChoice& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::std_allocator::ReflectableUtilChoice& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilChoice>(), alloc),
                 m_object(object)
         {}
@@ -327,7 +327,7 @@ template <>
         const ::test_object::std_allocator::ReflectableUtilChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -339,7 +339,7 @@ template <>
         using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::ReflectableUtilChoice& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::std_allocator::ReflectableUtilChoice& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilChoice>(), alloc),
                 m_object(object)
         {}
@@ -379,7 +379,7 @@ template <>
         {
             if (name == "array")
             {
-                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(get_allocator());
+                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>();
                 return ::zserio::reflectableArray(get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
@@ -410,7 +410,7 @@ template <>
         ::test_object::std_allocator::ReflectableUtilChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -419,9 +419,9 @@ template <>
     class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilChoice, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::ReflectableUtilChoice>& view_, const ::std::allocator<uint8_t>& allocator) :
+        Introspectable(const ::zserio::View<::test_object::std_allocator::ReflectableUtilChoice>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilChoice, ::std::allocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -454,7 +454,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

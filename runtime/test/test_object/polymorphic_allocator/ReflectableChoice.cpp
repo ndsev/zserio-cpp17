@@ -226,7 +226,7 @@ View<::test_object::polymorphic_allocator::ReflectableChoice> read(BitStreamRead
     switch (view.param())
     {
     case ::test_object::polymorphic_allocator::ReflectableEnum::VALUE1:
-        data.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(data.get_allocator());
+        data.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>();
         read(reader, data.get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>());
         break;
     case ::test_object::polymorphic_allocator::ReflectableEnum::VALUE2:
@@ -316,7 +316,7 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
         "test_object.polymorphic_allocator.ReflectableChoice",
         [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableChoice>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableChoice>>(allocator);
         },
         templateName, templateArguments,
         fields, parameters, functions, "param()", cases
@@ -336,7 +336,7 @@ template <>
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableChoice& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::polymorphic_allocator::ReflectableChoice& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableChoice>(), alloc),
                 m_object(object)
         {}
@@ -378,7 +378,7 @@ template <>
         const ::test_object::polymorphic_allocator::ReflectableChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -390,7 +390,7 @@ template <>
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
         using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::polymorphic_allocator::ReflectableChoice& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::polymorphic_allocator::ReflectableChoice& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::ReflectableChoice>(), alloc),
                 m_object(object)
         {}
@@ -446,7 +446,7 @@ template <>
         {
             if (name == "valueStr")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>();
                 return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
             }
             if (name == "value32")
@@ -484,7 +484,7 @@ template <>
         ::test_object::polymorphic_allocator::ReflectableChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -493,9 +493,9 @@ template <>
     class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableChoice, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::ReflectableChoice>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator) :
+        Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::ReflectableChoice>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableChoice, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::pmr::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -534,7 +534,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

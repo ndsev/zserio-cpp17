@@ -28,13 +28,25 @@ namespace polymorphic_allocator
 
 struct DebugStringParamObject
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     DebugStringParamObject() noexcept;
-    explicit DebugStringParamObject(const AllocatorType& allocator) noexcept;
+    explicit DebugStringParamObject(const allocator_type& allocator) noexcept;
+
+    DebugStringParamObject(DebugStringParamObject&&) = default;
+    DebugStringParamObject(DebugStringParamObject&& other_, const allocator_type& allocator);
+
+    DebugStringParamObject(const DebugStringParamObject&) = default;
+    DebugStringParamObject(const DebugStringParamObject& other_, const allocator_type& allocator);
+
+    DebugStringParamObject& operator=(DebugStringParamObject&&) = default;
+    DebugStringParamObject& operator=(const DebugStringParamObject&) = default;
+
+    ~DebugStringParamObject() = default;
 
     explicit DebugStringParamObject(
-            ::zserio::pmr::String text_);
+            ::zserio::pmr::String text_,
+            const allocator_type& allocator = {});
 
     ::zserio::pmr::String text;
 };
