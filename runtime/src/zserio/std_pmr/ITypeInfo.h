@@ -1,8 +1,9 @@
 #ifndef ZSERIO_STD_PMR_I_TYPE_INFO_H_INC
 #define ZSERIO_STD_PMR_I_TYPE_INFO_H_INC
 
-#include "zserio/ITypeInfo.h"
 #include <memory_resource>
+
+#include "zserio/ITypeInfo.h"
 
 namespace zserio
 {

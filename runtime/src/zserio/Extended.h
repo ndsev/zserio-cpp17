@@ -16,6 +16,25 @@ template <typename T>
 class Extended
 {
 public:
+    Extended(Extended&& other) = default;
+
+    template <typename ALLOC>
+    Extended(Extended&& other, const ALLOC& allocator) :
+            m_value(std::move(other.m_value), allocator),
+            m_isPresent(other.m_isPresent)
+    {}
+
+    Extended(const Extended& other) = default;
+
+    template <typename ALLOC>
+    Extended(const Extended& other, const ALLOC& allocator) :
+            m_value(other.m_value, allocator),
+            m_isPresent(other.m_isPresent)
+    {}
+
+    Extended& operator=(Extended&& other) = default;
+    Extended& operator=(const Extended& other) = default;
+
     /**
      * In-place extended value constructor from T's arguments.
      */

@@ -1,8 +1,9 @@
 #ifndef ZSERIO_STD_PMR_ANY_H_INC
 #define ZSERIO_STD_PMR_ANY_H_INC
 
-#include "zserio/Any.h"
 #include <memory_resource>
+
+#include "zserio/Any.h"
 
 namespace zserio
 {

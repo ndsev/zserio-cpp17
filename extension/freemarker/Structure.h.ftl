@@ -36,6 +36,15 @@ struct ${name}
 
     ${name}() noexcept;
     explicit ${name}(const allocator_type& allocator) noexcept;
+
+    ${name}(${name}&& other) noexcept = default;
+    ${name}(${name}&& other, const allocator_type& allocator) noexcept;
+
+    ${name}(const ${name}& other) noexcept = default;
+    ${name}(const ${name}& other, const allocator_type& allocator) noexcept;
+
+    ${name}& operator=(${name}&& other) noexcept = default;
+    ${name}& operator=(const ${name}& other) noexcept = default;
 <#list fieldList>
 
     explicit ${name}(
