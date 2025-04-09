@@ -535,13 +535,11 @@ void CreatorAdapter<ALLOC>::beginObject()
                 const CppType cppType = m_creator->getFieldType(m_keyStack.back()).getCppType();
                 if (cppType == CppType::BIT_BUFFER)
                 {
-                    m_objectValueAdapter =
-                            std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator());
+                    m_objectValueAdapter = std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator());
                 }
                 else if (cppType == CppType::BYTES)
                 {
-                    m_objectValueAdapter =
-                            std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator());
+                    m_objectValueAdapter = std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator());
                 }
                 else
                 {
@@ -553,13 +551,11 @@ void CreatorAdapter<ALLOC>::beginObject()
                 const CppType cppType = m_creator->getElementType().getCppType();
                 if (cppType == CppType::BIT_BUFFER)
                 {
-                    m_objectValueAdapter =
-                            allocate_unique<BitBufferAdapter<ALLOC>>(get_allocator());
+                    m_objectValueAdapter = allocate_unique<BitBufferAdapter<ALLOC>>(get_allocator());
                 }
                 else if (cppType == CppType::BYTES)
                 {
-                    m_objectValueAdapter =
-                            allocate_unique<BytesAdapter<ALLOC>>(get_allocator());
+                    m_objectValueAdapter = allocate_unique<BytesAdapter<ALLOC>>(get_allocator());
                 }
                 else
                 {

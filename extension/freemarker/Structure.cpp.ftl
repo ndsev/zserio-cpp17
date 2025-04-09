@@ -57,12 +57,16 @@ ${name}::${name}(const allocator_type&<#if structure_fields_need_allocator(field
 </#list>
 {}
 
-${name}::${name}(${name}&& other, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+${name}::${name}(${name}&&<#if fieldList?has_content> other_</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
 <#list fieldList>
     <#lt> :
     <#items as field>
-        <@field_data_member_name field/>(std::move(other.<@field_data_member_name field/>)<#rt>
-        <#if structure_field_needs_allocator(field)>, allocator</#if><#t>
+        <@field_data_member_name field/>(<#rt>
+        <#if structure_field_needs_allocator(field)>
+        <#lt>std::move(other_.<@field_data_member_name field/>), allocator<#rt>
+        <#else>
+        <#lt>other_.<@field_data_member_name field/><#rt>
+        </#if>
         <#lt>)<#sep>,</#sep>
     </#items>
 <#else>
@@ -70,11 +74,11 @@ ${name}::${name}(${name}&& other, const allocator_type&<#if structure_fields_nee
 </#list>
 {}
 
-${name}::${name}(const ${name}& other, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+${name}::${name}(const ${name}&<#if fieldList?has_content> other_</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
 <#list fieldList>
     <#lt> :
     <#items as field>
-        <@field_data_member_name field/>(other.<@field_data_member_name field/><#rt>
+        <@field_data_member_name field/>(other_.<@field_data_member_name field/><#rt>
         <#if structure_field_needs_allocator(field)>, allocator</#if><#t>
         <#lt>)<#sep>,</#sep>
     </#items>
@@ -817,7 +821,7 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
     {
     public:
-        Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& alloc = {}) :
+        explicit Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
                         view_, alloc)
         {}
