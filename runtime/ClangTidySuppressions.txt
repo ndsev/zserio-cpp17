@@ -133,8 +133,7 @@ google-explicit-constructor:src/zserio/Span.h:163
 google-explicit-constructor:src/zserio/Span.h:176
 
 # This is necessary for low level implementation of UniquePtrDeleter
-google-explicit-constructor:src/zserio/UniquePtr.h:57
-google-explicit-constructor:src/zserio/UniquePtr.h:68
+google-explicit-constructor:src/zserio/UniquePtr.h:55
 
 # PropagatingPolymorphicAllocator follows std::polymorphic:_allocator so the ctors should be implicit.
 google-explicit-constructor:src/zserio/pmr/PropagatingPolymorphicAllocator.h:35

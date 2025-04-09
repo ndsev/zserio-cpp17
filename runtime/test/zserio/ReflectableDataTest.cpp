@@ -42,7 +42,7 @@ using return_type_t = typename return_type<FUNC>::type;
 
 } // namespace detail
 
-class ReflectableTest : public ::testing::Test
+class ReflectableDataTest : public ::testing::Test
 {
 protected:
     template <typename ARRAY>
@@ -527,140 +527,140 @@ protected:
     }
 };
 
-TEST_F(ReflectableTest, boolReflectable)
+TEST_F(ReflectableDataTest, boolReflectable)
 {
     const Bool value = true;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getBool);
 }
 
-TEST_F(ReflectableTest, int8Reflectable)
+TEST_F(ReflectableDataTest, int8Reflectable)
 {
     const Int8 value = -12;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8);
 }
 
-TEST_F(ReflectableTest, int16Reflectable)
+TEST_F(ReflectableDataTest, int16Reflectable)
 {
     const Int16 value = -1234;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
-TEST_F(ReflectableTest, int32Reflectable)
+TEST_F(ReflectableDataTest, int32Reflectable)
 {
     const Int32 value = -123456;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
-TEST_F(ReflectableTest, int64Reflectable)
+TEST_F(ReflectableDataTest, int64Reflectable)
 {
     const Int64 value = -1234567890;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
-TEST_F(ReflectableTest, uint8Reflectable)
+TEST_F(ReflectableDataTest, uint8Reflectable)
 {
     const UInt8 value = 0xFF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8);
 }
 
-TEST_F(ReflectableTest, uint16Reflectable)
+TEST_F(ReflectableDataTest, uint16Reflectable)
 {
     const UInt16 value = 0xFFFF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
-TEST_F(ReflectableTest, uint32Reflectable)
+TEST_F(ReflectableDataTest, uint32Reflectable)
 {
     const UInt32 value = 0xFFFFFFFF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
-TEST_F(ReflectableTest, uint64Reflectable)
+TEST_F(ReflectableDataTest, uint64Reflectable)
 {
     const UInt64 value = 0xFFFFFFFFFFFF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
-TEST_F(ReflectableTest, fixedSignedBitField5) // mapped to int8_t
+TEST_F(ReflectableDataTest, fixedSignedBitField5) // mapped to int8_t
 {
     const Int5 value = 15;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8);
 }
 
-TEST_F(ReflectableTest, fixedSignedBitField15) // mapped to int16_t
+TEST_F(ReflectableDataTest, fixedSignedBitField15) // mapped to int16_t
 {
     const Int15 value = -15;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
-TEST_F(ReflectableTest, fixedSignedBitField31) // mapped to int32_t
+TEST_F(ReflectableDataTest, fixedSignedBitField31) // mapped to int32_t
 {
     const Int31 value = -12345678;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
-TEST_F(ReflectableTest, fixedSignedBitField60) // mapped to int64_t
+TEST_F(ReflectableDataTest, fixedSignedBitField60) // mapped to int64_t
 {
     const Int60 value = 1234567890;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
-TEST_F(ReflectableTest, fixedUnsignedBitField7) // mapped to uint8_t
+TEST_F(ReflectableDataTest, fixedUnsignedBitField7) // mapped to uint8_t
 {
     const UInt7 value = 0x2F;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8);
 }
 
-TEST_F(ReflectableTest, fixedUnsignedBitField9) // mapped to uint16_t
+TEST_F(ReflectableDataTest, fixedUnsignedBitField9) // mapped to uint16_t
 {
     const UInt9 value = 0x1FF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
-TEST_F(ReflectableTest, fixedUnsignedBitField31) // mapped to uint32_t
+TEST_F(ReflectableDataTest, fixedUnsignedBitField31) // mapped to uint32_t
 {
     const UInt31 value = UINT32_MAX >> 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
-TEST_F(ReflectableTest, fixedUnsignedBitField33) // mapped to uint64_t
+TEST_F(ReflectableDataTest, fixedUnsignedBitField33) // mapped to uint64_t
 {
     const UInt33 value = static_cast<uint64_t>(UINT32_MAX) << 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
-TEST_F(ReflectableTest, dynamicSignedBitField5) // mapped to int8_t
+TEST_F(ReflectableDataTest, dynamicSignedBitField5) // mapped to int8_t
 {
     const DynInt8<> value = 15;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8);
 }
 
-TEST_F(ReflectableTest, dynamicSignedBitField15) // mapped to int16_t
+TEST_F(ReflectableDataTest, dynamicSignedBitField15) // mapped to int16_t
 {
     const DynInt16<> value = -15;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
-TEST_F(ReflectableTest, dynamicSignedBitField31) // mapped to int32_t
+TEST_F(ReflectableDataTest, dynamicSignedBitField31) // mapped to int32_t
 {
     const uint8_t numBits = 31;
     const DynInt32<> value = -12345678;
@@ -669,7 +669,7 @@ TEST_F(ReflectableTest, dynamicSignedBitField31) // mapped to int32_t
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
-TEST_F(ReflectableTest, dynamicSignedBitField60) // mapped to int64_t
+TEST_F(ReflectableDataTest, dynamicSignedBitField60) // mapped to int64_t
 {
     const uint8_t numBits = 60;
     const DynInt64<> value = 1234567890;
@@ -678,147 +678,147 @@ TEST_F(ReflectableTest, dynamicSignedBitField60) // mapped to int64_t
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
-TEST_F(ReflectableTest, dynamicUnsignedBitField7) // mapped to uint8_t
+TEST_F(ReflectableDataTest, dynamicUnsignedBitField7) // mapped to uint8_t
 {
     const DynUInt8<> value = 0x2F;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8);
 }
 
-TEST_F(ReflectableTest, dynamicUnsignedBitField9) // mapped to uint16_t
+TEST_F(ReflectableDataTest, dynamicUnsignedBitField9) // mapped to uint16_t
 {
     const DynUInt16<> value = 0x1FF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
-TEST_F(ReflectableTest, dynamicUnsignedBitField31) // mapped to uint32_t
+TEST_F(ReflectableDataTest, dynamicUnsignedBitField31) // mapped to uint32_t
 {
     const DynUInt32<> value = UINT32_MAX >> 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
-TEST_F(ReflectableTest, dynamicUnsignedBitField33) // mapped to uint64_t
+TEST_F(ReflectableDataTest, dynamicUnsignedBitField33) // mapped to uint64_t
 {
     const DynUInt64<> value = static_cast<uint64_t>(UINT32_MAX) << 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
-TEST_F(ReflectableTest, varint16Reflectable)
+TEST_F(ReflectableDataTest, varint16Reflectable)
 {
     const VarInt16 value = -1234;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
 
-TEST_F(ReflectableTest, varint32Reflectable)
+TEST_F(ReflectableDataTest, varint32Reflectable)
 {
     const VarInt32 value = 54321;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
 }
 
-TEST_F(ReflectableTest, varint64Reflectable)
+TEST_F(ReflectableDataTest, varint64Reflectable)
 {
     const VarInt64 value = -87654321;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
-TEST_F(ReflectableTest, varintReflectable)
+TEST_F(ReflectableDataTest, varintReflectable)
 {
     const VarInt value = INT64_MAX;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
 }
 
-TEST_F(ReflectableTest, varuint16Reflectable)
+TEST_F(ReflectableDataTest, varuint16Reflectable)
 {
     const VarUInt16 value = 1234;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
-TEST_F(ReflectableTest, varuint32Reflectable)
+TEST_F(ReflectableDataTest, varuint32Reflectable)
 {
     const VarUInt32 value = 0x1FFFFFFF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
-TEST_F(ReflectableTest, varuint64Reflectable)
+TEST_F(ReflectableDataTest, varuint64Reflectable)
 {
     const VarUInt64 value = 4242424242;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
-TEST_F(ReflectableTest, varuintReflectable)
+TEST_F(ReflectableDataTest, varuintReflectable)
 {
     const VarUInt value = UINT64_MAX;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
 
-TEST_F(ReflectableTest, varsizeReflectable)
+TEST_F(ReflectableDataTest, varsizeReflectable)
 {
     const VarSize value = (UINT32_C(1) << (7U + 7 + 7 + 7 + 3)) - 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
-TEST_F(ReflectableTest, float16Reflectable)
+TEST_F(ReflectableDataTest, float16Reflectable)
 {
     const Float16 value = 2.0F;
     auto reflectablePtr = reflectable(value);
     checkFloatingPoint(value, reflectablePtr, &IReflectableData::getFloat);
 }
 
-TEST_F(ReflectableTest, float32Reflectable)
+TEST_F(ReflectableDataTest, float32Reflectable)
 {
     const Float32 value = 1.2F;
     auto reflectablePtr = reflectable(value);
     checkFloatingPoint(value, reflectablePtr, &IReflectableData::getFloat);
 }
 
-TEST_F(ReflectableTest, float64Reflectable)
+TEST_F(ReflectableDataTest, float64Reflectable)
 {
     const Float64 value = 1.2;
     auto reflectablePtr = reflectable(value);
     checkFloatingPoint(value, reflectablePtr, &IReflectableData::getDouble);
 }
 
-TEST_F(ReflectableTest, bytesReflectable)
+TEST_F(ReflectableDataTest, bytesReflectable)
 {
     const Bytes value{{0, 127, 128, 255}};
     auto reflectablePtr = reflectable(value);
     checkBytes(value, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, stringReflectable)
+TEST_F(ReflectableDataTest, stringReflectable)
 {
     const std::string value = "some longer string value to have a chance that some allocation hopefully occurs";
     auto reflectablePtr = reflectable(value);
     checkString(value, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, stringViewReflectable)
+TEST_F(ReflectableDataTest, stringViewReflectable)
 {
     auto view = std::string_view("some text as a string view");
     auto reflectablePtr = reflectable(view);
     checkString(view, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, bitBufferReflectable)
+TEST_F(ReflectableDataTest, bitBufferReflectable)
 {
     const BitBuffer value = BitBuffer{std::vector<uint8_t>({0xAB, 0xF0}), 12};
     auto reflectablePtr = reflectable(value);
     checkBitBuffer(value, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, boolConstArray)
+TEST_F(ReflectableDataTest, boolConstArray)
 {
     const auto rawArray = std::vector<Bool>({true, false, true, false});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -827,7 +827,7 @@ TEST_F(ReflectableTest, boolConstArray)
     });
 }
 
-TEST_F(ReflectableTest, boolArray)
+TEST_F(ReflectableDataTest, boolArray)
 {
     auto rawArray = std::vector<Bool>({true, false, true, false});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -836,7 +836,7 @@ TEST_F(ReflectableTest, boolArray)
     });
 }
 
-TEST_F(ReflectableTest, int8ConstArray)
+TEST_F(ReflectableDataTest, int8ConstArray)
 {
     const auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -848,7 +848,7 @@ TEST_F(ReflectableTest, int8ConstArray)
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, int8Array)
+TEST_F(ReflectableDataTest, int8Array)
 {
     auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -875,7 +875,7 @@ TEST_F(ReflectableTest, int8Array)
     ASSERT_THROW(reflectablePtr->setAt(Any(Int8(-42)), 2), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, int16ConstArray)
+TEST_F(ReflectableDataTest, int16ConstArray)
 {
     const auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -884,7 +884,7 @@ TEST_F(ReflectableTest, int16ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, int16Array)
+TEST_F(ReflectableDataTest, int16Array)
 {
     auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
     auto reflectable = reflectableArray(rawArray);
@@ -893,7 +893,7 @@ TEST_F(ReflectableTest, int16Array)
     });
 }
 
-TEST_F(ReflectableTest, int32ConstArray)
+TEST_F(ReflectableDataTest, int32ConstArray)
 {
     const auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -902,7 +902,7 @@ TEST_F(ReflectableTest, int32ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, int32Array)
+TEST_F(ReflectableDataTest, int32Array)
 {
     auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -911,7 +911,7 @@ TEST_F(ReflectableTest, int32Array)
     });
 }
 
-TEST_F(ReflectableTest, int64ConstArray)
+TEST_F(ReflectableDataTest, int64ConstArray)
 {
     const auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
@@ -920,7 +920,7 @@ TEST_F(ReflectableTest, int64ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, int64Array)
+TEST_F(ReflectableDataTest, int64Array)
 {
     auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
@@ -929,7 +929,7 @@ TEST_F(ReflectableTest, int64Array)
     });
 }
 
-TEST_F(ReflectableTest, uint8ConstArray)
+TEST_F(ReflectableDataTest, uint8ConstArray)
 {
     const auto rawArray = std::vector<UInt8>({10, 20, 30, 40});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -938,7 +938,7 @@ TEST_F(ReflectableTest, uint8ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, uint8Array)
+TEST_F(ReflectableDataTest, uint8Array)
 {
     auto rawArray = std::vector<UInt8>{{10, 20, 30, 40}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -947,7 +947,7 @@ TEST_F(ReflectableTest, uint8Array)
     });
 }
 
-TEST_F(ReflectableTest, uint16ConstArray)
+TEST_F(ReflectableDataTest, uint16ConstArray)
 {
     const auto rawArray = std::vector<UInt16>({100, 200, 300, 400});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -956,7 +956,7 @@ TEST_F(ReflectableTest, uint16ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, uint16Array)
+TEST_F(ReflectableDataTest, uint16Array)
 {
     auto rawArray = std::vector<UInt16>{{100, 200, 300, 400}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -965,7 +965,7 @@ TEST_F(ReflectableTest, uint16Array)
     });
 }
 
-TEST_F(ReflectableTest, uint32ConstArray)
+TEST_F(ReflectableDataTest, uint32ConstArray)
 {
     const auto rawArray = std::vector<UInt32>({10000, 20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -974,7 +974,7 @@ TEST_F(ReflectableTest, uint32ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, uint32Array)
+TEST_F(ReflectableDataTest, uint32Array)
 {
     auto rawArray = std::vector<UInt32>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -983,7 +983,7 @@ TEST_F(ReflectableTest, uint32Array)
     });
 }
 
-TEST_F(ReflectableTest, uint64ConstArray)
+TEST_F(ReflectableDataTest, uint64ConstArray)
 {
     const auto rawArray = std::vector<UInt64>({10000000, 20000000, 30000000, 40000000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -992,7 +992,7 @@ TEST_F(ReflectableTest, uint64ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, uint64Array)
+TEST_F(ReflectableDataTest, uint64Array)
 {
     auto rawArray = std::vector<UInt64>{{10000000, 20000000, 30000000, 40000000}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1001,7 +1001,7 @@ TEST_F(ReflectableTest, uint64Array)
     });
 }
 
-TEST_F(ReflectableTest, fixedSignedBitField5ConstArray)
+TEST_F(ReflectableDataTest, fixedSignedBitField5ConstArray)
 {
     const auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1010,7 +1010,7 @@ TEST_F(ReflectableTest, fixedSignedBitField5ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, fixedSignedBitField5Array)
+TEST_F(ReflectableDataTest, fixedSignedBitField5Array)
 {
     auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1037,7 +1037,7 @@ TEST_F(ReflectableTest, fixedSignedBitField5Array)
     ASSERT_THROW(reflectablePtr->setAt(Any(Int5(42)), 2), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, fixedUnsignedBitField5ConstArray)
+TEST_F(ReflectableDataTest, fixedUnsignedBitField5ConstArray)
 {
     const auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1046,7 +1046,7 @@ TEST_F(ReflectableTest, fixedUnsignedBitField5ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, fixedUnsignedBitField5Array)
+TEST_F(ReflectableDataTest, fixedUnsignedBitField5Array)
 {
     auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1055,7 +1055,7 @@ TEST_F(ReflectableTest, fixedUnsignedBitField5Array)
     });
 }
 
-TEST_F(ReflectableTest, dynamicSignedBitField5ConstArray)
+TEST_F(ReflectableDataTest, dynamicSignedBitField5ConstArray)
 {
     const auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1068,7 +1068,7 @@ TEST_F(ReflectableTest, dynamicSignedBitField5ConstArray)
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, dynamicSignedBitField5Array)
+TEST_F(ReflectableDataTest, dynamicSignedBitField5Array)
 {
     auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1095,7 +1095,7 @@ TEST_F(ReflectableTest, dynamicSignedBitField5Array)
     ASSERT_THROW(reflectablePtr->setAt(Any(DynInt8<>(42)), 2), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, dynamicUnsignedBitField5ConstArray)
+TEST_F(ReflectableDataTest, dynamicUnsignedBitField5ConstArray)
 {
     const auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1105,7 +1105,7 @@ TEST_F(ReflectableTest, dynamicUnsignedBitField5ConstArray)
             });
 }
 
-TEST_F(ReflectableTest, dynamicUnsignedBitField5Array)
+TEST_F(ReflectableDataTest, dynamicUnsignedBitField5Array)
 {
     auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1115,7 +1115,7 @@ TEST_F(ReflectableTest, dynamicUnsignedBitField5Array)
             });
 }
 
-TEST_F(ReflectableTest, varint16ConstArray)
+TEST_F(ReflectableDataTest, varint16ConstArray)
 {
     const auto rawArray = std::vector<VarInt16>({-10, -20, 30, 40});
     auto reflectable = reflectableArray(rawArray);
@@ -1124,7 +1124,7 @@ TEST_F(ReflectableTest, varint16ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, varint16Array)
+TEST_F(ReflectableDataTest, varint16Array)
 {
     auto rawArray = std::vector<VarInt16>{{-10, -20, 30, 40}};
     auto reflectable = reflectableArray(rawArray);
@@ -1133,7 +1133,7 @@ TEST_F(ReflectableTest, varint16Array)
     });
 }
 
-TEST_F(ReflectableTest, varint32ConstArray)
+TEST_F(ReflectableDataTest, varint32ConstArray)
 {
     const auto rawArray = std::vector<VarInt32>({-10000, -20000, 30000, 40000});
     auto reflectable = reflectableArray(rawArray);
@@ -1142,7 +1142,7 @@ TEST_F(ReflectableTest, varint32ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, varint32Array)
+TEST_F(ReflectableDataTest, varint32Array)
 {
     auto rawArray = std::vector<VarInt32>{{-10000, -20000, 30000, 40000}};
     auto reflectable = reflectableArray(rawArray);
@@ -1151,7 +1151,7 @@ TEST_F(ReflectableTest, varint32Array)
     });
 }
 
-TEST_F(ReflectableTest, varint64ConstArray)
+TEST_F(ReflectableDataTest, varint64ConstArray)
 {
     const auto rawArray = std::vector<VarInt64>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
@@ -1160,7 +1160,7 @@ TEST_F(ReflectableTest, varint64ConstArray)
     });
 }
 
-TEST_F(ReflectableTest, varint64Array)
+TEST_F(ReflectableDataTest, varint64Array)
 {
     auto rawArray = std::vector<VarInt64>{{-10000000, -20000000, 30000000, 40000000}};
     auto reflectable = reflectableArray(rawArray);
@@ -1169,7 +1169,7 @@ TEST_F(ReflectableTest, varint64Array)
     });
 }
 
-TEST_F(ReflectableTest, varintConstArray)
+TEST_F(ReflectableDataTest, varintConstArray)
 {
     const auto rawArray = std::vector<VarInt>({-10000000, -20000000, 30000000, 40000000});
     auto reflectable = reflectableArray(rawArray);
@@ -1178,7 +1178,7 @@ TEST_F(ReflectableTest, varintConstArray)
     });
 }
 
-TEST_F(ReflectableTest, varintArray)
+TEST_F(ReflectableDataTest, varintArray)
 {
     auto rawArray = std::vector<VarInt>{{-10000000, -20000000, 30000000, 40000000}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1187,7 +1187,7 @@ TEST_F(ReflectableTest, varintArray)
     });
 }
 
-TEST_F(ReflectableTest, varuint16ConstArray)
+TEST_F(ReflectableDataTest, varuint16ConstArray)
 {
     const auto rawArray = std::vector<VarUInt16>({10, 20, 30, 40});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1197,7 +1197,7 @@ TEST_F(ReflectableTest, varuint16ConstArray)
             });
 }
 
-TEST_F(ReflectableTest, varuint16Array)
+TEST_F(ReflectableDataTest, varuint16Array)
 {
     auto rawArray = std::vector<VarUInt16>{{10, 20, 30, 40}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1206,7 +1206,7 @@ TEST_F(ReflectableTest, varuint16Array)
     });
 }
 
-TEST_F(ReflectableTest, varuint32ConstArray)
+TEST_F(ReflectableDataTest, varuint32ConstArray)
 {
     const auto rawArray = std::vector<VarUInt32>({10000, 20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1216,7 +1216,7 @@ TEST_F(ReflectableTest, varuint32ConstArray)
             });
 }
 
-TEST_F(ReflectableTest, varuint32Array)
+TEST_F(ReflectableDataTest, varuint32Array)
 {
     auto rawArray = std::vector<VarUInt32>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1225,7 +1225,7 @@ TEST_F(ReflectableTest, varuint32Array)
     });
 }
 
-TEST_F(ReflectableTest, varuint64ConstArray)
+TEST_F(ReflectableDataTest, varuint64ConstArray)
 {
     const auto rawArray = std::vector<VarUInt64>({10000, 20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1235,7 +1235,7 @@ TEST_F(ReflectableTest, varuint64ConstArray)
             });
 }
 
-TEST_F(ReflectableTest, varuint64Array)
+TEST_F(ReflectableDataTest, varuint64Array)
 {
     auto rawArray = std::vector<VarUInt64>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1244,7 +1244,7 @@ TEST_F(ReflectableTest, varuint64Array)
     });
 }
 
-TEST_F(ReflectableTest, varuintConstArray)
+TEST_F(ReflectableDataTest, varuintConstArray)
 {
     const auto rawArray = std::vector<VarUInt64>({10000, 20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1254,7 +1254,7 @@ TEST_F(ReflectableTest, varuintConstArray)
             });
 }
 
-TEST_F(ReflectableTest, varuintArray)
+TEST_F(ReflectableDataTest, varuintArray)
 {
     auto rawArray = std::vector<VarUInt>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1263,7 +1263,7 @@ TEST_F(ReflectableTest, varuintArray)
     });
 }
 
-TEST_F(ReflectableTest, varsizeConstArray)
+TEST_F(ReflectableDataTest, varsizeConstArray)
 {
     const auto rawArray = std::vector<VarSize>({10000, 20000, 30000, 40000});
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1273,7 +1273,7 @@ TEST_F(ReflectableTest, varsizeConstArray)
             });
 }
 
-TEST_F(ReflectableTest, varsizeArray)
+TEST_F(ReflectableDataTest, varsizeArray)
 {
     auto rawArray = std::vector<VarSize>{{10000, 20000, 30000, 40000}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1282,7 +1282,7 @@ TEST_F(ReflectableTest, varsizeArray)
     });
 }
 
-TEST_F(ReflectableTest, float16ConstArray)
+TEST_F(ReflectableDataTest, float16ConstArray)
 {
     const auto rawArray = std::vector<Float16>{{2.0F, 0.0F}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1292,7 +1292,7 @@ TEST_F(ReflectableTest, float16ConstArray)
             });
 }
 
-TEST_F(ReflectableTest, float16Array)
+TEST_F(ReflectableDataTest, float16Array)
 {
     auto rawArray = std::vector<Float16>{{2.0F, 0.0F}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1301,7 +1301,7 @@ TEST_F(ReflectableTest, float16Array)
     });
 }
 
-TEST_F(ReflectableTest, float32ConstArray)
+TEST_F(ReflectableDataTest, float32ConstArray)
 {
     const auto rawArray = std::vector<Float32>{{2.0F, 0.0F, 1.2F}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1311,7 +1311,7 @@ TEST_F(ReflectableTest, float32ConstArray)
             });
 }
 
-TEST_F(ReflectableTest, float32Array)
+TEST_F(ReflectableDataTest, float32Array)
 {
     auto rawArray = std::vector<Float32>{{2.0F, 0.0F, 1.2F}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1320,7 +1320,7 @@ TEST_F(ReflectableTest, float32Array)
     });
 }
 
-TEST_F(ReflectableTest, float64ConstArray)
+TEST_F(ReflectableDataTest, float64ConstArray)
 {
     const auto rawArray = std::vector<Float64>{{2.0, 0.0, 1.2}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1330,7 +1330,7 @@ TEST_F(ReflectableTest, float64ConstArray)
             });
 }
 
-TEST_F(ReflectableTest, float64Array)
+TEST_F(ReflectableDataTest, float64Array)
 {
     auto rawArray = std::vector<Float64>{{2.0, 0.0, 1.2}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1339,7 +1339,7 @@ TEST_F(ReflectableTest, float64Array)
     });
 }
 
-TEST_F(ReflectableTest, stringConstArray)
+TEST_F(ReflectableDataTest, stringConstArray)
 {
     const auto rawArray = std::vector<std::string>{{"one", "two", "three"}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1352,7 +1352,7 @@ TEST_F(ReflectableTest, stringConstArray)
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, stringArray)
+TEST_F(ReflectableDataTest, stringArray)
 {
     auto rawArray = std::vector<std::string>{{"one", "two", "three"}};
     auto reflectable = reflectableArray(rawArray);
@@ -1380,7 +1380,7 @@ TEST_F(ReflectableTest, stringArray)
     ASSERT_THROW(reflectable->setAt(Any(std::string("set")), 2), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, bitBufferConstArray)
+TEST_F(ReflectableDataTest, bitBufferConstArray)
 {
     const auto rawArray = std::vector<BitBuffer>{{BitBuffer({0xF8}, 5), BitBuffer({0xAB, 0xCD}, 16)}};
     auto reflectable = reflectableArray(rawArray);
@@ -1390,7 +1390,7 @@ TEST_F(ReflectableTest, bitBufferConstArray)
             });
 }
 
-TEST_F(ReflectableTest, bitBufferArray)
+TEST_F(ReflectableDataTest, bitBufferArray)
 {
     auto rawArray = std::vector<BitBuffer>{{BitBuffer({0xF8}, 5), BitBuffer({0xAB, 0xCD}, 16)}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1418,7 +1418,7 @@ TEST_F(ReflectableTest, bitBufferArray)
     ASSERT_THROW(reflectablePtr->setAt(Any(BitBuffer()), 2), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, bytesConstArray)
+TEST_F(ReflectableDataTest, bytesConstArray)
 {
     const auto rawArray = std::vector<Bytes>{{{{0x00, 0x01}}, {{0xFF, 0xFE}}}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1428,7 +1428,7 @@ TEST_F(ReflectableTest, bytesConstArray)
             });
 }
 
-TEST_F(ReflectableTest, bytesArray)
+TEST_F(ReflectableDataTest, bytesArray)
 {
     auto rawArray = std::vector<Bytes>{{{{0x00, 0x01}}, {{0xFF, 0xFE}}}};
     auto reflectablePtr = reflectableArray(rawArray);
@@ -1456,21 +1456,21 @@ TEST_F(ReflectableTest, bytesArray)
     ASSERT_THROW(reflectablePtr->setAt(Any(Bytes()), 2), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, bitmaskConstReflectable)
+TEST_F(ReflectableDataTest, bitmaskConstReflectable)
 {
     const ReflectableBitmask bitmask = ReflectableBitmask::Values::WRITE;
     auto reflectablePtr = reflectable(bitmask);
     checkBitmask(bitmask, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, bitmaskReflectable)
+TEST_F(ReflectableDataTest, bitmaskReflectable)
 {
     ReflectableBitmask bitmask = ReflectableBitmask::Values::WRITE;
     auto reflectablePtr = reflectable(bitmask);
     checkBitmask(bitmask, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, bitmaskConstArray)
+TEST_F(ReflectableDataTest, bitmaskConstArray)
 {
     const auto rawArray = std::vector<ReflectableBitmask>{{ReflectableBitmask::Values::WRITE,
             ReflectableBitmask::Values::CREATE, ReflectableBitmask::Values::READ}};
@@ -1484,7 +1484,7 @@ TEST_F(ReflectableTest, bitmaskConstArray)
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, bitmaskArray)
+TEST_F(ReflectableDataTest, bitmaskArray)
 {
     auto rawArray = std::vector<ReflectableBitmask>{{ReflectableBitmask::Values::WRITE,
             ReflectableBitmask::Values::CREATE, ReflectableBitmask::Values::READ}};
@@ -1520,14 +1520,14 @@ TEST_F(ReflectableTest, bitmaskArray)
     ASSERT_THROW(reflectablePtr->setAt(Any(ReflectableBitmask::Values::CREATE), 3), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, enumReflectable)
+TEST_F(ReflectableDataTest, enumReflectable)
 {
     const ReflectableEnum enumeration = ReflectableEnum::VALUE1;
     auto reflectablePtr = reflectable(enumeration);
     checkEnum(enumeration, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, enumConstArray)
+TEST_F(ReflectableDataTest, enumConstArray)
 {
     const auto rawArray = std::vector<ReflectableEnum>{
             {ReflectableEnum::VALUE1, ReflectableEnum::VALUE2, ReflectableEnum::VALUE3}};
@@ -1541,7 +1541,7 @@ TEST_F(ReflectableTest, enumConstArray)
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, enumArray)
+TEST_F(ReflectableDataTest, enumArray)
 {
     auto rawArray = std::vector<ReflectableEnum>{
             {ReflectableEnum::VALUE1, ReflectableEnum::VALUE2, ReflectableEnum::VALUE3}};
@@ -1577,7 +1577,7 @@ TEST_F(ReflectableTest, enumArray)
     ASSERT_THROW(reflectablePtr->setAt(Any(ReflectableEnum(ReflectableEnum::VALUE2)), 3), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, compoundConst)
+TEST_F(ReflectableDataTest, compoundConst)
 {
     const ReflectableObject reflectableObject = createReflectableObject("test", 13);
     auto reflectablePtr = reflectable(reflectableObject);
@@ -1595,7 +1595,7 @@ TEST_F(ReflectableTest, compoundConst)
             nonConstChildReflectable->setField("value", Any(static_cast<uint32_t>(11))), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, compound)
+TEST_F(ReflectableDataTest, compound)
 {
     ReflectableObject reflectableObject = createReflectableObject("test", 13);
     auto reflectablePtr = reflectable(reflectableObject);
@@ -1603,7 +1603,7 @@ TEST_F(ReflectableTest, compound)
     checkCompound(reflectableObject, reflectablePtr);
 }
 
-TEST_F(ReflectableTest, compoundConstArray)
+TEST_F(ReflectableDataTest, compoundConstArray)
 {
     ReflectableObject reflectableObject1 = createReflectableObject("1", 13);
     const auto rawArray =
@@ -1623,7 +1623,7 @@ TEST_F(ReflectableTest, compoundConstArray)
     ASSERT_THROW(nonConstReflectable->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, compoundArray)
+TEST_F(ReflectableDataTest, compoundArray)
 {
     auto rawArray = std::vector<ReflectableObject>{
             {createReflectableObject("1", 13), createReflectableObject("2", 42)}};
@@ -1650,7 +1650,7 @@ TEST_F(ReflectableTest, compoundArray)
     ASSERT_THROW(reflectablePtr->setAt(Any(), size), CppRuntimeException); // out of range
 }
 
-TEST_F(ReflectableTest, defaultUnimplementedMethods)
+TEST_F(ReflectableDataTest, defaultUnimplementedMethods)
 {
     class Reflectable : public ReflectableDataBase<std::allocator<uint8_t>>
     {
@@ -1665,7 +1665,7 @@ TEST_F(ReflectableTest, defaultUnimplementedMethods)
     ASSERT_THROW(constReflectableRef.getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(ReflectableTest, reflectableOwner)
+TEST_F(ReflectableDataTest, reflectableOwner)
 {
     auto reflectable = typeInfo<ReflectableObject>().createInstance();
 
