@@ -16,6 +16,29 @@ template <typename T>
 class Extended
 {
 public:
+    Extended(Extended&& other) = default;
+
+    template <typename ALLOC>
+    Extended(Extended&& other, const ALLOC& allocator) :
+            m_isPresent(other.m_isPresent),
+            m_value(std::move(other.m_value), allocator)
+    {}
+
+    Extended(const Extended& other) = default;
+
+    /**
+     * Non-const copy ctor just to give preference to regular copy ctor over variadic ctor
+     */
+    Extended(Extended& other) :
+            Extended(const_cast<const Extended&>(other))
+    {}
+
+    template <typename ALLOC>
+    Extended(const Extended& other, const ALLOC& allocator) :
+            m_isPresent(other.m_isPresent),
+            m_value(other.m_value, allocator)
+    {}
+
     /**
      * In-place extended value constructor from T's arguments.
      */
@@ -23,6 +46,11 @@ public:
     explicit constexpr Extended(ARGS&&... args) :
             m_value(std::forward<ARGS>(args)...)
     {}
+
+    Extended& operator=(Extended&& other) = default;
+    Extended& operator=(const Extended& other) = default;
+
+    ~Extended() = default;
 
     /**
      * Const extended value getter.
