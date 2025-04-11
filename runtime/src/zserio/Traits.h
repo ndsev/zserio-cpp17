@@ -125,7 +125,7 @@ inline constexpr bool is_numeric_wrapper_v = is_numeric_wrapper<T, V>::value;
  * Trait used to check wheter the type T is complete (defined)
  * */
 template <typename T, std::size_t = sizeof(T)>
-std::true_type is_complete_impl(T *);
+std::true_type is_complete_impl(T*);
 
 std::false_type is_complete_impl(...);
 
