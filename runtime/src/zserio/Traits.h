@@ -23,17 +23,22 @@ class NumericTypeWrapper;
  * \{
  */
 template <typename T, typename = void>
-struct is_allocator : std::false_type
+struct is_allocator_impl : std::false_type
 {};
 
 template <typename T>
-struct is_allocator<T,
-        std::void_t<decltype(std::declval<T>().allocate(0)),
-                decltype(std::declval<T>().deallocate(nullptr, 0))>> : std::true_type
+struct is_allocator_impl<T,
+        std::void_t<typename T::value_type, decltype(std::declval<T>().allocate(0)),
+                decltype(std::declval<T>().deallocate(std::declval<typename T::value_type*>(), 0))>>
+        : std::true_type
 {};
 
-template <typename T, typename V = void>
-inline constexpr bool is_allocator_v = is_allocator<T, V>::value;
+template <typename T>
+struct is_allocator : is_allocator_impl<std::decay_t<T>>
+{};
+
+template <typename T>
+inline constexpr bool is_allocator_v = is_allocator<T>::value;
 /** \} */
 
 /**
@@ -120,6 +125,20 @@ struct is_numeric_wrapper<T,
 
 template <typename T, typename V = void>
 inline constexpr bool is_numeric_wrapper_v = is_numeric_wrapper<T, V>::value;
+
+/**
+ * Trait used to check wheter the type T is complete (defined)
+ * */
+template <typename T, std::size_t = sizeof(T)>
+std::true_type is_complete_impl(T*);
+
+std::false_type is_complete_impl(...);
+
+template <typename T>
+using is_complete = decltype(is_complete_impl(std::declval<T*>()));
+
+template <typename T>
+constexpr bool is_complete_v = is_complete<T>::value;
 
 } // namespace zserio
 
