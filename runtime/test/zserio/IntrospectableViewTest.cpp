@@ -405,7 +405,7 @@ protected:
         checkWriteRead(
                 enumeration, introspectableView,
                 [](BitStreamReader& reader) {
-                    ReflectableEnum readEnumeration;
+                    ReflectableEnum readEnumeration{};
                     detail::read(reader, readEnumeration);
                     return readEnumeration;
                 },
