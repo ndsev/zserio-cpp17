@@ -157,7 +157,7 @@ misc-no-recursion:src/zserio/JsonParser.h:224
 misc-no-recursion:src/zserio/JsonParser.h:235
 misc-no-recursion:src/zserio/JsonParser.h:253
 misc-no-recursion:src/zserio/JsonParser.h:268
-misc-no-recursion:src/zserio/IntrospectableView.h:1186
+misc-no-recursion:src/zserio/IntrospectableView.h:1187
 misc-no-recursion:src/zserio/ReflectableData.h:1304
 misc-no-recursion:src/zserio/ReflectableData.h:1348
 misc-no-recursion:src/zserio/ReflectableUtil.h:161

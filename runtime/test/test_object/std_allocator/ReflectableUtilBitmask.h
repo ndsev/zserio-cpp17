@@ -17,6 +17,7 @@
 #include <zserio/String.h>
 #include <zserio/ITypeInfo.h>
 #include <zserio/IReflectableData.h>
+#include <zserio/IIntrospectableView.h>
 #include <zserio/Types.h>
 
 namespace test_object
@@ -348,6 +349,9 @@ struct TypeInfo<::test_object::std_allocator::ReflectableUtilBitmask, ::std::all
 
 template <>
 ::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator);
+
+template <>
+::zserio::IIntrospectableViewConstPtr introspectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator);
 
 } // namespace zserio
 

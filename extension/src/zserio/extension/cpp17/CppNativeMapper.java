@@ -86,6 +86,8 @@ public final class CppNativeMapper
                 new NativeAllocType(typesContext.getReflectablePtr(), allocatorDefinition, "uint8_t");
         reflectableConstPtrType =
                 new NativeAllocType(typesContext.getReflectableConstPtr(), allocatorDefinition, "uint8_t");
+        introspectableConstPtrType =
+                new NativeAllocType(typesContext.getIntrospectableConstPtr(), allocatorDefinition, "uint8_t");
     }
 
     public CppNativeSymbol getCppSymbol(AstNode symbol) throws ZserioExtensionException
@@ -259,6 +261,11 @@ public final class CppNativeMapper
     public NativeAllocType getReflectableConstPtrType()
     {
         return reflectableConstPtrType;
+    }
+
+    public NativeAllocType getIntrospectableConstPtrType()
+    {
+        return introspectableConstPtrType;
     }
 
     public NativeIntegralType getUInt64Type()
@@ -838,6 +845,7 @@ public final class CppNativeMapper
     private final NativeAllocType typeInfoType;
     private final NativeAllocType reflectablePtrType;
     private final NativeAllocType reflectableConstPtrType;
+    private final NativeAllocType introspectableConstPtrType;
 
     private final static NativeNumericWrapperType booleanType = new NativeNumericWrapperType("Bool", "bool");
     private final static NativeNumericWrapperType float16Type =

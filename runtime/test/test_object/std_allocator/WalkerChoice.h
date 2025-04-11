@@ -18,6 +18,7 @@
 #include <zserio/ChoiceTag.h>
 #include <zserio/ITypeInfo.h>
 #include <zserio/IReflectableData.h>
+#include <zserio/IIntrospectableView.h>
 #include <zserio/View.h>
 #include <zserio/Types.h>
 
@@ -149,6 +150,9 @@ template <>
 
 template <>
 ::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::WalkerChoice& value, const ::std::allocator<uint8_t>& allocator);
+
+template <>
+::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::WalkerChoice>& view, const ::std::allocator<uint8_t>& allocator);
 
 } // namespace zserio
 

@@ -7,6 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
 #include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
@@ -633,7 +634,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::CreatorObject,
         "test_object.std_allocator.CreatorObject",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::CreatorObject>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::CreatorObject>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -728,7 +729,7 @@ template <>
         const ::test_object::std_allocator::CreatorObject& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
 }
 
 template <>
@@ -1006,7 +1007,83 @@ template <>
         ::test_object::std_allocator::CreatorObject& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+}
+
+template <>
+::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::CreatorObject>& view, const ::std::allocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::CreatorObject, ::std::allocator<uint8_t>>
+    {
+    public:
+        Introspectable(const ::zserio::View<::test_object::std_allocator::CreatorObject>& view_, const ::std::allocator<uint8_t>& allocator) :
+                ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::CreatorObject, ::std::allocator<uint8_t>>(
+                        view_, allocator)
+        {}
+
+        ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::introspectable(getValue().value(), get_allocator());
+            }
+            if (name == "nested")
+            {
+                return ::zserio::introspectable(getValue().nested(), get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::introspectable(getValue().text(), get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::introspectableArray(getValue().nestedArray(), get_allocator());
+            }
+            if (name == "textArray")
+            {
+                return ::zserio::introspectableArray(getValue().textArray(), get_allocator());
+            }
+            if (name == "externArray")
+            {
+                if (!getValue().externArray().has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::introspectableArray(*getValue().externArray(), get_allocator());
+            }
+            if (name == "bytesArray")
+            {
+                if (!getValue().bytesArray().has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::introspectableArray(*getValue().bytesArray(), get_allocator());
+            }
+            if (name == "optionalBool")
+            {
+                if (!getValue().optionalBool().has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::introspectable(*getValue().optionalBool(), get_allocator());
+            }
+            if (name == "optionalNested")
+            {
+                if (!getValue().optionalNested().has_value())
+                {
+                    return nullptr;
+                }
+
+                return ::zserio::introspectable(*getValue().optionalNested(), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'CreatorObject'!";
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
 }
 
 } // namespace zserio

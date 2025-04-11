@@ -18,6 +18,7 @@
 #include <zserio/ChoiceTag.h>
 #include <zserio/pmr/ITypeInfo.h>
 #include <zserio/pmr/IReflectableData.h>
+#include <zserio/pmr/IIntrospectableView.h>
 #include <zserio/View.h>
 #include <zserio/Types.h>
 #include <zserio/pmr/String.h>
@@ -144,6 +145,9 @@ template <>
 
 template <>
 ::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableChoice& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
+template <>
+::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::ReflectableChoice>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

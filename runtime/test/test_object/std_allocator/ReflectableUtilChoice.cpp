@@ -6,6 +6,7 @@
 #include <zserio/ChoiceCaseException.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
 #include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
@@ -271,7 +272,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
         "test_object.std_allocator.ReflectableUtilChoice",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::ReflectableUtilChoice>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::ReflectableUtilChoice>>(allocator, allocator);
         },
         templateName, templateArguments,
         fields, parameters, functions, "param()", cases
@@ -326,7 +327,7 @@ template <>
         const ::test_object::std_allocator::ReflectableUtilChoice& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
 }
 
 template <>
@@ -409,7 +410,51 @@ template <>
         ::test_object::std_allocator::ReflectableUtilChoice& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+}
+
+template <>
+::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::ReflectableUtilChoice>& view, const ::std::allocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilChoice, ::std::allocator<uint8_t>>
+    {
+    public:
+        Introspectable(const ::zserio::View<::test_object::std_allocator::ReflectableUtilChoice>& view_, const ::std::allocator<uint8_t>& allocator) :
+                ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilChoice, ::std::allocator<uint8_t>>(
+                        view_, allocator)
+        {}
+
+        ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "array")
+            {
+                return ::zserio::introspectableArray(getValue().array(), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
+        }
+
+        ::zserio::IIntrospectableViewConstPtr getParameter(::std::string_view name) const override
+        {
+            if (name == "param")
+            {
+                return ::zserio::introspectable(getValue().param(), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Parameter '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
+        }
+
+        ::std::string_view getChoice() const override
+        {
+            switch (getValue().zserioChoiceTag())
+            {
+            case ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array:
+                return "array";
+            default:
+                return "";
+            }
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
 }
 
 } // namespace zserio

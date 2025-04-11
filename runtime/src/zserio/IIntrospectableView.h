@@ -6,6 +6,7 @@
 
 #include "zserio/BitSize.h"
 #include "zserio/IIntrospectableData.h"
+#include "zserio/View.h"
 
 namespace zserio
 {
@@ -127,6 +128,23 @@ using IBasicIntrospectableViewConstPtr = typename IBasicIntrospectableView<ALLOC
 /** \{ */
 using IIntrospectableView = IBasicIntrospectableView<>;
 using IIntrospectableViewConstPtr = IBasicIntrospectableViewConstPtr<>;
+/** \} */
+
+/**
+ * Gets reflectable for the given object.
+ *
+ * \param value Object value to reflect.
+ * \param allocator Allocator to use for reflectable allocation.
+ *
+ * \return Reflectable to the given object.
+ */
+/** \{ */
+template <typename T, typename ALLOC = typename T::AllocatorType>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(const View<T>& view, const ALLOC& allocator = ALLOC());
+
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<std::is_enum_v<T> || is_bitmask_v<T>, int> = 0>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(T value, const ALLOC& allocator = ALLOC());
 /** \} */
 
 } // namespace zserio

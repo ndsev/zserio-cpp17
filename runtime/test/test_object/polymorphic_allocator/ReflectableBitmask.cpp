@@ -5,8 +5,9 @@
 
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
-#include <zserio/TypeInfo.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/TypeInfo.h>
 
 #include <test_object/polymorphic_allocator/ReflectableBitmask.h>
 
@@ -113,6 +114,40 @@ template <>
     };
 
     return ::std::allocate_shared<Reflectable>(allocator, value);
+}
+
+template <>
+::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::ReflectableBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        explicit Introspectable(::test_object::polymorphic_allocator::ReflectableBitmask bitmask) :
+                ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                        typeInfo<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(), bitmask)
+        {}
+        ::test_object::polymorphic_allocator::ReflectableBitmask::ZserioType::ValueType getUInt8() const override
+        {
+            return getValue().getValue();
+        }
+
+        uint64_t toUInt() const override
+        {
+            return getValue().getValue();
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toUInt());
+        }
+
+        ::zserio::pmr::String toString(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return getValue().toString(alloc);
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, value);
 }
 
 } // namespace zserio

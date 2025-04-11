@@ -6,8 +6,9 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
 <#if withTypeInfoCode>
-#include <zserio/TypeInfo.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/TypeInfo.h>
 </#if>
 <@system_includes cppSystemIncludes/>
 
@@ -111,6 +112,41 @@ ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.alloca
     };
 
     return std::allocate_shared<Reflectable>(allocator, value);
+}
+
+template <>
+${types.introspectableConstPtr.name} introspectable(${fullName} value, const ${types.allocator.default}& allocator)
+{
+    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+    {
+    public:
+        explicit Introspectable(${fullName} value) :
+                ::zserio::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+                        typeInfo<${fullName}, ${types.allocator.default}>(), value)
+        {}
+
+        ${underlyingTypeInfo.typeFullName}::ValueType get<#if !isSigned>U</#if>Int${nativeNumBits}() const override
+        {
+            return static_cast<typename ::std::underlying_type<${fullName}>::type>(getValue());
+        }
+
+        <#if isSigned>int64_t toInt()<#else>uint64_t toUInt()</#if> const override
+        {
+            return static_cast<typename ::std::underlying_type<${fullName}>::type>(getValue());
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(<#if isSigned>toInt()<#else>toUInt()</#if>);
+        }
+
+        ${types.string.name} toString(const ${types.allocator.default}& alloc) const override
+        {
+            return ${types.string.name}(::zserio::enumToString(getValue()), alloc);
+        }
+    };
+
+    return std::allocate_shared<Introspectable>(allocator, value);
 }
 </#if>
 <@namespace_end ["zserio"]/>

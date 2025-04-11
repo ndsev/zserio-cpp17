@@ -191,6 +191,7 @@ public abstract class CppTemplateData implements IncludeCollector
             typeInfo = new TypeTemplateData(nativeMapper.getTypeInfoType());
             reflectablePtr = new TypeTemplateData(nativeMapper.getReflectablePtrType());
             reflectableConstPtr = new TypeTemplateData(nativeMapper.getReflectableConstPtrType());
+            introspectableConstPtr = new TypeTemplateData(nativeMapper.getIntrospectableConstPtrType());
         }
 
         public AllocatorTemplateData getAllocator()
@@ -296,6 +297,11 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getReflectableConstPtr()
         {
             return reflectableConstPtr;
+        }
+
+        public TypeTemplateData getIntrospectableConstPtr()
+        {
+            return introspectableConstPtr;
         }
 
         public static final class AllocatorTemplateData
@@ -405,6 +411,7 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData typeInfo;
         private final TypeTemplateData reflectablePtr;
         private final TypeTemplateData reflectableConstPtr;
+        private final TypeTemplateData introspectableConstPtr;
     }
 
     private final String generatorDescription;

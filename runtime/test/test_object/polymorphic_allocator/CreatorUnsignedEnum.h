@@ -18,6 +18,7 @@
 #include <zserio/Enums.h>
 #include <zserio/pmr/ITypeInfo.h>
 #include <zserio/pmr/IReflectableData.h>
+#include <zserio/pmr/IIntrospectableView.h>
 #include <zserio/Types.h>
 
 namespace test_object
@@ -77,6 +78,9 @@ struct TypeInfo<::test_object::polymorphic_allocator::CreatorUnsignedEnum, ::zse
 
 template <>
 ::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::CreatorUnsignedEnum value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
+template <>
+::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::CreatorUnsignedEnum value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

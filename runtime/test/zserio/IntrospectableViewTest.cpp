@@ -1,11 +1,23 @@
 #include <functional>
 
 #include "gtest/gtest.h"
-#include "zserio/Array.h"
+#include "test_object/std_allocator/ReflectableBitmask.h"
+#include "test_object/std_allocator/ReflectableChoice.h"
+#include "test_object/std_allocator/ReflectableEnum.h"
+#include "test_object/std_allocator/ReflectableObject.h"
+#include "test_object/std_allocator/ReflectableUnion.h"
+#include "zserio/ArrayView.h"
 #include "zserio/IntrospectableView.h"
 #include "zserio/View.h"
 
 using namespace std::placeholders;
+
+using test_object::std_allocator::ReflectableBitmask;
+using test_object::std_allocator::ReflectableChoice;
+using test_object::std_allocator::ReflectableEnum;
+using test_object::std_allocator::ReflectableNested;
+using test_object::std_allocator::ReflectableObject;
+using test_object::std_allocator::ReflectableUnion;
 
 namespace zserio
 {
@@ -34,11 +46,6 @@ protected:
     void checkWriteRead(T value, const INTROSPECTABLE_VIEW_PTR& introspectableView, const READ_FUNC& readFunc,
             size_t bitBufferSize)
     {
-        (void)value;
-        (void)introspectableView;
-        (void)readFunc;
-        (void)bitBufferSize;
-
         BitBuffer bitBuffer(bitBufferSize);
         BitStreamWriter writer(bitBuffer);
         introspectableView->write(writer);
@@ -72,101 +79,92 @@ protected:
 
     template <typename T, typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<std::is_same_v<typename T::ValueType, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(T value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr, const GETTER& getter,
+    void checkCppTypeGetter(T value, const INTROSPECTABLE_VIEW_PTR& introspectableView, const GETTER& getter,
             const char* testName, const char* getterName)
     {
-        ASSERT_EQ(value, ((*introspectableViewPtr).*getter)()) << testName << " : " << getterName;
+        ASSERT_EQ(value, ((*introspectableView).*getter)()) << testName << " : " << getterName;
     }
 
     template <typename T, typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<!std::is_same_v<typename T::ValueType, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(T, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr, const GETTER& getter,
+    void checkCppTypeGetter(T, const INTROSPECTABLE_VIEW_PTR& introspectableView, const GETTER& getter,
             const char* testName, const char* getterName)
     {
-        ASSERT_THROW(((*introspectableViewPtr).*getter)(), CppRuntimeException)
-                << testName << " : " << getterName;
+        ASSERT_THROW(((*introspectableView).*getter)(), CppRuntimeException) << testName << " : " << getterName;
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<std::is_same_v<BytesView, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(BytesView value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
+    void checkCppTypeGetter(BytesView value, const INTROSPECTABLE_VIEW_PTR& introspectableView,
             const GETTER& getter, const char* testName, const char* getterName)
     {
-        ASSERT_EQ(value.size(), ((*introspectableViewPtr).*getter)().size()) << testName << " : " << getterName;
-        ASSERT_EQ(value.data(), ((*introspectableViewPtr).*getter)().data()) << testName << " : " << getterName;
+        ASSERT_EQ(value.size(), ((*introspectableView).*getter)().size()) << testName << " : " << getterName;
+        ASSERT_EQ(value.data(), ((*introspectableView).*getter)().data()) << testName << " : " << getterName;
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<!std::is_same_v<BytesView, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(BytesView, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
-            const GETTER& getter, const char* testName, const char* getterName)
+    void checkCppTypeGetter(BytesView, const INTROSPECTABLE_VIEW_PTR& introspectableView, const GETTER& getter,
+            const char* testName, const char* getterName)
     {
-        ASSERT_THROW(((*introspectableViewPtr).*getter)(), CppRuntimeException)
-                << testName << " : " << getterName;
+        ASSERT_THROW(((*introspectableView).*getter)(), CppRuntimeException) << testName << " : " << getterName;
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<std::is_same_v<std::string_view, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(std::string_view value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
+    void checkCppTypeGetter(std::string_view value, const INTROSPECTABLE_VIEW_PTR& introspectableView,
             const GETTER& getter, const char* testName, const char* getterName)
     {
-        ASSERT_EQ(value, ((*introspectableViewPtr).*getter)()) << testName << " : " << getterName;
+        ASSERT_EQ(value, ((*introspectableView).*getter)()) << testName << " : " << getterName;
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<!std::is_same_v<std::string_view, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(std::string_view, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
+    void checkCppTypeGetter(std::string_view, const INTROSPECTABLE_VIEW_PTR& introspectableView,
             const GETTER& getter, const char* testName, const char* getterName)
     {
-        ASSERT_THROW(((*introspectableViewPtr).*getter)(), CppRuntimeException)
-                << testName << " : " << getterName;
+        ASSERT_THROW(((*introspectableView).*getter)(), CppRuntimeException) << testName << " : " << getterName;
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<std::is_same_v<const BitBuffer&, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(const BitBuffer& value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
+    void checkCppTypeGetter(const BitBuffer& value, const INTROSPECTABLE_VIEW_PTR& introspectableView,
             const GETTER& getter, const char* testName, const char* getterName)
     {
-        ASSERT_EQ(value, ((*introspectableViewPtr).*getter)()) << testName << " : " << getterName;
+        ASSERT_EQ(value, ((*introspectableView).*getter)()) << testName << " : " << getterName;
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR, typename GETTER,
             std::enable_if_t<!std::is_same_v<const BitBuffer&, detail::return_type_t<GETTER>>, int> = 0>
-    void checkCppTypeGetter(const BitBuffer&, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
+    void checkCppTypeGetter(const BitBuffer&, const INTROSPECTABLE_VIEW_PTR& introspectableView,
             const GETTER& getter, const char* testName, const char* getterName)
     {
-        ASSERT_THROW(((*introspectableViewPtr).*getter)(), CppRuntimeException)
-                << testName << " : " << getterName;
+        ASSERT_THROW(((*introspectableView).*getter)(), CppRuntimeException) << testName << " : " << getterName;
     }
 
     template <typename T, typename INTROSPECTABLE_VIEW_PTR>
-    void checkCppTypeGetters(
-            T value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr, const char* testName)
+    void checkCppTypeGetters(T value, const INTROSPECTABLE_VIEW_PTR& introspectableView, const char* testName)
     {
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getBool, testName, "getBool");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getBool, testName, "getBool");
 
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getInt8, testName, "getInt8");
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getInt16, testName, "getInt16");
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getInt32, testName, "getInt32");
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getInt64, testName, "getInt64");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getInt8, testName, "getInt8");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getInt16, testName, "getInt16");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getInt32, testName, "getInt32");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getInt64, testName, "getInt64");
 
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getUInt8, testName, "getUInt8");
-        checkCppTypeGetter(
-                value, introspectableViewPtr, &IIntrospectableView::getUInt16, testName, "getUInt16");
-        checkCppTypeGetter(
-                value, introspectableViewPtr, &IIntrospectableView::getUInt32, testName, "getUInt32");
-        checkCppTypeGetter(
-                value, introspectableViewPtr, &IIntrospectableView::getUInt64, testName, "getUInt64");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getUInt8, testName, "getUInt8");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getUInt16, testName, "getUInt16");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getUInt32, testName, "getUInt32");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getUInt64, testName, "getUInt64");
 
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getFloat, testName, "getFloat");
-        checkCppTypeGetter(
-                value, introspectableViewPtr, &IIntrospectableView::getDouble, testName, "getDouble");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getFloat, testName, "getFloat");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getDouble, testName, "getDouble");
 
-        checkCppTypeGetter(value, introspectableViewPtr, &IIntrospectableView::getBytes, testName, "getBytes");
+        checkCppTypeGetter(value, introspectableView, &IIntrospectableView::getBytes, testName, "getBytes");
         checkCppTypeGetter(
-                value, introspectableViewPtr, &IIntrospectableView::getStringView, testName, "getStringView");
+                value, introspectableView, &IIntrospectableView::getStringView, testName, "getStringView");
         checkCppTypeGetter(
-                value, introspectableViewPtr, &IIntrospectableView::getBitBuffer, testName, "getBitBuffer");
+                value, introspectableView, &IIntrospectableView::getBitBuffer, testName, "getBitBuffer");
     }
 
     template <typename T, typename INTROSPECTABLE_VIEW_PTR, typename GETTER, typename READ_FUNC>
@@ -189,46 +187,43 @@ protected:
     }
 
     template <typename T, typename INTROSPECTABLE_VIEW_PTR, typename GETTER, typename READ_FUNC>
-    void checkIntegral(T value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr, const GETTER& getter,
+    void checkIntegral(T value, const INTROSPECTABLE_VIEW_PTR& introspectableView, const GETTER& getter,
             const READ_FUNC& readFunc, size_t bitSize, const char* testName)
     {
-        (void)readFunc;
-        (void)bitSize;
-        (void)testName;
-        ASSERT_EQ(value, ((*introspectableViewPtr).*getter)());
+        ASSERT_EQ(value, ((*introspectableView).*getter)());
 
-        ASSERT_EQ(value, introspectableViewPtr->getAnyValue().template get<T>());
+        ASSERT_EQ(value, introspectableView->getAnyValue().template get<T>());
 
-        ASSERT_DOUBLE_EQ(static_cast<double>(value), introspectableViewPtr->toDouble());
-        ASSERT_EQ(zserio::toString(value), introspectableViewPtr->toString());
+        ASSERT_DOUBLE_EQ(static_cast<double>(value), introspectableView->toDouble());
+        ASSERT_EQ(zserio::toString(value), introspectableView->toString());
 
-        checkCppTypeGetters(value, introspectableViewPtr, testName);
+        checkCppTypeGetters(value, introspectableView, testName);
 
-        checkNonCompound(introspectableViewPtr);
+        checkNonCompound(introspectableView);
 
-        checkNonArray(introspectableViewPtr);
+        checkNonArray(introspectableView);
 
-        checkWriteRead(value, introspectableViewPtr, readFunc, bitSize);
+        checkWriteRead(value, introspectableView, readFunc, bitSize);
     }
 
     template <typename T, typename INTROSPECTABLE_VIEW_PTR, typename GETTER, typename READ_FUNC>
-    void checkSignedIntegral(T value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
-            const GETTER& getter, const READ_FUNC& readFunc, size_t bitSize = sizeof(T) * 8)
+    void checkSignedIntegral(T value, const INTROSPECTABLE_VIEW_PTR& introspectableView, const GETTER& getter,
+            const READ_FUNC& readFunc, size_t bitSize = sizeof(T) * 8)
     {
-        ASSERT_EQ(value, introspectableViewPtr->toInt());
-        ASSERT_THROW(introspectableViewPtr->toUInt(), CppRuntimeException);
+        ASSERT_EQ(value, introspectableView->toInt());
+        ASSERT_THROW(introspectableView->toUInt(), CppRuntimeException);
 
-        checkIntegral(value, introspectableViewPtr, getter, readFunc, bitSize, "checkSignedIntegral");
+        checkIntegral(value, introspectableView, getter, readFunc, bitSize, "checkSignedIntegral");
     }
 
     template <typename T, typename INTROSPECTABLE_VIEW_PTR, typename GETTER, typename READ_FUNC>
-    void checkUnsignedIntegral(T value, const INTROSPECTABLE_VIEW_PTR& introspectableViewPtr,
-            const GETTER& getter, const READ_FUNC& readFunc, size_t bitSize = sizeof(T) * 8)
+    void checkUnsignedIntegral(T value, const INTROSPECTABLE_VIEW_PTR& introspectableView, const GETTER& getter,
+            const READ_FUNC& readFunc, size_t bitSize = sizeof(T) * 8)
     {
-        ASSERT_EQ(value, introspectableViewPtr->toUInt());
-        ASSERT_THROW(introspectableViewPtr->toInt(), CppRuntimeException);
+        ASSERT_EQ(value, introspectableView->toUInt());
+        ASSERT_THROW(introspectableView->toInt(), CppRuntimeException);
 
-        checkIntegral(value, introspectableViewPtr, getter, readFunc, bitSize, "checkUnsignedIntegral");
+        checkIntegral(value, introspectableView, getter, readFunc, bitSize, "checkUnsignedIntegral");
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR>
@@ -301,9 +296,9 @@ protected:
 
     template <typename T, typename TRAITS>
     void checkArrayAnyValue(
-            const Array<T, TRAITS>& array, const IIntrospectableViewConstPtr& introspectableView)
+            const ArrayView<T, TRAITS>& array, const IIntrospectableViewConstPtr& introspectableView)
     {
-        auto introArray = introspectableView->getAnyValue().template get<Array<T, TRAITS>>();
+        auto introArray = introspectableView->getAnyValue().template get<ArrayView<T, TRAITS>>();
         ASSERT_EQ(array.size(), introArray.size());
         for (size_t i = 0; i < array.size(); ++i)
         {
@@ -312,7 +307,7 @@ protected:
     }
 
     template <typename T, typename TRAITS, typename INTROSPECTABLE_VIEW_PTR, typename ELEMENT_CHECKER>
-    void checkArray(const Array<T, TRAITS>& array, const INTROSPECTABLE_VIEW_PTR& introspectableView,
+    void checkArray(const ArrayView<T, TRAITS>& array, const INTROSPECTABLE_VIEW_PTR& introspectableView,
             const ELEMENT_CHECKER& elementChecker)
     {
         ASSERT_TRUE(introspectableView->isArray());
@@ -354,17 +349,21 @@ protected:
         ASSERT_THROW(introspectableView->toDouble(), CppRuntimeException);
         ASSERT_THROW(introspectableView->toString(), CppRuntimeException);
 
+        ASSERT_THROW(introspectableView->bitSizeOf(0), CppRuntimeException);
+
+        BitBuffer bitBuffer(0);
+        BitStreamWriter writer(bitBuffer);
+        ASSERT_THROW(introspectableView->write(writer), CppRuntimeException);
+
         checkNonCompound(introspectableView);
     }
 
-#if 0 // !@#
-
     template <typename INTROSPECTABLE_VIEW_PTR>
-    void checkBitmask(IntrospectableViewBitmask bitmask, const INTROSPECTABLE_VIEW_PTR& introspectableView)
+    void checkBitmask(ReflectableBitmask bitmask, const INTROSPECTABLE_VIEW_PTR& introspectableView)
     {
         ASSERT_EQ(bitmask.getValue(), introspectableView->getUInt8());
 
-        ASSERT_EQ(bitmask, introspectableView->getAnyValue().template get<IntrospectableViewBitmask>());
+        ASSERT_EQ(bitmask, introspectableView->getAnyValue().template get<ReflectableBitmask>());
 
         ASSERT_EQ(bitmask.getValue(), introspectableView->toUInt());
         ASSERT_EQ(bitmask.getValue(), introspectableView->toDouble());
@@ -375,14 +374,23 @@ protected:
 
         checkNonCompound(introspectableView);
         checkNonArray(introspectableView);
+
+        checkWriteRead(
+                bitmask, introspectableView,
+                [](BitStreamReader& reader) {
+                    ReflectableBitmask readBitmask;
+                    detail::read(reader, readBitmask);
+                    return readBitmask;
+                },
+                detail::bitSizeOf(bitmask));
     }
 
     template <typename INTROSPECTABLE_VIEW_PTR>
-    void checkEnum(IntrospectableViewEnum enumeration, const INTROSPECTABLE_VIEW_PTR& introspectableView)
+    void checkEnum(ReflectableEnum enumeration, const INTROSPECTABLE_VIEW_PTR& introspectableView)
     {
         ASSERT_EQ(enumToValue(enumeration), introspectableView->getInt8());
 
-        ASSERT_EQ(enumeration, introspectableView->getAnyValue().template get<IntrospectableViewEnum>());
+        ASSERT_EQ(enumeration, introspectableView->getAnyValue().template get<ReflectableEnum>());
 
         ASSERT_EQ(enumToValue(enumeration), introspectableView->toInt());
         ASSERT_EQ(enumToValue(enumeration), introspectableView->toDouble());
@@ -393,61 +401,55 @@ protected:
 
         checkNonCompound(introspectableView);
         checkNonArray(introspectableView);
+
+        checkWriteRead(
+                enumeration, introspectableView,
+                [](BitStreamReader& reader) {
+                    ReflectableEnum readEnumeration;
+                    detail::read(reader, readEnumeration);
+                    return readEnumeration;
+                },
+                detail::bitSizeOf(enumeration));
     }
 
-    void checkCompoundAnyValue(
-            const IntrospectableViewObject& introspectableViewObject, const IIntrospectableViewConstPtr& introspectableView)
+    void checkCompoundAnyValue(const View<ReflectableObject>& reflectableObjectView,
+            const IIntrospectableViewConstPtr& introspectableView)
     {
-        ASSERT_EQ(introspectableViewObject,
-                introspectableView->getAnyValue()
-                        .template get<std::reference_wrapper<const IntrospectableViewObject>>()
-                        .get());
-        ASSERT_EQ(introspectableViewObject.introspectableViewNested,
-                introspectableView->getField("introspectableViewNested")
+        ASSERT_EQ(reflectableObjectView,
+                introspectableView->getAnyValue().template get<View<ReflectableObject>>());
+        ASSERT_EQ(reflectableObjectView.reflectableNested(),
+                introspectableView->getField("reflectableNested")
                         ->getAnyValue()
-                        .template get<std::reference_wrapper<const IntrospectableViewNested>>()
-                        .get());
+                        .template get<View<ReflectableNested>>());
     }
 
-    void checkCompoundAnyValue(
-            const IntrospectableViewObject& introspectableViewObject, const IIntrospectableViewPtr& introspectableView)
-    {
-        ASSERT_EQ(introspectableViewObject,
-                introspectableView->getAnyValue().template get<std::reference_wrapper<IntrospectableViewObject>>().get());
-        ASSERT_EQ(introspectableViewObject.introspectableViewNested,
-                introspectableView->getField("introspectableViewNested")
-                        ->getAnyValue()
-                        .template get<std::reference_wrapper<IntrospectableViewNested>>()
-                        .get());
-    }
-
-    template <typename INTROSPECTABLE_VIEW_PTR>
-    void checkCompoundConstMethods(
-            const IntrospectableViewObject& introspectableViewObject, const INTROSPECTABLE_VIEW_PTR& introspectableView)
+    void checkCompound(const View<ReflectableObject>& reflectableObjectView,
+            const IIntrospectableViewConstPtr& introspectableView)
     {
         ASSERT_TRUE(TypeInfoUtil::isCompound(introspectableView->getTypeInfo().getSchemaType()));
 
         // field getter
-        ASSERT_EQ(introspectableViewObject.introspectableViewNested.value,
-                introspectableView->getField("introspectableViewNested")->getField("value")->getUInt32());
+        ASSERT_EQ(reflectableObjectView.reflectableNested().value(),
+                introspectableView->getField("reflectableNested")->getField("value")->getUInt32());
         ASSERT_THROW(introspectableView->getField("nonexistent"), CppRuntimeException);
-        ASSERT_THROW(introspectableView->getField("introspectableViewNested")->getField("nonexistent"), CppRuntimeException);
+        ASSERT_THROW(introspectableView->getField("reflectableNested")->getField("nonexistent"),
+                CppRuntimeException);
 
-        ASSERT_EQ("valueStr", introspectableView->getField("introspectableViewChoice")->getChoice());
-        ASSERT_EQ("value32", introspectableView->getField("introspectableViewUnion")->getChoice());
+        ASSERT_EQ("valueStr", introspectableView->getField("reflectableChoice")->getChoice());
+        ASSERT_EQ("value32", introspectableView->getField("reflectableUnion")->getChoice());
 
         // find field
-        ASSERT_EQ(introspectableViewObject.introspectableViewNested.value,
-                introspectableView->find("introspectableViewNested.value")->toUInt());
-        ASSERT_EQ(introspectableViewObject.introspectableViewNested.value,
-                (*introspectableView)["introspectableViewNested.value"]->toDouble());
+        ASSERT_EQ(reflectableObjectView.reflectableNested().value(),
+                introspectableView->find("reflectableNested.value")->toUInt());
+        ASSERT_EQ(reflectableObjectView.reflectableNested().value(),
+                (*introspectableView)["reflectableNested.value"]->toDouble());
 
         // find failed
-        ASSERT_EQ(nullptr, introspectableView->find("introspectableViewNested.nonexistent"));
+        ASSERT_EQ(nullptr, introspectableView->find("reflectableNested.nonexistent"));
         ASSERT_EQ(nullptr, introspectableView->find("nonexistent"));
-        ASSERT_EQ(nullptr, introspectableView->find("introspectableViewNested.value.nonexistent"));
+        ASSERT_EQ(nullptr, introspectableView->find("reflectableNested.value.nonexistent"));
 
-        checkCompoundAnyValue(introspectableViewObject, introspectableView);
+        checkCompoundAnyValue(reflectableObjectView, introspectableView);
 
         ASSERT_THROW(introspectableView->getBool(), CppRuntimeException);
         ASSERT_THROW(introspectableView->getInt8(), CppRuntimeException);
@@ -470,63 +472,32 @@ protected:
         ASSERT_THROW(introspectableView->toString(), CppRuntimeException);
 
         checkNonArray(introspectableView);
+
+        ReflectableObject readReflectableObject;
+        checkWriteRead(
+                reflectableObjectView, introspectableView,
+                [&](BitStreamReader& reader) {
+                    return detail::read(reader, readReflectableObject);
+                },
+                detail::bitSizeOf(reflectableObjectView));
     }
 
-    void checkCompound(const IntrospectableViewObject& introspectableViewObject, const IIntrospectableViewConstPtr& introspectableView)
+    static ReflectableObject createReflectableObject(std::string_view stringField, UInt31 value = 13,
+            ReflectableEnum ReflectableEnum = ReflectableEnum::VALUE1,
+            ReflectableUnion::ChoiceTag unionTag = ReflectableUnion::ChoiceTag::CHOICE_value32)
     {
-        checkCompoundConstMethods(introspectableViewObject, introspectableView);
-    }
+        ReflectableObject reflectableObject;
+        reflectableObject.stringField = stringField;
+        reflectableObject.reflectableNested.value = value;
+        reflectableObject.reflectableEnum = ReflectableEnum;
 
-    void checkCompound(const IntrospectableViewObject& introspectableViewObject, const IIntrospectableViewPtr& introspectableView)
-    {
-        checkCompoundConstMethods(introspectableViewObject, introspectableView);
-        checkCompoundConstMethods(introspectableViewObject, static_cast<IIntrospectableViewConstPtr>(introspectableView));
-
-        // setter
-        introspectableView->getField("introspectableViewNested")->setField("value", Any(UInt31(11)));
-        ASSERT_EQ(11, introspectableViewObject.introspectableViewNested.value);
-        introspectableView->find("introspectableViewNested")->setField("value", Any(UInt31(11)));
-        ASSERT_THROW(introspectableView->setField("nonexistent", Any()), CppRuntimeException);
-        ASSERT_THROW(
-                introspectableView->find("introspectableViewNested")->setField("nonexistent", Any()), CppRuntimeException);
-        introspectableView->find("introspectableViewChoice")->setField("value32", Any(UInt32(42)));
-        ASSERT_EQ(introspectableViewObject.introspectableViewChoice.index(), IntrospectableViewChoice::ChoiceTag::CHOICE_value32);
-        introspectableView->getField("introspectableViewUnion")->setField("valueStr", Any(std::string("test")));
-        ASSERT_EQ(introspectableViewObject.introspectableViewUnion.index(), IntrospectableViewUnion::ChoiceTag::CHOICE_valueStr);
-        // return back to let checkCompoundConstMethods pass
-        introspectableView->find("introspectableViewChoice")->setField("valueStr", Any(std::string("test")));
-        introspectableView->find("introspectableViewUnion")->setField("value32", Any(UInt32(13)));
-
-        // any value
-        ASSERT_EQ(introspectableViewObject.introspectableViewNested,
-                introspectableView->find("introspectableViewNested")
-                        ->getAnyValue()
-                        .template get<std::reference_wrapper<IntrospectableViewNested>>()
-                        .get());
-
-        introspectableView->createField("introspectableViewNested");
-        ASSERT_EQ(uint32_t(), introspectableViewObject.introspectableViewNested.value);
-
-        introspectableView->setField("introspectableViewNested", Any(IntrospectableViewNested{42}));
-        ASSERT_EQ(42, introspectableViewObject.introspectableViewNested.value);
-    }
-
-    static IntrospectableViewObject createIntrospectableViewObject(std::string_view stringField, UInt31 value = 13,
-            IntrospectableViewEnum introspectableViewEnum = IntrospectableViewEnum::VALUE1,
-            IntrospectableViewUnion::ChoiceTag unionTag = IntrospectableViewUnion::ChoiceTag::CHOICE_value32)
-    {
-        IntrospectableViewObject introspectableViewObject;
-        introspectableViewObject.stringField = stringField;
-        introspectableViewObject.introspectableViewNested.value = value;
-        introspectableViewObject.introspectableViewEnum = introspectableViewEnum;
-
-        switch (introspectableViewEnum)
+        switch (ReflectableEnum)
         {
-        case IntrospectableViewEnum::VALUE1:
-            introspectableViewObject.introspectableViewChoice.emplace<IntrospectableViewChoice::ChoiceTag::CHOICE_valueStr>("test");
+        case ReflectableEnum::VALUE1:
+            reflectableObject.reflectableChoice.emplace<ReflectableChoice::ChoiceTag::CHOICE_valueStr>("test");
             break;
-        case IntrospectableViewEnum::VALUE2:
-            introspectableViewObject.introspectableViewChoice.emplace<IntrospectableViewChoice::ChoiceTag::CHOICE_value32>(13);
+        case ReflectableEnum::VALUE2:
+            reflectableObject.reflectableChoice.emplace<ReflectableChoice::ChoiceTag::CHOICE_value32>(13);
             break;
         default:
             // empty
@@ -535,156 +506,164 @@ protected:
 
         switch (unionTag)
         {
-        case IntrospectableViewUnion::ChoiceTag::CHOICE_value32:
-            introspectableViewObject.introspectableViewUnion.emplace<IntrospectableViewUnion::ChoiceTag::CHOICE_value32>(13);
+        case ReflectableUnion::ChoiceTag::CHOICE_value32:
+            reflectableObject.reflectableUnion.emplace<ReflectableUnion::ChoiceTag::CHOICE_value32>(13);
             break;
-        case IntrospectableViewUnion::ChoiceTag::CHOICE_valueStr:
-            introspectableViewObject.introspectableViewUnion.emplace<IntrospectableViewUnion::ChoiceTag::CHOICE_valueStr>("test");
+        case ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+            reflectableObject.reflectableUnion.emplace<ReflectableUnion::ChoiceTag::CHOICE_valueStr>("test");
             break;
         default:
             // shouldn't occur
             break;
         }
 
-        return introspectableViewObject;
+        return reflectableObject;
     }
-#endif // !@#
 };
 
 TEST_F(IntrospectableViewTest, boolIntrospectableView)
 {
     const Bool value = true;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getBool,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getBool,
             std::bind(&BitStreamReader::readBool, _1));
 }
 
 TEST_F(IntrospectableViewTest, int8IntrospectableView)
 {
     const Int8 value = -12;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt8,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt8,
             std::bind(&BitStreamReader::readSignedBits32, _1, 8));
 }
 
 TEST_F(IntrospectableViewTest, int16IntrospectableView)
 {
     const Int16 value = -1234;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt16,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt16,
             std::bind(&BitStreamReader::readSignedBits32, _1, 16));
 }
 
 TEST_F(IntrospectableViewTest, int32IntrospectableView)
 {
     const Int32 value = -123456;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt32,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt32,
             std::bind(&BitStreamReader::readSignedBits32, _1, 32));
 }
 
 TEST_F(IntrospectableViewTest, int64IntrospectableView)
 {
     const Int64 value = -1234567890;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readSignedBits64, _1, 64));
 }
 
 TEST_F(IntrospectableViewTest, uint8IntrospectableView)
 {
     const UInt8 value = 0xFF;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt8,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt8,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
 }
 
 TEST_F(IntrospectableViewTest, uint16IntrospectableView)
 {
     const UInt16 value = 0xFFFF;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt16,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt16,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
 }
 
 TEST_F(IntrospectableViewTest, uint32IntrospectableView)
 {
     const UInt32 value = 0xFFFFFFFF;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
 }
 
 TEST_F(IntrospectableViewTest, uint64IntrospectableView)
 {
     const UInt64 value = 0xFFFFFFFFFFFF;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
 }
 
 TEST_F(IntrospectableViewTest, fixedSignedBitField5) // mapped to int8_t
 {
     const Int5 value = 15;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt8,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt8,
             std::bind(&BitStreamReader::readSignedBits32, _1, 5), 5);
 }
 
 TEST_F(IntrospectableViewTest, fixedSignedBitField15) // mapped to int16_t
 {
     const Int15 value = -15;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt16,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt16,
             std::bind(&BitStreamReader::readSignedBits32, _1, 15), 15);
 }
 
 TEST_F(IntrospectableViewTest, fixedSignedBitField31) // mapped to int32_t
 {
     const Int31 value = -12345678;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt32,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt32,
             std::bind(&BitStreamReader::readSignedBits32, _1, 31), 31);
 }
 
 TEST_F(IntrospectableViewTest, fixedSignedBitField60) // mapped to int64_t
 {
     const Int60 value = 1234567890;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readSignedBits64, _1, 60), 60);
 }
 
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField7) // mapped to uint8_t
 {
     const UInt7 value = 0x2F;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt8,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt8,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 7), 7);
 }
 
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField9) // mapped to uint16_t
 {
     const UInt9 value = 0x1FF;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt16,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt16,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 9), 9);
 }
 
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField31) // mapped to uint32_t
 {
     const UInt31 value = UINT32_MAX >> 1U;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, 31), 31);
 }
 
 TEST_F(IntrospectableViewTest, fixedUnsignedBitField33) // mapped to uint64_t
 {
     const UInt33 value = static_cast<uint64_t>(UINT32_MAX) << 1U;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readUnsignedBits64, _1, 33), 33);
+}
+
+TEST_F(IntrospectableViewTest, dynamicKnownUnsignedBitField5)
+{
+    constexpr uint8_t NUM_BITS = 5;
+    const DynUInt8<NUM_BITS> value = 15;
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt8,
+            std::bind(&BitStreamReader::readUnsignedBits32, _1, NUM_BITS), NUM_BITS);
 }
 
 TEST_F(IntrospectableViewTest, dynamicSignedBitField5) // mapped to int8_t
@@ -692,8 +671,8 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField5) // mapped to int8_t
     const uint8_t numBits = 5;
     const DynInt8<> value = 15;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt8,
+    auto introspectableView = introspectable(view);
+    checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt8,
             std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
 }
 
@@ -702,8 +681,8 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField15) // mapped to int16_t
     const uint8_t numBits = 15;
     const DynInt16<> value = -15;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt16,
+    auto introspectableView = introspectable(view);
+    checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt16,
             std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
 }
 
@@ -712,8 +691,8 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField31) // mapped to int32_t
     const uint8_t numBits = 31;
     const DynInt32<> value = -12345678;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt32,
+    auto introspectableView = introspectable(view);
+    checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt32,
             std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
 }
 
@@ -722,8 +701,8 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField60) // mapped to int64_t
     const uint8_t numBits = 60;
     const DynInt64<> value = 1234567890;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkSignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getInt64,
+    auto introspectableView = introspectable(view);
+    checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readSignedBits64, _1, numBits), numBits);
 }
 
@@ -732,8 +711,8 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField7) // mapped to uint8_t
     const uint8_t numBits = 7;
     const DynUInt8<> value = 0x2F;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt8,
+    auto introspectableView = introspectable(view);
+    checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt8,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
 }
 
@@ -742,8 +721,8 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField9) // mapped to uint16_t
     const uint8_t numBits = 9;
     const DynUInt16<> value = 0x1FF;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt16,
+    auto introspectableView = introspectable(view);
+    checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt16,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
 }
 
@@ -752,8 +731,8 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField31) // mapped to uint32_t
     const uint8_t numBits = 31;
     const DynUInt32<> value = UINT32_MAX >> 1U;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt32,
+    auto introspectableView = introspectable(view);
+    checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
 }
 
@@ -762,135 +741,135 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField33) // mapped to uint64_t
     const uint8_t numBits = 33;
     const DynUInt64<> value = static_cast<uint64_t>(UINT32_MAX) << 1U;
     const View view(value, numBits);
-    auto introspectableViewPtr = introspectable(view);
-    checkUnsignedIntegral(view, introspectableViewPtr, &IIntrospectableView::getUInt64,
+    auto introspectableView = introspectable(view);
+    checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readUnsignedBits64, _1, numBits), numBits);
 }
 
 TEST_F(IntrospectableViewTest, varint16IntrospectableView)
 {
     const VarInt16 value = -1234;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt16,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt16,
             std::bind(&BitStreamReader::readVarInt16, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varint32IntrospectableView)
 {
     const VarInt32 value = 54321;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt32,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt32,
             std::bind(&BitStreamReader::readVarInt32, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varint64IntrospectableView)
 {
     const VarInt64 value = -87654321;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readVarInt64, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varintIntrospectableView)
 {
     const VarInt value = INT64_MAX;
-    auto introspectableViewPtr = introspectable(value);
-    checkSignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getInt64,
+    auto introspectableView = introspectable(value);
+    checkSignedIntegral(value, introspectableView, &IIntrospectableView::getInt64,
             std::bind(&BitStreamReader::readVarInt, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varuint16IntrospectableView)
 {
     const VarUInt16 value = 1234;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt16,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt16,
             std::bind(&BitStreamReader::readVarUInt16, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varuint32IntrospectableView)
 {
     const VarUInt32 value = 0x1FFFFFFF;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readVarUInt32, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varuint64IntrospectableView)
 {
     const VarUInt64 value = 4242424242;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readVarUInt64, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varuintIntrospectableView)
 {
     const VarUInt value = UINT64_MAX;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt64,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt64,
             std::bind(&BitStreamReader::readVarUInt, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, varsizeIntrospectableView)
 {
     const VarSize value = (UINT32_C(1) << (7U + 7 + 7 + 7 + 3)) - 1U;
-    auto introspectableViewPtr = introspectable(value);
-    checkUnsignedIntegral(value, introspectableViewPtr, &IIntrospectableView::getUInt32,
+    auto introspectableView = introspectable(value);
+    checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt32,
             std::bind(&BitStreamReader::readVarSize, _1), zserio::detail::bitSizeOf(value));
 }
 
 TEST_F(IntrospectableViewTest, float16IntrospectableView)
 {
     const Float16 value = 2.0F;
-    auto introspectableViewPtr = introspectable(value);
-    checkFloatingPoint(value, introspectableViewPtr, &IIntrospectableView::getFloat,
+    auto introspectableView = introspectable(value);
+    checkFloatingPoint(value, introspectableView, &IIntrospectableView::getFloat,
             std::bind(&BitStreamReader::readFloat16, _1));
 }
 
 TEST_F(IntrospectableViewTest, float32IntrospectableView)
 {
     const Float32 value = 1.2F;
-    auto introspectableViewPtr = introspectable(value);
-    checkFloatingPoint(value, introspectableViewPtr, &IIntrospectableView::getFloat,
+    auto introspectableView = introspectable(value);
+    checkFloatingPoint(value, introspectableView, &IIntrospectableView::getFloat,
             std::bind(&BitStreamReader::readFloat32, _1));
 }
 
 TEST_F(IntrospectableViewTest, float64IntrospectableView)
 {
     const Float64 value = 1.2;
-    auto introspectableViewPtr = introspectable(value);
-    checkFloatingPoint(value, introspectableViewPtr, &IIntrospectableView::getDouble,
+    auto introspectableView = introspectable(value);
+    checkFloatingPoint(value, introspectableView, &IIntrospectableView::getDouble,
             std::bind(&BitStreamReader::readFloat64, _1));
 }
 
 TEST_F(IntrospectableViewTest, bytesIntrospectableView)
 {
     const Bytes value{{0, 127, 128, 255}};
-    auto introspectableViewPtr = introspectable(BytesView(value.data(), value.size()));
-    checkBytes(value, introspectableViewPtr);
+    auto introspectableView = introspectable(BytesView(value.data(), value.size()));
+    checkBytes(value, introspectableView);
 }
 
 TEST_F(IntrospectableViewTest, stringIntrospectableView)
 {
     auto value = std::string_view("some text as a string view");
-    auto introspectableViewPtr = introspectable(value);
-    checkString(value, introspectableViewPtr);
+    auto introspectableView = introspectable(value);
+    checkString(value, introspectableView);
 }
 
 TEST_F(IntrospectableViewTest, bitBufferIntrospectableView)
 {
     const BitBuffer value = BitBuffer{std::vector<uint8_t>({0xAB, 0xF0}), 12};
     const BitBufferView view = value;
-    auto introspectableViewPtr = introspectable(view);
-    checkBitBuffer(value, introspectableViewPtr);
+    auto introspectableView = introspectable(view);
+    checkBitBuffer(value, introspectableView);
 }
 
 TEST_F(IntrospectableViewTest, boolConstArray)
 {
     const auto rawArray = std::vector<Bool>({true, false, true, false});
-    const Array<const Bool> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Bool> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Bool value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getBool,
                         std::bind(&BitStreamReader::readBool, _1));
@@ -900,9 +879,9 @@ TEST_F(IntrospectableViewTest, boolConstArray)
 TEST_F(IntrospectableViewTest, int8ConstArray)
 {
     const auto rawArray = std::vector<Int8>({-10, -20, 30, 40});
-    const Array<const Int8> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Int8> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Int8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
                         std::bind(&BitStreamReader::readSignedBits32, _1, 8));
@@ -912,9 +891,9 @@ TEST_F(IntrospectableViewTest, int8ConstArray)
 TEST_F(IntrospectableViewTest, int16ConstArray)
 {
     const auto rawArray = std::vector<Int16>({-100, -200, 300, 400});
-    const Array<const Int16> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Int16> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Int16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
                         std::bind(&BitStreamReader::readSignedBits32, _1, 16));
@@ -924,9 +903,9 @@ TEST_F(IntrospectableViewTest, int16ConstArray)
 TEST_F(IntrospectableViewTest, int32ConstArray)
 {
     const auto rawArray = std::vector<Int32>({-10000, -20000, 30000, 40000});
-    const Array<const Int32> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Int32> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Int32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
                         std::bind(&BitStreamReader::readSignedBits32, _1, 32));
@@ -936,9 +915,9 @@ TEST_F(IntrospectableViewTest, int32ConstArray)
 TEST_F(IntrospectableViewTest, int64ConstArray)
 {
     const auto rawArray = std::vector<Int64>({-10000000, -20000000, 30000000, 40000000});
-    const Array<const Int64> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Int64> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Int64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
                         std::bind(&BitStreamReader::readSignedBits64, _1, 64));
@@ -948,9 +927,9 @@ TEST_F(IntrospectableViewTest, int64ConstArray)
 TEST_F(IntrospectableViewTest, uint8ConstArray)
 {
     const auto rawArray = std::vector<UInt8>({10, 20, 30, 40});
-    const Array<const UInt8> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const UInt8> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](UInt8 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
                         std::bind(&BitStreamReader::readUnsignedBits32, _1, 8));
@@ -960,9 +939,9 @@ TEST_F(IntrospectableViewTest, uint8ConstArray)
 TEST_F(IntrospectableViewTest, uint16ConstArray)
 {
     const auto rawArray = std::vector<UInt16>({100, 200, 300, 400});
-    const Array<const UInt16> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const UInt16> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](UInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt16,
                         std::bind(&BitStreamReader::readUnsignedBits32, _1, 16));
@@ -972,9 +951,9 @@ TEST_F(IntrospectableViewTest, uint16ConstArray)
 TEST_F(IntrospectableViewTest, uint32ConstArray)
 {
     const auto rawArray = std::vector<UInt32>({10000, 20000, 30000, 40000});
-    const Array<const UInt32> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const UInt32> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](UInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
                         std::bind(&BitStreamReader::readUnsignedBits32, _1, 32));
@@ -984,9 +963,9 @@ TEST_F(IntrospectableViewTest, uint32ConstArray)
 TEST_F(IntrospectableViewTest, uint64ConstArray)
 {
     const auto rawArray = std::vector<UInt64>({10000000, 20000000, 30000000, 40000000});
-    const Array<const UInt64> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const UInt64> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](UInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
                         std::bind(&BitStreamReader::readUnsignedBits64, _1, 64));
@@ -997,9 +976,9 @@ TEST_F(IntrospectableViewTest, fixedSignedBitField5ConstArray)
 {
     uint8_t numBits = 5;
     const auto rawArray = std::vector<Int5>{{-3, -1, 2, 4, 6}};
-    const Array<const Int5> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Int5> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Int5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
                         std::bind(&BitStreamReader::readSignedBits32, _1, numBits), numBits);
@@ -1010,9 +989,9 @@ TEST_F(IntrospectableViewTest, fixedUnsignedBitField5ConstArray)
 {
     const uint8_t numBits = 5;
     const auto rawArray = std::vector<UInt5>{{3, 1, 2, 4, 6}};
-    const Array<const UInt5> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const UInt5> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](UInt5 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
                         std::bind(&BitStreamReader::readUnsignedBits32, _1, numBits), numBits);
@@ -1038,9 +1017,9 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField5ConstArray)
 
     ZserioArrayOwner owner;
     const auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
-    const Array<const DynInt8<>, ZserioArrayTraits> array(rawArray, owner);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const DynInt8<>, ZserioArrayTraits> array(rawArray, owner);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](View<DynInt8<>> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
                         std::bind(&BitStreamReader::readSignedBits32, _1, owner.numBits), owner.numBits);
@@ -1066,9 +1045,9 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField5ConstArray)
 
     ZserioArrayOwner owner;
     const auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
-    const Array<const DynUInt8<>, ZserioArrayTraits> array(rawArray, owner);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const DynUInt8<>, ZserioArrayTraits> array(rawArray, owner);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](View<DynUInt8<>> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
                         std::bind(&BitStreamReader::readUnsignedBits32, _1, owner.numBits), owner.numBits);
@@ -1078,8 +1057,8 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField5ConstArray)
 TEST_F(IntrospectableViewTest, varint16ConstArray)
 {
     const auto rawArray = std::vector<VarInt16>({-10, -20, 30, 40});
-    const Array<const VarInt16> array(rawArray);
-    auto introspectableView = introspectable(array);
+    const ArrayView<const VarInt16> array(rawArray);
+    auto introspectableView = introspectableArray(array);
     checkArray(array, introspectableView,
             [&](VarInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt16,
@@ -1090,8 +1069,8 @@ TEST_F(IntrospectableViewTest, varint16ConstArray)
 TEST_F(IntrospectableViewTest, varint32ConstArray)
 {
     const auto rawArray = std::vector<VarInt32>({-10000, -20000, 30000, 40000});
-    const Array<const VarInt32> array(rawArray);
-    auto introspectableView = introspectable(array);
+    const ArrayView<const VarInt32> array(rawArray);
+    auto introspectableView = introspectableArray(array);
     checkArray(array, introspectableView,
             [&](VarInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt32,
@@ -1102,8 +1081,8 @@ TEST_F(IntrospectableViewTest, varint32ConstArray)
 TEST_F(IntrospectableViewTest, varint64ConstArray)
 {
     const auto rawArray = std::vector<VarInt64>({-10000000, -20000000, 30000000, 40000000});
-    const Array<const VarInt64> array(rawArray);
-    auto introspectableView = introspectable(array);
+    const ArrayView<const VarInt64> array(rawArray);
+    auto introspectableView = introspectableArray(array);
     checkArray(array, introspectableView,
             [&](VarInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
@@ -1114,8 +1093,8 @@ TEST_F(IntrospectableViewTest, varint64ConstArray)
 TEST_F(IntrospectableViewTest, varintConstArray)
 {
     const auto rawArray = std::vector<VarInt>({-10000000, -20000000, 30000000, 40000000});
-    const Array<const VarInt> array(rawArray);
-    auto introspectableView = introspectable(array);
+    const ArrayView<const VarInt> array(rawArray);
+    auto introspectableView = introspectableArray(array);
     checkArray(array, introspectableView,
             [&](VarInt value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt64,
@@ -1126,9 +1105,9 @@ TEST_F(IntrospectableViewTest, varintConstArray)
 TEST_F(IntrospectableViewTest, varuint16ConstArray)
 {
     const auto rawArray = std::vector<VarUInt16>({10, 20, 30, 40});
-    const Array<const VarUInt16> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const VarUInt16> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](VarUInt16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt16,
                         std::bind(&BitStreamReader::readVarUInt16, _1));
@@ -1138,9 +1117,9 @@ TEST_F(IntrospectableViewTest, varuint16ConstArray)
 TEST_F(IntrospectableViewTest, varuint32ConstArray)
 {
     const auto rawArray = std::vector<VarUInt32>({10000, 20000, 30000, 40000});
-    const Array<const VarUInt32> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const VarUInt32> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](VarUInt32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
                         std::bind(&BitStreamReader::readVarUInt32, _1));
@@ -1150,9 +1129,9 @@ TEST_F(IntrospectableViewTest, varuint32ConstArray)
 TEST_F(IntrospectableViewTest, varuint64ConstArray)
 {
     const auto rawArray = std::vector<VarUInt64>({10000, 20000, 30000, 40000});
-    const Array<const VarUInt64> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const VarUInt64> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](VarUInt64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
                         std::bind(&BitStreamReader::readVarUInt64, _1));
@@ -1162,9 +1141,9 @@ TEST_F(IntrospectableViewTest, varuint64ConstArray)
 TEST_F(IntrospectableViewTest, varuintConstArray)
 {
     const auto rawArray = std::vector<VarUInt>({10000, 20000, 30000, 40000});
-    const Array<const VarUInt> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const VarUInt> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](VarUInt value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt64,
                         std::bind(&BitStreamReader::readVarUInt, _1));
@@ -1174,9 +1153,9 @@ TEST_F(IntrospectableViewTest, varuintConstArray)
 TEST_F(IntrospectableViewTest, varsizeConstArray)
 {
     const auto rawArray = std::vector<VarSize>({10000, 20000, 30000, 40000});
-    const Array<const VarSize> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const VarSize> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](VarSize value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt32,
                         std::bind(&BitStreamReader::readVarSize, _1));
@@ -1186,9 +1165,9 @@ TEST_F(IntrospectableViewTest, varsizeConstArray)
 TEST_F(IntrospectableViewTest, float16ConstArray)
 {
     const auto rawArray = std::vector<Float16>{{2.0F, 0.0F}};
-    const Array<const Float16> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Float16> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Float16 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getFloat,
                         std::bind(&BitStreamReader::readFloat16, _1));
@@ -1198,9 +1177,9 @@ TEST_F(IntrospectableViewTest, float16ConstArray)
 TEST_F(IntrospectableViewTest, float32ConstArray)
 {
     const auto rawArray = std::vector<Float32>{{2.0F, 0.0F, 1.2F}};
-    const Array<const Float32> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Float32> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Float32 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getFloat,
                         std::bind(&BitStreamReader::readFloat32, _1));
@@ -1210,9 +1189,9 @@ TEST_F(IntrospectableViewTest, float32ConstArray)
 TEST_F(IntrospectableViewTest, float64ConstArray)
 {
     const auto rawArray = std::vector<Float64>{{2.0, 0.0, 1.2}};
-    const Array<const Float64> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Float64> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](Float64 value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkFloatingPoint(value, elementIntrospectableView, &IIntrospectableView::getDouble,
                         std::bind(&BitStreamReader::readFloat64, _1));
@@ -1222,9 +1201,9 @@ TEST_F(IntrospectableViewTest, float64ConstArray)
 TEST_F(IntrospectableViewTest, stringConstArray)
 {
     const auto rawArray = std::vector<std::string>{{"one", "two", "three"}};
-    const Array<const std::string> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const std::string> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](std::string_view value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkString(value, elementIntrospectableView);
             });
@@ -1233,8 +1212,8 @@ TEST_F(IntrospectableViewTest, stringConstArray)
 TEST_F(IntrospectableViewTest, bitBufferConstArray)
 {
     const auto rawArray = std::vector<BitBuffer>{{BitBuffer({0xF8}, 5), BitBuffer({0xAB, 0xCD}, 16)}};
-    const Array<const BitBuffer> array(rawArray);
-    auto introspectableView = introspectable(array);
+    const ArrayView<const BitBuffer> array(rawArray);
+    auto introspectableView = introspectableArray(array);
     checkArray(array, introspectableView,
             [&](BitBufferView value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkBitBuffer(value, elementIntrospectableView);
@@ -1244,277 +1223,72 @@ TEST_F(IntrospectableViewTest, bitBufferConstArray)
 TEST_F(IntrospectableViewTest, bytesConstArray)
 {
     const auto rawArray = std::vector<Bytes>{{{{0x00, 0x01}}, {{0xFF, 0xFE}}}};
-    const Array<const Bytes> array(rawArray);
-    auto introspectableViewPtr = introspectable(array);
-    checkArray(array, introspectableViewPtr,
+    const ArrayView<const Bytes> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
             [&](BytesView value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkBytes(value, elementIntrospectableView);
             });
 }
 
-#if 0 // !@#
 TEST_F(IntrospectableViewTest, bitmaskConstIntrospectableView)
 {
-    const IntrospectableViewBitmask bitmask = IntrospectableViewBitmask::Values::WRITE;
-    auto introspectableViewPtr = introspectableView(bitmask);
-    checkBitmask(bitmask, introspectableViewPtr);
-}
-
-TEST_F(IntrospectableViewTest, bitmaskIntrospectableView)
-{
-    IntrospectableViewBitmask bitmask = IntrospectableViewBitmask::Values::WRITE;
-    auto introspectableViewPtr = introspectableView(bitmask);
-    checkBitmask(bitmask, introspectableViewPtr);
+    const ReflectableBitmask bitmask = ReflectableBitmask::Values::WRITE;
+    auto introspectableView = introspectable(bitmask);
+    checkBitmask(bitmask, introspectableView);
 }
 
 TEST_F(IntrospectableViewTest, bitmaskConstArray)
 {
-    const auto rawArray = std::vector<IntrospectableViewBitmask>{{IntrospectableViewBitmask::Values::WRITE,
-            IntrospectableViewBitmask::Values::CREATE, IntrospectableViewBitmask::Values::READ}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](IntrospectableViewBitmask value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const auto rawArray = std::vector<ReflectableBitmask>{{ReflectableBitmask::Values::WRITE,
+            ReflectableBitmask::Values::CREATE, ReflectableBitmask::Values::READ}};
+    const ArrayView<const ReflectableBitmask> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
+            [&](ReflectableBitmask value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkBitmask(value, elementIntrospectableView);
             });
-
-    auto nonConstIntrospectableView = std::const_pointer_cast<IIntrospectableView>(introspectableViewPtr);
-    ASSERT_THROW(nonConstIntrospectableView->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(IntrospectableViewTest, bitmaskArray)
+TEST_F(IntrospectableViewTest, enumConstIntrospectableView)
 {
-    auto rawArray = std::vector<IntrospectableViewBitmask>{{IntrospectableViewBitmask::Values::WRITE,
-            IntrospectableViewBitmask::Values::CREATE, IntrospectableViewBitmask::Values::READ}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](IntrospectableViewBitmask value, const IIntrospectableViewPtr& elementIntrospectableView) {
-                checkBitmask(value, elementIntrospectableView);
-            });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
-            [&](IntrospectableViewBitmask value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkBitmask(value, elementIntrospectableView);
-            });
-
-    introspectableViewPtr->resize(0);
-    ASSERT_EQ(0, introspectableViewPtr->size());
-    introspectableViewPtr->append(Any(IntrospectableViewBitmask(IntrospectableViewBitmask::Values::READ)));
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(IntrospectableViewBitmask::Values::READ, IntrospectableViewBitmask(introspectableViewPtr->at(0)->getUInt8()));
-    introspectableViewPtr->setAt(Any(IntrospectableViewBitmask(IntrospectableViewBitmask::Values::CREATE)), 0);
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(IntrospectableViewBitmask::Values::CREATE, IntrospectableViewBitmask(introspectableViewPtr->at(0)->getUInt8()));
-    introspectableViewPtr->resize(2);
-    ASSERT_EQ(2, introspectableViewPtr->size());
-
-    introspectableViewPtr->append(Any(IntrospectableViewBitmask(IntrospectableViewBitmask::Values::WRITE).getValue()));
-    ASSERT_EQ(3, introspectableViewPtr->size());
-    ASSERT_EQ(IntrospectableViewBitmask::Values::WRITE, IntrospectableViewBitmask(introspectableViewPtr->at(2)->getUInt8()));
-    introspectableViewPtr->setAt(Any(IntrospectableViewBitmask(IntrospectableViewBitmask::Values::READ).getValue()), 2);
-    ASSERT_EQ(3, introspectableViewPtr->size());
-    ASSERT_EQ(IntrospectableViewBitmask::Values::READ, IntrospectableViewBitmask(introspectableViewPtr->at(2)->getUInt8()));
-
-    // out of range
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(IntrospectableViewBitmask::Values::CREATE), 3), CppRuntimeException);
-}
-
-TEST_F(IntrospectableViewTest, enumIntrospectableView)
-{
-    const IntrospectableViewEnum enumeration = IntrospectableViewEnum::VALUE1;
-    auto introspectableViewPtr = introspectableView(enumeration);
-    checkEnum(enumeration, introspectableViewPtr);
+    const ReflectableEnum enumeration = ReflectableEnum::VALUE1;
+    auto introspectableView = introspectable(enumeration);
+    checkEnum(enumeration, introspectableView);
 }
 
 TEST_F(IntrospectableViewTest, enumConstArray)
 {
-    const auto rawArray = std::vector<IntrospectableViewEnum>{
-            {IntrospectableViewEnum::VALUE1, IntrospectableViewEnum::VALUE2, IntrospectableViewEnum::VALUE3}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](IntrospectableViewEnum value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+    const auto rawArray = std::vector<ReflectableEnum>{
+            {ReflectableEnum::VALUE1, ReflectableEnum::VALUE2, ReflectableEnum::VALUE3}};
+    const ArrayView<const ReflectableEnum> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
+            [&](ReflectableEnum value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkEnum(value, elementIntrospectableView);
             });
-
-    auto nonConstIntrospectableView = std::const_pointer_cast<IIntrospectableView>(introspectableViewPtr);
-    ASSERT_THROW(nonConstIntrospectableView->getAnyValue(), CppRuntimeException);
-}
-
-TEST_F(IntrospectableViewTest, enumArray)
-{
-    auto rawArray = std::vector<IntrospectableViewEnum>{
-            {IntrospectableViewEnum::VALUE1, IntrospectableViewEnum::VALUE2, IntrospectableViewEnum::VALUE3}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](IntrospectableViewEnum value, const IIntrospectableViewPtr& elementIntrospectableView) {
-                checkEnum(value, elementIntrospectableView);
-            });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
-            [&](IntrospectableViewEnum value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkEnum(value, elementIntrospectableView);
-            });
-
-    introspectableViewPtr->resize(0);
-    ASSERT_EQ(0, introspectableViewPtr->size());
-    introspectableViewPtr->append(Any(IntrospectableViewEnum(IntrospectableViewEnum::VALUE3)));
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(enumToValue(IntrospectableViewEnum::VALUE3), introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->setAt(Any(IntrospectableViewEnum(IntrospectableViewEnum::VALUE2)), 0);
-    ASSERT_EQ(1, introspectableViewPtr->size());
-    ASSERT_EQ(enumToValue(IntrospectableViewEnum::VALUE2), introspectableViewPtr->at(0)->getInt8());
-    introspectableViewPtr->resize(2);
-    ASSERT_EQ(2, introspectableViewPtr->size());
-
-    introspectableViewPtr->append(Any(enumToValue(IntrospectableViewEnum::VALUE1)));
-    ASSERT_EQ(3, introspectableViewPtr->size());
-    ASSERT_EQ(enumToValue(IntrospectableViewEnum::VALUE1), introspectableViewPtr->at(2)->getInt8());
-    introspectableViewPtr->setAt(Any(enumToValue(IntrospectableViewEnum::VALUE2)), 2);
-    ASSERT_EQ(3, introspectableViewPtr->size());
-    ASSERT_EQ(enumToValue(IntrospectableViewEnum::VALUE2), introspectableViewPtr->at(2)->getInt8());
-
-    // out of range
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(IntrospectableViewEnum(IntrospectableViewEnum::VALUE2)), 3), CppRuntimeException);
 }
 
 TEST_F(IntrospectableViewTest, compoundConst)
 {
-    const IntrospectableViewObject introspectableViewObject = createIntrospectableViewObject("test", 13);
-    auto introspectableViewPtr = introspectableView(introspectableViewObject);
-    checkCompound(introspectableViewObject, introspectableViewPtr);
-
-    IIntrospectableViewPtr nonConstIntrospectableView = std::const_pointer_cast<IIntrospectableView>(introspectableViewPtr);
-    ASSERT_NO_THROW(introspectableViewPtr->getField("introspectableViewNested"));
-    ASSERT_THROW(nonConstIntrospectableView->getField("introspectableViewNested"), CppRuntimeException);
-    ASSERT_NO_THROW(introspectableViewPtr->getAnyValue());
-    ASSERT_THROW(nonConstIntrospectableView->getAnyValue(), CppRuntimeException);
-
-    IIntrospectableViewConstPtr childIntrospectableView = introspectableViewPtr->getField("introspectableViewNested");
-    IIntrospectableViewPtr nonConstChildIntrospectableView = std::const_pointer_cast<IIntrospectableView>(childIntrospectableView);
-    ASSERT_THROW(
-            nonConstChildIntrospectableView->setField("value", Any(static_cast<uint32_t>(11))), CppRuntimeException);
-}
-
-TEST_F(IntrospectableViewTest, compound)
-{
-    IntrospectableViewObject introspectableViewObject = createIntrospectableViewObject("test", 13);
-    auto introspectableViewPtr = introspectableView(introspectableViewObject);
-
-    checkCompound(introspectableViewObject, introspectableViewPtr);
+    const ReflectableObject reflectableObject = createReflectableObject("test", 13);
+    const View view(reflectableObject);
+    auto introspectableView = introspectable(view);
+    checkCompound(view, introspectableView);
 }
 
 TEST_F(IntrospectableViewTest, compoundConstArray)
 {
-    IntrospectableViewObject introspectableViewObject1 = createIntrospectableViewObject("1", 13);
+    ReflectableObject reflectableObject1 = createReflectableObject("1", 13);
     const auto rawArray =
-            std::vector<IntrospectableViewObject>{{introspectableViewObject1, createIntrospectableViewObject("2", 42)}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](const IntrospectableViewObject& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkCompound(value, elementIntrospectableView);
+            std::vector<ReflectableObject>{{reflectableObject1, createReflectableObject("2", 42)}};
+    const ArrayView<const ReflectableObject> array(rawArray);
+    auto introspectableView = introspectableArray(array);
+    checkArray(array, introspectableView,
+            [&](const View<ReflectableObject>& view,
+                    const IIntrospectableViewConstPtr& elementIntrospectableView) {
+                checkCompound(view, elementIntrospectableView);
             });
-
-    IIntrospectableViewPtr nonConstIntrospectableView = std::const_pointer_cast<IIntrospectableView>(introspectableViewPtr);
-    ASSERT_THROW(nonConstIntrospectableView->at(0), CppRuntimeException);
-    ASSERT_THROW((*nonConstIntrospectableView)[0], CppRuntimeException);
-    ASSERT_THROW(nonConstIntrospectableView->resize(nonConstIntrospectableView->size() + 1), CppRuntimeException);
-    ASSERT_THROW(nonConstIntrospectableView->setAt(Any(createIntrospectableViewObject("test", 0)), 0), CppRuntimeException);
-    ASSERT_THROW(nonConstIntrospectableView->append(Any(createIntrospectableViewObject("test", 0))), CppRuntimeException);
-    ASSERT_THROW(nonConstIntrospectableView->getAnyValue(), CppRuntimeException);
 }
 
-TEST_F(IntrospectableViewTest, compoundArray)
-{
-    auto rawArray = std::vector<IntrospectableViewObject>{
-            {createIntrospectableViewObject("1", 13), createIntrospectableViewObject("2", 42)}};
-    auto introspectableViewPtr = introspectableViewArray(rawArray);
-    checkArray(rawArray, introspectableViewPtr,
-            [&](const IntrospectableViewObject& value, const IIntrospectableViewPtr& elementIntrospectableView) {
-                checkCompound(value, elementIntrospectableView);
-            });
-    checkArray(rawArray, static_cast<IIntrospectableViewConstPtr>(introspectableViewPtr),
-            [&](const IntrospectableViewObject& value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
-                checkCompound(value, elementIntrospectableView);
-            });
-
-    introspectableViewPtr->resize(introspectableViewPtr->size() + 1);
-    IIntrospectableViewPtr newCompound = introspectableViewPtr->at(introspectableViewPtr->size() - 1);
-    ASSERT_TRUE(newCompound);
-
-    introspectableViewPtr->setAt(Any(createIntrospectableViewObject("test", 0)), 0);
-    ASSERT_EQ(0, introspectableViewPtr->at(0)->find("introspectableViewNested.value")->getUInt32());
-    introspectableViewPtr->append(Any(createIntrospectableViewObject("test|", 1)));
-    ASSERT_EQ(1, introspectableViewPtr->at(introspectableViewPtr->size() - 1)->find("introspectableViewNested.value")->getUInt32());
-
-    const size_t size = introspectableViewPtr->size();
-    ASSERT_THROW(introspectableViewPtr->setAt(Any(), size), CppRuntimeException); // out of range
-}
-
-TEST_F(IntrospectableViewTest, defaultUnimplementedMethods)
-{
-    class IntrospectableView : public IntrospectableViewBase<std::allocator<uint8_t>>
-    {
-    public:
-        using IntrospectableViewBase<std::allocator<uint8_t>>::IntrospectableViewBase;
-    };
-
-    IntrospectableView introspectableView(typeInfo<UInt8>());
-    ASSERT_THROW(introspectableView.getAnyValue(), CppRuntimeException);
-
-    const IntrospectableView& constIntrospectableViewRef = introspectableView;
-    ASSERT_THROW(constIntrospectableViewRef.getAnyValue(), CppRuntimeException);
-}
-
-TEST_F(IntrospectableViewTest, introspectableViewOwner)
-{
-    auto introspectableView = typeInfo<IntrospectableViewObject>().createInstance();
-
-    IIntrospectableViewConstPtr constIntrospectableView = introspectableView;
-
-    IntrospectableViewObject defaultIntrospectableViewObject;
-    ASSERT_EQ(defaultIntrospectableViewObject,
-            introspectableView->getAnyValue().template get<std::reference_wrapper<IntrospectableViewObject>>().get());
-    ASSERT_EQ(defaultIntrospectableViewObject,
-            constIntrospectableView->getAnyValue().template get<std::reference_wrapper<IntrospectableViewObject>>().get());
-
-    ASSERT_TRUE(TypeInfoUtil::isCompound(introspectableView->getTypeInfo().getSchemaType()));
-    ASSERT_FALSE(introspectableView->isArray());
-    introspectableView->setField("introspectableViewNested", Any(IntrospectableViewNested{42}));
-    ASSERT_EQ(42, introspectableView->getField("introspectableViewNested")->getField("value")->getUInt32());
-    ASSERT_EQ(42, constIntrospectableView->getField("introspectableViewNested")->getField("value")->getUInt32());
-    ASSERT_THROW(introspectableView->createField("nonexistent"), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getChoice(), CppRuntimeException);
-    ASSERT_THROW(constIntrospectableView->getChoice(), CppRuntimeException);
-    ASSERT_FALSE(introspectableView->find("nonexistent"));
-    ASSERT_FALSE(constIntrospectableView->find("nonexistent"));
-    ASSERT_FALSE((*introspectableView)["nonexistent"]);
-    ASSERT_FALSE((*constIntrospectableView)["nonexistent"]);
-
-    ASSERT_THROW(introspectableView->size(), CppRuntimeException); // not an array
-    ASSERT_THROW(introspectableView->resize(0), CppRuntimeException); // not an array
-    ASSERT_THROW(introspectableView->at(0), CppRuntimeException); // not an array
-    ASSERT_THROW(constIntrospectableView->at(0), CppRuntimeException); // not an array
-    ASSERT_THROW((*introspectableView)[0], CppRuntimeException); // not an array
-    ASSERT_THROW((*constIntrospectableView)[0], CppRuntimeException); // not an array
-    ASSERT_THROW(introspectableView->setAt(Any(), 0), CppRuntimeException); // not an array
-    ASSERT_THROW(introspectableView->append(Any()), CppRuntimeException); // not an array
-
-    ASSERT_THROW(introspectableView->getBool(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getInt8(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getInt16(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getInt32(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getInt64(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getUInt8(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getUInt16(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getUInt32(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getUInt64(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getFloat(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getDouble(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getBytes(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getStringView(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->getBitBuffer(), CppRuntimeException);
-
-    ASSERT_THROW(introspectableView->toInt(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->toUInt(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->toDouble(), CppRuntimeException);
-    ASSERT_THROW(introspectableView->toString(), CppRuntimeException);
-}
-#endif // !@#
 } // namespace zserio

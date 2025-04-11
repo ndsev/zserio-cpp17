@@ -48,6 +48,8 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "IReflectableDataPtr", false, false, "zserio/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IReflectableDataConstPtr", false, false, "zserio/IReflectableData.h");
+            introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME,
+                    "IIntrospectableViewConstPtr", false, false, "zserio/IIntrospectableView.h");
         }
         else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
         {
@@ -88,6 +90,8 @@ public final class TypesContext
                     false, "zserio/pmr/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "IReflectableDataConstPtr",
                     false, false, "zserio/pmr/IReflectableData.h");
+            introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME,
+                    "IIntrospectableViewConstPtr", false, false, "zserio/pmr/IIntrospectableView.h");
         }
         else
         {
@@ -123,9 +127,11 @@ public final class TypesContext
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ITypeInfo", true, true, "zserio/ITypeInfo.h");
             reflectablePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", true, true, "zserio/IReflectableData.h");
+                    ZSERIO_PACKAGE_NAME, "IBasicReflectablePtr", true, true, "zserio/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", true, true, "zserio/IReflectableData.h");
+                    ZSERIO_PACKAGE_NAME, "IBasicReflectableConstPtr", true, true, "zserio/IReflectableData.h");
+            introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME,
+                    "IBasicIntrospectableViewConstPtr", true, true, "zserio/IIntrospectableView.h");
         }
     }
 
@@ -234,6 +240,11 @@ public final class TypesContext
         return reflectableConstPtr;
     }
 
+    public NativeTypeDefinition getIntrospectableConstPtr()
+    {
+        return introspectableConstPtr;
+    }
+
     public static final class AllocatorDefinition
     {
         public AllocatorDefinition(String allocatorType, String allocatorSystemInclude)
@@ -336,6 +347,7 @@ public final class TypesContext
     private final NativeTypeDefinition typeInfo;
     private final NativeTypeDefinition reflectablePtr;
     private final NativeTypeDefinition reflectableConstPtr;
+    private final NativeTypeDefinition introspectableConstPtr;
 
     public static final AllocatorDefinition PROPAGATING_POLYMORPHIC_ALLOCATOR = new AllocatorDefinition(
             "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PropagatingPolymorphicAllocator.h");
