@@ -36,6 +36,8 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "IServiceClient", false, false, "zserio/IService.h");
             serviceDataPtr = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IServiceDataPtr", false, false, "zserio/IService.h");
+            introspectableServiceData = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IntrospectableServiceData", false, false, "zserio/IService.h");
             objectServiceData = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ObjectServiceData", false, false, "zserio/IService.h");
             rawServiceDataHolder = new NativeTypeDefinition(
@@ -78,6 +80,8 @@ public final class TypesContext
                     ZSERIO_PMR_PACKAGE_NAME, "IServiceClient", false, false, "zserio/pmr/IService.h");
             serviceDataPtr = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "IServiceDataPtr", false, false, "zserio/pmr/IService.h");
+            introspectableServiceData = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME,
+                    "IntrospectableServiceData", false, false, "zserio/pmr/IService.h");
             objectServiceData = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "ObjectServiceData", false, false, "zserio/pmr/IService.h");
             rawServiceDataHolder = new NativeTypeDefinition(
@@ -118,6 +122,8 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "IBasicServiceClient", true, true, "zserio/IService.h");
             serviceDataPtr = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IBasicServiceDataPtr", true, true, "zserio/IService.h");
+            introspectableServiceData = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "BasicIntrospectableServiceData", true, true, "zserio/IService.h");
             objectServiceData = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BasicObjectServiceData", true, true, "zserio/IService.h");
             rawServiceDataHolder = new NativeTypeDefinition(
@@ -208,6 +214,11 @@ public final class TypesContext
     public NativeTypeDefinition getServiceDataPtr()
     {
         return serviceDataPtr;
+    }
+
+    public NativeTypeDefinition getIntrospectableServiceData()
+    {
+        return introspectableServiceData;
     }
 
     public NativeTypeDefinition getObjectServiceData()
@@ -340,6 +351,7 @@ public final class TypesContext
     private final NativeTypeDefinition service;
     private final NativeTypeDefinition serviceClient;
     private final NativeTypeDefinition serviceDataPtr;
+    private final NativeTypeDefinition introspectableServiceData;
     private final NativeTypeDefinition objectServiceData;
     private final NativeTypeDefinition rawServiceDataHolder;
     private final NativeTypeDefinition rawServiceDataView;

@@ -185,6 +185,7 @@ public abstract class CppTemplateData implements IncludeCollector
             service = new TypeTemplateData(nativeMapper.getServiceType());
             serviceClient = new TypeTemplateData(nativeMapper.getServiceClientType());
             serviceDataPtr = new TypeTemplateData(nativeMapper.getServiceDataPtrType());
+            introspectableServiceData = new TypeTemplateData(nativeMapper.getIntrospectableServiceDataType());
             objectServiceData = new TypeTemplateData(nativeMapper.getObjectServiceDataType());
             rawServiceDataHolder = new TypeTemplateData(nativeMapper.getRawServiceDataHolderType());
             rawServiceDataView = new TypeTemplateData(nativeMapper.getRawServiceDataViewType());
@@ -267,6 +268,11 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getServiceDataPtr()
         {
             return serviceDataPtr;
+        }
+
+        public TypeTemplateData getIntrospectableServiceData()
+        {
+            return introspectableServiceData;
         }
 
         public TypeTemplateData getObjectServiceData()
@@ -405,6 +411,7 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData service;
         private final TypeTemplateData serviceClient;
         private final TypeTemplateData serviceDataPtr;
+        private final TypeTemplateData introspectableServiceData;
         private final TypeTemplateData objectServiceData;
         private final TypeTemplateData rawServiceDataHolder;
         private final TypeTemplateData rawServiceDataView;

@@ -74,6 +74,8 @@ public final class CppNativeMapper
                 new NativeAllocType(typesContext.getServiceClient(), allocatorDefinition, "uint8_t");
         serviceDataPtrType =
                 new NativeAllocType(typesContext.getServiceDataPtr(), allocatorDefinition, "uint8_t");
+        introspectableServiceDataType = new NativeAllocType(
+                typesContext.getIntrospectableServiceData(), allocatorDefinition, "uint8_t");
         objectServiceDataType =
                 new NativeAllocType(typesContext.getObjectServiceData(), allocatorDefinition, "uint8_t");
         rawServiceDataHolderType =
@@ -231,6 +233,11 @@ public final class CppNativeMapper
     public NativeAllocType getServiceDataPtrType()
     {
         return serviceDataPtrType;
+    }
+
+    public NativeAllocType getIntrospectableServiceDataType()
+    {
+        return introspectableServiceDataType;
     }
 
     public NativeAllocType getObjectServiceDataType()
@@ -838,6 +845,7 @@ public final class CppNativeMapper
     private final NativeAllocType serviceType;
     private final NativeAllocType serviceClientType;
     private final NativeAllocType serviceDataPtrType;
+    private final NativeAllocType introspectableServiceDataType;
     private final NativeAllocType objectServiceDataType;
     private final NativeAllocType rawServiceDataHolderType;
     private final NativeAllocType rawServiceDataViewType;
