@@ -121,6 +121,20 @@ struct is_numeric_wrapper<T,
 template <typename T, typename V = void>
 inline constexpr bool is_numeric_wrapper_v = is_numeric_wrapper<T, V>::value;
 
+/**
+ * Trait used to check wheter the type T is complete (defined)
+ * */
+template <typename T, std::size_t = sizeof(T)>
+std::true_type is_complete_impl(T *);
+
+std::false_type is_complete_impl(...);
+
+template <typename T>
+using is_complete = decltype(is_complete_impl(std::declval<T*>()));
+
+template <typename T>
+constexpr bool is_complete_v = is_complete<T>::value;
+
 } // namespace zserio
 
 #endif // ifndef ZSERIO_TRAITS_H_INC
