@@ -20,16 +20,16 @@ public:
 
     template <typename ALLOC>
     Extended(Extended&& other, const ALLOC& allocator) :
-            m_value(std::move(other.m_value), allocator),
-            m_isPresent(other.m_isPresent)
+            m_isPresent(other.m_isPresent),
+            m_value(std::move(other.m_value), allocator)
     {}
 
     Extended(const Extended& other) = default;
 
     template <typename ALLOC>
     Extended(const Extended& other, const ALLOC& allocator) :
-            m_value(other.m_value, allocator),
-            m_isPresent(other.m_isPresent)
+            m_isPresent(other.m_isPresent),
+            m_value(other.m_value, allocator)
     {}
 
     Extended& operator=(Extended&& other) = default;

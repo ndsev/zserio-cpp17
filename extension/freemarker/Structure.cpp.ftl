@@ -58,7 +58,7 @@ ${name}::${name}(const allocator_type&<#if structure_fields_need_allocator(field
 </#list>
 {}
 
-${name}::${name}(${name}&& other, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+${name}::${name}(${name}&&<#if fieldList?has_content> other</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
     <#lt> :
     <#items as field>
@@ -71,7 +71,7 @@ ${name}::${name}(${name}&& other, const allocator_type&<#if structure_fields_nee
 </#list>
 {}
 
-${name}::${name}(const ${name}& other, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
+${name}::${name}(const ${name}&<#if fieldList?has_content> other</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
     <#lt> :
     <#items as field>
