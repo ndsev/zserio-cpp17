@@ -23,17 +23,22 @@ class NumericTypeWrapper;
  * \{
  */
 template <typename T, typename = void>
-struct is_allocator : std::false_type
+struct is_allocator_impl : std::false_type
 {};
 
 template <typename T>
-struct is_allocator<T,
-        std::void_t<decltype(std::declval<T>().allocate(0)),
-                decltype(std::declval<T>().deallocate(nullptr, 0))>> : std::true_type
+struct is_allocator_impl<T,
+        std::void_t<typename T::value_type, decltype(std::declval<T>().allocate(0)),
+                decltype(std::declval<T>().deallocate(std::declval<typename T::value_type*>(), 0))>>
+        : std::true_type
 {};
 
-template <typename T, typename V = void>
-inline constexpr bool is_allocator_v = is_allocator<T, V>::value;
+template <typename T>
+struct is_allocator : is_allocator_impl<std::decay_t<T>>
+{};
+
+template <typename T>
+inline constexpr bool is_allocator_v = is_allocator<T>::value;
 /** \} */
 
 /**
