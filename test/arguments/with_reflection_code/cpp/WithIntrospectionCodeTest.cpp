@@ -12,7 +12,8 @@ namespace with_reflection_code
 {
 
 using AllocatorType = Choice::AllocatorType;
-using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using StringAllocatorType = zserio::RebindAlloc<AllocatorType, char>;
+using StringType = zserio::BasicString<StringAllocatorType>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 using IReflectableData = zserio::IBasicReflectableData<AllocatorType>;
@@ -245,13 +246,13 @@ protected:
         checkWriteRead(*(introspectableView["childArray"]->at(1)), structureView.childArray()[1]);
         checkWriteReadBuiltin(*(introspectableView["childArray"]->at(1)->getField("name")),
                 [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.childArray()[1].name(), reader.readString<AllocatorType>());
+                    ASSERT_EQ(structureView.childArray()[1].name(), reader.readString<StringAllocatorType>());
                 });
         checkWriteThrows(*(introspectableView["childArray"]->at(1)->getField("nicknames")));
         checkWriteReadBuiltin(*(introspectableView["childArray"]->at(1)->getField("nicknames")->at(1)),
                 [&structureView](zserio::BitStreamReader& reader) {
                     ASSERT_EQ(structureView.childArray()[1].nicknames()->at(1),
-                            reader.readString<AllocatorType>());
+                            reader.readString<StringAllocatorType>());
                 });
 
         // uint8 param;
