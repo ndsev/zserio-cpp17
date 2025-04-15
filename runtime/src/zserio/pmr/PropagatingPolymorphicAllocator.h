@@ -109,12 +109,18 @@ public:
         if constexpr (std::uses_allocator_v<std::remove_cv_t<U>, Self>)
         {
             if constexpr (std::is_constructible_v<U, std::allocator_arg_t, Self, Args...>)
+            {
                 new (static_cast<void*>(ptr)) U(std::allocator_arg, *this, std::forward<Args>(args)...);
+            }
             else
+            {
                 new (static_cast<void*>(ptr)) U(std::forward<Args>(args)..., *this);
+            }
         }
         else
+        {
             new (static_cast<void*>(ptr)) U(std::forward<Args>(args)...);
+        }
     }
 
     /**

@@ -837,7 +837,7 @@ public:
     using Base::operator[];
     using Base::getAnyValue;
 
-    ReflectableDataConstArray(const RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
+    explicit ReflectableDataConstArray(const RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
             Base(typeInfo<typename RAW_ARRAY::value_type, ALLOC>(), allocator),
             m_rawArray(rawArray)
     {}
@@ -878,7 +878,7 @@ public:
     using Base::getAnyValue;
     using Base::getTypeInfo;
 
-    ReflectableDataArray(RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
+    explicit ReflectableDataArray(RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
             Base(typeInfo<typename RAW_ARRAY::value_type, ALLOC>(), allocator),
             m_rawArray(rawArray)
     {}
