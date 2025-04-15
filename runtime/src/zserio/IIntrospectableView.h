@@ -4,7 +4,9 @@
 #include <memory>
 #include <string_view>
 
+#include "zserio/BitSize.h"
 #include "zserio/IIntrospectableData.h"
+#include "zserio/View.h"
 
 namespace zserio
 {
@@ -25,7 +27,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~IBasicIntrospectableView() = default;
+    ~IBasicIntrospectableView() override = default;
 
     /**
      * Gets introspectable to the parameter (i.e. member) with the given schema name.
@@ -66,7 +68,7 @@ public:
      *
      * \return Updated bit position which points to the first bit after the compound.
      */
-    virtual size_t initializeOffsets(size_t bitPosition) const = 0;
+    virtual BitSize initializeOffsets(BitSize bitPosition) const = 0;
 
     /**
      * Initializes indexed offsets of the introspectable compound object.
@@ -78,7 +80,7 @@ public:
      *
      * \return Updated bit position which points to the first bit after the compound.
      */
-    virtual size_t initializeOffsets() const = 0;
+    virtual BitSize initializeOffsets() const = 0;
 
     /**
      * Gets the number of bits needed for serialization of the introspectable object.
@@ -91,7 +93,7 @@ public:
      *
      * \return The size of the serialized introspectable object in bits.
      */
-    virtual size_t bitSizeOf(size_t bitPosition) const = 0;
+    virtual BitSize bitSizeOf(BitSize bitPosition) const = 0;
 
     /**
      * Gets the number of bits needed for serialization of the introspectable object.
@@ -104,7 +106,7 @@ public:
      *
      * \return The size of the serialized introspectable object in bits.
      */
-    virtual size_t bitSizeOf() const = 0;
+    virtual BitSize bitSizeOf() const = 0;
 
     /**
      * Writes the introspectable object to a bit stream using the given bit stream writer.
@@ -126,6 +128,23 @@ using IBasicIntrospectableViewConstPtr = typename IBasicIntrospectableView<ALLOC
 /** \{ */
 using IIntrospectableView = IBasicIntrospectableView<>;
 using IIntrospectableViewConstPtr = IBasicIntrospectableViewConstPtr<>;
+/** \} */
+
+/**
+ * Gets reflectable for the given object.
+ *
+ * \param value Object value to reflect.
+ * \param allocator Allocator to use for reflectable allocation.
+ *
+ * \return Reflectable to the given object.
+ */
+/** \{ */
+template <typename T, typename ALLOC = typename T::AllocatorType>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(const View<T>& view, const ALLOC& allocator = ALLOC());
+
+template <typename T, typename ALLOC = std::allocator<uint8_t>,
+        std::enable_if_t<std::is_enum_v<T> || is_bitmask_v<T>, int> = 0>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(T value, const ALLOC& allocator = ALLOC());
 /** \} */
 
 } // namespace zserio

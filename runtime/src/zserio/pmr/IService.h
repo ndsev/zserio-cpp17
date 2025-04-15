@@ -21,6 +21,9 @@ using IServiceClient = IBasicServiceClient<PropagatingPolymorphicAllocator<uint8
  * Typedef to service data implementation provided for convenience - using
  * PropagatingPolymorphicAllocator<uint8_t>.
  */
+template <typename ZSERIO_OBJECT>
+using IntrospectableServiceData =
+        BasicIntrospectableServiceData<ZSERIO_OBJECT, PropagatingPolymorphicAllocator<uint8_t>>;
 using ObjectServiceData = BasicObjectServiceData<PropagatingPolymorphicAllocator<uint8_t>>;
 using RawServiceDataHolder = BasicRawServiceDataHolder<PropagatingPolymorphicAllocator<uint8_t>>;
 using RawServiceDataView = BasicRawServiceDataView<PropagatingPolymorphicAllocator<uint8_t>>;

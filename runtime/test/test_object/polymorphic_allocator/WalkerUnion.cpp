@@ -6,6 +6,7 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/SizeConvertUtil.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
 #include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
@@ -307,7 +308,7 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::W
         "test_object.polymorphic_allocator.WalkerUnion",
         [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::WalkerUnion>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::WalkerUnion>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -375,7 +376,7 @@ template <>
         const ::test_object::polymorphic_allocator::WalkerUnion& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
 }
 
 template <>
@@ -504,7 +505,54 @@ template <>
         ::test_object::polymorphic_allocator::WalkerUnion& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+}
+
+template <>
+::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::WalkerUnion>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::WalkerUnion, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::WalkerUnion>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator) :
+                ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::WalkerUnion, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                        view_, allocator)
+        {}
+
+        ::zserio::pmr::IIntrospectableViewConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "value")
+            {
+                return ::zserio::introspectable(getValue().value(), get_allocator());
+            }
+            if (name == "text")
+            {
+                return ::zserio::introspectable(getValue().text(), get_allocator());
+            }
+            if (name == "nestedArray")
+            {
+                return ::zserio::introspectableArray(getValue().nestedArray(), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
+        }
+
+        ::std::string_view getChoice() const override
+        {
+            switch (getValue().zserioChoiceTag())
+            {
+            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+                return "value";
+            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+                return "text";
+            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+                return "nestedArray";
+            default:
+                return "";
+            }
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
 }
 
 } // namespace zserio

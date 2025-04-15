@@ -6,6 +6,7 @@
 #include <zserio/ChoiceCaseException.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
 #include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
@@ -315,7 +316,7 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
         "test_object.polymorphic_allocator.ReflectableChoice",
         [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableChoice>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::ReflectableChoice>>(allocator, allocator);
         },
         templateName, templateArguments,
         fields, parameters, functions, "param()", cases
@@ -377,7 +378,7 @@ template <>
         const ::test_object::polymorphic_allocator::ReflectableChoice& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
 }
 
 template <>
@@ -483,7 +484,57 @@ template <>
         ::test_object::polymorphic_allocator::ReflectableChoice& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+}
+
+template <>
+::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::ReflectableChoice>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableChoice, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::ReflectableChoice>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator) :
+                ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableChoice, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                        view_, allocator)
+        {}
+
+        ::zserio::pmr::IIntrospectableViewConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "valueStr")
+            {
+                return ::zserio::introspectable(getValue().valueStr(), get_allocator());
+            }
+            if (name == "value32")
+            {
+                return ::zserio::introspectable(getValue().value32(), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableChoice'!";
+        }
+
+        ::zserio::pmr::IIntrospectableViewConstPtr getParameter(::std::string_view name) const override
+        {
+            if (name == "param")
+            {
+                return ::zserio::introspectable(getValue().param(), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Parameter '") << name << "' doesn't exist in 'ReflectableChoice'!";
+        }
+
+        ::std::string_view getChoice() const override
+        {
+            switch (getValue().zserioChoiceTag())
+            {
+            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr:
+                return "valueStr";
+            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32:
+                return "value32";
+            default:
+                return "";
+            }
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
 }
 
 } // namespace zserio

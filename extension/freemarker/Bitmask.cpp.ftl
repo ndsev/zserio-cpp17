@@ -5,8 +5,9 @@
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
 <#if withTypeInfoCode>
-#include <zserio/TypeInfo.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/TypeInfo.h>
 </#if>
 <@system_includes cppSystemIncludes/>
 
@@ -107,6 +108,41 @@ ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.alloca
     };
 
     return ::std::allocate_shared<Reflectable>(allocator, value);
+}
+
+template <>
+${types.introspectableConstPtr.name} introspectable(${fullName} value, const ${types.allocator.default}& allocator)
+{
+    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+    {
+    public:
+        explicit Introspectable(${fullName} bitmask) :
+                ::zserio::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+                        typeInfo<${fullName}, ${types.allocator.default}>(), bitmask)
+        {}
+        <#-- bitmask is always unsigned -->
+        ${fullName}::ZserioType::ValueType getUInt${nativeNumBits}() const override
+        {
+            return getValue().getValue();
+        }
+
+        uint64_t toUInt() const override
+        {
+            return getValue().getValue();
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toUInt());
+        }
+
+        ${types.string.name} toString(const ${types.allocator.default}& alloc) const override
+        {
+            return getValue().toString(alloc);
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, value);
 }
 <@namespace_end ["zserio"]/>
 </#if>

@@ -6,8 +6,9 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
-#include <zserio/TypeInfo.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/TypeInfo.h>
 
 #include <test_object/polymorphic_allocator/ReflectableUtilEnum.h>
 
@@ -114,6 +115,41 @@ template <>
     };
 
     return std::allocate_shared<Reflectable>(allocator, value);
+}
+
+template <>
+::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::ReflectableUtilEnum value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableUtilEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    {
+    public:
+        explicit Introspectable(::test_object::polymorphic_allocator::ReflectableUtilEnum value) :
+                ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableUtilEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                        typeInfo<::test_object::polymorphic_allocator::ReflectableUtilEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(), value)
+        {}
+
+        ::zserio::Int8::ValueType getInt8() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::polymorphic_allocator::ReflectableUtilEnum>::type>(getValue());
+        }
+
+        int64_t toInt() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::polymorphic_allocator::ReflectableUtilEnum>::type>(getValue());
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toInt());
+        }
+
+        ::zserio::pmr::String toString(const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::pmr::String(::zserio::enumToString(getValue()), alloc);
+        }
+    };
+
+    return std::allocate_shared<Introspectable>(allocator, value);
 }
 
 } // namespace zserio

@@ -27,7 +27,7 @@ struct TestObject
 
 struct VarDynInt16Owner
 {
-    const uint8_t numBits = 10;
+    uint8_t numBits = 10;
 };
 
 } // namespace

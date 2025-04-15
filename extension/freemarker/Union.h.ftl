@@ -16,6 +16,7 @@
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
 <@type_includes types.reflectablePtr/>
+<@type_includes types.introspectableConstPtr/>
 </#if>
 #include <zserio/View.h>
 <@system_includes headerSystemIncludes/>
@@ -196,6 +197,10 @@ ${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${
 
 template <>
 ${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
+
+template <>
+${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
+        <#lt>const ${types.allocator.default}& allocator);
 <@namespace_end ["zserio"]/>
 <#else>
 <@namespace_end ["zserio", "detail"]/>

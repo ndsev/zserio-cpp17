@@ -6,8 +6,9 @@
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 #include <zserio/StringConvertUtil.h>
-#include <zserio/TypeInfo.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
+#include <zserio/TypeInfo.h>
 
 #include <test_object/std_allocator/ReflectableEnum.h>
 
@@ -118,6 +119,41 @@ template <>
     };
 
     return std::allocate_shared<Reflectable>(allocator, value);
+}
+
+template <>
+::zserio::IIntrospectableViewConstPtr introspectable(::test_object::std_allocator::ReflectableEnum value, const ::std::allocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableEnum, ::std::allocator<uint8_t>>
+    {
+    public:
+        explicit Introspectable(::test_object::std_allocator::ReflectableEnum value) :
+                ::zserio::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableEnum, ::std::allocator<uint8_t>>(
+                        typeInfo<::test_object::std_allocator::ReflectableEnum, ::std::allocator<uint8_t>>(), value)
+        {}
+
+        ::zserio::Int8::ValueType getInt8() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::std_allocator::ReflectableEnum>::type>(getValue());
+        }
+
+        int64_t toInt() const override
+        {
+            return static_cast<typename ::std::underlying_type<::test_object::std_allocator::ReflectableEnum>::type>(getValue());
+        }
+
+        double toDouble() const override
+        {
+            return static_cast<double>(toInt());
+        }
+
+        ::zserio::String toString(const ::std::allocator<uint8_t>& alloc) const override
+        {
+            return ::zserio::String(::zserio::enumToString(getValue()), alloc);
+        }
+    };
+
+    return std::allocate_shared<Introspectable>(allocator, value);
 }
 
 } // namespace zserio

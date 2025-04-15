@@ -18,6 +18,7 @@ add_custom_test(with_reflection_code
     DEPENDS
         with_reflection_code_zs
     SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WithIntrospectionCodeTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WithReflectionCodeTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}

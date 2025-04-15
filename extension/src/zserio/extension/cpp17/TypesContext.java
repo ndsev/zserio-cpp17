@@ -36,6 +36,8 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "IServiceClient", false, false, "zserio/IService.h");
             serviceDataPtr = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IServiceDataPtr", false, false, "zserio/IService.h");
+            introspectableServiceData = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "IntrospectableServiceData", false, false, "zserio/IService.h");
             objectServiceData = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ObjectServiceData", false, false, "zserio/IService.h");
             rawServiceDataHolder = new NativeTypeDefinition(
@@ -48,6 +50,8 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "IReflectableDataPtr", false, false, "zserio/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IReflectableDataConstPtr", false, false, "zserio/IReflectableData.h");
+            introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME,
+                    "IIntrospectableViewConstPtr", false, false, "zserio/IIntrospectableView.h");
         }
         else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
         {
@@ -76,6 +80,8 @@ public final class TypesContext
                     ZSERIO_PMR_PACKAGE_NAME, "IServiceClient", false, false, "zserio/pmr/IService.h");
             serviceDataPtr = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "IServiceDataPtr", false, false, "zserio/pmr/IService.h");
+            introspectableServiceData = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME,
+                    "IntrospectableServiceData", false, false, "zserio/pmr/IService.h");
             objectServiceData = new NativeTypeDefinition(
                     ZSERIO_PMR_PACKAGE_NAME, "ObjectServiceData", false, false, "zserio/pmr/IService.h");
             rawServiceDataHolder = new NativeTypeDefinition(
@@ -88,6 +94,8 @@ public final class TypesContext
                     false, "zserio/pmr/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "IReflectableDataConstPtr",
                     false, false, "zserio/pmr/IReflectableData.h");
+            introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME,
+                    "IIntrospectableViewConstPtr", false, false, "zserio/pmr/IIntrospectableView.h");
         }
         else
         {
@@ -114,6 +122,8 @@ public final class TypesContext
                     ZSERIO_PACKAGE_NAME, "IBasicServiceClient", true, true, "zserio/IService.h");
             serviceDataPtr = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "IBasicServiceDataPtr", true, true, "zserio/IService.h");
+            introspectableServiceData = new NativeTypeDefinition(
+                    ZSERIO_PACKAGE_NAME, "BasicIntrospectableServiceData", true, true, "zserio/IService.h");
             objectServiceData = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "BasicObjectServiceData", true, true, "zserio/IService.h");
             rawServiceDataHolder = new NativeTypeDefinition(
@@ -123,9 +133,11 @@ public final class TypesContext
             typeInfo = new NativeTypeDefinition(
                     ZSERIO_PACKAGE_NAME, "ITypeInfo", true, true, "zserio/ITypeInfo.h");
             reflectablePtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectablePtr", true, true, "zserio/IReflectableData.h");
+                    ZSERIO_PACKAGE_NAME, "IBasicReflectablePtr", true, true, "zserio/IReflectableData.h");
             reflectableConstPtr = new NativeTypeDefinition(
-                    ZSERIO_PACKAGE_NAME, "IReflectableConstPtr", true, true, "zserio/IReflectableData.h");
+                    ZSERIO_PACKAGE_NAME, "IBasicReflectableConstPtr", true, true, "zserio/IReflectableData.h");
+            introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME,
+                    "IBasicIntrospectableViewConstPtr", true, true, "zserio/IIntrospectableView.h");
         }
     }
 
@@ -204,6 +216,11 @@ public final class TypesContext
         return serviceDataPtr;
     }
 
+    public NativeTypeDefinition getIntrospectableServiceData()
+    {
+        return introspectableServiceData;
+    }
+
     public NativeTypeDefinition getObjectServiceData()
     {
         return objectServiceData;
@@ -232,6 +249,11 @@ public final class TypesContext
     public NativeTypeDefinition getReflectableConstPtr()
     {
         return reflectableConstPtr;
+    }
+
+    public NativeTypeDefinition getIntrospectableConstPtr()
+    {
+        return introspectableConstPtr;
     }
 
     public static final class AllocatorDefinition
@@ -329,6 +351,7 @@ public final class TypesContext
     private final NativeTypeDefinition service;
     private final NativeTypeDefinition serviceClient;
     private final NativeTypeDefinition serviceDataPtr;
+    private final NativeTypeDefinition introspectableServiceData;
     private final NativeTypeDefinition objectServiceData;
     private final NativeTypeDefinition rawServiceDataHolder;
     private final NativeTypeDefinition rawServiceDataView;
@@ -336,6 +359,7 @@ public final class TypesContext
     private final NativeTypeDefinition typeInfo;
     private final NativeTypeDefinition reflectablePtr;
     private final NativeTypeDefinition reflectableConstPtr;
+    private final NativeTypeDefinition introspectableConstPtr;
 
     public static final AllocatorDefinition PROPAGATING_POLYMORPHIC_ALLOCATOR = new AllocatorDefinition(
             "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PropagatingPolymorphicAllocator.h");

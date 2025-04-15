@@ -62,25 +62,14 @@ ${types.serviceDataPtr.name} Service::${method.name}Method(
     return ::std::allocate_shared<${types.rawServiceDataHolder.name}>(get_allocator_ref(),
             ${method.name}Impl(request<#if method.requestTypeInfo.isBytes>Data</#if>, context));
     <#else>
-    class ResponseData : public ${types.serviceDataPtr.name}::element_type
-    {
-    public:
-        ResponseData(${method.responseTypeInfo.typeFullName}&& response, const AllocatorType& allocator) :
-                m_serviceData(response, allocator)
-        {}
-
-        ::zserio::Span<const uint8_t> getData() const override
-        {
-            return m_serviceData.getData();
-        }
-
-    private:
-        ${types.objectServiceData.name} m_serviceData;
-    };
-
-    return ::std::allocate_shared<ResponseData>(get_allocator_ref(),
-            ${method.name}Impl(request<#if method.requestTypeInfo.isBytes>Data</#if>, context), <#rt>
-            <#lt>get_allocator_ref());
+    ${method.responseTypeInfo.typeFullName} response = ${method.name}Impl(<#rt>
+            <#lt>request<#if method.requestTypeInfo.isBytes>Data</#if>, context);
+        <#if withTypeInfoCode>
+    return ::std::allocate_shared<${types.introspectableServiceData.name}<${method.responseTypeInfo.typeFullName}>>(
+            get_allocator_ref(), std::move(response), get_allocator_ref());
+        <#else>
+    return ::std::allocate_shared<${types.objectServiceData.name}>(get_allocator_ref(), response, get_allocator_ref());
+        </#if>
     </#if>
 }
 </#list>

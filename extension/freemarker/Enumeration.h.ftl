@@ -13,6 +13,7 @@
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
 <@type_includes types.reflectablePtr/>
+<@type_includes types.introspectableConstPtr/>
 </#if>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
@@ -73,6 +74,9 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
 
 template <>
 ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.allocator.default}& allocator);
+
+template <>
+${types.introspectableConstPtr.name} introspectable(${fullName} value, const ${types.allocator.default}& allocator);
 </#if>
 <@namespace_end ["zserio"]/>
 <@namespace_begin ["std"]/>

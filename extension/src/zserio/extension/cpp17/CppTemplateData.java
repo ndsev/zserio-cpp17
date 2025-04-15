@@ -185,12 +185,14 @@ public abstract class CppTemplateData implements IncludeCollector
             service = new TypeTemplateData(nativeMapper.getServiceType());
             serviceClient = new TypeTemplateData(nativeMapper.getServiceClientType());
             serviceDataPtr = new TypeTemplateData(nativeMapper.getServiceDataPtrType());
+            introspectableServiceData = new TypeTemplateData(nativeMapper.getIntrospectableServiceDataType());
             objectServiceData = new TypeTemplateData(nativeMapper.getObjectServiceDataType());
             rawServiceDataHolder = new TypeTemplateData(nativeMapper.getRawServiceDataHolderType());
             rawServiceDataView = new TypeTemplateData(nativeMapper.getRawServiceDataViewType());
             typeInfo = new TypeTemplateData(nativeMapper.getTypeInfoType());
             reflectablePtr = new TypeTemplateData(nativeMapper.getReflectablePtrType());
             reflectableConstPtr = new TypeTemplateData(nativeMapper.getReflectableConstPtrType());
+            introspectableConstPtr = new TypeTemplateData(nativeMapper.getIntrospectableConstPtrType());
         }
 
         public AllocatorTemplateData getAllocator()
@@ -268,6 +270,11 @@ public abstract class CppTemplateData implements IncludeCollector
             return serviceDataPtr;
         }
 
+        public TypeTemplateData getIntrospectableServiceData()
+        {
+            return introspectableServiceData;
+        }
+
         public TypeTemplateData getObjectServiceData()
         {
             return objectServiceData;
@@ -296,6 +303,11 @@ public abstract class CppTemplateData implements IncludeCollector
         public TypeTemplateData getReflectableConstPtr()
         {
             return reflectableConstPtr;
+        }
+
+        public TypeTemplateData getIntrospectableConstPtr()
+        {
+            return introspectableConstPtr;
         }
 
         public static final class AllocatorTemplateData
@@ -399,12 +411,14 @@ public abstract class CppTemplateData implements IncludeCollector
         private final TypeTemplateData service;
         private final TypeTemplateData serviceClient;
         private final TypeTemplateData serviceDataPtr;
+        private final TypeTemplateData introspectableServiceData;
         private final TypeTemplateData objectServiceData;
         private final TypeTemplateData rawServiceDataHolder;
         private final TypeTemplateData rawServiceDataView;
         private final TypeTemplateData typeInfo;
         private final TypeTemplateData reflectablePtr;
         private final TypeTemplateData reflectableConstPtr;
+        private final TypeTemplateData introspectableConstPtr;
     }
 
     private final String generatorDescription;

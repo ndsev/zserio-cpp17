@@ -74,6 +74,8 @@ public final class CppNativeMapper
                 new NativeAllocType(typesContext.getServiceClient(), allocatorDefinition, "uint8_t");
         serviceDataPtrType =
                 new NativeAllocType(typesContext.getServiceDataPtr(), allocatorDefinition, "uint8_t");
+        introspectableServiceDataType = new NativeAllocType(
+                typesContext.getIntrospectableServiceData(), allocatorDefinition, "uint8_t");
         objectServiceDataType =
                 new NativeAllocType(typesContext.getObjectServiceData(), allocatorDefinition, "uint8_t");
         rawServiceDataHolderType =
@@ -86,6 +88,8 @@ public final class CppNativeMapper
                 new NativeAllocType(typesContext.getReflectablePtr(), allocatorDefinition, "uint8_t");
         reflectableConstPtrType =
                 new NativeAllocType(typesContext.getReflectableConstPtr(), allocatorDefinition, "uint8_t");
+        introspectableConstPtrType =
+                new NativeAllocType(typesContext.getIntrospectableConstPtr(), allocatorDefinition, "uint8_t");
     }
 
     public CppNativeSymbol getCppSymbol(AstNode symbol) throws ZserioExtensionException
@@ -231,6 +235,11 @@ public final class CppNativeMapper
         return serviceDataPtrType;
     }
 
+    public NativeAllocType getIntrospectableServiceDataType()
+    {
+        return introspectableServiceDataType;
+    }
+
     public NativeAllocType getObjectServiceDataType()
     {
         return objectServiceDataType;
@@ -259,6 +268,11 @@ public final class CppNativeMapper
     public NativeAllocType getReflectableConstPtrType()
     {
         return reflectableConstPtrType;
+    }
+
+    public NativeAllocType getIntrospectableConstPtrType()
+    {
+        return introspectableConstPtrType;
     }
 
     public NativeIntegralType getUInt64Type()
@@ -831,6 +845,7 @@ public final class CppNativeMapper
     private final NativeAllocType serviceType;
     private final NativeAllocType serviceClientType;
     private final NativeAllocType serviceDataPtrType;
+    private final NativeAllocType introspectableServiceDataType;
     private final NativeAllocType objectServiceDataType;
     private final NativeAllocType rawServiceDataHolderType;
     private final NativeAllocType rawServiceDataViewType;
@@ -838,6 +853,7 @@ public final class CppNativeMapper
     private final NativeAllocType typeInfoType;
     private final NativeAllocType reflectablePtrType;
     private final NativeAllocType reflectableConstPtrType;
+    private final NativeAllocType introspectableConstPtrType;
 
     private final static NativeNumericWrapperType booleanType = new NativeNumericWrapperType("Bool", "bool");
     private final static NativeNumericWrapperType float16Type =

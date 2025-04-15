@@ -4,12 +4,14 @@
 <#include "CompoundParameter.inc.ftl">
 <#include "TypeInfo.inc.ftl">
 <#include "Reflectable.inc.ftl">
+<#include "Introspectable.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/ChoiceCaseException.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/HashCodeUtil.h>
 <#if withTypeInfoCode>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
 #include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
@@ -500,7 +502,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         "${schemaTypeName}",
         [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
         {
-            return std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator, allocator);
         },
         templateName, templateArguments,
         fields, parameters, functions, "${selectorExpression?j_string}", cases
@@ -564,7 +566,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         <#if isConst>const </#if>${fullName}& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
 </#macro>
 template <>
 ${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
@@ -576,6 +578,47 @@ template <>
 ${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator)
 {
     <@choice_reflectable false/>
+}
+
+template <>
+${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
+        <#lt>const ${types.allocator.default}& allocator)
+{
+    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+    {
+    public:
+        Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& allocator) :
+                ::zserio::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+                        view_, allocator)
+        {}
+    <#if fieldList?has_content>
+
+        <@introspectable_get_field name, fieldList/>
+    </#if>
+    <#if parameterList?has_content>
+
+        <@introspectable_get_parameter name, parameterList/>
+    </#if>
+    <#if functionList?has_content>
+
+        <@introspectable_call_function name, functionList/>
+    </#if>
+
+        ::std::string_view getChoice() const override
+        {
+            switch (getValue().zserioChoiceTag())
+            {
+    <#list fieldList as field>
+            case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+                return "${field.name}";
+    </#list>
+            default:
+                return "";
+            }
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
 }
 <@namespace_end ["zserio"]/>
 <#else>

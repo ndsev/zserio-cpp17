@@ -856,6 +856,8 @@ TEST(TypesTest, bitSizeOfIntWrapper)
     EXPECT_EQ(33, detail::bitSizeOf(UInt33()));
     EXPECT_EQ(63, detail::bitSizeOf(UInt63()));
     EXPECT_EQ(64, detail::bitSizeOf(UInt64()));
+
+    EXPECT_EQ(13, detail::bitSizeOf(DynInt16<13>()));
 }
 
 TEST(TypesTest, bitSizeOfVarInt16)

@@ -1,5 +1,3 @@
-#include <string_view>
-
 #include "gtest/gtest.h"
 #include "with_reflection_code/Choice.h"
 #include "with_reflection_code/Extended.h"

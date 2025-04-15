@@ -15,6 +15,7 @@
 #include <memory>
 #include <zserio/pmr/ITypeInfo.h>
 #include <zserio/pmr/IReflectableData.h>
+#include <zserio/pmr/IIntrospectableView.h>
 #include <zserio/View.h>
 #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Types.h>
@@ -120,6 +121,9 @@ template <>
 
 template <>
 ::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
+template <>
+::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::ReflectableObject>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

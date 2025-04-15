@@ -7,6 +7,7 @@
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 #include <zserio/HashCodeUtil.h>
+#include <zserio/IntrospectableView.h>
 #include <zserio/ReflectableData.h>
 #include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
@@ -197,7 +198,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerNested, 
         "test_object.std_allocator.WalkerNested",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::WalkerNested>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::WalkerNested>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -240,7 +241,7 @@ template <>
         const ::test_object::std_allocator::WalkerNested& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
 }
 
 template <>
@@ -310,7 +311,31 @@ template <>
         ::test_object::std_allocator::WalkerNested& m_object;
     };
 
-    return std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+}
+
+template <>
+::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::WalkerNested>& view, const ::std::allocator<uint8_t>& allocator)
+{
+    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerNested, ::std::allocator<uint8_t>>
+    {
+    public:
+        Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerNested>& view_, const ::std::allocator<uint8_t>& allocator) :
+                ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerNested, ::std::allocator<uint8_t>>(
+                        view_, allocator)
+        {}
+
+        ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
+        {
+            if (name == "text")
+            {
+                return ::zserio::introspectable(getValue().text(), get_allocator());
+            }
+            throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerNested'!";
+        }
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
 }
 
 } // namespace zserio
