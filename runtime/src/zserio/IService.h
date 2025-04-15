@@ -108,7 +108,7 @@ public:
      * \param allocator Allocator to use for data allocation
      */
     template <typename ZSERIO_OBJECT>
-    explicit BasicObjectServiceData(ZSERIO_OBJECT& object, const ALLOC& allocator = ALLOC()) :
+    explicit BasicObjectServiceData(const ZSERIO_OBJECT& object, const ALLOC& allocator = ALLOC()) :
             m_data(zserio::serialize(object, allocator))
     {}
 
