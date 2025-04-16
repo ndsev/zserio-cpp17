@@ -92,7 +92,16 @@ inline constexpr bool array_traits_has_at_v = array_traits_has_at<T, V>::value;
 template <typename OBJECT, typename>
 struct ArrayTraits
 {
+    template <typename OBJECT_ = OBJECT,
+            std::enable_if_t<std::is_constructible_v<View<OBJECT_>, const OBJECT&>, int> = 0>
     static View<OBJECT> at(const detail::DummyArrayOwner&, const OBJECT& element, size_t)
+    {
+        return View<OBJECT>(element);
+    }
+
+    template <typename OBJECT_ = OBJECT,
+            std::enable_if_t<std::is_constructible_v<View<OBJECT_>, OBJECT&>, int> = 0>
+    static View<OBJECT> at(const detail::DummyArrayOwner&, OBJECT& element, size_t)
     {
         return View<OBJECT>(element);
     }
@@ -114,6 +123,16 @@ struct ArrayTraits
 template <typename T>
 struct NumericArrayTraits
 {
+    static const T& at(const detail::DummyArrayOwner&, const T& element, size_t)
+    {
+        return element;
+    }
+
+    static T& at(const detail::DummyArrayOwner&, T& element, size_t)
+    {
+        return element;
+    }
+
     static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(reader, element);
@@ -210,6 +229,11 @@ struct ArrayTraits<BasicString<ALLOC>>
 template <typename T>
 struct ArrayTraits<T, std::enable_if_t<std::is_enum_v<T>>>
 {
+    static T at(const detail::DummyArrayOwner&, T element, size_t)
+    {
+        return element;
+    }
+
     static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(reader, element);
@@ -225,6 +249,11 @@ struct ArrayTraits<T, std::enable_if_t<std::is_enum_v<T>>>
 template <typename T>
 struct ArrayTraits<T, std::enable_if_t<zserio::is_bitmask_v<T>>>
 {
+    static T at(const detail::DummyArrayOwner&, T element, size_t)
+    {
+        return element;
+    }
+
     static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
     {
         detail::read(reader, element);

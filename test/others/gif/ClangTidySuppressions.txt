@@ -1,12 +1,16 @@
 bugprone-exception-escape::gen/gif/gif_data/SubBlock.h
 bugprone-exception-escape::gen/gif/gif_data/ZippedSubBlock.h
+bugprone-exception-escape:gen/gif/gif_data/ApplicationExtension.h
 bugprone-exception-escape:gen/gif/gif_data/BlockData.h
 bugprone-exception-escape:gen/gif/gif_data/BlockTypes.h
 bugprone-exception-escape:gen/gif/gif_data/BlockTypes.h
 bugprone-exception-escape:gen/gif/gif_data/CommentExtension.h
+bugprone-exception-escape:gen/gif/gif_data/ExtensionBlock.h
 bugprone-exception-escape:gen/gif/gif_data/ExtensionTypes.h
 bugprone-exception-escape:gen/gif/gif_data/GifData.h
+bugprone-exception-escape:gen/gif/gif_data/ImageBlock.h
 bugprone-exception-escape:gen/gif/gif_data/ImageDescriptor.h
+bugprone-exception-escape:gen/gif/gif_data/PlainTextExtension.h
 bugprone-exception-escape:gen/gif/gif_data/RasterData.h
 bugprone-exception-escape:gen/gif/gif_data/SubBlock.h
 bugprone-exception-escape:gen/gif/gif_data/ZippedBlockData.h

@@ -1,15 +1,20 @@
 bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/EmptyChoice.h
 bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/EmptyUnion.h
+bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/Main.h
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct_recursion/Block.h
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestChoice.h
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestStructure.h
 bugprone-exception-escape:gen/array_types/packed_variable_array_struct/TestUnion.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorChoice.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorStruct.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/MixedColorUnion.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/PackedColorChoice.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/PackedColorStruct.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/PackedColorUnion.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorChoice.h
+bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorStruct.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorUnion.h
+
 
 cert-err58-cpp:cpp/PackedAutoArrayStructWithBytesTest.cpp
 cert-err58-cpp:cpp/PackedAutoArrayStructWithExternTest.cpp

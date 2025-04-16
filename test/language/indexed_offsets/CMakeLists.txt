@@ -23,6 +23,12 @@ add_custom_test(indexed_offsets
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BoolIndexedOffsetArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/CompoundIndexedOffsetArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EmptyIndexedOffsetArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/IndexedOffsetArrayInChoiceHolderTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/IndexedOffsetArrayInChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/IndexedOffsetArrayInNestedChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/IndexedOffsetArrayInNestedUnionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/IndexedOffsetArrayInRecursiveUnionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/IndexedOffsetArrayInUnionTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/Int14IndexedOffsetArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalIndexedOffsetArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalNestedIndexedOffsetArrayTest.cpp

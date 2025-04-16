@@ -65,7 +65,7 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 <@namespace_begin ["zserio"]/>
 <@array_traits_definition fullName, fieldList/>
 
-View<${fullName}>::View(const ${fullName}& data<#rt>
+View<${fullName}>::View(<#if !usedAsOffset>const </#if>${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -77,7 +77,7 @@ View<${fullName}>::View(const ${fullName}& data<#rt>
 </#list>
 {}
 
-View<${fullName}>::View(const ${fullName}& data,
+View<${fullName}>::View(<#if !usedAsOffset>const </#if>${fullName}& data,
         const View&<#if parameterList?has_content> other</#if>) noexcept :
         m_data(&data)<#if parameterList?has_content>,</#if>
 <#list parameterList as parameter>

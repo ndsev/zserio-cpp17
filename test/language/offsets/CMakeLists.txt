@@ -21,6 +21,10 @@ add_custom_test(offsets
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/AutoArrayOffsetTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/BitOffsetTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/NestedOffsetTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OffsetInNestedChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OffsetInChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OffsetInNestedUnionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OffsetInUnionTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalMemberOffsetTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PackedAutoArrayOffsetTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ParameterOffsetTest.cpp

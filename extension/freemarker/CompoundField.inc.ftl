@@ -27,7 +27,7 @@
         <@array_type_name field/><#t>
     <#else>
         <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
-            ${field.typeInfo.typeFullName}<#t>
+            ${field.typeInfo.typeFullName}<#if field.usedAsOffset>&</#if><#t>
         <#elseif field.typeInfo.isString>
             ::std::string_view<#t>
         <#elseif field.typeInfo.isExtern>
@@ -177,7 +177,7 @@ ${I}}
             </#if>
         static View<${field.typeInfo.typeFullName}> at(<#rt>
                 <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
-                const ${field.typeInfo.typeFullName}& element, size_t index);
+                <#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}& element, size_t index);
 
         static void read(BitStreamReader& reader, <#rt>
                 <#lt>const <#if array_needs_owner(field)>OwnerType&<#else>detail::DummyArrayOwner&</#if> owner,
@@ -200,7 +200,8 @@ ${I}}
 
 View<${field.typeInfo.typeFullName}> View<${compoundFullName}>::<@array_traits_name field/>::at(<#rt>
         <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
-        const ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        <#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}& element, <#rt>
+        <#lt>size_t<#if array_needs_index(field)> index</#if>)
 {
     return View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
 }

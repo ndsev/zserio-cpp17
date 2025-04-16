@@ -24,6 +24,18 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         containsOffset = context.getOffsetFieldsCollector().containsOffset(compoundType);
 
         fieldList = createFieldList(context, compoundType, this);
+
+        boolean usedAsOffset = false;
+        for (CompoundFieldTemplateData field : fieldList)
+        {
+            if (field.getUsedAsOffset())
+            {
+                usedAsOffset = true;
+                break;
+            }
+        }
+        this.usedAsOffset = usedAsOffset;
+
         parameterList = createParameterList(context, compoundType, this);
         functionList = createFunctionList(context, compoundType, this);
 
@@ -40,6 +52,11 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
     public boolean getContainsOffset()
     {
         return containsOffset;
+    }
+
+    public boolean getUsedAsOffset()
+    {
+        return usedAsOffset;
     }
 
     public Iterable<CompoundFieldTemplateData> getFieldList()
@@ -114,6 +131,7 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
 
     private final boolean usedInPackedArray;
     private final boolean containsOffset;
+    private final boolean usedAsOffset;
 
     private final List<CompoundFieldTemplateData> fieldList;
     private final List<CompoundParameterTemplateData> parameterList;

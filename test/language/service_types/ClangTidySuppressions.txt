@@ -1,4 +1,8 @@
 bugprone-exception-escape:gen/service_types/complex_types_service/Response.h
 bugprone-exception-escape:gen/service_types/complex_types_service/ResponseData.h
+bugprone-exception-escape:gen/service_types/complex_types_service/ColorModelChoice.h
 
 cppcoreguidelines-pro-bounds-constant-array-index:cpp/ComplexTypesServiceTest.cpp
+
+performance-move-const-arg:gen/service_types/simple_service/SimpleService.cpp
+performance-move-const-arg:gen/service_types/complex_types_service/ComplexTypesService.cpp

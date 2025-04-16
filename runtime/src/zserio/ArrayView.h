@@ -235,14 +235,7 @@ public:
                     << index << " is out of bounds (" << m_data.size() << ")!";
         }
 
-        if constexpr (detail::array_traits_has_at_v<Traits>)
-        {
-            return Traits::at(m_owner, m_data[index], index);
-        }
-        else
-        {
-            return m_data[index];
-        }
+        return Traits::at(m_owner, m_data[index], index);
     }
 
     /**
@@ -254,14 +247,7 @@ public:
      */
     decltype(auto) operator[](size_t index) const
     {
-        if constexpr (detail::array_traits_has_at_v<Traits>)
-        {
-            return Traits::at(m_owner, m_data[index], index);
-        }
-        else
-        {
-            return m_data[index];
-        }
+        return Traits::at(m_owner, m_data[index], index);
     }
 
     /**

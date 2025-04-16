@@ -411,16 +411,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         if (isMostLeftId)
             result.append(getAccessPrefix());
 
-        if (isSetter)
-        {
-            result.append(CPP_SETTER_ZSERIO_DATA_ACCESSOR);
-            result.append(".");
-            result.append(field.getName());
-        }
-        else
-        {
-            formatFieldGetter(result, isMostLeftId, field);
-        }
+        formatFieldGetter(result, isMostLeftId, field);
     }
 
     private void formatEnumItem(StringBuilder result, boolean isMostLeftId, EnumItem enumItem,
@@ -486,8 +477,6 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
     private final CppNativeMapper cppNativeMapper;
     private final IncludeCollector includeCollector;
-
-    private final static String CPP_SETTER_ZSERIO_DATA_ACCESSOR = "zserioData()";
 
     private final static String CPP_GETTER_FUNCTION_CALL = "()";
     protected final static String CPP_GETTER_OPTIONAL_VALUE = ".value()";

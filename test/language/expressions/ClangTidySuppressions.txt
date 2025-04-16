@@ -1,3 +1,4 @@
+bugprone-exception-escape:gen/expressions/index_operator/Element.h
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.h
 
 cppcoreguidelines-pro-bounds-constant-array-index:cpp/IndexOperatorTest.cpp

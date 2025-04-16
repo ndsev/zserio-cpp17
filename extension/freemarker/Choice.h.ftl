@@ -78,7 +78,7 @@ class View<${fullName}>
 {
 public:
     <@array_traits_declaration fullName, fieldList/>
-    explicit View(const ${fullName}& data<#rt>
+    explicit View(<#if !usedAsOffset>const </#if>${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -107,10 +107,10 @@ public:
     const ${fullName}& zserioData() const;
 
 protected:
-    View(const ${fullName}& data, const View& other) noexcept;
+    View(<#if !usedAsOffset>const </#if>${fullName}& data, const View& other) noexcept;
 
 private:
-    const ${fullName}* m_data;
+    <#if !usedAsOffset>const </#if>${fullName}* m_data;
 <#list parameterList as parameter>
     <@parameter_view_type_name parameter/> <@parameter_view_member_name parameter/>;
 </#list>
