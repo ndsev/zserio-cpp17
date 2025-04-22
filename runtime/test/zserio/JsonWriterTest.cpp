@@ -309,7 +309,7 @@ TEST_F(JsonWriterTest, externValue)
 
 TEST_F(JsonWriterTest, signedEnumValue)
 {
-    class DummyEnumReflectable : public ReflectableDataBase<std::allocator<uint8_t>>
+    class DummyEnumReflectable : public detail::ReflectableDataBase<std::allocator<uint8_t>>
     {
     public:
         explicit DummyEnumReflectable(
@@ -365,7 +365,7 @@ TEST_F(JsonWriterTest, signedEnumValue)
 
 TEST_F(JsonWriterTest, unsignedEnumValue)
 {
-    class DummyEnumReflectable : public ReflectableDataBase<std::allocator<uint8_t>>
+    class DummyEnumReflectable : public detail::ReflectableDataBase<std::allocator<uint8_t>>
     {
     public:
         explicit DummyEnumReflectable(
@@ -417,7 +417,7 @@ TEST_F(JsonWriterTest, unsignedEnumValue)
 
 TEST_F(JsonWriterTest, bitmaskValue)
 {
-    class DummyBitmaskReflectable : public ReflectableDataBase<std::allocator<uint8_t>>
+    class DummyBitmaskReflectable : public detail::ReflectableDataBase<std::allocator<uint8_t>>
     {
     public:
         explicit DummyBitmaskReflectable(
@@ -478,12 +478,12 @@ TEST_F(JsonWriterTest, unexpectedValue)
     using allocator_type = ::std::allocator<uint8_t>;
 
     const detail::StructTypeInfo<allocator_type> structTypeInfo("Struct", nullptr, "", {}, {}, {}, {});
-    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<allocator_type>
+    class Reflectable : public detail::ReflectableDataAllocatorHolderBase<allocator_type>
     {
     public:
         explicit Reflectable(
                 const detail::StructTypeInfo<allocator_type>& structTypeInfo, const allocator_type& allocator) :
-                ::zserio::ReflectableDataAllocatorHolderBase<allocator_type>(structTypeInfo, allocator)
+                detail::ReflectableDataAllocatorHolderBase<allocator_type>(structTypeInfo, allocator)
         {}
     };
     auto reflectable = std::allocate_shared<Reflectable>(allocator_type(), structTypeInfo, allocator_type());

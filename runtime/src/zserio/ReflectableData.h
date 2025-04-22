@@ -10,6 +10,9 @@
 namespace zserio
 {
 
+namespace detail
+{
+
 /**
  * Base class for all reflectable data implementations.
  */
@@ -613,10 +616,12 @@ public:
     BasicAny<ALLOC> getAnyValue(const ALLOC& allocator) override;
 };
 
+} // namespace detail
+
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(Bool value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BoolReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BoolReflectableData<ALLOC>>(allocator, value);
 }
 
 template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>>
@@ -629,38 +634,38 @@ IBasicReflectableDataPtr<ALLOC> reflectable(
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<Int64ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int64ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<Int32ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int32ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<Int16ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int16ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<Int8ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int8ReflectableData<Type, ALLOC>>(allocator, value);
         }
     }
     else
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<UInt64ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt64ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<UInt32ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt32ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<UInt16ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt16ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<UInt8ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt8ReflectableData<Type, ALLOC>>(allocator, value);
         }
     }
 }
@@ -675,38 +680,38 @@ IBasicReflectableDataPtr<ALLOC> reflectable(
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<Int64ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int64ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<Int32ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int32ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<Int16ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int16ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<Int8ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int8ReflectableData<Type, ALLOC>>(allocator, value);
         }
     }
     else
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<UInt64ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt64ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<UInt32ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt32ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<UInt16ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt16ReflectableData<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<UInt8ReflectableData<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt8ReflectableData<Type, ALLOC>>(allocator, value);
         }
     }
 }
@@ -714,112 +719,115 @@ IBasicReflectableDataPtr<ALLOC> reflectable(
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarInt16 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int16ReflectableData<VarInt16, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int16ReflectableData<VarInt16, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarInt32 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int32ReflectableData<VarInt32, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int32ReflectableData<VarInt32, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarInt64 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int64ReflectableData<VarInt64, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int64ReflectableData<VarInt64, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarInt value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int64ReflectableData<VarInt, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int64ReflectableData<VarInt, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarUInt16 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt16ReflectableData<VarUInt16, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt16ReflectableData<VarUInt16, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarUInt32 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt32ReflectableData<VarUInt32, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt32ReflectableData<VarUInt32, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarUInt64 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt64ReflectableData<VarUInt64, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt64ReflectableData<VarUInt64, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarUInt value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt64ReflectableData<VarUInt, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt64ReflectableData<VarUInt, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(VarSize value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt32ReflectableData<VarSize, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt32ReflectableData<VarSize, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(Float16 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<FloatReflectableData<Float16, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::FloatReflectableData<Float16, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(Float32 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<FloatReflectableData<Float32, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::FloatReflectableData<Float32, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(Float64 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<DoubleReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::DoubleReflectableData<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(const BasicBytes<ALLOC>& value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BytesReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BytesReflectableData<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(BytesView value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BytesReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BytesReflectableData<ALLOC>>(allocator, value);
 }
 
 template <typename STRING_ALLOC, typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(
         const BasicString<STRING_ALLOC>& value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<StringReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::StringReflectableData<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(std::string_view value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<StringReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::StringReflectableData<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BitBufferReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BitBufferReflectableData<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataConstPtr<ALLOC> reflectable(
         const BasicBitBuffer<ALLOC>& value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BitBufferReflectableData<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BitBufferReflectableData<ALLOC>>(allocator, value);
 }
+
+namespace detail
+{
 
 /**
  * Reflectable for arrays of builtin types (except dynamic bit field arrays).
@@ -947,22 +955,6 @@ public:
 private:
     RAW_ARRAY& m_rawArray;
 };
-
-template <typename T, typename VECTOR_ALLOC, typename ALLOC = std::allocator<uint8_t>>
-IBasicReflectableDataConstPtr<ALLOC> reflectableArray(
-        const std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
-{
-    return std::allocate_shared<ReflectableDataConstArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
-}
-
-template <typename T, typename VECTOR_ALLOC, typename ALLOC = std::allocator<uint8_t>>
-IBasicReflectableDataPtr<ALLOC> reflectableArray(
-        std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
-{
-    return std::allocate_shared<ReflectableDataArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
-}
 
 /**
  * Wrapper around reflectable which actually owns the reflected object.
@@ -1563,6 +1555,24 @@ template <typename ALLOC>
 BasicAny<ALLOC> ReflectableDataConstArrayBase<ALLOC>::getAnyValue(const ALLOC&)
 {
     throw CppRuntimeException("Reflectable '") << getTypeInfo().getSchemaName() << "' is a constant array!";
+}
+
+} // namespace detail
+
+template <typename T, typename VECTOR_ALLOC, typename ALLOC = std::allocator<uint8_t>>
+IBasicReflectableDataConstPtr<ALLOC> reflectableArray(
+        const std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<detail::ReflectableDataConstArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
+            allocator, allocator, array);
+}
+
+template <typename T, typename VECTOR_ALLOC, typename ALLOC = std::allocator<uint8_t>>
+IBasicReflectableDataPtr<ALLOC> reflectableArray(
+        std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<detail::ReflectableDataArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
+            allocator, allocator, array);
 }
 
 } // namespace zserio

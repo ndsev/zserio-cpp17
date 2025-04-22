@@ -66,13 +66,13 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 template <>
 ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.allocator.default}& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataBase<${types.allocator.default}>
+    class Reflectable : public ::zserio::detail::ReflectableDataBase<${types.allocator.default}>
     {
     public:
-        using ::zserio::ReflectableDataBase<${types.allocator.default}>::getAnyValue;
+        using ::zserio::detail::ReflectableDataBase<${types.allocator.default}>::getAnyValue;
 
         explicit Reflectable(${fullName} value) :
-                ::zserio::ReflectableDataBase<${types.allocator.default}>(
+                ::zserio::detail::ReflectableDataBase<${types.allocator.default}>(
                         typeInfo<${fullName}, ${types.allocator.default}>()),
                 m_value(value)
         {}
@@ -117,11 +117,11 @@ ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.alloca
 template <>
 ${types.introspectableConstPtr.name} introspectable(${fullName} value, const ${types.allocator.default}& allocator)
 {
-    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>
     {
     public:
         explicit Introspectable(${fullName} value) :
-                ::zserio::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+                ::zserio::detail::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
                         typeInfo<${fullName}, ${types.allocator.default}>(), value)
         {}
 

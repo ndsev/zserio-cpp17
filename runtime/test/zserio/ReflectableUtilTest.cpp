@@ -273,12 +273,12 @@ TEST(ReflectableUtilTest, equalWrong)
     const WrongTypeInfo wrongTypeInfo = {"int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::PUBSUB};
     const WrongTypeInfo wrongTypeInfoDiffName = {"diff", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::PUBSUB};
 
-    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<allocator_type>
+    class Reflectable : public ::zserio::detail::ReflectableDataAllocatorHolderBase<allocator_type>
     {
     public:
         explicit Reflectable(
                 const detail::TypeInfoBase<allocator_type>& typeInfo, const allocator_type& allocator) :
-                ::zserio::ReflectableDataAllocatorHolderBase<allocator_type>(typeInfo, allocator)
+                ::zserio::detail::ReflectableDataAllocatorHolderBase<allocator_type>(typeInfo, allocator)
         {}
     };
 

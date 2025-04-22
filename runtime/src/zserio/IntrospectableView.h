@@ -8,6 +8,8 @@
 
 namespace zserio
 {
+namespace detail
+{
 
 /**
  * Base class for all introspectable view implementations.
@@ -719,10 +721,12 @@ public:
     }
 };
 
+} // namespace detail
+
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Bool value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BoolIntrospectableView<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BoolIntrospectableView<ALLOC>>(allocator, value);
 }
 
 template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>>
@@ -735,38 +739,38 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<Int64IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<Int32IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<Int16IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<Int8IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int8IntrospectableView<Type, ALLOC>>(allocator, value);
         }
     }
     else
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<UInt64IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<UInt32IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<UInt16IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<UInt8IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt8IntrospectableView<Type, ALLOC>>(allocator, value);
         }
     }
 }
@@ -782,38 +786,38 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<Int64IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<Int32IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<Int16IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<Int8IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::Int8IntrospectableView<Type, ALLOC>>(allocator, value);
         }
     }
     else
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<UInt64IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<UInt32IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<UInt16IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<UInt8IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::UInt8IntrospectableView<Type, ALLOC>>(allocator, value);
         }
     }
 }
@@ -828,38 +832,38 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<DynInt64IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynInt64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<DynInt32IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynInt32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<DynInt16IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynInt16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<DynInt8IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynInt8IntrospectableView<Type, ALLOC>>(allocator, value);
         }
     }
     else
     {
         if constexpr (sizeof(T) > 4)
         {
-            return std::allocate_shared<DynUInt64IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynUInt64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 2)
         {
-            return std::allocate_shared<DynUInt32IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynUInt32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else if constexpr (sizeof(T) > 1)
         {
-            return std::allocate_shared<DynUInt16IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynUInt16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
         else
         {
-            return std::allocate_shared<DynUInt8IntrospectableView<Type, ALLOC>>(allocator, value);
+            return std::allocate_shared<detail::DynUInt8IntrospectableView<Type, ALLOC>>(allocator, value);
         }
     }
 }
@@ -867,93 +871,96 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt16 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int16IntrospectableView<VarInt16, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int16IntrospectableView<VarInt16, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt32 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int32IntrospectableView<VarInt32, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int32IntrospectableView<VarInt32, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt64 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int64IntrospectableView<VarInt64, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int64IntrospectableView<VarInt64, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarInt value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<Int64IntrospectableView<VarInt, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::Int64IntrospectableView<VarInt, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt16 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt16IntrospectableView<VarUInt16, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt16IntrospectableView<VarUInt16, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt32 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt32IntrospectableView<VarUInt32, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt32IntrospectableView<VarUInt32, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt64 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt64IntrospectableView<VarUInt64, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt64IntrospectableView<VarUInt64, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarUInt value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt64IntrospectableView<VarUInt, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt64IntrospectableView<VarUInt, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(VarSize value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<UInt32IntrospectableView<VarSize, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::UInt32IntrospectableView<VarSize, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Float16 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<FloatIntrospectableView<Float16, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::FloatIntrospectableView<Float16, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Float32 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<FloatIntrospectableView<Float32, ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::FloatIntrospectableView<Float32, ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Float64 value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<DoubleIntrospectableView<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::DoubleIntrospectableView<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(BytesView value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BytesIntrospectableView<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BytesIntrospectableView<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(std::string_view value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<StringIntrospectableView<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::StringIntrospectableView<ALLOC>>(allocator, value);
 }
 
 template <typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
         BasicBitBufferView<ALLOC> value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<BitBufferIntrospectableView<ALLOC>>(allocator, value);
+    return std::allocate_shared<detail::BitBufferIntrospectableView<ALLOC>>(allocator, value);
 }
+
+namespace detail
+{
 
 /**
  * Introspectable for arrays.
@@ -1124,14 +1131,6 @@ public:
     }
 };
 
-template <typename T, typename TRAITS, typename ALLOC = std::allocator<uint8_t>>
-IBasicIntrospectableViewConstPtr<ALLOC> introspectableArray(
-        ArrayView<T, TRAITS> value, const ALLOC& allocator = ALLOC())
-{
-    return std::allocate_shared<IntrospectableViewArray<ArrayView<T, TRAITS>, ALLOC>>(
-            allocator, value, allocator);
-}
-
 template <typename T, typename ALLOC>
 class CompoundIntrospectableViewBase
         : public IntrospectableViewBase<View<T>, ALLOC>,
@@ -1258,6 +1257,16 @@ IBasicIntrospectableViewConstPtr<ALLOC> IntrospectableViewBase<T, ALLOC>::getFro
     {}
 
     return nullptr;
+}
+
+} // namespace detail
+
+template <typename T, typename TRAITS, typename ALLOC = std::allocator<uint8_t>>
+IBasicIntrospectableViewConstPtr<ALLOC> introspectableArray(
+        ArrayView<T, TRAITS> value, const ALLOC& allocator = ALLOC())
+{
+    return std::allocate_shared<detail::IntrospectableViewArray<ArrayView<T, TRAITS>, ALLOC>>(
+            allocator, value, allocator);
 }
 
 } // namespace zserio

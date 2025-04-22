@@ -75,51 +75,6 @@ struct is_delta_context : std::is_same<DeltaContext, T>
 template <typename T>
 inline constexpr bool is_delta_context_v = is_delta_context<T>::value;
 
-template <typename T, typename = void>
-struct array_traits_has_at : std::false_type
-{};
-
-template <typename T>
-struct array_traits_has_at<T, std::void_t<decltype(T::at)>> : std::true_type
-{};
-
-template <typename T, typename V = void>
-inline constexpr bool array_traits_has_at_v = array_traits_has_at<T, V>::value;
-
-} // namespace detail
-
-// for all generated objects which don't need an owner
-template <typename OBJECT, typename>
-struct ArrayTraits
-{
-    template <typename OBJECT_ = OBJECT,
-            std::enable_if_t<std::is_constructible_v<View<OBJECT_>, const OBJECT&>, int> = 0>
-    static View<OBJECT> at(const detail::DummyArrayOwner&, const OBJECT& element, size_t)
-    {
-        return View<OBJECT>(element);
-    }
-
-    template <typename OBJECT_ = OBJECT,
-            std::enable_if_t<std::is_constructible_v<View<OBJECT_>, OBJECT&>, int> = 0>
-    static View<OBJECT> at(const detail::DummyArrayOwner&, OBJECT& element, size_t)
-    {
-        return View<OBJECT>(element);
-    }
-
-    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, OBJECT& element, size_t)
-    {
-        (void)detail::read(reader, element);
-    }
-
-    template <typename OBJECT_ = OBJECT>
-    static std::enable_if_t<!detail::is_delta_context_v<detail::packing_context_type_t<OBJECT_>>> read(
-            typename detail::PackingContext<OBJECT_>& packingContext, BitStreamReader& reader,
-            const detail::DummyArrayOwner&, OBJECT& element, size_t)
-    {
-        detail::read(packingContext, reader, element);
-    }
-};
-
 template <typename T>
 struct NumericArrayTraits
 {
@@ -156,28 +111,62 @@ struct IntegralArrayTraits : NumericArrayTraits<T>
     }
 };
 
+} // namespace detail
+
+// for all generated objects which don't need an owner
+template <typename OBJECT, typename>
+struct ArrayTraits
+{
+    template <typename OBJECT_ = OBJECT,
+            std::enable_if_t<std::is_constructible_v<View<OBJECT_>, const OBJECT&>, int> = 0>
+    static View<OBJECT> at(const detail::DummyArrayOwner&, const OBJECT& element, size_t)
+    {
+        return View<OBJECT>(element);
+    }
+
+    template <typename OBJECT_ = OBJECT,
+            std::enable_if_t<std::is_constructible_v<View<OBJECT_>, OBJECT&>, int> = 0>
+    static View<OBJECT> at(const detail::DummyArrayOwner&, OBJECT& element, size_t)
+    {
+        return View<OBJECT>(element);
+    }
+
+    static void read(BitStreamReader& reader, const detail::DummyArrayOwner&, OBJECT& element, size_t)
+    {
+        (void)detail::read(reader, element);
+    }
+
+    template <typename OBJECT_ = OBJECT>
+    static std::enable_if_t<!detail::is_delta_context_v<detail::packing_context_type_t<OBJECT_>>> read(
+            typename detail::PackingContext<OBJECT_>& packingContext, BitStreamReader& reader,
+            const detail::DummyArrayOwner&, OBJECT& element, size_t)
+    {
+        detail::read(packingContext, reader, element);
+    }
+};
+
 template <>
-struct ArrayTraits<detail::BoolWrapper> : IntegralArrayTraits<detail::BoolWrapper>
+struct ArrayTraits<detail::BoolWrapper> : detail::IntegralArrayTraits<detail::BoolWrapper>
 {};
 
 template <typename VALUE_TYPE, BitSize BIT_SIZE>
 struct ArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
-        : IntegralArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
+        : detail::IntegralArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
 {};
 
 template <typename VALUE_TYPE, BitSize BIT_SIZE>
 struct ArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>, std::enable_if_t<(BIT_SIZE > 0)>>
-        : IntegralArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
+        : detail::IntegralArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
 {};
 
 template <typename VALUE_TYPE, typename detail::VarIntType VAR_TYPE>
 struct ArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
-        : IntegralArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
+        : detail::IntegralArrayTraits<detail::VarIntWrapper<VALUE_TYPE, VAR_TYPE>>
 {};
 
 template <typename VALUE_TYPE, detail::FloatType FLOAT_TYPE>
 struct ArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
-        : NumericArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
+        : detail::NumericArrayTraits<detail::FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>
 {};
 
 template <typename ALLOC>

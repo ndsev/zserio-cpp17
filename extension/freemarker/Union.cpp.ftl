@@ -451,7 +451,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
         "${schemaTypeName}",
         [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<${fullName}>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<${fullName}>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -461,14 +461,14 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 <@namespace_end ["detail"]/>
 
 <#macro union_reflectable isConst>
-    class Reflectable : public ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
+    class Reflectable : public ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
     {
     public:
-        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
-        using ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
+        using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
+        using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
 
         explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc) :
-                ::zserio::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(typeInfo<${fullName}>(), alloc),
+                ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(typeInfo<${fullName}>(), alloc),
                 m_object(object)
         {}
     <#if fieldList?has_content>
@@ -531,11 +531,11 @@ template <>
 ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
         <#lt>const ${types.allocator.default}& allocator)
 {
-    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
     {
     public:
         Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& allocator) :
-                ::zserio::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+                ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
                         view_, allocator)
         {}
     <#if fieldList?has_content>

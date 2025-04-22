@@ -68,13 +68,13 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::R
 template <>
 ::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::detail::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using ::zserio::detail::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(::test_object::polymorphic_allocator::ReflectableBitmask bitmask) :
-                ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                ::zserio::detail::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         typeInfo<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>()),
                 m_bitmask(bitmask)
         {}
@@ -119,11 +119,11 @@ template <>
 template <>
 ::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::ReflectableBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::polymorphic_allocator::ReflectableBitmask bitmask) :
-                ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         typeInfo<::test_object::polymorphic_allocator::ReflectableBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(), bitmask)
         {}
         ::test_object::polymorphic_allocator::ReflectableBitmask::ZserioType::ValueType getUInt8() const override

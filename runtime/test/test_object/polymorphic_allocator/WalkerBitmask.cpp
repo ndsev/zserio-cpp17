@@ -58,13 +58,13 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::W
 template <>
 ::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::detail::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using ::zserio::detail::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(::test_object::polymorphic_allocator::WalkerBitmask bitmask) :
-                ::zserio::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                ::zserio::detail::ReflectableDataBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         typeInfo<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>()),
                 m_bitmask(bitmask)
         {}
@@ -109,11 +109,11 @@ template <>
 template <>
 ::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::WalkerBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::polymorphic_allocator::WalkerBitmask bitmask) :
-                ::zserio::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         typeInfo<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(), bitmask)
         {}
         ::test_object::polymorphic_allocator::WalkerBitmask::ZserioType::ValueType getUInt32() const override

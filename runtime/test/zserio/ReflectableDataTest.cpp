@@ -1652,7 +1652,7 @@ TEST_F(ReflectableDataTest, compoundArray)
 
 TEST_F(ReflectableDataTest, defaultUnimplementedMethods)
 {
-    class Reflectable : public ReflectableDataBase<std::allocator<uint8_t>>
+    class Reflectable : public detail::ReflectableDataBase<std::allocator<uint8_t>>
     {
     public:
         using ReflectableDataBase<std::allocator<uint8_t>>::ReflectableDataBase;

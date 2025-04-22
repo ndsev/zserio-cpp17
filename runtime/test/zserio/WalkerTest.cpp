@@ -279,11 +279,11 @@ TEST(WalkerTest, walkWrongUnionField)
     //           therefore we need some wrong reflectable here)
     using allocator_type = ::std::allocator<uint8_t>;
 
-    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<allocator_type>
+    class Reflectable : public detail::ReflectableDataAllocatorHolderBase<allocator_type>
     {
     public:
         explicit Reflectable(WalkerUnion&, const allocator_type& allocator) :
-                ::zserio::ReflectableDataAllocatorHolderBase<allocator_type>(typeInfo<WalkerUnion>(), allocator)
+                detail::ReflectableDataAllocatorHolderBase<allocator_type>(typeInfo<WalkerUnion>(), allocator)
         {}
 
         ::std::string_view getChoice() const override

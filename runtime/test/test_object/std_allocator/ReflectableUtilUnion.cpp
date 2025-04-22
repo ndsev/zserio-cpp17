@@ -308,7 +308,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
         "test_object.std_allocator.ReflectableUtilUnion",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::std_allocator::ReflectableUtilUnion>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::ReflectableUtilUnion>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -321,14 +321,14 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
 template <>
 ::zserio::IReflectableDataConstPtr reflectable(const ::test_object::std_allocator::ReflectableUtilUnion& value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>
+    class Reflectable : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
-        using ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
+        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(const ::test_object::std_allocator::ReflectableUtilUnion& object, const ::std::allocator<uint8_t>& alloc) :
-                ::zserio::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilUnion>(), alloc),
+                ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilUnion>(), alloc),
                 m_object(object)
         {}
 
@@ -382,14 +382,14 @@ template <>
 template <>
 ::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::ReflectableUtilUnion& value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>
+    class Reflectable : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
-        using ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
+        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(::test_object::std_allocator::ReflectableUtilUnion& object, const ::std::allocator<uint8_t>& alloc) :
-                ::zserio::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilUnion>(), alloc),
+                ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableUtilUnion>(), alloc),
                 m_object(object)
         {}
 
@@ -511,11 +511,11 @@ template <>
 template <>
 ::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, const ::std::allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilUnion, ::std::allocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilUnion, ::std::allocator<uint8_t>>
     {
     public:
         Introspectable(const ::zserio::View<::test_object::std_allocator::ReflectableUtilUnion>& view_, const ::std::allocator<uint8_t>& allocator) :
-                ::zserio::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilUnion, ::std::allocator<uint8_t>>(
+                ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilUnion, ::std::allocator<uint8_t>>(
                         view_, allocator)
         {}
 

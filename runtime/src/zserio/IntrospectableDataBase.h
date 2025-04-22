@@ -5,6 +5,8 @@
 
 namespace zserio
 {
+namespace detail
+{
 
 /**
  * Base class for all introspectable data implementations.
@@ -282,6 +284,7 @@ typename IntrospectableDataBase<I, ALLOC>::ConstPtr IntrospectableDataBase<I, AL
     return find(path);
 }
 
+} // namespace detail
 } // namespace zserio
 
 #endif // ZSERIO_INTROSPECTABLE_DATA_BASE_H_INC

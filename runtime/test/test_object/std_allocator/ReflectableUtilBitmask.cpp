@@ -63,13 +63,13 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableUti
 template <>
 ::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataBase<::std::allocator<uint8_t>>
+    class Reflectable : public ::zserio::detail::ReflectableDataBase<::std::allocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableDataBase<::std::allocator<uint8_t>>::getAnyValue;
+        using ::zserio::detail::ReflectableDataBase<::std::allocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(::test_object::std_allocator::ReflectableUtilBitmask bitmask) :
-                ::zserio::ReflectableDataBase<::std::allocator<uint8_t>>(
+                ::zserio::detail::ReflectableDataBase<::std::allocator<uint8_t>>(
                         typeInfo<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>()),
                 m_bitmask(bitmask)
         {}
@@ -114,11 +114,11 @@ template <>
 template <>
 ::zserio::IIntrospectableViewConstPtr introspectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::std_allocator::ReflectableUtilBitmask bitmask) :
-                ::zserio::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>(
+                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>(
                         typeInfo<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>(), bitmask)
         {}
         ::test_object::std_allocator::ReflectableUtilBitmask::ZserioType::ValueType getUInt8() const override

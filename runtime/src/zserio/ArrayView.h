@@ -13,6 +13,9 @@
 namespace zserio
 {
 
+namespace detail
+{
+
 /**
  * ArrayView type enum which defined type of the underlying array.
  */
@@ -24,6 +27,8 @@ enum ArrayType
     AUTO, /**< Auto zserio array which has size stored in a hidden field before the array. */
     ALIGNED_AUTO /**< Aligned auto zserio array which is auto zserio array with indexed offsets. */
 };
+
+} // namespace detail
 
 template <typename T, typename ARRAY_TRAITS = ArrayTraits<std::remove_cv_t<T>>>
 class ArrayView

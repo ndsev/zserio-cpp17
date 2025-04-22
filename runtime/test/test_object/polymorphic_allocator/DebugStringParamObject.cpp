@@ -220,7 +220,7 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::polymorphic_allocator::D
         "test_object.polymorphic_allocator.DebugStringParamObject",
         [](const AllocatorType& allocator) -> ::zserio::pmr::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::ReflectableDataOwner<::test_object::polymorphic_allocator::DebugStringParamObject>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::polymorphic_allocator::DebugStringParamObject>>(allocator, allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -234,14 +234,14 @@ template <>
 ::zserio::pmr::IReflectableDataConstPtr reflectable(
         const ::test_object::polymorphic_allocator::DebugStringParamObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
-        using ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(const ::test_object::polymorphic_allocator::DebugStringParamObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::DebugStringParamObject>(), alloc),
+                ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::DebugStringParamObject>(), alloc),
                 m_object(object)
         {}
 
@@ -270,14 +270,14 @@ template <>
 ::zserio::pmr::IReflectableDataPtr reflectable(
         ::test_object::polymorphic_allocator::DebugStringParamObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Reflectable : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
-        using ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
+        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
 
         explicit Reflectable(::test_object::polymorphic_allocator::DebugStringParamObject& object, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& alloc) :
-                ::zserio::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::DebugStringParamObject>(), alloc),
+                ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::polymorphic_allocator::DebugStringParamObject>(), alloc),
                 m_object(object)
         {}
 
@@ -339,11 +339,11 @@ template <>
 template <>
 ::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::DebugStringParamObject>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::DebugStringParamObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::DebugStringParamObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
         Introspectable(const ::zserio::View<::test_object::polymorphic_allocator::DebugStringParamObject>& view_, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator) :
-                ::zserio::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::DebugStringParamObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                ::zserio::detail::CompoundIntrospectableViewBase<::test_object::polymorphic_allocator::DebugStringParamObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         view_, allocator)
         {}
 
