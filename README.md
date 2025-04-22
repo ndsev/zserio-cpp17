@@ -62,10 +62,8 @@ Although newer C++ compilers are not tested, they should work as well as long as
 The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator
 design.
 
-The generator fully supports the Zserio language and has the following limitations:
-
-- Templates are generated as instantiations without usage of native C++ templates
-- No support for generic programming, including JSON export and import
+The generator fully supports the Zserio language, its only limitation is that templates are generated as
+instantiations, not as native C++ templates.
 
 ### How to Get the latest C++17 Generator
 
