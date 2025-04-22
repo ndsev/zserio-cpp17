@@ -93,7 +93,7 @@ jobs:
         name: "zserio-runtime-cpp"
         path: distr/runtime_lib
 
-    - name: Archive Zseiro C++ build artifacts
+    - name: Archive Zserio C++ build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: "\
@@ -102,8 +102,8 @@ jobs:
               || format('mingw{0}', matrix.mingw-version)}}-\
           cxx${{matrix.cxx-standard}}-${{matrix.build-type}}"
         path: |
-          build/runtime_lib/**/runtime/*.a
-          build/runtime_lib/**/runtime/*.lib
+          build/runtime_lib/**/runtime/**/*.a
+          build/runtime_lib/**/runtime/**/*.lib
 
     - name: Download Zserio bundle artifact
       uses: actions/download-artifact@v4
