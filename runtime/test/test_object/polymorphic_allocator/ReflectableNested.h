@@ -13,13 +13,13 @@
 #endif
 
 #include <memory>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/View.h>
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Types.h>
-#include <zserio/pmr/String.h>
+#include <zserio/ppmr/String.h>
 
 namespace test_object
 {
@@ -28,13 +28,25 @@ namespace polymorphic_allocator
 
 struct ReflectableNested
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     ReflectableNested() noexcept;
-    explicit ReflectableNested(const AllocatorType& allocator) noexcept;
+    explicit ReflectableNested(const allocator_type& allocator) noexcept;
+
+    ReflectableNested(ReflectableNested&&) = default;
+    ReflectableNested(ReflectableNested&& other_, const allocator_type& allocator);
+
+    ReflectableNested(const ReflectableNested&) = default;
+    ReflectableNested(const ReflectableNested& other_, const allocator_type& allocator);
+
+    ReflectableNested& operator=(ReflectableNested&&) = default;
+    ReflectableNested& operator=(const ReflectableNested&) = default;
+
+    ~ReflectableNested() = default;
 
     explicit ReflectableNested(
-            ::zserio::UInt31 value_);
+            ::zserio::UInt31 value_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt31 value;
 };
@@ -103,21 +115,21 @@ View<::test_object::polymorphic_allocator::ReflectableNested> read(BitStreamRead
         ::std::string_view stringParam_);
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::ReflectableNested, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::ReflectableNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::ReflectableNested>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::ReflectableNested>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

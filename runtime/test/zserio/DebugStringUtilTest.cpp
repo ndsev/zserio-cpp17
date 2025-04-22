@@ -10,7 +10,7 @@
 #include "zserio/CppRuntimeException.h"
 #include "zserio/DebugStringUtil.h"
 #include "zserio/ReflectableData.h"
-#include "zserio/pmr/PropagatingPolymorphicAllocator.h"
+#include "zserio/ppmr/PropagatingPolymorphicAllocator.h"
 
 using StdDebugStringObject = test_object::std_allocator::DebugStringObject;
 using StdDebugStringParamObject = test_object::std_allocator::DebugStringParamObject;
@@ -18,7 +18,7 @@ using PmrDebugStringObject = test_object::polymorphic_allocator::DebugStringObje
 using PmrDebugStringParamObject = test_object::polymorphic_allocator::DebugStringParamObject;
 
 using StdAlloc = std::allocator<uint8_t>;
-using PmrAlloc = zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+using PmrAlloc = zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
 namespace zserio
 {

@@ -118,7 +118,7 @@ set(TEST_OBJECT_SRCS
 )
 
 set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
-    zserio/pmr/PropagatingPolymorphicAllocatorTest.cpp
+    zserio/ppmr/PropagatingPolymorphicAllocatorTest.cpp
     zserio/AllocatorHolderTest.cpp
     zserio/AnyTest.cpp
     zserio/ArrayLengthExceptionTest.cpp

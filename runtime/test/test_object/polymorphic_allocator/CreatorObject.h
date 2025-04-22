@@ -13,18 +13,18 @@
 #endif
 
 #include <memory>
-#include <zserio/pmr/Optional.h>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/Optional.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/View.h>
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/ArrayView.h>
 #include <zserio/Types.h>
-#include <zserio/pmr/BitBuffer.h>
-#include <zserio/pmr/Bytes.h>
-#include <zserio/pmr/String.h>
-#include <zserio/pmr/Vector.h>
+#include <zserio/ppmr/BitBuffer.h>
+#include <zserio/ppmr/Bytes.h>
+#include <zserio/ppmr/String.h>
+#include <zserio/ppmr/Vector.h>
 
 #include <test_object/polymorphic_allocator/CreatorNested.h>
 
@@ -35,31 +35,43 @@ namespace polymorphic_allocator
 
 struct CreatorObject
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     CreatorObject() noexcept;
-    explicit CreatorObject(const AllocatorType& allocator) noexcept;
+    explicit CreatorObject(const allocator_type& allocator) noexcept;
+
+    CreatorObject(CreatorObject&&) = default;
+    CreatorObject(CreatorObject&& other_, const allocator_type& allocator);
+
+    CreatorObject(const CreatorObject&) = default;
+    CreatorObject(const CreatorObject& other_, const allocator_type& allocator);
+
+    CreatorObject& operator=(CreatorObject&&) = default;
+    CreatorObject& operator=(const CreatorObject&) = default;
+
+    ~CreatorObject() = default;
 
     explicit CreatorObject(
             ::zserio::UInt32 value_,
             ::test_object::polymorphic_allocator::CreatorNested nested_,
-            ::zserio::pmr::String text_,
-            ::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested> nestedArray_,
-            ::zserio::pmr::Vector<::zserio::pmr::String> textArray_,
-            ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>> externArray_,
-            ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::Bytes>> bytesArray_,
-            ::zserio::pmr::Optional<::zserio::Bool> optionalBool_,
-            ::zserio::pmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested_);
+            ::zserio::ppmr::String text_,
+            ::zserio::ppmr::Vector<::test_object::polymorphic_allocator::CreatorNested> nestedArray_,
+            ::zserio::ppmr::Vector<::zserio::ppmr::String> textArray_,
+            ::zserio::ppmr::Optional<::zserio::ppmr::Vector<::zserio::ppmr::BitBuffer>> externArray_,
+            ::zserio::ppmr::Optional<::zserio::ppmr::Vector<::zserio::ppmr::Bytes>> bytesArray_,
+            ::zserio::ppmr::Optional<::zserio::Bool> optionalBool_,
+            ::zserio::ppmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 value;
     ::test_object::polymorphic_allocator::CreatorNested nested;
-    ::zserio::pmr::String text;
-    ::zserio::pmr::Vector<::test_object::polymorphic_allocator::CreatorNested> nestedArray;
-    ::zserio::pmr::Vector<::zserio::pmr::String> textArray;
-    ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::BitBuffer>> externArray;
-    ::zserio::pmr::Optional<::zserio::pmr::Vector<::zserio::pmr::Bytes>> bytesArray;
-    ::zserio::pmr::Optional<::zserio::Bool> optionalBool;
-    ::zserio::pmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested;
+    ::zserio::ppmr::String text;
+    ::zserio::ppmr::Vector<::test_object::polymorphic_allocator::CreatorNested> nestedArray;
+    ::zserio::ppmr::Vector<::zserio::ppmr::String> textArray;
+    ::zserio::ppmr::Optional<::zserio::ppmr::Vector<::zserio::ppmr::BitBuffer>> externArray;
+    ::zserio::ppmr::Optional<::zserio::ppmr::Vector<::zserio::ppmr::Bytes>> bytesArray;
+    ::zserio::ppmr::Optional<::zserio::Bool> optionalBool;
+    ::zserio::ppmr::Optional<::test_object::polymorphic_allocator::CreatorNested> optionalNested;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::CreatorObject& lhs, const ::test_object::polymorphic_allocator::CreatorObject& rhs);
@@ -96,11 +108,11 @@ public:
     View<::test_object::polymorphic_allocator::CreatorNested> nested() const;
     ::std::string_view text() const;
     ArrayView<const ::test_object::polymorphic_allocator::CreatorNested, ZserioNestedArrayArrayTraits> nestedArray() const;
-    ArrayView<const ::zserio::pmr::String> textArray() const;
-    ::zserio::pmr::Optional<ArrayView<const ::zserio::pmr::BitBuffer>> externArray() const;
-    ::zserio::pmr::Optional<ArrayView<const ::zserio::pmr::Bytes>> bytesArray() const;
-    ::zserio::pmr::Optional<::zserio::Bool> optionalBool() const;
-    ::zserio::pmr::Optional<View<::test_object::polymorphic_allocator::CreatorNested>> optionalNested() const;
+    ArrayView<const ::zserio::ppmr::String> textArray() const;
+    ::zserio::ppmr::Optional<ArrayView<const ::zserio::ppmr::BitBuffer>> externArray() const;
+    ::zserio::ppmr::Optional<ArrayView<const ::zserio::ppmr::Bytes>> bytesArray() const;
+    ::zserio::ppmr::Optional<::zserio::Bool> optionalBool() const;
+    ::zserio::ppmr::Optional<View<::test_object::polymorphic_allocator::CreatorNested>> optionalNested() const;
 
     const ::test_object::polymorphic_allocator::CreatorObject& zserioData() const;
 
@@ -134,21 +146,21 @@ template <>
 View<::test_object::polymorphic_allocator::CreatorObject> read(BitStreamReader& reader, ::test_object::polymorphic_allocator::CreatorObject& data);
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::CreatorObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::CreatorObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::CreatorObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::CreatorObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::CreatorObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::CreatorObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::CreatorObject>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::CreatorObject>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

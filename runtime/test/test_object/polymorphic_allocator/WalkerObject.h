@@ -13,16 +13,16 @@
 #endif
 
 #include <memory>
-#include <zserio/pmr/Optional.h>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/Optional.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/View.h>
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/ArrayView.h>
 #include <zserio/Types.h>
-#include <zserio/pmr/String.h>
-#include <zserio/pmr/Vector.h>
+#include <zserio/ppmr/String.h>
+#include <zserio/ppmr/Vector.h>
 
 #include <test_object/polymorphic_allocator/WalkerChoice.h>
 #include <test_object/polymorphic_allocator/WalkerNested.h>
@@ -35,25 +35,37 @@ namespace polymorphic_allocator
 
 struct WalkerObject
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     WalkerObject() noexcept;
-    explicit WalkerObject(const AllocatorType& allocator) noexcept;
+    explicit WalkerObject(const allocator_type& allocator) noexcept;
+
+    WalkerObject(WalkerObject&&) = default;
+    WalkerObject(WalkerObject&& other_, const allocator_type& allocator);
+
+    WalkerObject(const WalkerObject&) = default;
+    WalkerObject(const WalkerObject& other_, const allocator_type& allocator);
+
+    WalkerObject& operator=(WalkerObject&&) = default;
+    WalkerObject& operator=(const WalkerObject&) = default;
+
+    ~WalkerObject() = default;
 
     explicit WalkerObject(
             ::zserio::UInt32 identifier_,
-            ::zserio::pmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested_,
-            ::zserio::pmr::String text_,
-            ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion> unionArray_,
-            ::zserio::pmr::Optional<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray_,
+            ::zserio::ppmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested_,
+            ::zserio::ppmr::String text_,
+            ::zserio::ppmr::Vector<::test_object::polymorphic_allocator::WalkerUnion> unionArray_,
+            ::zserio::ppmr::Optional<::zserio::ppmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray_,
             ::zserio::UInt8 choiceSelector_,
-            ::test_object::polymorphic_allocator::WalkerChoice choiceField_);
+            ::test_object::polymorphic_allocator::WalkerChoice choiceField_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 identifier;
-    ::zserio::pmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested;
-    ::zserio::pmr::String text;
-    ::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion> unionArray;
-    ::zserio::pmr::Optional<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray;
+    ::zserio::ppmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested;
+    ::zserio::ppmr::String text;
+    ::zserio::ppmr::Vector<::test_object::polymorphic_allocator::WalkerUnion> unionArray;
+    ::zserio::ppmr::Optional<::zserio::ppmr::Vector<::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray;
     ::zserio::UInt8 choiceSelector;
     ::test_object::polymorphic_allocator::WalkerChoice choiceField;
 };
@@ -78,10 +90,10 @@ public:
     explicit View(const ::test_object::polymorphic_allocator::WalkerObject& data) noexcept;
 
     ::zserio::UInt32 identifier() const;
-    ::zserio::pmr::Optional<View<::test_object::polymorphic_allocator::WalkerNested>> nested() const;
+    ::zserio::ppmr::Optional<View<::test_object::polymorphic_allocator::WalkerNested>> nested() const;
     ::std::string_view text() const;
     ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion> unionArray() const;
-    ::zserio::pmr::Optional<ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray() const;
+    ::zserio::ppmr::Optional<ArrayView<const ::test_object::polymorphic_allocator::WalkerUnion>> optionalUnionArray() const;
     ::zserio::UInt8 choiceSelector() const;
     View<::test_object::polymorphic_allocator::WalkerChoice> choiceField() const;
 
@@ -117,21 +129,21 @@ template <>
 View<::test_object::polymorphic_allocator::WalkerObject> read(BitStreamReader& reader, ::test_object::polymorphic_allocator::WalkerObject& data);
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::WalkerObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::WalkerObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::WalkerObject>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::WalkerObject>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

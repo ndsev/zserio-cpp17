@@ -12,12 +12,12 @@
     #error Please update your Zserio runtime library to the version 0.3.0.
 #endif
 
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Bitmasks.h>
-#include <zserio/pmr/String.h>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/String.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/Types.h>
 
 namespace test_object
@@ -101,8 +101,8 @@ public:
      *
      * \return String which represents this bitmask.
      */
-    ::zserio::pmr::String toString(const ::zserio::pmr::String::allocator_type& allocator =
-            ::zserio::pmr::String::allocator_type()) const;
+    ::zserio::ppmr::String toString(const ::zserio::ppmr::String::allocator_type& allocator =
+            ::zserio::ppmr::String::allocator_type()) const;
 
 private:
     ZserioType m_value;
@@ -339,18 +339,18 @@ namespace detail
 {
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::WalkerBitmask, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerBitmask value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::WalkerBitmask value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::WalkerBitmask value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

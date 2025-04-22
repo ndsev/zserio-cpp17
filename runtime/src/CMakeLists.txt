@@ -26,22 +26,25 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/ITypeInfo.h
     zserio/pmr/Map.h
     zserio/pmr/Optional.h
-    zserio/pmr/PropagatingPolymorphicAllocator.h
     zserio/pmr/Set.h
     zserio/pmr/String.h
     zserio/pmr/UniquePtr.h
     zserio/pmr/Variant.h
     zserio/pmr/Vector.h
-    zserio/std_pmr/BitBuffer.h
-    zserio/std_pmr/Bytes.h
-    zserio/std_pmr/IService.h
-    zserio/std_pmr/Map.h
-    zserio/std_pmr/Optional.h
-    zserio/std_pmr/Set.h
-    zserio/std_pmr/String.h
-    zserio/std_pmr/UniquePtr.h
-    zserio/std_pmr/Variant.h
-    zserio/std_pmr/Vector.h
+    zserio/ppmr/Any.h
+    zserio/ppmr/BitBuffer.h
+    zserio/ppmr/Bytes.h
+    zserio/ppmr/IReflectableData.h
+    zserio/ppmr/IService.h
+    zserio/ppmr/ITypeInfo.h
+    zserio/ppmr/Map.h
+    zserio/ppmr/Optional.h
+    zserio/ppmr/PropagatingPolymorphicAllocator.h
+    zserio/ppmr/Set.h
+    zserio/ppmr/String.h
+    zserio/ppmr/UniquePtr.h
+    zserio/ppmr/Variant.h
+    zserio/ppmr/Vector.h
     zserio/AllocatorHolder.h
     zserio/Any.h
     zserio/ArrayView.h
