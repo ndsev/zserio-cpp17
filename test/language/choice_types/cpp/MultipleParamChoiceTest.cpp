@@ -13,7 +13,6 @@ namespace multiple_param_choice
 {
 
 using AllocatorType = TestChoice::AllocatorType;
-using ChoiceTag = TestChoice::ChoiceTag;
 
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
@@ -32,7 +31,7 @@ TEST_F(MultipleParamChoiceTest, selector)
 {
     TestChoice data;
     const VectorType<zserio::UInt5> value = {1, 10, 15};
-    data.emplace<ChoiceTag::CHOICE_array5>(value);
+    data.emplace<TestChoice::Tag::array5>(value);
     zserio::View viewA(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 1);
     ASSERT_EQ(ARRAY5_SELECTOR, viewA.selector());
 
@@ -50,7 +49,7 @@ TEST_F(MultipleParamChoiceTest, arrayLength)
 {
     TestChoice data;
     const VectorType<zserio::UInt5> value = {1, 10, 15};
-    data.emplace<ChoiceTag::CHOICE_array5>(value);
+    data.emplace<TestChoice::Tag::array5>(value);
     zserio::View view(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 1);
     ASSERT_EQ(static_cast<uint32_t>(value.size()), view.arrayLength());
 }
@@ -59,7 +58,7 @@ TEST_F(MultipleParamChoiceTest, bitFieldLength)
 {
     TestChoice data;
     const VectorType<zserio::UInt5> value = {1, 10, 15};
-    data.emplace<ChoiceTag::CHOICE_array5>(value);
+    data.emplace<TestChoice::Tag::array5>(value);
     zserio::View view(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 1);
     ASSERT_EQ(1, view.bitFieldLength());
 }
@@ -69,9 +68,9 @@ TEST_F(MultipleParamChoiceTest, zserioChoiceTag)
     {
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         zserio::View view(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 1);
-        ASSERT_EQ(ChoiceTag::CHOICE_array5, view.zserioChoiceTag());
+        ASSERT_EQ(TestChoice::Tag::array5, view.zserioChoiceTag());
     }
     {
         TestChoice data;
@@ -80,23 +79,23 @@ TEST_F(MultipleParamChoiceTest, zserioChoiceTag)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
-        data.emplace<ChoiceTag::CHOICE_array13>(value);
+        data.emplace<TestChoice::Tag::array13>(value);
         zserio::View view(data, ARRAY13_SELECTOR, static_cast<uint32_t>(value.size()), 1);
-        ASSERT_EQ(ChoiceTag::CHOICE_array13, view.zserioChoiceTag());
+        ASSERT_EQ(TestChoice::Tag::array13, view.zserioChoiceTag());
     }
     {
         TestChoice data;
         const zserio::Int17 value = 65535;
-        data.emplace<ChoiceTag::CHOICE_field17>(value);
+        data.emplace<TestChoice::Tag::field17>(value);
         zserio::View view(data, FIELD17_SELECTOR, 1, 1);
-        ASSERT_EQ(ChoiceTag::CHOICE_field17, view.zserioChoiceTag());
+        ASSERT_EQ(TestChoice::Tag::field17, view.zserioChoiceTag());
     }
     {
         TestChoice data;
         const zserio::DynInt16<> value = 16383;
-        data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
+        data.emplace<TestChoice::Tag::dynBitField>(value);
         zserio::View view(data, DYN_BIT_FIELD_SELECTOR, 1, 15);
-        ASSERT_EQ(ChoiceTag::CHOICE_dynBitField, view.zserioChoiceTag());
+        ASSERT_EQ(TestChoice::Tag::dynBitField, view.zserioChoiceTag());
     }
 }
 
@@ -104,11 +103,11 @@ TEST_F(MultipleParamChoiceTest, array5)
 {
     TestChoice data;
     const VectorType<zserio::UInt5> value = {1, 10, 15};
-    data.emplace<ChoiceTag::CHOICE_array5>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array13>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_field17>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_dynBitField>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_array5>(data));
+    data.emplace<TestChoice::Tag::array5>(value);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array13>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::field17>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::dynBitField>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<TestChoice::Tag::array5>(data));
 
     zserio::View view(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 1);
     ASSERT_THROW(view.array13(), zserio::BadVariantAccess);
@@ -126,11 +125,11 @@ TEST_F(MultipleParamChoiceTest, array13)
             Data13{VectorType<zserio::Int13>{1, 10, 15}},
             Data13{VectorType<zserio::Int13>{1, 10, 15}},
     };
-    data.emplace<ChoiceTag::CHOICE_array13>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array5>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_field17>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_dynBitField>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_array13>(data));
+    data.emplace<TestChoice::Tag::array13>(value);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array5>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::field17>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::dynBitField>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<TestChoice::Tag::array13>(data));
 
     zserio::View view(data, ARRAY13_SELECTOR, static_cast<uint32_t>(value.size()), 1);
     ASSERT_THROW(view.array5(), zserio::BadVariantAccess);
@@ -145,11 +144,11 @@ TEST_F(MultipleParamChoiceTest, field17)
 {
     TestChoice data;
     const zserio::Int17 value = 65535;
-    data.emplace<ChoiceTag::CHOICE_field17>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array5>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array13>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_dynBitField>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_field17>(data));
+    data.emplace<TestChoice::Tag::field17>(value);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array5>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array13>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::dynBitField>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<TestChoice::Tag::field17>(data));
 
     zserio::View view(data, FIELD17_SELECTOR, 1, 1);
     ASSERT_THROW(view.array5(), zserio::BadVariantAccess);
@@ -162,11 +161,11 @@ TEST_F(MultipleParamChoiceTest, dynBitField)
 {
     TestChoice data;
     const zserio::DynInt16<> value = 16383;
-    data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array5>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array13>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_field17>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_dynBitField>(data));
+    data.emplace<TestChoice::Tag::dynBitField>(value);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array5>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array13>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::field17>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<TestChoice::Tag::dynBitField>(data));
 
     zserio::View view(data, DYN_BIT_FIELD_SELECTOR, 1, 15);
     ASSERT_THROW(view.array5(), zserio::BadVariantAccess);
@@ -178,11 +177,11 @@ TEST_F(MultipleParamChoiceTest, dynBitField)
 TEST_F(MultipleParamChoiceTest, comparisonOperators)
 {
     TestChoice data;
-    data.emplace<ChoiceTag::CHOICE_field17>(2);
+    data.emplace<TestChoice::Tag::field17>(2);
     TestChoice equalData;
-    equalData.emplace<ChoiceTag::CHOICE_field17>(2);
+    equalData.emplace<TestChoice::Tag::field17>(2);
     TestChoice lessThenData;
-    lessThenData.emplace<ChoiceTag::CHOICE_field17>(0);
+    lessThenData.emplace<TestChoice::Tag::field17>(0);
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
     const VectorType<zserio::UInt5> value = {1, 10, 15};
@@ -192,7 +191,7 @@ TEST_F(MultipleParamChoiceTest, comparisonOperators)
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
     TestChoice anotherLessThenData;
-    anotherLessThenData.emplace<ChoiceTag::CHOICE_array5>(value);
+    anotherLessThenData.emplace<TestChoice::Tag::array5>(value);
     test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
 
     zserio::View anotherLessThenView(
@@ -206,7 +205,7 @@ TEST_F(MultipleParamChoiceTest, validate)
         // parameter selector is out of range
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         zserio::View view(data, 255, static_cast<uint32_t>(value.size()), 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
@@ -214,7 +213,7 @@ TEST_F(MultipleParamChoiceTest, validate)
         // parameter arrayLength is out of range
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         zserio::View view(data, ARRAY5_SELECTOR, std::numeric_limits<uint32_t>::max(), 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
@@ -222,7 +221,7 @@ TEST_F(MultipleParamChoiceTest, validate)
         // parameter bitFieldLength is out of range
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         zserio::View view(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 16);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
     }
@@ -230,7 +229,7 @@ TEST_F(MultipleParamChoiceTest, validate)
         // field array5 is out of range
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 255};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         zserio::View view1(data, ARRAY13_SELECTOR, static_cast<uint32_t>(value.size()), 1);
         ASSERT_THROW(zserio::detail::validate(view1), zserio::ChoiceCaseException);
         zserio::View view2(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 1);
@@ -240,7 +239,7 @@ TEST_F(MultipleParamChoiceTest, validate)
         // field array5 has wrong length
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         zserio::View view(data, ARRAY5_SELECTOR, 1, 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
     }
@@ -252,7 +251,7 @@ TEST_F(MultipleParamChoiceTest, validate)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
                 Data13{VectorType<zserio::Int13>{1, 10, 32767}},
         };
-        data.emplace<ChoiceTag::CHOICE_array13>(value);
+        data.emplace<TestChoice::Tag::array13>(value);
         zserio::View view1(data, ARRAY5_SELECTOR, static_cast<uint32_t>(value.size()), 1);
         ASSERT_THROW(zserio::detail::validate(view1), zserio::ChoiceCaseException);
         zserio::View view2(data, ARRAY13_SELECTOR, static_cast<uint32_t>(value.size()), 1);
@@ -266,7 +265,7 @@ TEST_F(MultipleParamChoiceTest, validate)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
-        data.emplace<ChoiceTag::CHOICE_array13>(value);
+        data.emplace<TestChoice::Tag::array13>(value);
         zserio::View view(data, ARRAY13_SELECTOR, 1, 1);
         ASSERT_THROW(zserio::detail::validate(view), zserio::ArrayLengthException);
     }
@@ -274,7 +273,7 @@ TEST_F(MultipleParamChoiceTest, validate)
         // field field17 is out of range
         TestChoice data;
         const zserio::Int17 value = 131072;
-        data.emplace<ChoiceTag::CHOICE_field17>(value);
+        data.emplace<TestChoice::Tag::field17>(value);
         zserio::View view1(data, ARRAY5_SELECTOR, 1, 1);
         ASSERT_THROW(zserio::detail::validate(view1), zserio::ChoiceCaseException);
         zserio::View view2(data, FIELD17_SELECTOR, 1, 1);
@@ -284,7 +283,7 @@ TEST_F(MultipleParamChoiceTest, validate)
         // field dynBitField is out of range
         TestChoice data;
         const zserio::DynInt16<> value = 32767;
-        data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
+        data.emplace<TestChoice::Tag::dynBitField>(value);
         zserio::View view1(data, FIELD17_SELECTOR, 1, 15);
         ASSERT_THROW(zserio::detail::validate(view1), zserio::ChoiceCaseException);
         zserio::View view2(data, DYN_BIT_FIELD_SELECTOR, 1, 15);
@@ -297,7 +296,7 @@ TEST_F(MultipleParamChoiceTest, writeRead)
     {
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         test_utils::writeReadTest(
                 data, ARRAY5_SELECTOR, zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
@@ -308,20 +307,20 @@ TEST_F(MultipleParamChoiceTest, writeRead)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
-        data.emplace<ChoiceTag::CHOICE_array13>(value);
+        data.emplace<TestChoice::Tag::array13>(value);
         test_utils::writeReadTest(
                 data, ARRAY13_SELECTOR, zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
     {
         TestChoice data;
         const zserio::Int17 value = 65535;
-        data.emplace<ChoiceTag::CHOICE_field17>(value);
+        data.emplace<TestChoice::Tag::field17>(value);
         test_utils::writeReadTest(data, FIELD17_SELECTOR, zserio::VarSize{1}, zserio::UInt4{1});
     }
     {
         TestChoice data;
         const zserio::DynInt16<> value = 16383;
-        data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
+        data.emplace<TestChoice::Tag::dynBitField>(value);
         test_utils::writeReadTest(data, DYN_BIT_FIELD_SELECTOR, zserio::VarSize{1}, zserio::UInt4{15});
     }
 }
@@ -331,7 +330,7 @@ TEST_F(MultipleParamChoiceTest, writeReadFile)
     {
         TestChoice data;
         const VectorType<zserio::UInt5> value = {1, 10, 15};
-        data.emplace<ChoiceTag::CHOICE_array5>(value);
+        data.emplace<TestChoice::Tag::array5>(value);
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array5.blob", data, ARRAY5_SELECTOR,
                 zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
@@ -342,21 +341,21 @@ TEST_F(MultipleParamChoiceTest, writeReadFile)
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
                 Data13{VectorType<zserio::Int13>{1, 10, 15}},
         };
-        data.emplace<ChoiceTag::CHOICE_array13>(value);
+        data.emplace<TestChoice::Tag::array13>(value);
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array13.blob", data, ARRAY13_SELECTOR,
                 zserio::VarSize{static_cast<uint32_t>(value.size())}, zserio::UInt4{1});
     }
     {
         TestChoice data;
         const zserio::Int17 value = 65535;
-        data.emplace<ChoiceTag::CHOICE_field17>(value);
+        data.emplace<TestChoice::Tag::field17>(value);
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "field17.blob", data, FIELD17_SELECTOR,
                 zserio::VarSize{1}, zserio::UInt4{1});
     }
     {
         TestChoice data;
         const zserio::DynInt16<> value = 16383;
-        data.emplace<ChoiceTag::CHOICE_dynBitField>(value);
+        data.emplace<TestChoice::Tag::dynBitField>(value);
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "dynBitField.blob", data,
                 DYN_BIT_FIELD_SELECTOR, zserio::VarSize{1}, zserio::UInt4{15});
     }

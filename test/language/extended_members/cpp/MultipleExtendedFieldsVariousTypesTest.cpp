@@ -80,7 +80,7 @@ protected:
         *extended2.extendedValue4 = std::nullopt;
         *extended2.extendedValue5 = EXTENDED_VALUE5;
         *extended2.extendedValue6 = EXTENDED_VALUE6;
-        extended2.extendedValue7->emplace<Union::ChoiceTag::CHOICE_valueU32>(UINT32_MAX);
+        extended2.extendedValue7->emplace<Union::Tag::valueU32>(UINT32_MAX);
         *extended2.extendedValue8 = std::nullopt;
         *extended2.extendedValue9 = EXTENDED_VALUE9;
         return extended2;
@@ -149,7 +149,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, defaultConstructor)
     ASSERT_FALSE(data.extendedValue4->has_value());
     ASSERT_EQ(0, *data.extendedValue5);
     ASSERT_EQ(VectorType<StringType>(), *data.extendedValue6);
-    ASSERT_EQ(Union::ChoiceTag::UNDEFINED_CHOICE, data.extendedValue7->index());
+    ASSERT_EQ(Union::Tag::ZSERIO_UNDEFINED, data.extendedValue7->index());
     ASSERT_FALSE(data.extendedValue8->has_value());
     ASSERT_FALSE(data.extendedValue9->has_value());
 
@@ -159,7 +159,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, defaultConstructor)
     ASSERT_FALSE(view.extendedValue4()->has_value());
     ASSERT_EQ(0, *view.extendedValue5());
     ASSERT_EQ(0, view.extendedValue6()->size());
-    ASSERT_EQ(Union::ChoiceTag::UNDEFINED_CHOICE, view.extendedValue7()->zserioChoiceTag());
+    ASSERT_EQ(Union::Tag::ZSERIO_UNDEFINED, view.extendedValue7()->zserioChoiceTag());
     ASSERT_FALSE(view.extendedValue8()->has_value());
     ASSERT_FALSE(view.extendedValue9()->has_value());
 }
@@ -181,7 +181,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, fieldConstructor)
     ASSERT_FALSE(data.extendedValue4->has_value());
     ASSERT_EQ(EXTENDED_VALUE5, *data.extendedValue5);
     ASSERT_EQ(EXTENDED_VALUE6, *data.extendedValue6);
-    ASSERT_EQ(Union::ChoiceTag::UNDEFINED_CHOICE, data.extendedValue7->index());
+    ASSERT_EQ(Union::Tag::ZSERIO_UNDEFINED, data.extendedValue7->index());
     ASSERT_FALSE(data.extendedValue8->has_value());
     ASSERT_EQ(EXTENDED_VALUE9, *data.extendedValue9);
 
@@ -192,7 +192,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, fieldConstructor)
     ASSERT_FALSE(view.extendedValue4()->has_value());
     ASSERT_EQ(EXTENDED_VALUE5, *view.extendedValue5());
     ASSERT_EQ(EXTENDED_VALUE6.size(), view.extendedValue6()->size());
-    ASSERT_EQ(Union::ChoiceTag::UNDEFINED_CHOICE, view.extendedValue7()->zserioChoiceTag());
+    ASSERT_EQ(Union::Tag::ZSERIO_UNDEFINED, view.extendedValue7()->zserioChoiceTag());
     ASSERT_FALSE(view.extendedValue8()->has_value());
     ASSERT_EQ(EXTENDED_VALUE9, *view.extendedValue9());
 }
@@ -248,7 +248,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, writeOriginalReadExtended2)
     ASSERT_FALSE(readViewExtended2.extendedValue4()->has_value());
     ASSERT_EQ(0, *readViewExtended2.extendedValue5());
     ASSERT_EQ(0, readViewExtended2.extendedValue6()->size());
-    ASSERT_EQ(Union::ChoiceTag::UNDEFINED_CHOICE, readViewExtended2.extendedValue7()->zserioChoiceTag());
+    ASSERT_EQ(Union::Tag::ZSERIO_UNDEFINED, readViewExtended2.extendedValue7()->zserioChoiceTag());
     ASSERT_FALSE(readViewExtended2.extendedValue8()->has_value());
     ASSERT_FALSE(readViewExtended2.extendedValue9()->has_value());
 
@@ -287,7 +287,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, writeExtended1ReadExtended2)
     ASSERT_FALSE(readViewExtended2.extendedValue4()->has_value());
     ASSERT_EQ(0, *readViewExtended2.extendedValue5());
     ASSERT_EQ(0, readViewExtended2.extendedValue6()->size());
-    ASSERT_EQ(Union::ChoiceTag::UNDEFINED_CHOICE, readViewExtended2.extendedValue7()->zserioChoiceTag());
+    ASSERT_EQ(Union::Tag::ZSERIO_UNDEFINED, readViewExtended2.extendedValue7()->zserioChoiceTag());
     ASSERT_FALSE(readViewExtended2.extendedValue8()->has_value());
     ASSERT_FALSE(readViewExtended2.extendedValue9()->has_value());
 
@@ -316,7 +316,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, writeExtended1ReadExtended2)
     readDataExtended2.extendedValue5.setPresent(true);
     *readDataExtended2.extendedValue6 = EXTENDED_VALUE6;
     readDataExtended2.extendedValue6.setPresent(true);
-    readDataExtended2.extendedValue7->emplace<Union::ChoiceTag::CHOICE_valueU32>(UINT32_MAX);
+    readDataExtended2.extendedValue7->emplace<Union::Tag::valueU32>(UINT32_MAX);
     readDataExtended2.extendedValue7.setPresent(true);
     readDataExtended2.extendedValue8.setPresent(true);
     *readDataExtended2.extendedValue9 = EXTENDED_VALUE9;
@@ -366,7 +366,7 @@ TEST_F(MultipleExtendedFieldsVariousTypesTest, validationError)
     dataExtended2.extendedValue6.setPresent(true);
     ASSERT_THROW((void)zserio::serialize(dataExtended2), zserio::ExtendedFieldException);
 
-    dataExtended2.extendedValue7->emplace<Union::ChoiceTag::CHOICE_valueU32>(UINT32_MAX);
+    dataExtended2.extendedValue7->emplace<Union::Tag::valueU32>(UINT32_MAX);
     dataExtended2.extendedValue7.setPresent(true);
     ASSERT_THROW((void)zserio::serialize(dataExtended2), zserio::ExtendedFieldException);
 

@@ -73,10 +73,10 @@ View<::test_object::std_allocator::ReflectableUtilChoice>::View(const ::test_obj
 
 ArrayView<const ::zserio::UInt32> View<::test_object::std_allocator::ReflectableUtilChoice>::array() const
 {
-    return ArrayView<const ::zserio::UInt32>{get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(*m_data)};
+    return ArrayView<const ::zserio::UInt32>{get<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>(*m_data)};
 }
 
-::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag View<::test_object::std_allocator::ReflectableUtilChoice>::zserioChoiceTag() const
+::test_object::std_allocator::ReflectableUtilChoice::Tag View<::test_object::std_allocator::ReflectableUtilChoice>::zserioChoiceTag() const
 {
     return m_data->index();
 }
@@ -152,10 +152,10 @@ void validate(const View<::test_object::std_allocator::ReflectableUtilChoice>& v
     case 1:
     case 2:
         // check choice case
-        if (view.zserioChoiceTag() != ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array)
+        if (view.zserioChoiceTag() != ::test_object::std_allocator::ReflectableUtilChoice::Tag::array)
         {
             throw ChoiceCaseException("Wrong case set in choice 'ReflectableUtilChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-                    " != " << static_cast<size_t>(::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array) << ")!";
+                    " != " << static_cast<size_t>(::test_object::std_allocator::ReflectableUtilChoice::Tag::array) << ")!";
         }
         validate<ArrayType::AUTO>(view.array(), "'ReflectableUtilChoice.array'");
         break;
@@ -208,8 +208,8 @@ View<::test_object::std_allocator::ReflectableUtilChoice> read(BitStreamReader& 
     {
     case 1:
     case 2:
-        data.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>();
-        read<ArrayType::AUTO>(reader, data.get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>());
+        data.emplace<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>();
+        read<ArrayType::AUTO>(reader, data.get<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>());
         break;
     default:
         // empty
@@ -302,7 +302,7 @@ template <>
             if (name == "array")
             {
                 return ::zserio::reflectableArray(
-                        get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
+                        get<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
         }
@@ -311,7 +311,7 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array:
+            case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
                 return "array";
             default:
                 return "";
@@ -349,7 +349,7 @@ template <>
             if (name == "array")
             {
                 return ::zserio::reflectableArray(
-                        get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
+                        get<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
         }
@@ -359,7 +359,7 @@ template <>
             if (name == "array")
             {
                 return ::zserio::reflectableArray(
-                        get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
+                        get<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
         }
@@ -368,7 +368,7 @@ template <>
         {
             if (name == "array")
             {
-                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
+                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::Vector<::zserio::UInt32>>(value));
                 return;
             }
@@ -379,8 +379,8 @@ template <>
         {
             if (name == "array")
             {
-                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(get_allocator());
-                return ::zserio::reflectableArray(get<::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array>(m_object), get_allocator());
+                m_object.emplace<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>(get_allocator());
+                return ::zserio::reflectableArray(get<::test_object::std_allocator::ReflectableUtilChoice::Tag::array>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUtilChoice'!";
         }
@@ -389,7 +389,7 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array:
+            case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
                 return "array";
             default:
                 return "";
@@ -446,7 +446,7 @@ template <>
         {
             switch (getValue().zserioChoiceTag())
             {
-            case ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag::CHOICE_array:
+            case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
                 return "array";
             default:
                 return "";

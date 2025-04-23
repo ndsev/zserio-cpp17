@@ -8,7 +8,6 @@ namespace empty_union_with_parameter
 {
 
 using AllocatorType = EmptyUnionWithParameter::AllocatorType;
-using ChoiceTag = EmptyUnionWithParameter::ChoiceTag;
 
 class EmptyUnionWithParameterTest : public ::testing::Test
 {
@@ -20,20 +19,20 @@ TEST_F(EmptyUnionWithParameterTest, emptyConstructor)
 {
     {
         EmptyUnionWithParameter data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyUnionWithParameter::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyUnionWithParameter data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyUnionWithParameter::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyUnionWithParameter data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyUnionWithParameter::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyUnionWithParameter data;
         zserio::View view(data, PARAM);
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+        ASSERT_EQ(EmptyUnionWithParameter::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
     }
 }
 
@@ -41,7 +40,7 @@ TEST_F(EmptyUnionWithParameterTest, zserioChoiceTag)
 {
     EmptyUnionWithParameter data;
     zserio::View view(data, PARAM);
-    ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+    ASSERT_EQ(EmptyUnionWithParameter::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
 }
 
 TEST_F(EmptyUnionWithParameterTest, param)

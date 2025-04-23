@@ -10,7 +10,7 @@ namespace constant_in_choice_case
 
 TEST(ConstantInChoiceCaseTest, writeRead)
 {
-    ConstantInChoiceCase data(zserio::in_place_index<ConstantInChoiceCase::ChoiceTag::CHOICE_constCase>, 42);
+    ConstantInChoiceCase data(zserio::in_place_index<ConstantInChoiceCase::Tag::constCase>, 42);
     test_utils::writeReadTest(data, UINT8_CONST);
 }
 

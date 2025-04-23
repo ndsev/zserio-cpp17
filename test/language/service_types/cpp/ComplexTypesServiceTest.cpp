@@ -81,11 +81,11 @@ public:
 private:
     void rgbToCmyk(const VectorType<ColorModelChoice>& data, Response& response)
     {
-        auto& cmykData = response.data.emplace<ResponseData::ChoiceTag::CHOICE_cmykData>(get_allocator_ref());
+        auto& cmykData = response.data.emplace<ResponseData::Tag::cmykData>(get_allocator_ref());
         cmykData.resize(response.length);
         for (uint32_t i = 0; i < response.length; ++i)
         {
-            const RGBModel& rgb = data.at(i).get<ColorModelChoice::ChoiceTag::CHOICE_rgb>();
+            const RGBModel& rgb = data.at(i).get<ColorModelChoice::Tag::rgb>();
             uint8_t colC = 0;
             uint8_t colM = 0;
             uint8_t colY = 0;
@@ -100,11 +100,11 @@ private:
 
     void cmykToRgb(const VectorType<ColorModelChoice>& data, Response& response)
     {
-        auto& rgbData = response.data.emplace<ResponseData::ChoiceTag::CHOICE_rgbData>(get_allocator_ref());
+        auto& rgbData = response.data.emplace<ResponseData::Tag::rgbData>(get_allocator_ref());
         rgbData.resize(response.length);
         for (uint32_t i = 0; i < response.length; ++i)
         {
-            const CMYKModel& cmyk = data.at(i).get<ColorModelChoice::ChoiceTag::CHOICE_cmyk>();
+            const CMYKModel& cmyk = data.at(i).get<ColorModelChoice::Tag::cmyk>();
             uint8_t colR = 0;
             uint8_t colG = 0;
             uint8_t colB = 0;
@@ -177,7 +177,7 @@ TEST_F(ComplexTypesServiceTest, rgbToCmyk)
         model.red = rgbValues[i % 3][0];
         model.green = rgbValues[i % 3][1];
         model.blue = rgbValues[i % 3][2];
-        data.at(i).emplace<Color::ChoiceTag::CHOICE_rgb>(model);
+        data.at(i).emplace<Color::Tag::rgb>(model);
     }
 
     LengthResponse lengthResponse = client.getLengthMethod(request);
@@ -186,7 +186,7 @@ TEST_F(ComplexTypesServiceTest, rgbToCmyk)
     Response response = client.swapModelsMethod(request);
     ASSERT_EQ(length, response.length);
 
-    const auto& cmykData = response.data.get<ResponseData::ChoiceTag::CHOICE_cmykData>();
+    const auto& cmykData = response.data.get<ResponseData::Tag::cmykData>();
     for (size_t i = 0; i < cmykData.size(); ++i)
     {
         const CMYKModel& cmyk = cmykData.at(i);
@@ -213,7 +213,7 @@ TEST_F(ComplexTypesServiceTest, cmykToRgb)
         model.magenta = cmykValues[i % 3][1];
         model.yellow = cmykValues[i % 3][2];
         model.key = cmykValues[i % 3][3];
-        data.at(i).emplace<Color::ChoiceTag::CHOICE_cmyk>(model);
+        data.at(i).emplace<Color::Tag::cmyk>(model);
     }
 
     LengthResponse lengthResponse = client.getLengthMethod(request);
@@ -222,7 +222,7 @@ TEST_F(ComplexTypesServiceTest, cmykToRgb)
     Response response = client.swapModelsMethod(request);
     ASSERT_EQ(length, response.length);
 
-    const auto& rgbData = response.data.get<ResponseData::ChoiceTag::CHOICE_rgbData>();
+    const auto& rgbData = response.data.get<ResponseData::Tag::rgbData>();
     for (size_t i = 0; i < rgbData.size(); ++i)
     {
         const RGBModel& rgb = rgbData.at(i);

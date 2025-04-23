@@ -66,20 +66,20 @@ View<::test_object::polymorphic_allocator::WalkerUnion>::View(const ::test_objec
 
 ::zserio::UInt32 View<::test_object::polymorphic_allocator::WalkerUnion>::value() const
 {
-    return get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(*m_data);
+    return get<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>(*m_data);
 }
 
 ::std::string_view View<::test_object::polymorphic_allocator::WalkerUnion>::text() const
 {
-    return ::std::string_view{get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(*m_data)};
+    return ::std::string_view{get<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(*m_data)};
 }
 
 ArrayView<const ::test_object::polymorphic_allocator::WalkerNested> View<::test_object::polymorphic_allocator::WalkerUnion>::nestedArray() const
 {
-    return ArrayView<const ::test_object::polymorphic_allocator::WalkerNested>{get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(*m_data)};
+    return ArrayView<const ::test_object::polymorphic_allocator::WalkerNested>{get<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(*m_data)};
 }
 
-::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag View<::test_object::polymorphic_allocator::WalkerUnion>::zserioChoiceTag() const
+::test_object::polymorphic_allocator::WalkerUnion::Tag View<::test_object::polymorphic_allocator::WalkerUnion>::zserioChoiceTag() const
 {
     return m_data->index();
 }
@@ -98,11 +98,11 @@ bool operator==(const View<::test_object::polymorphic_allocator::WalkerUnion>& l
 
     switch (lhs.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
         return (lhs.value() == rhs.value());
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
         return (lhs.text() == rhs.text());
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         return (lhs.nestedArray() == rhs.nestedArray());
     default:
         throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
@@ -118,11 +118,11 @@ bool operator<(const View<::test_object::polymorphic_allocator::WalkerUnion>& lh
 
     switch (lhs.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
         return (lhs.value() < rhs.value());
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
         return (lhs.text() < rhs.text());
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         return (lhs.nestedArray() < rhs.nestedArray());
     default:
         throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
@@ -157,13 +157,13 @@ void validate(const View<::test_object::polymorphic_allocator::WalkerUnion>& vie
 {
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
         validate(view.value(), "'WalkerUnion.value'");
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
         validate(view.text(), "'WalkerUnion.text'");
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         validate<ArrayType::AUTO>(view.nestedArray(), "'WalkerUnion.nestedArray'");
         break;
     default:
@@ -178,13 +178,13 @@ BitSize bitSizeOf(const View<::test_object::polymorphic_allocator::WalkerUnion>&
     endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
         endBitPosition += bitSizeOf(view.value(), endBitPosition);
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
         endBitPosition += bitSizeOf(view.text(), endBitPosition);
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         endBitPosition += bitSizeOf<ArrayType::AUTO>(view.nestedArray(), endBitPosition);
         break;
     default:
@@ -200,13 +200,13 @@ void write(BitStreamWriter& writer, const View<::test_object::polymorphic_alloca
     write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
         write(writer, view.value());
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
         write(writer, view.text());
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         write<ArrayType::AUTO>(writer, view.nestedArray());
         break;
     default:
@@ -221,19 +221,19 @@ View<::test_object::polymorphic_allocator::WalkerUnion> read(BitStreamReader& re
 
     VarSize choiceTag;
     read(reader, choiceTag);
-    switch (static_cast<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag>(choiceTag + 1))
+    switch (static_cast<::test_object::polymorphic_allocator::WalkerUnion::Tag>(choiceTag + 1))
     {
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
-        data.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>();
-        read(reader, data.get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>());
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
+        data.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>();
+        read(reader, data.get<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>());
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
-        data.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(data.get_allocator());
-        read(reader, data.get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>());
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
+        data.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(data.get_allocator());
+        read(reader, data.get<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>());
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
-        data.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(data.get_allocator());
-        (void)read<ArrayType::AUTO>(reader, data.get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>());
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
+        data.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(data.get_allocator());
+        (void)read<ArrayType::AUTO>(reader, data.get<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>());
         break;
     default:
         throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
@@ -337,17 +337,17 @@ template <>
             if (name == "value")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>(m_object), get_allocator());
             }
             if (name == "text")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
                 return ::zserio::reflectableArray(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
@@ -356,11 +356,11 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
                 return "value";
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
                 return "text";
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
                 return "nestedArray";
             default:
                 return "";
@@ -398,17 +398,17 @@ template <>
             if (name == "value")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>(m_object), get_allocator());
             }
             if (name == "text")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
                 return ::zserio::reflectableArray(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
@@ -418,17 +418,17 @@ template <>
             if (name == "value")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>(m_object), get_allocator());
             }
             if (name == "text")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
                 return ::zserio::reflectableArray(
-                        get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
@@ -437,19 +437,19 @@ template <>
         {
             if (name == "value")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "text")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::pmr::String>(value));
                 return;
             }
             if (name == "nestedArray")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::pmr::Vector<::test_object::polymorphic_allocator::WalkerNested>>(value));
                 return;
             }
@@ -460,18 +460,18 @@ template <>
         {
             if (name == "value")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>();
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>();
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::Tag::value>(m_object), get_allocator());
             }
             if (name == "text")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(get_allocator());
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(get_allocator());
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerUnion::Tag::text>(m_object), get_allocator());
             }
             if (name == "nestedArray")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(get_allocator());
-                return ::zserio::reflectableArray(get<::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(get_allocator());
+                return ::zserio::reflectableArray(get<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerUnion'!";
         }
@@ -480,11 +480,11 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
                 return "value";
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
                 return "text";
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
                 return "nestedArray";
             default:
                 return "";
@@ -540,11 +540,11 @@ template <>
         {
             switch (getValue().zserioChoiceTag())
             {
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
                 return "value";
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
                 return "text";
-            case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+            case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
                 return "nestedArray";
             default:
                 return "";
@@ -572,13 +572,13 @@ size_t hash<::zserio::View<::test_object::polymorphic_allocator::WalkerUnion>>::
     uint32_t result = ::zserio::HASH_SEED;
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_value:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::value:
         result = ::zserio::calcHashCode(result, view.value());
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_text:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::text:
         result = ::zserio::calcHashCode(result, view.text());
         break;
-    case ::test_object::polymorphic_allocator::WalkerUnion::ChoiceTag::CHOICE_nestedArray:
+    case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         result = ::zserio::calcHashCode(result, view.nestedArray());
         break;
     default:

@@ -328,7 +328,7 @@ protected:
 TEST_F(WithReflectionCodeTest, checkChoiceWithStructure)
 {
     Choice choice;
-    choice.emplace<Choice::ChoiceTag::CHOICE_structField>(createStruct());
+    choice.emplace<Choice::Tag::structField>(createStruct());
 
     auto reflectablePtr = reflectable(choice, AllocatorType{});
     ASSERT_EQ("with_reflection_code.Choice"sv, reflectablePtr->getTypeInfo().getSchemaName());
@@ -375,8 +375,8 @@ TEST_F(WithReflectionCodeTest, checkChoiceWithUnion)
 {
     Choice choice;
     Union unionField;
-    unionField.emplace<Union::ChoiceTag::CHOICE_structField>(createStruct());
-    choice.emplace<Choice::ChoiceTag::CHOICE_unionField>(unionField);
+    unionField.emplace<Union::Tag::structField>(createStruct());
+    choice.emplace<Choice::Tag::unionField>(unionField);
 
     auto reflectablePtr = reflectable(choice, AllocatorType{});
     ASSERT_EQ("with_reflection_code.Choice"sv, reflectablePtr->getTypeInfo().getSchemaName());
@@ -403,7 +403,7 @@ TEST_F(WithReflectionCodeTest, checkChoiceWithUnion)
 TEST_F(WithReflectionCodeTest, checkChoiceWithBitmask)
 {
     Choice choice;
-    choice.emplace<Choice::ChoiceTag::CHOICE_bitmaskField>(Bitmask::Values::FLAG3);
+    choice.emplace<Choice::Tag::bitmaskField>(Bitmask::Values::FLAG3);
 
     auto reflectablePtr = zserio::reflectable(choice, AllocatorType{});
     ASSERT_EQ("with_reflection_code.Choice"sv, reflectablePtr->getTypeInfo().getSchemaName());

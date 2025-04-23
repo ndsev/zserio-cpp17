@@ -73,15 +73,15 @@ View<::test_object::polymorphic_allocator::ReflectableChoice>::View(const ::test
 
 ::std::string_view View<::test_object::polymorphic_allocator::ReflectableChoice>::valueStr() const
 {
-    return ::std::string_view{get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(*m_data)};
+    return ::std::string_view{get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(*m_data)};
 }
 
 ::zserio::UInt32 View<::test_object::polymorphic_allocator::ReflectableChoice>::value32() const
 {
-    return get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(*m_data);
+    return get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>(*m_data);
 }
 
-::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag View<::test_object::polymorphic_allocator::ReflectableChoice>::zserioChoiceTag() const
+::test_object::polymorphic_allocator::ReflectableChoice::Tag View<::test_object::polymorphic_allocator::ReflectableChoice>::zserioChoiceTag() const
 {
     return m_data->index();
 }
@@ -158,19 +158,19 @@ void validate(const View<::test_object::polymorphic_allocator::ReflectableChoice
     {
     case ::test_object::polymorphic_allocator::ReflectableEnum::VALUE1:
         // check choice case
-        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr)
+        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr)
         {
             throw ChoiceCaseException("Wrong case set in choice 'ReflectableChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr) << ")!";
+                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr) << ")!";
         }
         validate(view.valueStr(), "'ReflectableChoice.valueStr'");
         break;
     case ::test_object::polymorphic_allocator::ReflectableEnum::VALUE2:
         // check choice case
-        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32)
+        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32)
         {
             throw ChoiceCaseException("Wrong case set in choice 'ReflectableChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32) << ")!";
+                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32) << ")!";
         }
         validate(view.value32(), "'ReflectableChoice.value32'");
         break;
@@ -226,12 +226,12 @@ View<::test_object::polymorphic_allocator::ReflectableChoice> read(BitStreamRead
     switch (view.param())
     {
     case ::test_object::polymorphic_allocator::ReflectableEnum::VALUE1:
-        data.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(data.get_allocator());
-        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>());
+        data.emplace<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(data.get_allocator());
+        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>());
         break;
     case ::test_object::polymorphic_allocator::ReflectableEnum::VALUE2:
-        data.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>();
-        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>());
+        data.emplace<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>();
+        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>());
         break;
     default:
         // empty
@@ -346,12 +346,12 @@ template <>
             if (name == "valueStr")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(m_object), get_allocator());
             }
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableChoice'!";
         }
@@ -360,9 +360,9 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr:
+            case ::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr:
                 return "valueStr";
-            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32:
                 return "value32";
             default:
                 return "";
@@ -400,12 +400,12 @@ template <>
             if (name == "valueStr")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(m_object), get_allocator());
             }
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableChoice'!";
         }
@@ -415,12 +415,12 @@ template <>
             if (name == "valueStr")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(m_object), get_allocator());
             }
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableChoice'!";
         }
@@ -429,13 +429,13 @@ template <>
         {
             if (name == "valueStr")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::pmr::String>(value));
                 return;
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
@@ -446,13 +446,13 @@ template <>
         {
             if (name == "valueStr")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(get_allocator());
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(get_allocator());
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr>(m_object), get_allocator());
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>();
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>();
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableChoice'!";
         }
@@ -461,9 +461,9 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr:
+            case ::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr:
                 return "valueStr";
-            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32:
                 return "value32";
             default:
                 return "";
@@ -524,9 +524,9 @@ template <>
         {
             switch (getValue().zserioChoiceTag())
             {
-            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_valueStr:
+            case ::test_object::polymorphic_allocator::ReflectableChoice::Tag::valueStr:
                 return "valueStr";
-            case ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::ReflectableChoice::Tag::value32:
                 return "value32";
             default:
                 return "";

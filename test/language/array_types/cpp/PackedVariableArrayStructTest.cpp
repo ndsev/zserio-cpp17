@@ -65,17 +65,16 @@ protected:
         TestChoice testChoice;
         if (index == 0 || index == 2 || index == 4)
         {
-            testChoice.emplace<TestChoice::ChoiceTag::CHOICE_value16>(
-                    zserio::UInt16(static_cast<uint16_t>(index)));
+            testChoice.emplace<TestChoice::Tag::value16>(zserio::UInt16(static_cast<uint16_t>(index)));
         }
         else if (index == 5)
         {
-            testChoice.emplace<TestChoice::ChoiceTag::CHOICE_array32>(
+            testChoice.emplace<TestChoice::Tag::array32>(
                     VectorType<zserio::UInt32>{{index * 2, index * 2 + 1}});
         }
         else
         {
-            testChoice.emplace<TestChoice::ChoiceTag::CHOICE_value32>(Value32{index * 2});
+            testChoice.emplace<TestChoice::Tag::value32>(Value32{index * 2});
         }
 
         return testChoice;
@@ -86,17 +85,15 @@ protected:
         TestUnion testUnion;
         if (index % 2 == 0)
         {
-            testUnion.emplace<TestUnion::ChoiceTag::CHOICE_value16>(
-                    zserio::UInt16(static_cast<uint16_t>(index)));
+            testUnion.emplace<TestUnion::Tag::value16>(zserio::UInt16(static_cast<uint16_t>(index)));
         }
         else if (index == 5)
         {
-            testUnion.emplace<TestUnion::ChoiceTag::CHOICE_array32>(
-                    VectorType<zserio::UInt32>{{index * 2, index * 2 + 1}});
+            testUnion.emplace<TestUnion::Tag::array32>(VectorType<zserio::UInt32>{{index * 2, index * 2 + 1}});
         }
         else
         {
-            testUnion.emplace<TestUnion::ChoiceTag::CHOICE_value32>(Value32{index * 2});
+            testUnion.emplace<TestUnion::Tag::value32>(Value32{index * 2});
         }
 
         return testUnion;

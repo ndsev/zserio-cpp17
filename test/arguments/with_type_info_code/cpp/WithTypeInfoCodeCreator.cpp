@@ -103,9 +103,9 @@ static void fillRecursiveStruct(RecursiveStruct& recursiveStruct)
 static void fillRecursiveUnion(RecursiveUnion& recursiveUnion)
 {
     RecursiveUnion recursiveUnionFieldU32;
-    recursiveUnionFieldU32.emplace<RecursiveUnion::ChoiceTag::CHOICE_fieldU32>(0xDEAD);
+    recursiveUnionFieldU32.emplace<RecursiveUnion::Tag::fieldU32>(0xDEAD);
     const VectorType<RecursiveUnion> recursive = {recursiveUnionFieldU32};
-    recursiveUnion.emplace<RecursiveUnion::ChoiceTag::CHOICE_recursive>(recursive);
+    recursiveUnion.emplace<RecursiveUnion::Tag::recursive>(recursive);
 }
 
 static void fillRecursiveChoice(RecursiveChoice& recursiveChoice, bool param1, bool param2)
@@ -115,17 +115,17 @@ static void fillRecursiveChoice(RecursiveChoice& recursiveChoice, bool param1, b
         RecursiveChoice recursiveChoiceFalse;
         fillRecursiveChoice(recursiveChoiceFalse, param2, false);
         const VectorType<RecursiveChoice> recursive = {recursiveChoiceFalse};
-        recursiveChoice.emplace<RecursiveChoice::ChoiceTag::CHOICE_recursive>(recursive);
+        recursiveChoice.emplace<RecursiveChoice::Tag::recursive>(recursive);
     }
     else
     {
-        recursiveChoice.emplace<RecursiveChoice::ChoiceTag::CHOICE_fieldU32>(0xDEAD);
+        recursiveChoice.emplace<RecursiveChoice::Tag::fieldU32>(0xDEAD);
     }
 }
 
 static void fillSimpleUnion(SimpleUnion& simpleUnion)
 {
-    simpleUnion.emplace<SimpleUnion::ChoiceTag::CHOICE_testBitmask>(TestBitmask::Values::_Green);
+    simpleUnion.emplace<SimpleUnion::Tag::testBitmask>(TestBitmask::Values::_Green);
 }
 
 static void fillSimpleChoice(SimpleChoice& simpleChoice, const TestEnum& testEnum)
@@ -134,11 +134,11 @@ static void fillSimpleChoice(SimpleChoice& simpleChoice, const TestEnum& testEnu
     {
         SimpleUnion simpleUnion;
         fillSimpleUnion(simpleUnion);
-        simpleChoice.emplace<SimpleChoice::ChoiceTag::CHOICE_fieldTwo>(simpleUnion);
+        simpleChoice.emplace<SimpleChoice::Tag::fieldTwo>(simpleUnion);
     }
     else
     {
-        simpleChoice.emplace<SimpleChoice::ChoiceTag::CHOICE_fieldDefault>("text");
+        simpleChoice.emplace<SimpleChoice::Tag::fieldDefault>("text");
     }
 }
 

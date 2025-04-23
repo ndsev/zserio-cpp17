@@ -15,8 +15,7 @@ protected:
         writer.writeUnsignedBits32(TERMINATOR_OFFSET, 32);
         writer.writeBool(BOOL_VALUE);
         // union's choice tag
-        writer.writeVarSize(
-                static_cast<uint32_t>(NestedOffsetUnion::ChoiceTag::CHOICE_nestedOffsetArrayStructure - 1));
+        writer.writeVarSize(static_cast<uint32_t>(NestedOffsetUnion::Tag::nestedOffsetArrayStructure - 1));
         writer.writeUnsignedBits32(NUM_ELEMENTS, 8);
         for (uint32_t i = 0; i < NUM_ELEMENTS; ++i)
         {
@@ -38,8 +37,7 @@ protected:
         ASSERT_EQ(BOOL_VALUE, nestedOffsetChoice.type());
 
         const auto& nestedOffsetUnion = nestedOffsetChoice.nestedOffsetUnion();
-        ASSERT_EQ(NestedOffsetUnion::ChoiceTag::CHOICE_nestedOffsetArrayStructure,
-                nestedOffsetUnion.zserioChoiceTag());
+        ASSERT_EQ(NestedOffsetUnion::Tag::nestedOffsetArrayStructure, nestedOffsetUnion.zserioChoiceTag());
 
         const auto& nestedOffsetArrayStructure = nestedOffsetUnion.nestedOffsetArrayStructure();
         ASSERT_EQ(NUM_ELEMENTS, nestedOffsetArrayStructure.numElements());
@@ -85,9 +83,9 @@ protected:
             nestedOffsetStructure.data = i;
             nestedOffsetStructureList.push_back(nestedOffsetStructure);
         }
-        nestedOffsetUnion.emplace<NestedOffsetUnion::ChoiceTag::CHOICE_nestedOffsetArrayStructure>(
+        nestedOffsetUnion.emplace<NestedOffsetUnion::Tag::nestedOffsetArrayStructure>(
                 nestedOffsetArrayStructure);
-        nestedOffsetChoice.emplace<NestedOffsetChoice::ChoiceTag::CHOICE_nestedOffsetUnion>(nestedOffsetUnion);
+        nestedOffsetChoice.emplace<NestedOffsetChoice::Tag::nestedOffsetUnion>(nestedOffsetUnion);
     }
 
     static constexpr bool BOOL_VALUE = true;

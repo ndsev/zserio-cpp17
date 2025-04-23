@@ -39,7 +39,7 @@ ${I}{
 ${I}    if (name == "${field.name}")
 ${I}    {
 ${I}        return ::zserio::reflectable<#if field.array??>Array</#if>(
-${I}                get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_object), get_allocator());
+${I}                get<${fullName}::Tag::<@choice_tag_name field/>>(m_object), get_allocator());
 ${I}    }
     </#list>
 ${I}    throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in '${compoundName}'!";
@@ -71,10 +71,10 @@ ${I}{
     <#list fieldList as field>
 ${I}    if (name == "${field.name}")
 ${I}    {
-${I}        m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(<#rt>
+${I}        m_object.emplace<${fullName}::Tag::<@choice_tag_name field/>>(<#rt>
                     <#lt><#if field.typeInfo.needsAllocator || field.array??>get_allocator()</#if>);
 ${I}        return ::zserio::reflectable<#if field.array??>Array</#if>(<#rt>
-                    <#lt>get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(m_object), get_allocator());
+                    <#lt>get<${fullName}::Tag::<@choice_tag_name field/>>(m_object), get_allocator());
 ${I}    }
     </#list>
 ${I}    throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in '${compoundName}'!";
@@ -116,7 +116,7 @@ ${I}{
     <#list fieldList as field>
 ${I}    if (name == "${field.name}")
 ${I}    {
-${I}        m_object.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(
+${I}        m_object.emplace<${fullName}::Tag::<@choice_tag_name field/>>(
 ${I}                ::zserio::ReflectableUtil::fromAny<<@field_data_type_name field/>>(value));
 ${I}        return;
 ${I}    }

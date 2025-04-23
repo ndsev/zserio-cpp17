@@ -8,26 +8,25 @@ namespace empty_choice
 {
 
 using AllocatorType = EmptyChoice::AllocatorType;
-using ChoiceTag = EmptyChoice::ChoiceTag;
 
 TEST(EmptyChoiceTest, constructors)
 {
     {
         EmptyChoice data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoice data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoice data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoice data;
         zserio::View view(data, static_cast<zserio::UInt8>(0));
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+        ASSERT_EQ(EmptyChoice::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
     }
 }
 
@@ -42,7 +41,7 @@ TEST(EmptyChoiceTest, zserioChoiceTag)
 {
     EmptyChoice data;
     zserio::View view(data, static_cast<zserio::UInt8>(0));
-    ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+    ASSERT_EQ(EmptyChoice::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
 }
 
 TEST(EmptyChoiceTest, comparisonOperators)

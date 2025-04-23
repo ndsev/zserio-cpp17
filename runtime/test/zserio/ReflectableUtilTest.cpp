@@ -192,32 +192,29 @@ TEST(ReflectableUtilTest, equalBitmasks)
 TEST(ReflectableUtilTest, equalCompounds)
 {
     ReflectableUtilUnion compound1 = ReflectableUtilUnion();
-    compound1.emplace<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(ReflectableUtilEnum::ONE);
+    compound1.emplace<ReflectableUtilUnion::Tag::reflectableUtilEnum>(ReflectableUtilEnum::ONE);
 
     ReflectableUtilUnion compound2 = ReflectableUtilUnion();
-    compound2.emplace<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilEnum>(ReflectableUtilEnum::TWO);
+    compound2.emplace<ReflectableUtilUnion::Tag::reflectableUtilEnum>(ReflectableUtilEnum::TWO);
 
     ReflectableUtilUnion compound3 = ReflectableUtilUnion();
-    compound3.emplace<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
-            ReflectableUtilBitmask::Values::READ);
+    compound3.emplace<ReflectableUtilUnion::Tag::reflectableUtilBitmask>(ReflectableUtilBitmask::Values::READ);
 
     ReflectableUtilUnion compound4 = ReflectableUtilUnion();
-    compound4.emplace<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(
+    compound4.emplace<ReflectableUtilUnion::Tag::reflectableUtilObject>(
             ReflectableUtilObject(0, ReflectableUtilChoice()));
 
     ReflectableUtilUnion compound5 = ReflectableUtilUnion();
-    compound5.emplace<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(
+    compound5.emplace<ReflectableUtilUnion::Tag::reflectableUtilObject>(
             ReflectableUtilObject(1, ReflectableUtilChoice()));
-    compound5.get<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>()
-            .reflectableUtilChoice.emplace<ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
-                    std::vector<UInt32>());
+    compound5.get<ReflectableUtilUnion::Tag::reflectableUtilObject>()
+            .reflectableUtilChoice.emplace<ReflectableUtilChoice::Tag::array>(std::vector<UInt32>());
 
     ReflectableUtilUnion compound6 = ReflectableUtilUnion();
-    compound6.emplace<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>(
+    compound6.emplace<ReflectableUtilUnion::Tag::reflectableUtilObject>(
             ReflectableUtilObject(1, ReflectableUtilChoice()));
-    compound6.get<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilObject>()
-            .reflectableUtilChoice.emplace<ReflectableUtilChoice::ChoiceTag::CHOICE_array>(
-                    std::vector<UInt32>{{1, 2, 3}});
+    compound6.get<ReflectableUtilUnion::Tag::reflectableUtilObject>()
+            .reflectableUtilChoice.emplace<ReflectableUtilChoice::Tag::array>(std::vector<UInt32>{{1, 2, 3}});
 
     ASSERT_TRUE(ReflectableUtil::equal(reflectable(compound1), reflectable(compound1)));
     ASSERT_TRUE(ReflectableUtil::equal(reflectable(compound2), reflectable(compound2)));
@@ -358,16 +355,16 @@ TEST(ReflectableUtilTest, getValueCompound)
 
     ReflectableUtilUnion& reflectableUtilUnionRef =
             ReflectableUtil::getValue<ReflectableUtilUnion>(reflectablePtr);
-    reflectableUtilUnionRef.emplace<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>(
+    reflectableUtilUnionRef.emplace<ReflectableUtilUnion::Tag::reflectableUtilBitmask>(
             ReflectableUtilBitmask::Values::WRITE);
     ASSERT_EQ(ReflectableUtilBitmask::Values::WRITE,
-            reflectableUtilUnion.get<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>());
+            reflectableUtilUnion.get<ReflectableUtilUnion::Tag::reflectableUtilBitmask>());
 
     auto constReflectable = reflectable(static_cast<const ReflectableUtilUnion&>(reflectableUtilUnion));
     const ReflectableUtilUnion& reflectableUtilUnionConstRef =
             ReflectableUtil::getValue<ReflectableUtilUnion>(constReflectable);
     ASSERT_EQ(ReflectableUtilBitmask::Values::WRITE,
-            reflectableUtilUnionConstRef.get<ReflectableUtilUnion::ChoiceTag::CHOICE_reflectableUtilBitmask>());
+            reflectableUtilUnionConstRef.get<ReflectableUtilUnion::Tag::reflectableUtilBitmask>());
     ASSERT_EQ(&reflectableUtilUnion, &reflectableUtilUnionConstRef);
 }
 

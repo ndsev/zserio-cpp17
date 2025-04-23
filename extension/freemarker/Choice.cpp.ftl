@@ -97,10 +97,10 @@ View<${fullName}>::View(<#if !usedAsOffset>const </#if>${fullName}& data,
 {
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
     <#-- field which does not need View -->
-    return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(*m_data);
+    return get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data);
     <#else>
     <#-- field which needs View -->
-    return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(*m_data)<#rt>
+    return <@field_view_type_name field/>{get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data)<#rt>
             <#lt><@field_view_parameters field/>};
     </#if>
 }
@@ -113,7 +113,7 @@ View<${fullName}>::View(<#if !usedAsOffset>const </#if>${fullName}& data,
 }
 </#list>
 
-${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
+${fullName}::Tag View<${fullName}>::zserioChoiceTag() const
 {
     return m_data->index();
 }
@@ -257,10 +257,10 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}// check choice case
-${I}if (view.zserioChoiceTag() != ${fullName}::ChoiceTag::<@choice_tag_name member.field/>)
+${I}if (view.zserioChoiceTag() != ${fullName}::Tag::<@choice_tag_name member.field/>)
 ${I}{
 ${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-${I}            " != " << static_cast<size_t>(${fullName}::ChoiceTag::<@choice_tag_name member.field/>) << ")!";
+${I}            " != " << static_cast<size_t>(${fullName}::Tag::<@choice_tag_name member.field/>) << ")!";
 ${I}}
     <@field_check_constraint member.field, indent/>
 ${I}validate<@array_template_args member.field/>(view.${member.field.getterName}(), "'${name}.${member.field.name}'"<#rt>
@@ -333,12 +333,12 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 <#macro choice_read_member member indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
-${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>(<#rt>
+${I}data.emplace<${fullName}::Tag::<@choice_tag_name member.field/>>(<#rt>
         <#lt><#if member.field.typeInfo.needsAllocator>data.get_allocator()</#if>);
 ${I}<#if member.field.compound??>(void)</#if>read<@array_read_suffix member.field, packed/><#rt>
         <@array_read_template_args fullName, member.field/>(<#t>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
-        reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name member.field/>>()<#t>
+        reader, data.get<${fullName}::Tag::<@choice_tag_name member.field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters member.field/>);
     <@field_check_constraint member.field, indent/>
     <#else>
@@ -542,7 +542,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
             switch (m_object.index())
             {
     <#list fieldList as field>
-            case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+            case ${fullName}::Tag::<@choice_tag_name field/>:
                 return "${field.name}";
     </#list>
             default:
@@ -609,7 +609,7 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
             switch (getValue().zserioChoiceTag())
             {
     <#list fieldList as field>
-            case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+            case ${fullName}::Tag::<@choice_tag_name field/>:
                 return "${field.name}";
     </#list>
             default:

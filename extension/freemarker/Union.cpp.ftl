@@ -98,10 +98,10 @@ View<${fullName}>::View(<#if !usedAsOffset>const </#if>${fullName}& data,
 {
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
     <#-- field which does not need View -->
-    return get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(*m_data);
+    return get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data);
     <#else>
     <#-- field which needs View -->
-    return <@field_view_type_name field/>{get<${fullName}::ChoiceTag::<@choice_tag_name field/>>(*m_data)<#rt>
+    return <@field_view_type_name field/>{get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data)<#rt>
             <#lt><@field_view_parameters field/>};
     </#if>
 }
@@ -114,7 +114,7 @@ View<${fullName}>::View(<#if !usedAsOffset>const </#if>${fullName}& data,
 }
 </#list>
 
-${fullName}::ChoiceTag View<${fullName}>::zserioChoiceTag() const
+${fullName}::Tag View<${fullName}>::zserioChoiceTag() const
 {
     return m_data->index();
 }
@@ -129,7 +129,7 @@ const ${fullName}& View<${fullName}>::zserioData() const
 ${I}switch (${switchExpression})
 ${I}{
     <#list fieldList as field>
-${I}case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+${I}case ${fullName}::Tag::<@choice_tag_name field/>:
         <#assign caseCode><@.vars[fieldActionMacroName] field, indent+1, packed/></#assign>
         ${caseCode}<#t>
         <#if !caseCode?contains("return")>
@@ -280,12 +280,12 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 
 <#macro union_read_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}data.emplace<${fullName}::ChoiceTag::<@choice_tag_name field/>>(<#rt>
+${I}data.emplace<${fullName}::Tag::<@choice_tag_name field/>>(<#rt>
         <#lt><#if field.typeInfo.needsAllocator>data.get_allocator()</#if>);
 ${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#rt>
         <@array_read_template_args fullName, field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        reader, data.get<${fullName}::ChoiceTag::<@choice_tag_name field/>>()<#t>
+        reader, data.get<${fullName}::Tag::<@choice_tag_name field/>>()<#t>
         <#lt><@field_view_view_indirect_parameters field/>);
     <@field_check_constraint field, indent/>
 </#macro>
@@ -307,7 +307,7 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 
     VarSize choiceTag;
     read(reader, choiceTag);
-    <@union_switch "union_read_field", "union_no_match", "static_cast<${fullName}::ChoiceTag>(choiceTag + 1)"/>
+    <@union_switch "union_read_field", "union_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)"/>
 </#if>
 
     return view;
@@ -380,7 +380,7 @@ void read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext
 
     VarSize choiceTag;
     read(packingContext.zserioChoiceTag, reader, choiceTag);
-    <@union_switch "union_read_field", "union_no_match", "static_cast<${fullName}::ChoiceTag>(choiceTag + 1)", 1, true/>
+    <@union_switch "union_read_field", "union_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)", 1, true/>
 </#if>
     (void)view;
 }
@@ -489,7 +489,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
             switch (m_object.index())
             {
     <#list fieldList as field>
-            case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+            case ${fullName}::Tag::<@choice_tag_name field/>:
                 return "${field.name}";
     </#list>
             default:
@@ -556,7 +556,7 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
             switch (getValue().zserioChoiceTag())
             {
     <#list fieldList as field>
-            case ${fullName}::ChoiceTag::<@choice_tag_name field/>:
+            case ${fullName}::Tag::<@choice_tag_name field/>:
                 return "${field.name}";
     </#list>
             default:

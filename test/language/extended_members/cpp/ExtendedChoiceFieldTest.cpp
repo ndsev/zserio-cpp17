@@ -38,8 +38,8 @@ TEST_F(ExtendedChoiceFieldTest, defaultConstructor)
     ASSERT_EQ(0, data.numElements);
     ASSERT_EQ(0, view.numElements());
 
-    ASSERT_EQ(Choice::ChoiceTag::UNDEFINED_CHOICE, data.extendedValue->index());
-    ASSERT_EQ(Choice::ChoiceTag::UNDEFINED_CHOICE, view.extendedValue()->zserioChoiceTag());
+    ASSERT_EQ(Choice::Tag::ZSERIO_UNDEFINED, data.extendedValue->index());
+    ASSERT_EQ(Choice::Tag::ZSERIO_UNDEFINED, view.extendedValue()->zserioChoiceTag());
     ASSERT_EQ(0, view.extendedValue()->numElements());
 }
 
@@ -51,23 +51,23 @@ TEST_F(ExtendedChoiceFieldTest, fieldConstructor)
     ASSERT_TRUE(data.extendedValue.isPresent());
     ASSERT_TRUE(view.extendedValue().isPresent());
 
-    data.extendedValue->emplace<Choice::ChoiceTag::CHOICE_value>(42);
+    data.extendedValue->emplace<Choice::Tag::value>(42);
 
     ASSERT_EQ(1, data.numElements);
     ASSERT_EQ(1, view.numElements());
 
-    ASSERT_EQ(Choice::ChoiceTag::CHOICE_value, data.extendedValue->index());
-    ASSERT_EQ(Choice::ChoiceTag::CHOICE_value, view.extendedValue()->zserioChoiceTag());
-    ASSERT_EQ(42, zserio::get<Choice::ChoiceTag::CHOICE_value>(*data.extendedValue));
+    ASSERT_EQ(Choice::Tag::value, data.extendedValue->index());
+    ASSERT_EQ(Choice::Tag::value, view.extendedValue()->zserioChoiceTag());
+    ASSERT_EQ(42, zserio::get<Choice::Tag::value>(*data.extendedValue));
     ASSERT_EQ(1, view.extendedValue()->numElements());
     ASSERT_EQ(42, view.extendedValue()->value());
 }
 
 TEST_F(ExtendedChoiceFieldTest, comparisonOperators)
 {
-    Extended data(1, Choice(zserio::in_place_index<Choice::ChoiceTag::CHOICE_value>, 42));
-    Extended equalData(1, Choice(zserio::in_place_index<Choice::ChoiceTag::CHOICE_value>, 42));
-    Extended lessThanData(1, Choice(zserio::in_place_index<Choice::ChoiceTag::CHOICE_value>, 41));
+    Extended data(1, Choice(zserio::in_place_index<Choice::Tag::value>, 42));
+    Extended equalData(1, Choice(zserio::in_place_index<Choice::Tag::value>, 42));
+    Extended lessThanData(1, Choice(zserio::in_place_index<Choice::Tag::value>, 41));
 
     test_utils::comparisonOperatorsTest(data, equalData, lessThanData);
 
@@ -86,12 +86,12 @@ TEST_F(ExtendedChoiceFieldTest, bitSizeOf)
 
     Extended dataValue(1, Choice());
     zserio::View viewValue(dataValue);
-    dataValue.extendedValue->emplace<Choice::ChoiceTag::CHOICE_value>(42);
+    dataValue.extendedValue->emplace<Choice::Tag::value>(42);
     ASSERT_EQ(EXTENDED_BIT_SIZE_VALUE, zserio::detail::bitSizeOf(viewValue));
 
     Extended dataValues(static_cast<uint32_t>(VALUES.size()), Choice());
     zserio::View viewValues(dataValues);
-    dataValues.extendedValue->emplace<Choice::ChoiceTag::CHOICE_values>(VALUES);
+    dataValues.extendedValue->emplace<Choice::Tag::values>(VALUES);
     ASSERT_EQ(EXTENDED_BIT_SIZE_VALUES, zserio::detail::bitSizeOf(viewValues));
 }
 
@@ -112,7 +112,7 @@ TEST_F(ExtendedChoiceFieldTest, writeReadExtendedEmpty)
 TEST_F(ExtendedChoiceFieldTest, writeReadExtendedValue)
 {
     Extended data(1, Choice());
-    data.extendedValue->emplace<Choice::ChoiceTag::CHOICE_value>(42);
+    data.extendedValue->emplace<Choice::Tag::value>(42);
     zserio::View view(data);
     auto bitBuffer = zserio::serialize(data);
     ASSERT_EQ(EXTENDED_BIT_SIZE_VALUE, bitBuffer.getBitSize());
@@ -127,7 +127,7 @@ TEST_F(ExtendedChoiceFieldTest, writeReadExtendedValue)
 TEST_F(ExtendedChoiceFieldTest, writeReadExtendedValues)
 {
     Extended data(static_cast<uint32_t>(VALUES.size()), Choice());
-    data.extendedValue->emplace<Choice::ChoiceTag::CHOICE_values>(VALUES);
+    data.extendedValue->emplace<Choice::Tag::values>(VALUES);
     zserio::View view(data);
     auto bitBuffer = zserio::serialize(data);
     ASSERT_EQ(EXTENDED_BIT_SIZE_VALUES, bitBuffer.getBitSize());
@@ -151,7 +151,7 @@ TEST_F(ExtendedChoiceFieldTest, writeOriginalReadExtended)
     ASSERT_FALSE(readViewExtended.extendedValue().isPresent());
 
     // extended value is default constructed
-    ASSERT_EQ(Choice::ChoiceTag::UNDEFINED_CHOICE, readViewExtended.extendedValue()->zserioChoiceTag());
+    ASSERT_EQ(Choice::Tag::ZSERIO_UNDEFINED, readViewExtended.extendedValue()->zserioChoiceTag());
 
     // bit size as original
     ASSERT_EQ(ORIGINAL_BIT_SIZE, zserio::detail::bitSizeOf(readViewExtended));
@@ -167,7 +167,7 @@ TEST_F(ExtendedChoiceFieldTest, writeOriginalReadExtended)
     ASSERT_EQ(viewOriginal, readViewOriginal);
 
     // set and make the value present!
-    readDataExtended.extendedValue->emplace<Choice::ChoiceTag::CHOICE_values>(VALUES);
+    readDataExtended.extendedValue->emplace<Choice::Tag::values>(VALUES);
     readDataExtended.extendedValue.setPresent(true);
     ASSERT_TRUE(readViewExtended.extendedValue().isPresent());
     ASSERT_EQ(VALUES.at(0), readViewExtended.extendedValue()->values().at(0));
@@ -199,7 +199,7 @@ TEST_F(ExtendedChoiceFieldTest, writeExtendedEmptyReadOriginal)
 TEST_F(ExtendedChoiceFieldTest, writeExtendedValueReadOriginal)
 {
     Extended data(1, Choice());
-    data.extendedValue->emplace<Choice::ChoiceTag::CHOICE_value>(42);
+    data.extendedValue->emplace<Choice::Tag::value>(42);
     zserio::View view(data);
     auto bitBuffer = zserio::serialize(data);
     ASSERT_EQ(EXTENDED_BIT_SIZE_VALUE, bitBuffer.getBitSize());
@@ -214,7 +214,7 @@ TEST_F(ExtendedChoiceFieldTest, writeExtendedValueReadOriginal)
 TEST_F(ExtendedChoiceFieldTest, writeExtendedValuesReadOriginal)
 {
     Extended data(static_cast<uint32_t>(VALUES.size()), Choice());
-    data.extendedValue->emplace<Choice::ChoiceTag::CHOICE_values>(VALUES);
+    data.extendedValue->emplace<Choice::Tag::values>(VALUES);
     zserio::View view(data);
     auto bitBuffer = zserio::serialize(data);
     ASSERT_EQ(EXTENDED_BIT_SIZE_VALUES, bitBuffer.getBitSize());
@@ -228,10 +228,10 @@ TEST_F(ExtendedChoiceFieldTest, writeExtendedValuesReadOriginal)
 
 TEST_F(ExtendedChoiceFieldTest, stdHash)
 {
-    Extended data(1, Choice(zserio::in_place_index<Choice::ChoiceTag::CHOICE_value>, 42));
+    Extended data(1, Choice(zserio::in_place_index<Choice::Tag::value>, 42));
     const size_t dataHash = 63090;
-    Extended equalData(1, Choice(zserio::in_place_index<Choice::ChoiceTag::CHOICE_value>, 42));
-    Extended diffData(1, Choice(zserio::in_place_index<Choice::ChoiceTag::CHOICE_value>, 41));
+    Extended equalData(1, Choice(zserio::in_place_index<Choice::Tag::value>, 42));
+    Extended diffData(1, Choice(zserio::in_place_index<Choice::Tag::value>, 41));
     const size_t diffDataHash = 63089;
 
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);

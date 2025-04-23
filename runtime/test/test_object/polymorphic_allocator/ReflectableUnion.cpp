@@ -66,15 +66,15 @@ View<::test_object::polymorphic_allocator::ReflectableUnion>::View(const ::test_
 
 ::zserio::UInt32 View<::test_object::polymorphic_allocator::ReflectableUnion>::value32() const
 {
-    return get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(*m_data);
+    return get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>(*m_data);
 }
 
 ::std::string_view View<::test_object::polymorphic_allocator::ReflectableUnion>::valueStr() const
 {
-    return ::std::string_view{get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(*m_data)};
+    return ::std::string_view{get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(*m_data)};
 }
 
-::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag View<::test_object::polymorphic_allocator::ReflectableUnion>::zserioChoiceTag() const
+::test_object::polymorphic_allocator::ReflectableUnion::Tag View<::test_object::polymorphic_allocator::ReflectableUnion>::zserioChoiceTag() const
 {
     return m_data->index();
 }
@@ -93,9 +93,9 @@ bool operator==(const View<::test_object::polymorphic_allocator::ReflectableUnio
 
     switch (lhs.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
         return (lhs.value32() == rhs.value32());
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
         return (lhs.valueStr() == rhs.valueStr());
     default:
         throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUnion!");
@@ -111,9 +111,9 @@ bool operator<(const View<::test_object::polymorphic_allocator::ReflectableUnion
 
     switch (lhs.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
         return (lhs.value32() < rhs.value32());
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
         return (lhs.valueStr() < rhs.valueStr());
     default:
         throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUnion!");
@@ -148,10 +148,10 @@ void validate(const View<::test_object::polymorphic_allocator::ReflectableUnion>
 {
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
         validate(view.value32(), "'ReflectableUnion.value32'");
         break;
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
         validate(view.valueStr(), "'ReflectableUnion.valueStr'");
         break;
     default:
@@ -166,10 +166,10 @@ BitSize bitSizeOf(const View<::test_object::polymorphic_allocator::ReflectableUn
     endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
         endBitPosition += bitSizeOf(view.value32(), endBitPosition);
         break;
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
         endBitPosition += bitSizeOf(view.valueStr(), endBitPosition);
         break;
     default:
@@ -185,10 +185,10 @@ void write(BitStreamWriter& writer, const View<::test_object::polymorphic_alloca
     write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
         write(writer, view.value32());
         break;
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
         write(writer, view.valueStr());
         break;
     default:
@@ -203,15 +203,15 @@ View<::test_object::polymorphic_allocator::ReflectableUnion> read(BitStreamReade
 
     VarSize choiceTag;
     read(reader, choiceTag);
-    switch (static_cast<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag>(choiceTag + 1))
+    switch (static_cast<::test_object::polymorphic_allocator::ReflectableUnion::Tag>(choiceTag + 1))
     {
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
-        data.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>();
-        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>());
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
+        data.emplace<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>();
+        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>());
         break;
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
-        data.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(data.get_allocator());
-        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>());
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
+        data.emplace<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(data.get_allocator());
+        read(reader, data.get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>());
         break;
     default:
         throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUnion!");
@@ -299,12 +299,12 @@ template <>
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>(m_object), get_allocator());
             }
             if (name == "valueStr")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUnion'!";
         }
@@ -313,9 +313,9 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
                 return "value32";
-            case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+            case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
                 return "valueStr";
             default:
                 return "";
@@ -353,12 +353,12 @@ template <>
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>(m_object), get_allocator());
             }
             if (name == "valueStr")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUnion'!";
         }
@@ -368,12 +368,12 @@ template <>
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>(m_object), get_allocator());
             }
             if (name == "valueStr")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUnion'!";
         }
@@ -382,13 +382,13 @@ template <>
         {
             if (name == "value32")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "valueStr")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::pmr::String>(value));
                 return;
             }
@@ -399,13 +399,13 @@ template <>
         {
             if (name == "value32")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>();
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>();
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32>(m_object), get_allocator());
             }
             if (name == "valueStr")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(get_allocator());
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(get_allocator());
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUnion'!";
         }
@@ -414,9 +414,9 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
                 return "value32";
-            case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+            case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
                 return "valueStr";
             default:
                 return "";
@@ -468,9 +468,9 @@ template <>
         {
             switch (getValue().zserioChoiceTag())
             {
-            case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
                 return "value32";
-            case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+            case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
                 return "valueStr";
             default:
                 return "";
@@ -498,10 +498,10 @@ size_t hash<::zserio::View<::test_object::polymorphic_allocator::ReflectableUnio
     uint32_t result = ::zserio::HASH_SEED;
     switch (view.zserioChoiceTag())
     {
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_value32:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::value32:
         result = ::zserio::calcHashCode(result, view.value32());
         break;
-    case ::test_object::polymorphic_allocator::ReflectableUnion::ChoiceTag::CHOICE_valueStr:
+    case ::test_object::polymorphic_allocator::ReflectableUnion::Tag::valueStr:
         result = ::zserio::calcHashCode(result, view.valueStr());
         break;
     default:

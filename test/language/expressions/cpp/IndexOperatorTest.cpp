@@ -26,11 +26,11 @@ protected:
             Element element;
             if (wrong ? !isEven : isEven)
             {
-                element.emplace<Element::ChoiceTag::CHOICE_field8>(static_cast<uint8_t>(ELEMENTS[i]));
+                element.emplace<Element::Tag::field8>(static_cast<uint8_t>(ELEMENTS[i]));
             }
             else
             {
-                element.emplace<Element::ChoiceTag::CHOICE_field16>(static_cast<int16_t>(ELEMENTS[i]));
+                element.emplace<Element::Tag::field16>(static_cast<int16_t>(ELEMENTS[i]));
             }
             elements.push_back(element);
         }

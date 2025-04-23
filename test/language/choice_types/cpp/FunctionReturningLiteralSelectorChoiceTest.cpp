@@ -6,13 +6,11 @@ namespace choice_types
 namespace function_returning_literal_selector_choice
 {
 
-using ChoiceTag = TestChoice::ChoiceTag;
-
 TEST(FunctionReturningLiteralSelectorChoiceTest, field8)
 {
     Selector selector;
     zserio::View selectorView(selector, false);
-    TestChoice data(zserio::in_place_index<ChoiceTag::CHOICE_field8>, 0x7F);
+    TestChoice data(zserio::in_place_index<TestChoice::Tag::field8>, 0x7F);
     zserio::View view(data, selectorView);
 
     ASSERT_EQ(0x7F, view.field8());
@@ -23,7 +21,7 @@ TEST(FunctionReturningLiteralSelectorChoiceTest, field16)
 {
     Selector selector;
     zserio::View selectorView(selector, true);
-    TestChoice data(zserio::in_place_index<ChoiceTag::CHOICE_field16>, 0x7F7F);
+    TestChoice data(zserio::in_place_index<TestChoice::Tag::field16>, 0x7F7F);
     zserio::View view(data, selectorView);
 
     ASSERT_EQ(0x7F7F, view.field16());

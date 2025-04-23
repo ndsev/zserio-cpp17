@@ -43,11 +43,11 @@ struct ChoiceTag<::test_object::std_allocator::WalkerChoice>
 {
     enum Tag : size_t
     {
-        UNDEFINED_CHOICE,
-        CHOICE_value8,
-        CHOICE_value16,
-        CHOICE_value32,
-        CHOICE_value64
+        ZSERIO_UNDEFINED,
+        value8,
+        value16,
+        value32,
+        value64
     };
 };
 
@@ -66,8 +66,8 @@ struct WalkerChoice : ::zserio::Variant<::zserio::detail::ChoiceTag<WalkerChoice
         ::zserio::UInt32,
         ::zserio::UInt64>
 {
-    using ChoiceTag = ::zserio::detail::ChoiceTag<WalkerChoice>::Tag;
-    using Base = ::zserio::Variant<ChoiceTag,
+    using Tag = ::zserio::detail::ChoiceTag<WalkerChoice>::Tag;
+    using Base = ::zserio::Variant<Tag,
             ::std::monostate,
             ::zserio::UInt8,
             ::zserio::UInt16,
@@ -103,7 +103,7 @@ public:
     ::zserio::UInt32 value32() const;
     ::zserio::UInt64 value64() const;
 
-    ::test_object::std_allocator::WalkerChoice::ChoiceTag zserioChoiceTag() const;
+    ::test_object::std_allocator::WalkerChoice::Tag zserioChoiceTag() const;
     const ::test_object::std_allocator::WalkerChoice& zserioData() const;
 
 protected:

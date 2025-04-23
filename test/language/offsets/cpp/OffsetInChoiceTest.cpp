@@ -21,7 +21,7 @@ protected:
     static void fillData(TestStruct& data, bool setOffset = false)
     {
         data.hasOffset = HAS_OFFSET;
-        data.choiceField.emplace<TestChoice::ChoiceTag::CHOICE_offset>(setOffset ? OFFSET : 0);
+        data.choiceField.emplace<TestChoice::Tag::offset>(setOffset ? OFFSET : 0);
         data.u32Field = U32_FIELD;
     }
 

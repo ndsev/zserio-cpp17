@@ -159,7 +159,7 @@ ${I}}
 </#macro>
 
 <#macro choice_tag_name field>
-    CHOICE_<@field_name field/><#t>
+    <@field_name field/><#t>
 </#macro>
 
 <#macro array_traits_name field>

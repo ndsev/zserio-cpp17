@@ -9,7 +9,6 @@ namespace uint32_param_choice
 {
 
 using AllocatorType = UInt32ParamChoice::AllocatorType;
-using ChoiceTag = UInt32ParamChoice::ChoiceTag;
 
 class UInt32ParamChoiceTest : public ::testing::Test
 {
@@ -51,20 +50,20 @@ TEST_F(UInt32ParamChoiceTest, constructors)
 {
     {
         UInt32ParamChoice data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(UInt32ParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         UInt32ParamChoice data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(UInt32ParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         UInt32ParamChoice data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(UInt32ParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueA>, 99);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueA>, 99);
         zserio::View view(data, VARIANT_A_SELECTOR);
-        ASSERT_EQ(ChoiceTag::CHOICE_valueA, view.zserioChoiceTag());
+        ASSERT_EQ(UInt32ParamChoice::Tag::valueA, view.zserioChoiceTag());
     }
 }
 
@@ -72,7 +71,7 @@ TEST_F(UInt32ParamChoiceTest, copyConstructor)
 {
     UInt32ParamChoice data;
     const VariantA value = 99;
-    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    data.emplace<UInt32ParamChoice::Tag::valueA>(value);
     UInt32ParamChoice dataCopy(data);
     ASSERT_EQ(dataCopy, data);
 
@@ -85,7 +84,7 @@ TEST_F(UInt32ParamChoiceTest, assignmentOperator)
 {
     UInt32ParamChoice data;
     const VariantA value = 99;
-    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    data.emplace<UInt32ParamChoice::Tag::valueA>(value);
     UInt32ParamChoice dataCopy;
     dataCopy = data;
     ASSERT_EQ(dataCopy, data);
@@ -102,9 +101,9 @@ TEST_F(UInt32ParamChoiceTest, moveConstructor)
 {
     UInt32ParamChoice data;
     const VariantA value = 99;
-    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    data.emplace<UInt32ParamChoice::Tag::valueA>(value);
     UInt32ParamChoice dataMoved(std::move(data));
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueA>(dataMoved));
+    ASSERT_EQ(value, zserio::get<UInt32ParamChoice::Tag::valueA>(dataMoved));
 
     zserio::View view(dataMoved, VARIANT_A_SELECTOR);
     zserio::View viewMoved(std::move(view));
@@ -115,10 +114,10 @@ TEST_F(UInt32ParamChoiceTest, moveAssignmentOperator)
 {
     UInt32ParamChoice data;
     const VariantA value = 99;
-    data.emplace<ChoiceTag::CHOICE_valueA>(value);
+    data.emplace<UInt32ParamChoice::Tag::valueA>(value);
     UInt32ParamChoice dataMoved;
     dataMoved = std::move(data);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueA>(dataMoved));
+    ASSERT_EQ(value, zserio::get<UInt32ParamChoice::Tag::valueA>(dataMoved));
 
     zserio::View view(dataMoved, VARIANT_A_SELECTOR);
     UInt32ParamChoice dummyData;
@@ -131,7 +130,7 @@ TEST_F(UInt32ParamChoiceTest, moveAssignmentOperator)
 TEST_F(UInt32ParamChoiceTest, selector)
 {
     UInt32ParamChoice data;
-    data.emplace<ChoiceTag::CHOICE_valueA>(0);
+    data.emplace<UInt32ParamChoice::Tag::valueA>(0);
     zserio::View viewA(data, VARIANT_A_SELECTOR);
     ASSERT_EQ(VARIANT_A_SELECTOR, viewA.selector());
 
@@ -146,21 +145,21 @@ TEST_F(UInt32ParamChoiceTest, zserioChoiceTag)
 {
     {
         UInt32ParamChoice data;
-        data.emplace<ChoiceTag::CHOICE_valueA>(0);
+        data.emplace<UInt32ParamChoice::Tag::valueA>(0);
         zserio::View view(data, VARIANT_A_SELECTOR);
-        ASSERT_EQ(ChoiceTag::CHOICE_valueA, view.zserioChoiceTag());
+        ASSERT_EQ(UInt32ParamChoice::Tag::valueA, view.zserioChoiceTag());
     }
     {
         UInt32ParamChoice data;
-        data.emplace<ChoiceTag::CHOICE_valueB>(0);
+        data.emplace<UInt32ParamChoice::Tag::valueB>(0);
         zserio::View viewB(data, VARIANT_B_SELECTOR1);
-        ASSERT_EQ(ChoiceTag::CHOICE_valueB, viewB.zserioChoiceTag());
+        ASSERT_EQ(UInt32ParamChoice::Tag::valueB, viewB.zserioChoiceTag());
     }
     {
         UInt32ParamChoice data;
-        data.emplace<ChoiceTag::CHOICE_valueC>(0);
+        data.emplace<UInt32ParamChoice::Tag::valueC>(0);
         zserio::View viewC(data, EMPTY_SELECTOR2);
-        ASSERT_EQ(ChoiceTag::CHOICE_valueC, viewC.zserioChoiceTag());
+        ASSERT_EQ(UInt32ParamChoice::Tag::valueC, viewC.zserioChoiceTag());
     }
 }
 
@@ -168,10 +167,10 @@ TEST_F(UInt32ParamChoiceTest, valueA)
 {
     UInt32ParamChoice data;
     const VariantA value = 99;
-    data.emplace<ChoiceTag::CHOICE_valueA>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueB>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueC>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueA>(data));
+    data.emplace<UInt32ParamChoice::Tag::valueA>(value);
+    ASSERT_THROW(zserio::get<UInt32ParamChoice::Tag::valueB>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<UInt32ParamChoice::Tag::valueC>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<UInt32ParamChoice::Tag::valueA>(data));
 
     zserio::View view(data, VARIANT_A_SELECTOR);
     ASSERT_THROW(view.valueB(), zserio::BadVariantAccess);
@@ -182,10 +181,10 @@ TEST_F(UInt32ParamChoiceTest, valueA)
 TEST_F(UInt32ParamChoiceTest, valueB)
 {
     const VariantB value = 234;
-    UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueA>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueC>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueB>(data));
+    UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueB>, value);
+    ASSERT_THROW(zserio::get<UInt32ParamChoice::Tag::valueA>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<UInt32ParamChoice::Tag::valueC>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<UInt32ParamChoice::Tag::valueB>(data));
 
     zserio::View view(data, VARIANT_B_SELECTOR3);
     ASSERT_THROW(view.valueA(), zserio::BadVariantAccess);
@@ -197,10 +196,10 @@ TEST_F(UInt32ParamChoiceTest, valueC)
 {
     UInt32ParamChoice data;
     const VariantC value = 23456;
-    data.emplace<ChoiceTag::CHOICE_valueC>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueA>(data), zserio::BadVariantAccess);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_valueB>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_valueC>(data));
+    data.emplace<UInt32ParamChoice::Tag::valueC>(value);
+    ASSERT_THROW(zserio::get<UInt32ParamChoice::Tag::valueA>(data), zserio::BadVariantAccess);
+    ASSERT_THROW(zserio::get<UInt32ParamChoice::Tag::valueB>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<UInt32ParamChoice::Tag::valueC>(data));
 
     zserio::View view(data, VARIANT_C_SELECTOR);
     ASSERT_THROW(view.valueA(), zserio::BadVariantAccess);
@@ -211,11 +210,11 @@ TEST_F(UInt32ParamChoiceTest, valueC)
 TEST_F(UInt32ParamChoiceTest, comparisonOperators)
 {
     UInt32ParamChoice data;
-    data.emplace<ChoiceTag::CHOICE_valueB>(2);
+    data.emplace<UInt32ParamChoice::Tag::valueB>(2);
     UInt32ParamChoice equalData;
-    equalData.emplace<ChoiceTag::CHOICE_valueB>(2);
+    equalData.emplace<UInt32ParamChoice::Tag::valueB>(2);
     UInt32ParamChoice lessThenData;
-    lessThenData.emplace<ChoiceTag::CHOICE_valueA>(2);
+    lessThenData.emplace<UInt32ParamChoice::Tag::valueA>(2);
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
     zserio::View view(data, VARIANT_B_SELECTOR2);
@@ -224,7 +223,7 @@ TEST_F(UInt32ParamChoiceTest, comparisonOperators)
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
     UInt32ParamChoice lessThenDataViaSelector;
-    lessThenDataViaSelector.emplace<ChoiceTag::CHOICE_valueB>(2);
+    lessThenDataViaSelector.emplace<UInt32ParamChoice::Tag::valueB>(2);
     zserio::View lessThenViewViaSelector(lessThenDataViaSelector, VARIANT_B_SELECTOR1);
     test_utils::comparisonOperatorsTest(view, equalView, lessThenViewViaSelector);
 }
@@ -234,7 +233,7 @@ TEST_F(UInt32ParamChoiceTest, validate)
     {
         UInt32ParamChoice data;
         const VariantA value = 99;
-        data.emplace<ChoiceTag::CHOICE_valueA>(value);
+        data.emplace<UInt32ParamChoice::Tag::valueA>(value);
         zserio::View viewB(data, VARIANT_B_SELECTOR3);
         ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
         zserio::View viewC(data, VARIANT_C_SELECTOR);
@@ -242,7 +241,7 @@ TEST_F(UInt32ParamChoiceTest, validate)
     }
     {
         const VariantB value = 234;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueB>, value);
         zserio::View viewA(data, VARIANT_A_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
         zserio::View viewC(data, VARIANT_C_SELECTOR);
@@ -251,7 +250,7 @@ TEST_F(UInt32ParamChoiceTest, validate)
     {
         UInt32ParamChoice data;
         const VariantC value = 23456;
-        data.emplace<ChoiceTag::CHOICE_valueC>(value);
+        data.emplace<UInt32ParamChoice::Tag::valueC>(value);
         zserio::View viewA(data, VARIANT_A_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
         zserio::View viewB(data, VARIANT_B_SELECTOR1);
@@ -264,20 +263,20 @@ TEST_F(UInt32ParamChoiceTest, bitSizeOf)
     {
         UInt32ParamChoice data;
         const VariantA value = 99;
-        data.emplace<ChoiceTag::CHOICE_valueA>(value);
+        data.emplace<UInt32ParamChoice::Tag::valueA>(value);
         zserio::View view(data, VARIANT_A_SELECTOR);
         ASSERT_EQ(8, zserio::detail::bitSizeOf(view));
     }
     {
         const VariantB value = 234;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueB>, value);
         zserio::View view(data, VARIANT_B_SELECTOR3);
         ASSERT_EQ(16, zserio::detail::bitSizeOf(view));
     }
     {
         UInt32ParamChoice data;
         const VariantC value = 23456;
-        data.emplace<ChoiceTag::CHOICE_valueC>(value);
+        data.emplace<UInt32ParamChoice::Tag::valueC>(value);
         zserio::View view(data, VARIANT_C_SELECTOR);
         ASSERT_EQ(32, zserio::detail::bitSizeOf(view));
     }
@@ -287,17 +286,17 @@ TEST_F(UInt32ParamChoiceTest, writeRead)
 {
     {
         const VariantA value = 99;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueA>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueA>, value);
         test_utils::writeReadTest(data, VARIANT_A_SELECTOR);
     }
     {
         const VariantB value = 234;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueB>, value);
         test_utils::writeReadTest(data, VARIANT_B_SELECTOR2);
     }
     {
         const VariantC value = 23456;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueC>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueC>, value);
         test_utils::writeReadTest(data, VARIANT_C_SELECTOR);
     }
 }
@@ -307,21 +306,21 @@ TEST_F(UInt32ParamChoiceTest, read)
     {
         const zserio::UInt32 selector = VARIANT_A_SELECTOR;
         const int8_t value = 99;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueA>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueA>, value);
 
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
     {
         const zserio::UInt32 selector = VARIANT_B_SELECTOR1;
         const int16_t value = 234;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueB>, value);
 
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
     {
         const zserio::UInt32 selector = VARIANT_C_SELECTOR;
         const int32_t value = 23456;
-        UInt32ParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueC>, value);
+        UInt32ParamChoice data(zserio::in_place_index<UInt32ParamChoice::Tag::valueC>, value);
 
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
@@ -330,15 +329,15 @@ TEST_F(UInt32ParamChoiceTest, read)
 TEST_F(UInt32ParamChoiceTest, stdHash)
 {
     UInt32ParamChoice data;
-    data.emplace<ChoiceTag::CHOICE_valueA>(0);
+    data.emplace<UInt32ParamChoice::Tag::valueA>(0);
     const size_t dataHash = 31524; // hardcoded value to check that the hash code is stable
 
     UInt32ParamChoice equalData;
-    equalData.emplace<ChoiceTag::CHOICE_valueA>(0);
+    equalData.emplace<UInt32ParamChoice::Tag::valueA>(0);
 
     UInt32ParamChoice diffData;
     const VariantA value = 99;
-    diffData.emplace<ChoiceTag::CHOICE_valueA>(value);
+    diffData.emplace<UInt32ParamChoice::Tag::valueA>(value);
     const size_t diffDataHash = 31623; // hardcoded value to check that the hash code is stable
 
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);

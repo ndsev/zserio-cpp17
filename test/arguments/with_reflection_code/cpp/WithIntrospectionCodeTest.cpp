@@ -465,7 +465,7 @@ protected:
 TEST_F(WithIntrospectionCodeTest, checkChoiceWithStructure)
 {
     Choice choice;
-    choice.emplace<Choice::ChoiceTag::CHOICE_structField>(createStruct());
+    choice.emplace<Choice::Tag::structField>(createStruct());
     zserio::View<Choice> view(choice, Selector::STRUCT);
     zserio::detail::initializeOffsets(view, 0);
 
@@ -524,7 +524,7 @@ TEST_F(WithIntrospectionCodeTest, checkReflectableChoiceWithStruct)
     introspectableView->initializeOffsets();
 
     Choice choice;
-    choice.emplace<Choice::ChoiceTag::CHOICE_structField>(createStruct());
+    choice.emplace<Choice::Tag::structField>(createStruct());
     zserio::View view(choice, Selector::STRUCT);
     zserio::detail::initializeOffsets(view, 0);
 
@@ -537,8 +537,8 @@ TEST_F(WithIntrospectionCodeTest, checkChoiceWithUnion)
 {
     Choice choice;
     Union unionField;
-    unionField.emplace<Union::ChoiceTag::CHOICE_structField>(createStruct());
-    choice.emplace<Choice::ChoiceTag::CHOICE_unionField>(unionField);
+    unionField.emplace<Union::Tag::structField>(createStruct());
+    choice.emplace<Choice::Tag::unionField>(unionField);
     zserio::View view(choice, Selector::UNION);
 
     IIntrospectableViewConstPtr introspectableView = zserio::introspectable(view);
@@ -581,7 +581,7 @@ TEST_F(WithIntrospectionCodeTest, checkChoiceWithUnion)
 TEST_F(WithIntrospectionCodeTest, checkChoiceWithBitmask)
 {
     Choice choice;
-    choice.emplace<Choice::ChoiceTag::CHOICE_bitmaskField>(Bitmask::Values::FLAG3);
+    choice.emplace<Choice::Tag::bitmaskField>(Bitmask::Values::FLAG3);
     zserio::View view(choice, Selector::BITMASK);
 
     auto introspectableView = zserio::introspectable(view);

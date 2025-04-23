@@ -78,12 +78,12 @@ protected:
         zserio::UInt8 elementA = 0;
         if (isExplicit != 0)
         {
-            itemRef.emplace<ItemRef::ChoiceTag::CHOICE_item>(m_explicitItem);
+            itemRef.emplace<ItemRef::Tag::item>(m_explicitItem);
             elementA = m_explicitItem.valueA;
         }
         else
         {
-            itemRef.emplace<ItemRef::ChoiceTag::CHOICE_pos>(pos);
+            itemRef.emplace<ItemRef::Tag::pos>(pos);
             elementA = m_items.at(pos).valueA;
         }
         if (elementA == ELEMENT_A_FOR_EXTRA_VALUE)

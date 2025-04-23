@@ -20,7 +20,7 @@ protected:
         testStruct.bitField = 0;
         testStruct.enumField = TestEnum::ONE;
         testStruct.bitmaskField = TestBitmask::Values::READ;
-        data.choiceField.emplace<TestChoice::ChoiceTag::CHOICE_structField>(testStruct);
+        data.choiceField.emplace<TestChoice::Tag::structField>(testStruct);
     }
 
 private:

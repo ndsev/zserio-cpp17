@@ -20,8 +20,8 @@ protected:
 
     static void fillData(TestStruct& data, bool setOffset = false)
     {
-        data.unionField.emplace<TestUnion::ChoiceTag::CHOICE_nestedUnion>()
-                .emplace<NestedUnion::ChoiceTag::CHOICE_offset>(setOffset ? OFFSET : 0);
+        data.unionField.emplace<TestUnion::Tag::nestedUnion>().emplace<NestedUnion::Tag::offset>(
+                setOffset ? OFFSET : 0);
         data.u32Field = U32_FIELD;
     }
 

@@ -10,7 +10,6 @@ namespace full_bitmask_param_choice
 {
 
 using AllocatorType = FullBitmaskParamChoice::AllocatorType;
-using ChoiceTag = FullBitmaskParamChoice::ChoiceTag;
 
 class FullBitmaskParamChoiceTest : public ::testing::Test
 {
@@ -38,21 +37,21 @@ TEST_F(FullBitmaskParamChoiceTest, constructors)
 {
     {
         FullBitmaskParamChoice data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         FullBitmaskParamChoice data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         FullBitmaskParamChoice data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         const uint8_t value = 99;
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, value);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, value);
         zserio::View view(data, Selector::Values::BLACK);
-        ASSERT_EQ(ChoiceTag::CHOICE_black, view.zserioChoiceTag());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::black, view.zserioChoiceTag());
     }
 }
 
@@ -67,7 +66,7 @@ TEST_F(FullBitmaskParamChoiceTest, selector)
 TEST_F(FullBitmaskParamChoiceTest, black)
 {
     const uint8_t value = 99;
-    FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, value);
+    FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, value);
 
     const Selector selector = Selector::Values::BLACK;
     zserio::View view(data, selector);
@@ -77,7 +76,7 @@ TEST_F(FullBitmaskParamChoiceTest, black)
 TEST_F(FullBitmaskParamChoiceTest, white)
 {
     const uint8_t value = 234;
-    FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, value);
+    FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::white>, value);
 
     const Selector selector = Selector::Values::WHITE;
     zserio::View view(data, selector);
@@ -87,7 +86,7 @@ TEST_F(FullBitmaskParamChoiceTest, white)
 TEST_F(FullBitmaskParamChoiceTest, blackAndWhite)
 {
     const uint16_t value = 65535;
-    FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_blackAndWhite>, value);
+    FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::blackAndWhite>, value);
 
     const Selector selector = Selector::Values::BLACK_AND_WHITE;
     zserio::View view(data, selector);
@@ -97,33 +96,33 @@ TEST_F(FullBitmaskParamChoiceTest, blackAndWhite)
 TEST_F(FullBitmaskParamChoiceTest, zserioChoiceTag)
 {
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 0);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, 0);
         zserio::View view(data, Selector::Values::BLACK);
-        ASSERT_EQ(ChoiceTag::CHOICE_black, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_black, view.zserioChoiceTag());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::black, data.index());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::black, view.zserioChoiceTag());
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 0);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::white>, 0);
         zserio::View view(data, Selector::Values::WHITE);
-        ASSERT_EQ(ChoiceTag::CHOICE_white, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_white, view.zserioChoiceTag());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::white, data.index());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::white, view.zserioChoiceTag());
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_blackAndWhite>, 0);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::blackAndWhite>, 0);
         zserio::View view(data, Selector::Values::BLACK_AND_WHITE);
-        ASSERT_EQ(ChoiceTag::CHOICE_blackAndWhite, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_blackAndWhite, view.zserioChoiceTag());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::blackAndWhite, data.index());
+        ASSERT_EQ(FullBitmaskParamChoice::Tag::blackAndWhite, view.zserioChoiceTag());
     }
 }
 
 TEST_F(FullBitmaskParamChoiceTest, comparisonOperators)
 {
     FullBitmaskParamChoice data;
-    data.emplace<ChoiceTag::CHOICE_white>(2);
+    data.emplace<FullBitmaskParamChoice::Tag::white>(2);
     FullBitmaskParamChoice equalData;
-    equalData.emplace<ChoiceTag::CHOICE_white>(2);
+    equalData.emplace<FullBitmaskParamChoice::Tag::white>(2);
     FullBitmaskParamChoice lessThenData;
-    lessThenData.emplace<ChoiceTag::CHOICE_black>(2);
+    lessThenData.emplace<FullBitmaskParamChoice::Tag::black>(2);
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
     zserio::View view(data, Selector::Values::WHITE);
@@ -135,7 +134,7 @@ TEST_F(FullBitmaskParamChoiceTest, comparisonOperators)
 TEST_F(FullBitmaskParamChoiceTest, validate)
 {
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 2);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, 2);
         zserio::View viewB(data, Selector::Values::BLACK);
         ASSERT_NO_THROW(zserio::detail::validate(viewB));
         zserio::View viewW(data, Selector::Values::WHITE);
@@ -144,7 +143,7 @@ TEST_F(FullBitmaskParamChoiceTest, validate)
         ASSERT_THROW(zserio::detail::validate(viewBW), zserio::ChoiceCaseException);
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 2);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::white>, 2);
         zserio::View viewW(data, Selector::Values::WHITE);
         ASSERT_NO_THROW(zserio::detail::validate(viewW));
         zserio::View viewB(data, Selector::Values::BLACK);
@@ -153,7 +152,7 @@ TEST_F(FullBitmaskParamChoiceTest, validate)
         ASSERT_THROW(zserio::detail::validate(viewBW), zserio::ChoiceCaseException);
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_blackAndWhite>, 2);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::blackAndWhite>, 2);
         zserio::View viewBW(data, Selector::Values::BLACK_AND_WHITE);
         ASSERT_NO_THROW(zserio::detail::validate(viewBW));
         zserio::View viewB(data, Selector::Values::BLACK);
@@ -166,17 +165,17 @@ TEST_F(FullBitmaskParamChoiceTest, validate)
 TEST_F(FullBitmaskParamChoiceTest, bitSizeOf)
 {
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 0);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, 0);
         zserio::View view(data, Selector::Values::BLACK);
         ASSERT_EQ(8, zserio::detail::bitSizeOf(view));
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 1);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::white>, 1);
         zserio::View view(data, Selector::Values::WHITE);
         ASSERT_EQ(8, zserio::detail::bitSizeOf(view));
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_blackAndWhite>, 2);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::blackAndWhite>, 2);
         zserio::View view(data, Selector::Values::BLACK_AND_WHITE);
         ASSERT_EQ(16, zserio::detail::bitSizeOf(view));
     }
@@ -185,15 +184,15 @@ TEST_F(FullBitmaskParamChoiceTest, bitSizeOf)
 TEST_F(FullBitmaskParamChoiceTest, writeRead)
 {
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 99);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, 99);
         test_utils::writeReadTest(data, Selector(Selector::Values::BLACK));
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 234);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::white>, 234);
         test_utils::writeReadTest(data, Selector(Selector::Values::WHITE));
     }
     {
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_blackAndWhite>, 65535);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::blackAndWhite>, 65535);
         test_utils::writeReadTest(data, Selector(Selector::Values::BLACK_AND_WHITE));
     }
 }
@@ -203,19 +202,19 @@ TEST_F(FullBitmaskParamChoiceTest, read)
     {
         Selector selector = Selector::Values::BLACK;
         const uint8_t value = 99;
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, value);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, value);
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
     {
         Selector selector = Selector::Values::WHITE;
         const uint8_t value = 234;
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, value);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::white>, value);
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
     {
         Selector selector = Selector::Values::BLACK_AND_WHITE;
         const uint16_t value = 65535;
-        FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_blackAndWhite>, value);
+        FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::blackAndWhite>, value);
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
 }
@@ -224,10 +223,10 @@ TEST_F(FullBitmaskParamChoiceTest, stdHash)
 {
     // hardcoded values used to check that the hash code is stable
 
-    FullBitmaskParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 99);
+    FullBitmaskParamChoice data(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, 99);
     const size_t dataHash = 31623;
-    FullBitmaskParamChoice equalData(zserio::in_place_index<ChoiceTag::CHOICE_black>, 99);
-    FullBitmaskParamChoice diffData(zserio::in_place_index<ChoiceTag::CHOICE_black>, 100);
+    FullBitmaskParamChoice equalData(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, 99);
+    FullBitmaskParamChoice diffData(zserio::in_place_index<FullBitmaskParamChoice::Tag::black>, 100);
     const size_t diffDataHash = 31624;
 
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);

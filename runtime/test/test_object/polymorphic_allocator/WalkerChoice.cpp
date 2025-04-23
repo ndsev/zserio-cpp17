@@ -73,25 +73,25 @@ View<::test_object::polymorphic_allocator::WalkerChoice>::View(const ::test_obje
 
 ::zserio::UInt8 View<::test_object::polymorphic_allocator::WalkerChoice>::value8() const
 {
-    return get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(*m_data);
+    return get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>(*m_data);
 }
 
 ::zserio::UInt16 View<::test_object::polymorphic_allocator::WalkerChoice>::value16() const
 {
-    return get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(*m_data);
+    return get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>(*m_data);
 }
 
 ::zserio::UInt32 View<::test_object::polymorphic_allocator::WalkerChoice>::value32() const
 {
-    return get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(*m_data);
+    return get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>(*m_data);
 }
 
 ::zserio::UInt64 View<::test_object::polymorphic_allocator::WalkerChoice>::value64() const
 {
-    return get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(*m_data);
+    return get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>(*m_data);
 }
 
-::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag View<::test_object::polymorphic_allocator::WalkerChoice>::zserioChoiceTag() const
+::test_object::polymorphic_allocator::WalkerChoice::Tag View<::test_object::polymorphic_allocator::WalkerChoice>::zserioChoiceTag() const
 {
     return m_data->index();
 }
@@ -176,37 +176,37 @@ void validate(const View<::test_object::polymorphic_allocator::WalkerChoice>& vi
     {
     case 8:
         // check choice case
-        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8)
+        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::Tag::value8)
         {
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8) << ")!";
+                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::Tag::value8) << ")!";
         }
         validate(view.value8(), "'WalkerChoice.value8'");
         break;
     case 16:
         // check choice case
-        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16)
+        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::Tag::value16)
         {
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16) << ")!";
+                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::Tag::value16) << ")!";
         }
         validate(view.value16(), "'WalkerChoice.value16'");
         break;
     case 32:
         // check choice case
-        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32)
+        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::Tag::value32)
         {
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32) << ")!";
+                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::Tag::value32) << ")!";
         }
         validate(view.value32(), "'WalkerChoice.value32'");
         break;
     case 64:
         // check choice case
-        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64)
+        if (view.zserioChoiceTag() != ::test_object::polymorphic_allocator::WalkerChoice::Tag::value64)
         {
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64) << ")!";
+                    " != " << static_cast<size_t>(::test_object::polymorphic_allocator::WalkerChoice::Tag::value64) << ")!";
         }
         validate(view.value64(), "'WalkerChoice.value64'");
         break;
@@ -274,20 +274,20 @@ View<::test_object::polymorphic_allocator::WalkerChoice> read(BitStreamReader& r
     switch (view.selector())
     {
     case 8:
-        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>();
-        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>());
+        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>();
+        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>());
         break;
     case 16:
-        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>();
-        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>());
+        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>();
+        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>());
         break;
     case 32:
-        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>();
-        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>());
+        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>();
+        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>());
         break;
     case 64:
-        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>();
-        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>());
+        data.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>();
+        read(reader, data.get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>());
         break;
     default:
         // empty
@@ -448,22 +448,22 @@ template <>
             if (name == "value8")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
@@ -472,13 +472,13 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value8:
                 return "value8";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value16:
                 return "value16";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value32:
                 return "value32";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value64:
                 return "value64";
             default:
                 return "";
@@ -516,22 +516,22 @@ template <>
             if (name == "value8")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
@@ -541,22 +541,22 @@ template <>
             if (name == "value8")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
                 return ::zserio::reflectable(
-                        get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
+                        get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
@@ -565,25 +565,25 @@ template <>
         {
             if (name == "value8")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt8>(value));
                 return;
             }
             if (name == "value16")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt16>(value));
                 return;
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "value64")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt64>(value));
                 return;
             }
@@ -594,23 +594,23 @@ template <>
         {
             if (name == "value8")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>();
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>();
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>();
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>();
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>();
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>();
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
-                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>();
-                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64>(m_object), get_allocator());
+                m_object.emplace<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>();
+                return ::zserio::reflectable(get<::test_object::polymorphic_allocator::WalkerChoice::Tag::value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
         }
@@ -619,13 +619,13 @@ template <>
         {
             switch (m_object.index())
             {
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value8:
                 return "value8";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value16:
                 return "value16";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value32:
                 return "value32";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value64:
                 return "value64";
             default:
                 return "";
@@ -694,13 +694,13 @@ template <>
         {
             switch (getValue().zserioChoiceTag())
             {
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value8:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value8:
                 return "value8";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value16:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value16:
                 return "value16";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value32:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value32:
                 return "value32";
-            case ::test_object::polymorphic_allocator::WalkerChoice::ChoiceTag::CHOICE_value64:
+            case ::test_object::polymorphic_allocator::WalkerChoice::Tag::value64:
                 return "value64";
             default:
                 return "";

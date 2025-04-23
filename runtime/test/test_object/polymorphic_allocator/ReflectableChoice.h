@@ -46,9 +46,9 @@ struct ChoiceTag<::test_object::polymorphic_allocator::ReflectableChoice>
 {
     enum Tag : size_t
     {
-        UNDEFINED_CHOICE,
-        CHOICE_valueStr,
-        CHOICE_value32
+        ZSERIO_UNDEFINED,
+        valueStr,
+        value32
     };
 };
 
@@ -65,8 +65,8 @@ struct ReflectableChoice : ::zserio::pmr::Variant<::zserio::detail::ChoiceTag<Re
         ::zserio::pmr::String,
         ::zserio::UInt32>
 {
-    using ChoiceTag = ::zserio::detail::ChoiceTag<ReflectableChoice>::Tag;
-    using Base = ::zserio::pmr::Variant<ChoiceTag,
+    using Tag = ::zserio::detail::ChoiceTag<ReflectableChoice>::Tag;
+    using Base = ::zserio::pmr::Variant<Tag,
             ::std::monostate,
             ::zserio::pmr::String,
             ::zserio::UInt32>;
@@ -98,7 +98,7 @@ public:
     ::std::string_view valueStr() const;
     ::zserio::UInt32 value32() const;
 
-    ::test_object::polymorphic_allocator::ReflectableChoice::ChoiceTag zserioChoiceTag() const;
+    ::test_object::polymorphic_allocator::ReflectableChoice::Tag zserioChoiceTag() const;
     const ::test_object::polymorphic_allocator::ReflectableChoice& zserioData() const;
 
 protected:

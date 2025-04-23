@@ -53,11 +53,11 @@ protected:
         ItemRef& itemRef = inner.ref;
         if (isExplicit != 0)
         {
-            itemRef.emplace<ItemRef::ChoiceTag::CHOICE_item>(EXPLICIT_ITEM);
+            itemRef.emplace<ItemRef::Tag::item>(EXPLICIT_ITEM);
         }
         else
         {
-            itemRef.emplace<ItemRef::ChoiceTag::CHOICE_position>(pos);
+            itemRef.emplace<ItemRef::Tag::position>(pos);
         }
     }
 

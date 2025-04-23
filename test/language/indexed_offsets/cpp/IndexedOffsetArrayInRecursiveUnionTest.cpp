@@ -29,13 +29,13 @@ protected:
 
     static void fillData(TestStruct& data, bool setOffsets = false)
     {
-        auto& unionArray = data.unionField.emplace<TestUnion::ChoiceTag::CHOICE_unionArray>();
+        auto& unionArray = data.unionField.emplace<TestUnion::Tag::unionArray>();
         unionArray.resize(SIZE);
         data.field = FIELD;
         data.array.resize(SIZE);
         for (uint32_t i = 0; i < SIZE; ++i)
         {
-            unionArray[i].emplace<TestUnion::ChoiceTag::CHOICE_offset>(setOffsets ? FIRST_OFFSET + i * 4 : 0);
+            unionArray[i].emplace<TestUnion::Tag::offset>(setOffsets ? FIRST_OFFSET + i * 4 : 0);
             data.array[i] = i;
         }
     }

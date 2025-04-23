@@ -45,8 +45,8 @@ struct ChoiceTag<::test_object::std_allocator::ReflectableUtilChoice>
 {
     enum Tag : size_t
     {
-        UNDEFINED_CHOICE,
-        CHOICE_array
+        ZSERIO_UNDEFINED,
+        array
     };
 };
 
@@ -62,8 +62,8 @@ struct ReflectableUtilChoice : ::zserio::Variant<::zserio::detail::ChoiceTag<Ref
         ::std::monostate,
         ::zserio::Vector<::zserio::UInt32>>
 {
-    using ChoiceTag = ::zserio::detail::ChoiceTag<ReflectableUtilChoice>::Tag;
-    using Base = ::zserio::Variant<ChoiceTag,
+    using Tag = ::zserio::detail::ChoiceTag<ReflectableUtilChoice>::Tag;
+    using Base = ::zserio::Variant<Tag,
             ::std::monostate,
             ::zserio::Vector<::zserio::UInt32>>;
     using Base::BasicVariant;
@@ -93,7 +93,7 @@ public:
 
     ArrayView<const ::zserio::UInt32> array() const;
 
-    ::test_object::std_allocator::ReflectableUtilChoice::ChoiceTag zserioChoiceTag() const;
+    ::test_object::std_allocator::ReflectableUtilChoice::Tag zserioChoiceTag() const;
     const ::test_object::std_allocator::ReflectableUtilChoice& zserioData() const;
 
 protected:

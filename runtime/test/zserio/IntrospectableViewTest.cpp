@@ -484,7 +484,7 @@ protected:
 
     static ReflectableObject createReflectableObject(std::string_view stringField, UInt31 value = 13,
             ReflectableEnum ReflectableEnum = ReflectableEnum::VALUE1,
-            ReflectableUnion::ChoiceTag unionTag = ReflectableUnion::ChoiceTag::CHOICE_value32)
+            ReflectableUnion::Tag unionTag = ReflectableUnion::Tag::value32)
     {
         ReflectableObject reflectableObject;
         reflectableObject.stringField = stringField;
@@ -494,10 +494,10 @@ protected:
         switch (ReflectableEnum)
         {
         case ReflectableEnum::VALUE1:
-            reflectableObject.reflectableChoice.emplace<ReflectableChoice::ChoiceTag::CHOICE_valueStr>("test");
+            reflectableObject.reflectableChoice.emplace<ReflectableChoice::Tag::valueStr>("test");
             break;
         case ReflectableEnum::VALUE2:
-            reflectableObject.reflectableChoice.emplace<ReflectableChoice::ChoiceTag::CHOICE_value32>(13);
+            reflectableObject.reflectableChoice.emplace<ReflectableChoice::Tag::value32>(13);
             break;
         default:
             // empty
@@ -506,11 +506,11 @@ protected:
 
         switch (unionTag)
         {
-        case ReflectableUnion::ChoiceTag::CHOICE_value32:
-            reflectableObject.reflectableUnion.emplace<ReflectableUnion::ChoiceTag::CHOICE_value32>(13);
+        case ReflectableUnion::Tag::value32:
+            reflectableObject.reflectableUnion.emplace<ReflectableUnion::Tag::value32>(13);
             break;
-        case ReflectableUnion::ChoiceTag::CHOICE_valueStr:
-            reflectableObject.reflectableUnion.emplace<ReflectableUnion::ChoiceTag::CHOICE_valueStr>("test");
+        case ReflectableUnion::Tag::valueStr:
+            reflectableObject.reflectableUnion.emplace<ReflectableUnion::Tag::valueStr>("test");
             break;
         default:
             // shouldn't occur

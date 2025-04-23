@@ -8,27 +8,26 @@ namespace choice_types
 namespace empty_choice_with_default
 {
 
-using ChoiceTag = EmptyChoiceWithDefault::ChoiceTag;
 using AllocatorType = EmptyChoiceWithDefault::AllocatorType;
 
 TEST(EmptyChoiceWithDefaultTest, constructors)
 {
     {
         EmptyChoiceWithDefault data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoiceWithDefault::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoiceWithDefault data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoiceWithDefault::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoiceWithDefault data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoiceWithDefault::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoiceWithDefault data;
         zserio::View view(data, zserio::UInt8(0));
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+        ASSERT_EQ(EmptyChoiceWithDefault::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
     }
 }
 

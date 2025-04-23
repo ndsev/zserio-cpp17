@@ -14,7 +14,6 @@ namespace union_with_array
 {
 
 using AllocatorType = TestUnion::AllocatorType;
-using ChoiceTag = TestUnion::ChoiceTag;
 
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
@@ -51,15 +50,15 @@ TEST_F(UnionWithArrayTest, zserioChoiceTag)
 {
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array8>(createArray8());
+        data.emplace<TestUnion::Tag::array8>(createArray8());
         zserio::View view(data);
-        ASSERT_EQ(ChoiceTag::CHOICE_array8, view.zserioChoiceTag());
+        ASSERT_EQ(TestUnion::Tag::array8, view.zserioChoiceTag());
     }
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array16>(createArray16());
+        data.emplace<TestUnion::Tag::array16>(createArray16());
         zserio::View view(data);
-        ASSERT_EQ(ChoiceTag::CHOICE_array16, view.zserioChoiceTag());
+        ASSERT_EQ(TestUnion::Tag::array16, view.zserioChoiceTag());
     }
 }
 
@@ -67,9 +66,9 @@ TEST_F(UnionWithArrayTest, array8)
 {
     TestUnion data;
     const VectorType<Data8> value = createArray8();
-    data.emplace<ChoiceTag::CHOICE_array8>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array16>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_array8>(data));
+    data.emplace<TestUnion::Tag::array8>(value);
+    ASSERT_THROW(zserio::get<TestUnion::Tag::array16>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<TestUnion::Tag::array8>(data));
 
     zserio::View view(data);
     ASSERT_THROW(view.array16(), zserio::BadVariantAccess);
@@ -81,9 +80,9 @@ TEST_F(UnionWithArrayTest, array16)
 {
     TestUnion data;
     const VectorType<zserio::Int16> value = createArray16();
-    data.emplace<ChoiceTag::CHOICE_array16>(value);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array8>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(value, zserio::get<ChoiceTag::CHOICE_array16>(data));
+    data.emplace<TestUnion::Tag::array16>(value);
+    ASSERT_THROW(zserio::get<TestUnion::Tag::array8>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(value, zserio::get<TestUnion::Tag::array16>(data));
 
     zserio::View view(data);
     ASSERT_THROW(view.array8(), zserio::BadVariantAccess);
@@ -94,11 +93,11 @@ TEST_F(UnionWithArrayTest, array16)
 TEST_F(UnionWithArrayTest, comparisonOperators)
 {
     TestUnion data;
-    data.emplace<ChoiceTag::CHOICE_array16>(createArray16(1));
+    data.emplace<TestUnion::Tag::array16>(createArray16(1));
     TestUnion equalData;
-    equalData.emplace<ChoiceTag::CHOICE_array16>(createArray16(1));
+    equalData.emplace<TestUnion::Tag::array16>(createArray16(1));
     TestUnion lessThenData;
-    lessThenData.emplace<ChoiceTag::CHOICE_array16>(createArray16(0));
+    lessThenData.emplace<TestUnion::Tag::array16>(createArray16(0));
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
     zserio::View view(data);
@@ -107,7 +106,7 @@ TEST_F(UnionWithArrayTest, comparisonOperators)
     test_utils::comparisonOperatorsTest(view, equalView, lessThenView);
 
     TestUnion anotherLessThenData;
-    anotherLessThenData.emplace<ChoiceTag::CHOICE_array8>(createArray8());
+    anotherLessThenData.emplace<TestUnion::Tag::array8>(createArray8());
     test_utils::comparisonOperatorsTest(data, equalData, anotherLessThenData);
 
     zserio::View anotherLessThenView(anotherLessThenData);
@@ -128,13 +127,13 @@ TEST_F(UnionWithArrayTest, bitSizeOf)
 {
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array8>(createArray8());
+        data.emplace<TestUnion::Tag::array8>(createArray8());
         zserio::View view(data);
         ASSERT_EQ(ARRAY8_BITSIZE, zserio::detail::bitSizeOf(view));
     }
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array16>(createArray16());
+        data.emplace<TestUnion::Tag::array16>(createArray16());
         zserio::View view(data);
         ASSERT_EQ(ARRAY16_BITSIZE, zserio::detail::bitSizeOf(view));
     }
@@ -144,12 +143,12 @@ TEST_F(UnionWithArrayTest, writeRead)
 {
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array8>(createArray8());
+        data.emplace<TestUnion::Tag::array8>(createArray8());
         test_utils::writeReadTest(data);
     }
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array16>(createArray16());
+        data.emplace<TestUnion::Tag::array16>(createArray16());
         test_utils::writeReadTest(data);
     }
 }
@@ -158,12 +157,12 @@ TEST_F(UnionWithArrayTest, writeReadFile)
 {
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array8>(createArray8());
+        data.emplace<TestUnion::Tag::array8>(createArray8());
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array8.blob", data);
     }
     {
         TestUnion data;
-        data.emplace<ChoiceTag::CHOICE_array16>(createArray16());
+        data.emplace<TestUnion::Tag::array16>(createArray16());
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "array16.blob", data);
     }
 }

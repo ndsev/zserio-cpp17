@@ -7,11 +7,10 @@ namespace choice_types
 namespace enum_with_removed_item_param_choice
 {
 
-using ChoiceTag = EnumWithRemovedItemParamChoice::ChoiceTag;
-
 TEST(EnumWithRemovedItemParamChoiceTest, writeRead)
 {
-    EnumWithRemovedItemParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_greyData>, 0xCAFE);
+    EnumWithRemovedItemParamChoice data(
+            zserio::in_place_index<EnumWithRemovedItemParamChoice::Tag::greyData>, 0xCAFE);
     test_utils::writeReadTest(data, Selector::ZSERIO_REMOVED_GREY);
 }
 

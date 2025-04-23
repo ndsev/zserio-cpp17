@@ -8,8 +8,6 @@ namespace constraints
 namespace choice_constraints
 {
 
-using ChoiceTag = ChoiceConstraints::ChoiceTag;
-
 class ChoiceConstraintsTest : public ::testing::Test
 {
 protected:
@@ -35,7 +33,7 @@ protected:
 TEST_F(ChoiceConstraintsTest, readCorrectValue8Constraint)
 {
     const zserio::Bool selector = true;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value8>, VALUE8_CORRECT_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value8>, VALUE8_CORRECT_CONSTRAINT);
 
     test_utils::readTest(
             std::bind(writeData, std::placeholders::_1, selector, VALUE8_CORRECT_CONSTRAINT), data, selector);
@@ -44,7 +42,7 @@ TEST_F(ChoiceConstraintsTest, readCorrectValue8Constraint)
 TEST_F(ChoiceConstraintsTest, readWrongValue8Constraint)
 {
     const zserio::Bool selector = true;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value8>, VALUE8_WRONG_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value8>, VALUE8_WRONG_CONSTRAINT);
 
     ASSERT_THROW(
             test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, VALUE8_WRONG_CONSTRAINT),
@@ -55,7 +53,7 @@ TEST_F(ChoiceConstraintsTest, readWrongValue8Constraint)
 TEST_F(ChoiceConstraintsTest, readCorrectValue16Constraint)
 {
     const zserio::Bool selector = false;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value16>, VALUE16_CORRECT_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value16>, VALUE16_CORRECT_CONSTRAINT);
 
     test_utils::readTest(
             std::bind(writeData, std::placeholders::_1, selector, VALUE16_CORRECT_CONSTRAINT), data, selector);
@@ -64,7 +62,7 @@ TEST_F(ChoiceConstraintsTest, readCorrectValue16Constraint)
 TEST_F(ChoiceConstraintsTest, readWrongValue16Constraint)
 {
     const zserio::Bool selector = false;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value16>, VALUE16_WRONG_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value16>, VALUE16_WRONG_CONSTRAINT);
 
     ASSERT_THROW(test_utils::readTest(
                          std::bind(writeData, std::placeholders::_1, selector, VALUE16_WRONG_CONSTRAINT), data,
@@ -75,7 +73,7 @@ TEST_F(ChoiceConstraintsTest, readWrongValue16Constraint)
 TEST_F(ChoiceConstraintsTest, writeCorrectValue8Constraint)
 {
     const zserio::Bool selector = true;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value8>, VALUE8_CORRECT_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value8>, VALUE8_CORRECT_CONSTRAINT);
 
     test_utils::writeReadTest(data, selector);
 }
@@ -83,7 +81,7 @@ TEST_F(ChoiceConstraintsTest, writeCorrectValue8Constraint)
 TEST_F(ChoiceConstraintsTest, writeWrongValue8Constraint)
 {
     const zserio::Bool selector = true;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value8>, VALUE8_WRONG_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value8>, VALUE8_WRONG_CONSTRAINT);
 
     ASSERT_THROW(zserio::detail::validate(zserio::View(data, selector)), zserio::ConstraintException);
 
@@ -93,7 +91,7 @@ TEST_F(ChoiceConstraintsTest, writeWrongValue8Constraint)
 TEST_F(ChoiceConstraintsTest, writeCorrectValue16Constraint)
 {
     const zserio::Bool selector = false;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value16>, VALUE16_CORRECT_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value16>, VALUE16_CORRECT_CONSTRAINT);
 
     test_utils::writeReadTest(data, selector);
 }
@@ -101,7 +99,7 @@ TEST_F(ChoiceConstraintsTest, writeCorrectValue16Constraint)
 TEST_F(ChoiceConstraintsTest, writeWrongValue16Constraint)
 {
     const zserio::Bool selector = false;
-    ChoiceConstraints data(zserio::in_place_index<ChoiceTag::CHOICE_value16>, VALUE16_WRONG_CONSTRAINT);
+    ChoiceConstraints data(zserio::in_place_index<ChoiceConstraints::Tag::value16>, VALUE16_WRONG_CONSTRAINT);
 
     ASSERT_THROW(zserio::detail::validate(zserio::View(data, selector)), zserio::ConstraintException);
 

@@ -46,10 +46,10 @@ struct ChoiceTag<::test_object::std_allocator::ReflectableUtilUnion>
 {
     enum Tag : size_t
     {
-        UNDEFINED_CHOICE,
-        CHOICE_reflectableUtilEnum,
-        CHOICE_reflectableUtilBitmask,
-        CHOICE_reflectableUtilObject
+        ZSERIO_UNDEFINED,
+        reflectableUtilEnum,
+        reflectableUtilBitmask,
+        reflectableUtilObject
     };
 };
 
@@ -67,8 +67,8 @@ struct ReflectableUtilUnion : ::zserio::Variant<::zserio::detail::ChoiceTag<Refl
         ::test_object::std_allocator::ReflectableUtilBitmask,
         ::test_object::std_allocator::ReflectableUtilObject>
 {
-    using ChoiceTag = ::zserio::detail::ChoiceTag<ReflectableUtilUnion>::Tag;
-    using Base = ::zserio::Variant<ChoiceTag,
+    using Tag = ::zserio::detail::ChoiceTag<ReflectableUtilUnion>::Tag;
+    using Base = ::zserio::Variant<Tag,
             ::std::monostate,
             ::test_object::std_allocator::ReflectableUtilEnum,
             ::test_object::std_allocator::ReflectableUtilBitmask,
@@ -99,7 +99,7 @@ public:
     ::test_object::std_allocator::ReflectableUtilBitmask reflectableUtilBitmask() const;
     View<::test_object::std_allocator::ReflectableUtilObject> reflectableUtilObject() const;
 
-    ::test_object::std_allocator::ReflectableUtilUnion::ChoiceTag zserioChoiceTag() const;
+    ::test_object::std_allocator::ReflectableUtilUnion::Tag zserioChoiceTag() const;
     const ::test_object::std_allocator::ReflectableUtilUnion& zserioData() const;
 
 protected:

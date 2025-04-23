@@ -10,7 +10,6 @@ namespace enum_param_choice
 {
 
 using AllocatorType = EnumParamChoice::AllocatorType;
-using ChoiceTag = EnumParamChoice::ChoiceTag;
 
 class EnumParamChoiceTest : public ::testing::Test
 {
@@ -41,21 +40,21 @@ TEST_F(EnumParamChoiceTest, constructor)
 {
     {
         EnumParamChoice data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EnumParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EnumParamChoice data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EnumParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EnumParamChoice data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EnumParamChoice::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         const uint8_t value = 99;
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, value);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, value);
         zserio::View view(data, Selector::BLACK);
-        ASSERT_EQ(ChoiceTag::CHOICE_black, view.zserioChoiceTag());
+        ASSERT_EQ(EnumParamChoice::Tag::black, view.zserioChoiceTag());
     }
 }
 
@@ -70,7 +69,7 @@ TEST_F(EnumParamChoiceTest, selector)
 TEST_F(EnumParamChoiceTest, black)
 {
     const int8_t value = 99;
-    EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, value);
+    EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, value);
 
     const Selector selector = Selector::BLACK;
     zserio::View view(data, selector);
@@ -80,7 +79,7 @@ TEST_F(EnumParamChoiceTest, black)
 TEST_F(EnumParamChoiceTest, grey)
 {
     const int16_t value = 234;
-    EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_grey>, value);
+    EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::grey>, value);
 
     const Selector selector = Selector::GREY;
     zserio::View view(data, selector);
@@ -90,7 +89,7 @@ TEST_F(EnumParamChoiceTest, grey)
 TEST_F(EnumParamChoiceTest, white)
 {
     const int32_t value = 65535;
-    EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, value);
+    EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::white>, value);
 
     const Selector selector = Selector::WHITE;
     zserio::View view(data, selector);
@@ -100,33 +99,33 @@ TEST_F(EnumParamChoiceTest, white)
 TEST_F(EnumParamChoiceTest, zserioChoiceTag)
 {
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 0);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, 0);
         zserio::View view(data, Selector::BLACK);
-        ASSERT_EQ(ChoiceTag::CHOICE_black, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_black, view.zserioChoiceTag());
+        ASSERT_EQ(EnumParamChoice::Tag::black, data.index());
+        ASSERT_EQ(EnumParamChoice::Tag::black, view.zserioChoiceTag());
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_grey>, 0);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::grey>, 0);
         zserio::View view(data, Selector::GREY);
-        ASSERT_EQ(ChoiceTag::CHOICE_grey, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_grey, view.zserioChoiceTag());
+        ASSERT_EQ(EnumParamChoice::Tag::grey, data.index());
+        ASSERT_EQ(EnumParamChoice::Tag::grey, view.zserioChoiceTag());
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 0);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::white>, 0);
         zserio::View view(data, Selector::WHITE);
-        ASSERT_EQ(ChoiceTag::CHOICE_white, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_white, view.zserioChoiceTag());
+        ASSERT_EQ(EnumParamChoice::Tag::white, data.index());
+        ASSERT_EQ(EnumParamChoice::Tag::white, view.zserioChoiceTag());
     }
 }
 
 TEST_F(EnumParamChoiceTest, comparisonOperators)
 {
     EnumParamChoice data;
-    data.emplace<ChoiceTag::CHOICE_white>(2);
+    data.emplace<EnumParamChoice::Tag::white>(2);
     EnumParamChoice equalData;
-    equalData.emplace<ChoiceTag::CHOICE_white>(2);
+    equalData.emplace<EnumParamChoice::Tag::white>(2);
     EnumParamChoice lessThenData;
-    lessThenData.emplace<ChoiceTag::CHOICE_black>(2);
+    lessThenData.emplace<EnumParamChoice::Tag::black>(2);
     test_utils::comparisonOperatorsTest(data, equalData, lessThenData);
 
     zserio::View view(data, Selector::WHITE);
@@ -138,7 +137,7 @@ TEST_F(EnumParamChoiceTest, comparisonOperators)
 TEST_F(EnumParamChoiceTest, validate)
 {
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 2);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, 2);
         zserio::View viewB(data, Selector::BLACK);
         ASSERT_NO_THROW(zserio::detail::validate(viewB));
         zserio::View viewW(data, Selector::GREY);
@@ -147,7 +146,7 @@ TEST_F(EnumParamChoiceTest, validate)
         ASSERT_THROW(zserio::detail::validate(viewBW), zserio::ChoiceCaseException);
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_grey>, 2);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::grey>, 2);
         zserio::View viewW(data, Selector::GREY);
         ASSERT_NO_THROW(zserio::detail::validate(viewW));
         zserio::View viewB(data, Selector::BLACK);
@@ -156,7 +155,7 @@ TEST_F(EnumParamChoiceTest, validate)
         ASSERT_THROW(zserio::detail::validate(viewBW), zserio::ChoiceCaseException);
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 2);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::white>, 2);
         zserio::View viewBW(data, Selector::WHITE);
         ASSERT_NO_THROW(zserio::detail::validate(viewBW));
         zserio::View viewB(data, Selector::BLACK);
@@ -169,17 +168,17 @@ TEST_F(EnumParamChoiceTest, validate)
 TEST_F(EnumParamChoiceTest, bitSizeOf)
 {
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 0);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, 0);
         zserio::View view(data, Selector::BLACK);
         ASSERT_EQ(8, zserio::detail::bitSizeOf(view));
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_grey>, 1);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::grey>, 1);
         zserio::View view(data, Selector::GREY);
         ASSERT_EQ(16, zserio::detail::bitSizeOf(view));
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 2);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::white>, 2);
         zserio::View view(data, Selector::WHITE);
         ASSERT_EQ(32, zserio::detail::bitSizeOf(view));
     }
@@ -188,15 +187,15 @@ TEST_F(EnumParamChoiceTest, bitSizeOf)
 TEST_F(EnumParamChoiceTest, writeRead)
 {
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 99);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, 99);
         test_utils::writeReadTest(data, Selector(Selector::BLACK));
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_grey>, 234);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::grey>, 234);
         test_utils::writeReadTest(data, Selector(Selector::GREY));
     }
     {
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, 65535);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::white>, 65535);
         test_utils::writeReadTest(data, Selector(Selector::WHITE));
     }
 }
@@ -206,19 +205,19 @@ TEST_F(EnumParamChoiceTest, read)
     {
         Selector selector = Selector::BLACK;
         const Black value = 99;
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, value);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, value);
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
     {
         Selector selector = Selector::GREY;
         const Grey value = 234;
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_grey>, value);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::grey>, value);
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
     {
         Selector selector = Selector::WHITE;
         const White value = 65535;
-        EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_white>, value);
+        EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::white>, value);
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, selector, value), data, selector);
     }
 }
@@ -227,10 +226,10 @@ TEST_F(EnumParamChoiceTest, stdHash)
 {
     // hardcoded values used to check that the hash code is stable
 
-    EnumParamChoice data(zserio::in_place_index<ChoiceTag::CHOICE_black>, 99);
+    EnumParamChoice data(zserio::in_place_index<EnumParamChoice::Tag::black>, 99);
     const size_t dataHash = 31623;
-    EnumParamChoice equalData(zserio::in_place_index<ChoiceTag::CHOICE_black>, 99);
-    EnumParamChoice diffData(zserio::in_place_index<ChoiceTag::CHOICE_black>, 100);
+    EnumParamChoice equalData(zserio::in_place_index<EnumParamChoice::Tag::black>, 99);
+    EnumParamChoice diffData(zserio::in_place_index<EnumParamChoice::Tag::black>, 100);
     const size_t diffDataHash = 31624;
 
     test_utils::hashTest(data, dataHash, equalData, diffData, diffDataHash);

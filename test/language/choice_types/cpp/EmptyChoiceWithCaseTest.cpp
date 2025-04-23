@@ -7,27 +7,26 @@ namespace choice_types
 namespace empty_choice_with_case
 {
 
-using ChoiceTag = EmptyChoiceWithCase::ChoiceTag;
 using AllocatorType = EmptyChoiceWithCase::AllocatorType;
 
 TEST(EmptyChoiceWithCaseTest, constructors)
 {
     {
         EmptyChoiceWithCase data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoiceWithCase::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoiceWithCase data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoiceWithCase::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoiceWithCase data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyChoiceWithCase::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyChoiceWithCase data;
         zserio::View view(data, zserio::UInt8(0));
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+        ASSERT_EQ(EmptyChoiceWithCase::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
     }
 }
 

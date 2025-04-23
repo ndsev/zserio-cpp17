@@ -48,10 +48,10 @@ struct ChoiceTag<::test_object::std_allocator::WalkerUnion>
 {
     enum Tag : size_t
     {
-        UNDEFINED_CHOICE,
-        CHOICE_value,
-        CHOICE_text,
-        CHOICE_nestedArray
+        ZSERIO_UNDEFINED,
+        value,
+        text,
+        nestedArray
     };
 };
 
@@ -69,8 +69,8 @@ struct WalkerUnion : ::zserio::Variant<::zserio::detail::ChoiceTag<WalkerUnion>:
         ::zserio::String,
         ::zserio::Vector<::test_object::std_allocator::WalkerNested>>
 {
-    using ChoiceTag = ::zserio::detail::ChoiceTag<WalkerUnion>::Tag;
-    using Base = ::zserio::Variant<ChoiceTag,
+    using Tag = ::zserio::detail::ChoiceTag<WalkerUnion>::Tag;
+    using Base = ::zserio::Variant<Tag,
             ::std::monostate,
             ::zserio::UInt32,
             ::zserio::String,
@@ -101,7 +101,7 @@ public:
     ::std::string_view text() const;
     ArrayView<const ::test_object::std_allocator::WalkerNested> nestedArray() const;
 
-    ::test_object::std_allocator::WalkerUnion::ChoiceTag zserioChoiceTag() const;
+    ::test_object::std_allocator::WalkerUnion::Tag zserioChoiceTag() const;
     const ::test_object::std_allocator::WalkerUnion& zserioData() const;
 
 protected:

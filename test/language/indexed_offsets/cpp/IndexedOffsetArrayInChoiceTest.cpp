@@ -28,7 +28,7 @@ protected:
     static void fillData(TestStruct& data, bool setOffsets = false)
     {
         data.nameLength = 0;
-        auto& offsetArray = data.choiceField.emplace<TestChoice::ChoiceTag::CHOICE_offsetArray>();
+        auto& offsetArray = data.choiceField.emplace<TestChoice::Tag::offsetArray>();
         offsetArray.resize(SIZE);
         data.u32Array.resize(SIZE);
         for (uint32_t i = 0; i < SIZE; ++i)

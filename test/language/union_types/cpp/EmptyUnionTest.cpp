@@ -8,26 +8,25 @@ namespace empty_union
 {
 
 using AllocatorType = EmptyUnion::AllocatorType;
-using ChoiceTag = EmptyUnion::ChoiceTag;
 
 TEST(EmptyUnionTest, emptyConstructor)
 {
     {
         EmptyUnion data;
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyUnion::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyUnion data = {};
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyUnion::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyUnion data(AllocatorType{});
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
+        ASSERT_EQ(EmptyUnion::Tag::ZSERIO_UNDEFINED, data.index());
     }
     {
         EmptyUnion data;
         zserio::View view(data);
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+        ASSERT_EQ(EmptyUnion::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
     }
 }
 
@@ -35,7 +34,7 @@ TEST(EmptyUnionTest, zserioChoiceTag)
 {
     EmptyUnion data;
     zserio::View view(data);
-    ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+    ASSERT_EQ(EmptyUnion::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
 }
 
 TEST(EmptyUnionTest, comparisonOperators)

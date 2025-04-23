@@ -30,29 +30,27 @@ protected:
     static constexpr zserio::UInt3 VARIANT_A_SELECTOR = 1;
     static constexpr zserio::UInt3 VARIANT_B_SELECTOR = 2;
     static constexpr zserio::UInt3 DEFAULT_SELECTOR = 3;
-
-    using ChoiceTag = DefaultEmptyChoice::ChoiceTag;
 };
 
 TEST_F(DefaultEmptyChoiceTest, choiceTag)
 {
     {
-        DefaultEmptyChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueA>, 99);
+        DefaultEmptyChoice data(zserio::in_place_index<DefaultEmptyChoice::Tag::valueA>, 99);
         zserio::View view(data, VARIANT_A_SELECTOR);
-        ASSERT_EQ(ChoiceTag::CHOICE_valueA, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_valueA, view.zserioChoiceTag());
+        ASSERT_EQ(DefaultEmptyChoice::Tag::valueA, data.index());
+        ASSERT_EQ(DefaultEmptyChoice::Tag::valueA, view.zserioChoiceTag());
     }
     {
-        DefaultEmptyChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, 234);
+        DefaultEmptyChoice data(zserio::in_place_index<DefaultEmptyChoice::Tag::valueB>, 234);
         zserio::View view(data, VARIANT_B_SELECTOR);
-        ASSERT_EQ(ChoiceTag::CHOICE_valueB, data.index());
-        ASSERT_EQ(ChoiceTag::CHOICE_valueB, view.zserioChoiceTag());
+        ASSERT_EQ(DefaultEmptyChoice::Tag::valueB, data.index());
+        ASSERT_EQ(DefaultEmptyChoice::Tag::valueB, view.zserioChoiceTag());
     }
     {
         DefaultEmptyChoice data;
         zserio::View view(data, DEFAULT_SELECTOR);
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, data.index());
-        ASSERT_EQ(ChoiceTag::UNDEFINED_CHOICE, view.zserioChoiceTag());
+        ASSERT_EQ(DefaultEmptyChoice::Tag::ZSERIO_UNDEFINED, data.index());
+        ASSERT_EQ(DefaultEmptyChoice::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
     }
 }
 
@@ -61,14 +59,14 @@ TEST_F(DefaultEmptyChoiceTest, writeRead)
     {
         const zserio::UInt3 tag = VARIANT_A_SELECTOR;
         const VariantA value = 99;
-        DefaultEmptyChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueA>, value);
+        DefaultEmptyChoice data(zserio::in_place_index<DefaultEmptyChoice::Tag::valueA>, value);
 
         test_utils::writeReadTest(data, tag);
     }
     {
         const zserio::UInt3 tag = VARIANT_B_SELECTOR;
         const VariantB value = 234;
-        DefaultEmptyChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        DefaultEmptyChoice data(zserio::in_place_index<DefaultEmptyChoice::Tag::valueB>, value);
 
         test_utils::writeReadTest(data, tag);
     }
@@ -85,14 +83,14 @@ TEST_F(DefaultEmptyChoiceTest, read)
     {
         const zserio::UInt3 tag = VARIANT_A_SELECTOR;
         const VariantA value = 99;
-        DefaultEmptyChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueA>, value);
+        DefaultEmptyChoice data(zserio::in_place_index<DefaultEmptyChoice::Tag::valueA>, value);
 
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, tag, value), data, tag);
     }
     {
         const zserio::UInt3 tag = VARIANT_B_SELECTOR;
         const VariantB value = 234;
-        DefaultEmptyChoice data(zserio::in_place_index<ChoiceTag::CHOICE_valueB>, value);
+        DefaultEmptyChoice data(zserio::in_place_index<DefaultEmptyChoice::Tag::valueB>, value);
 
         test_utils::readTest(std::bind(writeData, std::placeholders::_1, tag, value), data, tag);
     }

@@ -19,48 +19,46 @@ protected:
     static void fillUnpackedColors(VectorType<UnpackedColorStruct>& unpackedColors)
     {
         unpackedColors.emplace_back(true, UnpackedColorChoice{});
-        unpackedColors.back().colorChoice.emplace<UnpackedColorChoice::ChoiceTag::CHOICE_colorName>("yellow");
+        unpackedColors.back().colorChoice.emplace<UnpackedColorChoice::Tag::colorName>("yellow");
 
         unpackedColors.emplace_back(false, UnpackedColorChoice{});
-        unpackedColors.back().colorChoice.emplace<UnpackedColorChoice::ChoiceTag::CHOICE_colorUnion>(
-                UnpackedColorUnion(zserio::in_place_index<UnpackedColorUnion::ChoiceTag::CHOICE_colorBitmask>,
-                        UnpackedColorBitmask::Values::GREEN | UnpackedColorBitmask::Values::RED));
+        unpackedColors.back().colorChoice.emplace<UnpackedColorChoice::Tag::colorUnion>(UnpackedColorUnion(
+                zserio::in_place_index<UnpackedColorUnion::Tag::colorBitmask>,
+                UnpackedColorBitmask::Values::GREEN | UnpackedColorBitmask::Values::RED));
 
         unpackedColors.emplace_back(false, UnpackedColorChoice{});
-        unpackedColors.back().colorChoice.emplace<UnpackedColorChoice::ChoiceTag::CHOICE_colorUnion>(
-                UnpackedColorUnion(zserio::in_place_index<UnpackedColorUnion::ChoiceTag::CHOICE_colorEnum>,
-                        UnpackedColorEnum::BLUE));
+        unpackedColors.back().colorChoice.emplace<UnpackedColorChoice::Tag::colorUnion>(UnpackedColorUnion(
+                zserio::in_place_index<UnpackedColorUnion::Tag::colorEnum>, UnpackedColorEnum::BLUE));
     }
 
     static void fillMixedColors(VectorType<MixedColorStruct>& mixedColors)
     {
         mixedColors.emplace_back(true, MixedColorChoice{});
-        mixedColors.back().colorChoice.emplace<MixedColorChoice::ChoiceTag::CHOICE_colorName>("purple");
+        mixedColors.back().colorChoice.emplace<MixedColorChoice::Tag::colorName>("purple");
 
         mixedColors.emplace_back(false, MixedColorChoice{});
-        mixedColors.back().colorChoice.emplace<MixedColorChoice::ChoiceTag::CHOICE_colorUnion>(MixedColorUnion(
-                zserio::in_place_index<MixedColorUnion::ChoiceTag::CHOICE_colorBitmask>,
+        mixedColors.back().colorChoice.emplace<MixedColorChoice::Tag::colorUnion>(MixedColorUnion(
+                zserio::in_place_index<MixedColorUnion::Tag::colorBitmask>,
                 MixedColorBitmask::Values::BLUE | MixedColorBitmask::Values::GREEN));
 
         mixedColors.emplace_back(false, MixedColorChoice{});
-        mixedColors.back().colorChoice.emplace<MixedColorChoice::ChoiceTag::CHOICE_colorUnion>(MixedColorUnion(
-                zserio::in_place_index<MixedColorUnion::ChoiceTag::CHOICE_colorEnum>, MixedColorEnum::RED));
+        mixedColors.back().colorChoice.emplace<MixedColorChoice::Tag::colorUnion>(
+                MixedColorUnion(zserio::in_place_index<MixedColorUnion::Tag::colorEnum>, MixedColorEnum::RED));
     }
 
     static void fillPackedColors(VectorType<PackedColorStruct>& packedColors)
     {
         packedColors.emplace_back(true, PackedColorChoice{});
-        packedColors.back().colorChoice.emplace<PackedColorChoice::ChoiceTag::CHOICE_colorName>("grey");
+        packedColors.back().colorChoice.emplace<PackedColorChoice::Tag::colorName>("grey");
 
         packedColors.emplace_back(false, PackedColorChoice{});
-        packedColors.back().colorChoice.emplace<PackedColorChoice::ChoiceTag::CHOICE_colorUnion>(
-                PackedColorUnion(zserio::in_place_index<PackedColorUnion::ChoiceTag::CHOICE_colorBitmask>,
-                        PackedColorBitmask::Values::BLUE | PackedColorBitmask::Values::RED));
+        packedColors.back().colorChoice.emplace<PackedColorChoice::Tag::colorUnion>(PackedColorUnion(
+                zserio::in_place_index<PackedColorUnion::Tag::colorBitmask>,
+                PackedColorBitmask::Values::BLUE | PackedColorBitmask::Values::RED));
 
         packedColors.emplace_back(false, PackedColorChoice{});
-        packedColors.back().colorChoice.emplace<PackedColorChoice::ChoiceTag::CHOICE_colorUnion>(
-                PackedColorUnion(zserio::in_place_index<PackedColorUnion::ChoiceTag::CHOICE_colorEnum>,
-                        PackedColorEnum::GREEN));
+        packedColors.back().colorChoice.emplace<PackedColorChoice::Tag::colorUnion>(PackedColorUnion(
+                zserio::in_place_index<PackedColorUnion::Tag::colorEnum>, PackedColorEnum::GREEN));
     }
 
     static void fillUnpackedColorsHolder(UnpackedColorsHolder& unpackedColorsHolder)

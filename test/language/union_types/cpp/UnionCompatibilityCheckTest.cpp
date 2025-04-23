@@ -30,12 +30,11 @@ protected:
         UNION data;
         if (index % 2 == 0)
         {
-            data.template emplace<UNION::ChoiceTag::CHOICE_coordXY>(CoordXY{10 * index, 20 * index});
+            data.template emplace<UNION::Tag::coordXY>(CoordXY{10 * index, 20 * index});
         }
         else
         {
-            data.template emplace<UNION::ChoiceTag::CHOICE_text>(
-                    "text" + zserio::toString<AllocatorType>(index));
+            data.template emplace<UNION::Tag::text>("text" + zserio::toString<AllocatorType>(index));
         }
 
         return data;
@@ -51,8 +50,7 @@ protected:
     UnionVersion2 createUnionXYZ(uint32_t index)
     {
         UnionVersion2 data;
-        data.template emplace<UnionVersion2::ChoiceTag::CHOICE_coordXYZ>(
-                CoordXYZ{10 * index, 20 * index, 1.1 * index});
+        data.template emplace<UnionVersion2::Tag::coordXYZ>(CoordXYZ{10 * index, 20 * index, 1.1 * index});
 
         return data;
     }

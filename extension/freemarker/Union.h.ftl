@@ -33,7 +33,7 @@ struct ChoiceTag<${fullName}>
 {
     enum Tag : size_t
     {
-        UNDEFINED_CHOICE,
+        ZSERIO_UNDEFINED,
 <#list fieldList as field>
         <@choice_tag_name field/><#sep>,</#sep>
 </#list>
@@ -53,8 +53,8 @@ struct ${name} : <@variant_type_name_begin/>::zserio::detail::ChoiceTag<${name}>
 </#list>
         <#lt>>
 {
-    using ChoiceTag = ::zserio::detail::ChoiceTag<${name}>::Tag;
-    using Base = <@variant_type_name_begin/>ChoiceTag,
+    using Tag = ::zserio::detail::ChoiceTag<${name}>::Tag;
+    using Base = <@variant_type_name_begin/>Tag,
             ::std::monostate<#rt>
 <#list fieldList as field>
             <#lt>,
@@ -103,7 +103,7 @@ public:
     </#items>
 </#list>
 
-    ${fullName}::ChoiceTag zserioChoiceTag() const;
+    ${fullName}::Tag zserioChoiceTag() const;
     const ${fullName}& zserioData() const;
 
 protected:

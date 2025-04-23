@@ -70,16 +70,15 @@ protected:
     static HOLDER createHolder(ENUM selector, uint32_t index)
     {
         using Choice = typename VersionTraits<HOLDER>::Choice;
-        using ChoiceTag = typename Choice::ChoiceTag;
 
         Choice choice;
         if (selector == ENUM::COORD_XY)
         {
-            choice.template emplace<ChoiceTag::CHOICE_coordXY>(CoordXY{10 * index, 20 * index});
+            choice.template emplace<Choice::Tag::coordXY>(CoordXY{10 * index, 20 * index});
         }
         else
         {
-            choice.template emplace<ChoiceTag::CHOICE_text>("text" + zserio::toString<AllocatorType>(index));
+            choice.template emplace<Choice::Tag::text>("text" + zserio::toString<AllocatorType>(index));
         }
 
         HOLDER holder(selector, std::move(choice));
@@ -100,10 +99,8 @@ protected:
 
     HolderVersion2 createHolderCoordXYZ(uint32_t index)
     {
-        using ChoiceTag = ChoiceVersion2::ChoiceTag;
-
         ChoiceVersion2 choice;
-        choice.emplace<ChoiceTag::CHOICE_coordXYZ>(CoordXYZ{10 * index, 20 * index, 1.1 * index});
+        choice.emplace<ChoiceVersion2::Tag::coordXYZ>(CoordXYZ{10 * index, 20 * index, 1.1 * index});
 
         HolderVersion2 holderVersion2(EnumVersion2::COORD_XYZ, std::move(choice));
         return holderVersion2;

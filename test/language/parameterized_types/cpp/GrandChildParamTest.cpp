@@ -21,7 +21,7 @@ protected:
         Item item;
         item.param = ITEM_PARAM;
         item.extraParam = ITEM_EXTRA_PARAM;
-        itemChoice.emplace<ItemChoice::ChoiceTag::CHOICE_item>(item);
+        itemChoice.emplace<ItemChoice::Tag::item>(item);
     }
 
     static void fillData(GrandChildParam& data)
@@ -40,7 +40,7 @@ protected:
     {
         writer.writeBool(itemChoiceHolder.hasItem);
 
-        const Item& item = itemChoiceHolder.itemChoice.get<ItemChoice::ChoiceTag::CHOICE_item>();
+        const Item& item = itemChoiceHolder.itemChoice.get<ItemChoice::Tag::item>();
         writer.writeUnsignedBits32(item.param, 16);
         writer.writeUnsignedBits32(*item.extraParam, 32);
     }

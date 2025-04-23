@@ -29,8 +29,8 @@ protected:
     {
         data.nameLength = 0;
         auto& offsetArray =
-                data.choiceField.emplace<TestChoice::ChoiceTag::CHOICE_nestedChoice>()
-                        .emplace<NestedChoice::ChoiceTag::CHOICE_offsetArray>();
+                data.choiceField.emplace<TestChoice::Tag::nestedChoice>()
+                        .emplace<NestedChoice::Tag::offsetArray>();
         offsetArray.resize(SIZE);
         data.u32Array.resize(SIZE);
         for (uint32_t i = 0; i < SIZE; ++i)

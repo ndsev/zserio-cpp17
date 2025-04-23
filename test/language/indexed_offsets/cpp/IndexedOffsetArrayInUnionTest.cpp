@@ -27,7 +27,7 @@ protected:
 
     static void fillData(TestStruct& data, bool setOffsets = false)
     {
-        auto& offsetArray = data.unionField.emplace<TestUnion::ChoiceTag::CHOICE_offsetArray>();
+        auto& offsetArray = data.unionField.emplace<TestUnion::Tag::offsetArray>();
         offsetArray.resize(SIZE);
         data.u32Array.resize(SIZE);
         for (uint32_t i = 0; i < SIZE; ++i)

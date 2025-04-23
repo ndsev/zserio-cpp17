@@ -13,7 +13,6 @@ namespace choice_with_array
 using AllocatorType = TestChoice::AllocatorType;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using ChoiceTag = TestChoice::ChoiceTag;
 
 class ChoiceWithArrayTest : public ::testing::Test
 {
@@ -27,9 +26,9 @@ TEST_F(ChoiceWithArrayTest, array8)
 {
     TestChoice data;
     const VectorType<Data8> array8(4);
-    data.emplace<ChoiceTag::CHOICE_array8>(array8);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array16>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(array8, zserio::get<ChoiceTag::CHOICE_array8>(data));
+    data.emplace<TestChoice::Tag::array8>(array8);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array16>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(array8, zserio::get<TestChoice::Tag::array8>(data));
 
     zserio::View view(data, ARRAY8_SELECTOR);
     ASSERT_THROW(view.array16(), zserio::BadVariantAccess);
@@ -44,9 +43,9 @@ TEST_F(ChoiceWithArrayTest, array16)
 {
     TestChoice data;
     const VectorType<zserio::Int16> array16(4);
-    data.emplace<ChoiceTag::CHOICE_array16>(array16);
-    ASSERT_THROW(zserio::get<ChoiceTag::CHOICE_array8>(data), zserio::BadVariantAccess);
-    ASSERT_EQ(array16, zserio::get<ChoiceTag::CHOICE_array16>(data));
+    data.emplace<TestChoice::Tag::array16>(array16);
+    ASSERT_THROW(zserio::get<TestChoice::Tag::array8>(data), zserio::BadVariantAccess);
+    ASSERT_EQ(array16, zserio::get<TestChoice::Tag::array16>(data));
 
     zserio::View view(data, ARRAY16_SELECTOR);
     ASSERT_THROW(view.array8(), zserio::BadVariantAccess);
@@ -61,12 +60,12 @@ TEST_F(ChoiceWithArrayTest, writeReadFile)
 {
     {
         const VectorType<Data8> array8{Data8{1}, Data8{2}, Data8{3}, Data8{4}};
-        TestChoice data(zserio::in_place_index<ChoiceTag::CHOICE_array8>, array8);
+        TestChoice data(zserio::in_place_index<TestChoice::Tag::array8>, array8);
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "8.blob", data, ARRAY8_SELECTOR);
     }
     {
         const VectorType<zserio::Int16> array16{10, 20, 30, 40, 50};
-        TestChoice data(zserio::in_place_index<ChoiceTag::CHOICE_array16>, array16);
+        TestChoice data(zserio::in_place_index<TestChoice::Tag::array16>, array16);
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "16.blob", data, ARRAY16_SELECTOR);
     }
 }

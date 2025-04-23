@@ -28,9 +28,9 @@ WalkerObject createWalkerObject(uint32_t identifier = 13, bool createNested = tr
 {
     std::vector<WalkerUnion> unionArray;
     unionArray.resize(3);
-    unionArray[0].emplace<WalkerUnion::ChoiceTag::CHOICE_text>("1");
-    unionArray[1].emplace<WalkerUnion::ChoiceTag::CHOICE_value>(2);
-    unionArray[2].emplace<WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
+    unionArray[0].emplace<WalkerUnion::Tag::text>("1");
+    unionArray[1].emplace<WalkerUnion::Tag::value>(2);
+    unionArray[2].emplace<WalkerUnion::Tag::nestedArray>(
             std::vector<WalkerNested>{{WalkerNested{"nestedArray"}}});
     const uint8_t choiceSelector = 0;
     WalkerChoice choiceField;
@@ -297,7 +297,7 @@ TEST(WalkerTest, walkWrongUnionField)
     Walker walker(observer, defaultFilter);
 
     WalkerUnion walkerUnion;
-    walkerUnion.emplace<WalkerUnion::ChoiceTag::CHOICE_value>(0);
+    walkerUnion.emplace<WalkerUnion::Tag::value>(0);
     walker.walk(std::allocate_shared<Reflectable>(allocator_type(), walkerUnion, allocator_type()));
 
     ASSERT_EQ("test_object.std_allocator.WalkerUnion",
@@ -660,11 +660,11 @@ TEST(RegexWalkFilterTest, regexArrayNoMatch)
 
     std::vector<WalkerUnion> unionArray;
     unionArray.resize(1);
-    unionArray[0].emplace<WalkerUnion::ChoiceTag::CHOICE_nestedArray>(
+    unionArray[0].emplace<WalkerUnion::Tag::nestedArray>(
             std::vector<WalkerNested>{{WalkerNested{"nestedArray"}}});
     const uint8_t choiceSelector = 8;
     WalkerChoice choiceField;
-    choiceField.emplace<WalkerChoice::ChoiceTag::CHOICE_value8>(0xAB);
+    choiceField.emplace<WalkerChoice::Tag::value8>(0xAB);
     WalkerObject walkerObject(13, WalkerNested("nested"), "test", std::move(unionArray), std::nullopt,
             choiceSelector, choiceField);
     IReflectableDataConstPtr walkerReflectable = reflectable(walkerObject);

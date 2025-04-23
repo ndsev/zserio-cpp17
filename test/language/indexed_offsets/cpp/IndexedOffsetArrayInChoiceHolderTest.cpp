@@ -33,7 +33,7 @@ protected:
         data.u32Array.resize(SIZE);
         for (uint32_t i = 0; i < SIZE; ++i)
         {
-            choiceArray[i].emplace<TestChoice::ChoiceTag::CHOICE_offset>(setOffsets ? FIRST_OFFSET + i * 4 : 0);
+            choiceArray[i].emplace<TestChoice::Tag::offset>(setOffsets ? FIRST_OFFSET + i * 4 : 0);
             data.u32Array[i] = i;
         }
     }

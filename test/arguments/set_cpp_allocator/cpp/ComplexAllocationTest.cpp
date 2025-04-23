@@ -57,14 +57,12 @@ protected:
         // unionField
         if (hasArray)
         {
-            writer.writeVarSize(
-                    static_cast<uint32_t>(allocation_union::AllocationUnion::ChoiceTag::CHOICE_array) - 1);
+            writer.writeVarSize(static_cast<uint32_t>(allocation_union::AllocationUnion::Tag::array) - 1);
             writer.writeVarSize(UNION_COMPOUND_ARRAY_SIZE);
         }
         else
         {
-            writer.writeVarSize(
-                    static_cast<uint32_t>(allocation_union::AllocationUnion::ChoiceTag::CHOICE_compound) - 1);
+            writer.writeVarSize(static_cast<uint32_t>(allocation_union::AllocationUnion::Tag::compound) - 1);
         }
         writer.writeUnsignedBits32(UNION_COMPOUND_ELEMENT0_VALUE16, 16);
         writer.writeBool(UNION_COMPOUND_ELEMENT0_IS_VALID);
@@ -176,11 +174,11 @@ protected:
             array.reserve(CHOICE_COMPOUND_ARRAY_SIZE);
             array.emplace_back(CHOICE_COMPOUND_ELEMENT0_VALUE16, CHOICE_COMPOUND_ELEMENT0_IS_VALID);
             array.emplace_back(CHOICE_COMPOUND_ELEMENT1_VALUE16, CHOICE_COMPOUND_ELEMENT1_IS_VALID);
-            choiceField.emplace<allocation_choice::AllocationChoice::ChoiceTag::CHOICE_array>(std::move(array));
+            choiceField.emplace<allocation_choice::AllocationChoice::Tag::array>(std::move(array));
         }
         else
         {
-            choiceField.emplace<allocation_choice::AllocationChoice::ChoiceTag::CHOICE_compound>(
+            choiceField.emplace<allocation_choice::AllocationChoice::Tag::compound>(
                     allocation_choice::ChoiceCompound(
                             CHOICE_COMPOUND_ELEMENT0_VALUE16, CHOICE_COMPOUND_ELEMENT0_IS_VALID));
         }
@@ -194,11 +192,11 @@ protected:
             VectorType<allocation_union::UnionCompound> array(allocator);
             array.reserve(UNION_COMPOUND_ARRAY_SIZE);
             array.emplace_back(UNION_COMPOUND_ELEMENT0_VALUE16, UNION_COMPOUND_ELEMENT0_IS_VALID);
-            unionField.emplace<allocation_union::AllocationUnion::ChoiceTag::CHOICE_array>(std::move(array));
+            unionField.emplace<allocation_union::AllocationUnion::Tag::array>(std::move(array));
         }
         else
         {
-            unionField.emplace<allocation_union::AllocationUnion::ChoiceTag::CHOICE_compound>(
+            unionField.emplace<allocation_union::AllocationUnion::Tag::compound>(
                     allocation_union::UnionCompound(
                             UNION_COMPOUND_ELEMENT0_VALUE16, UNION_COMPOUND_ELEMENT0_IS_VALID));
         }
