@@ -57,15 +57,15 @@ ${name}::${name}(const allocator_type&<#if structure_fields_need_allocator(field
 </#list>
 {}
 
-${name}::${name}(${name}&&<#if fieldList?has_content> other_</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
+${name}::${name}(${name}&&<#if fieldList?has_content> other</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
 <#list fieldList>
     <#lt> :
     <#items as field>
         <@field_data_member_name field/>(<#rt>
         <#if structure_field_needs_allocator(field)>
-        <#lt>std::move(other_.<@field_data_member_name field/>), allocator<#rt>
+        <#lt>std::move(other.<@field_data_member_name field/>), allocator<#rt>
         <#else>
-        <#lt>other_.<@field_data_member_name field/><#rt>
+        <#lt>other.<@field_data_member_name field/><#rt>
         </#if>
         <#lt>)<#sep>,</#sep>
     </#items>
@@ -74,11 +74,11 @@ ${name}::${name}(${name}&&<#if fieldList?has_content> other_</#if>, const alloca
 </#list>
 {}
 
-${name}::${name}(const ${name}&<#if fieldList?has_content> other_</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
+${name}::${name}(const ${name}&<#if fieldList?has_content> other</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
 <#list fieldList>
     <#lt> :
     <#items as field>
-        <@field_data_member_name field/>(other_.<@field_data_member_name field/><#rt>
+        <@field_data_member_name field/>(other.<@field_data_member_name field/><#rt>
         <#if structure_field_needs_allocator(field)>, allocator</#if><#t>
         <#lt>)<#sep>,</#sep>
     </#items>

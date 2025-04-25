@@ -39,10 +39,10 @@ struct ${name}
     explicit ${name}(const allocator_type& allocator) noexcept;
 
     ${name}(${name}&&) = default;
-    ${name}(${name}&& other_, const allocator_type& allocator);
+    ${name}(${name}&& other, const allocator_type& allocator);
 
     ${name}(const ${name}&) = default;
-    ${name}(const ${name}& other_, const allocator_type& allocator);
+    ${name}(const ${name}& other, const allocator_type& allocator);
 
     ${name}& operator=(${name}&&) = default;
     ${name}& operator=(const ${name}&) = default;
