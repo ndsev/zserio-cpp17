@@ -105,7 +105,7 @@ bool operator==(const View<::test_object::polymorphic_allocator::WalkerUnion>& l
     case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         return (lhs.nestedArray() == rhs.nestedArray());
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
+        return true;
     }
 }
 
@@ -125,7 +125,7 @@ bool operator<(const View<::test_object::polymorphic_allocator::WalkerUnion>& lh
     case ::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray:
         return (lhs.nestedArray() < rhs.nestedArray());
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
+        return false;
     }
 }
 
@@ -167,7 +167,7 @@ void validate(const View<::test_object::polymorphic_allocator::WalkerUnion>& vie
         validate<ArrayType::AUTO>(view.nestedArray(), "'WalkerUnion.nestedArray'");
         break;
     default:
-        throw UnionCaseException("No case set in union 'WalkerUnion'!");
+        throw UnionCaseException("No case set in union '::test_object::polymorphic_allocator::WalkerUnion'!");
     }
 }
 
@@ -188,7 +188,7 @@ BitSize bitSizeOf(const View<::test_object::polymorphic_allocator::WalkerUnion>&
         endBitPosition += bitSizeOf<ArrayType::AUTO>(view.nestedArray(), endBitPosition);
         break;
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
+        break;
     }
 
     return endBitPosition - bitPosition;
@@ -210,7 +210,7 @@ void write(BitStreamWriter& writer, const View<::test_object::polymorphic_alloca
         write<ArrayType::AUTO>(writer, view.nestedArray());
         break;
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
+        break;
     }
 }
 
@@ -236,7 +236,7 @@ View<::test_object::polymorphic_allocator::WalkerUnion> read(BitStreamReader& re
         (void)read<ArrayType::AUTO>(reader, data.get<::test_object::polymorphic_allocator::WalkerUnion::Tag::nestedArray>());
         break;
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
+        throw UnionCaseException("Unexpected choice tag during read of union '::test_object::polymorphic_allocator::WalkerUnion'!");
     }
 
     return view;
@@ -582,7 +582,7 @@ size_t hash<::zserio::View<::test_object::polymorphic_allocator::WalkerUnion>>::
         result = ::zserio::calcHashCode(result, view.nestedArray());
         break;
     default:
-        throw ::zserio::CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::WalkerUnion!");
+        break;
     }
 
     return static_cast<size_t>(result);

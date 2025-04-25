@@ -105,7 +105,7 @@ bool operator==(const View<::test_object::polymorphic_allocator::ReflectableUtil
     case ::test_object::polymorphic_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject:
         return (lhs.reflectableUtilObject() == rhs.reflectableUtilObject());
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUtilUnion!");
+        return true;
     }
 }
 
@@ -125,7 +125,7 @@ bool operator<(const View<::test_object::polymorphic_allocator::ReflectableUtilU
     case ::test_object::polymorphic_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject:
         return (lhs.reflectableUtilObject() < rhs.reflectableUtilObject());
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUtilUnion!");
+        return false;
     }
 }
 
@@ -167,7 +167,7 @@ void validate(const View<::test_object::polymorphic_allocator::ReflectableUtilUn
         validate(view.reflectableUtilObject(), "'ReflectableUtilUnion.reflectableUtilObject'");
         break;
     default:
-        throw UnionCaseException("No case set in union 'ReflectableUtilUnion'!");
+        throw UnionCaseException("No case set in union '::test_object::polymorphic_allocator::ReflectableUtilUnion'!");
     }
 }
 
@@ -188,7 +188,7 @@ BitSize bitSizeOf(const View<::test_object::polymorphic_allocator::ReflectableUt
         endBitPosition += bitSizeOf(view.reflectableUtilObject(), endBitPosition);
         break;
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUtilUnion!");
+        break;
     }
 
     return endBitPosition - bitPosition;
@@ -210,7 +210,7 @@ void write(BitStreamWriter& writer, const View<::test_object::polymorphic_alloca
         write(writer, view.reflectableUtilObject());
         break;
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUtilUnion!");
+        break;
     }
 }
 
@@ -236,7 +236,7 @@ View<::test_object::polymorphic_allocator::ReflectableUtilUnion> read(BitStreamR
         (void)read(reader, data.get<::test_object::polymorphic_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>());
         break;
     default:
-        throw CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUtilUnion!");
+        throw UnionCaseException("Unexpected choice tag during read of union '::test_object::polymorphic_allocator::ReflectableUtilUnion'!");
     }
 
     return view;
@@ -582,7 +582,7 @@ size_t hash<::zserio::View<::test_object::polymorphic_allocator::ReflectableUtil
         result = ::zserio::calcHashCode(result, view.reflectableUtilObject());
         break;
     default:
-        throw ::zserio::CppRuntimeException("No case set in union ::test_object::polymorphic_allocator::ReflectableUtilUnion!");
+        break;
     }
 
     return static_cast<size_t>(result);

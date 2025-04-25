@@ -98,14 +98,19 @@ bool operator==(const View<::test_object::std_allocator::ReflectableChoice>& lhs
         return false;
     }
 
-    switch (lhs.param())
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
     {
-    case ::test_object::std_allocator::ReflectableEnum::VALUE1:
+        return false;
+    }
+
+    switch (lhs.zserioChoiceTag())
+    {
+    case ::test_object::std_allocator::ReflectableChoice::Tag::valueStr:
         return (lhs.valueStr() == rhs.valueStr());
-    case ::test_object::std_allocator::ReflectableEnum::VALUE2:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::value32:
         return (lhs.value32() == rhs.value32());
     default:
-        return true; // empty
+        return true;
     }
 }
 
@@ -116,14 +121,19 @@ bool operator<(const View<::test_object::std_allocator::ReflectableChoice>& lhs,
         return lhs.param() < rhs.param();
     }
 
-    switch (lhs.param())
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
     {
-    case ::test_object::std_allocator::ReflectableEnum::VALUE1:
+        return lhs.zserioChoiceTag() < rhs.zserioChoiceTag();
+    }
+
+    switch (lhs.zserioChoiceTag())
+    {
+    case ::test_object::std_allocator::ReflectableChoice::Tag::valueStr:
         return (lhs.valueStr() < rhs.valueStr());
-    case ::test_object::std_allocator::ReflectableEnum::VALUE2:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::value32:
         return (lhs.value32() < rhs.value32());
     default:
-        return false; // empty
+        return false;
     }
 }
 
@@ -184,16 +194,15 @@ template <>
 BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableChoice>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
-    switch (view.param())
+    switch (view.zserioChoiceTag())
     {
-    case ::test_object::std_allocator::ReflectableEnum::VALUE1:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::valueStr:
         endBitPosition += bitSizeOf(view.valueStr(), endBitPosition);
         break;
-    case ::test_object::std_allocator::ReflectableEnum::VALUE2:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::value32:
         endBitPosition += bitSizeOf(view.value32(), endBitPosition);
         break;
     default:
-        // empty
         break;
     }
 
@@ -203,16 +212,15 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableChoice>& v
 template <>
 void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableChoice>& view)
 {
-    switch (view.param())
+    switch (view.zserioChoiceTag())
     {
-    case ::test_object::std_allocator::ReflectableEnum::VALUE1:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::valueStr:
         write(writer, view.valueStr());
         break;
-    case ::test_object::std_allocator::ReflectableEnum::VALUE2:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::value32:
         write(writer, view.value32());
         break;
     default:
-        // empty
         break;
     }
 }
@@ -553,16 +561,15 @@ size_t hash<::zserio::View<::test_object::std_allocator::ReflectableChoice>>::op
 {
     uint32_t result = ::zserio::HASH_SEED;
     result = ::zserio::calcHashCode(result, view.param());
-    switch (view.param())
+    switch (view.zserioChoiceTag())
     {
-    case ::test_object::std_allocator::ReflectableEnum::VALUE1:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::valueStr:
         result = ::zserio::calcHashCode(result, view.valueStr());
         break;
-    case ::test_object::std_allocator::ReflectableEnum::VALUE2:
+    case ::test_object::std_allocator::ReflectableChoice::Tag::value32:
         result = ::zserio::calcHashCode(result, view.value32());
         break;
     default:
-        // empty
         break;
     }
 

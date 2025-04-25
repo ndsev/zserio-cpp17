@@ -132,17 +132,17 @@ ${I}{
 ${I}case ${fullName}::Tag::<@choice_tag_name field/>:
         <#assign caseCode><@.vars[fieldActionMacroName] field, indent+1, packed/></#assign>
         ${caseCode}<#t>
-        <#if !caseCode?contains("return")>
+        <#if !caseCode?contains("return ")>
 ${I}    break;
         </#if>
     </#list>
 ${I}default:
-        <@.vars[noMatchMacroName] name, indent+1/>
+        <@.vars[noMatchMacroName] fullName, indent+1/>
 ${I}}
 </#macro>
-<#macro union_no_match name indent>
+<#macro union_compare_no_match fullName indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw CppRuntimeException("No case set in union ${fullName}!");
+${I}return true;
 </#macro>
 <#macro union_compare_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
@@ -164,12 +164,16 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
         return false;
     }
 
-    <@union_switch "union_compare_field", "union_no_match", "lhs.zserioChoiceTag()"/>
+    <@union_switch "union_compare_field", "union_compare_no_match", "lhs.zserioChoiceTag()"/>
 <#else>
     return true;
 </#if>
 }
 
+<#macro union_less_than_no_match fullName indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}return false;
+</#macro>
 <#macro union_less_than_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}return (lhs.${field.getterName}() < rhs.${field.getterName}());
@@ -190,7 +194,7 @@ bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterLi
         return lhs.zserioChoiceTag() < rhs.zserioChoiceTag();
     }
 
-    <@union_switch "union_less_than_field", "union_no_match", "lhs.zserioChoiceTag()"/>
+    <@union_switch "union_less_than_field", "union_less_than_no_match", "lhs.zserioChoiceTag()"/>
 <#else>
     return false;
 </#if>
@@ -226,9 +230,9 @@ ${I}validate<@array_template_args field/>(view.${field.getterName}(), "'${name}.
         </#if>
         <#lt>);
 </#macro>
-<#macro union_validate_no_match name indent>
+<#macro union_validate_no_match fullName indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw UnionCaseException("No case set in union '${name}'!");
+${I}throw UnionCaseException("No case set in union '${fullName}'!");
 </#macro>
 template <>
 void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
@@ -241,6 +245,10 @@ void validate(const View<${fullName}>&<#if fieldList?has_content || parameterLis
 </#if>
 }
 
+<#macro union_no_match fullName indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}break;
+</#macro>
 <#macro union_bitsizeof_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
@@ -289,6 +297,10 @@ ${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#r
         <#lt><@field_view_view_indirect_parameters field/>);
     <@field_check_constraint field, indent/>
 </#macro>
+<#macro union_read_no_match fullName indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}throw UnionCaseException("Unexpected choice tag during read of union '${fullName}'!");
+</#macro>
 template <>
 View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
@@ -307,7 +319,7 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 
     VarSize choiceTag;
     read(reader, choiceTag);
-    <@union_switch "union_read_field", "union_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)"/>
+    <@union_switch "union_read_field", "union_read_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)"/>
 </#if>
 
     return view;
@@ -318,8 +330,6 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field_needs_packing_context(field)>
 ${I}initContext(<@packing_context field/>, view.${field.getterName}());
-    <#else>
-${I}// empty
     </#if>
 </#macro>
 template <>
@@ -380,7 +390,7 @@ void read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext
 
     VarSize choiceTag;
     read(packingContext.zserioChoiceTag, reader, choiceTag);
-    <@union_switch "union_read_field", "union_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)", 1, true/>
+    <@union_switch "union_read_field", "union_read_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)", 1, true/>
 </#if>
     (void)view;
 }
@@ -460,6 +470,14 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 }
 <@namespace_end ["detail"]/>
 
+<#macro union_get_choice_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}return "${field.name}";
+</#macro>
+<#macro union_get_choice_no_match fullName indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}return "";
+</#macro>
 <#macro union_reflectable isConst>
     class Reflectable : public ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
     {
@@ -486,15 +504,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 
         ::std::string_view getChoice() const override
         {
-            switch (m_object.index())
-            {
-    <#list fieldList as field>
-            case ${fullName}::Tag::<@choice_tag_name field/>:
-                return "${field.name}";
-    </#list>
-            default:
-                return "";
-            }
+            <@union_switch "union_get_choice_field", "union_get_choice_no_match", "m_object.index()", 3/>
         }
 
         ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
@@ -553,15 +563,8 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
 
         ::std::string_view getChoice() const override
         {
-            switch (getValue().zserioChoiceTag())
-            {
-    <#list fieldList as field>
-            case ${fullName}::Tag::<@choice_tag_name field/>:
-                return "${field.name}";
-    </#list>
-            default:
-                return "";
-            }
+            <@union_switch "union_get_choice_field", "union_get_choice_no_match",
+                    "getValue().zserioChoiceTag()", 3/>
         }
     };
 
@@ -586,10 +589,6 @@ size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_conten
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}result = ::zserio::calcHashCode(result, view.${field.getterName}());
 </#macro>
-<#macro union_hash_no_match name indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw ::zserio::CppRuntimeException("No case set in union ${fullName}!");
-</#macro>
 size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
         <#lt>const ::zserio::View<${fullName}>&<#if parameterList?has_content || fieldList?has_content> view</#if>) const
 {
@@ -598,7 +597,7 @@ size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
     result = ::zserio::calcHashCode(result, view.${parameter.getterName}());
 </#list>
 <#if fieldList?has_content>
-    <@union_switch "union_hash_field", "union_hash_no_match", "view.zserioChoiceTag()"/>
+    <@union_switch "union_hash_field", "union_no_match", "view.zserioChoiceTag()"/>
 
 </#if>
     return static_cast<size_t>(result);

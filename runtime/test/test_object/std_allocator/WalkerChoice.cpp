@@ -108,18 +108,23 @@ bool operator==(const View<::test_object::std_allocator::WalkerChoice>& lhs, con
         return false;
     }
 
-    switch (lhs.selector())
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
     {
-    case 8:
+        return false;
+    }
+
+    switch (lhs.zserioChoiceTag())
+    {
+    case ::test_object::std_allocator::WalkerChoice::Tag::value8:
         return (lhs.value8() == rhs.value8());
-    case 16:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value16:
         return (lhs.value16() == rhs.value16());
-    case 32:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value32:
         return (lhs.value32() == rhs.value32());
-    case 64:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value64:
         return (lhs.value64() == rhs.value64());
     default:
-        return true; // empty
+        return true;
     }
 }
 
@@ -130,18 +135,23 @@ bool operator<(const View<::test_object::std_allocator::WalkerChoice>& lhs, cons
         return lhs.selector() < rhs.selector();
     }
 
-    switch (lhs.selector())
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
     {
-    case 8:
+        return lhs.zserioChoiceTag() < rhs.zserioChoiceTag();
+    }
+
+    switch (lhs.zserioChoiceTag())
+    {
+    case ::test_object::std_allocator::WalkerChoice::Tag::value8:
         return (lhs.value8() < rhs.value8());
-    case 16:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value16:
         return (lhs.value16() < rhs.value16());
-    case 32:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value32:
         return (lhs.value32() < rhs.value32());
-    case 64:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value64:
         return (lhs.value64() < rhs.value64());
     default:
-        return false; // empty
+        return false;
     }
 }
 
@@ -220,22 +230,21 @@ template <>
 BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerChoice>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
-    switch (view.selector())
+    switch (view.zserioChoiceTag())
     {
-    case 8:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value8:
         endBitPosition += bitSizeOf(view.value8(), endBitPosition);
         break;
-    case 16:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value16:
         endBitPosition += bitSizeOf(view.value16(), endBitPosition);
         break;
-    case 32:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value32:
         endBitPosition += bitSizeOf(view.value32(), endBitPosition);
         break;
-    case 64:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value64:
         endBitPosition += bitSizeOf(view.value64(), endBitPosition);
         break;
     default:
-        // empty
         break;
     }
 
@@ -245,22 +254,21 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerChoice>& view, 
 template <>
 void write(BitStreamWriter& writer, const View<::test_object::std_allocator::WalkerChoice>& view)
 {
-    switch (view.selector())
+    switch (view.zserioChoiceTag())
     {
-    case 8:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value8:
         write(writer, view.value8());
         break;
-    case 16:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value16:
         write(writer, view.value16());
         break;
-    case 32:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value32:
         write(writer, view.value32());
         break;
-    case 64:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value64:
         write(writer, view.value64());
         break;
     default:
-        // empty
         break;
     }
 }
@@ -727,22 +735,21 @@ size_t hash<::zserio::View<::test_object::std_allocator::WalkerChoice>>::operato
 {
     uint32_t result = ::zserio::HASH_SEED;
     result = ::zserio::calcHashCode(result, view.selector());
-    switch (view.selector())
+    switch (view.zserioChoiceTag())
     {
-    case 8:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value8:
         result = ::zserio::calcHashCode(result, view.value8());
         break;
-    case 16:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value16:
         result = ::zserio::calcHashCode(result, view.value16());
         break;
-    case 32:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value32:
         result = ::zserio::calcHashCode(result, view.value32());
         break;
-    case 64:
+    case ::test_object::std_allocator::WalkerChoice::Tag::value64:
         result = ::zserio::calcHashCode(result, view.value64());
         break;
     default:
-        // empty
         break;
     }
 

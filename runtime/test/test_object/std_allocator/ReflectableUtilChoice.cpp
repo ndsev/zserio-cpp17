@@ -93,13 +93,17 @@ bool operator==(const View<::test_object::std_allocator::ReflectableUtilChoice>&
         return false;
     }
 
-    switch (lhs.param())
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
     {
-    case 1:
-    case 2:
+        return false;
+    }
+
+    switch (lhs.zserioChoiceTag())
+    {
+    case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
         return (lhs.array() == rhs.array());
     default:
-        return true; // empty
+        return true;
     }
 }
 
@@ -110,13 +114,17 @@ bool operator<(const View<::test_object::std_allocator::ReflectableUtilChoice>& 
         return lhs.param() < rhs.param();
     }
 
-    switch (lhs.param())
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
     {
-    case 1:
-    case 2:
+        return lhs.zserioChoiceTag() < rhs.zserioChoiceTag();
+    }
+
+    switch (lhs.zserioChoiceTag())
+    {
+    case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
         return (lhs.array() < rhs.array());
     default:
-        return false; // empty
+        return false;
     }
 }
 
@@ -169,14 +177,12 @@ template <>
 BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilChoice>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
-    switch (view.param())
+    switch (view.zserioChoiceTag())
     {
-    case 1:
-    case 2:
+    case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
         endBitPosition += bitSizeOf<ArrayType::AUTO>(view.array(), endBitPosition);
         break;
     default:
-        // empty
         break;
     }
 
@@ -186,14 +192,12 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilChoice
 template <>
 void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableUtilChoice>& view)
 {
-    switch (view.param())
+    switch (view.zserioChoiceTag())
     {
-    case 1:
-    case 2:
+    case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
         write<ArrayType::AUTO>(writer, view.array());
         break;
     default:
-        // empty
         break;
     }
 }
@@ -473,14 +477,12 @@ size_t hash<::zserio::View<::test_object::std_allocator::ReflectableUtilChoice>>
 {
     uint32_t result = ::zserio::HASH_SEED;
     result = ::zserio::calcHashCode(result, view.param());
-    switch (view.param())
+    switch (view.zserioChoiceTag())
     {
-    case 1:
-    case 2:
+    case ::test_object::std_allocator::ReflectableUtilChoice::Tag::array:
         result = ::zserio::calcHashCode(result, view.array());
         break;
     default:
-        // empty
         break;
     }
 

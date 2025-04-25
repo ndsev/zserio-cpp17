@@ -123,7 +123,7 @@ const ${fullName}& View<${fullName}>::zserioData() const
     return *m_data;
 }
 
-<#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
+<#macro choice_expression_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if canUseNativeSwitch>
 ${I}switch (${switchExpression})
@@ -172,23 +172,35 @@ ${I}{
             <#if defaultMember??>
         <@.vars[memberActionMacroName] defaultMember, indent+1, packed/>
             <#else>
-        <@.vars[noMatchMacroName] name, indent+1/>
+        <@.vars[noMatchMacroName] fullName, indent+1/>
             </#if>
 ${I}}
         </#if>
     </#if>
 </#macro>
-<#macro choice_compare_member member indent packed>
+<#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}return (lhs.${member.field.getterName}() == rhs.${member.field.getterName}());
-    <#else>
-${I}return true; // empty
-    </#if>
+${I}switch (${switchExpression})
+${I}{
+    <#list fieldList as field>
+${I}case ${fullName}::Tag::<@choice_tag_name field/>:
+        <#assign caseCode><@.vars[memberActionMacroName] field, indent+1, packed/></#assign>
+        ${caseCode}<#t>
+        <#if !caseCode?contains("return ")>
+${I}    break;
+        </#if>
+    </#list>
+${I}default:
+        <@.vars[noMatchMacroName] fullName, indent+1/>
+${I}}
 </#macro>
-<#macro choice_no_match name indent>
+<#macro choice_compare_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw CppRuntimeException("No match in choice ${fullName}!");
+${I}return (lhs.${field.getterName}() == rhs.${field.getterName}());
+</#macro>
+<#macro choice_compare_no_match fullName indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}return true;
 </#macro>
 bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
@@ -201,19 +213,24 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 
 </#list>
 <#if fieldList?has_content>
-    <@choice_switch "choice_compare_member", "choice_no_match", lhsIndirectSelectorExpression/>
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
+    {
+        return false;
+    }
+
+    <@choice_switch "choice_compare_field", "choice_compare_no_match", "lhs.zserioChoiceTag()"/>
 <#else>
     return true;
 </#if>
 }
 
-<#macro choice_less_than_member member indent packed>
+<#macro choice_less_than_no_match fullName indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}return (lhs.${member.field.getterName}() < rhs.${member.field.getterName}());
-    <#else>
-${I}return false; // empty
-    </#if>
+${I}return false;
+</#macro>
+<#macro choice_less_than_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}return (lhs.${field.getterName}() < rhs.${field.getterName}());
 </#macro>
 bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
@@ -226,7 +243,12 @@ bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterLi
 
 </#list>
 <#if fieldList?has_content>
-    <@choice_switch "choice_less_than_member", "choice_no_match", lhsIndirectSelectorExpression/>
+    if (lhs.zserioChoiceTag() != rhs.zserioChoiceTag())
+    {
+        return lhs.zserioChoiceTag() < rhs.zserioChoiceTag();
+    }
+
+    <@choice_switch "choice_less_than_field", "choice_less_than_no_match", "lhs.zserioChoiceTag()"/>
 <#else>
     return false;
 </#if>
@@ -272,7 +294,7 @@ ${I}validate<@array_template_args member.field/>(view.${member.field.getterName}
 ${I}// empty
     </#if>
 </#macro>
-<#macro choice_validate_no_match name indent>
+<#macro choice_validate_no_match fullName indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}throw ChoiceCaseException("No match in choice ${fullName}!");
 </#macro>
@@ -283,19 +305,20 @@ void validate(const View<${fullName}>& view, ::std::string_view)
     validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#if fieldList?has_content>
-    <@choice_switch "choice_validate_member", "choice_validate_no_match", viewIndirectSelectorExpression/>
+    <@choice_expression_switch "choice_validate_member", "choice_validate_no_match",
+            viewIndirectSelectorExpression/>
 </#if>
 }
 
-<#macro choice_bitsizeof_member member indent packed>
+<#macro choice_no_match fullName indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}endBitPosition += bitSizeOf<@array_suffix member.field, packed/><@array_template_args member.field/>(<#rt>
-        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
-        <#lt>view.${member.field.getterName}(), endBitPosition);
-    <#else>
-${I}// empty
-    </#if>
+${I}break;
+</#macro>
+<#macro choice_bitsizeof_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
+        <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
 template <>
 BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
@@ -303,7 +326,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 {
 <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    <@choice_switch "choice_bitsizeof_member", "choice_no_match", viewIndirectSelectorExpression/>
+    <@choice_switch "choice_bitsizeof_field", "choice_no_match", "view.zserioChoiceTag()"/>
 
     return endBitPosition - bitPosition;
 <#else>
@@ -311,22 +334,18 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 </#if>
 }
 
-<#macro choice_write_member member indent packed>
+<#macro choice_write_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}write<@array_suffix member.field, packed/><@array_template_args member.field/>(<#rt>
-        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
-        <#lt>writer, view.${member.field.getterName}());
-    <#else>
-${I}// empty
-    </#if>
+${I}write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
+        <#lt>writer, view.${field.getterName}());
 </#macro>
 template <>
 void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    <@choice_switch "choice_write_member", "choice_no_match", viewIndirectSelectorExpression/>
+    <@choice_switch "choice_write_field", "choice_no_match", "view.zserioChoiceTag()"/>
 </#if>
 }
 
@@ -360,19 +379,17 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 </#list>
             <#lt>);
 <#if fieldList?has_content>
-    <@choice_switch "choice_read_member", "choice_no_match", viewIndirectSelectorExpression/>
+    <@choice_expression_switch "choice_read_member", "choice_validate_no_match", viewIndirectSelectorExpression/>
 </#if>
 
     return view;
 }
 <#if isPackable && usedInPackedArray>
 
-<#macro choice_init_context member indent packed>
+<#macro choice_init_context field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field?? && field_needs_packing_context(member.field)>
-${I}initContext(<@packing_context member.field/>, view.${member.field.getterName}());
-    <#else>
-${I}// empty
+    <#if field_needs_packing_context(field)>
+${I}initContext(<@packing_context field/>, view.${field.getterName}());
     </#if>
 </#macro>
 template <>
@@ -380,7 +397,7 @@ void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldLis
         <#lt>const View<${fullName}>&<#if needs_packing_context(fieldList)> view</#if>)
 {
     <#if fieldList?has_content>
-    <@choice_switch "choice_init_context", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+    <@choice_switch "choice_init_context", "choice_no_match", "view.zserioChoiceTag()", 1, true/>
     </#if>
 }
 
@@ -391,7 +408,7 @@ BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldLi
 {
     <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    <@choice_switch "choice_bitsizeof_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+    <@choice_switch "choice_bitsizeof_field", "choice_no_match", "view.zserioChoiceTag()", 1, true/>
 
     return endBitPosition - bitPosition;
     <#else>
@@ -405,7 +422,7 @@ void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pa
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    <@choice_switch "choice_write_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+    <@choice_switch "choice_write_field", "choice_no_match", "view.zserioChoiceTag()", 1, true/>
 </#if>
 }
 
@@ -425,23 +442,19 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
 </#list>
             <#lt>);
 <#if fieldList?has_content>
-    <@choice_switch "choice_read_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+    <@choice_expression_switch "choice_read_member", "choice_validate_no_match", viewIndirectSelectorExpression, 1, true/>
 </#if>
     (void)view;
 }
 </#if>
 <#if containsOffset>
 
-<#macro choice_initialize_offsets_member member indent packed>
+<#macro choice_initialize_offsets_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}endBitPosition += <#if member.field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
-        <@array_suffix member.field, packed/><@array_template_args member.field/>(<#t>
-        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
-        <#lt>view.${member.field.getterName}(), endBitPosition);
-    <#else>
-${I}// empty
-    </#if>
+${I}endBitPosition += <#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
+        <@array_suffix field, packed/><@array_template_args field/>(<#t>
+        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
+        <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
 BitSize OffsetsInitializer<${fullName}>::initialize(
         const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
@@ -449,7 +462,7 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
 {
     <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    <@choice_switch "choice_initialize_offsets_member", "choice_no_match", viewIndirectSelectorExpression/>
+    <@choice_switch "choice_initialize_offsets_field", "choice_no_match", "view.zserioChoiceTag()"/>
 
     return endBitPosition - bitPosition;
     <#else>
@@ -465,7 +478,7 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
 {
         <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    <@choice_switch "choice_initilize_offsets_member", "choice_no_match", viewIndirectSelectorExpression, 1, true/>
+    <@choice_switch "choice_initilize_offsets_field", "choice_no_match", "view.zserioChoiceTag()", 1, true/>
 
     return endBitPosition - bitPosition;
         <#else>
@@ -512,6 +525,14 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 }
 <@namespace_end ["detail"]/>
 
+<#macro choice_get_choice_field field indent packed>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}return "${field.name}";
+</#macro>
+<#macro choice_get_choice_no_match fullName indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}return "";
+</#macro>
 <#macro choice_reflectable isConst>
     class Reflectable : public ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
     {
@@ -539,15 +560,7 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 
         ::std::string_view getChoice() const override
         {
-            switch (m_object.index())
-            {
-    <#list fieldList as field>
-            case ${fullName}::Tag::<@choice_tag_name field/>:
-                return "${field.name}";
-    </#list>
-            default:
-                return "";
-            }
+            <@choice_switch "choice_get_choice_field", "choice_get_choice_no_match", "m_object.index()", 3/>
         }
 
         ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
@@ -606,15 +619,8 @@ ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& vie
 
         ::std::string_view getChoice() const override
         {
-            switch (getValue().zserioChoiceTag())
-            {
-    <#list fieldList as field>
-            case ${fullName}::Tag::<@choice_tag_name field/>:
-                return "${field.name}";
-    </#list>
-            default:
-                return "";
-            }
+            <@choice_switch "choice_get_choice_field", "choice_get_choice_no_match",
+                    "getValue().zserioChoiceTag()", 3/>
         }
     };
 
@@ -635,17 +641,9 @@ size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_conten
     return static_cast<size_t>(result);
 }
 
-<#macro choice_hash_member member indent packed>
+<#macro choice_hash_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}result = ::zserio::calcHashCode(result, view.${member.field.getterName}());
-    <#else>
-${I}// empty
-    </#if>
-</#macro>
-<#macro choice_hash_no_match name indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw ::zserio::CppRuntimeException("No match in choice ${fullName}!");
+${I}result = ::zserio::calcHashCode(result, view.${field.getterName}());
 </#macro>
 size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
         <#lt>const ::zserio::View<${fullName}>&<#if parameterList?has_content || fieldList?has_content> view</#if>) const
@@ -655,7 +653,7 @@ size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
     result = ::zserio::calcHashCode(result, view.${parameter.getterName}());
 </#list>
 <#if fieldList?has_content>
-    <@choice_switch "choice_hash_member", "choice_hash_no_match", viewIndirectSelectorExpression/>
+    <@choice_switch "choice_hash_field", "choice_no_match", "view.zserioChoiceTag()"/>
 
 </#if>
     return static_cast<size_t>(result);
