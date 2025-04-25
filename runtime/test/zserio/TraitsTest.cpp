@@ -45,6 +45,13 @@ public:
     using allocator_type = std::allocator<uint8_t>;
 };
 
+template <typename T>
+class TmpTest;
+
+template <>
+class TmpTest<std::string>
+{};
+
 } // namespace
 
 TEST(TraitsTest, isAllocator)
@@ -84,6 +91,13 @@ TEST(TraitsTest, isBitmask)
     ASSERT_FALSE(is_bitmask<DummyEnum>::value);
     ASSERT_FALSE(is_bitmask<std::string>::value);
     ASSERT_FALSE(is_bitmask<std::vector<uint8_t>>::value);
+}
+
+TEST(TraitsTest, isComplete)
+{
+    ASSERT_TRUE(is_complete<std::string>::value);
+    ASSERT_FALSE(is_complete<TmpTest<int>>::value);
+    ASSERT_TRUE(is_complete<TmpTest<std::string>>::value);
 }
 
 } // namespace zserio
