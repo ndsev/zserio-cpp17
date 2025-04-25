@@ -53,18 +53,37 @@ TEST_F(SimpleStructureTest, emptyConstructor)
 
 TEST_F(SimpleStructureTest, fieldConstructor)
 {
-    const uint8_t numberA = 0x07;
-    const uint8_t numberB = 0xFF;
-    const uint8_t numberC = 0x7F;
-    SimpleStructure data(numberA, numberB, numberC);
-    ASSERT_EQ(numberA, data.numberA);
-    ASSERT_EQ(numberB, data.numberB);
-    ASSERT_EQ(numberC, data.numberC);
+    {
+        // normal arguments
+        const uint8_t numberA = 0x07;
+        const uint8_t numberB = 0xFF;
+        const uint8_t numberC = 0x7F;
+        SimpleStructure data(numberA, numberB, numberC);
+        ASSERT_EQ(numberA, data.numberA);
+        ASSERT_EQ(numberB, data.numberB);
+        ASSERT_EQ(numberC, data.numberC);
 
-    zserio::View view(data);
-    ASSERT_EQ(numberA, view.numberA());
-    ASSERT_EQ(numberB, view.numberB());
-    ASSERT_EQ(numberC, view.numberC());
+        zserio::View view(data);
+        ASSERT_EQ(numberA, view.numberA());
+        ASSERT_EQ(numberB, view.numberB());
+        ASSERT_EQ(numberC, view.numberC());
+    }
+
+    {
+        // initializer list
+        const uint8_t numberA = 0x07;
+        const uint8_t numberB = 0xFF;
+        const uint8_t numberC = 0x7F;
+        SimpleStructure data({numberA, numberB, numberC});
+        ASSERT_EQ(numberA, data.numberA);
+        ASSERT_EQ(numberB, data.numberB);
+        ASSERT_EQ(numberC, data.numberC);
+
+        zserio::View view(data);
+        ASSERT_EQ(numberA, view.numberA());
+        ASSERT_EQ(numberB, view.numberB());
+        ASSERT_EQ(numberC, view.numberC());
+    }
 }
 
 TEST_F(SimpleStructureTest, copyConstructor)

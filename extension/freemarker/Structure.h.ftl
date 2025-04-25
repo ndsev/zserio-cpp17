@@ -39,7 +39,7 @@ struct ${name}
     explicit ${name}(const AllocatorType& allocator) noexcept;
 <#list fieldList>
 
-    explicit ${name}(
+    <#if fieldList?size == 1>explicit </#if>${name}(
     <#items as field>
             <@structure_field_ctor_type_name field/> <@field_data_arg_name field/><#if field?has_next>,<#else>);</#if>
     </#items>
