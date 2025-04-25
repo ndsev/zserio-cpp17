@@ -13,11 +13,11 @@ namespace parameterized_types
 namespace multiple_params
 {
 
-using allocator_type = TestStructure::allocator_type;
+using AllocatorType = TestStructure::allocator_type;
 
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class MultipleParamsTest : public ::testing::Test
 {

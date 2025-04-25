@@ -11,10 +11,10 @@ namespace sql_virtual_columns
 namespace simple_virtual_columns
 {
 
-using allocator_type = SimpleVirtualColumnsDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = SimpleVirtualColumnsDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class SimpleVirtualColumnsTest : public ::testing::Test
 {
@@ -52,7 +52,7 @@ protected:
         rows.clear();
         for (int32_t id = 0; id < NUM_TABLE_ROWS; ++id)
         {
-            const StringType content = "Content" + zserio::toString<allocator_type>(id);
+            const StringType content = "Content" + zserio::toString<AllocatorType>(id);
             SimpleVirtualColumnsTable::Row row;
             fillRow(row, content);
             rows.push_back(row);

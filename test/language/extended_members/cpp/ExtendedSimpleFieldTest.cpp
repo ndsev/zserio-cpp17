@@ -8,7 +8,7 @@ namespace extended_members
 namespace extended_simple_field
 {
 
-using allocator_type = Extended::allocator_type;
+using AllocatorType = Extended::allocator_type;
 
 class ExtendedSimpleFieldTest : public ::testing::Test
 {

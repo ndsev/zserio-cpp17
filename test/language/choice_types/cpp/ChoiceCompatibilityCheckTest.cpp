@@ -8,7 +8,7 @@ namespace choice_types
 namespace choice_compatibility_check
 {
 
-using AllocatorType = ChoiceCompatibilityCheckVersion1::AllocatorType;
+using AllocatorType = ChoiceCompatibilityCheckVersion1::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

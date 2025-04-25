@@ -9,7 +9,7 @@ namespace choice_types
 namespace enum_param_choice
 {
 
-using AllocatorType = EnumParamChoice::AllocatorType;
+using AllocatorType = EnumParamChoice::allocator_type;
 
 class EnumParamChoiceTest : public ::testing::Test
 {

@@ -10,10 +10,10 @@ namespace extended_members
 namespace extended_optional_parameterized_field
 {
 
-using allocator_type = Extended::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = Extended::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class ExtendedOptionalParameterizedFieldTest : public ::testing::Test
 {

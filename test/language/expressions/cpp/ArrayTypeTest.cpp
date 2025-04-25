@@ -7,9 +7,9 @@ namespace expressions
 namespace array_type
 {
 
-using allocator_type = ArrayTypeExpression::allocator_type;
+using AllocatorType = ArrayTypeExpression::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 TEST(ArrayTypeTest, bitSizeOfWithOptional)
 {

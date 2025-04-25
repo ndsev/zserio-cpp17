@@ -8,7 +8,7 @@ namespace choice_types
 namespace bool_param_choice
 {
 
-using AllocatorType = BoolParamChoice::AllocatorType;
+using AllocatorType = BoolParamChoice::allocator_type;
 
 class BoolParamChoiceTest : public ::testing::Test
 {

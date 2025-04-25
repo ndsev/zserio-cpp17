@@ -7,9 +7,9 @@ namespace array_types
 namespace packed_arrays_mapping
 {
 
-using allocator_type = PackedArraysMapping::allocator_type;
+using AllocatorType = PackedArraysMapping::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class PackedArraysMappingTest : public ::testing::Test
 {

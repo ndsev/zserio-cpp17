@@ -16,10 +16,10 @@ namespace sql_tables
 namespace blob_offsets_param_table
 {
 
-using allocator_type = TestDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class BlobOffsetsParamTableTest : public ::testing::Test
 {
@@ -67,7 +67,7 @@ protected:
         rows.resize(NUM_BLOB_OFFSETS_PARAM_TABLE_ROWS);
         for (uint32_t blobId = 0; blobId < NUM_BLOB_OFFSETS_PARAM_TABLE_ROWS; ++blobId)
         {
-            const StringType name = "Name" + zserio::toString<allocator_type>(blobId);
+            const StringType name = "Name" + zserio::toString<AllocatorType>(blobId);
             fillRow(rows[blobId], blobId, name);
         }
     }
@@ -160,7 +160,7 @@ TEST_F(BlobOffsetsParamTableTest, update)
     const uint64_t updateRowId = 3;
     BlobOffsetsParamTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "blobId=" + zserio::toString<allocator_type>(updateRowId);
+    const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
     VectorType<BlobOffsetsParamTable::Row> readRows;

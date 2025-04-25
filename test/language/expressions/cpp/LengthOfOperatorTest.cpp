@@ -10,11 +10,11 @@ namespace expressions
 namespace lengthof_operator
 {
 
-using allocator_type = LengthOfFunctions::allocator_type;
+using AllocatorType = LengthOfFunctions::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
-using BytesType = zserio::BasicBytes<zserio::RebindAlloc<allocator_type, uint8_t>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
+using BytesType = zserio::BasicBytes<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 TEST(LengthOfOperatorTest, getLengthOfStrConstant)
 {

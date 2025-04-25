@@ -7,12 +7,12 @@ namespace array_types
 namespace arrays_mapping
 {
 
-using allocator_type = ArraysMapping::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = ArraysMapping::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
-using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 class ArraysMappingTest : public ::testing::Test
 {

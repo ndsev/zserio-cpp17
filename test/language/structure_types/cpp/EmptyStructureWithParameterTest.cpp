@@ -7,7 +7,7 @@ namespace structure_types
 namespace empty_structure_with_parameter
 {
 
-using allocator_type = EmptyStructureWithParameter::allocator_type;
+using AllocatorType = EmptyStructureWithParameter::allocator_type;
 
 TEST(EmptyStructureWithParameterTest, emptyConstructor)
 {
@@ -20,7 +20,7 @@ TEST(EmptyStructureWithParameterTest, emptyConstructor)
         (void)data;
     }
     {
-        EmptyStructureWithParameter data(allocator_type{});
+        EmptyStructureWithParameter data(AllocatorType{});
         (void)data;
     }
     {

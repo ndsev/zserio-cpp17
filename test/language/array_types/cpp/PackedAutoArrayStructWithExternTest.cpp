@@ -11,10 +11,10 @@ namespace array_types
 namespace packed_auto_array_struct_with_extern
 {
 
-using allocator_type = PackedAutoArray::allocator_type;
+using AllocatorType = PackedAutoArray::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
-using BitBufferType = zserio::BasicBitBuffer<allocator_type>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 
 class PackedAutoArrayStructWithExternTest : public ::testing::Test
 {

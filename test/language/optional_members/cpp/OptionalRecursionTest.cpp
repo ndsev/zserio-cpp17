@@ -11,9 +11,9 @@ namespace optional_members
 namespace optional_recursion
 {
 
-using allocator_type = Block::allocator_type;
+using AllocatorType = Block::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class OptionalRecursionTest : public ::testing::Test
 {

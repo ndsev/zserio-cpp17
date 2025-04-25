@@ -10,10 +10,10 @@ namespace array_types
 namespace variable_array_struct_cast_int8
 {
 
-using allocator_type = VariableArray::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = VariableArray::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class VariableArrayStructCastInt8Test : public ::testing::Test
 {
@@ -26,7 +26,7 @@ protected:
         {
             TestStructure testStructure;
             testStructure.id = static_cast<uint32_t>(i);
-            testStructure.name = StringType("Name") + zserio::toString<allocator_type>(i);
+            testStructure.name = StringType("Name") + zserio::toString<AllocatorType>(i);
             compoundArray.push_back(testStructure);
         }
         VariableArray variableArray;

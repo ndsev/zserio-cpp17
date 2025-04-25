@@ -11,10 +11,10 @@ namespace member_access
 namespace access_within_type
 {
 
-using allocator_type = Message::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = Message::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class AccessWithinTypeTest : public ::testing::Test
 {
@@ -48,7 +48,7 @@ protected:
 
     static StringType getSentence(uint16_t index)
     {
-        return StringType("This is sentence #") + zserio::toString<allocator_type>(index);
+        return StringType("This is sentence #") + zserio::toString<AllocatorType>(index);
     }
 
     static constexpr uint16_t VERSION_VALUE = 0xAB;

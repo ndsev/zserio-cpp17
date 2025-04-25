@@ -12,10 +12,10 @@ namespace explicit_parameters
 namespace explicit_simple_param
 {
 
-using allocator_type = ExplicitParametersDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = ExplicitParametersDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class ExplicitSimpleParamTest : public ::testing::Test
 {
@@ -89,7 +89,7 @@ protected:
         rows.clear();
         for (uint32_t id = 0; id < NUM_SIMPLE_PARAM_TABLE_ROWS; ++id)
         {
-            const StringType name = "Name" + zserio::toString<allocator_type>(id);
+            const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             SimpleParamTable::Row row;
             fillRow(row, id, name);
             rows.push_back(row);
@@ -184,7 +184,7 @@ TEST_F(ExplicitSimpleParamTest, update)
     const uint64_t updateRowId = 3;
     SimpleParamTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "id=" + zserio::toString<allocator_type>(updateRowId);
+    const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     simpleParamTable.update(parameterProvider, updateRow, updateCondition);
 
     SimpleParamTable::Reader reader = simpleParamTable.createReader(parameterProvider, updateCondition);

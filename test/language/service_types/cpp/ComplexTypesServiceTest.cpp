@@ -14,10 +14,10 @@ namespace service_types
 namespace complex_types_service
 {
 
-using allocator_type = ComplexTypesService::Client::allocator_type;
+using AllocatorType = ComplexTypesService::Client::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
-using LocalServiceClient = test_utils::LocalServiceClient<allocator_type>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using LocalServiceClient = test_utils::LocalServiceClient<AllocatorType>;
 
 namespace
 {

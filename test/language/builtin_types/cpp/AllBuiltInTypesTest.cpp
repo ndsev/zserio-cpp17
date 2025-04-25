@@ -12,12 +12,12 @@ namespace builtin_types
 namespace all_builtin_types
 {
 
-using allocator_type = AllBuiltInTypes::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = AllBuiltInTypes::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
-using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<allocator_type, uint8_t>>;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 class AllBuiltInTypesTest : public ::testing::Test
 {

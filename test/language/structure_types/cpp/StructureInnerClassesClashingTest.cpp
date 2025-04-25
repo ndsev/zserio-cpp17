@@ -10,10 +10,10 @@ namespace structure_types
 namespace structure_inner_classes_clashing
 {
 
-using allocator_type = ArrayType_array::allocator_type;
+using AllocatorType = ArrayType_array::allocator_type;
 
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 TEST(StructureInnerClassesClashingTest, writeReadArrayTypeArray)
 {

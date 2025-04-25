@@ -11,10 +11,10 @@ namespace sql_virtual_tables
 namespace fts5_virtual_table
 {
 
-using allocator_type = Fts5TestDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = Fts5TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class Fts5VirtualTableTest : public ::testing::Test
 {
@@ -51,8 +51,8 @@ protected:
         rows.clear();
         for (int32_t id = 0; id < NUM_VIRTUAL_TABLE_ROWS; ++id)
         {
-            const StringType title = "Title" + zserio::toString<allocator_type>(id);
-            const StringType body = "Body" + zserio::toString<allocator_type>(id);
+            const StringType title = "Title" + zserio::toString<AllocatorType>(id);
+            const StringType body = "Body" + zserio::toString<AllocatorType>(id);
             Fts5VirtualTable::Row row;
             fillRow(row, title, body);
             rows.push_back(row);

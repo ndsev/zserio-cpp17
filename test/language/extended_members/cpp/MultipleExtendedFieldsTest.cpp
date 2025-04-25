@@ -11,8 +11,8 @@ namespace extended_members
 namespace multiple_extended_fields
 {
 
-using allocator_type = Extended2::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = Extended2::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class MultipleExtendedFieldsTest : public ::testing::Test
 {

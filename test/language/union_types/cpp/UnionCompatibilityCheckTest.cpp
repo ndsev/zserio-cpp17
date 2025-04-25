@@ -10,7 +10,7 @@ namespace union_types
 namespace union_compatibility_check
 {
 
-using AllocatorType = UnionCompatibilityCheckVersion1::AllocatorType;
+using AllocatorType = UnionCompatibilityCheckVersion1::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

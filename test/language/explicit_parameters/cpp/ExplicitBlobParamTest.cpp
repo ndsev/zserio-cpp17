@@ -13,10 +13,10 @@ namespace explicit_parameters
 namespace explicit_blob_param
 {
 
-using allocator_type = ExplicitParametersDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = ExplicitParametersDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class ExplicitBlobParamTest : public ::testing::Test
 {
@@ -101,7 +101,7 @@ protected:
         rows.resize(NUM_BLOB_PARAM_TABLE_ROWS);
         for (uint32_t id = 0; id < NUM_BLOB_PARAM_TABLE_ROWS; ++id)
         {
-            const StringType name = "Name" + zserio::toString<allocator_type>(id);
+            const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             fillRow(rows[id], id, name);
         }
     }
@@ -195,7 +195,7 @@ TEST_F(ExplicitBlobParamTest, update)
     const uint64_t updateRowId = 3;
     BlobParamTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "id=" + zserio::toString<allocator_type>(updateRowId);
+    const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     blobParamTable.update(parameterProvider, updateRow, updateCondition);
 
     BlobParamTable::Reader reader = blobParamTable.createReader(parameterProvider, updateCondition);

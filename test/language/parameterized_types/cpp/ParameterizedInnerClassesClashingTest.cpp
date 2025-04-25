@@ -9,9 +9,9 @@ namespace parameterized_types
 namespace parameterized_inner_classes_clashing
 {
 
-using allocator_type = ElementFactory_array::allocator_type;
+using AllocatorType = ElementFactory_array::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class ParameterizedInnerClassesClashingTest : public ::testing::Test
 {

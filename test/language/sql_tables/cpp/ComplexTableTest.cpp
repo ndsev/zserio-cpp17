@@ -11,10 +11,10 @@ namespace sql_tables
 namespace complex_table
 {
 
-using allocator_type = TestDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class ComplexTableTest : public ::testing::Test
 {
@@ -90,7 +90,7 @@ protected:
         rows.clear();
         for (uint64_t blobId = 0; blobId < NUM_COMPLEX_TABLE_ROWS; ++blobId)
         {
-            const StringType name = "Name" + zserio::toString<allocator_type>(blobId);
+            const StringType name = "Name" + zserio::toString<AllocatorType>(blobId);
             ComplexTable::Row row;
             fillRow(row, blobId, name);
             rows.push_back(row);
@@ -245,7 +245,7 @@ TEST_F(ComplexTableTest, update)
     const uint64_t updateRowId = 3;
     ComplexTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "blobId=" + zserio::toString<allocator_type>(updateRowId);
+    const StringType updateCondition = "blobId=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(parameterProvider, updateRow, updateCondition);
 
     VectorType<ComplexTable::Row> readRows;

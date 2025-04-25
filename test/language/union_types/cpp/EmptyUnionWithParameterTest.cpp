@@ -7,7 +7,7 @@ namespace union_types
 namespace empty_union_with_parameter
 {
 
-using AllocatorType = EmptyUnionWithParameter::AllocatorType;
+using AllocatorType = EmptyUnionWithParameter::allocator_type;
 
 class EmptyUnionWithParameterTest : public ::testing::Test
 {

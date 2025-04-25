@@ -7,9 +7,9 @@ namespace parameterized_types
 namespace grand_child_param
 {
 
-using allocator_type = GrandChildParam::allocator_type;
+using AllocatorType = GrandChildParam::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class GrandChildParamTest : public ::testing::Test
 {

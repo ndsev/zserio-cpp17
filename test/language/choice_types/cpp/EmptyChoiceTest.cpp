@@ -7,7 +7,7 @@ namespace choice_types
 namespace empty_choice
 {
 
-using AllocatorType = EmptyChoice::AllocatorType;
+using AllocatorType = EmptyChoice::allocator_type;
 
 TEST(EmptyChoiceTest, constructors)
 {

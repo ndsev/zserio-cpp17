@@ -8,11 +8,11 @@ using namespace test_utils;
 namespace sql_allocation
 {
 
-using allocator_type = SqlAllocationDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = SqlAllocationDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
-using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<allocator_type, uint8_t>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 class SqlAllocationTest : public ::testing::Test
 {
@@ -66,13 +66,13 @@ protected:
         SqlAllocationTableParameterProvider m_sqlAllocationTableParameterProvider;
     };
 
-    const allocator_type& getAllocator() const
+    const AllocatorType& getAllocator() const
     {
         return m_allocator;
     }
 
     void fillRows(VectorType<SqlAllocationTable::Row>& rows,
-            SqlAllocationTableParameterProvider& parameterProvider, const allocator_type& allocator)
+            SqlAllocationTableParameterProvider& parameterProvider, const AllocatorType& allocator)
     {
         rows.reserve(NUM_ROWS);
         for (uint32_t i = 0; i < NUM_ROWS; ++i)
@@ -82,7 +82,7 @@ protected:
     }
 
     void fillRow(SqlAllocationTable::Row& row, SqlAllocationTableParameterProvider& parameterProvider,
-            const allocator_type& allocator, uint32_t id, uint32_t len = 0)
+            const AllocatorType& allocator, uint32_t id, uint32_t len = 0)
     {
         zserio::View rowView(row, parameterProvider);
 
@@ -99,7 +99,7 @@ protected:
         row.roleWithVeryLongNameAndYetLongerName = Role::Values::MEMBER;
     }
 
-    ParameterizedBlob createParameterizedBlob(const DataBlob& dataBlob, const allocator_type& allocator)
+    ParameterizedBlob createParameterizedBlob(const DataBlob& dataBlob, const AllocatorType& allocator)
     {
         ParameterizedBlob parameterizedBlob{allocator};
         for (uint32_t i = 0; i < dataBlob.len; ++i)
@@ -145,7 +145,7 @@ private:
     InvalidMemoryResource m_invalidMemoryResource;
     MemoryResourceScopedSetter m_invalidMemoryResourceSetter;
     TestMemoryResource<12 * 1024> m_memoryResource;
-    allocator_type m_allocator;
+    AllocatorType m_allocator;
 
 protected:
     std::unique_ptr<SqlAllocationDb> m_database; // must be behind the m_memoryResource

@@ -11,10 +11,10 @@ namespace sql_tables
 namespace without_pk_table
 {
 
-using allocator_type = TestDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = TestDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class WithoutPkTableTest : public ::testing::Test
 {
@@ -51,7 +51,7 @@ protected:
         rows.clear();
         for (int32_t identifier = 0; identifier < NUM_WITHOUT_PK_TABLE_ROWS; ++identifier)
         {
-            const StringType name = "Name" + zserio::toString<allocator_type>(identifier);
+            const StringType name = "Name" + zserio::toString<AllocatorType>(identifier);
             WithoutPkTable::Row row;
             fillRow(row, identifier, name);
             rows.push_back(row);
@@ -142,7 +142,7 @@ TEST_F(WithoutPkTableTest, update)
     const int32_t updateRowId = 3;
     WithoutPkTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "identifier=" + zserio::toString<allocator_type>(updateRowId);
+    const StringType updateCondition = "identifier=" + zserio::toString<AllocatorType>(updateRowId);
     testTable.update(updateRow, updateCondition);
 
     VectorType<WithoutPkTable::Row> readRows;

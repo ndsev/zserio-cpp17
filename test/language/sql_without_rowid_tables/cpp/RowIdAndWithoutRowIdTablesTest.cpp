@@ -11,10 +11,10 @@ namespace sql_without_rowid_tables
 namespace rowid_and_without_rowid_tables
 {
 
-using allocator_type = RowIdAndWithoutRowIdDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = RowIdAndWithoutRowIdDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T, typename COMPARE = std::less<T>>
-using SetType = std::set<T, COMPARE, zserio::RebindAlloc<allocator_type, T>>;
+using SetType = std::set<T, COMPARE, zserio::RebindAlloc<AllocatorType, T>>;
 
 class RowIdAndWithoutRowIdTablesTest : public ::testing::Test
 {
@@ -30,8 +30,8 @@ protected:
     bool isColumnInTable(
             zserio::ISqliteDatabase& database, std::string_view columnName, std::string_view tableName)
     {
-        return zserio::ValidationSqliteUtil<allocator_type>::isColumnInTable(
-                database.connection(), "", tableName, columnName, allocator_type());
+        return zserio::ValidationSqliteUtil<AllocatorType>::isColumnInTable(
+                database.connection(), "", tableName, columnName, AllocatorType());
     }
 
     static constexpr std::string_view ORDINARY_ROW_ID_TABLE_NAME = "ordinaryRowIdTable";

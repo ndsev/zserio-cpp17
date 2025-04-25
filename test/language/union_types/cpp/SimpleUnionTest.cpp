@@ -12,7 +12,7 @@ namespace union_types
 namespace simple_union
 {
 
-using AllocatorType = SimpleUnion::AllocatorType;
+using AllocatorType = SimpleUnion::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class SimpleUnionTest : public ::testing::Test

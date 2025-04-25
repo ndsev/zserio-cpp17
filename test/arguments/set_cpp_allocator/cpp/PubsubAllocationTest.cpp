@@ -12,8 +12,8 @@ using namespace test_utils;
 namespace pubsub_allocation
 {
 
-using allocator_type = GreetingPubsub::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = GreetingPubsub::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class PubsubAllocationTest : public ::testing::Test
 {
@@ -39,7 +39,7 @@ public:
     PubsubAllocationTest(PubsubAllocationTest&&) = delete;
     PubsubAllocationTest& operator=(PubsubAllocationTest&&) = delete;
 
-    const allocator_type& getAllocator()
+    const AllocatorType& getAllocator()
     {
         return m_allocator;
     }
@@ -51,7 +51,7 @@ protected:
         size_t subscribeCount = 0;
     };
 
-    class TestPubsubImpl : public TestPubsub<allocator_type>
+    class TestPubsubImpl : public TestPubsub<AllocatorType>
     {
     public:
         explicit TestPubsubImpl(const allocator_type& allocator) :
@@ -83,7 +83,7 @@ protected:
     class NameCallback : public GreetingPubsub::GreetingPubsubCallback<Name>
     {
     public:
-        using allocator_type = pubsub_allocation::allocator_type;
+        using allocator_type = pubsub_allocation::AllocatorType;
 
         explicit NameCallback(GreetingPubsub& pubsub, const allocator_type& allocator) :
                 m_greetingPubsub(pubsub),
@@ -113,7 +113,7 @@ protected:
 
     struct GreetingCallback : public GreetingPubsub::GreetingPubsubCallback<Greeting>
     {
-        using allocator_type = pubsub_allocation::allocator_type;
+        using allocator_type = pubsub_allocation::AllocatorType;
 
         explicit GreetingCallback(const allocator_type& allocator) :
                 greeting(allocator)
@@ -132,7 +132,7 @@ private:
     InvalidMemoryResource m_invalidMemoryResource;
     MemoryResourceScopedSetter m_invalidMemoryResourceSetter;
     TestMemoryResource<4 * 1024> m_memoryResource;
-    allocator_type m_allocator;
+    AllocatorType m_allocator;
     std::unique_ptr<TestPubsubImpl> m_testPubsub;
 
 protected: // must be behind m_allocator

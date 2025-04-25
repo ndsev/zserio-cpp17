@@ -9,9 +9,9 @@ namespace optional_members
 namespace optional_array
 {
 
-using allocator_type = TestStruct::allocator_type;
+using AllocatorType = TestStruct::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 TEST(OptionalArrayTest, data8)
 {

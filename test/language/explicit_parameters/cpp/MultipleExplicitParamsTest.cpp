@@ -12,10 +12,10 @@ namespace explicit_parameters
 namespace multiple_explicit_params
 {
 
-using allocator_type = ExplicitParametersDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = ExplicitParametersDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class MultipleExplicitParamsTest : public ::testing::Test
 {
@@ -109,7 +109,7 @@ protected:
         rows.clear();
         for (uint32_t id = 0; id < NUM_MULTIPLE_PARAMS_ROWS; ++id)
         {
-            const StringType name = "Name" + zserio::toString<allocator_type>(id);
+            const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             MultipleParamsTable::Row row;
             fillRow(row, id, name);
             rows.push_back(row);
@@ -215,7 +215,7 @@ TEST_F(MultipleExplicitParamsTest, update)
     const uint64_t updateRowId = 3;
     MultipleParamsTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "id=" + zserio::toString<allocator_type>(updateRowId);
+    const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     multipleParamsTable.update(parameterProvider, updateRow, updateCondition);
 
     MultipleParamsTable::Reader reader = multipleParamsTable.createReader(parameterProvider, updateCondition);

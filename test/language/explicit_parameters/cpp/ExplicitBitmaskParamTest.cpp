@@ -12,10 +12,10 @@ namespace explicit_parameters
 namespace explicit_bitmask_param
 {
 
-using allocator_type = ExplicitParametersDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = ExplicitParametersDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class ExplicitBitmaskParamTest : public ::testing::Test
 {
@@ -89,7 +89,7 @@ protected:
         rows.clear();
         for (uint32_t id = 0; id < NUM_BITMASK_PARAM_TABLE_ROWS; ++id)
         {
-            const StringType name = "Name" + zserio::toString<allocator_type>(id);
+            const StringType name = "Name" + zserio::toString<AllocatorType>(id);
             BitmaskParamTable::Row row;
             fillRow(row, id, name);
             rows.push_back(row);
@@ -184,7 +184,7 @@ TEST_F(ExplicitBitmaskParamTest, update)
     const uint64_t updateRowId = 3;
     BitmaskParamTable::Row updateRow;
     fillRow(updateRow, updateRowId, "UpdatedName");
-    const StringType updateCondition = "id=" + zserio::toString<allocator_type>(updateRowId);
+    const StringType updateCondition = "id=" + zserio::toString<AllocatorType>(updateRowId);
     bitmaskParamTable.update(parameterProvider, updateRow, updateCondition);
 
     BitmaskParamTable::Reader reader = bitmaskParamTable.createReader(parameterProvider, updateCondition);

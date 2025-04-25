@@ -9,7 +9,7 @@ namespace parameterized_types
 namespace nested_parameterized_field
 {
 
-using allocator_type = TopLevel::allocator_type;
+using AllocatorType = TopLevel::allocator_type;
 
 class NestedParameterizedFieldTest : public ::testing::Test
 {

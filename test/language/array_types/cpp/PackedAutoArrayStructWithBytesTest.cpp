@@ -11,8 +11,8 @@ namespace array_types
 namespace packed_auto_array_struct_with_bytes
 {
 
-using allocator_type = PackedAutoArray::allocator_type;
-using BytesType = zserio::BasicBytes<allocator_type>;
+using AllocatorType = PackedAutoArray::allocator_type;
+using BytesType = zserio::BasicBytes<AllocatorType>;
 
 class PackedAutoArrayStructWithBytesTest : public ::testing::Test
 {

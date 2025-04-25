@@ -7,8 +7,8 @@ namespace builtin_types
 namespace dynamic_bitfield_length_bounds
 {
 
-using allocator_type = Container::allocator_type;
-using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<allocator_type, uint8_t>>;
+using AllocatorType = Container::allocator_type;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 class DynamicBitFieldLengthBoundsTest : public ::testing::Test
 {

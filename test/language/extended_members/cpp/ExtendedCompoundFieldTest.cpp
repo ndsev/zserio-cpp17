@@ -8,9 +8,9 @@ namespace extended_members
 namespace extended_compound_field
 {
 
-using allocator_type = Extended::allocator_type;
+using AllocatorType = Extended::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class ExtendedCompoundFieldTest : public ::testing::Test
 {

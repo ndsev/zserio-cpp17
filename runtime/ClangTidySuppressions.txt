@@ -26,7 +26,7 @@ bugprone-use-after-move:src/zserio/Variant.h:681
 # Specialization of std::hash is allowed.
 cert-dcl58-cpp:src/zserio/BitBuffer.h:595
 cert-dcl58-cpp:src/zserio/BitBuffer.h:607
-cert-dcl58-cpp:src/zserio/Extended.h:231
+cert-dcl58-cpp:src/zserio/Extended.h:240
 cert-dcl58-cpp:src/zserio/Optional.h:1170
 cert-dcl58-cpp:src/zserio/Variant.h:841
 cert-dcl58-cpp:src/zserio/View.h:223
@@ -102,10 +102,10 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:97
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:98
 
 # This is necessary for implementation of low level zserio::Any abstraction.
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:582
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:588
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:618
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:625
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:580
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:586
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:616
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:623
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19
@@ -159,13 +159,8 @@ misc-no-recursion:src/zserio/JsonParser.h:235
 misc-no-recursion:src/zserio/JsonParser.h:253
 misc-no-recursion:src/zserio/JsonParser.h:268
 misc-no-recursion:src/zserio/IntrospectableView.h:1228
-<<<<<<< HEAD
 misc-no-recursion:src/zserio/ReflectableData.h:1296
 misc-no-recursion:src/zserio/ReflectableData.h:1340
-=======
-misc-no-recursion:src/zserio/ReflectableData.h:1303
-misc-no-recursion:src/zserio/ReflectableData.h:1347
->>>>>>> 71b00ce (Fix clang-tidy)
 misc-no-recursion:src/zserio/ReflectableUtil.h:161
 misc-no-recursion:src/zserio/ReflectableUtil.h:197
 misc-no-recursion:src/zserio/ReflectableUtil.h:217
@@ -191,5 +186,7 @@ fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86
+performance-move-const-arg:test/zserio/ExtendedTest.cpp:83
+performance-move-const-arg:test/zserio/ExtendedTest.cpp:91
 performance-move-const-arg:test/zserio/ppmr/PropagatingPolymorphicAllocatorTest.cpp:56
 performance-move-const-arg:test/zserio/ppmr/PropagatingPolymorphicAllocatorTest.cpp:73

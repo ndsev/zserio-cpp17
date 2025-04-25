@@ -12,10 +12,10 @@ namespace sql_virtual_columns
 namespace hidden_virtual_columns
 {
 
-using allocator_type = HiddenVirtualColumnsDb::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = HiddenVirtualColumnsDb::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class HiddenVirtualColumnsTest : public ::testing::Test
 {
@@ -57,7 +57,7 @@ protected:
         rows.clear();
         for (int32_t id = 0; id < NUM_TABLE_ROWS; ++id)
         {
-            const StringType searchTags = "Search Tags" + zserio::toString<allocator_type>(id);
+            const StringType searchTags = "Search Tags" + zserio::toString<AllocatorType>(id);
             HiddenVirtualColumnsTable::Row row;
             fillRow(row, id, searchTags);
             rows.push_back(row);
@@ -84,8 +84,8 @@ protected:
 
     bool isHiddenVirtualColumnInTable(const StringType& columnName)
     {
-        return zserio::ValidationSqliteUtil<allocator_type>::isColumnInTable(
-                m_database->connection(), "", m_tableName, columnName, allocator_type());
+        return zserio::ValidationSqliteUtil<AllocatorType>::isColumnInTable(
+                m_database->connection(), "", m_tableName, columnName, AllocatorType());
     }
 
     static constexpr int32_t NUM_TABLE_ROWS = 5;
@@ -155,7 +155,7 @@ TEST_F(HiddenVirtualColumnsTest, update)
     const int64_t updateDocId = 1;
     HiddenVirtualColumnsTable::Row updateRow;
     fillRow(updateRow, updateDocId, "Updated Search Tags");
-    const StringType updateCondition = "docId='" + zserio::toString<allocator_type>(updateDocId) + "'";
+    const StringType updateCondition = "docId='" + zserio::toString<AllocatorType>(updateDocId) + "'";
     testTable.update(updateRow, updateCondition);
 
     VectorType<HiddenVirtualColumnsTable::Row> readRows;

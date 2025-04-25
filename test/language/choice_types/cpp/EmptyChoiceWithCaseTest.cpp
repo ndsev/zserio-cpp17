@@ -7,7 +7,7 @@ namespace choice_types
 namespace empty_choice_with_case
 {
 
-using AllocatorType = EmptyChoiceWithCase::AllocatorType;
+using AllocatorType = EmptyChoiceWithCase::allocator_type;
 
 TEST(EmptyChoiceWithCaseTest, constructors)
 {

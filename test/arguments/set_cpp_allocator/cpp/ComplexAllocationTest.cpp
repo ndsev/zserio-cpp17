@@ -15,12 +15,12 @@ using namespace test_utils;
 namespace complex_allocation
 {
 
-using allocator_type = MainStructure::allocator_type;
-using StringType = zserio::BasicString<zserio::RebindAlloc<allocator_type, char>>;
+using AllocatorType = MainStructure::allocator_type;
+using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
-using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<allocator_type, uint8_t>>;
+using BitBufferType = zserio::BasicBitBuffer<zserio::RebindAlloc<AllocatorType, uint8_t>>;
 
 class ComplexAllocationTest : public ::testing::Test
 {
@@ -157,7 +157,7 @@ protected:
                 BYTES_ARRAY_ELEMENT1_DATA, static_cast<uint8_t>(BYTES_ARRAY_ELEMENT1_VAR_SIZE * 8));
     }
 
-    void fillStringArray(VectorType<StringType>& stringArray, const allocator_type&)
+    void fillStringArray(VectorType<StringType>& stringArray)
     {
         stringArray.reserve(STRING_ARRAY_SIZE);
         stringArray.emplace_back(STRING_ARRAY_ELEMENT0);
@@ -166,7 +166,7 @@ protected:
     }
 
     void fillChoiceField(
-            allocation_choice::AllocationChoice& choiceField, const allocator_type& allocator, bool hasArray)
+            allocation_choice::AllocationChoice& choiceField, const AllocatorType& allocator, bool hasArray)
     {
         if (hasArray)
         {
@@ -185,7 +185,7 @@ protected:
     }
 
     void fillUnionField(
-            allocation_union::AllocationUnion& unionField, const allocator_type& allocator, bool hasArray)
+            allocation_union::AllocationUnion& unionField, const AllocatorType& allocator, bool hasArray)
     {
         if (hasArray)
         {
@@ -235,7 +235,7 @@ protected:
     }
 
     void fillOptionalField(allocation_struct_optional::AllocationStructOptional& structOptionalField,
-            const allocator_type& allocator)
+            const AllocatorType& allocator)
     {
         VectorType<StringType> names0(allocator);
         names0.reserve(STRUCT_OPTIONAL_NAMES0_SIZE);
@@ -253,7 +253,7 @@ protected:
         structOptionalField.others = std::move(others);
     }
 
-    BitBufferType createExternalField(const allocator_type& allocator)
+    BitBufferType createExternalField(const AllocatorType& allocator)
     {
         const std::array<uint8_t, 2> externalFieldData = {
                 static_cast<uint8_t>(EXTERNAL_FIELD_DATA >> 8U), static_cast<uint8_t>(EXTERNAL_FIELD_DATA)};
@@ -261,7 +261,7 @@ protected:
         return BitBufferType(externalFieldData, EXTERNAL_FIELD_VAR_SIZE, allocator);
     }
 
-    void fillExternalArray(VectorType<BitBufferType>& externalArray, const allocator_type&)
+    void fillExternalArray(VectorType<BitBufferType>& externalArray, const AllocatorType&)
     {
         externalArray.reserve(EXTERNAL_ARRAY_SIZE);
         externalArray.emplace_back(
@@ -274,14 +274,14 @@ protected:
         externalArray.emplace_back(externalElement1Data, EXTERNAL_ARRAY_ELEMENT1_VAR_SIZE);
     }
 
-    VectorType<uint8_t> createBytesField(const allocator_type& allocator)
+    VectorType<uint8_t> createBytesField(const AllocatorType& allocator)
     {
         return VectorType<uint8_t>(
                 {static_cast<uint8_t>(BYTES_FIELD_DATA >> 8U), static_cast<uint8_t>(BYTES_FIELD_DATA)},
                 allocator);
     }
 
-    void fillBytesArray(VectorType<VectorType<uint8_t>>& bytesArray, const allocator_type&)
+    void fillBytesArray(VectorType<VectorType<uint8_t>>& bytesArray, const AllocatorType&)
     {
         bytesArray.reserve(BYTES_ARRAY_SIZE);
         const std::array<uint8_t, 2> bytesArrayElement0Data = {
@@ -291,13 +291,13 @@ protected:
         bytesArray.emplace_back(BYTES_ARRAY_ELEMENT1_VAR_SIZE, BYTES_ARRAY_ELEMENT1_DATA);
     }
 
-    void fillData(MainStructure& data, const allocator_type& allocator, bool hasArray)
+    void fillData(MainStructure& data, const AllocatorType& allocator, bool hasArray)
     {
         // stringField
         data.stringField = STRING_FIELD;
 
         // stringArray[]
-        fillStringArray(data.stringArray, allocator);
+        fillStringArray(data.stringArray);
 
         // hasArray
         data.hasArray = hasArray;
@@ -330,7 +330,7 @@ protected:
     void checkRead(bool hasArray)
     {
         MainStructure expectedReadData;
-        fillData(expectedReadData, allocator_type(), hasArray);
+        fillData(expectedReadData, AllocatorType(), hasArray);
         zserio::View expectedReadView(expectedReadData);
 
         const zserio::View view(expectedReadData);
@@ -346,7 +346,7 @@ protected:
         zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure readData(allocator);
             zserio::View readView = zserio::detail::read(reader, readData);
 
@@ -374,7 +374,7 @@ protected:
 
         TestMemoryResource<1024 * 4> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -419,7 +419,7 @@ protected:
 
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -442,7 +442,7 @@ protected:
     {
         // if allocator is propagating, use invalid memory resource
         const bool hasPropagatingAllocator =
-                std::allocator_traits<allocator_type>::propagate_on_container_copy_assignment::value;
+                std::allocator_traits<AllocatorType>::propagate_on_container_copy_assignment::value;
 
         InvalidMemoryResource invalidMemoryResource;
         HeapMemoryResource heapMemoryResource;
@@ -452,7 +452,7 @@ protected:
 
         TestMemoryResource<1024 * 4> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -497,7 +497,7 @@ protected:
 
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -524,7 +524,7 @@ protected:
 
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -539,7 +539,7 @@ protected:
     void checkFieldConstructor(bool hasArray)
     {
         MainStructure expectedData;
-        fillData(expectedData, allocator_type(), hasArray);
+        fillData(expectedData, AllocatorType(), hasArray);
 
         // check that default memory resource won't be used
         InvalidMemoryResource invalidMemoryResource;
@@ -547,14 +547,14 @@ protected:
 
         TestMemoryResource<1024 * 3> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
 
             // string field
             StringType stringField(STRING_FIELD, allocator);
 
             // stringArray
             VectorType<StringType> stringArray(allocator);
-            fillStringArray(stringArray, allocator);
+            fillStringArray(stringArray);
 
             // choiceField
             allocation_choice::AllocationChoice choiceField(allocator);
@@ -615,7 +615,7 @@ protected:
 
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -648,15 +648,15 @@ protected:
         TestMemoryResource<> memoryResource2("Memory Resource #2");
         TestMemoryResource<> memoryResource3("Memory Resource #3");
         {
-            const allocator_type allocator1(&memoryResource1);
+            const AllocatorType allocator1(&memoryResource1);
             MainStructure data(allocator1);
             fillData(data, allocator1, hasArray);
 
-            const allocator_type allocator2(&memoryResource2);
+            const AllocatorType allocator2(&memoryResource2);
             MainStructure equalData(allocator2);
             fillData(equalData, allocator2, hasArray);
 
-            const allocator_type allocator3(&memoryResource3);
+            const AllocatorType allocator3(&memoryResource3);
             MainStructure lessThanData(allocator3);
             fillData(lessThanData, allocator3, hasArray);
             lessThanData.structField.bit7Array.at(0) = STRUCT_BIT7_ARRAY_ELEMENT0 - 1;
@@ -704,16 +704,16 @@ protected:
         TestMemoryResource<> memoryResource2("Memory Resource #2");
         TestMemoryResource<> memoryResource3("Memory Resource #3");
         {
-            const allocator_type allocator1(&memoryResource1);
+            const AllocatorType allocator1(&memoryResource1);
             MainStructure data(allocator1);
             fillData(data, allocator1, hasArray);
             const size_t dataHash = hasArray ? 1549832418 : 4121278947;
 
-            const allocator_type allocator2(&memoryResource2);
+            const AllocatorType allocator2(&memoryResource2);
             MainStructure equalData(allocator2);
             fillData(equalData, allocator2, hasArray);
 
-            const allocator_type allocator3(&memoryResource3);
+            const AllocatorType allocator3(&memoryResource3);
             MainStructure diffData(allocator3);
             fillData(diffData, allocator3, hasArray);
             diffData.structField.bit7Array.at(0) = STRUCT_BIT7_ARRAY_ELEMENT0 - 1;
@@ -765,7 +765,7 @@ protected:
 
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -800,7 +800,7 @@ protected:
 
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -831,7 +831,7 @@ protected:
 
         TestMemoryResource<> memoryResource("Memory Resource #1");
         {
-            const allocator_type allocator(&memoryResource);
+            const AllocatorType allocator(&memoryResource);
             MainStructure data(allocator);
             fillData(data, allocator, hasArray);
 
@@ -863,10 +863,10 @@ private:
     {
         // if allocator is propagating, use invalid memory resource
         InvalidMemoryResource dummyMemoryResource;
-        allocator_type dummyAllocator(&dummyMemoryResource);
+        AllocatorType dummyAllocator(&dummyMemoryResource);
 
         return (dummyAllocator ==
-                std::allocator_traits<allocator_type>::select_on_container_copy_construction(dummyAllocator));
+                std::allocator_traits<AllocatorType>::select_on_container_copy_construction(dummyAllocator));
     }
 
     static constexpr const char* STRING_FIELD = "String Field Must Be Longer Than 32 Bytes";

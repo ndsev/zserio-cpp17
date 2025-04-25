@@ -8,9 +8,9 @@ namespace offsets
 namespace packed_auto_array_offset
 {
 
-using allocator_type = AutoArrayHolder::allocator_type;
+using AllocatorType = AutoArrayHolder::allocator_type;
 template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<allocator_type, T>>;
+using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
 class PackedAutoArrayOffsetTest : public ::testing::Test
 {
