@@ -11,6 +11,24 @@ bugprone-exception-escape:gen_string_expressions/type_info_string_expressions/Ty
 bugprone-reserved-identifier:gen_type_info_code/with_type_info_code/TestBitmask.h
 bugprone-reserved-identifier:gen_type_info_code/with_type_info_code/TestEnum.h
 
+misc-unused-parameters:gen_type_info_code/with_type_info_code/ComplexStruct.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/ParameterizedStruct.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/RecursiveChoice.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/RecursiveStruct.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/RecursiveUnion.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/SimpleChoice.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/SimpleStruct.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/SimpleUnion.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/TS32.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/TemplatedParameterizedStruct_TS32.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/WithTypeInfoCode.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/TestChoice.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/TestStruct.cpp
+misc-unused-parameters:gen_type_info_code/with_type_info_code/TypeInfoStringExpressions.cpp
+misc-unused-parameters:gen_string_expressions/type_info_string_expressions/TestChoice.cpp
+misc-unused-parameters:gen_string_expressions/type_info_string_expressions/TestStruct.cpp
+misc-unused-parameters:gen_string_expressions/type_info_string_expressions/TypeInfoStringExpressions.cpp
+
 cppcoreguidelines-pro-bounds-constant-array-index:gen_type_info_code/with_type_info_code/Fts4Table.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:gen_type_info_code/with_type_info_code/SqlTable.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:gen_type_info_code/with_type_info_code/TemplatedSqlTableU8.cpp
