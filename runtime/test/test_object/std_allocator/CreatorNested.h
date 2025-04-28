@@ -38,7 +38,7 @@ struct CreatorNested
     CreatorNested() noexcept;
     explicit CreatorNested(const AllocatorType& allocator) noexcept;
 
-    explicit CreatorNested(
+    CreatorNested(
             ::zserio::UInt32 value_,
             ::zserio::String text_,
             ::zserio::BitBuffer externData_,

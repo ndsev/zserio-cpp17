@@ -40,7 +40,7 @@ struct WalkerObject
     WalkerObject() noexcept;
     explicit WalkerObject(const AllocatorType& allocator) noexcept;
 
-    explicit WalkerObject(
+    WalkerObject(
             ::zserio::UInt32 identifier_,
             ::zserio::pmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested_,
             ::zserio::pmr::String text_,

@@ -120,11 +120,11 @@ template <>
 template <>
 ::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::polymorphic_allocator::CreatorUnsignedEnum value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::CreatorUnsignedEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::IntrospectableViewBase<::test_object::polymorphic_allocator::CreatorUnsignedEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::polymorphic_allocator::CreatorUnsignedEnum value) :
-                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::polymorphic_allocator::CreatorUnsignedEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                ::zserio::detail::IntrospectableViewBase<::test_object::polymorphic_allocator::CreatorUnsignedEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         typeInfo<::test_object::polymorphic_allocator::CreatorUnsignedEnum, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>(), value)
         {}
 

@@ -34,7 +34,7 @@ struct ReflectableUtilObject
     ReflectableUtilObject() noexcept;
     explicit ReflectableUtilObject(const AllocatorType& allocator) noexcept;
 
-    explicit ReflectableUtilObject(
+    ReflectableUtilObject(
             ::zserio::UInt8 choiceParam_,
             ::test_object::std_allocator::ReflectableUtilChoice reflectableUtilChoice_);
 

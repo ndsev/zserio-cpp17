@@ -38,7 +38,7 @@ struct ReflectableObject
     ReflectableObject() noexcept;
     explicit ReflectableObject(const AllocatorType& allocator) noexcept;
 
-    explicit ReflectableObject(
+    ReflectableObject(
             ::zserio::pmr::String stringField_,
             ::test_object::polymorphic_allocator::ReflectableNested reflectableNested_,
             ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum_,

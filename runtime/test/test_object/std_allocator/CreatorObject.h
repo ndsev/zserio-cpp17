@@ -40,7 +40,7 @@ struct CreatorObject
     CreatorObject() noexcept;
     explicit CreatorObject(const AllocatorType& allocator) noexcept;
 
-    explicit CreatorObject(
+    CreatorObject(
             ::zserio::UInt32 value_,
             ::test_object::std_allocator::CreatorNested nested_,
             ::zserio::String text_,
