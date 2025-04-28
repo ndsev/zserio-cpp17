@@ -114,11 +114,11 @@ template <>
 template <>
 ::zserio::ppmr::IIntrospectableViewConstPtr introspectable(::test_object::ppmr_allocator::CreatorBitmask value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::ppmr_allocator::CreatorBitmask, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::IntrospectableViewBase<::test_object::ppmr_allocator::CreatorBitmask, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::ppmr_allocator::CreatorBitmask bitmask) :
-                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::ppmr_allocator::CreatorBitmask, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(
+                ::zserio::detail::IntrospectableViewBase<::test_object::ppmr_allocator::CreatorBitmask, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         typeInfo<::test_object::ppmr_allocator::CreatorBitmask, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(), bitmask)
         {}
         ::test_object::ppmr_allocator::CreatorBitmask::ZserioType::ValueType getUInt8() const override

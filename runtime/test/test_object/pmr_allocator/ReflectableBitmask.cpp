@@ -119,11 +119,11 @@ template <>
 template <>
 ::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::pmr_allocator::ReflectableBitmask value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::pmr_allocator::ReflectableBitmask, ::std::pmr::polymorphic_allocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::IntrospectableViewBase<::test_object::pmr_allocator::ReflectableBitmask, ::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::pmr_allocator::ReflectableBitmask bitmask) :
-                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::pmr_allocator::ReflectableBitmask, ::std::pmr::polymorphic_allocator<uint8_t>>(
+                ::zserio::detail::IntrospectableViewBase<::test_object::pmr_allocator::ReflectableBitmask, ::std::pmr::polymorphic_allocator<uint8_t>>(
                         typeInfo<::test_object::pmr_allocator::ReflectableBitmask, ::std::pmr::polymorphic_allocator<uint8_t>>(), bitmask)
         {}
         ::test_object::pmr_allocator::ReflectableBitmask::ZserioType::ValueType getUInt8() const override

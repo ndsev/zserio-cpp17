@@ -58,66 +58,18 @@ public:
     virtual ConstPtr callFunction(std::string_view name) const = 0;
 
     /**
-     * Initializes indexed offsets of the introspectable compound object.
+     * Serializes the introspectable compound object.
      *
-     * This method actually breaks the read-only concepts because it sets the offsets in the underlying data.
-     *
-     * \param bitPosition The bit stream position to be used for calculation.
+     * \param allocator Allocator to use for the value allocation.
      *
      * \throw CppRuntimeException When the introspectable object is not a compound.
      *
-     * \return Updated bit position which points to the first bit after the compound.
+     * \return Allocated bit buffer containing the serialized compound object.
      */
-    virtual BitSize initializeOffsets(BitSize bitPosition) const = 0;
-
-    /**
-     * Initializes indexed offsets of the introspectable compound object.
-     *
-     * This method actually breaks the read-only concepts because it sets the offsets in the underlying data.
-     * The bit stream position to be used for calculation is defaulted to zero.
-     *
-     * \throw CppRuntimeException When the introspectable object is not a compound.
-     *
-     * \return Updated bit position which points to the first bit after the compound.
-     */
-    virtual BitSize initializeOffsets() const = 0;
-
-    /**
-     * Gets the number of bits needed for serialization of the introspectable object.
-     *
-     * \note Works for all introspectable types except arrays!
-     *
-     * \param bitPosition The bit stream position to be used for calculation.
-     *
-     * \throw CppRuntimeException When the introspectable object is an array.
-     *
-     * \return The size of the serialized introspectable object in bits.
-     */
-    virtual BitSize bitSizeOf(BitSize bitPosition) const = 0;
-
-    /**
-     * Gets the number of bits needed for serialization of the introspectable object.
-     *
-     * The bit stream position to be used for calculation is defaulted to zero.
-     *
-     * \note Works for all introspectable types except arrays!
-     *
-     * \throw CppRuntimeException When the introspectable object is an array.
-     *
-     * \return The size of the serialized introspectable object in bits.
-     */
-    virtual BitSize bitSizeOf() const = 0;
-
-    /**
-     * Writes the introspectable object to a bit stream using the given bit stream writer.
-     *
-     * \note Works for all introspectable types except arrays!
-     *
-     * \param writer Bit stream writer to use.
-     *
-     * \throw CppRuntimeException When the introspectable object is an array.
-     */
-    virtual void write(BitStreamWriter& writer) const = 0;
+    /** \{ */
+    virtual BasicBitBuffer<ALLOC> serialize(const ALLOC& allocator) const = 0;
+    virtual BasicBitBuffer<ALLOC> serialize() const = 0;
+    /** \} */
 };
 
 /** Typedef to introspectable smart pointer needed for convenience in generated code. */

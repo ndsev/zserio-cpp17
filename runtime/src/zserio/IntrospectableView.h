@@ -4,6 +4,7 @@
 #include "zserio/ArrayView.h"
 #include "zserio/IIntrospectableView.h"
 #include "zserio/IntrospectableDataBase.h"
+#include "zserio/SerializeUtil.h"
 #include "zserio/TypeInfoUtil.h"
 
 namespace zserio
@@ -87,33 +88,16 @@ public:
                 << "' has no functions to call!";
     }
 
-    BitSize initializeOffsets(BitSize) const override
+    BasicBitBuffer<ALLOC> serialize(const ALLOC&) const override
     {
         throw CppRuntimeException("Type '")
                 << IntrospectableViewBase<T, ALLOC>::getTypeInfo().getSchemaName()
                 << "' is not a compound type!";
     }
 
-    BitSize initializeOffsets() const override
+    BasicBitBuffer<ALLOC> serialize() const override
     {
-        return initializeOffsets(0);
-    }
-
-    BitSize bitSizeOf(BitSize) const override
-    {
-        throw CppRuntimeException("Type '")
-                << IntrospectableViewBase<T, ALLOC>::getTypeInfo().getSchemaName() << "' is not implemented!";
-    }
-
-    BitSize bitSizeOf() const override
-    {
-        return bitSizeOf(0);
-    }
-
-    void write(BitStreamWriter&) const override
-    {
-        throw CppRuntimeException("Type '")
-                << IntrospectableViewBase<T, ALLOC>::getTypeInfo().getSchemaName() << "' is not implemented!";
+        return serialize(ALLOC());
     }
 
 private:
@@ -127,43 +111,17 @@ private:
 };
 
 /**
- * Base class for introspectable numeric (arithmetic) types, string view and span.
- */
-template <typename T, typename ALLOC>
-class SimpleIntrospectableViewBase : public IntrospectableViewBase<T, ALLOC>
-{
-private:
-    using Base = IntrospectableViewBase<T, ALLOC>;
-
-protected:
-    SimpleIntrospectableViewBase(const IBasicTypeInfo<ALLOC>& typeInfo, T value) :
-            Base(typeInfo, value)
-    {}
-
-public:
-    BitSize bitSizeOf(BitSize bitPosition) const override
-    {
-        return detail::bitSizeOf(Base::getValue(), bitPosition);
-    }
-
-    void write(BitStreamWriter& writer) const override
-    {
-        detail::write(writer, Base::getValue());
-    }
-};
-
-/**
  * Base class for integral introspectables.
  *
  * Implements toString() and toDouble() conversions.
  */
 template <typename T, typename ALLOC>
-class IntegralIntrospectableViewBase : public SimpleIntrospectableViewBase<T, ALLOC>
+class IntegralIntrospectableViewBase : public IntrospectableViewBase<T, ALLOC>
 {
 protected:
     static_assert(std::is_integral_v<typename T::ValueType>, "T must be a signed integral type!");
 
-    using Base = SimpleIntrospectableViewBase<T, ALLOC>;
+    using Base = IntrospectableViewBase<T, ALLOC>;
 
 public:
     IntegralIntrospectableViewBase(const IBasicTypeInfo<ALLOC>& typeInfo, T value) :
@@ -601,12 +559,12 @@ public:
  * Base class for floating point introspectables.
  */
 template <typename T, typename ALLOC>
-class FloatingPointIntrospectableViewBase : public SimpleIntrospectableViewBase<T, ALLOC>
+class FloatingPointIntrospectableViewBase : public IntrospectableViewBase<T, ALLOC>
 {
 protected:
     static_assert(std::is_floating_point_v<typename T::ValueType>, "T must be a floating point type!");
 
-    using Base = SimpleIntrospectableViewBase<T, ALLOC>;
+    using Base = IntrospectableViewBase<T, ALLOC>;
     using Base::Base;
 
 public:
@@ -660,10 +618,10 @@ public:
  * Introspectable for values of bytes type.
  */
 template <typename ALLOC>
-class BytesIntrospectableView : public SimpleIntrospectableViewBase<BytesView, ALLOC>
+class BytesIntrospectableView : public IntrospectableViewBase<BytesView, ALLOC>
 {
 private:
-    using Base = SimpleIntrospectableViewBase<BytesView, ALLOC>;
+    using Base = IntrospectableViewBase<BytesView, ALLOC>;
 
 public:
     explicit BytesIntrospectableView(BytesView value) :
@@ -680,10 +638,10 @@ public:
  * Instrospectable for values of string type.
  */
 template <typename ALLOC>
-class StringIntrospectableView : public SimpleIntrospectableViewBase<std::string_view, ALLOC>
+class StringIntrospectableView : public IntrospectableViewBase<std::string_view, ALLOC>
 {
 private:
-    using Base = SimpleIntrospectableViewBase<std::string_view, ALLOC>;
+    using Base = IntrospectableViewBase<std::string_view, ALLOC>;
 
 public:
     explicit StringIntrospectableView(std::string_view value) :
@@ -705,10 +663,10 @@ public:
  * Introspectable for values of bit buffer type.
  */
 template <typename ALLOC>
-class BitBufferIntrospectableView : public SimpleIntrospectableViewBase<BasicBitBufferView<ALLOC>, ALLOC>
+class BitBufferIntrospectableView : public IntrospectableViewBase<BasicBitBufferView<ALLOC>, ALLOC>
 {
 private:
-    using Base = SimpleIntrospectableViewBase<BasicBitBufferView<ALLOC>, ALLOC>;
+    using Base = IntrospectableViewBase<BasicBitBufferView<ALLOC>, ALLOC>;
 
 public:
     explicit BitBufferIntrospectableView(BasicBitBufferView<ALLOC> value) :
@@ -1069,17 +1027,7 @@ public:
         throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
     }
 
-    BitSize initializeOffsets(BitSize) const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    BitSize bitSizeOf(BitSize) const override
-    {
-        throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
-    }
-
-    void write(BitStreamWriter&) const override
+    BasicBitBuffer<ALLOC> serialize(const ALLOC&) const override
     {
         throw CppRuntimeException("Introspectable is an array '") << getTypeInfo().getSchemaName() << "[]'!";
     }
@@ -1099,19 +1047,9 @@ public:
             AllocatorHolder<ALLOC>(allocator)
     {}
 
-    BitSize initializeOffsets(BitSize bitPosition) const override
+    BasicBitBuffer<ALLOC> serialize(const ALLOC& allocator) const override
     {
-        return zserio::detail::initializeOffsets(Base::getValue(), bitPosition);
-    }
-
-    BitSize bitSizeOf(BitSize bitPosition) const override
-    {
-        return zserio::detail::bitSizeOf(Base::getValue(), bitPosition);
-    }
-
-    void write(BitStreamWriter& writer) const override
-    {
-        zserio::detail::write(writer, Base::getValue());
+        return zserio::serialize(Base::getValue(), allocator);
     }
 };
 

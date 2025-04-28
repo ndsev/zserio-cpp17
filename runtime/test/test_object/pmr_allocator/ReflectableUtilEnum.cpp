@@ -120,11 +120,11 @@ template <>
 template <>
 ::zserio::pmr::IIntrospectableViewConstPtr introspectable(::test_object::pmr_allocator::ReflectableUtilEnum value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::pmr_allocator::ReflectableUtilEnum, ::std::pmr::polymorphic_allocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::IntrospectableViewBase<::test_object::pmr_allocator::ReflectableUtilEnum, ::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::pmr_allocator::ReflectableUtilEnum value) :
-                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::pmr_allocator::ReflectableUtilEnum, ::std::pmr::polymorphic_allocator<uint8_t>>(
+                ::zserio::detail::IntrospectableViewBase<::test_object::pmr_allocator::ReflectableUtilEnum, ::std::pmr::polymorphic_allocator<uint8_t>>(
                         typeInfo<::test_object::pmr_allocator::ReflectableUtilEnum, ::std::pmr::polymorphic_allocator<uint8_t>>(), value)
         {}
 

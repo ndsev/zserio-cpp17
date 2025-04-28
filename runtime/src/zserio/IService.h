@@ -81,9 +81,7 @@ public:
         if (m_introspectable && m_data.getBitSize() == 0)
         {
             // lazy initialization
-            m_data = BasicBitBuffer<ALLOC>(m_introspectable->initializeOffsets(), m_data.get_allocator());
-            BitStreamWriter writer(m_data);
-            m_introspectable->write(writer);
+            m_data = m_introspectable->serialize(m_data.get_allocator());
         }
         return m_data.getData();
     }

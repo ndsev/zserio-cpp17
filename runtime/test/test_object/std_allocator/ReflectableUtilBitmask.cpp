@@ -114,11 +114,11 @@ template <>
 template <>
 ::zserio::IIntrospectableViewConstPtr introspectable(::test_object::std_allocator::ReflectableUtilBitmask value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>
+    class Introspectable : public ::zserio::detail::IntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>
     {
     public:
         explicit Introspectable(::test_object::std_allocator::ReflectableUtilBitmask bitmask) :
-                ::zserio::detail::SimpleIntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>(
+                ::zserio::detail::IntrospectableViewBase<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>(
                         typeInfo<::test_object::std_allocator::ReflectableUtilBitmask, ::std::allocator<uint8_t>>(), bitmask)
         {}
         ::test_object::std_allocator::ReflectableUtilBitmask::ZserioType::ValueType getUInt8() const override

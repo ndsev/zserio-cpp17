@@ -113,11 +113,11 @@ ${types.reflectablePtr.name} reflectable(${fullName} value, const ${types.alloca
 template <>
 ${types.introspectableConstPtr.name} introspectable(${fullName} value, const ${types.allocator.default}& allocator)
 {
-    class Introspectable : public ::zserio::detail::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+    class Introspectable : public ::zserio::detail::IntrospectableViewBase<${fullName}, ${types.allocator.default}>
     {
     public:
         explicit Introspectable(${fullName} bitmask) :
-                ::zserio::detail::SimpleIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+                ::zserio::detail::IntrospectableViewBase<${fullName}, ${types.allocator.default}>(
                         typeInfo<${fullName}, ${types.allocator.default}>(), bitmask)
         {}
         <#-- bitmask is always unsigned -->

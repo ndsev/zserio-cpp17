@@ -116,7 +116,7 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:99
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:100
 
 # This multiple inheritance is intended and we think that to avoid it would mean much more obscure design.
-fuchsia-multiple-inheritance:src/zserio/IntrospectableView.h:923
+fuchsia-multiple-inheritance:src/zserio/IntrospectableView.h:881
 fuchsia-multiple-inheritance:src/zserio/ReflectableData.h:516
 
 # Optional follows std::optional so the ctors should be implicit.
@@ -157,6 +157,7 @@ misc-no-recursion
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
+google-build-using-namespace:test/zserio/IntrospectableViewTest.cpp:14
 bugprone-use-after-move:test/zserio/OptionalTest.cpp:284
 bugprone-use-after-move:test/zserio/OptionalTest.cpp:292
 bugprone-use-after-move:test/zserio/VariantTest.cpp:170
@@ -172,7 +173,6 @@ cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
 cppcoreguidelines-pro-type-reinterpret-cast:test/zserio/SqliteConnectionTest.cpp:321
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
-google-build-using-namespace:test/zserio/IntrospectableViewTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86

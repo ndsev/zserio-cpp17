@@ -165,59 +165,26 @@ protected:
         creator.endArray();
     }
 
-    void checkWriteThrows(const IIntrospectableView& introspectableView)
+    void checkSerializeThrows(const IIntrospectableView& introspectableView)
     {
-        zserio::BitBuffer bitBuffer;
-        zserio::BitStreamWriter writer(bitBuffer);
-        ASSERT_THROW(introspectableView.write(writer), zserio::CppRuntimeException);
-    }
-
-    // for builtin types
-    template <typename CHECKER>
-    void checkWriteReadBuiltin(const IIntrospectableView& introspectableView, const CHECKER& checker)
-    {
-        zserio::BitBuffer bitBuffer(1024 * 8);
-        zserio::BitStreamWriter writer(bitBuffer);
-        introspectableView.write(writer);
-        const size_t bitSizeOf = introspectableView.bitSizeOf();
-        ASSERT_EQ(bitSizeOf, writer.getBitPosition());
-
-        zserio::BitStreamReader reader(bitBuffer);
-        checker(reader);
-        ASSERT_EQ(bitSizeOf, reader.getBitPosition());
+        ASSERT_THROW(introspectableView.serialize(), zserio::CppRuntimeException);
     }
 
     template <typename T, typename... ARGS>
-    void checkWriteRead(
+    void checkSerialize(
             const IIntrospectableView& introspectableView, const zserio::View<T>& originalView, ARGS... args)
     {
-        const size_t bitSizeOf = introspectableView.bitSizeOf();
-        zserio::BitBuffer bitBuffer(bitSizeOf);
-        zserio::BitStreamWriter writer(bitBuffer);
-        introspectableView.write(writer);
-        ASSERT_EQ(bitSizeOf, writer.getBitPosition());
+        BitBuffer bitBuffer = introspectableView.serialize();
+
+        T deserializeObject;
+        zserio::View<T> deserializeView = zserio::deserialize<T>(bitBuffer, deserializeObject, args...);
+        ASSERT_EQ(originalView, deserializeView);
 
         zserio::BitStreamReader reader(bitBuffer);
         T readObject;
         zserio::View<T> readView = zserio::detail::read(reader, readObject, args...);
         ASSERT_EQ(originalView, readView);
-        ASSERT_EQ(bitSizeOf, reader.getBitPosition());
-    }
-
-    template <typename T, std::enable_if_t<std::is_enum_v<T> || zserio::is_bitmask_v<T>, int> = 0>
-    void checkWriteReadValue(const IIntrospectableView& introspectableView, T value)
-    {
-        const size_t bitSizeOf = introspectableView.bitSizeOf();
-        zserio::BitBuffer bitBuffer(bitSizeOf);
-        zserio::BitStreamWriter writer(bitBuffer);
-        introspectableView.write(writer);
-        ASSERT_EQ(bitSizeOf, writer.getBitPosition());
-
-        zserio::BitStreamReader reader(bitBuffer);
-        T readValue{};
-        zserio::detail::read(reader, readValue);
-        ASSERT_EQ(value, readValue);
-        ASSERT_EQ(bitSizeOf, reader.getBitPosition());
+        ASSERT_EQ(bitBuffer.getBitSize(), reader.getBitPosition());
     }
 
     void checkStructReflectable(
@@ -242,18 +209,11 @@ protected:
         ASSERT_TRUE(introspectableView["childArray"]->at(1)->find("nicknames")->isArray());
         ASSERT_EQ(2, introspectableView["childArray"]->at(1)->find("nicknames")->size());
         ASSERT_EQ("first", introspectableView["childArray"]->at(1)->find("nicknames")->at(1)->toString());
-        checkWriteThrows(*(introspectableView["childArray"]));
-        checkWriteRead(*(introspectableView["childArray"]->at(1)), structureView.childArray()[1]);
-        checkWriteReadBuiltin(*(introspectableView["childArray"]->at(1)->getField("name")),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.childArray()[1].name(), reader.readString<StringAllocatorType>());
-                });
-        checkWriteThrows(*(introspectableView["childArray"]->at(1)->getField("nicknames")));
-        checkWriteReadBuiltin(*(introspectableView["childArray"]->at(1)->getField("nicknames")->at(1)),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.childArray()[1].nicknames()->at(1),
-                            reader.readString<StringAllocatorType>());
-                });
+        checkSerializeThrows(*(introspectableView["childArray"]));
+        checkSerialize(*(introspectableView["childArray"]->at(1)), structureView.childArray()[1]);
+        checkSerializeThrows(*(introspectableView["childArray"]->at(1)->getField("name")));
+        checkSerializeThrows(*(introspectableView["childArray"]->at(1)->getField("nicknames")));
+        checkSerializeThrows(*(introspectableView["childArray"]->at(1)->getField("nicknames")->at(1)));
 
         // uint8 param;
         ASSERT_EQ(5, introspectableView.getField("param")->getUInt8());
@@ -261,10 +221,7 @@ protected:
         ASSERT_EQ("5", introspectableView.getField("param")->toString());
         ASSERT_THROW(introspectableView.getField("param")->toInt(), zserio::CppRuntimeException);
         ASSERT_THROW(introspectableView.getField("param")->getInt8(), zserio::CppRuntimeException);
-        checkWriteReadBuiltin(
-                *(introspectableView.getField("param")), [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.param(), reader.readUnsignedBits32(8));
-                });
+        checkSerializeThrows(*(introspectableView.getField("param")));
 
         // Parameterized(param) parameterized;
         ASSERT_EQ(5, introspectableView["parameterized.param"]->getUInt8());
@@ -276,8 +233,8 @@ protected:
         ASSERT_EQ(5, introspectableView["parameterized.array"]->at(4)->getUInt8());
         ASSERT_EQ(4, (*(introspectableView["parameterized.array"]))[3]->toUInt());
         ASSERT_THROW((*(introspectableView["parameterized.array"]))[4]->toInt(), zserio::CppRuntimeException);
-        checkWriteThrows(*(introspectableView["parameterized.array"]));
-        checkWriteRead(
+        checkSerializeThrows(*(introspectableView["parameterized.array"]));
+        checkSerialize(
                 *(introspectableView["parameterized"]), structureView.parameterized(), structureView.param());
 
         // varsize len : len > 0 && len < 1000;
@@ -288,28 +245,22 @@ protected:
         ASSERT_EQ(4, introspectableView.find("len")->toUInt());
         ASSERT_EQ(4.0, introspectableView.find("len")->toDouble());
         ASSERT_THROW(introspectableView.find("len")->toInt(), zserio::CppRuntimeException);
-        checkWriteReadBuiltin(
-                *(introspectableView.find("len")), [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.len(), reader.readVarSize());
-                });
+        checkSerializeThrows(*(introspectableView.find("len")));
 
         // uint32 offsets[len];
         ASSERT_TRUE(introspectableView.getField("offsets")->isArray());
         ASSERT_EQ(4, introspectableView.getField("offsets")->size());
         ASSERT_NE(0, introspectableView.getField("offsets")->at(0)->getUInt32()); // offset shall be initialized
         ASSERT_NE(0, introspectableView.getField("offsets")->at(0)->toDouble());
-        checkWriteThrows(*(introspectableView.getField("offsets")));
-        checkWriteReadBuiltin(*(introspectableView.getField("offsets")->at(0)),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.offsets()[0], reader.readUnsignedBits32(32));
-                });
+        checkSerializeThrows(*(introspectableView.getField("offsets")));
+        checkSerializeThrows(*(introspectableView.getField("offsets")->at(0)));
 
         // Parameterized(param) parameterizedArray[len];
         ASSERT_TRUE(introspectableView.getField("parameterizedArray")->isArray());
         ASSERT_EQ(4, introspectableView.getField("parameterizedArray")->size());
         ASSERT_EQ("3", introspectableView["parameterizedArray"]->at(2)->find("array")->at(2)->toString());
-        checkWriteThrows(*(introspectableView["parameterizedArray"]));
-        checkWriteRead(*(introspectableView["parameterizedArray"]->at(2)),
+        checkSerializeThrows(*(introspectableView["parameterizedArray"]));
+        checkSerialize(*(introspectableView["parameterizedArray"]->at(2)),
                 structureView.parameterizedArray()[2], structureView.param());
 
         // Bitmask bitmaskField;
@@ -319,15 +270,15 @@ protected:
                 introspectableView.getField("bitmaskField")->toDouble());
         ASSERT_EQ(Bitmask(Bitmask::Values::FLAG1 | Bitmask::Values::FLAG2).toString(),
                 introspectableView.getField("bitmaskField")->toString());
-        checkWriteReadValue(*(introspectableView.getField("bitmaskField")), structureView.bitmaskField());
+        checkSerializeThrows(*(introspectableView.getField("bitmaskField")));
 
         // Bitmask bitmaskArray[];
         ASSERT_TRUE(introspectableView.getField("bitmaskArray")->isArray());
         ASSERT_EQ(2, introspectableView.getField("bitmaskArray")->size());
         ASSERT_EQ(Bitmask(Bitmask::Values::FLAG1).getValue(),
                 introspectableView["bitmaskArray"]->at(0)->toUInt());
-        checkWriteThrows(*(introspectableView["bitmaskArray"]));
-        checkWriteReadValue(*(introspectableView["bitmaskArray"]->at(0)), structureView.bitmaskArray()[0]);
+        checkSerializeThrows(*(introspectableView["bitmaskArray"]));
+        checkSerializeThrows(*(introspectableView["bitmaskArray"]->at(0)));
 
         // SelectorEnum enumField;
         ASSERT_EQ(zserio::SchemaType::ENUM, introspectableView["enumField"]->getTypeInfo().getSchemaType());
@@ -335,7 +286,7 @@ protected:
         ASSERT_EQ(zserio::enumToValue(Selector::STRUCT), introspectableView.getField("enumField")->getInt8());
         ASSERT_THROW(introspectableView.getField("enumField")->toUInt(), zserio::CppRuntimeException);
         ASSERT_EQ(zserio::enumToString(Selector::STRUCT), introspectableView.getField("enumField")->toString());
-        checkWriteReadValue(*(introspectableView.getField("enumField")), structureView.enumField());
+        checkSerializeThrows(*(introspectableView.getField("enumField")));
 
         // Selector enumArray[];
         ASSERT_EQ(zserio::SchemaType::ENUM, introspectableView["enumArray"]->getTypeInfo().getSchemaType());
@@ -348,18 +299,14 @@ protected:
         ASSERT_TRUE(introspectableView["enumArray"]->isArray());
         ASSERT_EQ(zserio::enumToValue(Selector::STRUCT), introspectableView["enumArray"]->at(0)->getInt8());
         ASSERT_EQ(zserio::enumToValue(Selector::STRUCT), introspectableView["enumArray"]->at(0)->toDouble());
-        checkWriteThrows(*(introspectableView.getField("enumArray")));
-        checkWriteReadValue(*(introspectableView.getField("enumArray")->at(0)), structureView.enumArray()[0]);
+        checkSerializeThrows(*(introspectableView.getField("enumArray")));
+        checkSerializeThrows(*(introspectableView.getField("enumArray")->at(0)));
 
         // bit<param> dynamicBitField if param < 64;
         ASSERT_EQ(31, introspectableView["dynamicBitField"]->toUInt());
         ASSERT_EQ(31, introspectableView["dynamicBitField"]->getUInt64());
         ASSERT_THROW(introspectableView["dynamicBitField"]->getUInt8(), zserio::CppRuntimeException);
-        checkWriteReadBuiltin(
-                *(introspectableView["dynamicBitField"]), [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(
-                            structureView.dynamicBitField(), reader.readUnsignedBits64(structureView.param()));
-                });
+        checkSerializeThrows(*(introspectableView["dynamicBitField"]));
 
         // bit<param> dynamicBitFieldArray[];
         ASSERT_TRUE(introspectableView.getField("dynamicBitFieldArray")->isArray());
@@ -368,12 +315,8 @@ protected:
         ASSERT_EQ(20, introspectableView["dynamicBitFieldArray"]->at(1)->toUInt());
         ASSERT_EQ(20.0, introspectableView["dynamicBitFieldArray"]->at(1)->toDouble());
         ASSERT_EQ("30", introspectableView["dynamicBitFieldArray"]->at(2)->toString());
-        checkWriteThrows(*(introspectableView["dynamicBitFieldArray"]));
-        checkWriteReadBuiltin(*(introspectableView["dynamicBitFieldArray"]->at(2)),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.dynamicBitFieldArray()[2],
-                            reader.readUnsignedBits64(structureView.param()));
-                });
+        checkSerializeThrows(*(introspectableView["dynamicBitFieldArray"]));
+        checkSerializeThrows(*(introspectableView["dynamicBitFieldArray"]->at(2)));
 
         // int<param> dynamicIntField if param < 4;
         ASSERT_EQ(nullptr, introspectableView.getField("dynamicIntField"));
@@ -388,11 +331,8 @@ protected:
         ASSERT_EQ(-1.0, introspectableView["dynamicIntFieldArray"]->at(1)->toDouble());
         ASSERT_EQ("-1", introspectableView["dynamicIntFieldArray"]->at(1)->toString());
         ASSERT_EQ(1, introspectableView["dynamicIntFieldArray"]->at(2)->getInt8());
-        checkWriteThrows(*(introspectableView["dynamicIntFieldArray"]));
-        checkWriteReadBuiltin(*(introspectableView["dynamicIntFieldArray"]->at(0)),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.dynamicIntFieldArray()->at(0), reader.readSignedBits32(4));
-                });
+        checkSerializeThrows(*(introspectableView["dynamicIntFieldArray"]));
+        checkSerializeThrows(*(introspectableView["dynamicIntFieldArray"]->at(0)));
 
         // bool boolArray[];
         ASSERT_TRUE(introspectableView["boolArray"]->isArray());
@@ -400,20 +340,14 @@ protected:
         ASSERT_FALSE(introspectableView["boolArray"]->at(1)->getBool());
         ASSERT_EQ(0.0, introspectableView["boolArray"]->at(1)->toDouble());
         ASSERT_EQ("false", introspectableView["boolArray"]->at(1)->toString());
-        checkWriteThrows(*(introspectableView["boolArray"]));
-        checkWriteReadBuiltin(
-                *(introspectableView["boolArray"]->at(0)), [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.boolArray()[0], reader.readBool());
-                });
+        checkSerializeThrows(*(introspectableView["boolArray"]));
+        checkSerializeThrows(*(introspectableView["boolArray"]->at(0)));
 
         // extern externField;
         ASSERT_EQ(16, introspectableView.getField("externField")->getBitBuffer().getBitSize());
         ASSERT_EQ(0xAB, introspectableView.getField("externField")->getBitBuffer().getBytes().at(0));
         ASSERT_EQ(0xCD, introspectableView.getField("externField")->getBitBuffer().getBytes().at(1));
-        checkWriteReadBuiltin(*(introspectableView.getField("externField")),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.externField().get(), reader.readBitBuffer<AllocatorType>());
-                });
+        checkSerializeThrows(*(introspectableView.getField("externField")));
 
         // extern externArray[];
         ASSERT_TRUE(introspectableView["externArray"]->isArray());
@@ -422,20 +356,14 @@ protected:
         ASSERT_EQ(0x02, introspectableView["externArray"]->at(0)->getBitBuffer().getBytes().at(0));
         ASSERT_EQ(1, introspectableView["externArray"]->at(1)->getBitBuffer().getBitSize());
         ASSERT_EQ(0x01, introspectableView["externArray"]->at(1)->getBitBuffer().getBytes().at(0));
-        checkWriteThrows(*(introspectableView["externArray"]));
-        checkWriteReadBuiltin(*(introspectableView.getField("externArray")->at(0)),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.externArray()[0].get(), reader.readBitBuffer<AllocatorType>());
-                });
+        checkSerializeThrows(*(introspectableView["externArray"]));
+        checkSerializeThrows(*(introspectableView.getField("externArray")->at(0)));
 
         // bytes bytesField;
         ASSERT_EQ(2, introspectableView.getField("bytesField")->getBytes().size());
         ASSERT_EQ(0xAB, introspectableView.getField("bytesField")->getBytes().data()[0]);
         ASSERT_EQ(0xCD, introspectableView.getField("bytesField")->getBytes().data()[1]);
-        checkWriteReadBuiltin(*(introspectableView.getField("bytesField")),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.bytesField(), reader.readBytes<AllocatorType>());
-                });
+        checkSerializeThrows(*(introspectableView.getField("bytesField")));
 
         // bytes bytesArray[];
         ASSERT_TRUE(introspectableView["bytesArray"]->isArray());
@@ -446,19 +374,16 @@ protected:
         ASSERT_EQ(2, introspectableView["bytesArray"]->at(1)->getBytes().size());
         ASSERT_EQ(0xCA, introspectableView["bytesArray"]->at(1)->getBytes()[0]);
         ASSERT_EQ(0xFE, introspectableView["bytesArray"]->at(1)->getBytes()[1]);
-        checkWriteThrows(*(introspectableView["bytesArray"]));
-        checkWriteReadBuiltin(*(introspectableView.getField("bytesArray")->at(0)),
-                [&structureView](zserio::BitStreamReader& reader) {
-                    ASSERT_EQ(structureView.bytesArray()[0], reader.readBytes<AllocatorType>());
-                });
+        checkSerializeThrows(*(introspectableView["bytesArray"]));
+        checkSerializeThrows(*(introspectableView.getField("bytesArray")->at(0)));
 
         // function Selector getEnumField()
         ASSERT_EQ(zserio::enumToString(SelectorEnum::STRUCT),
                 introspectableView.callFunction("getEnumField")->toString());
         ASSERT_EQ(zserio::enumToValue(SelectorEnum::STRUCT), introspectableView["getEnumField"]->toInt());
 
-        // write read check on structure
-        checkWriteRead(introspectableView, structureView);
+        // serialize check on structure
+        checkSerialize(introspectableView, structureView);
     }
 };
 
@@ -502,8 +427,8 @@ TEST_F(WithIntrospectionCodeTest, checkChoiceWithStructure)
 
     checkStructReflectable(*structIntrospectableView, view.structField());
 
-    // write read check on choice
-    checkWriteRead(*introspectableView, view, Selector::STRUCT);
+    // serialize check on choice
+    checkSerialize(*introspectableView, view, Selector::STRUCT);
 }
 
 // fully created via reflectable interface
@@ -521,16 +446,15 @@ TEST_F(WithIntrospectionCodeTest, checkReflectableChoiceWithStruct)
     Choice& choiceData = reflectable->getAnyValue().get<std::reference_wrapper<Choice>>();
     IIntrospectableViewConstPtr introspectableView =
             zserio::introspectable(zserio::View(choiceData, Selector::STRUCT));
-    introspectableView->initializeOffsets();
 
     Choice choice;
     choice.emplace<Choice::Tag::structField>(createStruct());
     zserio::View view(choice, Selector::STRUCT);
     zserio::detail::initializeOffsets(view, 0);
 
-    // check that write-read of object created via reflections gets the same object as the one
+    // check that serialize of object created via reflections gets the same object as the one
     // created via generated classes
-    checkWriteRead(*introspectableView, view, Selector::STRUCT);
+    checkSerialize(*introspectableView, view, Selector::STRUCT);
 }
 
 TEST_F(WithIntrospectionCodeTest, checkChoiceWithUnion)
@@ -543,7 +467,6 @@ TEST_F(WithIntrospectionCodeTest, checkChoiceWithUnion)
 
     IIntrospectableViewConstPtr introspectableView = zserio::introspectable(view);
     ASSERT_EQ("with_reflection_code.Choice"sv, introspectableView->getTypeInfo().getSchemaName());
-    introspectableView->initializeOffsets();
 
     ASSERT_EQ(
             zserio::enumToValue(SelectorEnum::UNION), introspectableView->getParameter("selector")->getInt8());
@@ -569,13 +492,15 @@ TEST_F(WithIntrospectionCodeTest, checkChoiceWithUnion)
 
     auto structIntrospectableView = introspectableView->find("unionField.structField");
     ASSERT_TRUE(structIntrospectableView);
+
+    // serialize check on union
+    checkSerialize(*(introspectableView->getField("unionField")), view.unionField());
+
+    // serialize check on choice
+    checkSerialize(*introspectableView, view, Selector::UNION);
+
+    // check structure (must be after 'serialize check on union' because of offset initialization)
     checkStructReflectable(*structIntrospectableView, view.unionField().structField());
-
-    // write read check on union
-    checkWriteRead(*(introspectableView->getField("unionField")), view.unionField());
-
-    // write read check on choice
-    checkWriteRead(*introspectableView, view, Selector::UNION);
 }
 
 TEST_F(WithIntrospectionCodeTest, checkChoiceWithBitmask)
@@ -630,11 +555,11 @@ TEST_F(WithIntrospectionCodeTest, checkChoiceWithBitmask)
     // call function via callFunction method throws
     ASSERT_THROW(introspectableView->callFunction("getBitmaskFromUnion"), zserio::CppRuntimeException);
 
-    // write read check on bitmask
-    checkWriteReadValue(*((*introspectableView)["bitmaskField"]), view.bitmaskField());
+    // serialize check on bitmask
+    checkSerializeThrows(*((*introspectableView)["bitmaskField"]));
 
-    // write read check on choice
-    checkWriteRead(*introspectableView, view, Selector::BITMASK);
+    // serialize check on choice
+    checkSerialize(*introspectableView, view, Selector::BITMASK);
 }
 
 TEST_F(WithIntrospectionCodeTest, childOptionalInconsistencies)
