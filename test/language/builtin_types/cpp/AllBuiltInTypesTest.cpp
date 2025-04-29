@@ -231,6 +231,7 @@ TEST_F(AllBuiltInTypesTest, variableIntfieldType)
 {
     // 14 is result of the length expression
     const zserio::DynInt16<> variableIntfieldTypeMax = zserio::NumericLimits<zserio::DynInt16<>>::max(14);
+    m_data.boolType = true;
     m_data.variableIntfieldType = variableIntfieldTypeMax + 1;
     ASSERT_THROW(zserio::detail::validate(m_view), zserio::OutOfRangeException);
 
