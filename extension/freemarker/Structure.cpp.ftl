@@ -349,9 +349,20 @@ ${I}}
     <#if field.optional??>
         <#if field.optional.viewIndirectClause??>
 ${I}// check non-auto optional
-${I}if ((${field.optional.viewIndirectClause}) && !view.${field.getterName}()<#if field.isExtended>.value()</#if>.has_value())
+${I}if (${field.optional.viewIndirectClause})
 ${I}{
-${I}    throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
+${I}    if (!view.${field.getterName}()<#if field.isExtended>.value()</#if>.has_value())
+${I}    {
+${I}        throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
+${I}    }
+${I}}
+${I}else
+${I}{
+${I}    if (view.${field.getterName}()<#if field.isExtended>.value()</#if>.has_value())
+${I}    {
+${I}        throw UnexpectedOptionalException(
+${I}                "Optional field '${name}.${field.name}' is set but not used!");
+${I}    }
 ${I}}
         </#if>
 ${I}if (view.${field.getterName}()<#if field.isExtended>-><#else>.</#if>has_value())

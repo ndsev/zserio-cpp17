@@ -12,6 +12,7 @@
 #include <zserio/ReflectableUtil.h>
 #include <zserio/TypeInfo.h>
 #include <zserio/MissedOptionalException.h>
+#include <zserio/UnexpectedOptionalException.h>
 
 #include <test_object/ppmr_allocator/WalkerObject.h>
 
@@ -279,9 +280,20 @@ void validate(const View<::test_object::ppmr_allocator::WalkerObject>& view, ::s
 {
     validate(view.identifier(), "'WalkerObject.identifier'");
     // check non-auto optional
-    if ((view.identifier() != 0) && !view.nested().has_value())
+    if (view.identifier() != 0)
     {
-        throw MissedOptionalException("Optional field 'WalkerObject.nested' is used but not set!");
+        if (!view.nested().has_value())
+        {
+            throw MissedOptionalException("Optional field 'WalkerObject.nested' is used but not set!");
+        }
+    }
+    else
+    {
+        if (view.nested().has_value())
+        {
+            throw UnexpectedOptionalException(
+                    "Optional field 'WalkerObject.nested' is set but not used!");
+        }
     }
     if (view.nested().has_value())
     {
@@ -808,7 +820,7 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::ppmr_allocator::WalkerObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::ppmr_allocator::WalkerObject>& view_, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
+        explicit Introspectable(const ::zserio::View<::test_object::ppmr_allocator::WalkerObject>& view_, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::ppmr_allocator::WalkerObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         view_, alloc)
         {}

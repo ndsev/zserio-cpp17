@@ -45,7 +45,7 @@ struct CreatorObject
 
     ~CreatorObject() = default;
 
-    explicit CreatorObject(
+    CreatorObject(
             ::zserio::UInt32 value_,
             ::test_object::polymorphic_allocator::CreatorNested nested_,
             ::zserio::ppmr::String text_,

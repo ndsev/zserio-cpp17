@@ -1,6 +1,7 @@
 #include "choice_types/default_empty_choice/DefaultEmptyChoice.h"
 #include "gtest/gtest.h"
 #include "test_utils/TestUtility.h"
+#include "zserio/ChoiceCaseException.h"
 
 namespace choice_types
 {
@@ -51,6 +52,38 @@ TEST_F(DefaultEmptyChoiceTest, choiceTag)
         zserio::View view(data, DEFAULT_SELECTOR);
         ASSERT_EQ(DefaultEmptyChoice::Tag::ZSERIO_UNDEFINED, data.index());
         ASSERT_EQ(DefaultEmptyChoice::Tag::ZSERIO_UNDEFINED, view.zserioChoiceTag());
+    }
+}
+
+TEST_F(DefaultEmptyChoiceTest, validate)
+{
+    {
+        DefaultEmptyChoice data;
+        const VariantB value = 234;
+        data.emplace<DefaultEmptyChoice::Tag::valueB>(value);
+        zserio::View view(data, VARIANT_A_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ChoiceCaseException);
+    }
+    {
+        DefaultEmptyChoice data;
+        const VariantA value = 99;
+        data.emplace<DefaultEmptyChoice::Tag::valueA>(value);
+        zserio::View view(data, VARIANT_B_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ChoiceCaseException);
+    }
+    {
+        DefaultEmptyChoice data;
+        zserio::View view(data, DEFAULT_SELECTOR);
+        ASSERT_NO_THROW(zserio::detail::validate(view));
+        zserio::View viewA(data, VARIANT_A_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
+    }
+    {
+        DefaultEmptyChoice data;
+        const VariantA value = 99;
+        data.emplace<DefaultEmptyChoice::Tag::valueA>(value);
+        zserio::View view(data, DEFAULT_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ChoiceCaseException);
     }
 }
 

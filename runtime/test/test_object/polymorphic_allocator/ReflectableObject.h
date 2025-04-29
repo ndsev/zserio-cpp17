@@ -43,7 +43,7 @@ struct ReflectableObject
 
     ~ReflectableObject() = default;
 
-    explicit ReflectableObject(
+    ReflectableObject(
             ::zserio::ppmr::String stringField_,
             ::test_object::polymorphic_allocator::ReflectableNested reflectableNested_,
             ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum_,

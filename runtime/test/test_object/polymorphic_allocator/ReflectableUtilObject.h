@@ -39,7 +39,7 @@ struct ReflectableUtilObject
 
     ~ReflectableUtilObject() = default;
 
-    explicit ReflectableUtilObject(
+    ReflectableUtilObject(
             ::zserio::UInt8 choiceParam_,
             ::test_object::polymorphic_allocator::ReflectableUtilChoice reflectableUtilChoice_,
             const allocator_type& allocator = {});

@@ -292,6 +292,10 @@ ${I}validate<@array_template_args member.field/>(view.${member.field.getterName}
         <#lt>);
     <#else>
 ${I}// empty
+${I}if (view.zserioChoiceTag() != ${fullName}::Tag::ZSERIO_UNDEFINED)
+${I}{
+${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (should be empty)!");
+${I}}
     </#if>
 </#macro>
 <#macro choice_validate_no_match fullName indent>

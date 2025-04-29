@@ -1041,7 +1041,7 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::CreatorObject, ::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::pmr_allocator::CreatorObject>& view_, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
+        explicit Introspectable(const ::zserio::View<::test_object::pmr_allocator::CreatorObject>& view_, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::CreatorObject, ::std::pmr::polymorphic_allocator<uint8_t>>(
                         view_, alloc)
         {}

@@ -127,6 +127,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/TypeInfoUtil.h
     zserio/Types.cpp
     zserio/Types.h
+    zserio/UnexpectedOptionalException.h
     zserio/UnionCaseException.h
     zserio/UniquePtr.h
     zserio/ValidationException.h

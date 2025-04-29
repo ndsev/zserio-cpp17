@@ -329,7 +329,7 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::ppmr_allocator::WalkerNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::ppmr_allocator::WalkerNested>& view_, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
+        explicit Introspectable(const ::zserio::View<::test_object::ppmr_allocator::WalkerNested>& view_, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::ppmr_allocator::WalkerNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         view_, alloc)
         {}

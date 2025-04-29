@@ -222,6 +222,10 @@ void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::st
         break;
     default:
         // empty
+        if (view.zserioChoiceTag() != ::test_object::std_allocator::WalkerChoice::Tag::ZSERIO_UNDEFINED)
+        {
+            throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (should be empty)!");
+        }
         break;
     }
 }

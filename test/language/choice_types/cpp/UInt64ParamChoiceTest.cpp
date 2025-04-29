@@ -240,6 +240,22 @@ TEST_F(UInt64ParamChoiceTest, validate)
         zserio::View viewB(data, VARIANT_B_SELECTOR);
         ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
     }
+    {
+        UInt64ParamChoice data;
+        const VariantA value = 99;
+        data.emplace<UInt64ParamChoice::Tag::valueA>(value);
+        zserio::View view(data, EMPTY_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ChoiceCaseException);
+    }
+    {
+        UInt64ParamChoice data;
+        zserio::View viewA(data, VARIANT_A_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewA), zserio::ChoiceCaseException);
+        zserio::View viewB(data, VARIANT_B_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
+        zserio::View viewC(data, VARIANT_C_SELECTOR);
+        ASSERT_THROW(zserio::detail::validate(viewC), zserio::ChoiceCaseException);
+    }
 }
 
 TEST_F(UInt64ParamChoiceTest, bitSizeOf)

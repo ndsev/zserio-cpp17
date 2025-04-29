@@ -351,7 +351,7 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::DebugStringParamObject, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::DebugStringParamObject>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
+        explicit Introspectable(const ::zserio::View<::test_object::std_allocator::DebugStringParamObject>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::DebugStringParamObject, ::std::allocator<uint8_t>>(
                         view_, alloc)
         {}

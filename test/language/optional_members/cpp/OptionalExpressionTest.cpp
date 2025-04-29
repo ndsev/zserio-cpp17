@@ -3,6 +3,7 @@
 #include "optional_members/optional_expression/Container.h"
 #include "test_utils/TestUtility.h"
 #include "zserio/MissedOptionalException.h"
+#include "zserio/UnexpectedOptionalException.h"
 
 namespace optional_members
 {
@@ -90,13 +91,22 @@ TEST_F(OptionalExpressionTest, comparisionOperators)
     test_utils::comparisonOperatorsTest(view, equalView, lessThanView);
 }
 
-TEST_F(OptionalExpressionTest, validate)
+TEST_F(OptionalExpressionTest, validateMissedOptional)
 {
     Container data;
     data.basicColor = BasicColor::BLACK;
     data.numBlackTones = NUM_BLACK_TONES;
     zserio::View view(data);
     ASSERT_THROW(zserio::detail::validate(view), zserio::MissedOptionalException);
+}
+
+TEST_F(OptionalExpressionTest, validateUnexpectedOptional)
+{
+    Container data;
+    data.basicColor = BasicColor::WHITE;
+    data.numBlackTones = NUM_BLACK_TONES;
+    zserio::View view(data);
+    ASSERT_THROW(zserio::detail::validate(view), zserio::UnexpectedOptionalException);
 }
 
 TEST_F(OptionalExpressionTest, bitSizeOf)

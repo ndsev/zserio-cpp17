@@ -2,6 +2,7 @@
 #include "optional_members/optional_array/TestStruct.h"
 #include "zserio/MissedOptionalException.h"
 #include "zserio/RebindAlloc.h"
+#include "zserio/UnexpectedOptionalException.h"
 
 // just test setters and getters
 namespace optional_members
@@ -55,12 +56,21 @@ TEST(OptionalArrayTest, autoData16)
     ASSERT_EQ(4, view.autoData16()->size());
 }
 
-TEST(OptionalArrayTest, validate)
+TEST(OptionalArrayTest, validateMissedOptional)
 {
     TestStruct data;
     data.hasData8 = true;
     zserio::View view(data);
     ASSERT_THROW(zserio::detail::validate(view), zserio::MissedOptionalException);
+}
+
+TEST(OptionalArrayTest, validateUnexpectedOptional)
+{
+    TestStruct data;
+    data.data16 = VectorType<zserio::Int16>(4);
+    data.data8 = VectorType<Data8>(4);
+    zserio::View view(data);
+    ASSERT_THROW(zserio::detail::validate(view), zserio::UnexpectedOptionalException);
 }
 
 } // namespace optional_array

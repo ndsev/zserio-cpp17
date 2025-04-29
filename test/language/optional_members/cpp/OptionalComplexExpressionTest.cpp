@@ -2,6 +2,7 @@
 #include "optional_members/optional_complex_expression/Container.h"
 #include "test_utils/TestUtility.h"
 #include "zserio/MissedOptionalException.h"
+#include "zserio/UnexpectedOptionalException.h"
 
 namespace optional_members
 {
@@ -32,12 +33,21 @@ TEST_F(OptionalComplexExpressionTest, withOptional)
     test_utils::writeReadTest(data);
 }
 
-TEST_F(OptionalComplexExpressionTest, validate)
+TEST_F(OptionalComplexExpressionTest, validateMissedOptional)
 {
     Container data;
     data.permission = Permission::Values::WRITE;
     zserio::View view(data);
     ASSERT_THROW(zserio::detail::validate(view), zserio::MissedOptionalException);
+}
+
+TEST_F(OptionalComplexExpressionTest, validateUnexpectedOptional)
+{
+    Container data;
+    data.permission = Permission::Values::NONE;
+    data.extraData = EXTRA_DATA_VALUE;
+    zserio::View view(data);
+    ASSERT_THROW(zserio::detail::validate(view), zserio::UnexpectedOptionalException);
 }
 
 } // namespace optional_complex_expression

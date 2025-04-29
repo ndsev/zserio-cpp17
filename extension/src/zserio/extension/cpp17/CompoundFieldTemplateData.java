@@ -196,6 +196,7 @@ public final class CompoundFieldTemplateData
             else
             {
                 includeCollector.addCppSystemIncludes(Arrays.asList("zserio/MissedOptionalException.h"));
+                includeCollector.addCppSystemIncludes(Arrays.asList("zserio/UnexpectedOptionalException.h"));
                 final ExpressionFormatter cppExpressionFormatter =
                         context.getExpressionFormatter(includeCollector);
                 clause = cppExpressionFormatter.formatGetter(optionalClauseExpression);

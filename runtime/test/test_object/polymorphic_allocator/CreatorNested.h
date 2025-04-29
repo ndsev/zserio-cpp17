@@ -43,7 +43,7 @@ struct CreatorNested
 
     ~CreatorNested() = default;
 
-    explicit CreatorNested(
+    CreatorNested(
             ::zserio::UInt32 value_,
             ::zserio::ppmr::String text_,
             ::zserio::ppmr::BitBuffer externData_,

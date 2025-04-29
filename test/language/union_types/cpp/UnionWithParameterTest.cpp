@@ -130,7 +130,7 @@ TEST(UnionWithParameterTest, validate)
         const zserio::Int32 value = 1;
         data.emplace<TestUnion::Tag::case1Field>(value);
         zserio::View view(data, false);
-        // TODO[mikir] ASSERT_THROW(zserio::detail::validate(view), zserio::ConstraintException);
+        ASSERT_THROW(zserio::detail::validate(view), zserio::ConstraintException);
     }
 }
 

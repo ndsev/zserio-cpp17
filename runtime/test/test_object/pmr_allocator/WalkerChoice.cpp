@@ -222,6 +222,10 @@ void validate(const View<::test_object::pmr_allocator::WalkerChoice>& view, ::st
         break;
     default:
         // empty
+        if (view.zserioChoiceTag() != ::test_object::pmr_allocator::WalkerChoice::Tag::ZSERIO_UNDEFINED)
+        {
+            throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (should be empty)!");
+        }
         break;
     }
 }

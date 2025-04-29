@@ -186,6 +186,10 @@ void validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view,
         break;
     default:
         // empty
+        if (view.zserioChoiceTag() != ::test_object::pmr_allocator::ReflectableChoice::Tag::ZSERIO_UNDEFINED)
+        {
+            throw ChoiceCaseException("Wrong case set in choice 'ReflectableChoice' (should be empty)!");
+        }
         break;
     }
 }

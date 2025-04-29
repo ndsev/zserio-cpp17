@@ -256,6 +256,15 @@ TEST_F(UInt32ParamChoiceTest, validate)
         zserio::View viewB(data, VARIANT_B_SELECTOR1);
         ASSERT_THROW(zserio::detail::validate(viewB), zserio::ChoiceCaseException);
     }
+    {
+        UInt32ParamChoice data;
+        const VariantA value = 99;
+        data.emplace<UInt32ParamChoice::Tag::valueA>(value);
+        zserio::View view1(data, EMPTY_SELECTOR1);
+        ASSERT_THROW(zserio::detail::validate(view1), zserio::ChoiceCaseException);
+        zserio::View view2(data, EMPTY_SELECTOR2);
+        ASSERT_THROW(zserio::detail::validate(view2), zserio::ChoiceCaseException);
+    }
 }
 
 TEST_F(UInt32ParamChoiceTest, bitSizeOf)

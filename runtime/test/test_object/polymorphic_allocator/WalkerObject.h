@@ -45,7 +45,7 @@ struct WalkerObject
 
     ~WalkerObject() = default;
 
-    explicit WalkerObject(
+    WalkerObject(
             ::zserio::UInt32 identifier_,
             ::zserio::ppmr::Optional<::test_object::polymorphic_allocator::WalkerNested> nested_,
             ::zserio::ppmr::String text_,

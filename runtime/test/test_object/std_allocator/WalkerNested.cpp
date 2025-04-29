@@ -329,7 +329,7 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerNested, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerNested>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
+        explicit Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerNested>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerNested, ::std::allocator<uint8_t>>(
                         view_, alloc)
         {}
