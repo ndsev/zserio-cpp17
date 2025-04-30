@@ -99,7 +99,7 @@ template <class ALLOC>
 class OptionalTest : public testing::Test
 {
 public:
-    using allocator_type = ALLOC;
+    using AllocatorType = ALLOC;
 
     using BoolOptional = BasicOptional<ALLOC, Bool>;
     using IntOptional = BasicOptional<ALLOC, int>;
@@ -198,8 +198,6 @@ TYPED_TEST(OptionalTest, valueAssignment)
     opt1 = std::nullopt;
     ASSERT_TRUE(!opt1.has_value());
     ASSERT_TRUE(!opt1);
-    // typename TestFixture::StringOptional koko(std::move(opt1));
-    // opt1.has_value();
 
     typename TestFixture::IntOptional opt2;
     opt2 = 11;
@@ -221,31 +219,82 @@ TYPED_TEST(OptionalTest, valueAssignment)
 
 TYPED_TEST(OptionalTest, moveConstructor)
 {
-    typename TestFixture::StringOptional opt1(this->allocator);
-    opt1.emplace("yes");
-    ASSERT_EQ(opt1.value(), "yes");
+    {
+        typename TestFixture::StringOptional opt1(this->allocator);
+        opt1.emplace("yes");
+        ASSERT_EQ(opt1.value(), "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
 
-    const size_t numAllocs = this->allocator.numAllocs();
-    typename TestFixture::StringOptional opt2 = std::move(opt1);
-    ASSERT_EQ(opt2.value(), "yes");
-    ASSERT_EQ(this->allocator.numAllocs(), numAllocs);
+        typename TestFixture::StringOptional opt2 = std::move(opt1);
+        ASSERT_EQ(opt2.value(), "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
 
-    typename TestFixture::StringOptional opt3(std::move(opt2), this->allocator);
-    ASSERT_EQ(opt3.value(), "yes");
-    ASSERT_EQ(this->allocator.numAllocs(), numAllocs);
+        typename TestFixture::StringOptional opt3(std::move(opt2), this->allocator);
+        ASSERT_EQ(opt3.value(), "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
+    }
+
+    auto alloc1 = typename TestFixture::AllocatorType{};
+    auto alloc2 = typename TestFixture::AllocatorType{};
+
+    {
+        typename TestFixture::BigOptional opt1(alloc1);
+        opt1.emplace(BigObj('1'));
+        ASSERT_EQ(1, alloc1.numAllocs());
+
+        // move ctor with allocator
+        typename TestFixture::BigOptional opt2(opt1, alloc2);
+        ASSERT_EQ(1, alloc2.numAllocs());
+        ASSERT_TRUE(opt1.has_value());
+        ASSERT_TRUE(opt2.has_value());
+    }
 }
 
 TYPED_TEST(OptionalTest, moveAssignmentOperator)
 {
-    typename TestFixture::StringOptional opt1(this->allocator);
-    opt1.emplace("yes");
-    ASSERT_TRUE(opt1.value() == "yes");
+    {
+        typename TestFixture::StringOptional opt1(this->allocator);
+        opt1.emplace("yes");
+        ASSERT_TRUE(opt1.value() == "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
 
-    const size_t numAllocs = this->allocator.numAllocs();
-    typename TestFixture::StringOptional opt2(this->allocator);
-    opt2 = std::move(opt1);
-    ASSERT_EQ(opt2.value(), "yes");
-    ASSERT_EQ(this->allocator.numAllocs(), numAllocs);
+        typename TestFixture::StringOptional opt2(this->allocator);
+        opt2 = std::move(opt1);
+        ASSERT_EQ(opt2.value(), "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
+    }
+
+    auto alloc1 = typename TestFixture::AllocatorType{};
+    auto alloc2 = typename TestFixture::AllocatorType{};
+
+    {
+        typename TestFixture::BigOptional opt1(alloc1);
+        opt1.emplace('1');
+        ASSERT_EQ(1, alloc1.numAllocs());
+
+        typename TestFixture::BigOptional opt2(alloc2);
+        opt2.emplace('2');
+        ASSERT_EQ(1, alloc2.numAllocs());
+        opt2 = std::move(opt1);
+
+        ASSERT_EQ(opt2.value(), BigObj('1'));
+
+        if constexpr (std::is_same_v<TrackingAllocator<uint8_t>, typename TestFixture::AllocatorType>)
+        {
+            ASSERT_TRUE(!opt1.has_value());
+            ASSERT_TRUE(opt2.has_value());
+            ASSERT_EQ(1, alloc1.numAllocs());
+            ASSERT_EQ(0, alloc2.numAllocs());
+        }
+        else if constexpr (std::is_same_v<TrackingAllocatorNonProp<uint8_t>,
+                                   typename TestFixture::AllocatorType>)
+        {
+            ASSERT_TRUE(opt1.has_value());
+            ASSERT_TRUE(opt2.has_value());
+            ASSERT_EQ(1, alloc1.numAllocs());
+            ASSERT_EQ(1, alloc2.numAllocs());
+        }
+    }
 }
 
 TYPED_TEST(OptionalTest, optComparison)
@@ -308,7 +357,7 @@ TYPED_TEST(OptionalTest, makeOptional)
 TYPED_TEST(OptionalTest, optionalInOptional)
 {
     using IntOptionalInOptional =
-            BasicOptional<typename TestFixture::allocator_type, typename TestFixture::IntOptional>;
+            BasicOptional<typename TestFixture::AllocatorType, typename TestFixture::IntOptional>;
 
     IntOptionalInOptional intOpt(std::in_place, std::in_place, 2);
     ASSERT_TRUE(intOpt.has_value());
@@ -317,7 +366,7 @@ TYPED_TEST(OptionalTest, optionalInOptional)
     ASSERT_EQ(2, **intOpt);
 
     using BoolOptionalInOptional =
-            BasicOptional<typename TestFixture::allocator_type, typename TestFixture::BoolOptional>;
+            BasicOptional<typename TestFixture::AllocatorType, typename TestFixture::BoolOptional>;
     BoolOptionalInOptional boolOpt(std::in_place, std::in_place, true);
     BoolOptionalInOptional boolOpt2(std::in_place, this->allocator, std::in_place, this->allocator, true);
 

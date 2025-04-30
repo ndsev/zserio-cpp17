@@ -418,7 +418,7 @@ public:
     }
 
     /**
-     * Resets optional to epmty state.
+     * Resets optional to empty state.
      */
     void reset()
     {
@@ -662,14 +662,25 @@ private:
         {
             if constexpr (detail::is_optional_heap_allocated_v<T>)
             {
-                auto& ptr = other.m_data.value();
-                m_data.emplace(ptr);
-                ptr = nullptr;
+                if (get_allocator_ref() == other.get_allocator_ref())
+                {
+                    // non-standard optimization to reuse memory from the same resource
+                    // note that other will be unset after move in this case
+                    auto& ptr = other.m_data.value();
+                    m_data.emplace(ptr);
+                    ptr = nullptr;
+                }
+                else
+                {
+                    auto& value = *other.m_data.value();
+                    T* ptr = allocateValue(std::move(value));
+                    m_data.emplace(ptr);
+                }
             }
             else
             {
-                auto& val = *other.m_data;
-                m_data.emplace(std::move(val));
+                auto& value = *other.m_data;
+                m_data.emplace(std::move(value));
             }
         }
     }
