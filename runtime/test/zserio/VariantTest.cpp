@@ -96,12 +96,15 @@ template <class ALLOC>
 class VariantTest : public testing::Test
 {
 public:
-    enum class Idx1
+    using AllocatorType = ALLOC;
+
+    enum class Idx1 : size_t
     {
         A,
         B,
         C,
-        D
+        D,
+        E
     };
     using Variant1 = BasicVariant<ALLOC, Idx1, int32_t, std::string, BigObj, BigObj>;
 
@@ -153,34 +156,95 @@ TYPED_TEST(VariantTest, copyConstructor)
 
 TYPED_TEST(VariantTest, moveConstructor)
 {
-    typename TestFixture::Variant1 var1(this->allocator);
-    var1.template emplace<TestFixture::Idx1::B>("yes");
-    ASSERT_TRUE(get<TestFixture::Idx1::B>(var1) == "yes");
+    {
+        typename TestFixture::Variant1 var1(this->allocator);
+        var1.template emplace<TestFixture::Idx1::B>("yes");
+        ASSERT_TRUE(get<TestFixture::Idx1::B>(var1) == "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
 
-    const size_t numAllocs = this->allocator.numAllocs();
-    typename TestFixture::Variant1 var2 = std::move(var1);
-    ASSERT_EQ(get<TestFixture::Idx1::B>(var2), "yes");
-    ASSERT_EQ(get_if<TestFixture::Idx1::B>(&var1), nullptr);
-    ASSERT_EQ(this->allocator.numAllocs(), numAllocs);
+        typename TestFixture::Variant1 var2 = std::move(var1);
+        ASSERT_EQ(get<TestFixture::Idx1::B>(var2), "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
 
-    typename TestFixture::Variant1 var3(std::move(var2), this->allocator);
-    ASSERT_EQ(get<TestFixture::Idx1::B>(var3), "yes");
-    ASSERT_EQ(get_if<TestFixture::Idx1::B>(&var2), nullptr);
-    ASSERT_EQ(this->allocator.numAllocs(), numAllocs);
+        // zserio extension - same allocator, the moved-out variant remains in valueless state
+        ASSERT_TRUE(var1.valueless_by_exception());
+        ASSERT_EQ(static_cast<typename TestFixture::Idx1>(std::variant_npos), var1.index());
+
+        typename TestFixture::Variant1 var3(std::move(var2), this->allocator);
+        ASSERT_EQ(get<TestFixture::Idx1::B>(var3), "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
+
+        // zserio extension - same allocator, the moved-out variant remains in valueless state
+        ASSERT_TRUE(var2.valueless_by_exception());
+        ASSERT_EQ(static_cast<typename TestFixture::Idx1>(std::variant_npos), var2.index());
+    }
+
+    auto alloc1 = typename TestFixture::AllocatorType{};
+    auto alloc2 = typename TestFixture::AllocatorType{};
+
+    {
+        typename TestFixture::Variant1 var1(alloc1);
+        var1.template emplace<TestFixture::Idx1::D>(BigObj('1'));
+        ASSERT_EQ(1, alloc1.numAllocs());
+
+        // move ctor with allocator
+        typename TestFixture::Variant1 var2(std::move(var1), alloc2);
+        ASSERT_EQ(1, alloc2.numAllocs());
+        ASSERT_EQ(get<TestFixture::Idx1::D>(var2), BigObj('1'));
+    }
 }
 
 TYPED_TEST(VariantTest, moveAssignmentOperator)
 {
-    typename TestFixture::Variant1 var1(this->allocator);
-    var1.template emplace<TestFixture::Idx1::B>("yes");
-    ASSERT_TRUE(get<TestFixture::Idx1::B>(var1) == "yes");
+    {
+        typename TestFixture::Variant1 var1(this->allocator);
+        var1.template emplace<TestFixture::Idx1::B>("yes");
+        ASSERT_TRUE(get<TestFixture::Idx1::B>(var1) == "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
 
-    const size_t numAllocs = this->allocator.numAllocs();
-    typename TestFixture::Variant1 var2(this->allocator);
-    var2 = std::move(var1);
-    ASSERT_EQ(get<TestFixture::Idx1::B>(var2), "yes");
-    ASSERT_EQ(get_if<TestFixture::Idx1::B>(&var1), nullptr);
-    ASSERT_EQ(this->allocator.numAllocs(), numAllocs);
+        typename TestFixture::Variant1 var2(this->allocator);
+        var2 = std::move(var1);
+        ASSERT_EQ(get<TestFixture::Idx1::B>(var2), "yes");
+        ASSERT_EQ(1, this->allocator.numAllocs());
+
+        // zserio extension - same allocator, the moved-out variant remains in valueless state
+        ASSERT_TRUE(var1.valueless_by_exception());
+        ASSERT_EQ(static_cast<typename TestFixture::Idx1>(std::variant_npos), var1.index());
+    }
+
+    auto alloc1 = typename TestFixture::AllocatorType{};
+    auto alloc2 = typename TestFixture::AllocatorType{};
+
+    {
+        typename TestFixture::Variant1 var1(alloc1);
+        var1.template emplace<TestFixture::Idx1::D>(BigObj('1'));
+        ASSERT_EQ(1, alloc1.numAllocs());
+
+        typename TestFixture::Variant1 var2(alloc2);
+        var2.template emplace<TestFixture::Idx1::D>(BigObj('2'));
+        ASSERT_EQ(1, alloc2.numAllocs());
+        var2 = std::move(var1);
+
+        ASSERT_EQ(TestFixture::Idx1::D, var2.index());
+        ASSERT_EQ(get<TestFixture::Idx1::D>(var2), BigObj('1'));
+
+        if constexpr (std::is_same_v<TrackingAllocator<uint8_t>, typename TestFixture::AllocatorType>)
+        {
+            ASSERT_EQ(1, alloc1.numAllocs());
+            ASSERT_EQ(0, alloc2.numAllocs());
+
+            // zserio extension - same allocator, the moved-out variant remains in valueless state
+            ASSERT_TRUE(var1.valueless_by_exception());
+            ASSERT_EQ(static_cast<typename TestFixture::Idx1>(std::variant_npos), var1.index());
+        }
+        else if constexpr (std::is_same_v<TrackingAllocatorNonProp<uint8_t>,
+                                   typename TestFixture::AllocatorType>)
+        {
+            ASSERT_EQ(TestFixture::Idx1::D, var1.index());
+            ASSERT_EQ(1, alloc1.numAllocs());
+            ASSERT_EQ(1, alloc2.numAllocs());
+        }
+    }
 }
 
 TYPED_TEST(VariantTest, swap)
