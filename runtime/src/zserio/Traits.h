@@ -16,12 +16,6 @@ namespace detail
 template <typename VALUE_TYPE>
 class NumericTypeWrapper;
 
-} // namespace detail
-
-/**
- * Trait used to check whether the type T is an allocator.
- * \{
- */
 template <typename T, typename = void>
 struct is_allocator_impl : std::false_type
 {};
@@ -33,8 +27,14 @@ struct is_allocator_impl<T,
         : std::true_type
 {};
 
+} // namespace detail
+
+/**
+ * Trait used to check whether the type T is an allocator.
+ * \{
+ */
 template <typename T>
-struct is_allocator : is_allocator_impl<std::decay_t<T>>
+struct is_allocator : detail::is_allocator_impl<std::decay_t<T>>
 {};
 
 template <typename T>

@@ -44,6 +44,19 @@ struct is_variant_heap_allocated : variant_element<type_at_t<I, T...>>::is_heap_
 template <auto I, class... T>
 constexpr bool is_variant_heap_allocated_v = is_variant_heap_allocated<I, T...>::value;
 
+template <typename... T>
+struct any_variant_heap_allocated : std::false_type
+{};
+
+template <typename T, typename... ARGS>
+struct any_variant_heap_allocated<T, ARGS...>
+        : std::bool_constant<variant_element<T>::is_heap_allocated::value ||
+                  any_variant_heap_allocated<ARGS...>::value>
+{};
+
+template <typename... ARGS>
+inline constexpr bool any_variant_heap_allocated_v = any_variant_heap_allocated<ARGS...>::value;
+
 } // namespace detail
 
 /**
@@ -284,10 +297,22 @@ public:
     /**
      * Reports if variant is in nonstandard empty state.
      * Note: which operations lead to an empty state is not specified by ISO C++
+     *
+     * As an zserio extension, the valueless state can arise after move. This happens only When the held
+     * alternative is stored on the heap, and the used allocator is the same in both variants. In that case,
+     * the underlying pointer is stolen and the moved-out variant remains in the valueless state.
      */
     bool valueless_by_exception() const noexcept
     {
-        return m_data.valueless_by_exception();
+        if constexpr (detail::any_variant_heap_allocated_v<T...>)
+        {
+            return m_data.valueless_by_exception() ||
+                    valuelessByMoveSeq(std::make_index_sequence<sizeof...(T)>());
+        }
+        else
+        {
+            return m_data.valueless_by_exception();
+        }
     }
 
     /**
@@ -316,7 +341,16 @@ public:
      */
     INDEX index() const noexcept
     {
-        return static_cast<INDEX>(m_data.index());
+        if constexpr (detail::any_variant_heap_allocated_v<T...>)
+        {
+            return valuelessByMoveSeq(std::make_index_sequence<sizeof...(T)>())
+                    ? static_cast<INDEX>(std::variant_npos)
+                    : static_cast<INDEX>(m_data.index());
+        }
+        else
+        {
+            return static_cast<INDEX>(m_data.index());
+        }
     }
 
     /**
@@ -325,7 +359,7 @@ public:
     template <INDEX I, typename U = detail::type_at_t<I, T...>>
     U* get_if() noexcept
     {
-        if (I != index() || valueless_by_exception())
+        if (I != index())
         {
             return nullptr;
         }
@@ -345,7 +379,7 @@ public:
     template <INDEX I, typename U = detail::type_at_t<I, T...>>
     const U* get_if() const noexcept
     {
-        if (I != index() || valueless_by_exception())
+        if (I != index())
         {
             return nullptr;
         }
@@ -371,7 +405,7 @@ public:
         if (!ptr)
         {
             throw BadVariantAccess("Variant: Attempt to retrieve an inactive element at index ")
-                    << static_cast<size_t>(I) << ". Active element index is " << m_data.index();
+                    << static_cast<size_t>(I) << ". Active element index is " << static_cast<size_t>(index());
         }
         return *ptr;
     }
@@ -388,7 +422,7 @@ public:
         if (!ptr)
         {
             throw BadVariantAccess("Variant: Attempt to retrieve an inactive element at index ")
-                    << static_cast<size_t>(I) << ". Active element index is " << m_data.index();
+                    << static_cast<size_t>(I) << ". Active element index is " << static_cast<size_t>(index());
         }
         return *ptr;
     }
@@ -533,6 +567,29 @@ public:
     }
 
 private:
+    template <size_t... I>
+    bool valuelessByMoveSeq(std::index_sequence<I...>) const
+    {
+        return (valuelessByMove<I>() || ...);
+    }
+
+    template <size_t I>
+    bool valuelessByMove() const
+    {
+        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
+        {
+            if (I != m_data.index())
+            {
+                return false;
+            }
+            return *std::get_if<I>(&m_data) == nullptr;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     template <size_t... I, typename F, typename R>
     void visitSeq(F&& fun, R& returnValue, std::index_sequence<I...>)
     {
@@ -548,7 +605,7 @@ private:
     template <size_t I, typename F, typename R>
     void visit(F&& fun, R& returnValue)
     {
-        if (I != m_data.index())
+        if (I != static_cast<size_t>(index()))
         {
             return;
         }
@@ -565,7 +622,7 @@ private:
     template <size_t I, typename F, typename R>
     void visit(F&& fun, R& returnValue) const
     {
-        if (I != m_data.index())
+        if (I != static_cast<size_t>(index()))
         {
             return;
         }
@@ -588,7 +645,7 @@ private:
     template <size_t I>
     bool equal(const BasicVariant& other) const
     {
-        if (I != m_data.index())
+        if (I != static_cast<size_t>(index()))
         {
             return true;
         }
@@ -604,7 +661,7 @@ private:
     template <size_t I>
     bool less(const BasicVariant& other) const
     {
-        if (I != m_data.index())
+        if (I != static_cast<size_t>(index()))
         {
             return true;
         }
@@ -661,7 +718,7 @@ private:
     template <size_t I>
     void copy(const BasicVariant& other)
     {
-        if (I != other.m_data.index())
+        if (I != static_cast<size_t>(other.index()))
         {
             return;
         }
@@ -684,20 +741,29 @@ private:
     template <size_t I>
     void move(BasicVariant&& other)
     {
-        if (I != other.m_data.index())
+        if (I != static_cast<size_t>(other.index()))
         {
             return;
         }
         if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
         {
-            auto& ptr = *std::get_if<I>(&other.m_data);
-            m_data.template emplace<I>(ptr);
-            ptr = nullptr;
+            if (get_allocator_ref() == other.get_allocator_ref())
+            {
+                auto& ptr = *std::get_if<I>(&other.m_data);
+                m_data.template emplace<I>(ptr);
+                ptr = nullptr;
+            }
+            else
+            {
+                using U = detail::type_at_t<I, T...>;
+                U* ptr = allocateValue<U>(std::move(**std::get_if<I>(&other.m_data)));
+                m_data.template emplace<I>(ptr);
+            }
         }
         else
         {
-            auto& val = *std::get_if<I>(&other.m_data);
-            m_data.template emplace<I>(std::move(val));
+            auto& value = *std::get_if<I>(&other.m_data);
+            m_data.template emplace<I>(std::move(value));
         }
     }
 
@@ -715,7 +781,7 @@ private:
     template <size_t I>
     void clear()
     {
-        if (I != m_data.index())
+        if (I != static_cast<size_t>(index()))
         {
             return;
         }

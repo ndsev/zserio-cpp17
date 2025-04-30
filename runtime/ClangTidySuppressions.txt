@@ -16,19 +16,19 @@ bugprone-exception-escape:src/zserio/Optional.h:220
 bugprone-exception-escape:src/zserio/Optional.h:404
 
 # Variant is a generic container and exceptions may be thrown from the element types.
-bugprone-exception-escape:src/zserio/Variant.h:242
-bugprone-exception-escape:src/zserio/Variant.h:269
+bugprone-exception-escape:src/zserio/Variant.h:255
+bugprone-exception-escape:src/zserio/Variant.h:282
 
 # Iteration through all variant types is needed for folding expression, m_data active element is moved out
 # but index remains so it's safe to access.
-bugprone-use-after-move:src/zserio/Variant.h:681
+bugprone-use-after-move:src/zserio/Variant.h:738
 
 # Specialization of std::hash is allowed.
 cert-dcl58-cpp:src/zserio/BitBuffer.h:595
 cert-dcl58-cpp:src/zserio/BitBuffer.h:607
 cert-dcl58-cpp:src/zserio/Extended.h:240
-cert-dcl58-cpp:src/zserio/Optional.h:1170
-cert-dcl58-cpp:src/zserio/Variant.h:841
+cert-dcl58-cpp:src/zserio/Optional.h:1181
+cert-dcl58-cpp:src/zserio/Variant.h:907
 cert-dcl58-cpp:src/zserio/View.h:223
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
@@ -51,12 +51,12 @@ cppcoreguidelines-pro-type-union-access:src/zserio/Any.h
 # Optional follows std::optional so passing value by const & is correct.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:582
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:599
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:799
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:813
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:939
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:953
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1011
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1025
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:810
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:824
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:950
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:964
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1022
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1036
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
@@ -146,43 +146,33 @@ google-explicit-constructor:src/zserio/Types.h:67
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
 google-readability-casting:src/zserio/Variant.h:45
-google-readability-casting:src/zserio/Variant.h:66
+google-readability-casting:src/zserio/Variant.h:79
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
 google-explicit-constructor:src/zserio/View.h:133
 
 # This is necessary because of implementation. Zserio naturally supports recursion.
-misc-no-recursion:src/zserio/JsonParser.h:186
-misc-no-recursion:src/zserio/JsonParser.h:209
-misc-no-recursion:src/zserio/JsonParser.h:224
-misc-no-recursion:src/zserio/JsonParser.h:235
-misc-no-recursion:src/zserio/JsonParser.h:253
-misc-no-recursion:src/zserio/JsonParser.h:268
-misc-no-recursion:src/zserio/IntrospectableView.h:1228
-misc-no-recursion:src/zserio/ReflectableData.h:1296
-misc-no-recursion:src/zserio/ReflectableData.h:1340
-misc-no-recursion:src/zserio/ReflectableUtil.h:161
-misc-no-recursion:src/zserio/ReflectableUtil.h:197
-misc-no-recursion:src/zserio/ReflectableUtil.h:217
-misc-no-recursion:src/zserio/Walker.h:485
-misc-no-recursion:src/zserio/Walker.h:518
-misc-no-recursion:src/zserio/Walker.h:544
-misc-no-recursion:src/zserio/ZserioTreeCreator.h:220
-misc-no-recursion:src/zserio/ZserioTreeCreator.h:349
-misc-no-recursion:src/zserio/ZserioTreeCreator.h:356
+misc-no-recursion
 
 # Intentional tests.
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
-google-build-using-namespace:test/zserio/IntrospectableViewTest.cpp:13
+bugprone-use-after-move:test/zserio/OptionalTest.cpp:284
+bugprone-use-after-move:test/zserio/OptionalTest.cpp:292
+bugprone-use-after-move:test/zserio/VariantTest.cpp:170
+bugprone-use-after-move:test/zserio/VariantTest.cpp:178
+bugprone-use-after-move:test/zserio/VariantTest.cpp:211
+bugprone-use-after-move:test/zserio/VariantTest.cpp:237
+bugprone-use-after-move:test/zserio/VariantTest.cpp:243
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
-cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
 cppcoreguidelines-pro-type-reinterpret-cast:test/zserio/SqliteConnectionTest.cpp:321
+cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
+google-build-using-namespace:test/zserio/IntrospectableViewTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86
