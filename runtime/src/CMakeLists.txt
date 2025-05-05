@@ -26,12 +26,25 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/ITypeInfo.h
     zserio/pmr/Map.h
     zserio/pmr/Optional.h
-    zserio/pmr/PropagatingPolymorphicAllocator.h
     zserio/pmr/Set.h
     zserio/pmr/String.h
     zserio/pmr/UniquePtr.h
     zserio/pmr/Variant.h
     zserio/pmr/Vector.h
+    zserio/ppmr/Any.h
+    zserio/ppmr/BitBuffer.h
+    zserio/ppmr/Bytes.h
+    zserio/ppmr/IReflectableData.h
+    zserio/ppmr/IService.h
+    zserio/ppmr/ITypeInfo.h
+    zserio/ppmr/Map.h
+    zserio/ppmr/Optional.h
+    zserio/ppmr/PropagatingPolymorphicAllocator.h
+    zserio/ppmr/Set.h
+    zserio/ppmr/String.h
+    zserio/ppmr/UniquePtr.h
+    zserio/ppmr/Variant.h
+    zserio/ppmr/Vector.h
     zserio/AllocatorHolder.h
     zserio/Any.h
     zserio/ArrayView.h
@@ -128,6 +141,8 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
 )
 
 add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/zserio FILES ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 

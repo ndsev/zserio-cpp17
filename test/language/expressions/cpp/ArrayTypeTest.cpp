@@ -7,7 +7,7 @@ namespace expressions
 namespace array_type
 {
 
-using AllocatorType = ArrayTypeExpression::AllocatorType;
+using AllocatorType = ArrayTypeExpression::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

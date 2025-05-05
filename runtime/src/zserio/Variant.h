@@ -85,7 +85,7 @@ class BasicVariant : public AllocatorHolder<ALLOC>
 
 public:
     using AllocatorHolder<ALLOC>::get_allocator;
-    using AllocatorType = ALLOC;
+    using allocator_type = ALLOC;
     using IndexType = INDEX;
     using VariantType = std::variant<typename detail::variant_element<T>::type...>;
 

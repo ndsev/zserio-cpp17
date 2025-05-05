@@ -6,20 +6,14 @@
 #ifndef TEST_OBJECT_POLYMORPHIC_ALLOCATOR_REFLECTABLE_OBJECT_H
 #define TEST_OBJECT_POLYMORPHIC_ALLOCATOR_REFLECTABLE_OBJECT_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/View.h>
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Types.h>
-#include <zserio/pmr/String.h>
+#include <zserio/ppmr/String.h>
 
 #include <test_object/polymorphic_allocator/ReflectableChoice.h>
 #include <test_object/polymorphic_allocator/ReflectableEnum.h>
@@ -33,19 +27,31 @@ namespace polymorphic_allocator
 
 struct ReflectableObject
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     ReflectableObject() noexcept;
-    explicit ReflectableObject(const AllocatorType& allocator) noexcept;
+    explicit ReflectableObject(const allocator_type& allocator) noexcept;
+
+    ReflectableObject(ReflectableObject&&) = default;
+    ReflectableObject(ReflectableObject&& other_, const allocator_type& allocator);
+
+    ReflectableObject(const ReflectableObject&) = default;
+    ReflectableObject(const ReflectableObject& other_, const allocator_type& allocator);
+
+    ReflectableObject& operator=(ReflectableObject&&) = default;
+    ReflectableObject& operator=(const ReflectableObject&) = default;
+
+    ~ReflectableObject() = default;
 
     explicit ReflectableObject(
-            ::zserio::pmr::String stringField_,
+            ::zserio::ppmr::String stringField_,
             ::test_object::polymorphic_allocator::ReflectableNested reflectableNested_,
             ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum_,
             ::test_object::polymorphic_allocator::ReflectableChoice reflectableChoice_,
-            ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion_);
+            ::test_object::polymorphic_allocator::ReflectableUnion reflectableUnion_,
+            const allocator_type& allocator = {});
 
-    ::zserio::pmr::String stringField;
+    ::zserio::ppmr::String stringField;
     ::test_object::polymorphic_allocator::ReflectableNested reflectableNested;
     ::test_object::polymorphic_allocator::ReflectableEnum reflectableEnum;
     ::test_object::polymorphic_allocator::ReflectableChoice reflectableChoice;
@@ -109,21 +115,21 @@ template <>
 View<::test_object::polymorphic_allocator::ReflectableObject> read(BitStreamReader& reader, ::test_object::polymorphic_allocator::ReflectableObject& data);
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::ReflectableObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::ReflectableObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::ReflectableObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::ReflectableObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::ReflectableObject>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::ReflectableObject>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

@@ -7,7 +7,7 @@ namespace parameterized_types
 namespace simple_param
 {
 
-using AllocatorType = Item::AllocatorType;
+using AllocatorType = Item::allocator_type;
 
 class SimpleParamTest : public ::testing::Test
 {

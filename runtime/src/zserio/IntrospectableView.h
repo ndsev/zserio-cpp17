@@ -975,7 +975,7 @@ public:
     using Base::getTypeInfo;
     using AllocatorHolder<ALLOC>::get_allocator;
 
-    explicit IntrospectableViewArray(const ARRAY_VIEW& value, const ALLOC& allocator) :
+    explicit IntrospectableViewArray(const ARRAY_VIEW& value, const ALLOC& allocator = {}) :
             Base(typeInfo<typename ARRAY_VIEW::ValueType, ALLOC>(), value),
             AllocatorHolder<ALLOC>(allocator)
     {}
@@ -1265,8 +1265,7 @@ template <typename T, typename TRAITS, typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectableArray(
         ArrayView<T, TRAITS> value, const ALLOC& allocator = ALLOC())
 {
-    return std::allocate_shared<detail::IntrospectableViewArray<ArrayView<T, TRAITS>, ALLOC>>(
-            allocator, value, allocator);
+    return std::allocate_shared<detail::IntrospectableViewArray<ArrayView<T, TRAITS>, ALLOC>>(allocator, value);
 }
 
 } // namespace zserio

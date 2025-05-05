@@ -13,7 +13,7 @@ namespace union_types
 namespace union_with_array
 {
 
-using AllocatorType = TestUnion::AllocatorType;
+using AllocatorType = TestUnion::allocator_type;
 
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

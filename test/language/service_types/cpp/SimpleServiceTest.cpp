@@ -15,7 +15,7 @@ namespace service_types
 namespace simple_service
 {
 
-using AllocatorType = SimpleService::Client::AllocatorType;
+using AllocatorType = SimpleService::Client::allocator_type;
 using LocalServiceClient = test_utils::LocalServiceClient<AllocatorType>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

@@ -8,7 +8,7 @@ namespace extended_members
 namespace extended_choice_field
 {
 
-using AllocatorType = Extended::AllocatorType;
+using AllocatorType = Extended::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

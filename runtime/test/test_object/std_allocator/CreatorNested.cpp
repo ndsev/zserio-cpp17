@@ -20,10 +20,10 @@ namespace std_allocator
 {
 
 CreatorNested::CreatorNested() noexcept :
-        CreatorNested(AllocatorType{})
+        CreatorNested(allocator_type{})
 {}
 
-CreatorNested::CreatorNested(const AllocatorType& allocator) noexcept :
+CreatorNested::CreatorNested(const allocator_type& allocator) noexcept :
         value(),
         text(allocator),
         externData(allocator),
@@ -32,17 +32,36 @@ CreatorNested::CreatorNested(const AllocatorType& allocator) noexcept :
         creatorBitmask()
 {}
 
+CreatorNested::CreatorNested(CreatorNested&& other, const allocator_type& allocator) :
+        value(other.value),
+        text(std::move(other.text), allocator),
+        externData(std::move(other.externData), allocator),
+        bytesData(std::move(other.bytesData), allocator),
+        creatorEnum(other.creatorEnum),
+        creatorBitmask(other.creatorBitmask)
+{}
+
+CreatorNested::CreatorNested(const CreatorNested& other, const allocator_type& allocator) :
+        value(other.value),
+        text(other.text, allocator),
+        externData(other.externData, allocator),
+        bytesData(other.bytesData, allocator),
+        creatorEnum(other.creatorEnum),
+        creatorBitmask(other.creatorBitmask)
+{}
+
 CreatorNested::CreatorNested(
         ::zserio::UInt32 value_,
         ::zserio::String text_,
         ::zserio::BitBuffer externData_,
         ::zserio::Bytes bytesData_,
         ::test_object::std_allocator::CreatorEnum creatorEnum_,
-        ::test_object::std_allocator::CreatorBitmask creatorBitmask_) :
+        ::test_object::std_allocator::CreatorBitmask creatorBitmask_,
+        const allocator_type& allocator) :
         value(value_),
-        text(::std::move(text_)),
-        externData(::std::move(externData_)),
-        bytesData(::std::move(bytesData_)),
+        text(::std::move(text_), allocator),
+        externData(::std::move(externData_), allocator),
+        bytesData(::std::move(bytesData_), allocator),
         creatorEnum(creatorEnum_),
         creatorBitmask(creatorBitmask_)
 {}
@@ -416,7 +435,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::CreatorNested,
         "test_object.std_allocator.CreatorNested",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::CreatorNested>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::CreatorNested>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -436,7 +455,7 @@ template <>
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::CreatorNested& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::std_allocator::CreatorNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::CreatorNested>(), alloc),
                 m_object(object)
         {}
@@ -479,7 +498,7 @@ template <>
         const ::test_object::std_allocator::CreatorNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -492,7 +511,7 @@ template <>
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::CreatorNested& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::std_allocator::CreatorNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::CreatorNested>(), alloc),
                 m_object(object)
         {}
@@ -639,7 +658,7 @@ template <>
         ::test_object::std_allocator::CreatorNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -648,9 +667,9 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::CreatorNested, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::CreatorNested>& view_, const ::std::allocator<uint8_t>& allocator) :
+        Introspectable(const ::zserio::View<::test_object::std_allocator::CreatorNested>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::CreatorNested, ::std::allocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -692,7 +711,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

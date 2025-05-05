@@ -7,7 +7,7 @@ namespace structure_types
 namespace simple_structure
 {
 
-using AllocatorType = SimpleStructure::AllocatorType;
+using AllocatorType = SimpleStructure::allocator_type;
 
 class SimpleStructureTest : public ::testing::Test
 {

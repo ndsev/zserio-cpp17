@@ -14,7 +14,7 @@ namespace pubsub_types
 namespace simple_pubsub
 {
 
-using AllocatorType = SimplePubsub::AllocatorType;
+using AllocatorType = SimplePubsub::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;
 

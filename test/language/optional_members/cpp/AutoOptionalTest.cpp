@@ -7,7 +7,7 @@ namespace optional_members
 namespace auto_optional
 {
 
-using AllocatorType = Container::AllocatorType;
+using AllocatorType = Container::allocator_type;
 
 class AutoOptionalTest : public ::testing::Test
 {

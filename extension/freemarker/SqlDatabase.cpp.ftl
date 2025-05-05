@@ -15,8 +15,8 @@
 
 <#assign hasWithoutRowIdTable=sql_db_has_without_rowid_table(fieldList)/>
 ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& tableToDbFileNameRelocationMap,
-        const AllocatorType& allocator) :
-        ::zserio::AllocatorHolder<AllocatorType>(allocator),
+        const allocator_type& allocator) :
+        ::zserio::AllocatorHolder<allocator_type>(allocator),
         m_tableToAttachedDbNameRelocationMap(allocator)
 {
     sqlite3 *internalConnection = nullptr;
@@ -55,20 +55,20 @@ ${name}::${name}(const ${types.string.name}& dbFileName, const TRelocationMap& t
     initTables();
 }
 
-${name}::${name}(const ${types.string.name}& dbFileName, const AllocatorType& allocator) :
+${name}::${name}(const ${types.string.name}& dbFileName, const allocator_type& allocator) :
         ${name}(dbFileName, TRelocationMap(allocator), allocator)
 {}
 
 ${name}::${name}(sqlite3* externalConnection, const TRelocationMap& tableToAttachedDbNameRelocationMap,
-        const AllocatorType& allocator) :
-        ::zserio::AllocatorHolder<AllocatorType>(allocator),
+        const allocator_type& allocator) :
+        ::zserio::AllocatorHolder<allocator_type>(allocator),
         m_tableToAttachedDbNameRelocationMap(tableToAttachedDbNameRelocationMap, allocator)
 {
     m_db.reset(externalConnection, ::zserio::SqliteConnection::EXTERNAL_CONNECTION);
     initTables();
 }
 
-${name}::${name}(sqlite3* externalConnection, const AllocatorType& allocator) :
+${name}::${name}(sqlite3* externalConnection, const allocator_type& allocator) :
         ${name}(externalConnection, TRelocationMap(allocator), allocator)
 {}
 
@@ -171,10 +171,9 @@ void ${name}::initTables()
     relocationIt = m_tableToAttachedDbNameRelocationMap.find(
             ${types.string.name}(tableNames[${field?index}], get_allocator_ref()));
     </#if>
-    <@sql_field_member_name field/> = ::zserio::allocate_unique<${field.typeInfo.typeFullName}>(
+    <@sql_field_member_name field/> = ::std::allocate_shared<${field.typeInfo.typeFullName}>(
             get_allocator_ref(), this->m_db, tableNames[${field?index}],
-            relocationIt != m_tableToAttachedDbNameRelocationMap.end() ? relocationIt->second : EMPTY_STR,
-            get_allocator_ref());
+            relocationIt != m_tableToAttachedDbNameRelocationMap.end() ? relocationIt->second : EMPTY_STR);
     <#if field?has_next>
 
     </#if>

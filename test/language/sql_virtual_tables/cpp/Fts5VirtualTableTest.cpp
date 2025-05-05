@@ -11,7 +11,7 @@ namespace sql_virtual_tables
 namespace fts5_virtual_table
 {
 
-using AllocatorType = Fts5TestDb::AllocatorType;
+using AllocatorType = Fts5TestDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

@@ -10,7 +10,7 @@ namespace array_types
 namespace fixed_array_uint8
 {
 
-using AllocatorType = FixedArray::AllocatorType;
+using AllocatorType = FixedArray::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

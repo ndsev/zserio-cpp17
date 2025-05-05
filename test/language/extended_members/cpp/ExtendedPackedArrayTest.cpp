@@ -8,7 +8,7 @@ namespace extended_members
 namespace extended_packed_array
 {
 
-using AllocatorType = Extended2::AllocatorType;
+using AllocatorType = Extended2::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

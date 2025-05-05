@@ -14,7 +14,7 @@ namespace service_types
 namespace complex_types_service
 {
 
-using AllocatorType = ComplexTypesService::Client::AllocatorType;
+using AllocatorType = ComplexTypesService::Client::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 using LocalServiceClient = test_utils::LocalServiceClient<AllocatorType>;
@@ -81,7 +81,7 @@ public:
 private:
     void rgbToCmyk(const VectorType<ColorModelChoice>& data, Response& response)
     {
-        auto& cmykData = response.data.emplace<ResponseData::Tag::cmykData>(get_allocator_ref());
+        auto& cmykData = response.data.emplace<ResponseData::Tag::cmykData>();
         cmykData.resize(response.length);
         for (uint32_t i = 0; i < response.length; ++i)
         {
@@ -100,7 +100,7 @@ private:
 
     void cmykToRgb(const VectorType<ColorModelChoice>& data, Response& response)
     {
-        auto& rgbData = response.data.emplace<ResponseData::Tag::rgbData>(get_allocator_ref());
+        auto& rgbData = response.data.emplace<ResponseData::Tag::rgbData>();
         rgbData.resize(response.length);
         for (uint32_t i = 0; i < response.length; ++i)
         {

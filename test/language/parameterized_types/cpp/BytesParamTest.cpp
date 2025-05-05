@@ -7,7 +7,7 @@ namespace parameterized_types
 namespace bytes_param
 {
 
-using AllocatorType = BytesParam::AllocatorType;
+using AllocatorType = BytesParam::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

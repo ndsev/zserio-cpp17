@@ -7,7 +7,7 @@ namespace parameterized_types
 namespace array_element_param
 {
 
-using AllocatorType = Database::AllocatorType;
+using AllocatorType = Database::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

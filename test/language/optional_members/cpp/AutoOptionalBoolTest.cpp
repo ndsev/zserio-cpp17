@@ -7,7 +7,7 @@ namespace optional_members
 namespace auto_optional_bool
 {
 
-using AllocatorType = Container::AllocatorType;
+using AllocatorType = Container::allocator_type;
 
 class AutoOptionalBoolTest : public ::testing::Test
 {

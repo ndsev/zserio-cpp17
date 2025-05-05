@@ -845,7 +845,7 @@ public:
     using Base::operator[];
     using Base::getAnyValue;
 
-    ReflectableDataConstArray(const ALLOC& allocator, const RAW_ARRAY& rawArray) :
+    explicit ReflectableDataConstArray(const RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
             Base(typeInfo<typename RAW_ARRAY::value_type, ALLOC>(), allocator),
             m_rawArray(rawArray)
     {}
@@ -886,7 +886,7 @@ public:
     using Base::getAnyValue;
     using Base::getTypeInfo;
 
-    ReflectableDataArray(const ALLOC& allocator, RAW_ARRAY& rawArray) :
+    explicit ReflectableDataArray(RAW_ARRAY& rawArray, const ALLOC& allocator = {}) :
             Base(typeInfo<typename RAW_ARRAY::value_type, ALLOC>(), allocator),
             m_rawArray(rawArray)
     {}
@@ -961,7 +961,7 @@ private:
  *
  * This is needed in ZserioTreeCreator to be able to generically create the new instance of a zserio object.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType>
+template <typename T, typename ALLOC = typename T::allocator_type>
 class ReflectableDataOwner : public IBasicReflectableData<ALLOC>
 {
 public:
@@ -1564,7 +1564,7 @@ IBasicReflectableDataConstPtr<ALLOC> reflectableArray(
         const std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<detail::ReflectableDataConstArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
+            allocator, array);
 }
 
 template <typename T, typename VECTOR_ALLOC, typename ALLOC = std::allocator<uint8_t>>
@@ -1572,7 +1572,7 @@ IBasicReflectableDataPtr<ALLOC> reflectableArray(
         std::vector<T, VECTOR_ALLOC>& array, const ALLOC& allocator = ALLOC())
 {
     return std::allocate_shared<detail::ReflectableDataArray<std::vector<T, VECTOR_ALLOC>, ALLOC>>(
-            allocator, allocator, array);
+            allocator, array);
 }
 
 } // namespace zserio

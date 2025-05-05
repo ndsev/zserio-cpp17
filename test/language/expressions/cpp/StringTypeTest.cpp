@@ -9,7 +9,7 @@ namespace expressions
 namespace string_type
 {
 
-using AllocatorType = StringTypeExpression::AllocatorType;
+using AllocatorType = StringTypeExpression::allocator_type;
 
 class StringTypeTest : public ::testing::Test
 {

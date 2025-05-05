@@ -100,7 +100,7 @@ struct DebugStringTraits
  * \param stream Output stream to use.
  * \param allocator Allocator to use.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
 void toJsonStream(const T& object, std::ostream& stream, const ALLOC& allocator = ALLOC())
 {
@@ -128,7 +128,7 @@ void toJsonStream(const T& object, std::ostream& stream, const ALLOC& allocator 
  * \param indent Indent argument for JsonWriter.
  * \param allocator Allocator to use.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
 void toJsonStream(const T& object, std::ostream& stream, uint8_t indent, const ALLOC& allocator = ALLOC())
 {
@@ -157,7 +157,7 @@ void toJsonStream(const T& object, std::ostream& stream, uint8_t indent, const A
  * \param walkFilter WalkFilter to use by Walker.
  * \param allocator Allocator to use.
  */
-template <typename T, typename WALK_FILTER, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename WALK_FILTER, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<
                 std::is_base_of<IBasicWalkFilter<ALLOC>, typename std::decay<WALK_FILTER>::type>::value,
                 int>::type = 0>
@@ -191,7 +191,7 @@ void toJsonStream(
  * \param walkFilter WalkFilter to use by Walker.
  * \param allocator Allocator to use.
  */
-template <typename T, typename WALK_FILTER, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename WALK_FILTER, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<
                 std::is_base_of<IBasicWalkFilter<ALLOC>, typename std::decay<WALK_FILTER>::type>::value,
                 int>::type = 0>
@@ -218,7 +218,7 @@ void toJsonStream(const T& object, std::ostream& stream, uint8_t indent, WALK_FI
  *
  * \return JSON debug string.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
 BasicString<RebindAlloc<ALLOC, char>> toJsonString(const T& object, const ALLOC& allocator = ALLOC())
 {
@@ -246,7 +246,7 @@ BasicString<RebindAlloc<ALLOC, char>> toJsonString(const T& object, const ALLOC&
  *
  * \return JSON debug string.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
 BasicString<RebindAlloc<ALLOC, char>> toJsonString(
         const T& object, uint8_t indent, const ALLOC& allocator = ALLOC())
@@ -275,7 +275,7 @@ BasicString<RebindAlloc<ALLOC, char>> toJsonString(
  *
  * \return JSON debug string.
  */
-template <typename T, typename WALK_FILTER, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename WALK_FILTER, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<
                 std::is_base_of<IBasicWalkFilter<ALLOC>, typename std::decay<WALK_FILTER>::type>::value,
                 int>::type = 0>
@@ -308,7 +308,7 @@ BasicString<RebindAlloc<ALLOC, char>> toJsonString(
  *
  * \return JSON debug string.
  */
-template <typename T, typename WALK_FILTER, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename WALK_FILTER, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<
                 std::is_base_of<IBasicWalkFilter<ALLOC>, typename std::decay<WALK_FILTER>::type>::value,
                 int>::type = 0>
@@ -333,7 +333,7 @@ BasicString<RebindAlloc<ALLOC, char>> toJsonString(
  * \param fileName Name of file to write.
  * \param allocator Allocator to use.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
 void toJsonFile(const T& object, std::string_view fileName, const ALLOC& allocator = ALLOC())
 {
@@ -361,7 +361,7 @@ void toJsonFile(const T& object, std::string_view fileName, const ALLOC& allocat
  *
  * \throw CppRuntimeException When the writing fails.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<is_allocator<ALLOC>::value, int>::type = 0>
 void toJsonFile(const T& object, std::string_view fileName, uint8_t indent, const ALLOC& allocator = ALLOC())
 {
@@ -389,7 +389,7 @@ void toJsonFile(const T& object, std::string_view fileName, uint8_t indent, cons
  * \param walkFilter WalkFilter to use by Walker.
  * \param allocator Allocator to use.
  */
-template <typename T, typename WALK_FILTER, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename WALK_FILTER, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<
                 std::is_base_of<IBasicWalkFilter<ALLOC>, typename std::decay<WALK_FILTER>::type>::value,
                 int>::type = 0>
@@ -420,7 +420,7 @@ void toJsonFile(
  * \param walkFilter WalkFilter to use by Walker.
  * \param allocator Allocator to use.
  */
-template <typename T, typename WALK_FILTER, typename ALLOC = typename T::AllocatorType,
+template <typename T, typename WALK_FILTER, typename ALLOC = typename T::allocator_type,
         typename std::enable_if<
                 std::is_base_of<IBasicWalkFilter<ALLOC>, typename std::decay<WALK_FILTER>::type>::value,
                 int>::type = 0>
@@ -486,7 +486,7 @@ typename detail::DebugStringTraits<ALLOC>::ReflectableDataPtr fromJsonStream(
  * \return Instance of the requested zserio object.
  * \throw CppRuntimeException In case of any error.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType>
+template <typename T, typename ALLOC = typename T::allocator_type>
 T fromJsonStream(std::istream& is, const ALLOC& allocator = ALLOC())
 {
     return std::move(ReflectableUtil::getValue<T, ALLOC>(fromJsonStream(typeInfo<T>(), is, allocator)));
@@ -549,7 +549,7 @@ typename detail::DebugStringTraits<ALLOC>::ReflectableDataPtr fromJsonString(
  * \return Instance of the requested zserio object.
  * \throw CppRuntimeException In case of any error.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType>
+template <typename T, typename ALLOC = typename T::allocator_type>
 T fromJsonString(const BasicString<RebindAlloc<ALLOC, char>>& json, const ALLOC& allocator = ALLOC())
 {
     return std::move(ReflectableUtil::getValue<T, ALLOC>(fromJsonString(typeInfo<T>(), json, allocator)));
@@ -614,7 +614,7 @@ typename detail::DebugStringTraits<ALLOC>::ReflectableDataPtr fromJsonFile(
  * \return Instance of the requested zserio object.
  * \throw CppRuntimeException In case of any error.
  */
-template <typename T, typename ALLOC = typename T::AllocatorType>
+template <typename T, typename ALLOC = typename T::allocator_type>
 T fromJsonFile(std::string_view fileName, const ALLOC& allocator = ALLOC())
 {
     return std::move(ReflectableUtil::getValue<T, ALLOC>(fromJsonFile(typeInfo<T>(), fileName, allocator)));

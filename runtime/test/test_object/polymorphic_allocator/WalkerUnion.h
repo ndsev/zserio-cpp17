@@ -6,12 +6,6 @@
 #ifndef TEST_OBJECT_POLYMORPHIC_ALLOCATOR_WALKER_UNION_H
 #define TEST_OBJECT_POLYMORPHIC_ALLOCATOR_WALKER_UNION_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
 
 #include <zserio/pmr/Variant.h>

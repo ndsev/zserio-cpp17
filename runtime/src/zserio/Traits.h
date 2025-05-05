@@ -23,17 +23,22 @@ class NumericTypeWrapper;
  * \{
  */
 template <typename T, typename = void>
-struct is_allocator : std::false_type
+struct is_allocator_impl : std::false_type
 {};
 
 template <typename T>
-struct is_allocator<T,
-        std::void_t<decltype(std::declval<T>().allocate(0)),
-                decltype(std::declval<T>().deallocate(nullptr, 0))>> : std::true_type
+struct is_allocator_impl<T,
+        std::void_t<typename T::value_type, decltype(std::declval<T>().allocate(0)),
+                decltype(std::declval<T>().deallocate(std::declval<typename T::value_type*>(), 0))>>
+        : std::true_type
 {};
 
-template <typename T, typename V = void>
-inline constexpr bool is_allocator_v = is_allocator<T, V>::value;
+template <typename T>
+struct is_allocator : is_allocator_impl<std::decay_t<T>>
+{};
+
+template <typename T>
+inline constexpr bool is_allocator_v = is_allocator<T>::value;
 /** \} */
 
 /**
@@ -57,29 +62,11 @@ inline constexpr bool is_first_allocator_v = is_first_allocator<ARGS...>::value;
  * \{
  */
 template <typename T, typename = void>
-struct has_std_allocator : std::false_type
+struct has_allocator : std::false_type
 {};
 
 template <typename T>
-struct has_std_allocator<T, std::void_t<typename T::allocator_type>> : std::true_type
-{};
-
-template <typename T, typename V = void>
-inline constexpr bool has_std_allocator_v = has_std_allocator<T, V>::value;
-
-template <typename T, typename = void>
-struct has_zs_allocator : std::false_type
-{};
-
-template <typename T>
-struct has_zs_allocator<T, std::void_t<typename T::AllocatorType>> : std::true_type
-{};
-
-template <typename T, typename V = void>
-inline constexpr bool has_zs_allocator_v = has_zs_allocator<T, V>::value;
-
-template <typename T, typename V = void>
-struct has_allocator : std::disjunction<has_std_allocator<T, V>, has_zs_allocator<T, V>>
+struct has_allocator<T, std::void_t<typename T::allocator_type>> : std::true_type
 {};
 
 template <typename T, typename V = void>
@@ -138,6 +125,20 @@ struct is_numeric_wrapper<T,
 
 template <typename T, typename V = void>
 inline constexpr bool is_numeric_wrapper_v = is_numeric_wrapper<T, V>::value;
+
+/**
+ * Trait used to check wheter the type T is complete (defined)
+ * */
+template <typename T, typename = void>
+struct is_complete : std::false_type
+{};
+
+template <typename T>
+struct is_complete<T, std::void_t<decltype(sizeof(T))>> : std::true_type
+{};
+
+template <typename T>
+constexpr bool is_complete_v = is_complete<T>::value;
 
 } // namespace zserio
 

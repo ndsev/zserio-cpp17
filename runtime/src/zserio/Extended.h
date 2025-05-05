@@ -6,6 +6,22 @@
 namespace zserio
 {
 
+namespace detail
+{
+
+template <typename T, typename... ARGS>
+struct is_single_type : std::false_type
+{};
+
+template <typename T, typename A1>
+struct is_single_type<T, A1> : std::is_same<T, std::decay_t<A1>>
+{};
+
+template <typename T, typename... ARGS>
+inline constexpr bool is_single_type_v = is_single_type<T, ARGS...>::value;
+
+} // namespace detail
+
 /**
  * Wrapper around an extended field (defined using 'extended' keyword in Zserio schema).
  *
@@ -16,13 +32,34 @@ template <typename T>
 class Extended
 {
 public:
+    Extended(Extended&& other) = default;
+
+    template <typename ALLOC>
+    Extended(Extended&& other, const ALLOC& allocator) :
+            m_isPresent(other.m_isPresent),
+            m_value(std::move(other.m_value), allocator)
+    {}
+
+    Extended(const Extended& other) = default;
+
+    template <typename ALLOC>
+    Extended(const Extended& other, const ALLOC& allocator) :
+            m_isPresent(other.m_isPresent),
+            m_value(other.m_value, allocator)
+    {}
+
     /**
      * In-place extended value constructor from T's arguments.
      */
-    template <typename... ARGS>
+    template <typename... ARGS, typename = std::enable_if_t<!detail::is_single_type_v<Extended, ARGS...>>>
     explicit constexpr Extended(ARGS&&... args) :
             m_value(std::forward<ARGS>(args)...)
     {}
+
+    Extended& operator=(Extended&& other) = default;
+    Extended& operator=(const Extended& other) = default;
+
+    ~Extended() = default;
 
     /**
      * Const extended value getter.

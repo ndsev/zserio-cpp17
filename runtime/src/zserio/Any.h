@@ -312,7 +312,7 @@ public:
         {
             // TODO: do not dealloc unless necessary
             clearHolder();
-            if (AllocTraits::propagate_on_container_copy_assignment::value)
+            if constexpr (AllocTraits::propagate_on_container_copy_assignment::value)
             {
                 set_allocator(other.get_allocator_ref());
             }
@@ -357,7 +357,7 @@ public:
         if (this != &other)
         {
             clearHolder();
-            if (AllocTraits::propagate_on_container_move_assignment::value)
+            if constexpr (AllocTraits::propagate_on_container_move_assignment::value)
             {
                 set_allocator(std::move(other.get_allocator_ref()));
             }

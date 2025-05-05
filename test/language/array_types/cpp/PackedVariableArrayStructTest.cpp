@@ -8,7 +8,7 @@ namespace array_types
 namespace packed_variable_array_struct
 {
 
-using AllocatorType = PackedVariableArray::AllocatorType;
+using AllocatorType = PackedVariableArray::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 using BitBufferType = zserio::BasicBitBuffer<AllocatorType>;

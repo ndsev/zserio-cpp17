@@ -10,7 +10,7 @@ namespace extended_members
 namespace extended_indexed_offsets
 {
 
-using AllocatorType = Extended::AllocatorType;
+using AllocatorType = Extended::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

@@ -7,6 +7,7 @@ import zserio.ast.PackageName;
  *
  * Currently only types which depends on allocators are configurable.
  */
+
 public final class TypesContext
 {
     public TypesContext(AllocatorDefinition allocator)
@@ -53,7 +54,7 @@ public final class TypesContext
             introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PACKAGE_NAME,
                     "IIntrospectableViewConstPtr", false, false, "zserio/IIntrospectableView.h");
         }
-        else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
+        else if (allocator.equals(STD_POLYMORPHIC_ALLOCATOR))
         {
             any = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME, "Any", false, false, "zserio/pmr/Any.h");
             bitBuffer = new NativeTypeDefinition(
@@ -96,6 +97,50 @@ public final class TypesContext
                     false, false, "zserio/pmr/IReflectableData.h");
             introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PMR_PACKAGE_NAME,
                     "IIntrospectableViewConstPtr", false, false, "zserio/pmr/IIntrospectableView.h");
+        }
+        else if (allocator.equals(PROPAGATING_POLYMORPHIC_ALLOCATOR))
+        {
+            any = new NativeTypeDefinition(ZSERIO_PPMR_PACKAGE_NAME, "Any", false, false, "zserio/ppmr/Any.h");
+            bitBuffer = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "BitBuffer", false, false, "zserio/ppmr/BitBuffer.h");
+            bitBufferView = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "BitBufferView", false, false, "zserio/ppmr/BitBuffer.h");
+            bytes = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "Bytes", false, false, "zserio/ppmr/Bytes.h");
+            string = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "String", false, false, "zserio/ppmr/String.h");
+            vector = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "Vector", true, false, "zserio/ppmr/Vector.h");
+            map = new NativeTypeDefinition(ZSERIO_PPMR_PACKAGE_NAME, "Map", true, false, "zserio/ppmr/Map.h");
+            set = new NativeTypeDefinition(ZSERIO_PPMR_PACKAGE_NAME, "Set", true, false, "zserio/ppmr/Set.h");
+            optional = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "Optional", true, false, "zserio/ppmr/Optional.h");
+            variant = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "Variant", true, false, "zserio/ppmr/Variant.h");
+            uniquePtr = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "UniquePtr", true, false, "zserio/ppmr/UniquePtr.h");
+            service = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "IService", false, false, "zserio/ppmr/IService.h");
+            serviceClient = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "IServiceClient", false, false, "zserio/ppmr/IService.h");
+            serviceDataPtr = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "IServiceDataPtr", false, false, "zserio/ppmr/IService.h");
+            introspectableServiceData = new NativeTypeDefinition(ZSERIO_PPMR_PACKAGE_NAME,
+                    "IntrospectableServiceData", false, false, "zserio/ppmr/IService.h");
+            objectServiceData = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "ObjectServiceData", false, false, "zserio/ppmr/IService.h");
+            rawServiceDataHolder = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "RawServiceDataHolder", false, false, "zserio/ppmr/IService.h");
+            rawServiceDataView = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "RawServiceDataView", false, false, "zserio/ppmr/IService.h");
+            typeInfo = new NativeTypeDefinition(
+                    ZSERIO_PPMR_PACKAGE_NAME, "ITypeInfo", false, false, "zserio/ppmr/ITypeInfo.h");
+            reflectablePtr = new NativeTypeDefinition(ZSERIO_PPMR_PACKAGE_NAME, "IReflectableDataPtr", false,
+                    false, "zserio/ppmr/IReflectableData.h");
+            reflectableConstPtr = new NativeTypeDefinition(ZSERIO_PPMR_PACKAGE_NAME, "IReflectableDataConstPtr",
+                    false, false, "zserio/ppmr/IReflectableData.h");
+            introspectableConstPtr = new NativeTypeDefinition(ZSERIO_PPMR_PACKAGE_NAME,
+                    "IIntrospectableViewConstPtr", false, false, "zserio/ppmr/IIntrospectableView.h");
         }
         else
         {
@@ -362,12 +407,16 @@ public final class TypesContext
     private final NativeTypeDefinition introspectableConstPtr;
 
     public static final AllocatorDefinition PROPAGATING_POLYMORPHIC_ALLOCATOR = new AllocatorDefinition(
-            "::zserio::pmr::PropagatingPolymorphicAllocator", "zserio/pmr/PropagatingPolymorphicAllocator.h");
+            "::zserio::ppmr::PropagatingPolymorphicAllocator", "zserio/ppmr/PropagatingPolymorphicAllocator.h");
     public static final AllocatorDefinition STD_ALLOCATOR =
             new AllocatorDefinition("::std::allocator", "memory");
+    public static final AllocatorDefinition STD_POLYMORPHIC_ALLOCATOR =
+            new AllocatorDefinition("::std::pmr::polymorphic_allocator", "memory_resource");
 
     private static final PackageName STD_PACKAGE_NAME = new PackageName.Builder().addId("std").get();
     private static final PackageName ZSERIO_PACKAGE_NAME = new PackageName.Builder().addId("zserio").get();
+    private static final PackageName ZSERIO_PPMR_PACKAGE_NAME =
+            new PackageName.Builder().addId("zserio").addId("ppmr").get();
     private static final PackageName ZSERIO_PMR_PACKAGE_NAME =
             new PackageName.Builder().addId("zserio").addId("pmr").get();
 }

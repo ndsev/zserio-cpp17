@@ -9,7 +9,7 @@ namespace choice_types
 namespace full_enum_param_choice
 {
 
-using AllocatorType = FullEnumParamChoice::AllocatorType;
+using AllocatorType = FullEnumParamChoice::allocator_type;
 
 class FullEnumParamChoiceTest : public ::testing::Test
 {

@@ -12,7 +12,7 @@ namespace explicit_parameters
 namespace explicit_same_as_field
 {
 
-using AllocatorType = ExplicitParametersDb::AllocatorType;
+using AllocatorType = ExplicitParametersDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

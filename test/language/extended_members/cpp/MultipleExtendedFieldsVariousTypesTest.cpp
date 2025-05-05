@@ -12,7 +12,7 @@ namespace extended_members
 namespace multiple_extended_fields_various_types
 {
 
-using AllocatorType = Extended2::AllocatorType;
+using AllocatorType = Extended2::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

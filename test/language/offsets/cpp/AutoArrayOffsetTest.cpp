@@ -8,7 +8,7 @@ namespace offsets
 namespace auto_array_offset
 {
 
-using AllocatorType = AutoArrayHolder::AllocatorType;
+using AllocatorType = AutoArrayHolder::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

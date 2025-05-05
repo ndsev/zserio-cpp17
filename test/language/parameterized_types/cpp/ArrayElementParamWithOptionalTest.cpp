@@ -7,7 +7,7 @@ namespace parameterized_types
 namespace array_element_param_with_optional
 {
 
-using AllocatorType = Holder::AllocatorType;
+using AllocatorType = Holder::allocator_type;
 
 class ArrayElementParamWithOptionalTest : public ::testing::Test
 {

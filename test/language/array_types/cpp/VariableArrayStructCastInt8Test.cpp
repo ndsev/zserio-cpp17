@@ -10,7 +10,7 @@ namespace array_types
 namespace variable_array_struct_cast_int8
 {
 
-using AllocatorType = VariableArray::AllocatorType;
+using AllocatorType = VariableArray::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

@@ -8,7 +8,7 @@ namespace choice_types
 namespace empty_choice_with_default
 {
 
-using AllocatorType = EmptyChoiceWithDefault::AllocatorType;
+using AllocatorType = EmptyChoiceWithDefault::allocator_type;
 
 TEST(EmptyChoiceWithDefaultTest, constructors)
 {

@@ -6,20 +6,14 @@
 #ifndef TEST_OBJECT_POLYMORPHIC_ALLOCATOR_DEBUG_STRING_PARAM_OBJECT_H
 #define TEST_OBJECT_POLYMORPHIC_ALLOCATOR_DEBUG_STRING_PARAM_OBJECT_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/View.h>
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Types.h>
-#include <zserio/pmr/String.h>
+#include <zserio/ppmr/String.h>
 
 namespace test_object
 {
@@ -28,15 +22,27 @@ namespace polymorphic_allocator
 
 struct DebugStringParamObject
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     DebugStringParamObject() noexcept;
-    explicit DebugStringParamObject(const AllocatorType& allocator) noexcept;
+    explicit DebugStringParamObject(const allocator_type& allocator) noexcept;
+
+    DebugStringParamObject(DebugStringParamObject&&) = default;
+    DebugStringParamObject(DebugStringParamObject&& other_, const allocator_type& allocator);
+
+    DebugStringParamObject(const DebugStringParamObject&) = default;
+    DebugStringParamObject(const DebugStringParamObject& other_, const allocator_type& allocator);
+
+    DebugStringParamObject& operator=(DebugStringParamObject&&) = default;
+    DebugStringParamObject& operator=(const DebugStringParamObject&) = default;
+
+    ~DebugStringParamObject() = default;
 
     explicit DebugStringParamObject(
-            ::zserio::pmr::String text_);
+            ::zserio::ppmr::String text_,
+            const allocator_type& allocator = {});
 
-    ::zserio::pmr::String text;
+    ::zserio::ppmr::String text;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::DebugStringParamObject& lhs, const ::test_object::polymorphic_allocator::DebugStringParamObject& rhs);
@@ -97,21 +103,21 @@ View<::test_object::polymorphic_allocator::DebugStringParamObject> read(BitStrea
         ::zserio::Int32 param_);
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::DebugStringParamObject, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::DebugStringParamObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::DebugStringParamObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::DebugStringParamObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::DebugStringParamObject& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::DebugStringParamObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::DebugStringParamObject>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::DebugStringParamObject>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

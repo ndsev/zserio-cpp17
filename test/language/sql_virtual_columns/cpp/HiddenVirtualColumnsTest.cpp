@@ -12,7 +12,7 @@ namespace sql_virtual_columns
 namespace hidden_virtual_columns
 {
 
-using AllocatorType = HiddenVirtualColumnsDb::AllocatorType;
+using AllocatorType = HiddenVirtualColumnsDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

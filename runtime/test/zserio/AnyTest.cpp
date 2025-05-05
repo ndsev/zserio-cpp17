@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 #include "zserio/Any.h"
-#include "zserio/pmr/PropagatingPolymorphicAllocator.h"
+#include "zserio/ppmr/PropagatingPolymorphicAllocator.h"
 
 #include "TrackingAllocator.h"
 

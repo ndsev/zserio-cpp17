@@ -7,7 +7,7 @@ namespace builtin_types
 namespace bitfield_function_length
 {
 
-using AllocatorType = Container::AllocatorType;
+using AllocatorType = Container::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

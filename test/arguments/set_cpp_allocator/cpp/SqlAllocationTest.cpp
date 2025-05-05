@@ -8,7 +8,7 @@ using namespace test_utils;
 namespace sql_allocation
 {
 
-using AllocatorType = SqlAllocationDb::AllocatorType;
+using AllocatorType = SqlAllocationDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

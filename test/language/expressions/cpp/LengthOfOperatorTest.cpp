@@ -10,7 +10,7 @@ namespace expressions
 namespace lengthof_operator
 {
 
-using AllocatorType = LengthOfFunctions::AllocatorType;
+using AllocatorType = LengthOfFunctions::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;

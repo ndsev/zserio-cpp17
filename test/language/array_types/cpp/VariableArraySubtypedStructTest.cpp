@@ -11,7 +11,7 @@ namespace array_types
 namespace variable_array_subtyped_struct
 {
 
-using AllocatorType = VariableArray::AllocatorType;
+using AllocatorType = VariableArray::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

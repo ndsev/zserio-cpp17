@@ -25,6 +25,8 @@ public final class Cpp17ExtensionParameters
         final String cppAllocator = parameters.getCommandLineArg(OptionSetCppAllocator);
         if (cppAllocator == null || cppAllocator.equals(StdAllocator))
             allocatorDefinition = TypesContext.STD_ALLOCATOR;
+        else if (cppAllocator.equals(StdPolymorphicAllocator))
+            allocatorDefinition = TypesContext.STD_POLYMORPHIC_ALLOCATOR;
         else
             allocatorDefinition = TypesContext.PROPAGATING_POLYMORPHIC_ALLOCATOR;
 
@@ -71,7 +73,7 @@ public final class Cpp17ExtensionParameters
         options.addOption(option);
 
         option = new Option(OptionSetCppAllocator, true,
-                "set the C++ allocator to be used in generated code: std (default), polymorphic");
+                "set the C++ allocator to be used in generated code: std (default), pmr, ppmr");
         option.setArgName("allocator");
         option.setRequired(false);
         options.addOption(option);
@@ -95,7 +97,8 @@ public final class Cpp17ExtensionParameters
     {
         final String cppAllocator = parameters.getCommandLineArg(OptionSetCppAllocator);
         if (cppAllocator != null && !cppAllocator.equals(StdAllocator) &&
-                !cppAllocator.equals(PolymorphicAllocator))
+                !cppAllocator.equals(StdPolymorphicAllocator) &&
+                !cppAllocator.equals(PropagatingPolymorphicAllocator))
         {
             throw new ZserioExtensionException("The specified option '" + OptionSetCppAllocator + "' has "
                     + "unknown allocator '" + cppAllocator + "'!");
@@ -108,9 +111,13 @@ public final class Cpp17ExtensionParameters
         {
             description.add(StdAllocator + "Allocator");
         }
+        else if (allocatorDefinition == TypesContext.STD_POLYMORPHIC_ALLOCATOR)
+        {
+            description.add(StdPolymorphicAllocator + "Allocator");
+        }
         else if (allocatorDefinition == TypesContext.PROPAGATING_POLYMORPHIC_ALLOCATOR)
         {
-            description.add(PolymorphicAllocator + "Allocator");
+            description.add(PropagatingPolymorphicAllocator + "Allocator");
         }
         else
         {
@@ -125,7 +132,8 @@ public final class Cpp17ExtensionParameters
     private static final String OptionWithTypeInfoCode = "withTypeInfoCode";
 
     private final static String StdAllocator = "std";
-    private final static String PolymorphicAllocator = "polymorphic";
+    private final static String StdPolymorphicAllocator = "pmr";
+    private final static String PropagatingPolymorphicAllocator = "ppmr";
 
     private final String outputDir;
     private final boolean withTypeInfoCode;

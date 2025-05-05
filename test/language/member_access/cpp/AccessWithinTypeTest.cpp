@@ -11,7 +11,7 @@ namespace member_access
 namespace access_within_type
 {
 
-using AllocatorType = Message::AllocatorType;
+using AllocatorType = Message::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

@@ -6,22 +6,16 @@
 #ifndef TEST_OBJECT_POLYMORPHIC_ALLOCATOR_CREATOR_NESTED_H
 #define TEST_OBJECT_POLYMORPHIC_ALLOCATOR_CREATOR_NESTED_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/View.h>
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
 #include <zserio/Types.h>
-#include <zserio/pmr/BitBuffer.h>
-#include <zserio/pmr/Bytes.h>
-#include <zserio/pmr/String.h>
+#include <zserio/ppmr/BitBuffer.h>
+#include <zserio/ppmr/Bytes.h>
+#include <zserio/ppmr/String.h>
 
 #include <test_object/polymorphic_allocator/CreatorBitmask.h>
 #include <test_object/polymorphic_allocator/CreatorEnum.h>
@@ -33,23 +27,35 @@ namespace polymorphic_allocator
 
 struct CreatorNested
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     CreatorNested() noexcept;
-    explicit CreatorNested(const AllocatorType& allocator) noexcept;
+    explicit CreatorNested(const allocator_type& allocator) noexcept;
+
+    CreatorNested(CreatorNested&&) = default;
+    CreatorNested(CreatorNested&& other_, const allocator_type& allocator);
+
+    CreatorNested(const CreatorNested&) = default;
+    CreatorNested(const CreatorNested& other_, const allocator_type& allocator);
+
+    CreatorNested& operator=(CreatorNested&&) = default;
+    CreatorNested& operator=(const CreatorNested&) = default;
+
+    ~CreatorNested() = default;
 
     explicit CreatorNested(
             ::zserio::UInt32 value_,
-            ::zserio::pmr::String text_,
-            ::zserio::pmr::BitBuffer externData_,
-            ::zserio::pmr::Bytes bytesData_,
+            ::zserio::ppmr::String text_,
+            ::zserio::ppmr::BitBuffer externData_,
+            ::zserio::ppmr::Bytes bytesData_,
             ::test_object::polymorphic_allocator::CreatorEnum creatorEnum_,
-            ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask_);
+            ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 value;
-    ::zserio::pmr::String text;
-    ::zserio::pmr::BitBuffer externData;
-    ::zserio::pmr::Bytes bytesData;
+    ::zserio::ppmr::String text;
+    ::zserio::ppmr::BitBuffer externData;
+    ::zserio::ppmr::Bytes bytesData;
     ::test_object::polymorphic_allocator::CreatorEnum creatorEnum;
     ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask;
 };
@@ -78,7 +84,7 @@ public:
 
     ::zserio::UInt32 value() const;
     ::std::string_view text() const;
-    ::zserio::pmr::BitBufferView externData() const;
+    ::zserio::ppmr::BitBufferView externData() const;
     BytesView bytesData() const;
     ::test_object::polymorphic_allocator::CreatorEnum creatorEnum() const;
     ::test_object::polymorphic_allocator::CreatorBitmask creatorBitmask() const;
@@ -117,21 +123,21 @@ View<::test_object::polymorphic_allocator::CreatorNested> read(BitStreamReader& 
         ::zserio::UInt32 param_);
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::CreatorNested, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::CreatorNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::CreatorNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::CreatorNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::CreatorNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::CreatorNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::CreatorNested>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::CreatorNested>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

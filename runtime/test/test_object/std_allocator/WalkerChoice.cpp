@@ -426,7 +426,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerChoice, 
         "test_object.std_allocator.WalkerChoice",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::WalkerChoice>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::WalkerChoice>>(allocator);
         },
         templateName, templateArguments,
         fields, parameters, functions, "selector()", cases
@@ -446,7 +446,7 @@ template <>
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerChoice>(), alloc),
                 m_object(object)
         {}
@@ -502,7 +502,7 @@ template <>
         const ::test_object::std_allocator::WalkerChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -514,7 +514,7 @@ template <>
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::std_allocator::WalkerChoice& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerChoice>(), alloc),
                 m_object(object)
         {}
@@ -654,7 +654,7 @@ template <>
         ::test_object::std_allocator::WalkerChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -663,9 +663,9 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerChoice, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerChoice>& view_, const ::std::allocator<uint8_t>& allocator) :
+        explicit Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerChoice>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerChoice, ::std::allocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -716,7 +716,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

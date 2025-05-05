@@ -12,7 +12,7 @@ namespace builtin_types
 namespace all_builtin_types
 {
 
-using AllocatorType = AllBuiltInTypes::AllocatorType;
+using AllocatorType = AllBuiltInTypes::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

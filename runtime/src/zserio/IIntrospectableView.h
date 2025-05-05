@@ -139,7 +139,7 @@ using IIntrospectableViewConstPtr = IBasicIntrospectableViewConstPtr<>;
  * \return Reflectable to the given object.
  */
 /** \{ */
-template <typename T, typename ALLOC = typename T::AllocatorType>
+template <typename T, typename ALLOC = typename T::allocator_type>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(const View<T>& view, const ALLOC& allocator = ALLOC());
 
 template <typename T, typename ALLOC = std::allocator<uint8_t>,

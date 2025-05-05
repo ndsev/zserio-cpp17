@@ -10,7 +10,7 @@
 namespace sql_types
 {
 
-using AllocatorType = SqlTypesDb::AllocatorType;
+using AllocatorType = SqlTypesDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 class SqlTypesTest : public ::testing::Test

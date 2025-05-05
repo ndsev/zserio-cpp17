@@ -15,7 +15,7 @@ namespace sql_databases
 namespace db_with_relocation
 {
 
-using AllocatorType = EuropeDb::AllocatorType;
+using AllocatorType = EuropeDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

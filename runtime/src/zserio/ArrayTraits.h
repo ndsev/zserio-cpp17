@@ -60,7 +60,7 @@ struct packing_context_type
 };
 
 template <typename T>
-struct packing_context_type<T, std::void_t<decltype(PackingContext<T>{})>>
+struct packing_context_type<T, std::enable_if_t<is_complete_v<PackingContext<T>>>>
 {
     using type = PackingContext<T>;
 };

@@ -10,7 +10,7 @@ namespace choice_types
 namespace choice_with_array
 {
 
-using AllocatorType = TestChoice::AllocatorType;
+using AllocatorType = TestChoice::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

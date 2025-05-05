@@ -11,7 +11,7 @@ namespace choice_types
 namespace uint64_param_choice
 {
 
-using AllocatorType = UInt64ParamChoice::AllocatorType;
+using AllocatorType = UInt64ParamChoice::allocator_type;
 
 class UInt64ParamChoiceTest : public ::testing::Test
 {

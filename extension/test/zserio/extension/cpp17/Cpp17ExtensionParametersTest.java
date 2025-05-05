@@ -37,7 +37,17 @@ public class Cpp17ExtensionParametersTest
     @Test
     public void checkPolymorphicSetCppAllocator()
     {
-        final String setCppAllocator = "polymorphic";
+        final String setCppAllocator = "pmr";
+        final boolean withTypeInfoCode = false;
+        final TestExtensionParameters extensionParameters =
+                new TestExtensionParameters(setCppAllocator, withTypeInfoCode);
+        assertDoesNotThrow(() -> Cpp17ExtensionParameters.check(extensionParameters));
+    }
+
+    @Test
+    public void checkPropagatingSetCppAllocator()
+    {
+        final String setCppAllocator = "ppmr";
         final boolean withTypeInfoCode = false;
         final TestExtensionParameters extensionParameters =
                 new TestExtensionParameters(setCppAllocator, withTypeInfoCode);

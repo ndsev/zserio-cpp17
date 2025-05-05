@@ -6,7 +6,7 @@
 namespace type_info_string_expressions
 {
 
-using AllocatorType = TypeInfoStringExpressions::AllocatorType;
+using AllocatorType = TypeInfoStringExpressions::allocator_type;
 using ITypeInfoType = zserio::IBasicTypeInfo<AllocatorType>;
 
 class TypeInfoStringExpressionsTest : public ::testing::Test

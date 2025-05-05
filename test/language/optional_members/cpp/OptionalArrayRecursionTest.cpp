@@ -11,7 +11,7 @@ namespace optional_members
 namespace optional_array_recursion
 {
 
-using AllocatorType = Employee::AllocatorType;
+using AllocatorType = Employee::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

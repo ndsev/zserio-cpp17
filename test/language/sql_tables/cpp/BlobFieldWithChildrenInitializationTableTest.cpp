@@ -10,7 +10,7 @@ namespace sql_tables
 namespace blob_field_with_children_initialization_table
 {
 
-using AllocatorType = TestDb::AllocatorType;
+using AllocatorType = TestDb::allocator_type;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 

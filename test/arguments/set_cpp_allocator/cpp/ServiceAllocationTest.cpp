@@ -8,7 +8,7 @@ using namespace test_utils;
 namespace service_allocation
 {
 
-using AllocatorType = GreetingService::Client::AllocatorType;
+using AllocatorType = GreetingService::Client::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 using LocalServiceClient = test_utils::LocalServiceClient<AllocatorType>;
 
@@ -50,7 +50,7 @@ protected:
     class GreetingServiceImpl : public GreetingService::Service
     {
     public:
-        explicit GreetingServiceImpl(const AllocatorType& allocator) :
+        explicit GreetingServiceImpl(const allocator_type& allocator) :
                 GreetingService::Service(allocator)
         {}
 
@@ -61,7 +61,7 @@ protected:
                 static_cast<CountingContext*>(context)->greetingCount++;
             }
 
-            return Greeting(prepareGreeting(name.name));
+            return Greeting(prepareGreeting(name.name), get_allocator_ref());
         }
 
     private:
@@ -89,7 +89,7 @@ protected: // must be behind m_allocator
 
 TEST_F(ServiceAllocationTest, sendGreeting)
 {
-    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator())};
+    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator()), getAllocator()};
     const Greeting greeting = greetingClient.sendGreetingMethod(name);
     ASSERT_EQ("Hello my dear Zserio with long name which is longer than 32B! I hope you are well!",
             greeting.greeting);
@@ -99,7 +99,7 @@ TEST_F(ServiceAllocationTest, sendGreetingWithContext)
 {
     CountingContext context;
 
-    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator())};
+    Name name{StringType("Zserio with long name which is longer than 32B", getAllocator()), getAllocator()};
     const Greeting greeting = greetingClient.sendGreetingMethod(name, &context);
     ASSERT_EQ("Hello my dear Zserio with long name which is longer than 32B! I hope you are well!",
             greeting.greeting);

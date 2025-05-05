@@ -7,7 +7,7 @@ namespace union_types
 namespace empty_union
 {
 
-using AllocatorType = EmptyUnion::AllocatorType;
+using AllocatorType = EmptyUnion::allocator_type;
 
 TEST(EmptyUnionTest, emptyConstructor)
 {

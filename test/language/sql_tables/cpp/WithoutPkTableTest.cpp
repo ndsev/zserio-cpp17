@@ -11,7 +11,7 @@ namespace sql_tables
 namespace without_pk_table
 {
 
-using AllocatorType = TestDb::AllocatorType;
+using AllocatorType = TestDb::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

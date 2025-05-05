@@ -9,7 +9,7 @@ namespace choice_types
 namespace full_bitmask_param_choice
 {
 
-using AllocatorType = FullBitmaskParamChoice::AllocatorType;
+using AllocatorType = FullBitmaskParamChoice::allocator_type;
 
 class FullBitmaskParamChoiceTest : public ::testing::Test
 {

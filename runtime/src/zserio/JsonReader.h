@@ -33,6 +33,9 @@ class BitBufferAdapter : public IObjectValueAdapter<ALLOC>, public AllocatorHold
 public:
     using AllocatorHolder<ALLOC>::get_allocator;
 
+    BitBufferAdapter() :
+            m_state(VISIT_KEY)
+    {}
     explicit BitBufferAdapter(const ALLOC& allocator) :
             AllocatorHolder<ALLOC>(allocator),
             m_state(VISIT_KEY)
@@ -91,6 +94,9 @@ class BytesAdapter : public IObjectValueAdapter<ALLOC>, public AllocatorHolder<A
 public:
     using AllocatorHolder<ALLOC>::get_allocator;
 
+    BytesAdapter() :
+            m_state(VISIT_KEY)
+    {}
     explicit BytesAdapter(const ALLOC& allocator) :
             AllocatorHolder<ALLOC>(allocator),
             m_state(VISIT_KEY)
@@ -529,13 +535,11 @@ void CreatorAdapter<ALLOC>::beginObject()
                 const CppType cppType = m_creator->getFieldType(m_keyStack.back()).getCppType();
                 if (cppType == CppType::BIT_BUFFER)
                 {
-                    m_objectValueAdapter =
-                            std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator(), get_allocator());
+                    m_objectValueAdapter = std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator());
                 }
                 else if (cppType == CppType::BYTES)
                 {
-                    m_objectValueAdapter =
-                            std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator(), get_allocator());
+                    m_objectValueAdapter = std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator());
                 }
                 else
                 {
@@ -547,13 +551,11 @@ void CreatorAdapter<ALLOC>::beginObject()
                 const CppType cppType = m_creator->getElementType().getCppType();
                 if (cppType == CppType::BIT_BUFFER)
                 {
-                    m_objectValueAdapter =
-                            std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator(), get_allocator());
+                    m_objectValueAdapter = std::allocate_shared<BitBufferAdapter<ALLOC>>(get_allocator());
                 }
                 else if (cppType == CppType::BYTES)
                 {
-                    m_objectValueAdapter =
-                            std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator(), get_allocator());
+                    m_objectValueAdapter = std::allocate_shared<BytesAdapter<ALLOC>>(get_allocator());
                 }
                 else
                 {

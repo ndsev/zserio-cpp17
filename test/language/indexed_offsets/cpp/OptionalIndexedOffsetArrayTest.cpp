@@ -10,7 +10,7 @@ namespace indexed_offsets
 namespace optional_indexed_offset_array
 {
 
-using AllocatorType = OptionalIndexedOffsetArray::AllocatorType;
+using AllocatorType = OptionalIndexedOffsetArray::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;

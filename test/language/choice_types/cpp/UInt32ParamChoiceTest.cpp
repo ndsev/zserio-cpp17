@@ -8,7 +8,7 @@ namespace choice_types
 namespace uint32_param_choice
 {
 
-using AllocatorType = UInt32ParamChoice::AllocatorType;
+using AllocatorType = UInt32ParamChoice::allocator_type;
 
 class UInt32ParamChoiceTest : public ::testing::Test
 {

@@ -6,19 +6,13 @@
 #ifndef TEST_OBJECT_POLYMORPHIC_ALLOCATOR_WALKER_NESTED_H
 #define TEST_OBJECT_POLYMORPHIC_ALLOCATOR_WALKER_NESTED_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
-#include <zserio/pmr/ITypeInfo.h>
-#include <zserio/pmr/IReflectableData.h>
-#include <zserio/pmr/IIntrospectableView.h>
+#include <zserio/ppmr/ITypeInfo.h>
+#include <zserio/ppmr/IReflectableData.h>
+#include <zserio/ppmr/IIntrospectableView.h>
 #include <zserio/View.h>
-#include <zserio/pmr/PropagatingPolymorphicAllocator.h>
-#include <zserio/pmr/String.h>
+#include <zserio/ppmr/PropagatingPolymorphicAllocator.h>
+#include <zserio/ppmr/String.h>
 
 namespace test_object
 {
@@ -27,15 +21,27 @@ namespace polymorphic_allocator
 
 struct WalkerNested
 {
-    using AllocatorType = ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>;
+    using allocator_type = ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>;
 
     WalkerNested() noexcept;
-    explicit WalkerNested(const AllocatorType& allocator) noexcept;
+    explicit WalkerNested(const allocator_type& allocator) noexcept;
+
+    WalkerNested(WalkerNested&&) = default;
+    WalkerNested(WalkerNested&& other_, const allocator_type& allocator);
+
+    WalkerNested(const WalkerNested&) = default;
+    WalkerNested(const WalkerNested& other_, const allocator_type& allocator);
+
+    WalkerNested& operator=(WalkerNested&&) = default;
+    WalkerNested& operator=(const WalkerNested&) = default;
+
+    ~WalkerNested() = default;
 
     explicit WalkerNested(
-            ::zserio::pmr::String text_);
+            ::zserio::ppmr::String text_,
+            const allocator_type& allocator = {});
 
-    ::zserio::pmr::String text;
+    ::zserio::ppmr::String text;
 };
 
 bool operator==(const ::test_object::polymorphic_allocator::WalkerNested& lhs, const ::test_object::polymorphic_allocator::WalkerNested& rhs);
@@ -91,21 +97,21 @@ template <>
 View<::test_object::polymorphic_allocator::WalkerNested> read(BitStreamReader& reader, ::test_object::polymorphic_allocator::WalkerNested& data);
 
 template <>
-struct TypeInfo<::test_object::polymorphic_allocator::WalkerNested, ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>>
+struct TypeInfo<::test_object::polymorphic_allocator::WalkerNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
 {
-    static const ::zserio::pmr::ITypeInfo& get();
+    static const ::zserio::ppmr::ITypeInfo& get();
 };
 
 } // namespace detail
 
 template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::polymorphic_allocator::WalkerNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerNested& value, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::polymorphic_allocator::WalkerNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::WalkerNested>& view, const ::zserio::pmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::polymorphic_allocator::WalkerNested>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
 
 } // namespace zserio
 

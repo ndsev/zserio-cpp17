@@ -9,7 +9,7 @@ namespace choice_types
 namespace bitmask_param_choice
 {
 
-using AllocatorType = BitmaskParamChoice::AllocatorType;
+using AllocatorType = BitmaskParamChoice::allocator_type;
 
 class BitmaskParamChoiceTest : public ::testing::Test
 {

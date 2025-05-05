@@ -15,7 +15,7 @@ using namespace std::literals;
 namespace with_type_info_code
 {
 
-using AllocatorType = WithTypeInfoCode::AllocatorType;
+using AllocatorType = WithTypeInfoCode::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
 
 using BitBuffer = zserio::BasicBitBuffer<AllocatorType>;
