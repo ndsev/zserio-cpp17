@@ -6,12 +6,6 @@
 #ifndef TEST_OBJECT_STD_ALLOCATOR_DEBUG_STRING_PARAM_OBJECT_H
 #define TEST_OBJECT_STD_ALLOCATOR_DEBUG_STRING_PARAM_OBJECT_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
 #include <zserio/ITypeInfo.h>
 #include <zserio/IReflectableData.h>
@@ -28,13 +22,25 @@ namespace std_allocator
 
 struct DebugStringParamObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     DebugStringParamObject() noexcept;
-    explicit DebugStringParamObject(const AllocatorType& allocator) noexcept;
+    explicit DebugStringParamObject(const allocator_type& allocator) noexcept;
+
+    DebugStringParamObject(DebugStringParamObject&&) = default;
+    DebugStringParamObject(DebugStringParamObject&& other, const allocator_type& allocator);
+
+    DebugStringParamObject(const DebugStringParamObject&) = default;
+    DebugStringParamObject(const DebugStringParamObject& other, const allocator_type& allocator);
+
+    DebugStringParamObject& operator=(DebugStringParamObject&&) = default;
+    DebugStringParamObject& operator=(const DebugStringParamObject&) = default;
+
+    ~DebugStringParamObject() = default;
 
     explicit DebugStringParamObject(
-            ::zserio::String text_);
+            ::zserio::String text_,
+            const allocator_type& allocator = {});
 
     ::zserio::String text;
 };

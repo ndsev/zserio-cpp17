@@ -6,12 +6,6 @@
 #ifndef TEST_OBJECT_STD_ALLOCATOR_WALKER_OBJECT_H
 #define TEST_OBJECT_STD_ALLOCATOR_WALKER_OBJECT_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
 #include <zserio/Optional.h>
 #include <zserio/ITypeInfo.h>
@@ -35,19 +29,31 @@ namespace std_allocator
 
 struct WalkerObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     WalkerObject() noexcept;
-    explicit WalkerObject(const AllocatorType& allocator) noexcept;
+    explicit WalkerObject(const allocator_type& allocator) noexcept;
 
-    explicit WalkerObject(
+    WalkerObject(WalkerObject&&) = default;
+    WalkerObject(WalkerObject&& other, const allocator_type& allocator);
+
+    WalkerObject(const WalkerObject&) = default;
+    WalkerObject(const WalkerObject& other, const allocator_type& allocator);
+
+    WalkerObject& operator=(WalkerObject&&) = default;
+    WalkerObject& operator=(const WalkerObject&) = default;
+
+    ~WalkerObject() = default;
+
+    WalkerObject(
             ::zserio::UInt32 identifier_,
             ::zserio::Optional<::test_object::std_allocator::WalkerNested> nested_,
             ::zserio::String text_,
             ::zserio::Vector<::test_object::std_allocator::WalkerUnion> unionArray_,
             ::zserio::Optional<::zserio::Vector<::test_object::std_allocator::WalkerUnion>> optionalUnionArray_,
             ::zserio::UInt8 choiceSelector_,
-            ::test_object::std_allocator::WalkerChoice choiceField_);
+            ::test_object::std_allocator::WalkerChoice choiceField_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 identifier;
     ::zserio::Optional<::test_object::std_allocator::WalkerNested> nested;

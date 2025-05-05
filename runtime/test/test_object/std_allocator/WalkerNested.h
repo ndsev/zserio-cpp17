@@ -6,12 +6,6 @@
 #ifndef TEST_OBJECT_STD_ALLOCATOR_WALKER_NESTED_H
 #define TEST_OBJECT_STD_ALLOCATOR_WALKER_NESTED_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
 #include <zserio/ITypeInfo.h>
 #include <zserio/IReflectableData.h>
@@ -27,13 +21,25 @@ namespace std_allocator
 
 struct WalkerNested
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     WalkerNested() noexcept;
-    explicit WalkerNested(const AllocatorType& allocator) noexcept;
+    explicit WalkerNested(const allocator_type& allocator) noexcept;
+
+    WalkerNested(WalkerNested&&) = default;
+    WalkerNested(WalkerNested&& other, const allocator_type& allocator);
+
+    WalkerNested(const WalkerNested&) = default;
+    WalkerNested(const WalkerNested& other, const allocator_type& allocator);
+
+    WalkerNested& operator=(WalkerNested&&) = default;
+    WalkerNested& operator=(const WalkerNested&) = default;
+
+    ~WalkerNested() = default;
 
     explicit WalkerNested(
-            ::zserio::String text_);
+            ::zserio::String text_,
+            const allocator_type& allocator = {});
 
     ::zserio::String text;
 };

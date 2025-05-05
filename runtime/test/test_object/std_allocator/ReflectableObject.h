@@ -6,12 +6,6 @@
 #ifndef TEST_OBJECT_STD_ALLOCATOR_REFLECTABLE_OBJECT_H
 #define TEST_OBJECT_STD_ALLOCATOR_REFLECTABLE_OBJECT_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
 #include <zserio/ITypeInfo.h>
 #include <zserio/IReflectableData.h>
@@ -33,17 +27,29 @@ namespace std_allocator
 
 struct ReflectableObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     ReflectableObject() noexcept;
-    explicit ReflectableObject(const AllocatorType& allocator) noexcept;
+    explicit ReflectableObject(const allocator_type& allocator) noexcept;
 
-    explicit ReflectableObject(
+    ReflectableObject(ReflectableObject&&) = default;
+    ReflectableObject(ReflectableObject&& other, const allocator_type& allocator);
+
+    ReflectableObject(const ReflectableObject&) = default;
+    ReflectableObject(const ReflectableObject& other, const allocator_type& allocator);
+
+    ReflectableObject& operator=(ReflectableObject&&) = default;
+    ReflectableObject& operator=(const ReflectableObject&) = default;
+
+    ~ReflectableObject() = default;
+
+    ReflectableObject(
             ::zserio::String stringField_,
             ::test_object::std_allocator::ReflectableNested reflectableNested_,
             ::test_object::std_allocator::ReflectableEnum reflectableEnum_,
             ::test_object::std_allocator::ReflectableChoice reflectableChoice_,
-            ::test_object::std_allocator::ReflectableUnion reflectableUnion_);
+            ::test_object::std_allocator::ReflectableUnion reflectableUnion_,
+            const allocator_type& allocator = {});
 
     ::zserio::String stringField;
     ::test_object::std_allocator::ReflectableNested reflectableNested;

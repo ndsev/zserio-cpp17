@@ -6,12 +6,6 @@
 #ifndef TEST_OBJECT_STD_ALLOCATOR_CREATOR_OBJECT_H
 #define TEST_OBJECT_STD_ALLOCATOR_CREATOR_OBJECT_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
 #include <zserio/Optional.h>
 #include <zserio/ITypeInfo.h>
@@ -35,12 +29,23 @@ namespace std_allocator
 
 struct CreatorObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     CreatorObject() noexcept;
-    explicit CreatorObject(const AllocatorType& allocator) noexcept;
+    explicit CreatorObject(const allocator_type& allocator) noexcept;
 
-    explicit CreatorObject(
+    CreatorObject(CreatorObject&&) = default;
+    CreatorObject(CreatorObject&& other, const allocator_type& allocator);
+
+    CreatorObject(const CreatorObject&) = default;
+    CreatorObject(const CreatorObject& other, const allocator_type& allocator);
+
+    CreatorObject& operator=(CreatorObject&&) = default;
+    CreatorObject& operator=(const CreatorObject&) = default;
+
+    ~CreatorObject() = default;
+
+    CreatorObject(
             ::zserio::UInt32 value_,
             ::test_object::std_allocator::CreatorNested nested_,
             ::zserio::String text_,
@@ -49,7 +54,8 @@ struct CreatorObject
             ::zserio::Optional<::zserio::Vector<::zserio::BitBuffer>> externArray_,
             ::zserio::Optional<::zserio::Vector<::zserio::Bytes>> bytesArray_,
             ::zserio::Optional<::zserio::Bool> optionalBool_,
-            ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested_);
+            ::zserio::Optional<::test_object::std_allocator::CreatorNested> optionalNested_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt32 value;
     ::test_object::std_allocator::CreatorNested nested;

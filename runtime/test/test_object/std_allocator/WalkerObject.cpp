@@ -21,10 +21,10 @@ namespace std_allocator
 {
 
 WalkerObject::WalkerObject() noexcept :
-        WalkerObject(AllocatorType{})
+        WalkerObject(allocator_type{})
 {}
 
-WalkerObject::WalkerObject(const AllocatorType& allocator) noexcept :
+WalkerObject::WalkerObject(const allocator_type& allocator) noexcept :
         identifier(),
         nested(allocator),
         text(allocator),
@@ -34,6 +34,26 @@ WalkerObject::WalkerObject(const AllocatorType& allocator) noexcept :
         choiceField(allocator)
 {}
 
+WalkerObject::WalkerObject(WalkerObject&& other, const allocator_type& allocator) :
+        identifier(other.identifier),
+        nested(std::move(other.nested), allocator),
+        text(std::move(other.text), allocator),
+        unionArray(std::move(other.unionArray), allocator),
+        optionalUnionArray(std::move(other.optionalUnionArray), allocator),
+        choiceSelector(other.choiceSelector),
+        choiceField(std::move(other.choiceField), allocator)
+{}
+
+WalkerObject::WalkerObject(const WalkerObject& other, const allocator_type& allocator) :
+        identifier(other.identifier),
+        nested(other.nested, allocator),
+        text(other.text, allocator),
+        unionArray(other.unionArray, allocator),
+        optionalUnionArray(other.optionalUnionArray, allocator),
+        choiceSelector(other.choiceSelector),
+        choiceField(other.choiceField, allocator)
+{}
+
 WalkerObject::WalkerObject(
         ::zserio::UInt32 identifier_,
         ::zserio::Optional<::test_object::std_allocator::WalkerNested> nested_,
@@ -41,14 +61,15 @@ WalkerObject::WalkerObject(
         ::zserio::Vector<::test_object::std_allocator::WalkerUnion> unionArray_,
         ::zserio::Optional<::zserio::Vector<::test_object::std_allocator::WalkerUnion>> optionalUnionArray_,
         ::zserio::UInt8 choiceSelector_,
-        ::test_object::std_allocator::WalkerChoice choiceField_) :
+        ::test_object::std_allocator::WalkerChoice choiceField_,
+        const allocator_type& allocator) :
         identifier(identifier_),
-        nested(::std::move(nested_)),
-        text(::std::move(text_)),
-        unionArray(::std::move(unionArray_)),
-        optionalUnionArray(::std::move(optionalUnionArray_)),
+        nested(::std::move(nested_), allocator),
+        text(::std::move(text_), allocator),
+        unionArray(::std::move(unionArray_), allocator),
+        optionalUnionArray(::std::move(optionalUnionArray_), allocator),
         choiceSelector(choiceSelector_),
-        choiceField(::std::move(choiceField_))
+        choiceField(::std::move(choiceField_), allocator)
 {}
 
 bool operator==(const ::test_object::std_allocator::WalkerObject& lhs, const ::test_object::std_allocator::WalkerObject& rhs)
@@ -343,14 +364,14 @@ View<::test_object::std_allocator::WalkerObject> read(BitStreamReader& reader, :
     read(reader, data.identifier);
     if (view.identifier() != 0)
     {
-        data.nested.emplace(data.nested.get_allocator());
+        data.nested.emplace();
         (void)read(reader, *data.nested);
     }
     read(reader, data.text);
     (void)read<ArrayType::AUTO>(reader, data.unionArray);
     if (reader.readBool())
     {
-        data.optionalUnionArray.emplace(data.optionalUnionArray.get_allocator());
+        data.optionalUnionArray.emplace();
         (void)read<ArrayType::AUTO>(reader, *data.optionalUnionArray);
     }
     read(reader, data.choiceSelector);
@@ -491,7 +512,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerObject, 
         "test_object.std_allocator.WalkerObject",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::WalkerObject>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::WalkerObject>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -511,7 +532,7 @@ template <>
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
                 m_object(object)
         {}
@@ -568,7 +589,7 @@ template <>
         const ::test_object::std_allocator::WalkerObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -581,7 +602,7 @@ template <>
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::std_allocator::WalkerObject& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerObject>(), alloc),
                 m_object(object)
         {}
@@ -778,7 +799,7 @@ template <>
         ::test_object::std_allocator::WalkerObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -787,9 +808,9 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerObject, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerObject>& view_, const ::std::allocator<uint8_t>& allocator) :
+        Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerObject>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerObject, ::std::allocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -836,7 +857,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

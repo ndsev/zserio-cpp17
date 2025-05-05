@@ -20,16 +20,25 @@ namespace std_allocator
 {
 
 WalkerNested::WalkerNested() noexcept :
-        WalkerNested(AllocatorType{})
+        WalkerNested(allocator_type{})
 {}
 
-WalkerNested::WalkerNested(const AllocatorType& allocator) noexcept :
+WalkerNested::WalkerNested(const allocator_type& allocator) noexcept :
         text(allocator)
 {}
 
+WalkerNested::WalkerNested(WalkerNested&& other, const allocator_type& allocator) :
+        text(std::move(other.text), allocator)
+{}
+
+WalkerNested::WalkerNested(const WalkerNested& other, const allocator_type& allocator) :
+        text(other.text, allocator)
+{}
+
 WalkerNested::WalkerNested(
-        ::zserio::String text_) :
-        text(::std::move(text_))
+        ::zserio::String text_,
+        const allocator_type& allocator) :
+        text(::std::move(text_), allocator)
 {}
 
 bool operator==(const ::test_object::std_allocator::WalkerNested& lhs, const ::test_object::std_allocator::WalkerNested& rhs)
@@ -198,7 +207,7 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::WalkerNested, 
         "test_object.std_allocator.WalkerNested",
         [](const AllocatorType& allocator) -> ::zserio::IReflectableDataPtr
         {
-            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::WalkerNested>>(allocator, allocator);
+            return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<::test_object::std_allocator::WalkerNested>>(allocator);
         },
         templateName, templateArguments, fields, parameters, functions
     };
@@ -218,7 +227,7 @@ template <>
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::WalkerNested& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(const ::test_object::std_allocator::WalkerNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerNested>(), alloc),
                 m_object(object)
         {}
@@ -241,7 +250,7 @@ template <>
         const ::test_object::std_allocator::WalkerNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -254,7 +263,7 @@ template <>
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
         using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::WalkerNested& object, const ::std::allocator<uint8_t>& alloc) :
+        explicit Reflectable(::test_object::std_allocator::WalkerNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::WalkerNested>(), alloc),
                 m_object(object)
         {}
@@ -311,7 +320,7 @@ template <>
         ::test_object::std_allocator::WalkerNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value, allocator);
+    return ::std::allocate_shared<Reflectable>(allocator, value);
 }
 
 template <>
@@ -320,9 +329,9 @@ template <>
     class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerNested, ::std::allocator<uint8_t>>
     {
     public:
-        Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerNested>& view_, const ::std::allocator<uint8_t>& allocator) :
+        Introspectable(const ::zserio::View<::test_object::std_allocator::WalkerNested>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::WalkerNested, ::std::allocator<uint8_t>>(
-                        view_, allocator)
+                        view_, alloc)
         {}
 
         ::zserio::IIntrospectableViewConstPtr getField(::std::string_view name) const override
@@ -335,7 +344,7 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view, allocator);
+    return ::std::allocate_shared<Introspectable>(allocator, view);
 }
 
 } // namespace zserio

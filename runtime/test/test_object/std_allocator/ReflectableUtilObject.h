@@ -6,12 +6,6 @@
 #ifndef TEST_OBJECT_STD_ALLOCATOR_REFLECTABLE_UTIL_OBJECT_H
 #define TEST_OBJECT_STD_ALLOCATOR_REFLECTABLE_UTIL_OBJECT_H
 
-#include <zserio/CppRuntimeVersion.h>
-#if CPP17_EXTENSION_RUNTIME_VERSION_NUMBER != 3000
-    #error Version mismatch between Zserio runtime library and Zserio C++ generator!
-    #error Please update your Zserio runtime library to the version 0.3.0.
-#endif
-
 #include <memory>
 #include <zserio/ITypeInfo.h>
 #include <zserio/IReflectableData.h>
@@ -29,14 +23,26 @@ namespace std_allocator
 
 struct ReflectableUtilObject
 {
-    using AllocatorType = ::std::allocator<uint8_t>;
+    using allocator_type = ::std::allocator<uint8_t>;
 
     ReflectableUtilObject() noexcept;
-    explicit ReflectableUtilObject(const AllocatorType& allocator) noexcept;
+    explicit ReflectableUtilObject(const allocator_type& allocator) noexcept;
 
-    explicit ReflectableUtilObject(
+    ReflectableUtilObject(ReflectableUtilObject&&) = default;
+    ReflectableUtilObject(ReflectableUtilObject&& other, const allocator_type& allocator);
+
+    ReflectableUtilObject(const ReflectableUtilObject&) = default;
+    ReflectableUtilObject(const ReflectableUtilObject& other, const allocator_type& allocator);
+
+    ReflectableUtilObject& operator=(ReflectableUtilObject&&) = default;
+    ReflectableUtilObject& operator=(const ReflectableUtilObject&) = default;
+
+    ~ReflectableUtilObject() = default;
+
+    ReflectableUtilObject(
             ::zserio::UInt8 choiceParam_,
-            ::test_object::std_allocator::ReflectableUtilChoice reflectableUtilChoice_);
+            ::test_object::std_allocator::ReflectableUtilChoice reflectableUtilChoice_,
+            const allocator_type& allocator = {});
 
     ::zserio::UInt8 choiceParam;
     ::test_object::std_allocator::ReflectableUtilChoice reflectableUtilChoice;
