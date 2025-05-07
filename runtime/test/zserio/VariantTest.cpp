@@ -98,7 +98,7 @@ class VariantTest : public testing::Test
 public:
     using AllocatorType = ALLOC;
 
-    enum class Idx1
+    enum class Idx1 : size_t
     {
         A,
         B,
