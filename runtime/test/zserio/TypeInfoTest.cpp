@@ -130,36 +130,35 @@ TEST_F(TypeInfoTest, builtinTypeInfo)
     checkBuiltinTypeInfo(typeInfo<UInt63>(), "bit:63", SchemaType::UINT63, CppType::UINT64, 63);
     checkBuiltinTypeInfo(typeInfo<UInt64>(), "bit:64", SchemaType::UINT64, CppType::UINT64, 64);
 
-    checkBuiltinTypeInfo(typeInfo<DynInt8<1>>(), "int:1", SchemaType::INT1, CppType::INT8, 1);
-    checkBuiltinTypeInfo(typeInfo<DynInt8<7>>(), "int:7", SchemaType::INT7, CppType::INT8, 7);
-    checkBuiltinTypeInfo(typeInfo<DynInt16<9>>(), "int:9", SchemaType::INT9, CppType::INT16, 9);
-    checkBuiltinTypeInfo(typeInfo<DynInt16<15>>(), "int:15", SchemaType::INT15, CppType::INT16, 15);
-    checkBuiltinTypeInfo(typeInfo<DynInt32<17>>(), "int:17", SchemaType::INT17, CppType::INT32, 17);
-    checkBuiltinTypeInfo(typeInfo<DynInt32<31>>(), "int:31", SchemaType::INT31, CppType::INT32, 31);
-    checkBuiltinTypeInfo(typeInfo<DynInt64<33>>(), "int:33", SchemaType::INT33, CppType::INT64, 33);
-    checkBuiltinTypeInfo(typeInfo<DynInt64<63>>(), "int:63", SchemaType::INT63, CppType::INT64, 63);
+    checkBuiltinTypeInfo(typeInfo<Int<1>>(), "int:1", SchemaType::INT1, CppType::INT8, 1);
+    checkBuiltinTypeInfo(typeInfo<Int<7>>(), "int:7", SchemaType::INT7, CppType::INT8, 7);
+    checkBuiltinTypeInfo(typeInfo<Int<9>>(), "int:9", SchemaType::INT9, CppType::INT16, 9);
+    checkBuiltinTypeInfo(typeInfo<Int<15>>(), "int:15", SchemaType::INT15, CppType::INT16, 15);
+    checkBuiltinTypeInfo(typeInfo<Int<17>>(), "int:17", SchemaType::INT17, CppType::INT32, 17);
+    checkBuiltinTypeInfo(typeInfo<Int<31>>(), "int:31", SchemaType::INT31, CppType::INT32, 31);
+    checkBuiltinTypeInfo(typeInfo<Int<33>>(), "int:33", SchemaType::INT33, CppType::INT64, 33);
+    checkBuiltinTypeInfo(typeInfo<Int<63>>(), "int:63", SchemaType::INT63, CppType::INT64, 63);
 
-    checkBuiltinTypeInfo(typeInfo<DynUInt8<1>>(), "bit:1", SchemaType::UINT1, CppType::UINT8, 1);
-    checkBuiltinTypeInfo(typeInfo<DynUInt8<7>>(), "bit:7", SchemaType::UINT7, CppType::UINT8, 7);
-    checkBuiltinTypeInfo(typeInfo<DynUInt16<9>>(), "bit:9", SchemaType::UINT9, CppType::UINT16, 9);
-    checkBuiltinTypeInfo(typeInfo<DynUInt16<15>>(), "bit:15", SchemaType::UINT15, CppType::UINT16, 15);
-    checkBuiltinTypeInfo(typeInfo<DynUInt32<17>>(), "bit:17", SchemaType::UINT17, CppType::UINT32, 17);
-    checkBuiltinTypeInfo(typeInfo<DynUInt32<31>>(), "bit:31", SchemaType::UINT31, CppType::UINT32, 31);
-    checkBuiltinTypeInfo(typeInfo<DynUInt64<33>>(), "bit:33", SchemaType::UINT33, CppType::UINT64, 33);
-    checkBuiltinTypeInfo(typeInfo<DynUInt64<63>>(), "bit:63", SchemaType::UINT63, CppType::UINT64, 63);
+    checkBuiltinTypeInfo(typeInfo<UInt<1>>(), "bit:1", SchemaType::UINT1, CppType::UINT8, 1);
+    checkBuiltinTypeInfo(typeInfo<UInt<7>>(), "bit:7", SchemaType::UINT7, CppType::UINT8, 7);
+    checkBuiltinTypeInfo(typeInfo<UInt<9>>(), "bit:9", SchemaType::UINT9, CppType::UINT16, 9);
+    checkBuiltinTypeInfo(typeInfo<UInt<15>>(), "bit:15", SchemaType::UINT15, CppType::UINT16, 15);
+    checkBuiltinTypeInfo(typeInfo<UInt<17>>(), "bit:17", SchemaType::UINT17, CppType::UINT32, 17);
+    checkBuiltinTypeInfo(typeInfo<UInt<31>>(), "bit:31", SchemaType::UINT31, CppType::UINT32, 31);
+    checkBuiltinTypeInfo(typeInfo<UInt<33>>(), "bit:33", SchemaType::UINT33, CppType::UINT64, 33);
+    checkBuiltinTypeInfo(typeInfo<UInt<63>>(), "bit:63", SchemaType::UINT63, CppType::UINT64, 63);
 
-    checkBuiltinTypeInfo(typeInfo<DynInt8<>>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT8);
-    checkBuiltinTypeInfo(typeInfo<DynInt16<>>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT16);
-    checkBuiltinTypeInfo(typeInfo<DynInt32<>>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT32);
-    checkBuiltinTypeInfo(typeInfo<DynInt64<>>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT64);
+    checkBuiltinTypeInfo(typeInfo<DynInt8>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT8);
+    checkBuiltinTypeInfo(typeInfo<DynInt16>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT16);
+    checkBuiltinTypeInfo(typeInfo<DynInt32>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT32);
+    checkBuiltinTypeInfo(typeInfo<DynInt64>(), "int<>", SchemaType::DYNAMIC_SIGNED_BITFIELD, CppType::INT64);
+    checkBuiltinTypeInfo(typeInfo<DynUInt8>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT8);
     checkBuiltinTypeInfo(
-            typeInfo<DynUInt8<>>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT8);
+            typeInfo<DynUInt16>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT16);
     checkBuiltinTypeInfo(
-            typeInfo<DynUInt16<>>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT16);
+            typeInfo<DynUInt32>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT32);
     checkBuiltinTypeInfo(
-            typeInfo<DynUInt32<>>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT32);
-    checkBuiltinTypeInfo(
-            typeInfo<DynUInt64<>>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT64);
+            typeInfo<DynUInt64>(), "bit<>", SchemaType::DYNAMIC_UNSIGNED_BITFIELD, CppType::UINT64);
 }
 
 TEST_F(TypeInfoTest, structTypeInfo)

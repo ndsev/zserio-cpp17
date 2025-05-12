@@ -60,7 +60,7 @@ static void fillComplexStruct(ComplexStruct& complexStruct, bool createOptionals
 
     complexStruct.dynamicBitField = 8;
 
-    VectorType<zserio::DynUInt64<>> dynamicBitFieldArray;
+    VectorType<zserio::DynUInt64> dynamicBitFieldArray;
     for (size_t i = 1; i < 65536; i += 2)
     {
         dynamicBitFieldArray.push_back(i);

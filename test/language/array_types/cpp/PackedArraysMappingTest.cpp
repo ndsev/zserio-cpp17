@@ -46,7 +46,7 @@ TEST_F(PackedArraysMappingTest, unsignedBitfieldArrays)
     packedArraysMapping.bitfield32Array = VectorType<zserio::UInt32>(fixedArrayLength);
     packedArraysMapping.bitfield63Array = VectorType<zserio::UInt63>(fixedArrayLength);
     packedArraysMapping.uint8Value = 8;
-    packedArraysMapping.variableBitfieldLongArray = VectorType<zserio::DynUInt64<>>(fixedArrayLength);
+    packedArraysMapping.variableBitfieldLongArray = VectorType<zserio::DynUInt64>(fixedArrayLength);
 }
 
 TEST_F(PackedArraysMappingTest, signedBitfieldArrays)
@@ -58,7 +58,7 @@ TEST_F(PackedArraysMappingTest, signedBitfieldArrays)
     packedArraysMapping.intfield32Array = VectorType<zserio::Int32>(fixedArrayLength);
     packedArraysMapping.intfield64Array = VectorType<zserio::Int64>(fixedArrayLength);
     packedArraysMapping.uint8Value = 8;
-    packedArraysMapping.variableIntfieldLongArray = VectorType<zserio::DynInt64<>>(fixedArrayLength);
+    packedArraysMapping.variableIntfieldLongArray = VectorType<zserio::DynInt64>(fixedArrayLength);
 }
 
 TEST_F(PackedArraysMappingTest, variableUnsignedIntegerArrays)

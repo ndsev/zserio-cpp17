@@ -11,6 +11,7 @@ import zserio.ast.Constant;
 import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.DynamicBitFieldType;
 import zserio.ast.EnumType;
+import zserio.ast.Expression;
 import zserio.ast.ExternType;
 import zserio.ast.FixedBitFieldType;
 import zserio.ast.FloatType;
@@ -37,6 +38,7 @@ import zserio.extension.cpp17.types.NativeAllocType;
 import zserio.extension.cpp17.types.NativeArrayType;
 import zserio.extension.cpp17.types.NativeCompoundType;
 import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
+import zserio.extension.cpp17.types.NativeFixedBitFieldType;
 import zserio.extension.cpp17.types.NativeIntegralType;
 import zserio.extension.cpp17.types.NativeNumericWrapperType;
 import zserio.extension.cpp17.types.NativeStringViewType;
@@ -299,7 +301,16 @@ public final class CppNativeMapper
         final boolean isSigned = instantiation.getBaseType().isSigned();
         final int maxBitSize = instantiation.getMaxBitSize();
 
-        return mapDynamicBitFieldType(isSigned, maxBitSize);
+        final Expression lengthExpression = instantiation.getLengthExpression();
+        if (lengthExpression.getIntegerValue() != null)
+        {
+            return mapFixedBitFieldType(isSigned, maxBitSize,
+                    CppLiteralFormatter.formatUInt8Literal(lengthExpression.getIntegerValue()));
+        }
+        else
+        {
+            return mapDynamicBitFieldType(isSigned, maxBitSize);
+        }
     }
 
     private static CppNativeType mapBitFieldType(boolean isSigned, int numBits)
@@ -583,6 +594,11 @@ public final class CppNativeMapper
             // invalid
             return null;
         }
+    }
+
+    private static CppNativeType mapFixedBitFieldType(boolean isSigned, int numBits, String length)
+    {
+        return new NativeFixedBitFieldType(numBits, isSigned, length);
     }
 
     private static CppNativeType mapDynamicBitFieldType(boolean isSigned, int maxBitSize)

@@ -132,7 +132,7 @@ public:
 
     uint8_t getBitSize() const override;
 
-    template <typename T, BitSize BIT_SIZE>
+    template <BitSize BIT_SIZE, bool IS_SIGNED>
     static const FixedSizeBuiltinTypeInfo& getFixedBitField();
 
 private:
@@ -778,12 +778,12 @@ uint8_t FixedSizeBuiltinTypeInfo<ALLOC>::getBitSize() const
 }
 
 template <typename ALLOC>
-template <typename T, BitSize BIT_SIZE>
+template <BitSize BIT_SIZE, bool IS_SIGNED>
 const FixedSizeBuiltinTypeInfo<ALLOC>& FixedSizeBuiltinTypeInfo<ALLOC>::getFixedBitField()
 {
     static_assert(BIT_SIZE > 0 && BIT_SIZE <= 64, "Bit size out of range!");
 
-    if constexpr (std::is_signed_v<T>)
+    if constexpr (IS_SIGNED)
     {
         static const std::array<FixedSizeBuiltinTypeInfo<ALLOC>, 64> bitFieldTypeInfoArray = {
                 {{"int:1", SchemaType::INT1, CppType::INT8, 1}, //
@@ -1300,28 +1300,21 @@ struct TypeInfo<Bool, ALLOC>
     }
 };
 
-template <typename T, BitSize BIT_SIZE, typename ALLOC>
-struct TypeInfo<detail::IntWrapper<T, BIT_SIZE>, ALLOC>
+template <BitSize BIT_SIZE, bool IS_SIGNED, typename ALLOC>
+struct TypeInfo<detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>, ALLOC>
 {
     static const IBasicTypeInfo<ALLOC>& get()
     {
-        return FixedSizeBuiltinTypeInfo<ALLOC>::template getFixedBitField<T, BIT_SIZE>();
+        return FixedSizeBuiltinTypeInfo<ALLOC>::template getFixedBitField<BIT_SIZE, IS_SIGNED>();
     }
 };
 
-template <typename T, BitSize BIT_SIZE, typename ALLOC>
-struct TypeInfo<detail::DynIntWrapper<T, BIT_SIZE>, ALLOC>
+template <typename T, typename ALLOC>
+struct TypeInfo<detail::DynIntWrapper<T>, ALLOC>
 {
     static const IBasicTypeInfo<ALLOC>& get()
     {
-        if constexpr (BIT_SIZE != 0)
-        {
-            return FixedSizeBuiltinTypeInfo<ALLOC>::template getFixedBitField<T, BIT_SIZE>();
-        }
-        else
-        {
-            return BuiltinTypeInfo<ALLOC>::template getDynamicBitField<T>();
-        }
+        return BuiltinTypeInfo<ALLOC>::template getDynamicBitField<T>();
     }
 };
 

@@ -110,12 +110,12 @@ View<T> read(BitStreamReader& reader, T& data, ARGS...);
 } // namespace detail
 
 template <typename VALUE_TYPE>
-class View<detail::DynIntWrapper<VALUE_TYPE, 0>>
+class View<detail::DynIntWrapper<VALUE_TYPE>>
 {
 public:
     using ValueType = VALUE_TYPE;
 
-    View(detail::DynIntWrapper<VALUE_TYPE, 0> value, uint8_t numBits) :
+    View(detail::DynIntWrapper<VALUE_TYPE> value, uint8_t numBits) :
             m_value(value),
             m_numBits(numBits)
     {}
@@ -125,7 +125,7 @@ public:
         return m_numBits;
     }
 
-    detail::DynIntWrapper<VALUE_TYPE, 0> value() const
+    detail::DynIntWrapper<VALUE_TYPE> value() const
     {
         return m_value;
     }
@@ -136,27 +136,27 @@ public:
     }
 
 private:
-    detail::DynIntWrapper<VALUE_TYPE, 0> m_value;
+    detail::DynIntWrapper<VALUE_TYPE> m_value;
     uint8_t m_numBits;
 };
 
 template <typename VALUE_TYPE>
-bool operator==(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
-        const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& rhs)
+bool operator==(
+        const View<detail::DynIntWrapper<VALUE_TYPE>>& lhs, const View<detail::DynIntWrapper<VALUE_TYPE>>& rhs)
 {
     return lhs.numBits() == rhs.numBits() && lhs.value() == rhs.value();
 }
 
 template <typename VALUE_TYPE>
-bool operator!=(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
-        const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& rhs)
+bool operator!=(
+        const View<detail::DynIntWrapper<VALUE_TYPE>>& lhs, const View<detail::DynIntWrapper<VALUE_TYPE>>& rhs)
 {
     return !(lhs == rhs);
 }
 
 template <typename VALUE_TYPE>
-bool operator<(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
-        const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& rhs)
+bool operator<(
+        const View<detail::DynIntWrapper<VALUE_TYPE>>& lhs, const View<detail::DynIntWrapper<VALUE_TYPE>>& rhs)
 {
     if (lhs.numBits() != rhs.numBits())
     {
@@ -171,22 +171,22 @@ bool operator<(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
 }
 
 template <typename VALUE_TYPE>
-bool operator>(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
-        const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& rhs)
+bool operator>(
+        const View<detail::DynIntWrapper<VALUE_TYPE>>& lhs, const View<detail::DynIntWrapper<VALUE_TYPE>>& rhs)
 {
     return rhs < lhs;
 }
 
 template <typename VALUE_TYPE>
-bool operator<=(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
-        const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& rhs)
+bool operator<=(
+        const View<detail::DynIntWrapper<VALUE_TYPE>>& lhs, const View<detail::DynIntWrapper<VALUE_TYPE>>& rhs)
 {
     return !(rhs < lhs);
 }
 
 template <typename VALUE_TYPE>
-bool operator>=(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& lhs,
-        const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& rhs)
+bool operator>=(
+        const View<detail::DynIntWrapper<VALUE_TYPE>>& lhs, const View<detail::DynIntWrapper<VALUE_TYPE>>& rhs)
 {
     return !(lhs < rhs);
 }
@@ -195,19 +195,19 @@ namespace detail
 {
 
 template <typename VALUE_TYPE>
-void validate(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& view, std::string_view fieldName)
+void validate(const View<detail::DynIntWrapper<VALUE_TYPE>>& view, std::string_view fieldName)
 {
     return validate(view.value(), view.numBits(), fieldName);
 }
 
 template <typename VALUE_TYPE>
-BitSize bitSizeOf(const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& view, BitSize = 0)
+BitSize bitSizeOf(const View<detail::DynIntWrapper<VALUE_TYPE>>& view, BitSize = 0)
 {
     return view.numBits();
 }
 
 template <typename VALUE_TYPE>
-void write(BitStreamWriter& writer, const View<detail::DynIntWrapper<VALUE_TYPE, 0>>& view)
+void write(BitStreamWriter& writer, const View<detail::DynIntWrapper<VALUE_TYPE>>& view)
 {
     write(writer, view.value(), view.numBits());
 }
@@ -220,9 +220,9 @@ namespace std
 {
 
 template <typename VALUE_TYPE>
-struct hash<zserio::View<zserio::detail::DynIntWrapper<VALUE_TYPE, 0>>>
+struct hash<zserio::View<zserio::detail::DynIntWrapper<VALUE_TYPE>>>
 {
-    size_t operator()(const zserio::View<zserio::detail::DynIntWrapper<VALUE_TYPE, 0>>& view) const
+    size_t operator()(const zserio::View<zserio::detail::DynIntWrapper<VALUE_TYPE>>& view) const
     {
         uint32_t result = zserio::HASH_SEED;
         result = zserio::calcHashCode(result, view.numBits());

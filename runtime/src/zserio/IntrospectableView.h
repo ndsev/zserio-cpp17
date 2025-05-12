@@ -729,23 +729,24 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(Bool value, const ALLOC& 
     return std::allocate_shared<detail::BoolIntrospectableView<ALLOC>>(allocator, value);
 }
 
-template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>>
+template <BitSize BIT_SIZE, bool IS_SIGNED, typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
-        detail::IntWrapper<T, BIT_SIZE> value, const ALLOC& allocator = ALLOC())
+        detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED> value, const ALLOC& allocator = ALLOC())
 {
-    using Type = detail::IntWrapper<T, BIT_SIZE>;
+    using Type = detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>;
+    using ValueType = typename Type::ValueType;
 
-    if constexpr (std::is_signed_v<T>)
+    if constexpr (IS_SIGNED)
     {
-        if constexpr (sizeof(T) > 4)
+        if constexpr (sizeof(ValueType) > 4)
         {
             return std::allocate_shared<detail::Int64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 2)
+        else if constexpr (sizeof(ValueType) > 2)
         {
             return std::allocate_shared<detail::Int32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 1)
+        else if constexpr (sizeof(ValueType) > 1)
         {
             return std::allocate_shared<detail::Int16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
@@ -756,62 +757,15 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
     }
     else
     {
-        if constexpr (sizeof(T) > 4)
+        if constexpr (sizeof(ValueType) > 4)
         {
             return std::allocate_shared<detail::UInt64IntrospectableView<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 2)
+        else if constexpr (sizeof(ValueType) > 2)
         {
             return std::allocate_shared<detail::UInt32IntrospectableView<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 1)
-        {
-            return std::allocate_shared<detail::UInt16IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-        else
-        {
-            return std::allocate_shared<detail::UInt8IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-    }
-}
-
-template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>,
-        std::enable_if_t<BIT_SIZE != 0, int> = 0>
-IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
-        detail::DynIntWrapper<T, BIT_SIZE> value, const ALLOC& allocator = ALLOC())
-{
-    using Type = detail::DynIntWrapper<T, BIT_SIZE>;
-
-    if constexpr (std::is_signed_v<T>)
-    {
-        if constexpr (sizeof(T) > 4)
-        {
-            return std::allocate_shared<detail::Int64IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-        else if constexpr (sizeof(T) > 2)
-        {
-            return std::allocate_shared<detail::Int32IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-        else if constexpr (sizeof(T) > 1)
-        {
-            return std::allocate_shared<detail::Int16IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-        else
-        {
-            return std::allocate_shared<detail::Int8IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-    }
-    else
-    {
-        if constexpr (sizeof(T) > 4)
-        {
-            return std::allocate_shared<detail::UInt64IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-        else if constexpr (sizeof(T) > 2)
-        {
-            return std::allocate_shared<detail::UInt32IntrospectableView<Type, ALLOC>>(allocator, value);
-        }
-        else if constexpr (sizeof(T) > 1)
+        else if constexpr (sizeof(ValueType) > 1)
         {
             return std::allocate_shared<detail::UInt16IntrospectableView<Type, ALLOC>>(allocator, value);
         }
@@ -824,9 +778,9 @@ IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
 
 template <typename T, typename ALLOC = std::allocator<uint8_t>>
 IBasicIntrospectableViewConstPtr<ALLOC> introspectable(
-        const View<detail::DynIntWrapper<T, 0>>& value, const ALLOC& allocator = ALLOC())
+        const View<detail::DynIntWrapper<T>>& value, const ALLOC& allocator = ALLOC())
 {
-    using Type = detail::DynIntWrapper<T, 0>;
+    using Type = detail::DynIntWrapper<T>;
 
     if constexpr (std::is_signed_v<T>)
     {

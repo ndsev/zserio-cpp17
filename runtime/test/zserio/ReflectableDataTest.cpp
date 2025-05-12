@@ -648,14 +648,14 @@ TEST_F(ReflectableDataTest, fixedUnsignedBitField33) // mapped to uint64_t
 
 TEST_F(ReflectableDataTest, dynamicSignedBitField5) // mapped to int8_t
 {
-    const DynInt8<> value = 15;
+    const DynInt8 value = 15;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt8);
 }
 
 TEST_F(ReflectableDataTest, dynamicSignedBitField15) // mapped to int16_t
 {
-    const DynInt16<> value = -15;
+    const DynInt16 value = -15;
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt16);
 }
@@ -663,7 +663,7 @@ TEST_F(ReflectableDataTest, dynamicSignedBitField15) // mapped to int16_t
 TEST_F(ReflectableDataTest, dynamicSignedBitField31) // mapped to int32_t
 {
     const uint8_t numBits = 31;
-    const DynInt32<> value = -12345678;
+    const DynInt32 value = -12345678;
     const View view(value, numBits);
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt32);
@@ -672,7 +672,7 @@ TEST_F(ReflectableDataTest, dynamicSignedBitField31) // mapped to int32_t
 TEST_F(ReflectableDataTest, dynamicSignedBitField60) // mapped to int64_t
 {
     const uint8_t numBits = 60;
-    const DynInt64<> value = 1234567890;
+    const DynInt64 value = 1234567890;
     const View view(value, numBits);
     auto reflectablePtr = reflectable(value);
     checkSignedIntegral(value, reflectablePtr, &IReflectableData::getInt64);
@@ -680,28 +680,28 @@ TEST_F(ReflectableDataTest, dynamicSignedBitField60) // mapped to int64_t
 
 TEST_F(ReflectableDataTest, dynamicUnsignedBitField7) // mapped to uint8_t
 {
-    const DynUInt8<> value = 0x2F;
+    const DynUInt8 value = 0x2F;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt8);
 }
 
 TEST_F(ReflectableDataTest, dynamicUnsignedBitField9) // mapped to uint16_t
 {
-    const DynUInt16<> value = 0x1FF;
+    const DynUInt16 value = 0x1FF;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt16);
 }
 
 TEST_F(ReflectableDataTest, dynamicUnsignedBitField31) // mapped to uint32_t
 {
-    const DynUInt32<> value = UINT32_MAX >> 1U;
+    const DynUInt32 value = UINT32_MAX >> 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt32);
 }
 
 TEST_F(ReflectableDataTest, dynamicUnsignedBitField33) // mapped to uint64_t
 {
-    const DynUInt64<> value = static_cast<uint64_t>(UINT32_MAX) << 1U;
+    const DynUInt64 value = static_cast<uint64_t>(UINT32_MAX) << 1U;
     auto reflectablePtr = reflectable(value);
     checkUnsignedIntegral(value, reflectablePtr, &IReflectableData::getUInt64);
 }
@@ -1057,10 +1057,10 @@ TEST_F(ReflectableDataTest, fixedUnsignedBitField5Array)
 
 TEST_F(ReflectableDataTest, dynamicSignedBitField5ConstArray)
 {
-    const auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
+    const auto rawArray = std::vector<DynInt8>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
     checkArray(
-            rawArray, reflectablePtr, [&](DynInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
+            rawArray, reflectablePtr, [&](DynInt8 value, const IReflectableDataConstPtr& elementReflectable) {
                 checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
             });
 
@@ -1070,47 +1070,47 @@ TEST_F(ReflectableDataTest, dynamicSignedBitField5ConstArray)
 
 TEST_F(ReflectableDataTest, dynamicSignedBitField5Array)
 {
-    auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
+    auto rawArray = std::vector<DynInt8>{{-3, -1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
-    checkArray(rawArray, reflectablePtr, [&](DynInt8<> value, const IReflectableDataPtr& elementReflectable) {
+    checkArray(rawArray, reflectablePtr, [&](DynInt8 value, const IReflectableDataPtr& elementReflectable) {
         checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
     });
     checkArray(rawArray, static_cast<IReflectableDataConstPtr>(reflectablePtr),
-            [&](DynInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
+            [&](DynInt8 value, const IReflectableDataConstPtr& elementReflectable) {
                 checkSignedIntegral(value, elementReflectable, &IReflectableData::getInt8);
             });
 
     reflectablePtr->resize(0);
     ASSERT_EQ(0, reflectablePtr->size());
-    reflectablePtr->append(Any(DynInt8<>(13)));
+    reflectablePtr->append(Any(DynInt8(13)));
     ASSERT_EQ(1, reflectablePtr->size());
     ASSERT_EQ(13, reflectablePtr->at(0)->getInt8());
-    reflectablePtr->setAt(Any(DynInt8<>(42)), 0);
+    reflectablePtr->setAt(Any(DynInt8(42)), 0);
     ASSERT_EQ(1, reflectablePtr->size());
     ASSERT_EQ(42, reflectablePtr->at(0)->getInt8());
     reflectablePtr->resize(2);
     ASSERT_EQ(2, reflectablePtr->size());
 
     // out of range
-    ASSERT_THROW(reflectablePtr->setAt(Any(DynInt8<>(42)), 2), CppRuntimeException);
+    ASSERT_THROW(reflectablePtr->setAt(Any(DynInt8(42)), 2), CppRuntimeException);
 }
 
 TEST_F(ReflectableDataTest, dynamicUnsignedBitField5ConstArray)
 {
-    const auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
+    const auto rawArray = std::vector<DynUInt8>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
-    checkArray(rawArray, reflectablePtr,
-            [&](DynUInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
+    checkArray(
+            rawArray, reflectablePtr, [&](DynUInt8 value, const IReflectableDataConstPtr& elementReflectable) {
                 checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
             });
 }
 
 TEST_F(ReflectableDataTest, dynamicUnsignedBitField5Array)
 {
-    auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
+    auto rawArray = std::vector<DynUInt8>{{3, 1, 2, 4, 6}};
     auto reflectablePtr = reflectableArray(rawArray);
-    checkArray(rawArray, reflectablePtr,
-            [&](DynUInt8<> value, const IReflectableDataConstPtr& elementReflectable) {
+    checkArray(
+            rawArray, reflectablePtr, [&](DynUInt8 value, const IReflectableDataConstPtr& elementReflectable) {
                 checkUnsignedIntegral(value, elementReflectable, &IReflectableData::getUInt8);
             });
 }

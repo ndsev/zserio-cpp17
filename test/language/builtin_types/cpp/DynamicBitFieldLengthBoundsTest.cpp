@@ -36,11 +36,11 @@ protected:
     }
 
     static constexpr zserio::UInt4 UNSIGNED_BIT_LENGTH = 15;
-    static constexpr zserio::DynUInt16<> UNSIGNED_VALUE = (1U << UNSIGNED_BIT_LENGTH) - 1;
+    static constexpr zserio::DynUInt16 UNSIGNED_VALUE = (1U << UNSIGNED_BIT_LENGTH) - 1;
     static constexpr zserio::UInt8 UNSIGNED_BIG_BIT_LENGTH = 13;
-    static constexpr zserio::DynUInt64<> UNSIGNED_BIG_VALUE = (1U << UNSIGNED_BIG_BIT_LENGTH) - 1;
+    static constexpr zserio::DynUInt64 UNSIGNED_BIG_VALUE = (1U << UNSIGNED_BIG_BIT_LENGTH) - 1;
     static constexpr zserio::UInt64 SIGNED_BIT_LENGTH = 7;
-    static constexpr zserio::DynInt64<> SIGNED_VALUE = -static_cast<int64_t>(1U << (SIGNED_BIT_LENGTH - 1));
+    static constexpr zserio::DynInt64 SIGNED_VALUE = -static_cast<int64_t>(1U << (SIGNED_BIT_LENGTH - 1));
 };
 
 TEST_F(DynamicBitFieldLengthBoundsTest, read)

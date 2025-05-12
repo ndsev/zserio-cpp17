@@ -350,13 +350,15 @@ inline void write(BitStreamWriter& writer, Bool value)
     writer.writeBool(value);
 }
 
-template <typename T, BitSize BIT_SIZE>
-void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+void write(BitStreamWriter& writer, FixedIntWrapper<BIT_SIZE, IS_SIGNED> value)
 {
+    using ValueType = typename FixedIntWrapper<BIT_SIZE, IS_SIGNED>::ValueType;
+
     static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
-    if constexpr (sizeof(T) <= 4)
+    if constexpr (sizeof(ValueType) <= 4)
     {
-        if constexpr (std::is_signed_v<T>)
+        if constexpr (std::is_signed_v<ValueType>)
         {
             writer.writeSignedBits32(value, BIT_SIZE);
         }
@@ -367,7 +369,7 @@ void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
     }
     else
     {
-        if constexpr (std::is_signed_v<T>)
+        if constexpr (std::is_signed_v<ValueType>)
         {
             writer.writeSignedBits64(value, BIT_SIZE);
         }
@@ -379,7 +381,7 @@ void write(BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
 }
 
 template <typename T>
-void write(BitStreamWriter& writer, DynIntWrapper<T, 0> value, uint8_t numBits)
+void write(BitStreamWriter& writer, DynIntWrapper<T> value, uint8_t numBits)
 {
     if constexpr (sizeof(T) <= 4)
     {

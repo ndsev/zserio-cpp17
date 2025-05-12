@@ -116,7 +116,7 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:99
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:100
 
 # This multiple inheritance is intended and we think that to avoid it would mean much more obscure design.
-fuchsia-multiple-inheritance:src/zserio/IntrospectableView.h:969
+fuchsia-multiple-inheritance:src/zserio/IntrospectableView.h:923
 fuchsia-multiple-inheritance:src/zserio/ReflectableData.h:516
 
 # Optional follows std::optional so the ctors should be implicit.

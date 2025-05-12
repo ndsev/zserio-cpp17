@@ -195,28 +195,76 @@ constexpr bool operator>=(const BoolWrapper& lhs, const BoolWrapper& rhs)
     return !(lhs < rhs);
 }
 
-template <typename VALUE_TYPE, BitSize BIT_SIZE = 8 * sizeof(VALUE_TYPE)>
-class IntWrapper : public NumericTypeWrapper<VALUE_TYPE>
-{
-private:
-    static_assert((BIT_SIZE + 7) / 8 <= sizeof(VALUE_TYPE), "BitSize doesn't fit to the VALUE_TYPE!");
+template <BitSize BIT_SIZE, bool IS_SIGNED, typename = void>
+struct fixed_int_value_type;
 
-public:
-    using NumericTypeWrapper<VALUE_TYPE>::NumericTypeWrapper;
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, true, std::enable_if_t<(BIT_SIZE > 0 && BIT_SIZE <= 8)>>
+{
+    using type = int8_t;
 };
 
-template <typename VALUE_TYPE, BitSize BIT_SIZE = 0>
-class DynIntWrapper : public IntWrapper<VALUE_TYPE, BIT_SIZE>
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, true, std::enable_if_t<(BIT_SIZE > 8 && BIT_SIZE <= 16)>>
+{
+    using type = int16_t;
+};
+
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, true, std::enable_if_t<(BIT_SIZE > 16 && BIT_SIZE <= 32)>>
+{
+    using type = int32_t;
+};
+
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, true, std::enable_if_t<(BIT_SIZE > 32 && BIT_SIZE <= 64)>>
+{
+    using type = int64_t;
+};
+
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, false, std::enable_if_t<(BIT_SIZE > 0 && BIT_SIZE <= 8)>>
+{
+    using type = uint8_t;
+};
+
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, false, std::enable_if_t<(BIT_SIZE > 8 && BIT_SIZE <= 16)>>
+{
+    using type = uint16_t;
+};
+
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, false, std::enable_if_t<(BIT_SIZE > 16 && BIT_SIZE <= 32)>>
+{
+    using type = uint32_t;
+};
+
+template <BitSize BIT_SIZE>
+struct fixed_int_value_type<BIT_SIZE, false, std::enable_if_t<(BIT_SIZE > 32 && BIT_SIZE <= 64)>>
+{
+    using type = uint64_t;
+};
+
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+using fixed_int_value_type_t = typename fixed_int_value_type<BIT_SIZE, IS_SIGNED>::type;
+
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+class FixedIntWrapper : public NumericTypeWrapper<fixed_int_value_type_t<BIT_SIZE, IS_SIGNED>>
 {
 public:
-    using IntWrapper<VALUE_TYPE, BIT_SIZE>::IntWrapper;
+    using ValueType = fixed_int_value_type_t<BIT_SIZE, IS_SIGNED>;
+    using NumericTypeWrapper<ValueType>::NumericTypeWrapper;
+
+    static_assert(BIT_SIZE > 0, "BitSize cannot be 0!");
+    static_assert((BIT_SIZE + 7) / 8 <= sizeof(ValueType), "BitSize doesn't fit to the VALUE_TYPE!");
 };
 
 template <typename VALUE_TYPE>
-class DynIntWrapper<VALUE_TYPE, 0> : public IntWrapper<VALUE_TYPE>
+class DynIntWrapper : public NumericTypeWrapper<VALUE_TYPE>
 {
 public:
-    using IntWrapper<VALUE_TYPE>::IntWrapper;
+    using NumericTypeWrapper<VALUE_TYPE>::NumericTypeWrapper;
 };
 
 enum class VarIntType : uint8_t
@@ -264,20 +312,17 @@ template <>
 struct needs_range_check<BoolWrapper> : std::false_type
 {};
 
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-struct needs_range_check<IntWrapper<VALUE_TYPE, BIT_SIZE>>
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+struct needs_range_check<FixedIntWrapper<BIT_SIZE, IS_SIGNED>>
 {
-    static constexpr bool value = sizeof(VALUE_TYPE) * 8 != BIT_SIZE ||
+    using ValueType = typename FixedIntWrapper<BIT_SIZE, IS_SIGNED>::ValueType;
+
+    static constexpr bool value = sizeof(ValueType) * 8 != BIT_SIZE ||
             (BIT_SIZE != 8 && BIT_SIZE != 16 && BIT_SIZE != 32 && BIT_SIZE != 64);
 };
 
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-struct needs_range_check<DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
-        : needs_range_check<IntWrapper<VALUE_TYPE, BIT_SIZE>>
-{};
-
 template <typename VALUE_TYPE>
-struct needs_range_check<DynIntWrapper<VALUE_TYPE, 0>> : std::true_type
+struct needs_range_check<DynIntWrapper<VALUE_TYPE>> : std::true_type
 {};
 
 template <typename VALUE_TYPE, VarIntType VAR_TYPE>
@@ -321,26 +366,26 @@ struct RangeChecker
 };
 
 template <typename VALUE_TYPE>
-struct RangeChecker<DynIntWrapper<VALUE_TYPE, 0>>
+struct RangeChecker<DynIntWrapper<VALUE_TYPE>>
 {
     static constexpr void check(VALUE_TYPE value, BitSize numBits, std::string_view fieldName = "")
     {
         std::string_view fieldNamePrefix = (fieldName.empty()) ? "" : " for field ";
         if constexpr (std::is_signed_v<VALUE_TYPE>)
         {
-            if (value < NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::min(numBits) ||
-                    value > NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits))
+            if (value < NumericLimits<DynIntWrapper<VALUE_TYPE>>::min(numBits) ||
+                    value > NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits))
             {
                 throw OutOfRangeException("Value '")
                         << value << "' out of range '<"
-                        << NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::min(numBits) << ", "
-                        << NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits) << ">'" << fieldNamePrefix
+                        << NumericLimits<DynIntWrapper<VALUE_TYPE>>::min(numBits) << ", "
+                        << NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits) << ">'" << fieldNamePrefix
                         << fieldName << "!";
             }
         }
         else
         {
-            if (value > NumericLimits<DynIntWrapper<VALUE_TYPE, 0>>::max(numBits))
+            if (value > NumericLimits<DynIntWrapper<VALUE_TYPE>>::max(numBits))
             {
                 throw OutOfRangeException("Value '")
                         << value << "' out of bounds '"
@@ -373,18 +418,20 @@ struct NumericLimits<detail::BoolWrapper>
 /**
  * Specialization of NumericLimits template for integral types wrapper.
  */
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-struct NumericLimits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+struct NumericLimits<detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>>
 {
-    static constexpr detail::IntWrapper<VALUE_TYPE, BIT_SIZE> min() noexcept
+    using ValueType = typename detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>::ValueType;
+
+    static constexpr detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED> min() noexcept
     {
-        if constexpr (!detail::needs_range_check_v<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>)
+        if constexpr (!detail::needs_range_check_v<detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>>)
         {
-            return std::numeric_limits<VALUE_TYPE>::min();
+            return std::numeric_limits<ValueType>::min();
         }
-        else if constexpr (std::is_signed_v<VALUE_TYPE>)
+        else if constexpr (std::is_signed_v<ValueType>)
         {
-            return static_cast<VALUE_TYPE>(-static_cast<VALUE_TYPE>(1ULL << (BIT_SIZE - 1U)));
+            return static_cast<ValueType>(-static_cast<ValueType>(1ULL << (BIT_SIZE - 1U)));
         }
         else
         {
@@ -392,19 +439,19 @@ struct NumericLimits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
         }
     }
 
-    static constexpr detail::IntWrapper<VALUE_TYPE, BIT_SIZE> max() noexcept
+    static constexpr detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED> max() noexcept
     {
-        if constexpr (!detail::needs_range_check_v<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>)
+        if constexpr (!detail::needs_range_check_v<detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>>)
         {
-            return std::numeric_limits<VALUE_TYPE>::max();
+            return std::numeric_limits<ValueType>::max();
         }
-        else if constexpr (std::is_signed_v<VALUE_TYPE>)
+        else if constexpr (std::is_signed_v<ValueType>)
         {
-            return static_cast<VALUE_TYPE>((1ULL << (BIT_SIZE - 1U)) - 1U);
+            return static_cast<ValueType>((1ULL << (BIT_SIZE - 1U)) - 1U);
         }
         else
         {
-            return static_cast<VALUE_TYPE>((1ULL << BIT_SIZE) - 1U);
+            return static_cast<ValueType>((1ULL << BIT_SIZE) - 1U);
         }
     }
 };
@@ -463,20 +510,12 @@ private:
 };
 
 /**
- * Specialization of NumericLimits template for dynamic length integral types wrapper which has known bit size.
- */
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
-        : NumericLimits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
-{};
-
-/**
  * Specialization of NumericLimits template for dynamic length integral types wrapper with unknown bit size.
  */
 template <typename VALUE_TYPE>
-struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE, 0>>
+struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE>>
 {
-    static constexpr detail::DynIntWrapper<VALUE_TYPE, 0> min(BitSize numBits)
+    static constexpr detail::DynIntWrapper<VALUE_TYPE> min(BitSize numBits)
     {
         if constexpr (std::is_signed_v<VALUE_TYPE>)
         {
@@ -490,7 +529,7 @@ struct NumericLimits<detail::DynIntWrapper<VALUE_TYPE, 0>>
         }
     }
 
-    static constexpr detail::DynIntWrapper<VALUE_TYPE, 0> max(BitSize numBits)
+    static constexpr detail::DynIntWrapper<VALUE_TYPE> max(BitSize numBits)
     {
         checkNumBits(numBits);
 
@@ -692,155 +731,151 @@ constexpr typename T::ValueType toCheckedValue(T wrapper, BitSize numBits)
 
 using Bool = detail::BoolWrapper;
 
-using Int8 = detail::IntWrapper<int8_t>;
-using Int16 = detail::IntWrapper<int16_t>;
-using Int32 = detail::IntWrapper<int32_t>;
-using Int64 = detail::IntWrapper<int64_t>;
+using Int1 = detail::FixedIntWrapper<1, true>;
+using Int2 = detail::FixedIntWrapper<2, true>;
+using Int3 = detail::FixedIntWrapper<3, true>;
+using Int4 = detail::FixedIntWrapper<4, true>;
+using Int5 = detail::FixedIntWrapper<5, true>;
+using Int6 = detail::FixedIntWrapper<6, true>;
+using Int7 = detail::FixedIntWrapper<7, true>;
+using Int8 = detail::FixedIntWrapper<8, true>;
+using Int9 = detail::FixedIntWrapper<9, true>;
+using Int10 = detail::FixedIntWrapper<10, true>;
+using Int11 = detail::FixedIntWrapper<11, true>;
+using Int12 = detail::FixedIntWrapper<12, true>;
+using Int13 = detail::FixedIntWrapper<13, true>;
+using Int14 = detail::FixedIntWrapper<14, true>;
+using Int15 = detail::FixedIntWrapper<15, true>;
+using Int16 = detail::FixedIntWrapper<16, true>;
+using Int17 = detail::FixedIntWrapper<17, true>;
+using Int18 = detail::FixedIntWrapper<18, true>;
+using Int19 = detail::FixedIntWrapper<19, true>;
+using Int20 = detail::FixedIntWrapper<20, true>;
+using Int21 = detail::FixedIntWrapper<21, true>;
+using Int22 = detail::FixedIntWrapper<22, true>;
+using Int23 = detail::FixedIntWrapper<23, true>;
+using Int24 = detail::FixedIntWrapper<24, true>;
+using Int25 = detail::FixedIntWrapper<25, true>;
+using Int26 = detail::FixedIntWrapper<26, true>;
+using Int27 = detail::FixedIntWrapper<27, true>;
+using Int28 = detail::FixedIntWrapper<28, true>;
+using Int29 = detail::FixedIntWrapper<29, true>;
+using Int30 = detail::FixedIntWrapper<30, true>;
+using Int31 = detail::FixedIntWrapper<31, true>;
+using Int32 = detail::FixedIntWrapper<32, true>;
+using Int33 = detail::FixedIntWrapper<33, true>;
+using Int34 = detail::FixedIntWrapper<34, true>;
+using Int35 = detail::FixedIntWrapper<35, true>;
+using Int36 = detail::FixedIntWrapper<36, true>;
+using Int37 = detail::FixedIntWrapper<37, true>;
+using Int38 = detail::FixedIntWrapper<38, true>;
+using Int39 = detail::FixedIntWrapper<39, true>;
+using Int40 = detail::FixedIntWrapper<40, true>;
+using Int41 = detail::FixedIntWrapper<41, true>;
+using Int42 = detail::FixedIntWrapper<42, true>;
+using Int43 = detail::FixedIntWrapper<43, true>;
+using Int44 = detail::FixedIntWrapper<44, true>;
+using Int45 = detail::FixedIntWrapper<45, true>;
+using Int46 = detail::FixedIntWrapper<46, true>;
+using Int47 = detail::FixedIntWrapper<47, true>;
+using Int48 = detail::FixedIntWrapper<48, true>;
+using Int49 = detail::FixedIntWrapper<49, true>;
+using Int50 = detail::FixedIntWrapper<50, true>;
+using Int51 = detail::FixedIntWrapper<51, true>;
+using Int52 = detail::FixedIntWrapper<52, true>;
+using Int53 = detail::FixedIntWrapper<53, true>;
+using Int54 = detail::FixedIntWrapper<54, true>;
+using Int55 = detail::FixedIntWrapper<55, true>;
+using Int56 = detail::FixedIntWrapper<56, true>;
+using Int57 = detail::FixedIntWrapper<57, true>;
+using Int58 = detail::FixedIntWrapper<58, true>;
+using Int59 = detail::FixedIntWrapper<59, true>;
+using Int60 = detail::FixedIntWrapper<60, true>;
+using Int61 = detail::FixedIntWrapper<61, true>;
+using Int62 = detail::FixedIntWrapper<62, true>;
+using Int63 = detail::FixedIntWrapper<63, true>;
+using Int64 = detail::FixedIntWrapper<64, true>;
 
-using UInt8 = detail::IntWrapper<uint8_t>;
-using UInt16 = detail::IntWrapper<uint16_t>;
-using UInt32 = detail::IntWrapper<uint32_t>;
-using UInt64 = detail::IntWrapper<uint64_t>;
+using UInt1 = detail::FixedIntWrapper<1, false>;
+using UInt2 = detail::FixedIntWrapper<2, false>;
+using UInt3 = detail::FixedIntWrapper<3, false>;
+using UInt4 = detail::FixedIntWrapper<4, false>;
+using UInt5 = detail::FixedIntWrapper<5, false>;
+using UInt6 = detail::FixedIntWrapper<6, false>;
+using UInt7 = detail::FixedIntWrapper<7, false>;
+using UInt8 = detail::FixedIntWrapper<8, false>;
+using UInt9 = detail::FixedIntWrapper<9, false>;
+using UInt10 = detail::FixedIntWrapper<10, false>;
+using UInt11 = detail::FixedIntWrapper<11, false>;
+using UInt12 = detail::FixedIntWrapper<12, false>;
+using UInt13 = detail::FixedIntWrapper<13, false>;
+using UInt14 = detail::FixedIntWrapper<14, false>;
+using UInt15 = detail::FixedIntWrapper<15, false>;
+using UInt16 = detail::FixedIntWrapper<16, false>;
+using UInt17 = detail::FixedIntWrapper<17, false>;
+using UInt18 = detail::FixedIntWrapper<18, false>;
+using UInt19 = detail::FixedIntWrapper<19, false>;
+using UInt20 = detail::FixedIntWrapper<20, false>;
+using UInt21 = detail::FixedIntWrapper<21, false>;
+using UInt22 = detail::FixedIntWrapper<22, false>;
+using UInt23 = detail::FixedIntWrapper<23, false>;
+using UInt24 = detail::FixedIntWrapper<24, false>;
+using UInt25 = detail::FixedIntWrapper<25, false>;
+using UInt26 = detail::FixedIntWrapper<26, false>;
+using UInt27 = detail::FixedIntWrapper<27, false>;
+using UInt28 = detail::FixedIntWrapper<28, false>;
+using UInt29 = detail::FixedIntWrapper<29, false>;
+using UInt30 = detail::FixedIntWrapper<30, false>;
+using UInt31 = detail::FixedIntWrapper<31, false>;
+using UInt32 = detail::FixedIntWrapper<32, false>;
+using UInt33 = detail::FixedIntWrapper<33, false>;
+using UInt34 = detail::FixedIntWrapper<34, false>;
+using UInt35 = detail::FixedIntWrapper<35, false>;
+using UInt36 = detail::FixedIntWrapper<36, false>;
+using UInt37 = detail::FixedIntWrapper<37, false>;
+using UInt38 = detail::FixedIntWrapper<38, false>;
+using UInt39 = detail::FixedIntWrapper<39, false>;
+using UInt40 = detail::FixedIntWrapper<40, false>;
+using UInt41 = detail::FixedIntWrapper<41, false>;
+using UInt42 = detail::FixedIntWrapper<42, false>;
+using UInt43 = detail::FixedIntWrapper<43, false>;
+using UInt44 = detail::FixedIntWrapper<44, false>;
+using UInt45 = detail::FixedIntWrapper<45, false>;
+using UInt46 = detail::FixedIntWrapper<46, false>;
+using UInt47 = detail::FixedIntWrapper<47, false>;
+using UInt48 = detail::FixedIntWrapper<48, false>;
+using UInt49 = detail::FixedIntWrapper<49, false>;
+using UInt50 = detail::FixedIntWrapper<50, false>;
+using UInt51 = detail::FixedIntWrapper<51, false>;
+using UInt52 = detail::FixedIntWrapper<52, false>;
+using UInt53 = detail::FixedIntWrapper<53, false>;
+using UInt54 = detail::FixedIntWrapper<54, false>;
+using UInt55 = detail::FixedIntWrapper<55, false>;
+using UInt56 = detail::FixedIntWrapper<56, false>;
+using UInt57 = detail::FixedIntWrapper<57, false>;
+using UInt58 = detail::FixedIntWrapper<58, false>;
+using UInt59 = detail::FixedIntWrapper<59, false>;
+using UInt60 = detail::FixedIntWrapper<60, false>;
+using UInt61 = detail::FixedIntWrapper<61, false>;
+using UInt62 = detail::FixedIntWrapper<62, false>;
+using UInt63 = detail::FixedIntWrapper<63, false>;
+using UInt64 = detail::FixedIntWrapper<64, false>;
 
-using Int1 = detail::IntWrapper<int8_t, 1>;
-using Int2 = detail::IntWrapper<int8_t, 2>;
-using Int3 = detail::IntWrapper<int8_t, 3>;
-using Int4 = detail::IntWrapper<int8_t, 4>;
-using Int5 = detail::IntWrapper<int8_t, 5>;
-using Int6 = detail::IntWrapper<int8_t, 6>;
-using Int7 = detail::IntWrapper<int8_t, 7>;
-using Int9 = detail::IntWrapper<int16_t, 9>;
-using Int10 = detail::IntWrapper<int16_t, 10>;
-using Int11 = detail::IntWrapper<int16_t, 11>;
-using Int12 = detail::IntWrapper<int16_t, 12>;
-using Int13 = detail::IntWrapper<int16_t, 13>;
-using Int14 = detail::IntWrapper<int16_t, 14>;
-using Int15 = detail::IntWrapper<int16_t, 15>;
-using Int17 = detail::IntWrapper<int32_t, 17>;
-using Int18 = detail::IntWrapper<int32_t, 18>;
-using Int19 = detail::IntWrapper<int32_t, 19>;
-using Int20 = detail::IntWrapper<int32_t, 20>;
-using Int21 = detail::IntWrapper<int32_t, 21>;
-using Int22 = detail::IntWrapper<int32_t, 22>;
-using Int23 = detail::IntWrapper<int32_t, 23>;
-using Int24 = detail::IntWrapper<int32_t, 24>;
-using Int25 = detail::IntWrapper<int32_t, 25>;
-using Int26 = detail::IntWrapper<int32_t, 26>;
-using Int27 = detail::IntWrapper<int32_t, 27>;
-using Int28 = detail::IntWrapper<int32_t, 28>;
-using Int29 = detail::IntWrapper<int32_t, 29>;
-using Int30 = detail::IntWrapper<int32_t, 30>;
-using Int31 = detail::IntWrapper<int32_t, 31>;
-using Int33 = detail::IntWrapper<int64_t, 33>;
-using Int34 = detail::IntWrapper<int64_t, 34>;
-using Int35 = detail::IntWrapper<int64_t, 35>;
-using Int36 = detail::IntWrapper<int64_t, 36>;
-using Int37 = detail::IntWrapper<int64_t, 37>;
-using Int38 = detail::IntWrapper<int64_t, 38>;
-using Int39 = detail::IntWrapper<int64_t, 39>;
-using Int40 = detail::IntWrapper<int64_t, 40>;
-using Int41 = detail::IntWrapper<int64_t, 41>;
-using Int42 = detail::IntWrapper<int64_t, 42>;
-using Int43 = detail::IntWrapper<int64_t, 43>;
-using Int44 = detail::IntWrapper<int64_t, 44>;
-using Int45 = detail::IntWrapper<int64_t, 45>;
-using Int46 = detail::IntWrapper<int64_t, 46>;
-using Int47 = detail::IntWrapper<int64_t, 47>;
-using Int48 = detail::IntWrapper<int64_t, 48>;
-using Int49 = detail::IntWrapper<int64_t, 49>;
-using Int50 = detail::IntWrapper<int64_t, 50>;
-using Int51 = detail::IntWrapper<int64_t, 51>;
-using Int52 = detail::IntWrapper<int64_t, 52>;
-using Int53 = detail::IntWrapper<int64_t, 53>;
-using Int54 = detail::IntWrapper<int64_t, 54>;
-using Int55 = detail::IntWrapper<int64_t, 55>;
-using Int56 = detail::IntWrapper<int64_t, 56>;
-using Int57 = detail::IntWrapper<int64_t, 57>;
-using Int58 = detail::IntWrapper<int64_t, 58>;
-using Int59 = detail::IntWrapper<int64_t, 59>;
-using Int60 = detail::IntWrapper<int64_t, 60>;
-using Int61 = detail::IntWrapper<int64_t, 61>;
-using Int62 = detail::IntWrapper<int64_t, 62>;
-using Int63 = detail::IntWrapper<int64_t, 63>;
+template <size_t BIT_SIZE>
+using Int = detail::FixedIntWrapper<BIT_SIZE, true>;
 
-using UInt1 = detail::IntWrapper<uint8_t, 1>;
-using UInt2 = detail::IntWrapper<uint8_t, 2>;
-using UInt3 = detail::IntWrapper<uint8_t, 3>;
-using UInt4 = detail::IntWrapper<uint8_t, 4>;
-using UInt5 = detail::IntWrapper<uint8_t, 5>;
-using UInt6 = detail::IntWrapper<uint8_t, 6>;
-using UInt7 = detail::IntWrapper<uint8_t, 7>;
-using UInt9 = detail::IntWrapper<uint16_t, 9>;
-using UInt10 = detail::IntWrapper<uint16_t, 10>;
-using UInt11 = detail::IntWrapper<uint16_t, 11>;
-using UInt12 = detail::IntWrapper<uint16_t, 12>;
-using UInt13 = detail::IntWrapper<uint16_t, 13>;
-using UInt14 = detail::IntWrapper<uint16_t, 14>;
-using UInt15 = detail::IntWrapper<uint16_t, 15>;
-using UInt17 = detail::IntWrapper<uint32_t, 17>;
-using UInt18 = detail::IntWrapper<uint32_t, 18>;
-using UInt19 = detail::IntWrapper<uint32_t, 19>;
-using UInt20 = detail::IntWrapper<uint32_t, 20>;
-using UInt21 = detail::IntWrapper<uint32_t, 21>;
-using UInt22 = detail::IntWrapper<uint32_t, 22>;
-using UInt23 = detail::IntWrapper<uint32_t, 23>;
-using UInt24 = detail::IntWrapper<uint32_t, 24>;
-using UInt25 = detail::IntWrapper<uint32_t, 25>;
-using UInt26 = detail::IntWrapper<uint32_t, 26>;
-using UInt27 = detail::IntWrapper<uint32_t, 27>;
-using UInt28 = detail::IntWrapper<uint32_t, 28>;
-using UInt29 = detail::IntWrapper<uint32_t, 29>;
-using UInt30 = detail::IntWrapper<uint32_t, 30>;
-using UInt31 = detail::IntWrapper<uint32_t, 31>;
-using UInt33 = detail::IntWrapper<uint64_t, 33>;
-using UInt34 = detail::IntWrapper<uint64_t, 34>;
-using UInt35 = detail::IntWrapper<uint64_t, 35>;
-using UInt36 = detail::IntWrapper<uint64_t, 36>;
-using UInt37 = detail::IntWrapper<uint64_t, 37>;
-using UInt38 = detail::IntWrapper<uint64_t, 38>;
-using UInt39 = detail::IntWrapper<uint64_t, 39>;
-using UInt40 = detail::IntWrapper<uint64_t, 40>;
-using UInt41 = detail::IntWrapper<uint64_t, 41>;
-using UInt42 = detail::IntWrapper<uint64_t, 42>;
-using UInt43 = detail::IntWrapper<uint64_t, 43>;
-using UInt44 = detail::IntWrapper<uint64_t, 44>;
-using UInt45 = detail::IntWrapper<uint64_t, 45>;
-using UInt46 = detail::IntWrapper<uint64_t, 46>;
-using UInt47 = detail::IntWrapper<uint64_t, 47>;
-using UInt48 = detail::IntWrapper<uint64_t, 48>;
-using UInt49 = detail::IntWrapper<uint64_t, 49>;
-using UInt50 = detail::IntWrapper<uint64_t, 50>;
-using UInt51 = detail::IntWrapper<uint64_t, 51>;
-using UInt52 = detail::IntWrapper<uint64_t, 52>;
-using UInt53 = detail::IntWrapper<uint64_t, 53>;
-using UInt54 = detail::IntWrapper<uint64_t, 54>;
-using UInt55 = detail::IntWrapper<uint64_t, 55>;
-using UInt56 = detail::IntWrapper<uint64_t, 56>;
-using UInt57 = detail::IntWrapper<uint64_t, 57>;
-using UInt58 = detail::IntWrapper<uint64_t, 58>;
-using UInt59 = detail::IntWrapper<uint64_t, 59>;
-using UInt60 = detail::IntWrapper<uint64_t, 60>;
-using UInt61 = detail::IntWrapper<uint64_t, 61>;
-using UInt62 = detail::IntWrapper<uint64_t, 62>;
-using UInt63 = detail::IntWrapper<uint64_t, 63>;
+template <size_t BIT_SIZE>
+using UInt = detail::FixedIntWrapper<BIT_SIZE, false>;
 
-template <BitSize BIT_SIZE = 0>
-using DynInt8 = detail::DynIntWrapper<int8_t, BIT_SIZE>;
-template <BitSize BIT_SIZE = 0>
-using DynInt16 = detail::DynIntWrapper<int16_t, BIT_SIZE>;
-template <BitSize BIT_SIZE = 0>
-using DynInt32 = detail::DynIntWrapper<int32_t, BIT_SIZE>;
-template <BitSize BIT_SIZE = 0>
-using DynInt64 = detail::DynIntWrapper<int64_t, BIT_SIZE>;
+using DynInt8 = detail::DynIntWrapper<int8_t>;
+using DynInt16 = detail::DynIntWrapper<int16_t>;
+using DynInt32 = detail::DynIntWrapper<int32_t>;
+using DynInt64 = detail::DynIntWrapper<int64_t>;
 
-template <BitSize BIT_SIZE = 0>
-using DynUInt8 = detail::DynIntWrapper<uint8_t, BIT_SIZE>;
-template <BitSize BIT_SIZE = 0>
-using DynUInt16 = detail::DynIntWrapper<uint16_t, BIT_SIZE>;
-template <BitSize BIT_SIZE = 0>
-using DynUInt32 = detail::DynIntWrapper<uint32_t, BIT_SIZE>;
-template <BitSize BIT_SIZE = 0>
-using DynUInt64 = detail::DynIntWrapper<uint64_t, BIT_SIZE>;
+using DynUInt8 = detail::DynIntWrapper<uint8_t>;
+using DynUInt16 = detail::DynIntWrapper<uint16_t>;
+using DynUInt32 = detail::DynIntWrapper<uint32_t>;
+using DynUInt64 = detail::DynIntWrapper<uint64_t>;
 
 using VarInt16 = detail::VarIntWrapper<int16_t, detail::VarIntType::VAR16>;
 using VarInt32 = detail::VarIntWrapper<int32_t, detail::VarIntType::VAR32>;
@@ -897,8 +932,8 @@ inline BitSize bitSizeOf(BoolWrapper, BitSize = 0)
     return 1;
 }
 
-template <typename T, BitSize BIT_SIZE>
-BitSize bitSizeOf(IntWrapper<T, BIT_SIZE>, BitSize = 0)
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+BitSize bitSizeOf(FixedIntWrapper<BIT_SIZE, IS_SIGNED>, BitSize = 0)
 {
     static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     return BIT_SIZE;

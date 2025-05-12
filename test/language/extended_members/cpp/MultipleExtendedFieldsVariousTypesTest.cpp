@@ -125,7 +125,7 @@ protected:
     static const BytesType EXTENDED_VALUE3;
     static constexpr zserio::VarSize EXTENDED_VALUE5 = 3;
     static const VectorType<StringType> EXTENDED_VALUE6;
-    static constexpr zserio::DynUInt64<> EXTENDED_VALUE9 = 7; // bit<EXTENDED_VALUE5>
+    static constexpr zserio::DynUInt64 EXTENDED_VALUE9 = 7; // bit<EXTENDED_VALUE5>
 
     static constexpr size_t ORIGINAL_BIT_SIZE = 7;
 };

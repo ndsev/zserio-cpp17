@@ -181,7 +181,7 @@ TEST_F(AllBuiltInTypesTest, variableBitfieldType)
     ASSERT_THROW(zserio::detail::validate(m_view), zserio::OutOfRangeException);
 
     m_data.uint8Type = std::numeric_limits<uint8_t>::max();
-    const zserio::DynUInt64<> maxVariableBitfieldType = std::numeric_limits<uint64_t>::max();
+    const zserio::DynUInt64 maxVariableBitfieldType = std::numeric_limits<uint64_t>::max();
     m_data.variableBitfieldType = maxVariableBitfieldType;
     ASSERT_EQ(maxVariableBitfieldType, m_data.variableBitfieldType);
     ASSERT_EQ(maxVariableBitfieldType, m_view.variableBitfieldType());
@@ -189,7 +189,7 @@ TEST_F(AllBuiltInTypesTest, variableBitfieldType)
 
 TEST_F(AllBuiltInTypesTest, variableBitfield8Type)
 {
-    const zserio::DynUInt8<8> maxVariableBitfield8Type = std::numeric_limits<uint8_t>::max();
+    const zserio::UInt<8> maxVariableBitfield8Type = std::numeric_limits<uint8_t>::max();
     m_data.variableBitfield8Type = maxVariableBitfield8Type;
     ASSERT_EQ(maxVariableBitfield8Type, m_data.variableBitfield8Type);
     ASSERT_EQ(maxVariableBitfield8Type, m_view.variableBitfield8Type());
@@ -230,7 +230,7 @@ TEST_F(AllBuiltInTypesTest, intfield64Type)
 TEST_F(AllBuiltInTypesTest, variableIntfieldType)
 {
     // 14 is result of the length expression
-    const zserio::DynInt16<> variableIntfieldTypeMax = zserio::NumericLimits<zserio::DynInt16<>>::max(14);
+    const zserio::DynInt16 variableIntfieldTypeMax = zserio::NumericLimits<zserio::DynInt16>::max(14);
     m_data.boolType = true;
     m_data.variableIntfieldType = variableIntfieldTypeMax + 1;
     ASSERT_THROW(zserio::detail::validate(m_view), zserio::OutOfRangeException);
@@ -242,7 +242,7 @@ TEST_F(AllBuiltInTypesTest, variableIntfieldType)
 
 TEST_F(AllBuiltInTypesTest, variableIntfield8Type)
 {
-    const zserio::DynInt8<8> maxVariableIntfield8Type = std::numeric_limits<int8_t>::max();
+    const zserio::Int<8> maxVariableIntfield8Type = std::numeric_limits<int8_t>::max();
     m_data.variableIntfield8Type = maxVariableIntfield8Type;
     ASSERT_EQ(maxVariableIntfield8Type, m_data.variableIntfield8Type);
     ASSERT_EQ(maxVariableIntfield8Type, m_view.variableIntfield8Type());
@@ -430,7 +430,7 @@ TEST_F(AllBuiltInTypesTest, bitSizeOf)
     m_data.intfield16Type = std::numeric_limits<int16_t>::max();
     m_data.intfield32Type = std::numeric_limits<int32_t>::max();
     m_data.intfield64Type = std::numeric_limits<int64_t>::max();
-    m_data.variableIntfieldType = zserio::NumericLimits<zserio::DynInt16<>>::max(14);
+    m_data.variableIntfieldType = zserio::NumericLimits<zserio::DynInt16>::max(14);
     m_data.variableIntfield8Type = std::numeric_limits<int8_t>::max();
     m_data.float16Type = zserio::NumericLimits<zserio::Float16>::max();
     m_data.float32Type = std::numeric_limits<float>::max();
@@ -475,7 +475,7 @@ TEST_F(AllBuiltInTypesTest, writeReadFile)
     m_data.intfield16Type = std::numeric_limits<int16_t>::max();
     m_data.intfield32Type = std::numeric_limits<int32_t>::max();
     m_data.intfield64Type = std::numeric_limits<int64_t>::max();
-    m_data.variableIntfieldType = zserio::NumericLimits<zserio::DynInt16<>>::max(14);
+    m_data.variableIntfieldType = zserio::NumericLimits<zserio::DynInt16>::max(14);
     m_data.variableIntfield8Type = std::numeric_limits<int8_t>::max();
     m_data.float16Type = 1.0F;
     m_data.float32Type = std::numeric_limits<float>::max();

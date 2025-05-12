@@ -20,14 +20,14 @@ protected:
     static void writeData(zserio::BitStreamWriter& writer)
     {
         zserio::detail::write(writer, LENGTH);
-        zserio::detail::write(writer, zserio::DynInt16<LENGTH>(BITFIELD));
+        zserio::detail::write(writer, zserio::DynInt16(BITFIELD), LENGTH);
         zserio::detail::write(writer, DYNAMIC_BITFIELD_PARAM_VALUE);
         zserio::detail::write(writer, DYNAMIC_BITFIELD_PARAM_EXTRA_VALUE);
     }
 
 private:
     static constexpr zserio::UInt4 LENGTH = 5;
-    static constexpr zserio::DynInt16<> BITFIELD = 11;
+    static constexpr zserio::DynInt16 BITFIELD = 11;
     static constexpr zserio::UInt16 DYNAMIC_BITFIELD_PARAM_VALUE = 0x0BED;
     static constexpr zserio::UInt32 DYNAMIC_BITFIELD_PARAM_EXTRA_VALUE = 0x0BEDDEAD;
 };

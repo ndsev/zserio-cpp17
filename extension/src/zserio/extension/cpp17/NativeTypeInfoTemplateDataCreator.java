@@ -17,7 +17,6 @@ import zserio.ast.ZserioType;
 import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeDynamicBitFieldType;
-import zserio.extension.cpp17.types.NativeIntegralType;
 
 public final class NativeTypeInfoTemplateDataCreator
 {
@@ -26,34 +25,9 @@ public final class NativeTypeInfoTemplateDataCreator
     {
         final ZserioType baseType = typeInstantiation.getBaseType();
 
-        boolean isDynamicBitField = false;
-        final StringBuilder typeTemplateArgBuilder = new StringBuilder();
-        if (nativeType instanceof NativeIntegralType)
-        {
-            if (nativeType instanceof NativeDynamicBitFieldType &&
-                    typeInstantiation instanceof DynamicBitFieldInstantiation)
-            {
-                typeTemplateArgBuilder.append('<');
-                final DynamicBitFieldInstantiation dynamicBitFieldInstantiation =
-                        (DynamicBitFieldInstantiation)typeInstantiation;
-                final Expression lengthExpression = dynamicBitFieldInstantiation.getLengthExpression();
-                // dynamic bit field length must be constant expression and since this is a generic expression,
-                // which can contain e.g. functions (which are implemented only on View),
-                // it's safer to use the calculated value
-                if (lengthExpression.getIntegerValue() != null)
-                {
-                    typeTemplateArgBuilder.append(
-                            CppLiteralFormatter.formatUInt8Literal(lengthExpression.getIntegerValue()));
-                }
-                else
-                {
-                    isDynamicBitField = true;
-                }
-                typeTemplateArgBuilder.append('>');
-            }
-        }
+        boolean isDynamicBitField = nativeType instanceof NativeDynamicBitFieldType;
 
-        final String typeFullName = nativeType.getFullName() + typeTemplateArgBuilder.toString();
+        final String typeFullName = nativeType.getFullName();
         return create(typeFullName, nativeType, baseType, isDynamicBitField);
     }
 
@@ -66,15 +40,13 @@ public final class NativeTypeInfoTemplateDataCreator
     public static NativeTypeInfoTemplateData create(CppNativeType nativeType, ZserioType baseType)
     {
         boolean isDynamicBitLength = false;
-        final StringBuilder typeTemplateArgBuilder = new StringBuilder();
         if (baseType instanceof DynamicBitFieldType)
         {
             // when no type instantiation is available, we always get dynamic bit field (w/o the known length)
-            typeTemplateArgBuilder.append("<>");
             isDynamicBitLength = true;
         }
 
-        final String typeFullName = nativeType.getFullName() + typeTemplateArgBuilder.toString();
+        final String typeFullName = nativeType.getFullName();
         return create(typeFullName, nativeType, baseType, isDynamicBitLength);
     }
 

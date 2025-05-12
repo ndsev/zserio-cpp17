@@ -128,18 +128,18 @@ struct VarDynInt16ArrayTraits
 {
     using OwnerType = VarDynInt16Owner;
 
-    static View<DynInt16<>> at(const VarDynInt16Owner& owner, const DynInt16<>& element, size_t)
+    static View<DynInt16> at(const VarDynInt16Owner& owner, const DynInt16& element, size_t)
     {
-        return View<DynInt16<>>(element, owner.numBits);
+        return View<DynInt16>(element, owner.numBits);
     }
 
-    static void read(BitStreamReader& reader, const VarDynInt16Owner& owner, DynInt16<>& element, size_t)
+    static void read(BitStreamReader& reader, const VarDynInt16Owner& owner, DynInt16& element, size_t)
     {
         detail::read(reader, element, owner.numBits);
     }
 
     static void read(DeltaContext& context, BitStreamReader& reader, const VarDynInt16Owner& owner,
-            DynInt16<>& element, size_t)
+            DynInt16& element, size_t)
     {
         detail::read(context, reader, element, owner.numBits);
     }
@@ -314,14 +314,14 @@ TEST(ArrayTest, int8PackedArray)
 
 TEST(ArrayTest, fixedDynInt16Array)
 {
-    Vector<DynInt16<9>> rawArray1{-2, 13};
-    Vector<DynInt16<9>> rawArray2{-2, 42};
+    Vector<Int<9>> rawArray1{-2, 13};
+    Vector<Int<9>> rawArray2{-2, 42};
 
-    ArrayView<const DynInt16<9>> array1(rawArray1);
+    ArrayView<const Int<9>> array1(rawArray1);
     ASSERT_EQ(rawArray1.at(0), array1.at(0));
     ASSERT_EQ(rawArray1.at(1), array1.at(1));
 
-    ArrayView<const DynInt16<9>> array2(rawArray2);
+    ArrayView<const Int<9>> array2(rawArray2);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -333,7 +333,7 @@ TEST(ArrayTest, fixedDynInt16Array)
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
-    Vector<DynInt16<9>> readRawArray;
+    Vector<Int<9>> readRawArray;
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
@@ -341,16 +341,16 @@ TEST(ArrayTest, fixedDynInt16Array)
 
 TEST(ArrayTest, variableDynInt16Array)
 {
-    Vector<DynInt16<>> rawArray1{-2, 13};
-    Vector<DynInt16<>> rawArray2{-2, 42};
+    Vector<DynInt16> rawArray1{-2, 13};
+    Vector<DynInt16> rawArray2{-2, 42};
 
     VarDynInt16Owner owner;
 
-    ArrayView<const DynInt16<>, VarDynInt16ArrayTraits> array1(rawArray1, owner);
+    ArrayView<const DynInt16, VarDynInt16ArrayTraits> array1(rawArray1, owner);
     ASSERT_EQ(rawArray1.at(0), array1.at(0).value());
     ASSERT_EQ(rawArray1.at(1), array1.at(1).value());
 
-    ArrayView<const DynInt16<>, VarDynInt16ArrayTraits> array2(rawArray2, owner);
+    ArrayView<const DynInt16, VarDynInt16ArrayTraits> array2(rawArray2, owner);
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
@@ -362,7 +362,7 @@ TEST(ArrayTest, variableDynInt16Array)
     ASSERT_EQ(bitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
-    Vector<DynInt16<>> readRawArray;
+    Vector<DynInt16> readRawArray;
     detail::readWithTraits<detail::ArrayType::AUTO, VarDynInt16ArrayTraits>(
             reader, readRawArray, owner, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
@@ -371,10 +371,10 @@ TEST(ArrayTest, variableDynInt16Array)
 
 TEST(ArrayTest, variableDynInt16PackedArray)
 {
-    Vector<DynInt16<>> rawArray{-2, 0, 2, 4, 6, 8, 10};
+    Vector<DynInt16> rawArray{-2, 0, 2, 4, 6, 8, 10};
 
     VarDynInt16Owner owner;
-    ArrayView<const DynInt16<>, VarDynInt16ArrayTraits> array(rawArray, owner);
+    ArrayView<const DynInt16, VarDynInt16ArrayTraits> array(rawArray, owner);
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 10 + 6 * (maxBitNumber 2 + 1)
@@ -387,7 +387,7 @@ TEST(ArrayTest, variableDynInt16PackedArray)
     ASSERT_EQ(packedBitSize, writer.getBitPosition());
 
     BitStreamReader reader(buffer);
-    Vector<DynInt16<>> readRawArray;
+    Vector<DynInt16> readRawArray;
     detail::readPackedWithTraits<detail::ArrayType::NORMAL, VarDynInt16ArrayTraits>(
             reader, readRawArray, owner, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());

@@ -111,10 +111,11 @@ inline uint32_t calcHashCode(uint32_t seedValue, Bool value)
  *
  * \return Calculated hash code.
  */
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-inline uint32_t calcHashCode(uint32_t seedValue, detail::IntWrapper<VALUE_TYPE, BIT_SIZE> value)
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+inline uint32_t calcHashCode(uint32_t seedValue, detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED> value)
 {
-    return calcHashCode(seedValue, static_cast<VALUE_TYPE>(value));
+    using ValueType = typename detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>::ValueType;
+    return calcHashCode(seedValue, static_cast<ValueType>(value));
 }
 
 /**
@@ -125,8 +126,8 @@ inline uint32_t calcHashCode(uint32_t seedValue, detail::IntWrapper<VALUE_TYPE, 
  *
  * \return Calculated hash code.
  */
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-inline uint32_t calcHashCode(uint32_t seedValue, detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE> value)
+template <typename VALUE_TYPE>
+inline uint32_t calcHashCode(uint32_t seedValue, detail::DynIntWrapper<VALUE_TYPE> value)
 {
     return calcHashCode(seedValue, static_cast<VALUE_TYPE>(value));
 }

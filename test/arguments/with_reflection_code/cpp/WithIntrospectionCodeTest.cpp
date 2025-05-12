@@ -57,10 +57,10 @@ protected:
                 VectorType<Bitmask>{{Bitmask::Values::FLAG1, Bitmask::Values::FLAG2 | Bitmask::Values::FLAG3}},
                 Selector::STRUCT,
                 VectorType<Selector>{{Selector::STRUCT, SelectorEnum::UNION, Selector::BITMASK}},
-                zserio::DynUInt64<>(31), // dynamicBitField (bit<param>)
-                VectorType<zserio::DynUInt64<>>{{10, 20, 30}},
+                zserio::DynUInt64(31), // dynamicBitField (bit<param>)
+                VectorType<zserio::DynUInt64>{{10, 20, 30}},
                 std::nullopt, // dynamicIntField (param > 4)
-                VectorType<zserio::DynInt8<4>>{{-3, -1, 1, 3}},
+                VectorType<zserio::Int<4>>{{-3, -1, 1, 3}},
                 VectorType<zserio::Bool>{{true, false, true}},
                 BitBuffer{{0xAB, 0xCD}, 16},
                 VectorType<BitBuffer>{BitBuffer{{0x02}, 2}, BitBuffer{{0x01}, 1}},

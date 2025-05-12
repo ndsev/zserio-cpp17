@@ -49,12 +49,12 @@ TEST_F(ArraysMappingTest, unsignedBitfieldArrays)
     arraysMapping.bitfield32Array = VectorType<zserio::UInt32>(FIXED_ARRAY_LENGTH);
     arraysMapping.bitfield63Array = VectorType<zserio::UInt63>(FIXED_ARRAY_LENGTH);
     arraysMapping.uint8Value = 8;
-    arraysMapping.variableBitfieldLongArray = VectorType<zserio::DynUInt64<>>(FIXED_ARRAY_LENGTH);
-    arraysMapping.variableBitfieldIntArray = VectorType<zserio::DynUInt32<>>(FIXED_ARRAY_LENGTH);
-    arraysMapping.variableBitfieldShortArray = VectorType<zserio::DynUInt16<>>(FIXED_ARRAY_LENGTH);
-    arraysMapping.variableBitfieldByteArray = VectorType<zserio::DynUInt8<>>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableBitfieldLongArray = VectorType<zserio::DynUInt64>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableBitfieldIntArray = VectorType<zserio::DynUInt32>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableBitfieldShortArray = VectorType<zserio::DynUInt16>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableBitfieldByteArray = VectorType<zserio::DynUInt8>(FIXED_ARRAY_LENGTH);
     arraysMapping.length64 = 64;
-    arraysMapping.variableBitfield64Array = VectorType<zserio::DynUInt64<>>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableBitfield64Array = VectorType<zserio::DynUInt64>(FIXED_ARRAY_LENGTH);
 }
 
 TEST_F(ArraysMappingTest, signedBitfieldArrays)
@@ -66,12 +66,12 @@ TEST_F(ArraysMappingTest, signedBitfieldArrays)
     arraysMapping.intfield32Array = VectorType<zserio::Int32>(FIXED_ARRAY_LENGTH);
     arraysMapping.intfield64Array = VectorType<zserio::Int64>(FIXED_ARRAY_LENGTH);
     arraysMapping.uint8Value = 8;
-    arraysMapping.variableIntfieldLongArray = VectorType<zserio::DynInt64<>>(FIXED_ARRAY_LENGTH);
-    arraysMapping.variableIntfieldIntArray = VectorType<zserio::DynInt32<>>(FIXED_ARRAY_LENGTH);
-    arraysMapping.variableIntfieldShortArray = VectorType<zserio::DynInt16<>>(FIXED_ARRAY_LENGTH);
-    arraysMapping.variableIntfieldByteArray = VectorType<zserio::DynInt8<>>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableIntfieldLongArray = VectorType<zserio::DynInt64>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableIntfieldIntArray = VectorType<zserio::DynInt32>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableIntfieldShortArray = VectorType<zserio::DynInt16>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableIntfieldByteArray = VectorType<zserio::DynInt8>(FIXED_ARRAY_LENGTH);
     arraysMapping.length32 = 64;
-    arraysMapping.variableIntfield64Array = VectorType<zserio::DynInt64<>>(FIXED_ARRAY_LENGTH);
+    arraysMapping.variableIntfield64Array = VectorType<zserio::DynInt64>(FIXED_ARRAY_LENGTH);
 }
 
 TEST_F(ArraysMappingTest, float16Array)

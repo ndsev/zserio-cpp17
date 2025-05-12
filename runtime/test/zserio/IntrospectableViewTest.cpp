@@ -660,7 +660,7 @@ TEST_F(IntrospectableViewTest, fixedUnsignedBitField33) // mapped to uint64_t
 TEST_F(IntrospectableViewTest, dynamicKnownUnsignedBitField5)
 {
     constexpr uint8_t NUM_BITS = 5;
-    const DynUInt8<NUM_BITS> value = 15;
+    const UInt<NUM_BITS> value = 15;
     auto introspectableView = introspectable(value);
     checkUnsignedIntegral(value, introspectableView, &IIntrospectableView::getUInt8,
             std::bind(&BitStreamReader::readUnsignedBits32, _1, NUM_BITS), NUM_BITS);
@@ -669,7 +669,7 @@ TEST_F(IntrospectableViewTest, dynamicKnownUnsignedBitField5)
 TEST_F(IntrospectableViewTest, dynamicSignedBitField5) // mapped to int8_t
 {
     const uint8_t numBits = 5;
-    const DynInt8<> value = 15;
+    const DynInt8 value = 15;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt8,
@@ -679,7 +679,7 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField5) // mapped to int8_t
 TEST_F(IntrospectableViewTest, dynamicSignedBitField15) // mapped to int16_t
 {
     const uint8_t numBits = 15;
-    const DynInt16<> value = -15;
+    const DynInt16 value = -15;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt16,
@@ -689,7 +689,7 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField15) // mapped to int16_t
 TEST_F(IntrospectableViewTest, dynamicSignedBitField31) // mapped to int32_t
 {
     const uint8_t numBits = 31;
-    const DynInt32<> value = -12345678;
+    const DynInt32 value = -12345678;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt32,
@@ -699,7 +699,7 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField31) // mapped to int32_t
 TEST_F(IntrospectableViewTest, dynamicSignedBitField60) // mapped to int64_t
 {
     const uint8_t numBits = 60;
-    const DynInt64<> value = 1234567890;
+    const DynInt64 value = 1234567890;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkSignedIntegral(view, introspectableView, &IIntrospectableView::getInt64,
@@ -709,7 +709,7 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField60) // mapped to int64_t
 TEST_F(IntrospectableViewTest, dynamicUnsignedBitField7) // mapped to uint8_t
 {
     const uint8_t numBits = 7;
-    const DynUInt8<> value = 0x2F;
+    const DynUInt8 value = 0x2F;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt8,
@@ -719,7 +719,7 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField7) // mapped to uint8_t
 TEST_F(IntrospectableViewTest, dynamicUnsignedBitField9) // mapped to uint16_t
 {
     const uint8_t numBits = 9;
-    const DynUInt16<> value = 0x1FF;
+    const DynUInt16 value = 0x1FF;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt16,
@@ -729,7 +729,7 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField9) // mapped to uint16_t
 TEST_F(IntrospectableViewTest, dynamicUnsignedBitField31) // mapped to uint32_t
 {
     const uint8_t numBits = 31;
-    const DynUInt32<> value = UINT32_MAX >> 1U;
+    const DynUInt32 value = UINT32_MAX >> 1U;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt32,
@@ -739,7 +739,7 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField31) // mapped to uint32_t
 TEST_F(IntrospectableViewTest, dynamicUnsignedBitField33) // mapped to uint64_t
 {
     const uint8_t numBits = 33;
-    const DynUInt64<> value = static_cast<uint64_t>(UINT32_MAX) << 1U;
+    const DynUInt64 value = static_cast<uint64_t>(UINT32_MAX) << 1U;
     const View view(value, numBits);
     auto introspectableView = introspectable(view);
     checkUnsignedIntegral(view, introspectableView, &IIntrospectableView::getUInt64,
@@ -1009,18 +1009,18 @@ TEST_F(IntrospectableViewTest, dynamicSignedBitField5ConstArray)
     {
         using OwnerType = ZserioArrayOwner;
 
-        static View<DynInt8<>> at(const OwnerType& owner, const DynInt8<>& element, size_t)
+        static View<DynInt8> at(const OwnerType& owner, const DynInt8& element, size_t)
         {
-            return View<DynInt8<>>(element, owner.numBits);
+            return View<DynInt8>(element, owner.numBits);
         }
     };
 
     ZserioArrayOwner owner;
-    const auto rawArray = std::vector<DynInt8<>>{{-3, -1, 2, 4, 6}};
-    const ArrayView<const DynInt8<>, ZserioArrayTraits> array(rawArray, owner);
+    const auto rawArray = std::vector<DynInt8>{{-3, -1, 2, 4, 6}};
+    const ArrayView<const DynInt8, ZserioArrayTraits> array(rawArray, owner);
     auto introspectableView = introspectableArray(array);
     checkArray(array, introspectableView,
-            [&](View<DynInt8<>> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+            [&](View<DynInt8> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkSignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getInt8,
                         std::bind(&BitStreamReader::readSignedBits32, _1, owner.numBits), owner.numBits);
             });
@@ -1037,18 +1037,18 @@ TEST_F(IntrospectableViewTest, dynamicUnsignedBitField5ConstArray)
     {
         using OwnerType = ZserioArrayOwner;
 
-        static View<DynUInt8<>> at(const OwnerType& owner, const DynUInt8<>& element, size_t)
+        static View<DynUInt8> at(const OwnerType& owner, const DynUInt8& element, size_t)
         {
-            return View<DynUInt8<>>(element, owner.numBits);
+            return View<DynUInt8>(element, owner.numBits);
         }
     };
 
     ZserioArrayOwner owner;
-    const auto rawArray = std::vector<DynUInt8<>>{{3, 1, 2, 4, 6}};
-    const ArrayView<const DynUInt8<>, ZserioArrayTraits> array(rawArray, owner);
+    const auto rawArray = std::vector<DynUInt8>{{3, 1, 2, 4, 6}};
+    const ArrayView<const DynUInt8, ZserioArrayTraits> array(rawArray, owner);
     auto introspectableView = introspectableArray(array);
     checkArray(array, introspectableView,
-            [&](View<DynUInt8<>> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
+            [&](View<DynUInt8> value, const IIntrospectableViewConstPtr& elementIntrospectableView) {
                 checkUnsignedIntegral(value, elementIntrospectableView, &IIntrospectableView::getUInt8,
                         std::bind(&BitStreamReader::readUnsignedBits32, _1, owner.numBits), owner.numBits);
             });

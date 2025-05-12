@@ -149,14 +149,9 @@ template <>
 struct ArrayTraits<detail::BoolWrapper> : detail::IntegralArrayTraits<detail::BoolWrapper>
 {};
 
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-struct ArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
-        : detail::IntegralArrayTraits<detail::IntWrapper<VALUE_TYPE, BIT_SIZE>>
-{};
-
-template <typename VALUE_TYPE, BitSize BIT_SIZE>
-struct ArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>, std::enable_if_t<(BIT_SIZE > 0)>>
-        : detail::IntegralArrayTraits<detail::DynIntWrapper<VALUE_TYPE, BIT_SIZE>>
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+struct ArrayTraits<detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>>
+        : detail::IntegralArrayTraits<detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>>
 {};
 
 template <typename VALUE_TYPE, typename detail::VarIntType VAR_TYPE>

@@ -92,7 +92,7 @@ TEST_F(MultipleParamChoiceTest, zserioChoiceTag)
     }
     {
         TestChoice data;
-        const zserio::DynInt16<> value = 16383;
+        const zserio::DynInt16 value = 16383;
         data.emplace<TestChoice::Tag::dynBitField>(value);
         zserio::View view(data, DYN_BIT_FIELD_SELECTOR, 1, 15);
         ASSERT_EQ(TestChoice::Tag::dynBitField, view.zserioChoiceTag());
@@ -160,7 +160,7 @@ TEST_F(MultipleParamChoiceTest, field17)
 TEST_F(MultipleParamChoiceTest, dynBitField)
 {
     TestChoice data;
-    const zserio::DynInt16<> value = 16383;
+    const zserio::DynInt16 value = 16383;
     data.emplace<TestChoice::Tag::dynBitField>(value);
     ASSERT_THROW(zserio::get<TestChoice::Tag::array5>(data), zserio::BadVariantAccess);
     ASSERT_THROW(zserio::get<TestChoice::Tag::array13>(data), zserio::BadVariantAccess);
@@ -282,7 +282,7 @@ TEST_F(MultipleParamChoiceTest, validate)
     {
         // field dynBitField is out of range
         TestChoice data;
-        const zserio::DynInt16<> value = 32767;
+        const zserio::DynInt16 value = 32767;
         data.emplace<TestChoice::Tag::dynBitField>(value);
         zserio::View view1(data, FIELD17_SELECTOR, 1, 15);
         ASSERT_THROW(zserio::detail::validate(view1), zserio::ChoiceCaseException);
@@ -319,7 +319,7 @@ TEST_F(MultipleParamChoiceTest, writeRead)
     }
     {
         TestChoice data;
-        const zserio::DynInt16<> value = 16383;
+        const zserio::DynInt16 value = 16383;
         data.emplace<TestChoice::Tag::dynBitField>(value);
         test_utils::writeReadTest(data, DYN_BIT_FIELD_SELECTOR, zserio::VarSize{1}, zserio::UInt4{15});
     }
@@ -354,7 +354,7 @@ TEST_F(MultipleParamChoiceTest, writeReadFile)
     }
     {
         TestChoice data;
-        const zserio::DynInt16<> value = 16383;
+        const zserio::DynInt16 value = 16383;
         data.emplace<TestChoice::Tag::dynBitField>(value);
         test_utils::writeReadFileTest(std::string(BLOB_NAME_BASE) + "dynBitField.blob", data,
                 DYN_BIT_FIELD_SELECTOR, zserio::VarSize{1}, zserio::UInt4{15});

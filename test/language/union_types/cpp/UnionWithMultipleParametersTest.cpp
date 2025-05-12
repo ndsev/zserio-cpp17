@@ -71,7 +71,7 @@ TEST_F(UnionWithMultipleParametersTest, zserioChoiceTag)
     }
     {
         TestUnion data;
-        const zserio::DynInt16<> value = 16383;
+        const zserio::DynInt16 value = 16383;
         data.emplace<TestUnion::Tag::dynBitField>(value);
         zserio::View view(data, 1, 15);
         ASSERT_EQ(TestUnion::Tag::dynBitField, view.zserioChoiceTag());
@@ -139,7 +139,7 @@ TEST_F(UnionWithMultipleParametersTest, field17)
 TEST_F(UnionWithMultipleParametersTest, dynBitField)
 {
     TestUnion data;
-    const zserio::DynInt16<> value = 16383;
+    const zserio::DynInt16 value = 16383;
     data.emplace<TestUnion::Tag::dynBitField>(value);
     ASSERT_THROW(zserio::get<TestUnion::Tag::array5>(data), zserio::BadVariantAccess);
     ASSERT_THROW(zserio::get<TestUnion::Tag::array13>(data), zserio::BadVariantAccess);
@@ -252,7 +252,7 @@ TEST_F(UnionWithMultipleParametersTest, validate)
     {
         // field dynBitField is out of range
         TestUnion data;
-        const zserio::DynInt16<> value = 32767;
+        const zserio::DynInt16 value = 32767;
         data.emplace<TestUnion::Tag::dynBitField>(value);
         zserio::View view(data, 1, 15);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);
@@ -285,7 +285,7 @@ TEST_F(UnionWithMultipleParametersTest, writeRead)
     }
     {
         TestUnion data;
-        const zserio::DynInt16<> value = 16383;
+        const zserio::DynInt16 value = 16383;
         data.emplace<TestUnion::Tag::dynBitField>(value);
         test_utils::writeReadTest(data, zserio::VarSize{1}, zserio::UInt4{15});
     }
@@ -320,7 +320,7 @@ TEST_F(UnionWithMultipleParametersTest, writeReadFile)
     }
     {
         TestUnion data;
-        const zserio::DynInt16<> value = 16383;
+        const zserio::DynInt16 value = 16383;
         data.emplace<TestUnion::Tag::dynBitField>(value);
         test_utils::writeReadFileTest(
                 std::string(BLOB_NAME_BASE) + "dynBitField.blob", data, zserio::VarSize{1}, zserio::UInt4{15});

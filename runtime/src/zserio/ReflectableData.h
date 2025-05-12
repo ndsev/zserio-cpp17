@@ -624,23 +624,24 @@ IBasicReflectableDataPtr<ALLOC> reflectable(Bool value, const ALLOC& allocator =
     return std::allocate_shared<detail::BoolReflectableData<ALLOC>>(allocator, value);
 }
 
-template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>>
+template <BitSize BIT_SIZE, bool IS_SIGNED, typename ALLOC = std::allocator<uint8_t>>
 IBasicReflectableDataPtr<ALLOC> reflectable(
-        detail::IntWrapper<T, BIT_SIZE> value, const ALLOC& allocator = ALLOC())
+        detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED> value, const ALLOC& allocator = ALLOC())
 {
-    using Type = detail::IntWrapper<T, BIT_SIZE>;
+    using Type = detail::FixedIntWrapper<BIT_SIZE, IS_SIGNED>;
+    using ValueType = typename Type::ValueType;
 
-    if constexpr (std::is_signed_v<T>)
+    if constexpr (std::is_signed_v<ValueType>)
     {
-        if constexpr (sizeof(T) > 4)
+        if constexpr (sizeof(ValueType) > 4)
         {
             return std::allocate_shared<detail::Int64ReflectableData<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 2)
+        else if constexpr (sizeof(ValueType) > 2)
         {
             return std::allocate_shared<detail::Int32ReflectableData<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 1)
+        else if constexpr (sizeof(ValueType) > 1)
         {
             return std::allocate_shared<detail::Int16ReflectableData<Type, ALLOC>>(allocator, value);
         }
@@ -651,15 +652,15 @@ IBasicReflectableDataPtr<ALLOC> reflectable(
     }
     else
     {
-        if constexpr (sizeof(T) > 4)
+        if constexpr (sizeof(ValueType) > 4)
         {
             return std::allocate_shared<detail::UInt64ReflectableData<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 2)
+        else if constexpr (sizeof(ValueType) > 2)
         {
             return std::allocate_shared<detail::UInt32ReflectableData<Type, ALLOC>>(allocator, value);
         }
-        else if constexpr (sizeof(T) > 1)
+        else if constexpr (sizeof(ValueType) > 1)
         {
             return std::allocate_shared<detail::UInt16ReflectableData<Type, ALLOC>>(allocator, value);
         }
@@ -670,11 +671,10 @@ IBasicReflectableDataPtr<ALLOC> reflectable(
     }
 }
 
-template <typename T, BitSize BIT_SIZE, typename ALLOC = std::allocator<uint8_t>>
-IBasicReflectableDataPtr<ALLOC> reflectable(
-        detail::DynIntWrapper<T, BIT_SIZE> value, const ALLOC& allocator = ALLOC())
+template <typename T, typename ALLOC = std::allocator<uint8_t>>
+IBasicReflectableDataPtr<ALLOC> reflectable(detail::DynIntWrapper<T> value, const ALLOC& allocator = ALLOC())
 {
-    using Type = detail::DynIntWrapper<T, BIT_SIZE>;
+    using Type = detail::DynIntWrapper<T>;
 
     if constexpr (std::is_signed_v<T>)
     {

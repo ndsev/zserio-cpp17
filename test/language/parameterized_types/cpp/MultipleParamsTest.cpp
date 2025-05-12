@@ -76,7 +76,7 @@ TEST_F(MultipleParamsTest, field17)
 TEST_F(MultipleParamsTest, dynBitField)
 {
     TestStructure data;
-    const zserio::DynInt16<> dynBitField = 16383;
+    const zserio::DynInt16 dynBitField = 16383;
     data.dynBitField = dynBitField;
     zserio::View view(data, 1, 15);
     ASSERT_EQ(dynBitField, view.dynBitField());
@@ -91,7 +91,7 @@ TEST_F(MultipleParamsTest, comparisonOperators)
             Data13{VectorType<zserio::Int13>{1, 10, 15}},
     };
     const zserio::Int17 field17 = 65535;
-    const zserio::DynInt16<> dynBitField = 16383;
+    const zserio::DynInt16 dynBitField = 16383;
     const TestStructure data{array5, array13, field17, dynBitField};
     const TestStructure equalData{array5, array13, field17, dynBitField};
     const VectorType<zserio::UInt5> lessThenArray5 = {1, 10, 14};
@@ -126,7 +126,7 @@ TEST_F(MultipleParamsTest, validate)
             Data13{VectorType<zserio::Int13>{1, 10, 15}},
     };
     const zserio::Int17 field17 = 65535;
-    const zserio::DynInt16<> dynBitField = 16383;
+    const zserio::DynInt16 dynBitField = 16383;
     {
         // field array5 is out of range
         const VectorType<zserio::UInt5> wrongArray5 = {1, 10, 255};
@@ -166,7 +166,7 @@ TEST_F(MultipleParamsTest, validate)
     }
     {
         // field dynBitField is out of range
-        const zserio::DynInt16<> wrongDynBitField = 32767;
+        const zserio::DynInt16 wrongDynBitField = 32767;
         const TestStructure data{array5, array13, field17, wrongDynBitField};
         zserio::View view(data, static_cast<uint32_t>(array5.size()), 15);
         ASSERT_THROW(zserio::detail::validate(view), zserio::OutOfRangeException);

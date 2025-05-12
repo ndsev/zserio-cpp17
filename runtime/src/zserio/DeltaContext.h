@@ -357,31 +357,27 @@ inline void read(DeltaContext& deltaContext, BitStreamReader& reader, Bool& valu
     deltaContext.read(reader, value);
 }
 
-template <typename T, BitSize BIT_SIZE>
-void initContext(DeltaContext& deltaContext, IntWrapper<T, BIT_SIZE> value)
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+void initContext(DeltaContext& deltaContext, FixedIntWrapper<BIT_SIZE, IS_SIGNED> value)
 {
-    static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     deltaContext.init(value);
 }
 
-template <typename T, BitSize BIT_SIZE>
-BitSize bitSizeOf(DeltaContext& deltaContext, IntWrapper<T, BIT_SIZE> value, BitSize = 0)
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+BitSize bitSizeOf(DeltaContext& deltaContext, FixedIntWrapper<BIT_SIZE, IS_SIGNED> value, BitSize = 0)
 {
-    static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     return deltaContext.bitSizeOf(value);
 }
 
-template <typename T, BitSize BIT_SIZE>
-void write(DeltaContext& deltaContext, BitStreamWriter& writer, IntWrapper<T, BIT_SIZE> value)
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+void write(DeltaContext& deltaContext, BitStreamWriter& writer, FixedIntWrapper<BIT_SIZE, IS_SIGNED> value)
 {
-    static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     deltaContext.write(writer, value);
 }
 
-template <typename T, BitSize BIT_SIZE>
-void read(DeltaContext& deltaContext, BitStreamReader& reader, IntWrapper<T, BIT_SIZE>& value)
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+void read(DeltaContext& deltaContext, BitStreamReader& reader, FixedIntWrapper<BIT_SIZE, IS_SIGNED>& value)
 {
-    static_assert(BIT_SIZE != 0, "Variable dynamic bit fields not allowed here!");
     deltaContext.read(reader, value);
 }
 
@@ -410,25 +406,25 @@ void read(DeltaContext& deltaContext, BitStreamReader& reader, VarIntWrapper<T, 
 }
 
 template <typename T>
-void initContext(DeltaContext& deltaContext, View<DynIntWrapper<T, 0>> view)
+void initContext(DeltaContext& deltaContext, View<DynIntWrapper<T>> view)
 {
     deltaContext.init(view);
 }
 
 template <typename T>
-BitSize bitSizeOf(DeltaContext& deltaContext, View<DynIntWrapper<T, 0>> view, BitSize = 0)
+BitSize bitSizeOf(DeltaContext& deltaContext, View<DynIntWrapper<T>> view, BitSize = 0)
 {
     return deltaContext.bitSizeOf(view);
 }
 
 template <typename T>
-void write(DeltaContext& deltaContext, BitStreamWriter& writer, View<DynIntWrapper<T, 0>> view)
+void write(DeltaContext& deltaContext, BitStreamWriter& writer, View<DynIntWrapper<T>> view)
 {
     deltaContext.write(writer, view);
 }
 
 template <typename T>
-void read(DeltaContext& deltaContext, BitStreamReader& reader, DynIntWrapper<T, 0>& value, uint8_t bitSize)
+void read(DeltaContext& deltaContext, BitStreamReader& reader, DynIntWrapper<T>& value, uint8_t bitSize)
 {
     deltaContext.read(reader, value, bitSize);
 }

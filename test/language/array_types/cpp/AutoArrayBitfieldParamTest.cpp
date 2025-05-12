@@ -19,7 +19,7 @@ class AutoArrayBitfieldParamTest : public ::testing::Test
 protected:
     static void fillData(ParameterizedBitfieldLength& data)
     {
-        VectorType<zserio::DynUInt16<>>& dynamicBitfieldArray = data.dynamicBitfieldArray;
+        VectorType<zserio::DynUInt16>& dynamicBitfieldArray = data.dynamicBitfieldArray;
         for (uint16_t i = 0; i < DYNAMIC_BITFIELD_ARRAY_SIZE; ++i)
         {
             dynamicBitfieldArray.push_back(i);
