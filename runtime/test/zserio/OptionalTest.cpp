@@ -106,6 +106,7 @@ public:
     using ShortOptional = BasicOptional<ALLOC, int16_t>;
     using BigOptional = BasicOptional<ALLOC, BigObj>;
     using StringOptional = BasicOptional<ALLOC, std::string>;
+    using VectorOptional = BasicOptional<ALLOC, std::vector<int>>;
 
     ALLOC allocator;
 };
@@ -215,6 +216,10 @@ TYPED_TEST(OptionalTest, valueAssignment)
     opt2 = std::nullopt;
     ASSERT_TRUE(!opt2.has_value());
     ASSERT_TRUE(!opt2);
+
+    typename TestFixture::VectorOptional opt3;
+    opt3 = {4, 5, 6};
+    ASSERT_EQ(3, opt3->size());
 }
 
 TYPED_TEST(OptionalTest, moveConstructor)

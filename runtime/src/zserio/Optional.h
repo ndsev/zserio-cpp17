@@ -73,6 +73,9 @@ template <typename A, typename T>
 struct is_optional<BasicOptional<A, T>> : std::true_type
 {};
 
+template <typename T>
+constexpr bool is_optional_v = is_optional<T>::value;
+
 } // namespace detail
 
 /**
@@ -340,7 +343,9 @@ public:
      *
      * \return Reference to this.
      */
-    template <typename U, std::enable_if_t<!detail::is_optional<std::decay_t<U>>::value>* = nullptr>
+    template <typename U = T,
+            std::enable_if_t<!detail::is_optional_v<std::decay_t<U>> &&
+                    !(std::is_same_v<T, std::decay_t<U>> && std::is_scalar_v<U>)>* = nullptr>
     BasicOptional& operator=(U&& value)
     {
         emplace(std::forward<U>(value));
