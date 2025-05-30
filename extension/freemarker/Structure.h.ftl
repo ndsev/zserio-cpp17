@@ -124,6 +124,14 @@ bool operator<=(const View<${fullName}>& lhs, const View<${fullName}>& rhs);
 bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs);
 <@namespace_begin ["detail"]/>
 
+<#if parameterList?has_content>
+template <>
+struct ParameterTraits<${fullName}>
+{
+<@parameter_traits parameterList, 1/>
+};
+
+</#if>
 template <>
 void validate(const View<${fullName}>& view, ::std::string_view fieldName);
 

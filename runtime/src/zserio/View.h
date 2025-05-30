@@ -2,10 +2,12 @@
 #define ZSERIO_VIEW_H_INC
 
 #include <string_view>
+#include <tuple>
 
 #include "zserio/BitSize.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/Traits.h"
 
 namespace zserio
 {
@@ -29,6 +31,29 @@ View(T, ARGS&&...) -> View<T>;
 
 namespace detail
 {
+
+template <typename T>
+struct ParameterTraits
+{};
+
+// TODO[Mi-L@]: Do we need to have U&& here? It should take either simple type, or view (or string_view, etc.).
+template <size_t I, typename T, typename U>
+view_type_t<std::tuple_element_t<I, typename ParameterTraits<T>::Params>> makeParameter(U arg)
+{
+    using ParamType = std::tuple_element_t<I, typename ParameterTraits<T>::Params>;
+    if constexpr (is_dyn_int_wrapper_v<ParamType>)
+    {
+        return View<ParamType>(ParamType(static_cast<typename ParamType::ValueType>(arg)), 64);
+    }
+    else if constexpr (is_numeric_wrapper_v<ParamType>)
+    {
+        return ParamType(static_cast<typename ParamType::ValueType>(arg));
+    }
+    else
+    {
+        return arg;
+    }
+}
 
 /**
  * Global function for validation provided via specialization.

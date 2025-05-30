@@ -1,8 +1,29 @@
 #include "gtest/gtest.h"
 #include "zserio/BuiltInOperators.h"
+#include "zserio/Enums.h"
+#include "zserio/Types.h"
 
 namespace zserio
 {
+
+namespace
+{
+
+enum class Color : UInt8::ValueType
+{
+    NONE = UINT8_C(0),
+    RED = UINT8_C(2),
+    BLUE = UINT8_C(3),
+    BLACK = UINT8_C(7)
+};
+
+} // namespace
+
+template <>
+struct EnumTraits<Color>
+{
+    using ZserioType = UInt8;
+};
 
 namespace builtin
 {
@@ -13,9 +34,9 @@ namespace
 class DummyBitmask
 {
 public:
-    using UnderlyingType = uint8_t;
+    using ZserioType = UInt8;
 
-    enum class Values : UnderlyingType
+    enum class Values : ZserioType::ValueType
     {
         READ = 1U,
         WRITE = 2U,
@@ -23,20 +44,20 @@ public:
     };
 
     constexpr DummyBitmask(Values value) noexcept :
-            m_value(static_cast<UnderlyingType>(value))
+            m_value(static_cast<ZserioType::ValueType>(value))
     {}
 
-    constexpr explicit DummyBitmask(UnderlyingType value) noexcept :
+    constexpr explicit DummyBitmask(ZserioType value) noexcept :
             m_value(value)
     {}
 
-    constexpr UnderlyingType getValue() const
+    constexpr ZserioType getValue() const
     {
         return m_value;
     }
 
 private:
-    UnderlyingType m_value;
+    ZserioType m_value;
 };
 
 inline bool operator==(const DummyBitmask& lhs, const DummyBitmask& rhs)
@@ -44,21 +65,24 @@ inline bool operator==(const DummyBitmask& lhs, const DummyBitmask& rhs)
     return lhs.getValue() == rhs.getValue();
 }
 
-inline DummyBitmask operator|(DummyBitmask::Values lhs, DummyBitmask::Values rhs)
+inline DummyBitmask operator|(const DummyBitmask& lhs, const DummyBitmask& rhs)
 {
-    return DummyBitmask(
-            static_cast<DummyBitmask::UnderlyingType>(lhs) | static_cast<DummyBitmask::UnderlyingType>(rhs));
+    return DummyBitmask(lhs.getValue() | rhs.getValue());
 }
 
-inline DummyBitmask operator&(DummyBitmask::Values lhs, DummyBitmask::Values rhs)
+inline DummyBitmask operator|(DummyBitmask::Values lhs, DummyBitmask::Values rhs)
 {
-    return DummyBitmask(
-            static_cast<DummyBitmask::UnderlyingType>(lhs) & static_cast<DummyBitmask::UnderlyingType>(rhs));
+    return DummyBitmask(lhs) | DummyBitmask(rhs);
 }
 
 inline DummyBitmask operator&(const DummyBitmask& lhs, const DummyBitmask& rhs)
 {
     return DummyBitmask(lhs.getValue() & rhs.getValue());
+}
+
+inline DummyBitmask operator&(DummyBitmask::Values lhs, DummyBitmask::Values rhs)
+{
+    return DummyBitmask(lhs) & DummyBitmask(rhs);
 }
 
 } // namespace
@@ -105,6 +129,21 @@ TEST(BuiltInOperatorsTest, numBits)
     EXPECT_EQ(33, numBits((UINT64_C(1) << 32U) + 1));
     EXPECT_EQ(63, numBits(UINT64_C(1) << 63U));
     EXPECT_EQ(64, numBits((UINT64_C(1) << 63U) + 1));
+}
+
+TEST(BuiltinOperatorsTest, valueOf)
+{
+    EXPECT_EQ(DummyBitmask(DummyBitmask::Values::READ).getValue(),
+            valueOf(DummyBitmask(DummyBitmask::Values::READ)));
+    EXPECT_EQ(DummyBitmask(DummyBitmask::Values::WRITE).getValue(),
+            valueOf(DummyBitmask(DummyBitmask::Values::WRITE)));
+    EXPECT_EQ(DummyBitmask(DummyBitmask::Values::CREATE).getValue(),
+            valueOf(DummyBitmask(DummyBitmask::Values::CREATE)));
+
+    EXPECT_EQ(enumToValue(Color::NONE), valueOf(Color::NONE));
+    EXPECT_EQ(enumToValue(Color::RED), valueOf(Color::RED));
+    EXPECT_EQ(enumToValue(Color::BLUE), valueOf(Color::BLUE));
+    EXPECT_EQ(enumToValue(Color::BLACK), valueOf(Color::BLACK));
 }
 
 } // namespace builtin

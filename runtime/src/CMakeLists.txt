@@ -85,6 +85,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/HashCodeUtil.h
     zserio/IIntrospectableData.h
     zserio/IIntrospectableView.h
+    zserio/ItemsAccessor.h
     zserio/IntrospectableDataBase.h
     zserio/IntrospectableView.h
     zserio/IPubsub.h

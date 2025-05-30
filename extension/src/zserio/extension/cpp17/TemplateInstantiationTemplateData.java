@@ -28,7 +28,7 @@ public final class TemplateInstantiationTemplateData
             final CppNativeType argumentNativeType =
                     cppNativeMapper.getCppType(templateArgument.getTypeReference());
             templateArgumentTypeInfos.add(NativeTypeInfoTemplateDataCreator.create(
-                    argumentNativeType, templateArgument.getTypeReference()));
+                    context, argumentNativeType, templateArgument.getTypeReference()));
         }
     }
 

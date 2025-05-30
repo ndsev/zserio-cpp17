@@ -5,6 +5,7 @@
 #include <string_view>
 
 #include "zserio/BitSize.h"
+#include "zserio/Traits.h"
 
 namespace zserio
 {
@@ -19,6 +20,12 @@ using BasicString = std::basic_string<char, std::char_traits<char>, ALLOC>;
  * Typedef to std::string provided for convenience - using std::allocator<uint8_t>.
  */
 using String = BasicString<std::allocator<char>>;
+
+template <typename ALLOC>
+struct view_type<BasicString<ALLOC>>
+{
+    using type = std::string_view;
+};
 
 namespace detail
 {

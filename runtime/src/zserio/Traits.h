@@ -1,6 +1,7 @@
 #ifndef ZSERIO_TRAITS_H_INC
 #define ZSERIO_TRAITS_H_INC
 
+#include <cstddef>
 #include <type_traits>
 
 namespace zserio
@@ -10,11 +11,17 @@ namespace zserio
 template <typename, std::size_t>
 class Span;
 
+template <typename T>
+class View;
+
 namespace detail
 {
 
 template <typename VALUE_TYPE>
 class NumericTypeWrapper;
+
+template <typename VALUE_TYPE>
+class DynIntWrapper;
 
 template <typename T, typename = void>
 struct is_allocator_impl : std::false_type
@@ -112,7 +119,7 @@ inline constexpr bool is_span_v = is_span<T>::value;
 
 /**
  * Trait used to check whether the type T is a zserio numeric wrapper.
- * */
+ */
 template <typename T, typename = void>
 struct is_numeric_wrapper : std::false_type
 {};
@@ -127,8 +134,23 @@ template <typename T, typename V = void>
 inline constexpr bool is_numeric_wrapper_v = is_numeric_wrapper<T, V>::value;
 
 /**
- * Trait used to check wheter the type T is complete (defined)
- * */
+ * Trait used to check whether the type T is a zserio dynamic integer wrapper.
+ */
+template <typename T, typename = void>
+struct is_dyn_int_wrapper : std::false_type
+{};
+
+template <typename T>
+struct is_dyn_int_wrapper<T,
+        std::enable_if_t<std::is_base_of_v<detail::DynIntWrapper<typename T::ValueType>, T>>> : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool is_dyn_int_wrapper_v = is_dyn_int_wrapper<T, V>::value;
+
+/**
+ * Trait used to check whether the type T is complete (defined)
+ */
 template <typename T, typename = void>
 struct is_complete : std::false_type
 {};
@@ -139,6 +161,34 @@ struct is_complete<T, std::void_t<decltype(sizeof(T))>> : std::true_type
 
 template <typename T>
 constexpr bool is_complete_v = is_complete<T>::value;
+
+template <typename T, typename = void>
+struct view_type
+{
+    using type = T;
+};
+
+template <typename T>
+struct view_type<T, std::enable_if_t<zserio::is_complete_v<View<T>>>>
+{
+    using type = View<T>;
+};
+
+template <typename T, typename V = void>
+using view_type_t = typename view_type<T>::type;
+
+template <typename T, typename ALLOC, typename... ARGS>
+T constructWithAllocator(const ALLOC& allocator, ARGS&&... args)
+{
+    if constexpr (std::is_constructible_v<T, ARGS..., ALLOC>)
+    {
+        return T(std::forward<ARGS>(args)..., allocator);
+    }
+    else
+    {
+        return T(std::forward<ARGS>(args)...);
+    }
+}
 
 } // namespace zserio
 

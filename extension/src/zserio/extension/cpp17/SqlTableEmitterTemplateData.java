@@ -201,7 +201,8 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
 
             name = field.getName();
 
-            typeInfo = NativeTypeInfoTemplateDataCreator.create(nativeFieldType, fieldTypeInstantiation);
+            typeInfo =
+                    NativeTypeInfoTemplateDataCreator.create(context, nativeFieldType, fieldTypeInstantiation);
 
             final SqlConstraint fieldSqlConstraint = field.getSqlConstraint();
             final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
@@ -224,7 +225,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                         (ParameterizedTypeInstantiation)fieldTypeInstantiation;
                 for (InstantiatedParameter parameter : parameterizedInstantiation.getInstantiatedParameters())
                 {
-                    final ParameterTemplateData parameterTemplateData = new ParameterTemplateData(
+                    final ParameterTemplateData parameterTemplateData = new ParameterTemplateData(context,
                             cppNativeMapper, cppRowIndirectExpressionFormatter, table, field, parameter,
                             includeCollector);
                     typeParameters.add(parameterTemplateData);
@@ -245,11 +246,12 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                     createDynamicBitLength(fieldTypeInstantiation, cppRowIndirectExpressionFormatter);
 
             final ZserioType fieldBaseType = fieldTypeInstantiation.getBaseType();
-            underlyingTypeInfo = createUnderlyingTypeInfo(cppNativeMapper, fieldBaseType, includeCollector);
+            underlyingTypeInfo =
+                    createUnderlyingTypeInfo(context, cppNativeMapper, fieldBaseType, includeCollector);
             final SqlNativeTypeMapper sqlNativeTypeMapper = new SqlNativeTypeMapper();
             sqlTypeData = new SqlTypeTemplateData(sqlNativeTypeMapper, field);
-            sqlRangeCheckData = createRangeCheckData(
-                    cppNativeMapper, fieldBaseType, cppRowIndirectExpressionFormatter, fieldTypeInstantiation);
+            sqlRangeCheckData = createRangeCheckData(context, cppNativeMapper, fieldBaseType,
+                    cppRowIndirectExpressionFormatter, fieldTypeInstantiation);
 
             docComments = DocCommentsDataCreator.createData(context, field);
         }
@@ -336,7 +338,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
 
         public static final class ParameterTemplateData
         {
-            public ParameterTemplateData(CppNativeMapper cppNativeMapper,
+            public ParameterTemplateData(TemplateDataContext context, CppNativeMapper cppNativeMapper,
                     ExpressionFormatter cppRowIndirectExpressionFormatter, SqlTableType tableType, Field field,
                     InstantiatedParameter instantiatedParameter, IncludeCollector includeCollector)
                     throws ZserioExtensionException
@@ -347,8 +349,8 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                 includeCollector.addHeaderIncludesForType(parameterNativeType);
 
                 name = parameter.getName();
-                typeInfo =
-                        NativeTypeInfoTemplateDataCreator.create(parameterNativeType, parameterTypeReference);
+                typeInfo = NativeTypeInfoTemplateDataCreator.create(
+                        context, parameterNativeType, parameterTypeReference);
                 final Expression argumentExpression = instantiatedParameter.getArgumentExpression();
                 isExplicit = argumentExpression.isExplicitVariable();
                 expression = cppRowIndirectExpressionFormatter.formatGetter(argumentExpression);
@@ -511,8 +513,9 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             private final String bitFieldLength;
         }
 
-        private static NativeTypeInfoTemplateData createUnderlyingTypeInfo(CppNativeMapper cppNativeMapper,
-                ZserioType fieldBaseType, IncludeCollector includeCollector) throws ZserioExtensionException
+        private static NativeTypeInfoTemplateData createUnderlyingTypeInfo(TemplateDataContext context,
+                CppNativeMapper cppNativeMapper, ZserioType fieldBaseType, IncludeCollector includeCollector)
+                throws ZserioExtensionException
         {
             TypeInstantiation baseTypeInstantiation;
             if (fieldBaseType instanceof EnumType)
@@ -531,7 +534,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             final CppNativeType nativeBaseType = cppNativeMapper.getCppType(baseTypeInstantiation);
             includeCollector.addCppIncludesForType(nativeBaseType);
 
-            return NativeTypeInfoTemplateDataCreator.create(nativeBaseType, baseTypeInstantiation);
+            return NativeTypeInfoTemplateDataCreator.create(context, nativeBaseType, baseTypeInstantiation);
         }
 
         private final String name;
@@ -577,9 +580,10 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         return cppExpressionFormatter.formatGetter(sqlConstraint.getConstraintExpr());
     }
 
-    private static SqlRangeCheckData createRangeCheckData(CppNativeMapper cppNativeMapper,
-            ZserioType fieldBaseType, ExpressionFormatter cppRowIndirectExpressionFormatter,
-            TypeInstantiation typeInstantiation) throws ZserioExtensionException
+    private static SqlRangeCheckData createRangeCheckData(TemplateDataContext context,
+            CppNativeMapper cppNativeMapper, ZserioType fieldBaseType,
+            ExpressionFormatter cppRowIndirectExpressionFormatter, TypeInstantiation typeInstantiation)
+            throws ZserioExtensionException
     {
         TypeInstantiation baseTypeInstantiation = typeInstantiation;
         if (fieldBaseType instanceof EnumType)
@@ -623,7 +627,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         final String lowerBound = nativeType.formatLiteral(zserioLowerBound);
         final String upperBound = nativeType.formatLiteral(zserioUpperBound);
         final NativeTypeInfoTemplateData typeInfo =
-                NativeTypeInfoTemplateDataCreator.create(sqlNativeType, baseTypeInstantiation);
+                NativeTypeInfoTemplateDataCreator.create(context, sqlNativeType, baseTypeInstantiation);
 
         return new SqlRangeCheckData(checkLowerBound, lowerBound, upperBound, typeInfo, dynamicBitFieldLength);
     }

@@ -29,7 +29,7 @@ cert-dcl58-cpp:src/zserio/BitBuffer.h:607
 cert-dcl58-cpp:src/zserio/Extended.h:240
 cert-dcl58-cpp:src/zserio/Optional.h:1186
 cert-dcl58-cpp:src/zserio/Variant.h:907
-cert-dcl58-cpp:src/zserio/View.h:223
+cert-dcl58-cpp:src/zserio/View.h:239
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112
@@ -91,8 +91,8 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:390
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:587
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:655
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:83
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:96
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:84
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:97
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:44
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:49
@@ -149,7 +149,7 @@ google-readability-casting:src/zserio/Variant.h:45
 google-readability-casting:src/zserio/Variant.h:79
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
-google-explicit-constructor:src/zserio/View.h:133
+google-explicit-constructor:src/zserio/View.h:149
 
 # This is necessary because of implementation. Zserio naturally supports recursion.
 misc-no-recursion
@@ -174,7 +174,7 @@ cppcoreguidelines-pro-type-reinterpret-cast:test/zserio/SqliteConnectionTest.cpp
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
-google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:25
+google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:46
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:83
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:91

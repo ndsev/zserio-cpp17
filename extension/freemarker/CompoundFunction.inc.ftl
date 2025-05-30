@@ -8,7 +8,11 @@
     <#elseif function.returnTypeInfo.isBytes>
         BytesView<#t>
     <#else>
-        View<${function.returnTypeInfo.typeFullName}><#t>
+        <#if function.returnTypeInfo.isTemplateParameter>
+            view_type_t<${function.returnTypeInfo.typeFullName}><#t>
+        <#else>
+            View<${function.returnTypeInfo.typeFullName}><#t>
+        </#if>
     </#if>
 </#macro>
 

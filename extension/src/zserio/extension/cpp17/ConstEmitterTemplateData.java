@@ -33,14 +33,15 @@ public final class ConstEmitterTemplateData extends CppTemplateData
             final NativeStringViewType nativeStringViewType = cppNativeMapper.getStringViewType();
             addHeaderIncludesForType(nativeStringViewType);
             typeInfo = NativeTypeInfoTemplateDataCreator.create(
-                    nativeStringViewType, constantTypeInstantation.getTypeReference());
+                    context, nativeStringViewType, constantTypeInstantation.getTypeReference());
         }
         else
         {
             final CppNativeType nativeTargetType = cppNativeMapper.getCppType(constantTypeInstantation);
             addHeaderIncludesForType(nativeTargetType);
 
-            typeInfo = NativeTypeInfoTemplateDataCreator.create(nativeTargetType, constantTypeInstantation);
+            typeInfo = NativeTypeInfoTemplateDataCreator.create(
+                    context, nativeTargetType, constantTypeInstantation);
         }
 
         value = cppExpressionFormatter.formatGetter(constant.getValueExpression());

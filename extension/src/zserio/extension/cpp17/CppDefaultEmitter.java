@@ -32,7 +32,7 @@ abstract class CppDefaultEmitter extends DefaultTreeWalker
     @Override
     public boolean traverseTemplateInstantiations()
     {
-        return true;
+        return false;
     }
 
     @Override
@@ -81,8 +81,8 @@ abstract class CppDefaultEmitter extends DefaultTreeWalker
             {
                 if (fileInfo) // not skipped
                 {
-                    FreeMarkerUtil.processTemplate(
-                            CPP_TEMPLATE_LOCATION + templateName, templateData, outputFile, amalgamate);
+                    FreeMarkerUtil.processTemplate(CPP_TEMPLATE_LOCATION + templateName, templateData,
+                            outputFile, CppDefaultEmitter.class, amalgamate);
                 }
                 return;
             }
@@ -93,8 +93,8 @@ abstract class CppDefaultEmitter extends DefaultTreeWalker
                 !outputFileManager.checkTimestamps(outputFile) || !checkGeneratorDescription(outputFile);
         if (generate)
         {
-            FreeMarkerUtil.processTemplate(
-                    CPP_TEMPLATE_LOCATION + templateName, templateData, outputFile, amalgamate);
+            FreeMarkerUtil.processTemplate(CPP_TEMPLATE_LOCATION + templateName, templateData, outputFile,
+                    CppDefaultEmitter.class, amalgamate);
         }
 
         outputFileManager.registerOutputFile(outputFile, generate);

@@ -2,12 +2,14 @@ package zserio.extension.cpp17;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import zserio.ast.CompoundType;
 import zserio.ast.DocComment;
 import zserio.ast.Field;
 import zserio.ast.Function;
 import zserio.ast.Parameter;
+import zserio.ast.TemplateParameter;
 import zserio.extension.common.ZserioExtensionException;
 
 /**
@@ -20,10 +22,23 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
     {
         super(context, compoundType, compoundType);
 
+        final IncludeCollector includeCollector =
+                compoundType.getTemplateParameters().isEmpty() ? this : new HeaderIncludeCollectorAdapter(this);
+
+        final StringJoiner fullNameTemplateParameters = new StringJoiner(", ", "<", ">");
+        fullNameTemplateParameters.setEmptyValue("");
+        for (TemplateParameter templateParameter : compoundType.getTemplateParameters())
+        {
+            templateParameters.add(templateParameter.getName());
+            fullNameTemplateParameters.add(templateParameter.getName());
+        }
+
+        fullName = super.getFullName() + fullNameTemplateParameters.toString();
+
         usedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(compoundType);
         containsOffset = context.getOffsetFieldsCollector().containsOffset(compoundType);
 
-        fieldList = createFieldList(context, compoundType, this);
+        fieldList = createFieldList(context, compoundType, includeCollector);
 
         boolean usedAsOffset = false;
         for (CompoundFieldTemplateData field : fieldList)
@@ -36,12 +51,24 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         }
         this.usedAsOffset = usedAsOffset;
 
-        parameterList = createParameterList(context, compoundType, this);
-        functionList = createFunctionList(context, compoundType, this);
+        parameterList = createParameterList(context, compoundType, includeCollector);
+        functionList = createFunctionList(context, compoundType, includeCollector);
 
         isPackable = compoundType.isPackable();
 
-        templateInstantiation = TemplateInstantiationTemplateData.create(context, compoundType, this);
+        templateInstantiation =
+                TemplateInstantiationTemplateData.create(context, compoundType, includeCollector);
+    }
+
+    @Override
+    public String getFullName()
+    {
+        return fullName;
+    }
+
+    public List<String> getTemplateParameters()
+    {
+        return templateParameters;
     }
 
     public boolean getUsedInPackedArray()
@@ -128,6 +155,9 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
 
         return functionList;
     }
+
+    private final List<String> templateParameters = new ArrayList<String>();
+    private final String fullName;
 
     private final boolean usedInPackedArray;
     private final boolean containsOffset;

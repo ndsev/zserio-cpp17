@@ -28,7 +28,8 @@ public final class BitmaskEmitterTemplateData extends UserTypeTemplateData
         final NativeIntegralType nativeType = cppNativeMapper.getCppIntegralType(bitmaskTypeInstantiation);
         addHeaderIncludesForType(nativeType);
 
-        underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.create(nativeType, bitmaskTypeInstantiation);
+        underlyingTypeInfo =
+                NativeTypeInfoTemplateDataCreator.create(context, nativeType, bitmaskTypeInstantiation);
         nativeNumBits = NativeIntegralType.getNativeNumbits(nativeType.getNumBits());
 
         final List<BitmaskValue> bitmaskValues = bitmaskType.getValues();

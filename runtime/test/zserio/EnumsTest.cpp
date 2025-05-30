@@ -8,6 +8,9 @@
 namespace zserio
 {
 
+namespace
+{
+
 enum class Color : UInt8::ValueType
 {
     NONE = UINT8_C(0),
@@ -15,6 +18,8 @@ enum class Color : UInt8::ValueType
     BLUE = UINT8_C(3),
     BLACK = UINT8_C(7)
 };
+
+} // namespace
 
 template <>
 struct EnumTraits<Color>
@@ -171,6 +176,14 @@ TEST(EnumsTest, cppRuntimeExceptionOperator)
 TEST(EnumsTest, stdHash)
 {
     EXPECT_EQ((HASH_PRIME_NUMBER * HASH_SEED + enumToValue(Color::NONE)), std::hash<Color>{}(Color::NONE));
+}
+
+TEST(EnumsTest, itemsAccessor)
+{
+    EXPECT_EQ(Color::NONE, ItemsAccessor<Color>::Items::NONE);
+    EXPECT_EQ(Color::RED, ItemsAccessor<Color>::Items::RED);
+    EXPECT_EQ(Color::BLUE, ItemsAccessor<Color>::Items::BLUE);
+    EXPECT_EQ(Color::BLACK, ItemsAccessor<Color>::Items::BLACK);
 }
 
 } // namespace zserio

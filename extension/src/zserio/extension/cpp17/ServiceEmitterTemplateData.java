@@ -54,11 +54,13 @@ public final class ServiceEmitterTemplateData extends UserTypeTemplateData
             final TypeReference responseTypeReference = method.getResponseTypeReference();
             final CppNativeMapper cppTypeMapper = context.getCppNativeMapper();
             final CppNativeType cppResponseType = cppTypeMapper.getCppType(responseTypeReference);
-            responseTypeInfo = NativeTypeInfoTemplateDataCreator.create(cppResponseType, responseTypeReference);
+            responseTypeInfo =
+                    NativeTypeInfoTemplateDataCreator.create(context, cppResponseType, responseTypeReference);
 
             final TypeReference requestTypeReference = method.getRequestTypeReference();
             final CppNativeType cppRequestType = cppTypeMapper.getCppType(requestTypeReference);
-            requestTypeInfo = NativeTypeInfoTemplateDataCreator.create(cppRequestType, requestTypeReference);
+            requestTypeInfo =
+                    NativeTypeInfoTemplateDataCreator.create(context, cppRequestType, requestTypeReference);
 
             docComments = DocCommentsDataCreator.createData(context, method);
         }

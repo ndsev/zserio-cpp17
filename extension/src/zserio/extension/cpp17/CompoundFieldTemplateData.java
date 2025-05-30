@@ -6,14 +6,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import zserio.ast.ArrayInstantiation;
+import zserio.ast.AstNode;
 import zserio.ast.ChoiceType;
 import zserio.ast.CompoundType;
 import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.Expression;
 import zserio.ast.Field;
 import zserio.ast.IntegerType;
+import zserio.ast.Parameter;
 import zserio.ast.ParameterizedTypeInstantiation;
 import zserio.ast.ParameterizedTypeInstantiation.InstantiatedParameter;
+import zserio.ast.TemplateArgument;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
 import zserio.ast.UnionType;
@@ -23,6 +26,7 @@ import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeArrayType;
 import zserio.extension.cpp17.types.NativeIntegralType;
+import zserio.extension.cpp17.types.NativeTemplateArgumentType;
 
 /**
  * FreeMarker template data for compound fields.
@@ -37,7 +41,8 @@ public final class CompoundFieldTemplateData
 
         final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
         final CppNativeType fieldNativeType = cppNativeMapper.getCppType(fieldTypeInstantiation);
-        includeCollector.addHeaderIncludesForType(fieldNativeType);
+        addHeaderIncludes(
+                cppNativeMapper, fieldNativeType, fieldTypeInstantiation.getTypeReference(), includeCollector);
 
         name = field.getName();
         getterName = AccessorNameFormatter.getGetterName(field);
@@ -59,6 +64,7 @@ public final class CompoundFieldTemplateData
         constraint = createConstraint(context, field, includeCollector);
 
         typeInfo = createTypeInfo(context, fieldNativeType, fieldTypeInstantiation, includeCollector);
+        parameterized = createParameterized(context, fieldTypeInstantiation, includeCollector);
         compound = createCompound(context, fieldTypeInstantiation, includeCollector);
         dynamicBitFieldLength = createDynamicBitFieldLength(context, fieldTypeInstantiation, includeCollector);
         integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
@@ -157,6 +163,11 @@ public final class CompoundFieldTemplateData
     public NativeTypeInfoTemplateData getTypeInfo()
     {
         return typeInfo;
+    }
+
+    public Parameterized getParameterized()
+    {
+        return parameterized;
     }
 
     public Compound getCompound()
@@ -319,13 +330,43 @@ public final class CompoundFieldTemplateData
         private final boolean containsIndex;
     }
 
+    public static final class Parameterized
+    {
+        public Parameterized(TemplateDataContext context,
+                ParameterizedTypeInstantiation parameterizedTypeInstantiation,
+                IncludeCollector includeCollector) throws ZserioExtensionException
+        {
+            final ExpressionFormatter expressionFormatter = context.getExpressionFormatter(includeCollector);
+            final ExpressionFormatter viewIndirectExpressionFormatter =
+                    context.getIndirectExpressionFormatter(includeCollector, "view");
+            for (Expression argumentExpression : parameterizedTypeInstantiation.getTypeArguments())
+            {
+                arguments.add(expressionFormatter.formatGetter(argumentExpression));
+                viewIndirectArguments.add(viewIndirectExpressionFormatter.formatGetter(argumentExpression));
+            }
+        }
+
+        public List<String> getArguments()
+        {
+            return arguments;
+        }
+
+        public List<String> getViewIndirectArguments()
+        {
+            return viewIndirectArguments;
+        }
+
+        private final List<String> arguments = new ArrayList<String>();
+        private final List<String> viewIndirectArguments = new ArrayList<String>();
+    }
+
     public static final class Compound
     {
         public Compound(TemplateDataContext context,
                 ParameterizedTypeInstantiation parameterizedTypeInstantiation,
                 IncludeCollector includeCollector) throws ZserioExtensionException
         {
-            this(context, parameterizedTypeInstantiation.getBaseType(), includeCollector);
+            this(context, (CompoundType)parameterizedTypeInstantiation.getBaseType(), includeCollector);
 
             for (InstantiatedParameter param : parameterizedTypeInstantiation.getInstantiatedParameters())
             {
@@ -333,11 +374,11 @@ public final class CompoundFieldTemplateData
             }
         }
 
-        public Compound(TemplateDataContext context, CompoundType compoundType,
-                IncludeCollector includeCollector) throws ZserioExtensionException
+        public Compound(TemplateDataContext context, CompoundType baseType, IncludeCollector includeCollector)
+                throws ZserioExtensionException
         {
             instantiatedParameters = new ArrayList<InstantiatedParameterData>();
-            parameters = CompoundTypeTemplateData.createParameterList(context, compoundType, includeCollector);
+            parameters = CompoundTypeTemplateData.createParameterList(context, baseType, includeCollector);
         }
 
         public Iterable<InstantiatedParameterData> getInstantiatedParameters()
@@ -372,7 +413,8 @@ public final class CompoundFieldTemplateData
                         instantiatedParameter.getParameter().getTypeReference();
                 final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
                 final CppNativeType cppNativeType = cppNativeMapper.getCppType(parameterTypeReference);
-                typeInfo = NativeTypeInfoTemplateDataCreator.create(cppNativeType, parameterTypeReference);
+                typeInfo = NativeTypeInfoTemplateDataCreator.create(
+                        context, cppNativeType, parameterTypeReference);
             }
 
             public String getExpression()
@@ -585,6 +627,18 @@ public final class CompoundFieldTemplateData
         private final boolean elementUsedInPackedArray;
     }
 
+    private static void addHeaderIncludes(CppNativeMapper cppNativeMapper, CppNativeType nativeType,
+            TypeReference typeReference, IncludeCollector includeCollector) throws ZserioExtensionException
+    {
+        includeCollector.addHeaderIncludesForType(nativeType);
+        for (TemplateArgument templateArgument : typeReference.getTemplateArguments())
+        {
+            final TypeReference argumentTypeReference = templateArgument.getTypeReference();
+            final CppNativeType argumentNativeType = cppNativeMapper.getCppType(argumentTypeReference);
+            addHeaderIncludes(cppNativeMapper, argumentNativeType, argumentTypeReference, includeCollector);
+        }
+    }
+
     private static String getDynamicBitFieldLength(TypeInstantiation instantiation,
             ExpressionFormatter cppExpressionFormatter) throws ZserioExtensionException
     {
@@ -663,11 +717,43 @@ public final class CompoundFieldTemplateData
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType elementNativeType = cppNativeMapper.getCppType(elementTypeInstantiation);
 
-            return NativeTypeInfoTemplateDataCreator.create(elementNativeType, elementTypeInstantiation);
+            return NativeTypeInfoTemplateDataCreator.create(
+                    context, elementNativeType, elementTypeInstantiation);
         }
         else
         {
-            return NativeTypeInfoTemplateDataCreator.create(nativeType, typeInstantiation);
+            return NativeTypeInfoTemplateDataCreator.create(context, nativeType, typeInstantiation);
+        }
+    }
+
+    private static Parameterized createParameterized(
+            TemplateDataContext context, TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
+            throws ZserioExtensionException
+    {
+        if (typeInstantiation instanceof ArrayInstantiation)
+        {
+            final TypeInstantiation elementTypeInstantiation =
+                    ((ArrayInstantiation)typeInstantiation).getElementTypeInstantiation();
+            return createParameterizedImpl(context, elementTypeInstantiation, includeCollector);
+        }
+        else
+        {
+            return createParameterizedImpl(context, typeInstantiation, includeCollector);
+        }
+    }
+
+    private static Parameterized createParameterizedImpl(
+            TemplateDataContext context, TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
+            throws ZserioExtensionException
+    {
+        if (typeInstantiation instanceof ParameterizedTypeInstantiation)
+        {
+            return new Parameterized(
+                    context, (ParameterizedTypeInstantiation)typeInstantiation, includeCollector);
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -689,13 +775,17 @@ public final class CompoundFieldTemplateData
     private static Compound createCompoundImpl(TemplateDataContext context, TypeInstantiation typeInstantiation,
             IncludeCollector includeCollector) throws ZserioExtensionException
     {
-        if (typeInstantiation instanceof ParameterizedTypeInstantiation)
-        {
-            return new Compound(context, (ParameterizedTypeInstantiation)typeInstantiation, includeCollector);
-        }
         if (typeInstantiation.getBaseType() instanceof CompoundType)
         {
-            return new Compound(context, (CompoundType)typeInstantiation.getBaseType(), includeCollector);
+            if (typeInstantiation instanceof ParameterizedTypeInstantiation)
+            {
+                return new Compound(
+                        context, (ParameterizedTypeInstantiation)typeInstantiation, includeCollector);
+            }
+            else
+            {
+                return new Compound(context, (CompoundType)typeInstantiation.getBaseType(), includeCollector);
+            }
         }
         else
         {
@@ -769,6 +859,11 @@ public final class CompoundFieldTemplateData
 
         final BigInteger zserioLowerBound = typeToCheck.getLowerBound(typeInstantiation);
         final BigInteger zserioUpperBound = typeToCheck.getUpperBound(typeInstantiation);
+
+        // TODO[TEMPLATES]: not evaluated for templates
+        if (zserioLowerBound == null || zserioUpperBound == null)
+            return null;
+
         boolean checkLowerBound = true;
         boolean checkUpperBound = true;
 
@@ -787,7 +882,7 @@ public final class CompoundFieldTemplateData
         final String lowerBound = nativeType.formatLiteral(zserioLowerBound);
         final String upperBound = nativeType.formatLiteral(zserioUpperBound);
         final NativeTypeInfoTemplateData typeInfo =
-                NativeTypeInfoTemplateDataCreator.create(nativeType, typeInstantiation);
+                NativeTypeInfoTemplateDataCreator.create(context, nativeType, typeInstantiation);
 
         return new IntegerRange(checkLowerBound, lowerBound, upperBound, typeInfo, bitFieldLength);
     }
@@ -803,6 +898,7 @@ public final class CompoundFieldTemplateData
     private final Optional optional;
     private final Constraint constraint;
     private final NativeTypeInfoTemplateData typeInfo;
+    private final Parameterized parameterized;
     private final Compound compound;
     private final DynamicBitLength dynamicBitFieldLength;
     private final Array array;

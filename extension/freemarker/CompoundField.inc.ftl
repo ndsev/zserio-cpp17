@@ -35,7 +35,11 @@
         <#elseif field.typeInfo.isBytes>
             BytesView<#t>
         <#else>
-            View<${field.typeInfo.typeFullName}><#t>
+            <#if !field.parmeterized?? && field.typeInfo.isTemplateParameter>
+                view_type_t<${field.typeInfo.typeFullName}><#t>
+            <#else>
+                View<${field.typeInfo.typeFullName}><#t>
+            </#if>
         </#if>
     </#if>
 </#macro>
@@ -54,7 +58,12 @@
             , *this<#t>
         </#if>
     <#else>
-        <#if field.compound??>
+        <#if field.parameterized??>
+            <#list field.parameterized.arguments as argument>
+                , <#t>
+                detail::makeParameter<${argument?index}, ${field.typeInfo.typeFullName}>(${argument})<#t>
+            </#list>
+        <#elseif field.compound??>
             <#list field.compound.instantiatedParameters as instantiatedParameter>
                 , <#t>
                 <#if instantiatedParameter.typeInfo.isNumeric>
@@ -91,7 +100,12 @@
             , static_cast<size_t>(${field.array.viewIndirectLength})<#t>
         </#if>
     <#else>
-        <#if field.compound??>
+        <#if field.parameterized??>
+            <#list field.parameterized.viewIndirectArguments as argument>
+                , <#t>
+                detail::makeParameter<${argument?index}, ${field.typeInfo.typeFullName}>(${argument})<#t>
+            </#list>
+        <#elseif field.compound??>
             <#list field.compound.instantiatedParameters as instantiatedParameter>
                 , <#t>
                 <#if instantiatedParameter.typeInfo.isNumeric>

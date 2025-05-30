@@ -1,5 +1,7 @@
 package zserio.extension.cpp17;
 
+import java.util.StringJoiner;
+
 import zserio.ast.ArrayInstantiation;
 import zserio.ast.AstNode;
 import zserio.ast.BitmaskType;
@@ -25,6 +27,7 @@ import zserio.ast.StdIntegerType;
 import zserio.ast.StringType;
 import zserio.ast.StructureType;
 import zserio.ast.Subtype;
+import zserio.ast.TemplateParameter;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
 import zserio.ast.UnionType;
@@ -42,6 +45,7 @@ import zserio.extension.cpp17.types.NativeFixedBitFieldType;
 import zserio.extension.cpp17.types.NativeIntegralType;
 import zserio.extension.cpp17.types.NativeNumericWrapperType;
 import zserio.extension.cpp17.types.NativeStringViewType;
+import zserio.extension.cpp17.types.NativeTemplateArgumentType;
 import zserio.extension.cpp17.types.NativeUserType;
 
 /**
@@ -117,7 +121,7 @@ public final class CppNativeMapper
             return mapDynamicBitFieldInstantiation((DynamicBitFieldInstantiation)typeInstantiation);
 
         // don't resolve subtypes so that the subtype name (C++ typedef) will be used
-        return getCppType(typeInstantiation.getType());
+        return getCppType(typeInstantiation.getTypeReference());
     }
 
     public CppNativeType getCppType(TypeReference typeReference) throws ZserioExtensionException
@@ -805,6 +809,12 @@ public final class CppNativeMapper
         }
 
         @Override
+        public void visitTemplateParameter(TemplateParameter templateParameter)
+        {
+            cppType = new NativeTemplateArgumentType(templateParameter.getName());
+        }
+
+        @Override
         public void visitInstantiateType(InstantiateType type)
         {
             mapAliasType(type, type.getTypeReference());
@@ -826,7 +836,7 @@ public final class CppNativeMapper
         private void mapCompoundType(CompoundType type)
         {
             final PackageName packageName = type.getPackage().getPackageName();
-            final String name = type.getName();
+            final String name = type.getTemplate() != null ? type.getTemplate().getName() : type.getName();
             final String includeFileName = getIncludePath(packageName, name);
             cppType = new NativeCompoundType(packageName, name, includeFileName);
         }

@@ -235,7 +235,7 @@ View<T> deserializeFromBytes(Span<const uint8_t> buffer, T& data, ARGS&&... argu
 template <typename T, typename ALLOC>
 BasicBitBuffer<ALLOC> serialize(const View<T>& view, const ALLOC& allocator)
 {
-    detail::validate(view);
+    detail::validate(view, "");
     const BitSize bitSize = detail::initializeOffsets(view, 0);
     BasicBitBuffer<ALLOC> buffer(bitSize, allocator);
     BitStreamWriter writer(buffer);
@@ -272,7 +272,7 @@ BasicBitBuffer<ALLOC> serialize(const View<T>& view, const ALLOC& allocator)
 template <typename T, typename ALLOC>
 Vector<uint8_t, ALLOC> serializeToBytes(const View<T>& view, const ALLOC& allocator)
 {
-    detail::validate(view);
+    detail::validate(view, "");
     const BitSize bitSize = detail::initializeOffsets(view, 0);
     Vector<uint8_t, ALLOC> buffer((bitSize + 7) / 8, allocator);
     BitStreamWriter writer(buffer);

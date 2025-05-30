@@ -25,27 +25,6 @@ ${name}::${name}() noexcept :
         ${name}(allocator_type{})
 {}
 
-<#macro structure_field_initializer field>
-    <#if field.initializer??>
-        <#local initializer>
-            <#if field.typeInfo.isNumeric>static_cast<${field.typeInfo.typeFullName}::ValueType>(</#if><#t>
-            ${field.initializer}<#t>
-            <#if field.typeInfo.isNumeric>)</#if><#t>
-        </#local>
-        <#if field.optional??>
-            <#local initializer>
-                ::std::in_place, allocator, ${initializer}<#t>
-            </#local>
-        <#elseif field.typeInfo.needsAllocator>
-            <#local initializer>
-                ${initializer}, allocator<#t>
-            </#local>
-        </#if>
-        ${initializer}<#t>
-    <#elseif field.typeInfo.needsAllocator || field.optional?? || field.array??>
-        allocator<#t>
-    </#if>
-</#macro>
 ${name}::${name}(const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
         <#lt> :
@@ -63,9 +42,9 @@ ${name}::${name}(${name}&&<#if fieldList?has_content> other</#if>, const allocat
     <#items as field>
         <@field_data_member_name field/>(<#rt>
         <#if structure_field_needs_allocator(field)>
-        <#lt>std::move(other.<@field_data_member_name field/>), allocator<#rt>
+                std::move(other.<@field_data_member_name field/>), allocator<#t>
         <#else>
-        <#lt>other.<@field_data_member_name field/><#rt>
+                other.<@field_data_member_name field/><#t>
         </#if>
         <#lt>)<#sep>,</#sep>
     </#items>
@@ -86,7 +65,6 @@ ${name}::${name}(const ${name}&<#if fieldList?has_content> other</#if>, const al
 
 </#list>
 {}
-<#rt>
 <#if fieldList?has_content>
 
 ${name}::${name}(
@@ -188,53 +166,6 @@ View<${fullName}>::View(const ${fullName}& data,
 </#list>
 <#list fieldList as field>
 
-<#macro structure_field_view_getter field, indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.isExtended>
-${I}if (m_data-><@field_data_member_name field/>.isPresent())
-${I}{
-        <@structure_field_view_getter_optional field, indent+1/>
-${I}}
-${I}else
-${I}{
-${I}    auto <@field_view_local_name field/> = <#rt>
-        <#if field.optional??><#-- TODO[Mi-L@]: What if non-present optional in data has value? -->
-            <@structure_field_view_type_name field/>(::std::nullopt, <#t>
-                    <#lt>m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
-        <#else>
-            <#lt><@structure_field_view_getter_inner field, indent+1/>;
-        </#if>
-${I}    <@field_view_local_name field/>.setPresent(false);
-${I}    return <@field_view_local_name field/>;
-${I}}
-    <#else>
-    <@structure_field_view_getter_optional field, indent/>
-    </#if>
-</#macro>
-<#macro structure_field_view_getter_optional field, indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.optional??>
-${I}if (m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>has_value())
-${I}{
-${I}    return <@structure_field_view_getter_inner field, indent+1/>;
-${I}}
-${I}else
-${I}{
-${I}    return <@structure_field_view_type_name field/>(::std::nullopt, <#rt>
-                <#lt>m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator());
-${I}}
-    <#else>
-${I}return <@structure_field_view_getter_inner field, indent/>;
-    </#if>
-</#macro>
-<#macro structure_field_view_getter_inner field, indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#lt><@structure_field_view_type_name field/>{
-${I}        <#if field.optional??>::std::in_place, <#rt>
-            m_data-><@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>get_allocator(), </#if><#t>
-            <#if field.isExtended>*</#if><#if field.optional??>*</#if><#t>
-            m_data-><@field_data_member_name field/><@field_view_parameters field/>}<#t>
-</#macro>
 <@structure_field_view_type_full_name fullName, field/> View<${fullName}>::${field.getterName}() const
 {
     <#if !field.array?? && !field.typeInfo.isDynamicBitField && field.typeInfo.isSimple>
@@ -323,116 +254,21 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
-<#assign numExtendedFields=0/>
-<#macro structure_validate_field field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.isExtended>
-        <#if numExtendedFields == 0>
-${I}uint32_t numExtendedFields = 0;
-        </#if>
-        <#assign numExtendedFields++/>
-${I}if (view.${field.getterName}().isPresent())
-${I}{
-${I}    if (++numExtendedFields != ${numExtendedFields})
-${I}    {
-${I}        throw ExtendedFieldException(
-${I}                "Some of preceding extended fields is not present before '${name}.${field.name}'!");
-${I}    }
-        <@structure_validate_field_optional field, indent+1/>
-${I}}
-    <#else>
-    <@structure_validate_field_optional field, indent/>
-    </#if>
-</#macro>
-<#macro structure_validate_field_optional field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.optional??>
-        <#if field.optional.viewIndirectClause??>
-${I}// check non-auto optional
-${I}if (${field.optional.viewIndirectClause})
-${I}{
-${I}    if (!view.${field.getterName}()<#if field.isExtended>.value()</#if>.has_value())
-${I}    {
-${I}        throw MissedOptionalException("Optional field '${name}.${field.name}' is used but not set!");
-${I}    }
-${I}}
-${I}else
-${I}{
-${I}    if (view.${field.getterName}()<#if field.isExtended>.value()</#if>.has_value())
-${I}    {
-${I}        throw UnexpectedOptionalException(
-${I}                "Optional field '${name}.${field.name}' is set but not used!");
-${I}    }
-${I}}
-        </#if>
-${I}if (view.${field.getterName}()<#if field.isExtended>-><#else>.</#if>has_value())
-${I}{
-        <@structure_validate_field_inner field, indent+1/>
-${I}}
-    <#else>
-    <@structure_validate_field_inner field, indent/>
-    </#if>
-</#macro>
-<#macro structure_validate_field_inner field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <@field_check_constraint field, indent/>
-${I}validate<@array_template_args field/>(<#rt>
-        <#if field.isExtended>*</#if><#if field.optional??>*</#if>view.${field.getterName}(), <#t>
-        "'${name}.${field.name}'"<#t>
-        <#if field.array?? && field.array.viewIndirectLength??>
-        , static_cast<size_t>(${field.array.viewIndirectLength})<#t>
-        </#if>
-        <#lt>);
-</#macro>
 template <>
 void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
 <#list parameterList as parameter>
     validate<@array_template_args parameter/>(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
+<#assign numExtendedFields=0/>
 <#list fieldList as field>
-    <@structure_validate_field field, 1/>
+    <#if field.isExtended>
+        <#assign numExtendedFields++/>
+    </#if>
+    <@structure_validate_field field, numExtendedFields, 1/>
 </#list>
 }
 
-<#macro structure_bitsizeof_field_extended field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.isExtended>
-${I}if (<@field_view_local_name field/>.isPresent())
-${I}{
-${I}    endBitPosition = ::zserio::alignTo(8, endBitPosition);
-        <@structure_bitsizeof_field field, indent+1, false/>
-${I}}
-    <#else>
-    <@structure_bitsizeof_field field, indent, false/>
-    </#if>
-</#macro>
-<#macro structure_bitsizeof_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.optional??>
-        <#if !field.optional.viewIndirectClause??>
-${I}endBitPosition += bitSizeOf(Bool());
-        </#if>
-${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
-${I}{
-        <@structure_bitsizeof_field_inner field, indent+1, packed/>
-${I}}
-    <#else>
-    <@structure_bitsizeof_field_inner field, indent, packed/>
-    </#if>
-</#macro>
-<#macro structure_bitsizeof_field_inner field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.alignmentValue??>
-${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endBitPosition);
-    </#if>
-    <#if field.offset?? && !field.offset.containsIndex>
-${I}endBitPosition = alignTo(8, endBitPosition);
-    </#if>
-${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
-        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#lt>);
-</#macro>
 template <>
 BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
@@ -451,50 +287,6 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 </#if>
 }
 
-<#macro structure_write_field_extended field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.isExtended>
-${I}if (<@field_view_local_name field/>.isPresent())
-${I}{
-${I}    writer.alignTo(8);
-        <@structure_write_field field, indent+1, false/>
-${I}}
-    <#else>
-    <@structure_write_field field, indent, false/>
-    </#if>
-</#macro>
-<#macro structure_write_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.optional??>
-${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
-${I}{
-        <#if !field.optional.viewIndirectClause??>
-${I}    writer.writeBool(true);
-        </#if>
-        <@structure_write_field_inner field, indent+1, packed/>
-${I}}
-        <#if !field.optional.viewIndirectClause??>
-${I}else
-${I}{
-${I}    writer.writeBool(false);
-${I}}
-        </#if>
-    <#else>
-    <@structure_write_field_inner field, indent, packed/>
-    </#if>
-</#macro>
-<#macro structure_write_field_inner field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.alignmentValue??>
-${I}writer.alignTo(static_cast<BitSize>(${field.alignmentValue}));
-    </#if>
-    <#if field.offset?? && !field.offset.containsIndex>
-${I}writer.alignTo(8);
-    </#if>
-${I}write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
-        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#lt>writer, <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>);
-</#macro>
 template <>
 void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
@@ -505,54 +297,6 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 </#list>
 }
 
-<#macro structure_read_field_extended compoundName field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.isExtended>
-${I}if (::zserio::alignTo(8U, static_cast<::zserio::BitSize>(reader.getBitPosition())) <
-${I}        reader.getBufferBitSize())
-${I}{
-        reader.alignTo(8);
-        <@structure_read_field compoundName, field, indent+1, false/>
-${I}}
-${I}else
-${I}{
-${I}    data.<@field_data_member_name field/>.setPresent(false);
-${I}}
-    <#else>
-    <@structure_read_field compoundName, field, indent, false/>
-    </#if>
-</#macro>
-<#macro structure_read_field compoundName field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.optional??>
-        <#if field.optional.viewIndirectClause??>
-${I}if (${field.optional.viewIndirectClause})
-            <#else>
-${I}if (reader.readBool())
-            </#if>
-${I}{
-${I}    data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>emplace();
-        <@structure_read_field_inner compoundName, field, indent+1, packed/>
-${I}}
-    <#else>
-    <@structure_read_field_inner compoundName, field, indent, packed/>
-    </#if>
-</#macro>
-<#macro structure_read_field_inner compoundName field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.alignmentValue??>
-${I}reader.alignTo(static_cast<BitSize>(${field.alignmentValue}));
-    </#if>
-    <#if field.offset?? && !field.offset.containsIndex>
-${I}reader.alignTo(8);
-    </#if>
-${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#rt>
-        <@array_read_template_args fullName, field/>(<#t>
-        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        reader, <#if field.isExtended>*</#if><#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
-        <#lt><@field_view_view_indirect_parameters field/>);
-    <@field_check_constraint field, 1/>
-</#macro>
 template <>
 View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
@@ -646,57 +390,6 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
 </#if>
 <#if containsOffset>
 
-<#macro structure_initialize_offsets_field_extended field indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.isExtended>
-${I}if (<@field_view_local_name field/>.isPresent())
-${I}{
-${I}    endBitPosition = ::zserio::alignTo(8, endBitPosition);
-        <@structure_initialize_offsets_field field, indent+1, false/>
-${I}}
-    <#else>
-    <@structure_initialize_offsets_field field, indent, false/>
-    </#if>
-</#macro>
-<#macro structure_initialize_offsets_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.optional??>
-        <#if !field.optional.viewIndirectClause??>
-${I}endBitPosition += bitSizeOf(Bool());
-        </#if>
-${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
-${I}{
-        <@structure_initialize_offsets_field_inner field, indent+1, packed/>
-${I}}
-    <#else>
-    <@structure_initialize_offsets_field_inner field, indent, packed/>
-    </#if>
-</#macro>
-<#macro structure_initialize_offsets_field_inner field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field.alignmentValue??>
-${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endBitPosition);
-    </#if>
-    <#if field.offset?? && !field.offset.containsIndex>
-${I}endBitPosition = alignTo(8, endBitPosition);
-    </#if>
-    <#if field.offset?? && !field.offset.containsIndex>
-${I}${field.offset.viewIndirectSetter} = static_cast<${field.offset.typeInfo.typeFullName}::ValueType>(endBitPosition / 8);
-    </#if>
-${I}endBitPosition += <#rt>
-        <#if field.compound?? || field.offset?? && field.offset.containsIndex>
-        initializeOffsets<#t>
-        <#else>
-        bitSizeOf<#t>
-        </#if>
-        <@array_suffix field, packed/><@array_template_args field/>(<#t>
-        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#t>
-        <#if field.offset?? && field.offset.containsIndex>
-        , View<${fullName}>::<@structure_offset_setter_name field/>(view)<#t>
-        </#if>
-        <#lt>);
-</#macro>
 BitSize OffsetsInitializer<${fullName}>::initialize(
         const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
         <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)

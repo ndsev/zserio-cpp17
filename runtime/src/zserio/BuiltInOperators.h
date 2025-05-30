@@ -3,6 +3,9 @@
 
 #include <cstdint>
 
+#include "zserio/Enums.h"
+#include "zserio/Traits.h"
+
 namespace zserio
 {
 
@@ -46,6 +49,18 @@ bool isSet(BITMASK1 bitmaskValue, BITMASK2 requiredMask)
  * \return Number of bis required to encode <tt>numValues</tt> different values.
  */
 uint8_t numBits(uint64_t numValues);
+
+template <typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
+auto valueOf(T value)
+{
+    return enumToValue(value);
+}
+
+template <typename T, std::enable_if_t<zserio::is_bitmask_v<T>, int> = 0>
+auto valueOf(T value)
+{
+    return value.getValue();
+}
 
 } // namespace builtin
 

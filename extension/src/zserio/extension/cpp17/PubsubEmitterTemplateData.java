@@ -60,7 +60,7 @@ public final class PubsubEmitterTemplateData extends UserTypeTemplateData
             final TypeReference messageTypeReference = message.getTypeReference();
             final CppNativeType cppNativeType = cppNativeMapper.getCppType(messageTypeReference);
             includeCollector.addHeaderIncludesForType(cppNativeType);
-            typeInfo = NativeTypeInfoTemplateDataCreator.create(cppNativeType, messageTypeReference);
+            typeInfo = NativeTypeInfoTemplateDataCreator.create(context, cppNativeType, messageTypeReference);
             topicDefinition = cppExpressionFormatter.formatGetter(message.getTopicDefinitionExpr());
             isPublished = message.isPublished();
             isSubscribed = message.isSubscribed();

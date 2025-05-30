@@ -27,14 +27,15 @@ public final class CompoundFunctionTemplateData
             // (the expression can contain e.g. another function call, constant, etc.)
             final NativeStringViewType nativeStringViewType = cppNativeMapper.getStringViewType();
             includeCollector.addHeaderIncludesForType(nativeStringViewType);
-            returnTypeInfo =
-                    NativeTypeInfoTemplateDataCreator.create(nativeStringViewType, returnTypeReference);
+            returnTypeInfo = NativeTypeInfoTemplateDataCreator.create(
+                    context, nativeStringViewType, returnTypeReference);
         }
         else
         {
             final CppNativeType returnNativeType = cppNativeMapper.getCppType(returnTypeReference);
             includeCollector.addHeaderIncludesForType(returnNativeType);
-            returnTypeInfo = NativeTypeInfoTemplateDataCreator.create(returnNativeType, returnTypeReference);
+            returnTypeInfo =
+                    NativeTypeInfoTemplateDataCreator.create(context, returnNativeType, returnTypeReference);
         }
 
         final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);

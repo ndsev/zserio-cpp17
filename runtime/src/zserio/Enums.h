@@ -9,6 +9,7 @@
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
 #include "zserio/DeltaContext.h"
+#include "zserio/ItemsAccessor.h"
 
 namespace zserio
 {

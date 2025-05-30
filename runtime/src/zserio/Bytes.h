@@ -8,6 +8,7 @@
 
 #include "zserio/BitSize.h"
 #include "zserio/Span.h"
+#include "zserio/Traits.h"
 
 namespace zserio
 {
@@ -27,6 +28,12 @@ using Bytes = BasicBytes<>;
  * Typedef for View on Zserio Byte s type.
  */
 using BytesView = Span<const uint8_t>;
+
+template <typename ALLOC>
+struct view_type<BasicBytes<ALLOC>>
+{
+    using type = BytesView;
+};
 
 inline bool operator==(const BytesView& lhs, const BytesView& rhs)
 {

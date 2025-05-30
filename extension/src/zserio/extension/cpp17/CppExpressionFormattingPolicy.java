@@ -19,6 +19,7 @@ import zserio.ast.Field;
 import zserio.ast.Function;
 import zserio.ast.Package;
 import zserio.ast.Parameter;
+import zserio.ast.TemplateParameter;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.ZserioType;
 import zserio.extension.common.DefaultExpressionFormattingPolicy;
@@ -158,15 +159,29 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         final StringBuilder result = new StringBuilder();
         final String symbol = expr.getText();
         final AstNode resolvedSymbol = expr.getExprSymbolObject();
-        if (resolvedSymbol instanceof ZserioType)
+        final ExpressionType expressionType = expr.getExprType();
+
+        if (resolvedSymbol instanceof TemplateParameter && expressionType == ExpressionType.UNKNOWN)
+        {
+            result.append("::zserio::generic_accessor_t<");
+            result.append(symbol);
+            result.append(">");
+        }
+        else if (expressionType == ExpressionType.TEMPLATE_PARAMETER_VALUE)
+        {
+            result.append(symbol);
+        }
+        else if (resolvedSymbol instanceof ZserioType)
         {
             formatTypeIdentifier(result, (ZserioType)resolvedSymbol);
         }
         else
         {
             if (!(resolvedSymbol instanceof Package))
+            {
                 formatSymbolIdentifier(result, symbol, expr.isMostLeftId(), resolvedSymbol,
-                        expr.getExprZserioType(), isSetter);
+                        expr.getExprZserioType(), expr.getExprType(), isSetter);
+            }
         }
 
         // ignore package identifiers, they will be a part of the following Zserio type
@@ -191,20 +206,25 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     {
         if (expr.op1().getExprType() == Expression.ExpressionType.ENUM)
         {
-            return new UnaryExpressionFormatting("::zserio::enumToValue(", ")");
+            return new UnaryExpressionFormatting("::zserio::valueOf(", ")");
         }
         else if (expr.op1().getExprZserioType() instanceof BitmaskType)
         {
             if (expr.op1().requiresOwnerContext())
             {
-                return new UnaryExpressionFormatting("(", ").getValue()");
+                return new UnaryExpressionFormatting("::zserio::valueOf(", ")");
             }
             else
             {
                 final BitmaskType bitmaskType = (BitmaskType)expr.op1().getExprZserioType();
                 final CppNativeType bitmaskNativeType = cppNativeMapper.getCppType(bitmaskType);
-                return new UnaryExpressionFormatting(bitmaskNativeType.getFullName() + "(", ").getValue()");
+                return new UnaryExpressionFormatting(
+                        "::zserio::valueOf<" + bitmaskNativeType.getFullName() + ">(", ")");
             }
+        }
+        else if (expr.op1().getExprType() == Expression.ExpressionType.TEMPLATE_PARAMETER_VALUE)
+        {
+            return new UnaryExpressionFormatting("::zserio::valueOf<" + expr.op1().getText() + ">(", ")");
         }
         else
         {
@@ -230,8 +250,11 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     public BinaryExpressionFormatting getDot(Expression expr)
     {
         // ignore dots between package identifiers
-        if (expr.op1().getExprZserioType() == null)
+        if (expr.getExprType() != ExpressionType.TEMPLATE_PARAMETER_TYPE &&
+                expr.op1().getExprZserioType() == null)
+        {
             return new BinaryExpressionFormatting("");
+        }
 
         // do special handling for enumeration items
         if (expr.op2().getExprSymbolObject() instanceof EnumItem)
@@ -239,6 +262,13 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
 
         // do special handling for bitmask values
         if (expr.op2().getExprSymbolObject() instanceof BitmaskValue)
+            return new BinaryExpressionFormatting("::");
+
+        if (expr.getExprType() == ExpressionType.TEMPLATE_PARAMETER_TYPE)
+            return new BinaryExpressionFormatting("::zserio::genericAccessor(", ".", ")");
+
+        // do special handling for template parameter values
+        if (expr.getExprType() == ExpressionType.TEMPLATE_PARAMETER_VALUE)
             return new BinaryExpressionFormatting("::");
 
         return new BinaryExpressionFormatting(".");
@@ -333,7 +363,8 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     }
 
     private void formatSymbolIdentifier(StringBuilder result, String symbol, boolean isMostLeftId,
-            AstNode resolvedSymbol, ZserioType exprType, boolean isSetter) throws ZserioExtensionException
+            AstNode resolvedSymbol, ZserioType zserioType, ExpressionType exprType, boolean isSetter)
+            throws ZserioExtensionException
     {
         if (resolvedSymbol instanceof Parameter)
         {
@@ -351,13 +382,13 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
         {
             // EnumType.[ENUM_ITEM]
             final EnumItem enumItem = (EnumItem)resolvedSymbol;
-            formatEnumItem(result, isMostLeftId, enumItem, exprType);
+            formatEnumItem(result, isMostLeftId, enumItem, zserioType);
         }
         else if (resolvedSymbol instanceof BitmaskValue)
         {
             // BitmaskType.[BITMASK_VALUE]
             final BitmaskValue bitmaskValue = (BitmaskValue)resolvedSymbol;
-            formatBitmaskValue(result, isMostLeftId, bitmaskValue, exprType);
+            formatBitmaskValue(result, isMostLeftId, bitmaskValue, zserioType);
         }
         else if (resolvedSymbol instanceof Function)
         {
@@ -370,6 +401,10 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
             // [Constant]
             final Constant constant = (Constant)resolvedSymbol;
             formatConstant(result, constant);
+        }
+        else if (exprType == ExpressionType.TEMPLATE_PARAMETER_TYPE)
+        {
+            result.append(symbol + "()");
         }
         else
         {

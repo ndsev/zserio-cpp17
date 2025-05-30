@@ -47,7 +47,8 @@ public final class SqlDatabaseEmitterTemplateData extends UserTypeTemplateData
             includeCollector.addHeaderIncludesForType(nativeFieldType);
 
             name = field.getName();
-            typeInfo = NativeTypeInfoTemplateDataCreator.create(nativeFieldType, fieldTypeInstantiation);
+            typeInfo =
+                    NativeTypeInfoTemplateDataCreator.create(context, nativeFieldType, fieldTypeInstantiation);
             getterName = AccessorNameFormatter.getGetterName(field);
 
             if (fieldBaseType instanceof SqlTableType)

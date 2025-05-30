@@ -81,4 +81,11 @@ TEST(BitmasksTest, cppRuntimeExceptionOperator)
     ASSERT_STREQ("2", exception.what());
 }
 
+TEST(BitmasksTest, itemsAccessor)
+{
+    EXPECT_EQ(TestBitmask::Values::READ, ItemsAccessor<TestBitmask>::Items::READ);
+    EXPECT_EQ(TestBitmask::Values::WRITE, ItemsAccessor<TestBitmask>::Items::WRITE);
+    EXPECT_EQ(TestBitmask::Values::READ_WRITE, ItemsAccessor<TestBitmask>::Items::READ_WRITE);
+}
+
 } // namespace zserio

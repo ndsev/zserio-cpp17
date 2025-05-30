@@ -2,6 +2,8 @@
 #include <vector>
 
 #include "gtest/gtest.h"
+#include "zserio/Bytes.h"
+#include "zserio/String.h"
 #include "zserio/Traits.h"
 #include "zserio/Variant.h"
 
@@ -98,6 +100,12 @@ TEST(TraitsTest, isComplete)
     ASSERT_TRUE(is_complete<std::string>::value);
     ASSERT_FALSE(is_complete<TmpTest<int>>::value);
     ASSERT_TRUE(is_complete<TmpTest<std::string>>::value);
+}
+
+TEST(TraitsTest, viewType)
+{
+    assertTrue(std::is_same_v<std::string_view, view_type_t<std::string>>);
+    assertTrue(std::is_same_v<BytesView, view_type_t<Bytes>>);
 }
 
 } // namespace zserio

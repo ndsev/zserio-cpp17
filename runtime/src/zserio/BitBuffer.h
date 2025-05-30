@@ -13,6 +13,7 @@
 #include "zserio/HashCodeUtil.h"
 #include "zserio/SizeConvertUtil.h"
 #include "zserio/Span.h"
+#include "zserio/Traits.h"
 
 namespace zserio
 {
@@ -492,6 +493,12 @@ using BasicBitBufferView = std::reference_wrapper<const BasicBitBuffer<ALLOC>>;
 
 /** Typedef to BitBufferView provided for convenience - using std::allocator<uint8_t>. */
 using BitBufferView = std::reference_wrapper<const BitBuffer>;
+
+template <typename ALLOC>
+struct view_type<BasicBitBuffer<ALLOC>>
+{
+    using type = BasicBitBufferView<ALLOC>;
+};
 
 /** Comparison operator for BitBufferView. */
 /** \{ */

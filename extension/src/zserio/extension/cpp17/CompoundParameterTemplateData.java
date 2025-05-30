@@ -24,7 +24,7 @@ public final class CompoundParameterTemplateData
         includeCollector.addHeaderIncludesForType(cppNativeType);
 
         name = parameter.getName();
-        typeInfo = NativeTypeInfoTemplateDataCreator.create(cppNativeType, parameterTypeReference);
+        typeInfo = NativeTypeInfoTemplateDataCreator.create(context, cppNativeType, parameterTypeReference);
         getterName = AccessorNameFormatter.getGetterName(parameter);
 
         final List<DocComment> paramDocComments = new ArrayList<DocComment>();

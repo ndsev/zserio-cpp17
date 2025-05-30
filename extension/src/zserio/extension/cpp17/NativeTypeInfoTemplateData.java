@@ -7,7 +7,7 @@ public class NativeTypeInfoTemplateData
 {
     public NativeTypeInfoTemplateData(String typeFullName, boolean isSimple, boolean isNumeric,
             boolean isDynamicBitField, boolean isEnum, boolean isBitmask, boolean isBoolean, boolean isString,
-            boolean isExtern, boolean isBytes, boolean needsAllocator)
+            boolean isExtern, boolean isBytes, boolean isTemplateParameter, boolean needsAllocator)
     {
         this.typeFullName = typeFullName;
         this.isSimple = isSimple;
@@ -19,6 +19,7 @@ public class NativeTypeInfoTemplateData
         this.isString = isString;
         this.isExtern = isExtern;
         this.isBytes = isBytes;
+        this.isTemplateParameter = isTemplateParameter;
         this.needsAllocator = needsAllocator;
     }
 
@@ -72,6 +73,11 @@ public class NativeTypeInfoTemplateData
         return isBytes;
     }
 
+    public boolean getIsTemplateParameter()
+    {
+        return isTemplateParameter;
+    }
+
     public boolean getNeedsAllocator()
     {
         return needsAllocator;
@@ -87,5 +93,6 @@ public class NativeTypeInfoTemplateData
     private final boolean isString;
     private final boolean isExtern;
     private final boolean isBytes;
+    private final boolean isTemplateParameter;
     private final boolean needsAllocator;
 }

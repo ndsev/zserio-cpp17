@@ -29,7 +29,8 @@ public final class EnumerationEmitterTemplateData extends UserTypeTemplateData
         final NativeIntegralType nativeType = cppNativeMapper.getCppIntegralType(enumTypeInstantiation);
         addHeaderIncludesForType(nativeType);
 
-        underlyingTypeInfo = NativeTypeInfoTemplateDataCreator.create(nativeType, enumTypeInstantiation);
+        underlyingTypeInfo =
+                NativeTypeInfoTemplateDataCreator.create(context, nativeType, enumTypeInstantiation);
 
         isSigned = nativeType.isSigned();
         nativeNumBits = NativeIntegralType.getNativeNumbits(nativeType.getNumBits());
