@@ -160,10 +160,9 @@ bool operator>=(const View<::test_object::pmr_allocator::ReflectableChoice>& lhs
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view, ::std::string_view)
+void ObjectTraits<::test_object::pmr_allocator::ReflectableChoice>::validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view, ::std::string_view)
 {
-    validate(view.param(), "'ReflectableChoice.param'");
+    detail::validate(view.param(), "'ReflectableChoice.param'");
     switch (view.param())
     {
     case ::test_object::pmr_allocator::ReflectableEnum::VALUE1:
@@ -173,7 +172,7 @@ void validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view,
             throw ChoiceCaseException("Wrong case set in choice 'ReflectableChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr) << ")!";
         }
-        validate(view.valueStr(), "'ReflectableChoice.valueStr'");
+        detail::validate(view.valueStr(), "'ReflectableChoice.valueStr'");
         break;
     case ::test_object::pmr_allocator::ReflectableEnum::VALUE2:
         // check choice case
@@ -182,7 +181,7 @@ void validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view,
             throw ChoiceCaseException("Wrong case set in choice 'ReflectableChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::pmr_allocator::ReflectableChoice::Tag::value32) << ")!";
         }
-        validate(view.value32(), "'ReflectableChoice.value32'");
+        detail::validate(view.value32(), "'ReflectableChoice.value32'");
         break;
     default:
         // empty
@@ -194,17 +193,16 @@ void validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view,
     }
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableChoice>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::pmr_allocator::ReflectableChoice>::bitSizeOf(const View<::test_object::pmr_allocator::ReflectableChoice>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
     switch (view.zserioChoiceTag())
     {
     case ::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr:
-        endBitPosition += bitSizeOf(view.valueStr(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.valueStr(), endBitPosition);
         break;
     case ::test_object::pmr_allocator::ReflectableChoice::Tag::value32:
-        endBitPosition += bitSizeOf(view.value32(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.value32(), endBitPosition);
         break;
     default:
         break;
@@ -213,24 +211,22 @@ BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableChoice>& v
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableChoice>& view)
+void ObjectTraits<::test_object::pmr_allocator::ReflectableChoice>::write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableChoice>& view)
 {
     switch (view.zserioChoiceTag())
     {
     case ::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr:
-        write(writer, view.valueStr());
+        detail::write(writer, view.valueStr());
         break;
     case ::test_object::pmr_allocator::ReflectableChoice::Tag::value32:
-        write(writer, view.value32());
+        detail::write(writer, view.value32());
         break;
     default:
         break;
     }
 }
 
-template <>
-View<::test_object::pmr_allocator::ReflectableChoice> read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableChoice& data,
+View<::test_object::pmr_allocator::ReflectableChoice> ObjectTraits<::test_object::pmr_allocator::ReflectableChoice>::read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableChoice& data,
         ::test_object::pmr_allocator::ReflectableEnum param_)
 {
     View<::test_object::pmr_allocator::ReflectableChoice> view(data,
@@ -239,11 +235,11 @@ View<::test_object::pmr_allocator::ReflectableChoice> read(BitStreamReader& read
     {
     case ::test_object::pmr_allocator::ReflectableEnum::VALUE1:
         data.emplace<::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr>();
-        read(reader, data.get<::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr>());
+        detail::read(reader, data.get<::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr>());
         break;
     case ::test_object::pmr_allocator::ReflectableEnum::VALUE2:
         data.emplace<::test_object::pmr_allocator::ReflectableChoice::Tag::value32>();
-        read(reader, data.get<::test_object::pmr_allocator::ReflectableChoice::Tag::value32>());
+        detail::read(reader, data.get<::test_object::pmr_allocator::ReflectableChoice::Tag::value32>());
         break;
     default:
         // empty

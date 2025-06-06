@@ -114,17 +114,21 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::pmr_allocator::ReflectableChoice>
+{
+    using Parameters = std::tuple<
+            ::test_object::pmr_allocator::ReflectableEnum>;
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableChoice>& view, BitSize bitPosition);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableChoice>& view);
+    static void validate(const View<::test_object::pmr_allocator::ReflectableChoice>& view, ::std::string_view fieldName);
 
-template <>
-View<::test_object::pmr_allocator::ReflectableChoice> read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableChoice& data,
-        ::test_object::pmr_allocator::ReflectableEnum param_);
+    static BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableChoice>& view, BitSize bitPosition);
+
+    static void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableChoice>& view);
+
+    static View<::test_object::pmr_allocator::ReflectableChoice> read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableChoice& data,
+            ::test_object::pmr_allocator::ReflectableEnum param_);
+};
 
 template <>
 struct TypeInfo<::test_object::pmr_allocator::ReflectableChoice, ::std::pmr::polymorphic_allocator<uint8_t>>

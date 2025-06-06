@@ -95,8 +95,7 @@ View<::test_object::ppmr_allocator::DebugStringObject>::View(const ::test_object
 
 ::std::string_view View<::test_object::ppmr_allocator::DebugStringObject>::text() const
 {
-    return ::std::string_view{
-            m_data->text};
+    return ::std::string_view{m_data->text};
 }
 
 const ::test_object::ppmr_allocator::DebugStringObject& View<::test_object::ppmr_allocator::DebugStringObject>::zserioData() const
@@ -142,35 +141,31 @@ bool operator>=(const View<::test_object::ppmr_allocator::DebugStringObject>& lh
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::ppmr_allocator::DebugStringObject>& view, ::std::string_view)
+void ObjectTraits<::test_object::ppmr_allocator::DebugStringObject>::validate(const View<::test_object::ppmr_allocator::DebugStringObject>& view, ::std::string_view)
 {
-    validate(view.text(), "'DebugStringObject.text'");
+    detail::validate(view.text(), "'DebugStringObject.text'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::ppmr_allocator::DebugStringObject>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::ppmr_allocator::DebugStringObject>::bitSizeOf(const View<::test_object::ppmr_allocator::DebugStringObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto text_ = view.text();
-    endBitPosition += bitSizeOf(text_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(text_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::DebugStringObject>& view)
+void ObjectTraits<::test_object::ppmr_allocator::DebugStringObject>::write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::DebugStringObject>& view)
 {
     auto text_ = view.text();
-    write(writer, text_);
+    detail::write(writer, text_);
 }
 
-template <>
-View<::test_object::ppmr_allocator::DebugStringObject> read(BitStreamReader& reader, ::test_object::ppmr_allocator::DebugStringObject& data)
+View<::test_object::ppmr_allocator::DebugStringObject> ObjectTraits<::test_object::ppmr_allocator::DebugStringObject>::read(BitStreamReader& reader, ::test_object::ppmr_allocator::DebugStringObject& data)
 {
     View<::test_object::ppmr_allocator::DebugStringObject> view(data);
-    read(reader, data.text);
+    detail::read(reader, data.text);
     return view;
 }
 

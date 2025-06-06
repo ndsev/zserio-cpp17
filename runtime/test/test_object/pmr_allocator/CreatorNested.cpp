@@ -152,20 +152,17 @@ View<::test_object::pmr_allocator::CreatorNested>::View(const ::test_object::pmr
 
 ::std::string_view View<::test_object::pmr_allocator::CreatorNested>::text() const
 {
-    return ::std::string_view{
-            m_data->text};
+    return ::std::string_view{m_data->text};
 }
 
 ::zserio::pmr::BitBufferView View<::test_object::pmr_allocator::CreatorNested>::externData() const
 {
-    return ::zserio::pmr::BitBufferView{
-            m_data->externData};
+    return ::zserio::pmr::BitBufferView{m_data->externData};
 }
 
 BytesView View<::test_object::pmr_allocator::CreatorNested>::bytesData() const
 {
-    return BytesView{
-            m_data->bytesData};
+    return BytesView{m_data->bytesData};
 }
 
 ::test_object::pmr_allocator::CreatorEnum View<::test_object::pmr_allocator::CreatorNested>::creatorEnum() const
@@ -251,68 +248,64 @@ bool operator>=(const View<::test_object::pmr_allocator::CreatorNested>& lhs, co
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::pmr_allocator::CreatorNested>& view, ::std::string_view)
+void ObjectTraits<::test_object::pmr_allocator::CreatorNested>::validate(const View<::test_object::pmr_allocator::CreatorNested>& view, ::std::string_view)
 {
-    validate(view.param(), "'CreatorNested.param'");
-    validate(view.value(), "'CreatorNested.value'");
-    validate(view.text(), "'CreatorNested.text'");
-    validate(view.externData(), "'CreatorNested.externData'");
-    validate(view.bytesData(), "'CreatorNested.bytesData'");
-    validate(view.creatorEnum(), "'CreatorNested.creatorEnum'");
-    validate(view.creatorBitmask(), "'CreatorNested.creatorBitmask'");
+    detail::validate(view.param(), "'CreatorNested.param'");
+    detail::validate(view.value(), "'CreatorNested.value'");
+    detail::validate(view.text(), "'CreatorNested.text'");
+    detail::validate(view.externData(), "'CreatorNested.externData'");
+    detail::validate(view.bytesData(), "'CreatorNested.bytesData'");
+    detail::validate(view.creatorEnum(), "'CreatorNested.creatorEnum'");
+    detail::validate(view.creatorBitmask(), "'CreatorNested.creatorBitmask'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::CreatorNested>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::pmr_allocator::CreatorNested>::bitSizeOf(const View<::test_object::pmr_allocator::CreatorNested>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto value_ = view.value();
-    endBitPosition += bitSizeOf(value_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(value_, endBitPosition);
     auto text_ = view.text();
-    endBitPosition += bitSizeOf(text_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(text_, endBitPosition);
     auto externData_ = view.externData();
-    endBitPosition += bitSizeOf(externData_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(externData_, endBitPosition);
     auto bytesData_ = view.bytesData();
-    endBitPosition += bitSizeOf(bytesData_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(bytesData_, endBitPosition);
     auto creatorEnum_ = view.creatorEnum();
-    endBitPosition += bitSizeOf(creatorEnum_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(creatorEnum_, endBitPosition);
     auto creatorBitmask_ = view.creatorBitmask();
-    endBitPosition += bitSizeOf(creatorBitmask_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(creatorBitmask_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::CreatorNested>& view)
+void ObjectTraits<::test_object::pmr_allocator::CreatorNested>::write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::CreatorNested>& view)
 {
     auto value_ = view.value();
-    write(writer, value_);
+    detail::write(writer, value_);
     auto text_ = view.text();
-    write(writer, text_);
+    detail::write(writer, text_);
     auto externData_ = view.externData();
-    write(writer, externData_);
+    detail::write(writer, externData_);
     auto bytesData_ = view.bytesData();
-    write(writer, bytesData_);
+    detail::write(writer, bytesData_);
     auto creatorEnum_ = view.creatorEnum();
-    write(writer, creatorEnum_);
+    detail::write(writer, creatorEnum_);
     auto creatorBitmask_ = view.creatorBitmask();
-    write(writer, creatorBitmask_);
+    detail::write(writer, creatorBitmask_);
 }
 
-template <>
-View<::test_object::pmr_allocator::CreatorNested> read(BitStreamReader& reader, ::test_object::pmr_allocator::CreatorNested& data,
+View<::test_object::pmr_allocator::CreatorNested> ObjectTraits<::test_object::pmr_allocator::CreatorNested>::read(BitStreamReader& reader, ::test_object::pmr_allocator::CreatorNested& data,
         ::zserio::UInt32 param_)
 {
     View<::test_object::pmr_allocator::CreatorNested> view(data,
             param_);
-    read(reader, data.value);
-    read(reader, data.text);
-    read(reader, data.externData);
-    read(reader, data.bytesData);
-    read(reader, data.creatorEnum);
-    read(reader, data.creatorBitmask);
+    detail::read(reader, data.value);
+    detail::read(reader, data.text);
+    detail::read(reader, data.externData);
+    detail::read(reader, data.bytesData);
+    detail::read(reader, data.creatorEnum);
+    detail::read(reader, data.creatorBitmask);
     return view;
 }
 

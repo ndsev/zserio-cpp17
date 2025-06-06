@@ -183,34 +183,29 @@ View<::test_object::std_allocator::CreatorObject>::View(const ::test_object::std
 
 View<::test_object::std_allocator::CreatorNested> View<::test_object::std_allocator::CreatorObject>::nested() const
 {
-    return View<::test_object::std_allocator::CreatorNested>{
-            m_data->nested, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(value()))};
+    return View<::test_object::std_allocator::CreatorNested>{m_data->nested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(value())};
 }
 
 ::std::string_view View<::test_object::std_allocator::CreatorObject>::text() const
 {
-    return ::std::string_view{
-            m_data->text};
+    return ::std::string_view{m_data->text};
 }
 
 ArrayView<const ::test_object::std_allocator::CreatorNested, View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits> View<::test_object::std_allocator::CreatorObject>::nestedArray() const
 {
-    return ArrayView<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits>{
-            m_data->nestedArray, *this};
+    return ArrayView<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits>{m_data->nestedArray, *this};
 }
 
 ArrayView<const ::zserio::String> View<::test_object::std_allocator::CreatorObject>::textArray() const
 {
-    return ArrayView<const ::zserio::String>{
-            m_data->textArray};
+    return ArrayView<const ::zserio::String>{m_data->textArray};
 }
 
 ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>> View<::test_object::std_allocator::CreatorObject>::externArray() const
 {
     if (m_data->externArray.has_value())
     {
-        return ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>>{
-                ::std::in_place, m_data->externArray.get_allocator(), *m_data->externArray};
+        return ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>>{::std::in_place, m_data->externArray.get_allocator(), *m_data->externArray};
     }
     else
     {
@@ -222,8 +217,7 @@ ArrayView<const ::zserio::String> View<::test_object::std_allocator::CreatorObje
 {
     if (m_data->bytesArray.has_value())
     {
-        return ::zserio::Optional<ArrayView<const ::zserio::Bytes>>{
-                ::std::in_place, m_data->bytesArray.get_allocator(), *m_data->bytesArray};
+        return ::zserio::Optional<ArrayView<const ::zserio::Bytes>>{::std::in_place, m_data->bytesArray.get_allocator(), *m_data->bytesArray};
     }
     else
     {
@@ -240,8 +234,7 @@ ArrayView<const ::zserio::String> View<::test_object::std_allocator::CreatorObje
 {
     if (m_data->optionalNested.has_value())
     {
-        return ::zserio::Optional<View<::test_object::std_allocator::CreatorNested>>{
-                ::std::in_place, m_data->optionalNested.get_allocator(), *m_data->optionalNested, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(value()))};
+        return ::zserio::Optional<View<::test_object::std_allocator::CreatorNested>>{::std::in_place, m_data->optionalNested.get_allocator(), *m_data->optionalNested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(value())};
     }
     else
     {
@@ -332,93 +325,90 @@ bool operator>=(const View<::test_object::std_allocator::CreatorObject>& lhs, co
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::std_allocator::CreatorObject>& view, ::std::string_view)
+void ObjectTraits<::test_object::std_allocator::CreatorObject>::validate(const View<::test_object::std_allocator::CreatorObject>& view, ::std::string_view)
 {
-    validate(view.value(), "'CreatorObject.value'");
-    validate(view.nested(), "'CreatorObject.nested'");
-    validate(view.text(), "'CreatorObject.text'");
-    validate<ArrayType::AUTO>(view.nestedArray(), "'CreatorObject.nestedArray'");
-    validate<ArrayType::AUTO>(view.textArray(), "'CreatorObject.textArray'");
+    detail::validate(view.value(), "'CreatorObject.value'");
+    detail::validate(view.nested(), "'CreatorObject.nested'");
+    detail::validate(view.text(), "'CreatorObject.text'");
+    detail::validate<ArrayType::AUTO>(view.nestedArray(), "'CreatorObject.nestedArray'");
+    detail::validate<ArrayType::AUTO>(view.textArray(), "'CreatorObject.textArray'");
     if (view.externArray().has_value())
     {
-        validate<ArrayType::AUTO>(*view.externArray(), "'CreatorObject.externArray'");
+        detail::validate<ArrayType::AUTO>(*view.externArray(), "'CreatorObject.externArray'");
     }
     if (view.bytesArray().has_value())
     {
-        validate<ArrayType::AUTO>(*view.bytesArray(), "'CreatorObject.bytesArray'");
+        detail::validate<ArrayType::AUTO>(*view.bytesArray(), "'CreatorObject.bytesArray'");
     }
     if (view.optionalBool().has_value())
     {
-        validate(*view.optionalBool(), "'CreatorObject.optionalBool'");
+        detail::validate(*view.optionalBool(), "'CreatorObject.optionalBool'");
     }
     if (view.optionalNested().has_value())
     {
-        validate(*view.optionalNested(), "'CreatorObject.optionalNested'");
+        detail::validate(*view.optionalNested(), "'CreatorObject.optionalNested'");
     }
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::CreatorObject>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::std_allocator::CreatorObject>::bitSizeOf(const View<::test_object::std_allocator::CreatorObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto value_ = view.value();
-    endBitPosition += bitSizeOf(value_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(value_, endBitPosition);
     auto nested_ = view.nested();
-    endBitPosition += bitSizeOf(nested_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(nested_, endBitPosition);
     auto text_ = view.text();
-    endBitPosition += bitSizeOf(text_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(text_, endBitPosition);
     auto nestedArray_ = view.nestedArray();
-    endBitPosition += bitSizeOf<ArrayType::AUTO>(nestedArray_, endBitPosition);
+    endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(nestedArray_, endBitPosition);
     auto textArray_ = view.textArray();
-    endBitPosition += bitSizeOf<ArrayType::AUTO>(textArray_, endBitPosition);
+    endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(textArray_, endBitPosition);
     auto externArray_ = view.externArray();
-    endBitPosition += bitSizeOf(Bool());
+    endBitPosition += detail::bitSizeOf(Bool());
     if (externArray_.has_value())
     {
-        endBitPosition += bitSizeOf<ArrayType::AUTO>(*externArray_, endBitPosition);
+        endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(*externArray_, endBitPosition);
     }
     auto bytesArray_ = view.bytesArray();
-    endBitPosition += bitSizeOf(Bool());
+    endBitPosition += detail::bitSizeOf(Bool());
     if (bytesArray_.has_value())
     {
-        endBitPosition += bitSizeOf<ArrayType::AUTO>(*bytesArray_, endBitPosition);
+        endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(*bytesArray_, endBitPosition);
     }
     auto optionalBool_ = view.optionalBool();
-    endBitPosition += bitSizeOf(Bool());
+    endBitPosition += detail::bitSizeOf(Bool());
     if (optionalBool_.has_value())
     {
-        endBitPosition += bitSizeOf(*optionalBool_, endBitPosition);
+        endBitPosition += detail::bitSizeOf(*optionalBool_, endBitPosition);
     }
     auto optionalNested_ = view.optionalNested();
-    endBitPosition += bitSizeOf(Bool());
+    endBitPosition += detail::bitSizeOf(Bool());
     if (optionalNested_.has_value())
     {
-        endBitPosition += bitSizeOf(*optionalNested_, endBitPosition);
+        endBitPosition += detail::bitSizeOf(*optionalNested_, endBitPosition);
     }
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::CreatorObject>& view)
+void ObjectTraits<::test_object::std_allocator::CreatorObject>::write(BitStreamWriter& writer, const View<::test_object::std_allocator::CreatorObject>& view)
 {
     auto value_ = view.value();
-    write(writer, value_);
+    detail::write(writer, value_);
     auto nested_ = view.nested();
-    write(writer, nested_);
+    detail::write(writer, nested_);
     auto text_ = view.text();
-    write(writer, text_);
+    detail::write(writer, text_);
     auto nestedArray_ = view.nestedArray();
-    write<ArrayType::AUTO>(writer, nestedArray_);
+    detail::write<ArrayType::AUTO>(writer, nestedArray_);
     auto textArray_ = view.textArray();
-    write<ArrayType::AUTO>(writer, textArray_);
+    detail::write<ArrayType::AUTO>(writer, textArray_);
     auto externArray_ = view.externArray();
     if (externArray_.has_value())
     {
         writer.writeBool(true);
-        write<ArrayType::AUTO>(writer, *externArray_);
+        detail::write<ArrayType::AUTO>(writer, *externArray_);
     }
     else
     {
@@ -428,7 +418,7 @@ void write(BitStreamWriter& writer, const View<::test_object::std_allocator::Cre
     if (bytesArray_.has_value())
     {
         writer.writeBool(true);
-        write<ArrayType::AUTO>(writer, *bytesArray_);
+        detail::write<ArrayType::AUTO>(writer, *bytesArray_);
     }
     else
     {
@@ -438,7 +428,7 @@ void write(BitStreamWriter& writer, const View<::test_object::std_allocator::Cre
     if (optionalBool_.has_value())
     {
         writer.writeBool(true);
-        write(writer, *optionalBool_);
+        detail::write(writer, *optionalBool_);
     }
     else
     {
@@ -448,7 +438,7 @@ void write(BitStreamWriter& writer, const View<::test_object::std_allocator::Cre
     if (optionalNested_.has_value())
     {
         writer.writeBool(true);
-        write(writer, *optionalNested_);
+        detail::write(writer, *optionalNested_);
     }
     else
     {
@@ -456,34 +446,33 @@ void write(BitStreamWriter& writer, const View<::test_object::std_allocator::Cre
     }
 }
 
-template <>
-View<::test_object::std_allocator::CreatorObject> read(BitStreamReader& reader, ::test_object::std_allocator::CreatorObject& data)
+View<::test_object::std_allocator::CreatorObject> ObjectTraits<::test_object::std_allocator::CreatorObject>::read(BitStreamReader& reader, ::test_object::std_allocator::CreatorObject& data)
 {
     View<::test_object::std_allocator::CreatorObject> view(data);
-    read(reader, data.value);
-    (void)read(reader, data.nested, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(view.value())));
-    read(reader, data.text);
-    (void)readWithTraits<ArrayType::AUTO, View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits>(reader, data.nestedArray, view);
-    read<ArrayType::AUTO>(reader, data.textArray);
+    detail::read(reader, data.value);
+    (void)detail::read(reader, data.nested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(view.value()));
+    detail::read(reader, data.text);
+    (void)detail::readWithTraits<ArrayType::AUTO, View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits>(reader, data.nestedArray, view);
+    detail::read<ArrayType::AUTO>(reader, data.textArray);
     if (reader.readBool())
     {
         data.externArray.emplace();
-        read<ArrayType::AUTO>(reader, *data.externArray);
+        detail::read<ArrayType::AUTO>(reader, *data.externArray);
     }
     if (reader.readBool())
     {
         data.bytesArray.emplace();
-        read<ArrayType::AUTO>(reader, *data.bytesArray);
+        detail::read<ArrayType::AUTO>(reader, *data.bytesArray);
     }
     if (reader.readBool())
     {
         data.optionalBool.emplace();
-        read(reader, *data.optionalBool);
+        detail::read(reader, *data.optionalBool);
     }
     if (reader.readBool())
     {
         data.optionalNested.emplace();
-        (void)read(reader, *data.optionalNested, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(view.value())));
+        (void)detail::read(reader, *data.optionalNested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(view.value()));
     }
     return view;
 }

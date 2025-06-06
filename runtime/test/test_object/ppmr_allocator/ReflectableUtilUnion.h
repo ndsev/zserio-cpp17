@@ -114,16 +114,17 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::ppmr_allocator::ReflectableUtilUnion>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::ppmr_allocator::ReflectableUtilUnion>
+{
 
-template <>
-BitSize bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUtilUnion>& view, BitSize bitPosition);
+    static void validate(const View<::test_object::ppmr_allocator::ReflectableUtilUnion>& view, ::std::string_view fieldName);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::ReflectableUtilUnion>& view);
+    static BitSize bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUtilUnion>& view, BitSize bitPosition);
 
-template <>
-View<::test_object::ppmr_allocator::ReflectableUtilUnion> read(BitStreamReader& reader, ::test_object::ppmr_allocator::ReflectableUtilUnion& data);
+    static void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::ReflectableUtilUnion>& view);
+
+    static View<::test_object::ppmr_allocator::ReflectableUtilUnion> read(BitStreamReader& reader, ::test_object::ppmr_allocator::ReflectableUtilUnion& data);
+};
 
 template <>
 struct TypeInfo<::test_object::ppmr_allocator::ReflectableUtilUnion, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>

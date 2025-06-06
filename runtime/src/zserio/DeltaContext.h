@@ -309,33 +309,48 @@ namespace detail
 {
 
 template <typename T>
-struct PackingContext;
-
-// TODO[Mi-L@]: comments?!
-template <typename T>
-void initContext(PackingContext<T>& packingContext, const View<T>& view);
+struct ObjectTraits;
 
 template <typename T>
-BitSize bitSizeOf(PackingContext<T>& packingContext, const View<T>& view, BitSize bitPosition);
-
-template <typename T>
-BitSize initializeOffsets(PackingContext<T>& packingContext, const View<T>& view, BitSize bitPosition)
+void initContext(typename ObjectTraits<T>::PackingContext& packingContext, const View<T>& view)
 {
-    if constexpr (has_offsets_initializer_v<T>)
+    ObjectTraits<T>::initContext(packingContext, view);
+}
+
+template <typename T>
+BitSize bitSizeOf(
+        typename ObjectTraits<T>::PackingContext& packingContext, const View<T>& view, BitSize bitPosition)
+{
+    return ObjectTraits<T>::bitSizeOf(packingContext, view, bitPosition);
+}
+
+template <typename T>
+BitSize initializeOffsets(
+        typename ObjectTraits<T>::PackingContext& packingContext, const View<T>& view, BitSize bitPosition)
+{
+    if constexpr (has_initialize_offsets_v<T>)
     {
-        return OffsetsInitializer<T>::initialize(packingContext, view, bitPosition);
+        return ObjectTraits<T>::initializeOffsets(packingContext, view, bitPosition);
     }
     else
     {
-        return bitSizeOf(packingContext, view, bitPosition);
+        return ObjectTraits<T>::bitSizeOf(packingContext, view, bitPosition);
     }
 }
 
 template <typename T>
-void write(PackingContext<T>& packingContext, BitStreamWriter& writer, const View<T>& view);
+void write(
+        typename ObjectTraits<T>::PackingContext& packingContext, BitStreamWriter& writer, const View<T>& view)
+{
+    ObjectTraits<T>::write(packingContext, writer, view);
+}
 
 template <typename T, typename... ARGS>
-void read(PackingContext<T>& packingContext, BitStreamReader& reader, T& data, ARGS...);
+void read(typename ObjectTraits<T>::PackingContext& packingContext, BitStreamReader& reader, T& data,
+        ARGS&&... args)
+{
+    ObjectTraits<T>::read(packingContext, reader, data, std::forward<ARGS>(args)...);
+}
 
 inline void initContext(DeltaContext& deltaContext, Bool value)
 {

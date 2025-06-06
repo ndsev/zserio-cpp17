@@ -152,40 +152,39 @@ bool operator>=(const View<::test_object::std_allocator::ReflectableUtilUnion>& 
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, ::std::string_view)
+void ObjectTraits<::test_object::std_allocator::ReflectableUtilUnion>::validate(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, ::std::string_view)
 {
     switch (view.zserioChoiceTag())
     {
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilEnum:
-        validate(view.reflectableUtilEnum(), "'ReflectableUtilUnion.reflectableUtilEnum'");
+        detail::validate(view.reflectableUtilEnum(), "'ReflectableUtilUnion.reflectableUtilEnum'");
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilBitmask:
-        validate(view.reflectableUtilBitmask(), "'ReflectableUtilUnion.reflectableUtilBitmask'");
+        detail::validate(view.reflectableUtilBitmask(), "'ReflectableUtilUnion.reflectableUtilBitmask'");
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject:
-        validate(view.reflectableUtilObject(), "'ReflectableUtilUnion.reflectableUtilObject'");
+        detail::validate(view.reflectableUtilObject(), "'ReflectableUtilUnion.reflectableUtilObject'");
         break;
     default:
         throw UnionCaseException("No case set in union '::test_object::std_allocator::ReflectableUtilUnion'!");
     }
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::std_allocator::ReflectableUtilUnion>::bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    endBitPosition += detail::bitSizeOf(
+            fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilEnum:
-        endBitPosition += bitSizeOf(view.reflectableUtilEnum(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.reflectableUtilEnum(), endBitPosition);
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilBitmask:
-        endBitPosition += bitSizeOf(view.reflectableUtilBitmask(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.reflectableUtilBitmask(), endBitPosition);
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject:
-        endBitPosition += bitSizeOf(view.reflectableUtilObject(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.reflectableUtilObject(), endBitPosition);
         break;
     default:
         break;
@@ -194,46 +193,44 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilUnion>
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableUtilUnion>& view)
+void ObjectTraits<::test_object::std_allocator::ReflectableUtilUnion>::write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableUtilUnion>& view)
 {
-    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    detail::write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilEnum:
-        write(writer, view.reflectableUtilEnum());
+        detail::write(writer, view.reflectableUtilEnum());
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilBitmask:
-        write(writer, view.reflectableUtilBitmask());
+        detail::write(writer, view.reflectableUtilBitmask());
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject:
-        write(writer, view.reflectableUtilObject());
+        detail::write(writer, view.reflectableUtilObject());
         break;
     default:
         break;
     }
 }
 
-template <>
-View<::test_object::std_allocator::ReflectableUtilUnion> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableUtilUnion& data)
+View<::test_object::std_allocator::ReflectableUtilUnion> ObjectTraits<::test_object::std_allocator::ReflectableUtilUnion>::read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableUtilUnion& data)
 {
     View<::test_object::std_allocator::ReflectableUtilUnion> view(data);
 
     VarSize choiceTag;
-    read(reader, choiceTag);
+    detail::read(reader, choiceTag);
     switch (static_cast<::test_object::std_allocator::ReflectableUtilUnion::Tag>(choiceTag + 1))
     {
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilEnum:
         data.emplace<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilEnum>();
-        read(reader, data.get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilEnum>());
+        detail::read(reader, data.get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilEnum>());
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilBitmask:
         data.emplace<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilBitmask>();
-        read(reader, data.get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilBitmask>());
+        detail::read(reader, data.get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilBitmask>());
         break;
     case ::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject:
         data.emplace<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>();
-        (void)read(reader, data.get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>());
+        (void)detail::read(reader, data.get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>());
         break;
     default:
         throw UnionCaseException("Unexpected choice tag during read of union '::test_object::std_allocator::ReflectableUtilUnion'!");

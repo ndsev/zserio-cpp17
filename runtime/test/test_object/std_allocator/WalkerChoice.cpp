@@ -178,10 +178,9 @@ bool operator>=(const View<::test_object::std_allocator::WalkerChoice>& lhs, con
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::std::string_view)
+void ObjectTraits<::test_object::std_allocator::WalkerChoice>::validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::std::string_view)
 {
-    validate(view.selector(), "'WalkerChoice.selector'");
+    detail::validate(view.selector(), "'WalkerChoice.selector'");
     switch (view.selector())
     {
     case 8:
@@ -191,7 +190,7 @@ void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::st
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::std_allocator::WalkerChoice::Tag::value8) << ")!";
         }
-        validate(view.value8(), "'WalkerChoice.value8'");
+        detail::validate(view.value8(), "'WalkerChoice.value8'");
         break;
     case 16:
         // check choice case
@@ -200,7 +199,7 @@ void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::st
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::std_allocator::WalkerChoice::Tag::value16) << ")!";
         }
-        validate(view.value16(), "'WalkerChoice.value16'");
+        detail::validate(view.value16(), "'WalkerChoice.value16'");
         break;
     case 32:
         // check choice case
@@ -209,7 +208,7 @@ void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::st
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::std_allocator::WalkerChoice::Tag::value32) << ")!";
         }
-        validate(view.value32(), "'WalkerChoice.value32'");
+        detail::validate(view.value32(), "'WalkerChoice.value32'");
         break;
     case 64:
         // check choice case
@@ -218,7 +217,7 @@ void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::st
             throw ChoiceCaseException("Wrong case set in choice 'WalkerChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::std_allocator::WalkerChoice::Tag::value64) << ")!";
         }
-        validate(view.value64(), "'WalkerChoice.value64'");
+        detail::validate(view.value64(), "'WalkerChoice.value64'");
         break;
     default:
         // empty
@@ -230,23 +229,22 @@ void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::st
     }
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerChoice>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::std_allocator::WalkerChoice>::bitSizeOf(const View<::test_object::std_allocator::WalkerChoice>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
     switch (view.zserioChoiceTag())
     {
     case ::test_object::std_allocator::WalkerChoice::Tag::value8:
-        endBitPosition += bitSizeOf(view.value8(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.value8(), endBitPosition);
         break;
     case ::test_object::std_allocator::WalkerChoice::Tag::value16:
-        endBitPosition += bitSizeOf(view.value16(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.value16(), endBitPosition);
         break;
     case ::test_object::std_allocator::WalkerChoice::Tag::value32:
-        endBitPosition += bitSizeOf(view.value32(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.value32(), endBitPosition);
         break;
     case ::test_object::std_allocator::WalkerChoice::Tag::value64:
-        endBitPosition += bitSizeOf(view.value64(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.value64(), endBitPosition);
         break;
     default:
         break;
@@ -255,30 +253,28 @@ BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerChoice>& view, 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::WalkerChoice>& view)
+void ObjectTraits<::test_object::std_allocator::WalkerChoice>::write(BitStreamWriter& writer, const View<::test_object::std_allocator::WalkerChoice>& view)
 {
     switch (view.zserioChoiceTag())
     {
     case ::test_object::std_allocator::WalkerChoice::Tag::value8:
-        write(writer, view.value8());
+        detail::write(writer, view.value8());
         break;
     case ::test_object::std_allocator::WalkerChoice::Tag::value16:
-        write(writer, view.value16());
+        detail::write(writer, view.value16());
         break;
     case ::test_object::std_allocator::WalkerChoice::Tag::value32:
-        write(writer, view.value32());
+        detail::write(writer, view.value32());
         break;
     case ::test_object::std_allocator::WalkerChoice::Tag::value64:
-        write(writer, view.value64());
+        detail::write(writer, view.value64());
         break;
     default:
         break;
     }
 }
 
-template <>
-View<::test_object::std_allocator::WalkerChoice> read(BitStreamReader& reader, ::test_object::std_allocator::WalkerChoice& data,
+View<::test_object::std_allocator::WalkerChoice> ObjectTraits<::test_object::std_allocator::WalkerChoice>::read(BitStreamReader& reader, ::test_object::std_allocator::WalkerChoice& data,
         ::zserio::UInt8 selector_)
 {
     View<::test_object::std_allocator::WalkerChoice> view(data,
@@ -287,19 +283,19 @@ View<::test_object::std_allocator::WalkerChoice> read(BitStreamReader& reader, :
     {
     case 8:
         data.emplace<::test_object::std_allocator::WalkerChoice::Tag::value8>();
-        read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value8>());
+        detail::read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value8>());
         break;
     case 16:
         data.emplace<::test_object::std_allocator::WalkerChoice::Tag::value16>();
-        read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value16>());
+        detail::read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value16>());
         break;
     case 32:
         data.emplace<::test_object::std_allocator::WalkerChoice::Tag::value32>();
-        read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value32>());
+        detail::read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value32>());
         break;
     case 64:
         data.emplace<::test_object::std_allocator::WalkerChoice::Tag::value64>();
-        read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value64>());
+        detail::read(reader, data.get<::test_object::std_allocator::WalkerChoice::Tag::value64>());
         break;
     default:
         // empty

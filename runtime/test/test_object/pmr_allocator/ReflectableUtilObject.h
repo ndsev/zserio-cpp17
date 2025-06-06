@@ -90,16 +90,16 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::pmr_allocator::ReflectableUtilObject>
+{
+    static void validate(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, ::std::string_view fieldName);
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, BitSize bitPosition);
+    static BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, BitSize bitPosition);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableUtilObject>& view);
+    static void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableUtilObject>& view);
 
-template <>
-View<::test_object::pmr_allocator::ReflectableUtilObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableUtilObject& data);
+    static View<::test_object::pmr_allocator::ReflectableUtilObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableUtilObject& data);
+};
 
 template <>
 struct TypeInfo<::test_object::pmr_allocator::ReflectableUtilObject, ::std::pmr::polymorphic_allocator<uint8_t>>

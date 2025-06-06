@@ -110,17 +110,20 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::std_allocator::CreatorNested>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::std_allocator::CreatorNested>
+{
+    using Parameters = std::tuple<
+            ::zserio::UInt32>;
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::CreatorNested>& view, BitSize bitPosition);
+    static void validate(const View<::test_object::std_allocator::CreatorNested>& view, ::std::string_view fieldName);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::CreatorNested>& view);
+    static BitSize bitSizeOf(const View<::test_object::std_allocator::CreatorNested>& view, BitSize bitPosition);
 
-template <>
-View<::test_object::std_allocator::CreatorNested> read(BitStreamReader& reader, ::test_object::std_allocator::CreatorNested& data,
-        ::zserio::UInt32 param_);
+    static void write(BitStreamWriter& writer, const View<::test_object::std_allocator::CreatorNested>& view);
+
+    static View<::test_object::std_allocator::CreatorNested> read(BitStreamReader& reader, ::test_object::std_allocator::CreatorNested& data,
+            ::zserio::UInt32 param_);
+};
 
 template <>
 struct TypeInfo<::test_object::std_allocator::CreatorNested, ::std::allocator<uint8_t>>

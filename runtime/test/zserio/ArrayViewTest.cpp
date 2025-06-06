@@ -68,59 +68,55 @@ namespace detail
 {
 
 template <>
-struct PackingContext<TestObject>
+struct ObjectTraits<TestObject>
 {
-    DeltaContext field;
+    struct PackingContext
+    {
+        DeltaContext field;
+    };
+
+    static BitSize bitSizeOf(const View<TestObject>& view, BitSize bitPosition)
+    {
+        BitSize endBitPosition = bitPosition;
+        endBitPosition += detail::bitSizeOf(view.field(), endBitPosition);
+        return endBitPosition - bitPosition;
+    }
+
+    static void write(BitStreamWriter& writer, const View<TestObject>& view)
+    {
+        detail::write(writer, view.field());
+    }
+
+    static View<TestObject> read(BitStreamReader& reader, TestObject& data)
+    {
+        View<TestObject> view(data);
+        detail::read(reader, data.field);
+        return view;
+    }
+
+    static void initContext(PackingContext& packingContext, const View<TestObject>& view)
+    {
+        detail::initContext(packingContext.field, view.field());
+    }
+
+    static BitSize bitSizeOf(PackingContext& packingContext, const View<TestObject>& view, BitSize bitPosition)
+    {
+        BitSize endBitPosition = bitPosition;
+        endBitPosition += detail::bitSizeOf(packingContext.field, view.field(), endBitPosition);
+        return endBitPosition - bitPosition;
+    }
+
+    static void write(PackingContext& packingContext, BitStreamWriter& writer, const View<TestObject>& view)
+    {
+        detail::write(packingContext.field, writer, view.field());
+    }
+
+    static void read(PackingContext& packingContext, BitStreamReader& reader, TestObject& data)
+    {
+
+        detail::read(packingContext.field, reader, data.field);
+    }
 };
-
-template <>
-BitSize bitSizeOf(const View<TestObject>& view, BitSize bitPosition)
-{
-    BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(view.field(), endBitPosition);
-    return endBitPosition - bitPosition;
-}
-
-template <>
-void write(BitStreamWriter& writer, const View<TestObject>& view)
-{
-    write(writer, view.field());
-}
-
-template <>
-View<TestObject> read(BitStreamReader& reader, TestObject& data)
-{
-    View<TestObject> view(data);
-    read(reader, data.field);
-    return view;
-}
-
-template <>
-void initContext(PackingContext<TestObject>& packingContext, const View<TestObject>& view)
-{
-    initContext(packingContext.field, view.field());
-}
-
-template <>
-BitSize bitSizeOf(PackingContext<TestObject>& packingContext, const View<TestObject>& view, BitSize bitPosition)
-{
-    BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(packingContext.field, view.field(), endBitPosition);
-    return endBitPosition - bitPosition;
-}
-
-template <>
-void write(PackingContext<TestObject>& packingContext, BitStreamWriter& writer, const View<TestObject>& view)
-{
-    write(packingContext.field, writer, view.field());
-}
-
-template <>
-void read(PackingContext<TestObject>& packingContext, BitStreamReader& reader, TestObject& data)
-{
-
-    read(packingContext.field, reader, data.field);
-}
 
 } // namespace detail
 

@@ -103,8 +103,7 @@ View<::test_object::pmr_allocator::DebugStringParamObject>::View(const ::test_ob
 
 ::std::string_view View<::test_object::pmr_allocator::DebugStringParamObject>::text() const
 {
-    return ::std::string_view{
-            m_data->text};
+    return ::std::string_view{m_data->text};
 }
 
 const ::test_object::pmr_allocator::DebugStringParamObject& View<::test_object::pmr_allocator::DebugStringParamObject>::zserioData() const
@@ -155,38 +154,34 @@ bool operator>=(const View<::test_object::pmr_allocator::DebugStringParamObject>
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, ::std::string_view)
+void ObjectTraits<::test_object::pmr_allocator::DebugStringParamObject>::validate(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, ::std::string_view)
 {
-    validate(view.param(), "'DebugStringParamObject.param'");
-    validate(view.text(), "'DebugStringParamObject.text'");
+    detail::validate(view.param(), "'DebugStringParamObject.param'");
+    detail::validate(view.text(), "'DebugStringParamObject.text'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::pmr_allocator::DebugStringParamObject>::bitSizeOf(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto text_ = view.text();
-    endBitPosition += bitSizeOf(text_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(text_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::DebugStringParamObject>& view)
+void ObjectTraits<::test_object::pmr_allocator::DebugStringParamObject>::write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::DebugStringParamObject>& view)
 {
     auto text_ = view.text();
-    write(writer, text_);
+    detail::write(writer, text_);
 }
 
-template <>
-View<::test_object::pmr_allocator::DebugStringParamObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::DebugStringParamObject& data,
+View<::test_object::pmr_allocator::DebugStringParamObject> ObjectTraits<::test_object::pmr_allocator::DebugStringParamObject>::read(BitStreamReader& reader, ::test_object::pmr_allocator::DebugStringParamObject& data,
         ::zserio::Int32 param_)
 {
     View<::test_object::pmr_allocator::DebugStringParamObject> view(data,
             param_);
-    read(reader, data.text);
+    detail::read(reader, data.text);
     return view;
 }
 

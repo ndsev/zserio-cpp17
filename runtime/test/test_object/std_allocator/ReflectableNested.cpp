@@ -171,41 +171,37 @@ bool operator>=(const View<::test_object::std_allocator::ReflectableNested>& lhs
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::std_allocator::ReflectableNested>& view, ::std::string_view)
+void ObjectTraits<::test_object::std_allocator::ReflectableNested>::validate(const View<::test_object::std_allocator::ReflectableNested>& view, ::std::string_view)
 {
-    validate(view.dummyParam(), "'ReflectableNested.dummyParam'");
-    validate(view.stringParam(), "'ReflectableNested.stringParam'");
-    validate(view.value(), "'ReflectableNested.value'");
+    detail::validate(view.dummyParam(), "'ReflectableNested.dummyParam'");
+    detail::validate(view.stringParam(), "'ReflectableNested.stringParam'");
+    detail::validate(view.value(), "'ReflectableNested.value'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableNested>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::std_allocator::ReflectableNested>::bitSizeOf(const View<::test_object::std_allocator::ReflectableNested>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto value_ = view.value();
-    endBitPosition += bitSizeOf(value_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(value_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableNested>& view)
+void ObjectTraits<::test_object::std_allocator::ReflectableNested>::write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableNested>& view)
 {
     auto value_ = view.value();
-    write(writer, value_);
+    detail::write(writer, value_);
 }
 
-template <>
-View<::test_object::std_allocator::ReflectableNested> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableNested& data,
+View<::test_object::std_allocator::ReflectableNested> ObjectTraits<::test_object::std_allocator::ReflectableNested>::read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableNested& data,
         ::zserio::Int31 dummyParam_,
         ::std::string_view stringParam_)
 {
     View<::test_object::std_allocator::ReflectableNested> view(data,
             dummyParam_,
             stringParam_);
-    read(reader, data.value);
+    detail::read(reader, data.value);
     return view;
 }
 

@@ -108,16 +108,17 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::std_allocator::ReflectableUnion>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::std_allocator::ReflectableUnion>
+{
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUnion>& view, BitSize bitPosition);
+    static void validate(const View<::test_object::std_allocator::ReflectableUnion>& view, ::std::string_view fieldName);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableUnion>& view);
+    static BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUnion>& view, BitSize bitPosition);
 
-template <>
-View<::test_object::std_allocator::ReflectableUnion> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableUnion& data);
+    static void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableUnion>& view);
+
+    static View<::test_object::std_allocator::ReflectableUnion> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableUnion& data);
+};
 
 template <>
 struct TypeInfo<::test_object::std_allocator::ReflectableUnion, ::std::allocator<uint8_t>>

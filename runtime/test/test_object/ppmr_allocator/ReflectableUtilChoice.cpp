@@ -151,10 +151,9 @@ bool operator>=(const View<::test_object::ppmr_allocator::ReflectableUtilChoice>
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& view, ::std::string_view)
+void ObjectTraits<::test_object::ppmr_allocator::ReflectableUtilChoice>::validate(const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& view, ::std::string_view)
 {
-    validate(view.param(), "'ReflectableUtilChoice.param'");
+    detail::validate(view.param(), "'ReflectableUtilChoice.param'");
     switch (view.param())
     {
     case 1:
@@ -165,7 +164,7 @@ void validate(const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& 
             throw ChoiceCaseException("Wrong case set in choice 'ReflectableUtilChoice' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
                     " != " << static_cast<size_t>(::test_object::ppmr_allocator::ReflectableUtilChoice::Tag::array) << ")!";
         }
-        validate<ArrayType::AUTO>(view.array(), "'ReflectableUtilChoice.array'");
+        detail::validate<ArrayType::AUTO>(view.array(), "'ReflectableUtilChoice.array'");
         break;
     default:
         // empty
@@ -177,14 +176,13 @@ void validate(const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& 
     }
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::ppmr_allocator::ReflectableUtilChoice>::bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::ReflectableUtilChoice::Tag::array:
-        endBitPosition += bitSizeOf<ArrayType::AUTO>(view.array(), endBitPosition);
+        endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(view.array(), endBitPosition);
         break;
     default:
         break;
@@ -193,21 +191,19 @@ BitSize bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUtilChoic
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& view)
+void ObjectTraits<::test_object::ppmr_allocator::ReflectableUtilChoice>::write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::ReflectableUtilChoice>& view)
 {
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::ReflectableUtilChoice::Tag::array:
-        write<ArrayType::AUTO>(writer, view.array());
+        detail::write<ArrayType::AUTO>(writer, view.array());
         break;
     default:
         break;
     }
 }
 
-template <>
-View<::test_object::ppmr_allocator::ReflectableUtilChoice> read(BitStreamReader& reader, ::test_object::ppmr_allocator::ReflectableUtilChoice& data,
+View<::test_object::ppmr_allocator::ReflectableUtilChoice> ObjectTraits<::test_object::ppmr_allocator::ReflectableUtilChoice>::read(BitStreamReader& reader, ::test_object::ppmr_allocator::ReflectableUtilChoice& data,
         ::zserio::UInt8 param_)
 {
     View<::test_object::ppmr_allocator::ReflectableUtilChoice> view(data,
@@ -217,7 +213,7 @@ View<::test_object::ppmr_allocator::ReflectableUtilChoice> read(BitStreamReader&
     case 1:
     case 2:
         data.emplace<::test_object::ppmr_allocator::ReflectableUtilChoice::Tag::array>();
-        read<ArrayType::AUTO>(reader, data.get<::test_object::ppmr_allocator::ReflectableUtilChoice::Tag::array>());
+        detail::read<ArrayType::AUTO>(reader, data.get<::test_object::ppmr_allocator::ReflectableUtilChoice::Tag::array>());
         break;
     default:
         // empty

@@ -124,72 +124,61 @@ bool operator<=(const View<${fullName}>& lhs, const View<${fullName}>& rhs);
 bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs);
 <@namespace_begin ["detail"]/>
 
-<#if parameterList?has_content>
 template <>
-struct ParameterTraits<${fullName}>
+struct ObjectTraits<${fullName}>
 {
-<@parameter_traits parameterList, 1/>
-};
+<#if parameterList?has_content>
+    <@parameter_traits parameterList, 1/>
 
 </#if>
-template <>
-void validate(const View<${fullName}>& view, ::std::string_view fieldName);
 
-template <>
-BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
+    static void validate(const View<${fullName}>& view, ::std::string_view fieldName);
 
-template <>
-void write(BitStreamWriter& writer, const View<${fullName}>& view);
+    static BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);
 
-template <>
-View<${fullName}> read(BitStreamReader& reader, ${fullName}& data<#rt>
+    static void write(BitStreamWriter& writer, const View<${fullName}>& view);
+
+    static View<${fullName}> read(BitStreamReader& reader, ${fullName}& data<#rt>
 <#list parameterList as parameter>
-        <#lt>,
-        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+            <#lt>,
+            <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
-        <#lt>);
+            <#lt>);
 <#if isPackable && usedInPackedArray>
 
-template <>
-struct PackingContext<${fullName}>
-{
-<#list fieldList as field>
-    <#if field_needs_packing_context(field)>
-    <@packing_context_type_name field/> <@packing_context_member_name field/>;
-    </#if>
-</#list>
-};
-
-template <>
-void initContext(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view);
-
-template <>
-BitSize bitSizeOf(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view,
-        BitSize bitPosition);
-
-template <>
-void write(PackingContext<${fullName}>& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
-
-template <>
-void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
-    <#list parameterList as parameter>
-        <#lt>,
-        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    struct PackingContext
+    {
+    <#list fieldList as field>
+        <#if field_needs_packing_context(field)>
+        <@packing_context_type_name field/> <@packing_context_member_name field/>;
+        </#if>
     </#list>
-        <#lt>);
+    };
+
+    static void initContext(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view);
+
+    static BitSize bitSizeOf(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view,
+            BitSize bitPosition);
+
+    static void write(PackingContext<${fullName}>& packingContext, BitStreamWriter& writer,
+            const View<${fullName}>& view);
+
+    static void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
+    <#list parameterList as parameter>
+            <#lt>,
+            <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+            <#lt>);
 </#if>
 <#if containsOffset>
 
-template <>
-struct OffsetsInitializer<${fullName}>
-{
-    static BitSize initialize(const View<${fullName}>& view, BitSize bitPosition);
+    static BitSize initializeOffsets(const View<${fullName}>& view, BitSize bitPosition);
     <#if isPackable && usedInPackedArray>
-    static BitSize initialize(PackingConext<${fullName}>& packingContext,
+    static BitSize initializeOffsets(PackingConext<${fullName}>& packingContext,
             const View<${fullName}>& view, , BitSize bitPosition);
     </#if>
-};
 </#if>
+};
 <#if withTypeInfoCode>
 
 template <>

@@ -60,9 +60,9 @@ struct packing_context_type
 };
 
 template <typename T>
-struct packing_context_type<T, std::enable_if_t<is_complete_v<PackingContext<T>>>>
+struct packing_context_type<T, std::enable_if_t<is_complete_v<typename ObjectTraits<T>::PackingContext>>>
 {
-    using type = PackingContext<T>;
+    using type = typename ObjectTraits<T>::PackingContext;
 };
 
 template <typename T, typename V = void>
@@ -138,7 +138,7 @@ struct ArrayTraits
 
     template <typename OBJECT_ = OBJECT>
     static std::enable_if_t<!detail::is_delta_context_v<detail::packing_context_type_t<OBJECT_>>> read(
-            typename detail::PackingContext<OBJECT_>& packingContext, BitStreamReader& reader,
+            typename detail::ObjectTraits<OBJECT_>::PackingContext& packingContext, BitStreamReader& reader,
             const detail::DummyArrayOwner&, OBJECT& element, size_t)
     {
         detail::read(packingContext, reader, element);

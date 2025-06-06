@@ -130,14 +130,12 @@ View<::test_object::pmr_allocator::ReflectableObject>::View(const ::test_object:
 
 ::std::string_view View<::test_object::pmr_allocator::ReflectableObject>::stringField() const
 {
-    return ::std::string_view{
-            m_data->stringField};
+    return ::std::string_view{m_data->stringField};
 }
 
 View<::test_object::pmr_allocator::ReflectableNested> View<::test_object::pmr_allocator::ReflectableObject>::reflectableNested() const
 {
-    return View<::test_object::pmr_allocator::ReflectableNested>{
-            m_data->reflectableNested, ::zserio::Int31(static_cast<::zserio::Int31::ValueType>(13)), stringField()};
+    return View<::test_object::pmr_allocator::ReflectableNested>{m_data->reflectableNested, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableNested>(13), detail::makeParameter<1, ::test_object::pmr_allocator::ReflectableNested>(stringField())};
 }
 
 ::test_object::pmr_allocator::ReflectableEnum View<::test_object::pmr_allocator::ReflectableObject>::reflectableEnum() const
@@ -147,14 +145,12 @@ View<::test_object::pmr_allocator::ReflectableNested> View<::test_object::pmr_al
 
 View<::test_object::pmr_allocator::ReflectableChoice> View<::test_object::pmr_allocator::ReflectableObject>::reflectableChoice() const
 {
-    return View<::test_object::pmr_allocator::ReflectableChoice>{
-            m_data->reflectableChoice, reflectableEnum()};
+    return View<::test_object::pmr_allocator::ReflectableChoice>{m_data->reflectableChoice, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableChoice>(reflectableEnum())};
 }
 
 View<::test_object::pmr_allocator::ReflectableUnion> View<::test_object::pmr_allocator::ReflectableObject>::reflectableUnion() const
 {
-    return View<::test_object::pmr_allocator::ReflectableUnion>{
-            m_data->reflectableUnion};
+    return View<::test_object::pmr_allocator::ReflectableUnion>{m_data->reflectableUnion};
 }
 
 const ::test_object::pmr_allocator::ReflectableObject& View<::test_object::pmr_allocator::ReflectableObject>::zserioData() const
@@ -220,59 +216,55 @@ bool operator>=(const View<::test_object::pmr_allocator::ReflectableObject>& lhs
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::pmr_allocator::ReflectableObject>& view, ::std::string_view)
+void ObjectTraits<::test_object::pmr_allocator::ReflectableObject>::validate(const View<::test_object::pmr_allocator::ReflectableObject>& view, ::std::string_view)
 {
-    validate(view.stringField(), "'ReflectableObject.stringField'");
-    validate(view.reflectableNested(), "'ReflectableObject.reflectableNested'");
-    validate(view.reflectableEnum(), "'ReflectableObject.reflectableEnum'");
-    validate(view.reflectableChoice(), "'ReflectableObject.reflectableChoice'");
-    validate(view.reflectableUnion(), "'ReflectableObject.reflectableUnion'");
+    detail::validate(view.stringField(), "'ReflectableObject.stringField'");
+    detail::validate(view.reflectableNested(), "'ReflectableObject.reflectableNested'");
+    detail::validate(view.reflectableEnum(), "'ReflectableObject.reflectableEnum'");
+    detail::validate(view.reflectableChoice(), "'ReflectableObject.reflectableChoice'");
+    detail::validate(view.reflectableUnion(), "'ReflectableObject.reflectableUnion'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableObject>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::pmr_allocator::ReflectableObject>::bitSizeOf(const View<::test_object::pmr_allocator::ReflectableObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto stringField_ = view.stringField();
-    endBitPosition += bitSizeOf(stringField_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(stringField_, endBitPosition);
     auto reflectableNested_ = view.reflectableNested();
-    endBitPosition += bitSizeOf(reflectableNested_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(reflectableNested_, endBitPosition);
     auto reflectableEnum_ = view.reflectableEnum();
-    endBitPosition += bitSizeOf(reflectableEnum_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(reflectableEnum_, endBitPosition);
     auto reflectableChoice_ = view.reflectableChoice();
-    endBitPosition += bitSizeOf(reflectableChoice_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(reflectableChoice_, endBitPosition);
     auto reflectableUnion_ = view.reflectableUnion();
-    endBitPosition += bitSizeOf(reflectableUnion_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(reflectableUnion_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableObject>& view)
+void ObjectTraits<::test_object::pmr_allocator::ReflectableObject>::write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableObject>& view)
 {
     auto stringField_ = view.stringField();
-    write(writer, stringField_);
+    detail::write(writer, stringField_);
     auto reflectableNested_ = view.reflectableNested();
-    write(writer, reflectableNested_);
+    detail::write(writer, reflectableNested_);
     auto reflectableEnum_ = view.reflectableEnum();
-    write(writer, reflectableEnum_);
+    detail::write(writer, reflectableEnum_);
     auto reflectableChoice_ = view.reflectableChoice();
-    write(writer, reflectableChoice_);
+    detail::write(writer, reflectableChoice_);
     auto reflectableUnion_ = view.reflectableUnion();
-    write(writer, reflectableUnion_);
+    detail::write(writer, reflectableUnion_);
 }
 
-template <>
-View<::test_object::pmr_allocator::ReflectableObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableObject& data)
+View<::test_object::pmr_allocator::ReflectableObject> ObjectTraits<::test_object::pmr_allocator::ReflectableObject>::read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableObject& data)
 {
     View<::test_object::pmr_allocator::ReflectableObject> view(data);
-    read(reader, data.stringField);
-    (void)read(reader, data.reflectableNested, ::zserio::Int31(static_cast<::zserio::Int31::ValueType>(13)), view.stringField());
-    read(reader, data.reflectableEnum);
-    (void)read(reader, data.reflectableChoice, view.reflectableEnum());
-    (void)read(reader, data.reflectableUnion);
+    detail::read(reader, data.stringField);
+    (void)detail::read(reader, data.reflectableNested, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableNested>(13), detail::makeParameter<1, ::test_object::pmr_allocator::ReflectableNested>(view.stringField()));
+    detail::read(reader, data.reflectableEnum);
+    (void)detail::read(reader, data.reflectableChoice, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableChoice>(view.reflectableEnum()));
+    (void)detail::read(reader, data.reflectableUnion);
     return view;
 }
 

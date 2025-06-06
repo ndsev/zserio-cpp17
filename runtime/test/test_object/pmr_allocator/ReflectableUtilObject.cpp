@@ -108,8 +108,7 @@ View<::test_object::pmr_allocator::ReflectableUtilObject>::View(const ::test_obj
 
 View<::test_object::pmr_allocator::ReflectableUtilChoice> View<::test_object::pmr_allocator::ReflectableUtilObject>::reflectableUtilChoice() const
 {
-    return View<::test_object::pmr_allocator::ReflectableUtilChoice>{
-            m_data->reflectableUtilChoice, ::zserio::UInt8(static_cast<::zserio::UInt8::ValueType>(choiceParam()))};
+    return View<::test_object::pmr_allocator::ReflectableUtilChoice>{m_data->reflectableUtilChoice, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableUtilChoice>(choiceParam())};
 }
 
 const ::test_object::pmr_allocator::ReflectableUtilObject& View<::test_object::pmr_allocator::ReflectableUtilObject>::zserioData() const
@@ -160,41 +159,37 @@ bool operator>=(const View<::test_object::pmr_allocator::ReflectableUtilObject>&
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, ::std::string_view)
+void ObjectTraits<::test_object::pmr_allocator::ReflectableUtilObject>::validate(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, ::std::string_view)
 {
-    validate(view.choiceParam(), "'ReflectableUtilObject.choiceParam'");
-    validate(view.reflectableUtilChoice(), "'ReflectableUtilObject.reflectableUtilChoice'");
+    detail::validate(view.choiceParam(), "'ReflectableUtilObject.choiceParam'");
+    detail::validate(view.reflectableUtilChoice(), "'ReflectableUtilObject.reflectableUtilChoice'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::pmr_allocator::ReflectableUtilObject>::bitSizeOf(const View<::test_object::pmr_allocator::ReflectableUtilObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto choiceParam_ = view.choiceParam();
-    endBitPosition += bitSizeOf(choiceParam_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(choiceParam_, endBitPosition);
     auto reflectableUtilChoice_ = view.reflectableUtilChoice();
-    endBitPosition += bitSizeOf(reflectableUtilChoice_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(reflectableUtilChoice_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableUtilObject>& view)
+void ObjectTraits<::test_object::pmr_allocator::ReflectableUtilObject>::write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::ReflectableUtilObject>& view)
 {
     auto choiceParam_ = view.choiceParam();
-    write(writer, choiceParam_);
+    detail::write(writer, choiceParam_);
     auto reflectableUtilChoice_ = view.reflectableUtilChoice();
-    write(writer, reflectableUtilChoice_);
+    detail::write(writer, reflectableUtilChoice_);
 }
 
-template <>
-View<::test_object::pmr_allocator::ReflectableUtilObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableUtilObject& data)
+View<::test_object::pmr_allocator::ReflectableUtilObject> ObjectTraits<::test_object::pmr_allocator::ReflectableUtilObject>::read(BitStreamReader& reader, ::test_object::pmr_allocator::ReflectableUtilObject& data)
 {
     View<::test_object::pmr_allocator::ReflectableUtilObject> view(data);
-    read(reader, data.choiceParam);
-    (void)read(reader, data.reflectableUtilChoice, ::zserio::UInt8(static_cast<::zserio::UInt8::ValueType>(view.choiceParam())));
+    detail::read(reader, data.choiceParam);
+    (void)detail::read(reader, data.reflectableUtilChoice, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableUtilChoice>(view.choiceParam()));
     return view;
 }
 

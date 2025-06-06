@@ -94,8 +94,7 @@ View<::test_object::std_allocator::WalkerNested>::View(const ::test_object::std_
 
 ::std::string_view View<::test_object::std_allocator::WalkerNested>::text() const
 {
-    return ::std::string_view{
-            m_data->text};
+    return ::std::string_view{m_data->text};
 }
 
 const ::test_object::std_allocator::WalkerNested& View<::test_object::std_allocator::WalkerNested>::zserioData() const
@@ -141,35 +140,31 @@ bool operator>=(const View<::test_object::std_allocator::WalkerNested>& lhs, con
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::std_allocator::WalkerNested>& view, ::std::string_view)
+void ObjectTraits<::test_object::std_allocator::WalkerNested>::validate(const View<::test_object::std_allocator::WalkerNested>& view, ::std::string_view)
 {
-    validate(view.text(), "'WalkerNested.text'");
+    detail::validate(view.text(), "'WalkerNested.text'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerNested>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::std_allocator::WalkerNested>::bitSizeOf(const View<::test_object::std_allocator::WalkerNested>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto text_ = view.text();
-    endBitPosition += bitSizeOf(text_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(text_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::WalkerNested>& view)
+void ObjectTraits<::test_object::std_allocator::WalkerNested>::write(BitStreamWriter& writer, const View<::test_object::std_allocator::WalkerNested>& view)
 {
     auto text_ = view.text();
-    write(writer, text_);
+    detail::write(writer, text_);
 }
 
-template <>
-View<::test_object::std_allocator::WalkerNested> read(BitStreamReader& reader, ::test_object::std_allocator::WalkerNested& data)
+View<::test_object::std_allocator::WalkerNested> ObjectTraits<::test_object::std_allocator::WalkerNested>::read(BitStreamReader& reader, ::test_object::std_allocator::WalkerNested& data)
 {
     View<::test_object::std_allocator::WalkerNested> view(data);
-    read(reader, data.text);
+    detail::read(reader, data.text);
     return view;
 }
 

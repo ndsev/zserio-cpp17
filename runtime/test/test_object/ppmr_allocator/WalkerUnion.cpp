@@ -152,40 +152,39 @@ bool operator>=(const View<::test_object::ppmr_allocator::WalkerUnion>& lhs, con
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::ppmr_allocator::WalkerUnion>& view, ::std::string_view)
+void ObjectTraits<::test_object::ppmr_allocator::WalkerUnion>::validate(const View<::test_object::ppmr_allocator::WalkerUnion>& view, ::std::string_view)
 {
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::value:
-        validate(view.value(), "'WalkerUnion.value'");
+        detail::validate(view.value(), "'WalkerUnion.value'");
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::text:
-        validate(view.text(), "'WalkerUnion.text'");
+        detail::validate(view.text(), "'WalkerUnion.text'");
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray:
-        validate<ArrayType::AUTO>(view.nestedArray(), "'WalkerUnion.nestedArray'");
+        detail::validate<ArrayType::AUTO>(view.nestedArray(), "'WalkerUnion.nestedArray'");
         break;
     default:
         throw UnionCaseException("No case set in union '::test_object::ppmr_allocator::WalkerUnion'!");
     }
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::ppmr_allocator::WalkerUnion>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::ppmr_allocator::WalkerUnion>::bitSizeOf(const View<::test_object::ppmr_allocator::WalkerUnion>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    endBitPosition += detail::bitSizeOf(
+            fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::value:
-        endBitPosition += bitSizeOf(view.value(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.value(), endBitPosition);
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::text:
-        endBitPosition += bitSizeOf(view.text(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.text(), endBitPosition);
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray:
-        endBitPosition += bitSizeOf<ArrayType::AUTO>(view.nestedArray(), endBitPosition);
+        endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(view.nestedArray(), endBitPosition);
         break;
     default:
         break;
@@ -194,46 +193,44 @@ BitSize bitSizeOf(const View<::test_object::ppmr_allocator::WalkerUnion>& view, 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::WalkerUnion>& view)
+void ObjectTraits<::test_object::ppmr_allocator::WalkerUnion>::write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::WalkerUnion>& view)
 {
-    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    detail::write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::value:
-        write(writer, view.value());
+        detail::write(writer, view.value());
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::text:
-        write(writer, view.text());
+        detail::write(writer, view.text());
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray:
-        write<ArrayType::AUTO>(writer, view.nestedArray());
+        detail::write<ArrayType::AUTO>(writer, view.nestedArray());
         break;
     default:
         break;
     }
 }
 
-template <>
-View<::test_object::ppmr_allocator::WalkerUnion> read(BitStreamReader& reader, ::test_object::ppmr_allocator::WalkerUnion& data)
+View<::test_object::ppmr_allocator::WalkerUnion> ObjectTraits<::test_object::ppmr_allocator::WalkerUnion>::read(BitStreamReader& reader, ::test_object::ppmr_allocator::WalkerUnion& data)
 {
     View<::test_object::ppmr_allocator::WalkerUnion> view(data);
 
     VarSize choiceTag;
-    read(reader, choiceTag);
+    detail::read(reader, choiceTag);
     switch (static_cast<::test_object::ppmr_allocator::WalkerUnion::Tag>(choiceTag + 1))
     {
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::value:
         data.emplace<::test_object::ppmr_allocator::WalkerUnion::Tag::value>();
-        read(reader, data.get<::test_object::ppmr_allocator::WalkerUnion::Tag::value>());
+        detail::read(reader, data.get<::test_object::ppmr_allocator::WalkerUnion::Tag::value>());
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::text:
         data.emplace<::test_object::ppmr_allocator::WalkerUnion::Tag::text>();
-        read(reader, data.get<::test_object::ppmr_allocator::WalkerUnion::Tag::text>());
+        detail::read(reader, data.get<::test_object::ppmr_allocator::WalkerUnion::Tag::text>());
         break;
     case ::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray:
         data.emplace<::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray>();
-        (void)read<ArrayType::AUTO>(reader, data.get<::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray>());
+        (void)detail::read<ArrayType::AUTO>(reader, data.get<::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray>());
         break;
     default:
         throw UnionCaseException("Unexpected choice tag during read of union '::test_object::ppmr_allocator::WalkerUnion'!");

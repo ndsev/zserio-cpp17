@@ -90,17 +90,20 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::pmr_allocator::DebugStringParamObject>
+{
+    using Parameters = std::tuple<
+            ::zserio::Int32>;
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, BitSize bitPosition);
+    static void validate(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, ::std::string_view fieldName);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::DebugStringParamObject>& view);
+    static BitSize bitSizeOf(const View<::test_object::pmr_allocator::DebugStringParamObject>& view, BitSize bitPosition);
 
-template <>
-View<::test_object::pmr_allocator::DebugStringParamObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::DebugStringParamObject& data,
-        ::zserio::Int32 param_);
+    static void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::DebugStringParamObject>& view);
+
+    static View<::test_object::pmr_allocator::DebugStringParamObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::DebugStringParamObject& data,
+            ::zserio::Int32 param_);
+};
 
 template <>
 struct TypeInfo<::test_object::pmr_allocator::DebugStringParamObject, ::std::pmr::polymorphic_allocator<uint8_t>>

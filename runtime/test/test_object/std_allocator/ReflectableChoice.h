@@ -114,17 +114,21 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::std_allocator::ReflectableChoice>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::std_allocator::ReflectableChoice>
+{
+    using Parameters = std::tuple<
+            ::test_object::std_allocator::ReflectableEnum>;
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableChoice>& view, BitSize bitPosition);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableChoice>& view);
+    static void validate(const View<::test_object::std_allocator::ReflectableChoice>& view, ::std::string_view fieldName);
 
-template <>
-View<::test_object::std_allocator::ReflectableChoice> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableChoice& data,
-        ::test_object::std_allocator::ReflectableEnum param_);
+    static BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableChoice>& view, BitSize bitPosition);
+
+    static void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableChoice>& view);
+
+    static View<::test_object::std_allocator::ReflectableChoice> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableChoice& data,
+            ::test_object::std_allocator::ReflectableEnum param_);
+};
 
 template <>
 struct TypeInfo<::test_object::std_allocator::ReflectableChoice, ::std::allocator<uint8_t>>

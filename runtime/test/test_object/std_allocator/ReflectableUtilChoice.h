@@ -109,17 +109,21 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::std_allocator::ReflectableUtilChoice>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::std_allocator::ReflectableUtilChoice>
+{
+    using Parameters = std::tuple<
+            ::zserio::UInt8>;
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilChoice>& view, BitSize bitPosition);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableUtilChoice>& view);
+    static void validate(const View<::test_object::std_allocator::ReflectableUtilChoice>& view, ::std::string_view fieldName);
 
-template <>
-View<::test_object::std_allocator::ReflectableUtilChoice> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableUtilChoice& data,
-        ::zserio::UInt8 param_);
+    static BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilChoice>& view, BitSize bitPosition);
+
+    static void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableUtilChoice>& view);
+
+    static View<::test_object::std_allocator::ReflectableUtilChoice> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableUtilChoice& data,
+            ::zserio::UInt8 param_);
+};
 
 template <>
 struct TypeInfo<::test_object::std_allocator::ReflectableUtilChoice, ::std::allocator<uint8_t>>

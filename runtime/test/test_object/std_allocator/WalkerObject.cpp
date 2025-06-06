@@ -157,8 +157,7 @@ View<::test_object::std_allocator::WalkerObject>::View(const ::test_object::std_
 {
     if (m_data->nested.has_value())
     {
-        return ::zserio::Optional<View<::test_object::std_allocator::WalkerNested>>{
-                ::std::in_place, m_data->nested.get_allocator(), *m_data->nested};
+        return ::zserio::Optional<View<::test_object::std_allocator::WalkerNested>>{::std::in_place, m_data->nested.get_allocator(), *m_data->nested};
     }
     else
     {
@@ -168,22 +167,19 @@ View<::test_object::std_allocator::WalkerObject>::View(const ::test_object::std_
 
 ::std::string_view View<::test_object::std_allocator::WalkerObject>::text() const
 {
-    return ::std::string_view{
-            m_data->text};
+    return ::std::string_view{m_data->text};
 }
 
 ArrayView<const ::test_object::std_allocator::WalkerUnion> View<::test_object::std_allocator::WalkerObject>::unionArray() const
 {
-    return ArrayView<const ::test_object::std_allocator::WalkerUnion>{
-            m_data->unionArray};
+    return ArrayView<const ::test_object::std_allocator::WalkerUnion>{m_data->unionArray};
 }
 
 ::zserio::Optional<ArrayView<const ::test_object::std_allocator::WalkerUnion>> View<::test_object::std_allocator::WalkerObject>::optionalUnionArray() const
 {
     if (m_data->optionalUnionArray.has_value())
     {
-        return ::zserio::Optional<ArrayView<const ::test_object::std_allocator::WalkerUnion>>{
-                ::std::in_place, m_data->optionalUnionArray.get_allocator(), *m_data->optionalUnionArray};
+        return ::zserio::Optional<ArrayView<const ::test_object::std_allocator::WalkerUnion>>{::std::in_place, m_data->optionalUnionArray.get_allocator(), *m_data->optionalUnionArray};
     }
     else
     {
@@ -198,8 +194,7 @@ ArrayView<const ::test_object::std_allocator::WalkerUnion> View<::test_object::s
 
 View<::test_object::std_allocator::WalkerChoice> View<::test_object::std_allocator::WalkerObject>::choiceField() const
 {
-    return View<::test_object::std_allocator::WalkerChoice>{
-            m_data->choiceField, ::zserio::UInt8(static_cast<::zserio::UInt8::ValueType>(choiceSelector()))};
+    return View<::test_object::std_allocator::WalkerChoice>{m_data->choiceField, detail::makeParameter<0, ::test_object::std_allocator::WalkerChoice>(choiceSelector())};
 }
 
 const ::test_object::std_allocator::WalkerObject& View<::test_object::std_allocator::WalkerObject>::zserioData() const
@@ -275,10 +270,9 @@ bool operator>=(const View<::test_object::std_allocator::WalkerObject>& lhs, con
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::std_allocator::WalkerObject>& view, ::std::string_view)
+void ObjectTraits<::test_object::std_allocator::WalkerObject>::validate(const View<::test_object::std_allocator::WalkerObject>& view, ::std::string_view)
 {
-    validate(view.identifier(), "'WalkerObject.identifier'");
+    detail::validate(view.identifier(), "'WalkerObject.identifier'");
     // check non-auto optional
     if (view.identifier() != 0)
     {
@@ -297,97 +291,94 @@ void validate(const View<::test_object::std_allocator::WalkerObject>& view, ::st
     }
     if (view.nested().has_value())
     {
-        validate(*view.nested(), "'WalkerObject.nested'");
+        detail::validate(*view.nested(), "'WalkerObject.nested'");
     }
-    validate(view.text(), "'WalkerObject.text'");
-    validate<ArrayType::AUTO>(view.unionArray(), "'WalkerObject.unionArray'");
+    detail::validate(view.text(), "'WalkerObject.text'");
+    detail::validate<ArrayType::AUTO>(view.unionArray(), "'WalkerObject.unionArray'");
     if (view.optionalUnionArray().has_value())
     {
-        validate<ArrayType::AUTO>(*view.optionalUnionArray(), "'WalkerObject.optionalUnionArray'");
+        detail::validate<ArrayType::AUTO>(*view.optionalUnionArray(), "'WalkerObject.optionalUnionArray'");
     }
-    validate(view.choiceSelector(), "'WalkerObject.choiceSelector'");
-    validate(view.choiceField(), "'WalkerObject.choiceField'");
+    detail::validate(view.choiceSelector(), "'WalkerObject.choiceSelector'");
+    detail::validate(view.choiceField(), "'WalkerObject.choiceField'");
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerObject>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::std_allocator::WalkerObject>::bitSizeOf(const View<::test_object::std_allocator::WalkerObject>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
 
     auto identifier_ = view.identifier();
-    endBitPosition += bitSizeOf(identifier_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(identifier_, endBitPosition);
     auto nested_ = view.nested();
     if (nested_.has_value())
     {
-        endBitPosition += bitSizeOf(*nested_, endBitPosition);
+        endBitPosition += detail::bitSizeOf(*nested_, endBitPosition);
     }
     auto text_ = view.text();
-    endBitPosition += bitSizeOf(text_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(text_, endBitPosition);
     auto unionArray_ = view.unionArray();
-    endBitPosition += bitSizeOf<ArrayType::AUTO>(unionArray_, endBitPosition);
+    endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(unionArray_, endBitPosition);
     auto optionalUnionArray_ = view.optionalUnionArray();
-    endBitPosition += bitSizeOf(Bool());
+    endBitPosition += detail::bitSizeOf(Bool());
     if (optionalUnionArray_.has_value())
     {
-        endBitPosition += bitSizeOf<ArrayType::AUTO>(*optionalUnionArray_, endBitPosition);
+        endBitPosition += detail::bitSizeOf<ArrayType::AUTO>(*optionalUnionArray_, endBitPosition);
     }
     auto choiceSelector_ = view.choiceSelector();
-    endBitPosition += bitSizeOf(choiceSelector_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(choiceSelector_, endBitPosition);
     auto choiceField_ = view.choiceField();
-    endBitPosition += bitSizeOf(choiceField_, endBitPosition);
+    endBitPosition += detail::bitSizeOf(choiceField_, endBitPosition);
 
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::WalkerObject>& view)
+void ObjectTraits<::test_object::std_allocator::WalkerObject>::write(BitStreamWriter& writer, const View<::test_object::std_allocator::WalkerObject>& view)
 {
     auto identifier_ = view.identifier();
-    write(writer, identifier_);
+    detail::write(writer, identifier_);
     auto nested_ = view.nested();
     if (nested_.has_value())
     {
-        write(writer, *nested_);
+        detail::write(writer, *nested_);
     }
     auto text_ = view.text();
-    write(writer, text_);
+    detail::write(writer, text_);
     auto unionArray_ = view.unionArray();
-    write<ArrayType::AUTO>(writer, unionArray_);
+    detail::write<ArrayType::AUTO>(writer, unionArray_);
     auto optionalUnionArray_ = view.optionalUnionArray();
     if (optionalUnionArray_.has_value())
     {
         writer.writeBool(true);
-        write<ArrayType::AUTO>(writer, *optionalUnionArray_);
+        detail::write<ArrayType::AUTO>(writer, *optionalUnionArray_);
     }
     else
     {
         writer.writeBool(false);
     }
     auto choiceSelector_ = view.choiceSelector();
-    write(writer, choiceSelector_);
+    detail::write(writer, choiceSelector_);
     auto choiceField_ = view.choiceField();
-    write(writer, choiceField_);
+    detail::write(writer, choiceField_);
 }
 
-template <>
-View<::test_object::std_allocator::WalkerObject> read(BitStreamReader& reader, ::test_object::std_allocator::WalkerObject& data)
+View<::test_object::std_allocator::WalkerObject> ObjectTraits<::test_object::std_allocator::WalkerObject>::read(BitStreamReader& reader, ::test_object::std_allocator::WalkerObject& data)
 {
     View<::test_object::std_allocator::WalkerObject> view(data);
-    read(reader, data.identifier);
+    detail::read(reader, data.identifier);
     if (view.identifier() != 0)
     {
         data.nested.emplace();
-        (void)read(reader, *data.nested);
+        (void)detail::read(reader, *data.nested);
     }
-    read(reader, data.text);
-    (void)read<ArrayType::AUTO>(reader, data.unionArray);
+    detail::read(reader, data.text);
+    (void)detail::read<ArrayType::AUTO>(reader, data.unionArray);
     if (reader.readBool())
     {
         data.optionalUnionArray.emplace();
-        (void)read<ArrayType::AUTO>(reader, *data.optionalUnionArray);
+        (void)detail::read<ArrayType::AUTO>(reader, *data.optionalUnionArray);
     }
-    read(reader, data.choiceSelector);
-    (void)read(reader, data.choiceField, ::zserio::UInt8(static_cast<::zserio::UInt8::ValueType>(view.choiceSelector())));
+    detail::read(reader, data.choiceSelector);
+    (void)detail::read(reader, data.choiceField, detail::makeParameter<0, ::test_object::std_allocator::WalkerChoice>(view.choiceSelector()));
     return view;
 }
 

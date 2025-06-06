@@ -66,23 +66,25 @@ namespace detail
 {
 
 template <>
-void validate(const zserio::View<TestObject>& view, std::string_view fieldName)
+struct ObjectTraits<TestObject>
 {
-    if (view.param().len() != view.array().size())
+    static void validate(const zserio::View<TestObject>& view, std::string_view fieldName)
     {
-        throw CppRuntimeException("Validation error (") << fieldName << ")!";
+        if (view.param().len() != view.array().size())
+        {
+            throw CppRuntimeException("Validation error (") << fieldName << ")!";
+        }
     }
-}
 
-template <>
-BitSize bitSizeOf(const zserio::View<TestObject>& view, BitSize bitPosition)
-{
-    BitSize endBitPosition = bitPosition;
+    static BitSize bitSizeOf(const zserio::View<TestObject>& view, BitSize bitPosition)
+    {
+        BitSize endBitPosition = bitPosition;
 
-    endBitPosition = bitSizeOf<ArrayType::AUTO>(view.array());
+        endBitPosition = detail::bitSizeOf<ArrayType::AUTO>(view.array());
 
-    return endBitPosition - bitPosition;
-}
+        return endBitPosition - bitPosition;
+    }
+};
 
 } // namespace detail
 

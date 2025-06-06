@@ -32,15 +32,17 @@ View(T, ARGS&&...) -> View<T>;
 namespace detail
 {
 
+/**
+ * Default object traits. Concrete implementation is provided via specialization of this template structure.
+ */
 template <typename T>
-struct ParameterTraits
-{};
+struct ObjectTraits;
 
 // TODO[Mi-L@]: Do we need to have U&& here? It should take either simple type, or view (or string_view, etc.).
 template <size_t I, typename T, typename U>
-view_type_t<std::tuple_element_t<I, typename ParameterTraits<T>::Params>> makeParameter(U arg)
+view_type_t<std::tuple_element_t<I, typename ObjectTraits<T>::Parameters>> makeParameter(U arg)
 {
-    using ParamType = std::tuple_element_t<I, typename ParameterTraits<T>::Params>;
+    using ParamType = std::tuple_element_t<I, typename ObjectTraits<T>::Parameters>;
     if constexpr (is_dyn_int_wrapper_v<ParamType>)
     {
         return View<ParamType>(ParamType(static_cast<typename ParamType::ValueType>(arg)), 64);
@@ -63,7 +65,10 @@ view_type_t<std::tuple_element_t<I, typename ParameterTraits<T>::Params>> makePa
  * \throw CppRuntimeException In case of any validation error.
  */
 template <typename T>
-void validate(const View<T>& view, std::string_view fieldName = "");
+void validate(const View<T>& view, std::string_view fieldName = "")
+{
+    ObjectTraits<T>::validate(view, fieldName);
+}
 
 /**
  * Global function for bit size provided via specialization.
@@ -74,36 +79,34 @@ void validate(const View<T>& view, std::string_view fieldName = "");
  * \return Bit size of the Zserio object.
  */
 template <typename T>
-BitSize bitSizeOf(const View<T>& view, BitSize bitPosition = 0);
-
-/**
- * Default offset initializer. Types which need offset initialization shall provide this
- * information via specialization of this template structure.
- */
-template <typename T>
-struct OffsetsInitializer;
+BitSize bitSizeOf(const View<T>& view, BitSize bitPosition = 0)
+{
+    return ObjectTraits<T>::bitSizeOf(view, bitPosition);
+}
 
 template <typename T, typename = void>
-struct has_offsets_initializer : std::false_type
+struct has_initialize_offsets : std::false_type
 {};
 
 template <typename T>
-struct has_offsets_initializer<T, std::void_t<decltype(OffsetsInitializer<T>{})>> : std::true_type
+struct has_initialize_offsets<T,
+        std::void_t<decltype(ObjectTraits<T>().initializeOffsets(std::declval<const View<T>&>(), 0))>>
+        : std::true_type
 {};
 
 template <typename T, typename V = void>
-inline constexpr bool has_offsets_initializer_v = has_offsets_initializer<T, V>::value;
+inline constexpr bool has_initialize_offsets_v = has_initialize_offsets<T, V>::value;
 
 template <typename T>
 BitSize initializeOffsets(const View<T>& view, BitSize bitPosition)
 {
-    if constexpr (has_offsets_initializer_v<T>)
+    if constexpr (has_initialize_offsets_v<T>)
     {
-        return OffsetsInitializer<T>::initialize(view, bitPosition);
+        return ObjectTraits<T>::initializeOffsets(view, bitPosition);
     }
     else
     {
-        return bitSizeOf(view, bitPosition);
+        return ObjectTraits<T>::bitSizeOf(view, bitPosition);
     }
 }
 
@@ -116,7 +119,10 @@ BitSize initializeOffsets(const View<T>& view, BitSize bitPosition)
  * \throw CppRuntimeException In case of any write error.
  */
 template <typename T>
-void write(BitStreamWriter& writer, const View<T>& view);
+void write(BitStreamWriter& writer, const View<T>& view)
+{
+    ObjectTraits<T>::write(writer, view);
+}
 
 /**
  * Global function for reading provided via specialization.
@@ -130,7 +136,10 @@ void write(BitStreamWriter& writer, const View<T>& view);
  * \throw CppRuntimeException In case of any read error.
  */
 template <typename T, typename... ARGS>
-View<T> read(BitStreamReader& reader, T& data, ARGS...);
+View<T> read(BitStreamReader& reader, T& data, ARGS&&... args)
+{
+    return ObjectTraits<T>::read(reader, data, std::forward<ARGS>(args)...);
+}
 
 } // namespace detail
 

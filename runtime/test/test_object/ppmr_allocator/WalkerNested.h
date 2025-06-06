@@ -85,16 +85,16 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::ppmr_allocator::WalkerNested>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::ppmr_allocator::WalkerNested>
+{
+    static void validate(const View<::test_object::ppmr_allocator::WalkerNested>& view, ::std::string_view fieldName);
 
-template <>
-BitSize bitSizeOf(const View<::test_object::ppmr_allocator::WalkerNested>& view, BitSize bitPosition);
+    static BitSize bitSizeOf(const View<::test_object::ppmr_allocator::WalkerNested>& view, BitSize bitPosition);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::WalkerNested>& view);
+    static void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::WalkerNested>& view);
 
-template <>
-View<::test_object::ppmr_allocator::WalkerNested> read(BitStreamReader& reader, ::test_object::ppmr_allocator::WalkerNested& data);
+    static View<::test_object::ppmr_allocator::WalkerNested> read(BitStreamReader& reader, ::test_object::ppmr_allocator::WalkerNested& data);
+};
 
 template <>
 struct TypeInfo<::test_object::ppmr_allocator::WalkerNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>

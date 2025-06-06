@@ -143,34 +143,33 @@ bool operator>=(const View<::test_object::ppmr_allocator::ReflectableUnion>& lhs
 namespace detail
 {
 
-template <>
-void validate(const View<::test_object::ppmr_allocator::ReflectableUnion>& view, ::std::string_view)
+void ObjectTraits<::test_object::ppmr_allocator::ReflectableUnion>::validate(const View<::test_object::ppmr_allocator::ReflectableUnion>& view, ::std::string_view)
 {
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::value32:
-        validate(view.value32(), "'ReflectableUnion.value32'");
+        detail::validate(view.value32(), "'ReflectableUnion.value32'");
         break;
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::valueStr:
-        validate(view.valueStr(), "'ReflectableUnion.valueStr'");
+        detail::validate(view.valueStr(), "'ReflectableUnion.valueStr'");
         break;
     default:
         throw UnionCaseException("No case set in union '::test_object::ppmr_allocator::ReflectableUnion'!");
     }
 }
 
-template <>
-BitSize bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUnion>& view, BitSize bitPosition)
+BitSize ObjectTraits<::test_object::ppmr_allocator::ReflectableUnion>::bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUnion>& view, BitSize bitPosition)
 {
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    endBitPosition += detail::bitSizeOf(
+            fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::value32:
-        endBitPosition += bitSizeOf(view.value32(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.value32(), endBitPosition);
         break;
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::valueStr:
-        endBitPosition += bitSizeOf(view.valueStr(), endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.valueStr(), endBitPosition);
         break;
     default:
         break;
@@ -179,39 +178,37 @@ BitSize bitSizeOf(const View<::test_object::ppmr_allocator::ReflectableUnion>& v
     return endBitPosition - bitPosition;
 }
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::ReflectableUnion>& view)
+void ObjectTraits<::test_object::ppmr_allocator::ReflectableUnion>::write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::ReflectableUnion>& view)
 {
-    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    detail::write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     switch (view.zserioChoiceTag())
     {
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::value32:
-        write(writer, view.value32());
+        detail::write(writer, view.value32());
         break;
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::valueStr:
-        write(writer, view.valueStr());
+        detail::write(writer, view.valueStr());
         break;
     default:
         break;
     }
 }
 
-template <>
-View<::test_object::ppmr_allocator::ReflectableUnion> read(BitStreamReader& reader, ::test_object::ppmr_allocator::ReflectableUnion& data)
+View<::test_object::ppmr_allocator::ReflectableUnion> ObjectTraits<::test_object::ppmr_allocator::ReflectableUnion>::read(BitStreamReader& reader, ::test_object::ppmr_allocator::ReflectableUnion& data)
 {
     View<::test_object::ppmr_allocator::ReflectableUnion> view(data);
 
     VarSize choiceTag;
-    read(reader, choiceTag);
+    detail::read(reader, choiceTag);
     switch (static_cast<::test_object::ppmr_allocator::ReflectableUnion::Tag>(choiceTag + 1))
     {
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::value32:
         data.emplace<::test_object::ppmr_allocator::ReflectableUnion::Tag::value32>();
-        read(reader, data.get<::test_object::ppmr_allocator::ReflectableUnion::Tag::value32>());
+        detail::read(reader, data.get<::test_object::ppmr_allocator::ReflectableUnion::Tag::value32>());
         break;
     case ::test_object::ppmr_allocator::ReflectableUnion::Tag::valueStr:
         data.emplace<::test_object::ppmr_allocator::ReflectableUnion::Tag::valueStr>();
-        read(reader, data.get<::test_object::ppmr_allocator::ReflectableUnion::Tag::valueStr>());
+        detail::read(reader, data.get<::test_object::ppmr_allocator::ReflectableUnion::Tag::valueStr>());
         break;
     default:
         throw UnionCaseException("Unexpected choice tag during read of union '::test_object::ppmr_allocator::ReflectableUnion'!");

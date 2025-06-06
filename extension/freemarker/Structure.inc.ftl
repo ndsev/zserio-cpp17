@@ -262,7 +262,7 @@ ${I}}
 <#macro structure_validate_field_inner field indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <@field_check_constraint field, indent/>
-${I}validate<@array_template_args field/>(<#rt>
+${I}detail::validate<@array_template_args field/>(<#rt>
         <#if field.isExtended>*</#if><#if field.optional??>*</#if>view.${field.getterName}(), <#t>
         "'${name}.${field.name}'"<#t>
         <#if field.array?? && field.array.viewIndirectLength??>
@@ -288,7 +288,7 @@ ${I}}
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.optional??>
         <#if !field.optional.viewIndirectClause??>
-${I}endBitPosition += bitSizeOf(Bool());
+${I}endBitPosition += detail::bitSizeOf(Bool());
         </#if>
 ${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
 ${I}{
@@ -307,7 +307,7 @@ ${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endB
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
-${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+${I}endBitPosition += detail::bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#lt>);
 </#macro>
@@ -354,7 +354,7 @@ ${I}writer.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}writer.alignTo(8);
     </#if>
-${I}write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+${I}detail::write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>);
 </#macro>
@@ -402,7 +402,7 @@ ${I}reader.alignTo(static_cast<BitSize>(${field.alignmentValue}));
     <#if field.offset?? && !field.offset.containsIndex>
 ${I}reader.alignTo(8);
     </#if>
-${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#rt>
+${I}<#if field.compound??>(void)</#if>detail::read<@array_read_suffix field, packed/><#rt>
         <@array_read_template_args fullName, field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, <#if field.isExtended>*</#if><#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
@@ -427,7 +427,7 @@ ${I}}
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.optional??>
         <#if !field.optional.viewIndirectClause??>
-${I}endBitPosition += bitSizeOf(Bool());
+${I}endBitPosition += detail::bitSizeOf(Bool());
         </#if>
 ${I}if (<@field_view_local_name field/><#if field.isExtended>-><#else>.</#if>has_value())
 ${I}{
@@ -452,9 +452,9 @@ ${I}${field.offset.viewIndirectSetter} = static_cast<<#if field.offset.typeInfo.
     </#if>
 ${I}endBitPosition += <#rt>
         <#if field.compound?? || field.offset?? && field.offset.containsIndex>
-        initializeOffsets<#t>
+        detail::initializeOffsets<#t>
         <#else>
-        bitSizeOf<#t>
+        detail::bitSizeOf<#t>
         </#if>
         <@array_suffix field, packed/><@array_template_args field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>

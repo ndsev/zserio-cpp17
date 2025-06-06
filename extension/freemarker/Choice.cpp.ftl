@@ -285,7 +285,7 @@ ${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << sta
 ${I}            " != " << static_cast<size_t>(${fullName}::Tag::<@choice_tag_name member.field/>) << ")!";
 ${I}}
     <@field_check_constraint member.field, indent/>
-${I}validate<@array_template_args member.field/>(view.${member.field.getterName}(), "'${name}.${member.field.name}'"<#rt>
+${I}detail::validate<@array_template_args member.field/>(view.${member.field.getterName}(), "'${name}.${member.field.name}'"<#rt>
         <#if member.field.array?? && member.field.array.viewIndirectLength??>
         , static_cast<size_t>(${member.field.array.viewIndirectLength})<#t>
         </#if>
@@ -302,11 +302,10 @@ ${I}}
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}throw ChoiceCaseException("No match in choice ${fullName}!");
 </#macro>
-template <>
-void validate(const View<${fullName}>& view, ::std::string_view)
+void ObjectTraits<${fullName}>::validate(const View<${fullName}>& view, ::std::string_view)
 {
 <#list parameterList as parameter>
-    validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+    detail::validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#if fieldList?has_content>
     <@choice_expression_switch "choice_validate_member", "choice_validate_no_match",
@@ -320,12 +319,11 @@ ${I}break;
 </#macro>
 <#macro choice_bitsizeof_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+${I}endBitPosition += detail::bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
-template <>
-BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+BitSize ObjectTraits<${fullName}>::bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
 <#if fieldList?has_content>
@@ -340,12 +338,11 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 
 <#macro choice_write_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+${I}detail::write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, view.${field.getterName}());
 </#macro>
-template <>
-void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
+void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
@@ -357,7 +354,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if member.field??>
 ${I}data.emplace<${fullName}::Tag::<@choice_tag_name member.field/>>();
-${I}<#if member.field.compound??>(void)</#if>read<@array_read_suffix member.field, packed/><#rt>
+${I}<#if member.field.compound??>(void)</#if>detail::read<@array_read_suffix member.field, packed/><#rt>
         <@array_read_template_args fullName, member.field/>(<#t>
         <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
         reader, data.get<${fullName}::Tag::<@choice_tag_name member.field/>>()<#t>
@@ -367,8 +364,8 @@ ${I}<#if member.field.compound??>(void)</#if>read<@array_read_suffix member.fiel
 ${I}// empty
     </#if>
 </#macro>
-template <>
-View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
+        ${fullName}& data<#t>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -392,11 +389,11 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 <#macro choice_init_context field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field_needs_packing_context(field)>
-${I}initContext(<@packing_context field/>, view.${field.getterName}());
+${I}detail::initContext(<@packing_context field/>, view.${field.getterName}());
     </#if>
 </#macro>
-template <>
-void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::initContext(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         <#lt>const View<${fullName}>&<#if needs_packing_context(fieldList)> view</#if>)
 {
     <#if fieldList?has_content>
@@ -404,8 +401,8 @@ void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldLis
     </#if>
 }
 
-template <>
-BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+BitSize ObjectTraits<${fullName}>::bitSizeOf(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -419,8 +416,8 @@ BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldLi
     </#if>
 }
 
-template <>
-void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::write(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
@@ -429,8 +426,8 @@ void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pa
 </#if>
 }
 
-template <>
-void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::read(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
@@ -454,12 +451,12 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
 
 <#macro choice_initialize_offsets_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += <#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
+${I}endBitPosition += detail::<#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
         <@array_suffix field, packed/><@array_template_args field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
-BitSize OffsetsInitializer<${fullName}>::initialize(
+BitSize ObjectTraits<${fullName}>::initializeOffsets(
         const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
         <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -474,7 +471,7 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
 }
     <#if isPackable && usedInPackedArray>
 
-BitSize OffsetsInitializer<${fullName}>::initialize(
+BitSize ObjectTraits<${fullName}>::initializeOffsets(
         PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>,
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)

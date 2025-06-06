@@ -254,11 +254,11 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
-template <>
-void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
+void ObjectTraits<${fullName}>::validate(<#rt>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
 <#list parameterList as parameter>
-    validate<@array_template_args parameter/>(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+    detail::validate<@array_template_args parameter/>(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#assign numExtendedFields=0/>
 <#list fieldList as field>
@@ -269,8 +269,7 @@ void validate(const View<${fullName}>&<#if fieldList?has_content || parameterLis
 </#list>
 }
 
-template <>
-BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+BitSize ObjectTraits<${fullName}>::bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
 <#if fieldList?has_content>
@@ -287,8 +286,7 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 </#if>
 }
 
-template <>
-void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
+void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#list fieldList as field>
@@ -297,8 +295,8 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 </#list>
 }
 
-template <>
-View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
+        ${fullName}& data<#t>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -318,8 +316,8 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 }
 <#if isPackable && usedInPackedArray>
 
-template <>
-void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::initContext(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         <#lt>const View<${fullName}>&<#if needs_packing_context(fieldList)> view</#if>)
 {
     <#list fieldList as field>
@@ -337,8 +335,8 @@ void initContext(PackingContext<${fullName}>&<#if needs_packing_context(fieldLis
     </#list>
 }
 
-template <>
-BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+BitSize ObjectTraits<${fullName}>::bitSizeOf(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -356,8 +354,8 @@ BitSize bitSizeOf(PackingContext<${fullName}>&<#if needs_packing_context(fieldLi
     </#if>
 }
 
-template <>
-void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::write(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
@@ -367,8 +365,8 @@ void write(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pa
 </#list>
 }
 
-template <>
-void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::read(<#rt>
+        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
@@ -390,7 +388,7 @@ void read(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> pac
 </#if>
 <#if containsOffset>
 
-BitSize OffsetsInitializer<${fullName}>::initialize(
+BitSize ObjectTraits<${fullName}>::initializeOffsets(
         const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
         <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -409,7 +407,7 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
 }
     <#if isPackable && usedInPackedArray>
 
-BitSize OffsetsInitializer<${fullName}>::initialize(
+BitSize ObjectTraits<${fullName}>::initializeOffsets(
         PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>,
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)

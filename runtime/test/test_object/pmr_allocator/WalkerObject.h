@@ -111,16 +111,16 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::pmr_allocator::WalkerObject>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::pmr_allocator::WalkerObject>
+{
+    static void validate(const View<::test_object::pmr_allocator::WalkerObject>& view, ::std::string_view fieldName);
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::WalkerObject>& view, BitSize bitPosition);
+    static BitSize bitSizeOf(const View<::test_object::pmr_allocator::WalkerObject>& view, BitSize bitPosition);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::WalkerObject>& view);
+    static void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::WalkerObject>& view);
 
-template <>
-View<::test_object::pmr_allocator::WalkerObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::WalkerObject& data);
+    static View<::test_object::pmr_allocator::WalkerObject> read(BitStreamReader& reader, ::test_object::pmr_allocator::WalkerObject& data);
+};
 
 template <>
 struct TypeInfo<::test_object::pmr_allocator::WalkerObject, ::std::pmr::polymorphic_allocator<uint8_t>>

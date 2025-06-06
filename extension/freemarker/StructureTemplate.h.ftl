@@ -333,113 +333,100 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
+<@template_definition templateParameters/>
+struct ObjectTraits<${fullName}>
+{
 <#if parameterList?has_content>
-<@template_definition templateParameters/>
-struct ParameterTraits<${fullName}>
-{
-<@parameter_traits parameterList, 1/>
-};
-
+    <@parameter_traits parameterList, 1/>
 </#if>
-<@template_definition templateParameters/>
-void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, <#rt>
-        <#lt>::std::string_view fieldName)
-{
+
+    static void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, <#rt>
+            <#lt>::std::string_view fieldName)
+    {
 <#list parameterList as parameter>
-    validate<@array_template_args parameter/>(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+        detail::validate<@array_template_args parameter/>(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#assign numExtendedFields=0/>
 <#list fieldList as field>
     <#if field.isExtended>
         <#assign numExtendedFields++/>
     </#if>
-    <@structure_validate_field field, numExtendedFields, 1/>
+        <@structure_validate_field field, numExtendedFields, 2/>
 </#list>
-}
+    }
 
-<@template_definition templateParameters/>
-BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
-        <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
-{
+    static BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+            <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
+    {
 <#if fieldList?has_content>
-    BitSize endBitPosition = bitPosition;
+        BitSize endBitPosition = bitPosition;
 
     <#list fieldList as field>
-    auto <@field_view_local_name field/> = view.${field.getterName}();
-    <@structure_bitsizeof_field_extended field, 1/>
+        auto <@field_view_local_name field/> = view.${field.getterName}();
+        <@structure_bitsizeof_field_extended field, 2/>
     </#list>
 
-    return endBitPosition - bitPosition;
+        return endBitPosition - bitPosition;
 <#else>
-    return 0;
+        return 0;
 </#if>
-}
+    }
 
-<@template_definition templateParameters/>
-void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
-        <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
-{
+    static void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
+            <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
+    {
 <#list fieldList as field>
-    auto <@field_view_local_name field/> = view.${field.getterName}();
-    <@structure_write_field_extended field, 1/>
+        auto <@field_view_local_name field/> = view.${field.getterName}();
+        <@structure_write_field_extended field, 2/>
 </#list>
-}
+    }
 
-<@template_definition templateParameters/>
-View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
-<#list parameterList as parameter>
-        <#lt>,
-        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
-</#list>
-        <#lt>)
-{
-    View<${fullName}> view(data<#rt>
+    static View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
-            <#nt><@parameter_view_arg_name parameter/><#rt>
+            <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
-            <#lt>);
+            <#lt>)
+    {
+        View<${fullName}> view(data<#rt>
+<#list parameterList as parameter>
+                <#lt>,
+                <#nt><@parameter_view_arg_name parameter/><#rt>
+</#list>
+                <#lt>);
 <#list fieldList as field>
-    <@structure_read_field_extended fullName, field, 1/>
+        <@structure_read_field_extended fullName, field, 2/>
 </#list>
-    return view;
-}
+        return view;
+    }
 <#if isPackable && usedInPackedArray>
 
-<@template_definition templateParameters/>
-struct PackingContext<${fullName}>
-{
-<#list fieldList as field>
-    <#if field_needs_packing_context(field) && !(field.optional?? && field.optional.isRecursive)>
-    <@packing_context_type_name field/> <@packing_context_member_name field/>;
-    </#if>
-</#list>
-};
-
-<@template_definition templateParameters/>
-void initContext(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view);
-
-<@template_definition templateParameters/>
-BitSize bitSizeOf(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view,
-        BitSize bitPosition);
-
-<@template_definition templateParameters/>
-void write(PackingContext<${fullName}>& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
-
-<@template_definition templateParameters/>
-void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
-    <#list parameterList as parameter>
-        <#lt>,
-        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    struct PackingContext
+    {
+    <#list fieldList as field>
+        <#if field_needs_packing_context(field) && !(field.optional?? && field.optional.isRecursive)>
+        <@packing_context_type_name field/> <@packing_context_member_name field/>;
+        </#if>
     </#list>
-        <#lt>);
+    };
+
+    static void initContext(PackingContext& packingContext, const View<${fullName}>& view);
+
+    static BitSize bitSizeOf(PackingContext& packingContext, const View<${fullName}>& view,
+            BitSize bitPosition);
+
+    static void write(PackingContext& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
+
+    static void read(PackingContext& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
+    <#list parameterList as parameter>
+            <#lt>,
+            <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+            <#lt>);
 </#if>
 <#if containsOffset>
 
-<@template_definition templateParameters/>
-struct OffsetsInitializer<${fullName}>
-{
-    static BitSize initialize(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+    static BitSize initializeOffsets(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
             <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
     {
     <#if fieldList?has_content>
@@ -457,7 +444,7 @@ struct OffsetsInitializer<${fullName}>
     }
     <#if isPackable && usedInPackedArray>
     
-    static BitSize initialize(PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>,
+    static BitSize initializeOffsets(PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>,
             const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
             <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
     {
@@ -475,8 +462,8 @@ struct OffsetsInitializer<${fullName}>
         </#if>
     }
     </#if>
-};
 </#if>
+};
 <#if withTypeInfoCode>
 
 <@template_definition templateParameters/>

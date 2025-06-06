@@ -104,40 +104,40 @@ namespace detail
 {
 
 template <>
-void validate(const zserio::View<SimpleStructure>&, std::string_view)
-{}
-
-template <>
-void write(zserio::BitStreamWriter& writer, const zserio::View<SimpleStructure>& view)
+struct ObjectTraits<SimpleStructure>
 {
-    detail::write(writer, view.numberA());
-    detail::write(writer, view.numberB());
-    detail::write(writer, view.numberC());
-}
+    static void validate(const zserio::View<SimpleStructure>&, std::string_view)
+    {}
 
-template <>
-View<SimpleStructure> read(zserio::BitStreamReader& reader, SimpleStructure& data)
-{
-    View<SimpleStructure> view(data);
+    static void write(zserio::BitStreamWriter& writer, const zserio::View<SimpleStructure>& view)
+    {
+        detail::write(writer, view.numberA());
+        detail::write(writer, view.numberB());
+        detail::write(writer, view.numberC());
+    }
 
-    detail::read(reader, data.numberA);
-    detail::read(reader, data.numberB);
-    detail::read(reader, data.numberC);
+    static View<SimpleStructure> read(zserio::BitStreamReader& reader, SimpleStructure& data)
+    {
+        View<SimpleStructure> view(data);
 
-    return view;
-}
+        detail::read(reader, data.numberA);
+        detail::read(reader, data.numberB);
+        detail::read(reader, data.numberC);
 
-template <>
-BitSize bitSizeOf(const zserio::View<SimpleStructure>& view, BitSize bitPosition)
-{
-    BitSize endBitPosition = bitPosition;
+        return view;
+    }
 
-    endBitPosition += detail::bitSizeOf(view.numberA());
-    endBitPosition += detail::bitSizeOf(view.numberB());
-    endBitPosition += detail::bitSizeOf(view.numberC());
+    static BitSize bitSizeOf(const zserio::View<SimpleStructure>& view, BitSize bitPosition)
+    {
+        BitSize endBitPosition = bitPosition;
 
-    return endBitPosition - bitPosition;
-}
+        endBitPosition += detail::bitSizeOf(view.numberA());
+        endBitPosition += detail::bitSizeOf(view.numberB());
+        endBitPosition += detail::bitSizeOf(view.numberC());
+
+        return endBitPosition - bitPosition;
+    }
+};
 
 } // namespace detail
 
@@ -189,63 +189,60 @@ namespace detail
 {
 
 template <>
-void validate(const zserio::View<SimpleParameterizedStructure>& view, std::string_view fieldName)
+struct ObjectTraits<SimpleParameterizedStructure>
 {
-    (void)fieldName;
-
-    // check constraint
-    if (!(view.numberD() <= view.upperLimitD()))
+    static void validate(const zserio::View<SimpleParameterizedStructure>& view, std::string_view fieldName)
     {
-        throw zserio::ConstraintException("validate: Constraint violated!");
+        (void)fieldName;
+
+        // check constraint
+        if (!(view.numberD() <= view.upperLimitD()))
+        {
+            throw zserio::ConstraintException("validate: Constraint violated!");
+        }
     }
-}
 
-template <>
-void write(zserio::BitStreamWriter& writer, const zserio::View<SimpleParameterizedStructure>& view)
-{
-    detail::write(writer, view.numberA());
-    detail::write(writer, view.offsetB());
-    writer.alignTo(8);
-    detail::write(writer, view.numberB());
-    detail::write(writer, view.numberC());
-    detail::write(writer, view.numberD());
-}
+    static void write(zserio::BitStreamWriter& writer, const zserio::View<SimpleParameterizedStructure>& view)
+    {
+        detail::write(writer, view.numberA());
+        detail::write(writer, view.offsetB());
+        writer.alignTo(8);
+        detail::write(writer, view.numberB());
+        detail::write(writer, view.numberC());
+        detail::write(writer, view.numberD());
+    }
 
-template <>
-View<SimpleParameterizedStructure> read(
-        zserio::BitStreamReader& reader, SimpleParameterizedStructure& data, zserio::UInt6 upperLimitD)
-{
-    View<SimpleParameterizedStructure> view(data, upperLimitD);
+    static View<SimpleParameterizedStructure> read(
+            zserio::BitStreamReader& reader, SimpleParameterizedStructure& data, zserio::UInt6 upperLimitD)
+    {
+        View<SimpleParameterizedStructure> view(data, upperLimitD);
 
-    detail::read(reader, data.numberA);
-    detail::read(reader, data.offsetB);
-    reader.alignTo(8);
-    detail::read(reader, data.numberB);
-    detail::read(reader, data.numberC);
-    detail::read(reader, data.numberD);
+        detail::read(reader, data.numberA);
+        detail::read(reader, data.offsetB);
+        reader.alignTo(8);
+        detail::read(reader, data.numberB);
+        detail::read(reader, data.numberC);
+        detail::read(reader, data.numberD);
 
-    return view;
-}
+        return view;
+    }
 
-template <>
-BitSize bitSizeOf(const zserio::View<SimpleParameterizedStructure>& view, BitSize bitPosition)
-{
-    BitSize endBitPosition = bitPosition;
+    static BitSize bitSizeOf(const zserio::View<SimpleParameterizedStructure>& view, BitSize bitPosition)
+    {
+        BitSize endBitPosition = bitPosition;
 
-    endBitPosition += detail::bitSizeOf(view.numberA());
-    endBitPosition += detail::bitSizeOf(view.offsetB());
-    endBitPosition = alignTo(8, endBitPosition);
-    endBitPosition += detail::bitSizeOf(view.numberB());
-    endBitPosition += detail::bitSizeOf(view.numberC());
-    endBitPosition += detail::bitSizeOf(view.numberD());
+        endBitPosition += detail::bitSizeOf(view.numberA());
+        endBitPosition += detail::bitSizeOf(view.offsetB());
+        endBitPosition = alignTo(8, endBitPosition);
+        endBitPosition += detail::bitSizeOf(view.numberB());
+        endBitPosition += detail::bitSizeOf(view.numberC());
+        endBitPosition += detail::bitSizeOf(view.numberD());
 
-    return endBitPosition - bitPosition;
-}
+        return endBitPosition - bitPosition;
+    }
 
-template <>
-struct OffsetsInitializer<SimpleParameterizedStructure>
-{
-    static BitSize initialize(const zserio::View<SimpleParameterizedStructure>& view, BitSize bitPosition)
+    static BitSize initializeOffsets(
+            const zserio::View<SimpleParameterizedStructure>& view, BitSize bitPosition)
     {
         BitSize endBitPosition = bitPosition;
 

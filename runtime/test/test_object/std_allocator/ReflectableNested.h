@@ -95,18 +95,22 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::std_allocator::ReflectableNested>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::std_allocator::ReflectableNested>
+{
+    using Parameters = std::tuple<
+            ::zserio::Int31,
+            ::zserio::String>;
 
-template <>
-BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableNested>& view, BitSize bitPosition);
+    static void validate(const View<::test_object::std_allocator::ReflectableNested>& view, ::std::string_view fieldName);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableNested>& view);
+    static BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableNested>& view, BitSize bitPosition);
 
-template <>
-View<::test_object::std_allocator::ReflectableNested> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableNested& data,
-        ::zserio::Int31 dummyParam_,
-        ::std::string_view stringParam_);
+    static void write(BitStreamWriter& writer, const View<::test_object::std_allocator::ReflectableNested>& view);
+
+    static View<::test_object::std_allocator::ReflectableNested> read(BitStreamReader& reader, ::test_object::std_allocator::ReflectableNested& data,
+            ::zserio::Int31 dummyParam_,
+            ::std::string_view stringParam_);
+};
 
 template <>
 struct TypeInfo<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>

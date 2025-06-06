@@ -116,16 +116,17 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::ppmr_allocator::WalkerUnion>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::ppmr_allocator::WalkerUnion>
+{
 
-template <>
-BitSize bitSizeOf(const View<::test_object::ppmr_allocator::WalkerUnion>& view, BitSize bitPosition);
+    static void validate(const View<::test_object::ppmr_allocator::WalkerUnion>& view, ::std::string_view fieldName);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::WalkerUnion>& view);
+    static BitSize bitSizeOf(const View<::test_object::ppmr_allocator::WalkerUnion>& view, BitSize bitPosition);
 
-template <>
-View<::test_object::ppmr_allocator::WalkerUnion> read(BitStreamReader& reader, ::test_object::ppmr_allocator::WalkerUnion& data);
+    static void write(BitStreamWriter& writer, const View<::test_object::ppmr_allocator::WalkerUnion>& view);
+
+    static View<::test_object::ppmr_allocator::WalkerUnion> read(BitStreamReader& reader, ::test_object::ppmr_allocator::WalkerUnion& data);
+};
 
 template <>
 struct TypeInfo<::test_object::ppmr_allocator::WalkerUnion, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>

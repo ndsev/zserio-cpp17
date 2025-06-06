@@ -26,7 +26,7 @@
 
 <#macro parameter_traits parameters indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}using Params = std::tuple<
+${I}using Parameters = std::tuple<
     <#list parameters as parameter>
 ${I}        ${parameter.typeInfo.typeFullName}<#if parameter?has_next>,<#else>>;</#if>
     </#list>

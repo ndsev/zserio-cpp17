@@ -224,7 +224,7 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 <#macro union_validate_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <@field_check_constraint field, indent/>
-${I}validate<@array_template_args field/>(view.${field.getterName}(), "'${name}.${field.name}'"<#rt>
+${I}detail::validate<@array_template_args field/>(view.${field.getterName}(), "'${name}.${field.name}'"<#rt>
         <#if field.array?? && field.array.viewIndirectLength??>
         , static_cast<size_t>(${field.array.viewIndirectLength})<#t>
         </#if>
@@ -234,11 +234,11 @@ ${I}validate<@array_template_args field/>(view.${field.getterName}(), "'${name}.
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}throw UnionCaseException("No case set in union '${fullName}'!");
 </#macro>
-template <>
-void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
+void ObjectTraits<${fullName}>::validate(<#rt>
+        <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
 {
 <#list parameterList as parameter>
-    validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
+    detail::validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#if fieldList?has_content>
     <@union_switch "union_validate_field", "union_validate_no_match", "view.zserioChoiceTag()"/>
@@ -251,17 +251,17 @@ ${I}break;
 </#macro>
 <#macro union_bitsizeof_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+${I}endBitPosition += detail::bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
-template <>
-BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
+BitSize ObjectTraits<${fullName}>::bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
 <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    endBitPosition += detail::bitSizeOf(
+            fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_bitsizeof_field", "union_no_match", "view.zserioChoiceTag()"/>
 
     return endBitPosition - bitPosition;
@@ -272,16 +272,15 @@ BitSize bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>
 
 <#macro union_write_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
+${I}detail::write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>writer, view.${field.getterName}());
 </#macro>
-template <>
-void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
+void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    detail::write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_write_field", "union_no_match", "view.zserioChoiceTag()"/>
 </#if>
 }
@@ -289,7 +288,7 @@ void write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
 <#macro union_read_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}data.emplace<${fullName}::Tag::<@choice_tag_name field/>>();
-${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#rt>
+${I}<#if field.compound??>(void)</#if>detail::read<@array_read_suffix field, packed/><#rt>
         <@array_read_template_args fullName, field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, data.get<${fullName}::Tag::<@choice_tag_name field/>>()<#t>
@@ -300,8 +299,8 @@ ${I}<#if field.compound??>(void)</#if>read<@array_read_suffix field, packed/><#r
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}throw UnionCaseException("Unexpected choice tag during read of union '${fullName}'!");
 </#macro>
-template <>
-View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+View<${fullName}> ObjectTraits<${fullName}>::read(<#rt>
+        <#lt>BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -317,7 +316,7 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 <#if fieldList?has_content>
 
     VarSize choiceTag;
-    read(reader, choiceTag);
+    detail::read(reader, choiceTag);
     <@union_switch "union_read_field", "union_read_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)"/>
 </#if>
 
@@ -328,27 +327,25 @@ View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>,
 <#macro union_init_context field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field_needs_packing_context(field)>
-${I}initContext(<@packing_context field/>, view.${field.getterName}());
+${I}detail::initContext(<@packing_context field/>, view.${field.getterName}());
     </#if>
 </#macro>
-template <>
-void initContext(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::initContext(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
     <#if fieldList?has_content>
-    initContext(packingContext.zserioChoiceTag, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    detail::initContext(packingContext.zserioChoiceTag, fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_init_context", "union_no_match", "view.zserioChoiceTag()", 1, true/>
     </#if>
 }
 
-template <>
-BitSize bitSizeOf(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
+BitSize ObjectTraits<${fullName}>::bitSizeOf(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
     <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(packingContext.zserioChoiceTag,
+    endBitPosition += detail::bitSizeOf(packingContext.zserioChoiceTag,
             fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_bitsizeof_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
 
@@ -358,20 +355,18 @@ BitSize bitSizeOf(PackingContext<${fullName}>&<#if fieldList?has_content> packin
     </#if>
 }
 
-template <>
-void write(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::write(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
         BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
 <#if fieldList?has_content>
-    write(packingContext.zserioChoiceTag, writer,
+    detail::write(packingContext.zserioChoiceTag, writer,
             fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_write_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
 </#if>
 }
 
-template <>
-void read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>, <#rt>
         BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
@@ -388,7 +383,7 @@ void read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext
 <#if fieldList?has_content>
 
     VarSize choiceTag;
-    read(packingContext.zserioChoiceTag, reader, choiceTag);
+    detail::read(packingContext.zserioChoiceTag, reader, choiceTag);
     <@union_switch "union_read_field", "union_read_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)", 1, true/>
 </#if>
     (void)view;
@@ -398,18 +393,19 @@ void read(PackingContext<${fullName}>&<#if fieldList?has_content> packingContext
 
 <#macro union_initialize_offsets_field field indent packed>
     <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += <#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
+    <#-- TODO[TEMPLATES]: Do we need to call initializeOffsets for template parameter types? -->
+${I}endBitPosition += detail::<#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
         <@array_suffix field, packed/><@array_template_args field/>(<#t>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#lt>view.${field.getterName}(), endBitPosition);
 </#macro>
-BitSize OffsetsInitializer<${fullName}>::initialize(
+BitSize ObjectTraits<${fullName}>::initializeOffsets(
         const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
         <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
     <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
+    endBitPosition += detail::bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_initialize_offsets_field", "union_no_match", "view.zserioChoiceTag()"/>
 
     return endBitPosition - bitPosition;
@@ -419,14 +415,14 @@ BitSize OffsetsInitializer<${fullName}>::initialize(
 }
     <#if isPackable && usedInPackedArray>
 
-BitSize OffsetsInitializer<${fullName}>::initialize(
+BitSize ObjectTraits<${fullName}>::initializeOffsets(
         PackingContext<${fullName}>&<#if fieldList?has_content> packingContext</#if>,
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
         <#if fieldList?has_content>
     BitSize endBitPosition = bitPosition;
-    endBitPosition += bitSizeOf(packingContext.zserioChoiceTag,
+    endBitPosition += detail::bitSizeOf(packingContext.zserioChoiceTag,
             fromCheckedValue<VarSize>(convertSizeToUInt32(view.zserioChoiceTag()) - 1));
     <@union_switch "union_initialize_offsets_field", "union_no_match", "view.zserioChoiceTag()", 1, true/>
 

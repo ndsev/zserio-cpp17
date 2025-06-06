@@ -119,17 +119,21 @@ namespace detail
 {
 
 template <>
-void validate(const View<::test_object::pmr_allocator::WalkerChoice>& view, ::std::string_view fieldName);
+struct ObjectTraits<::test_object::pmr_allocator::WalkerChoice>
+{
+    using Parameters = std::tuple<
+            ::zserio::UInt8>;
 
-template <>
-BitSize bitSizeOf(const View<::test_object::pmr_allocator::WalkerChoice>& view, BitSize bitPosition);
 
-template <>
-void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::WalkerChoice>& view);
+    static void validate(const View<::test_object::pmr_allocator::WalkerChoice>& view, ::std::string_view fieldName);
 
-template <>
-View<::test_object::pmr_allocator::WalkerChoice> read(BitStreamReader& reader, ::test_object::pmr_allocator::WalkerChoice& data,
-        ::zserio::UInt8 selector_);
+    static BitSize bitSizeOf(const View<::test_object::pmr_allocator::WalkerChoice>& view, BitSize bitPosition);
+
+    static void write(BitStreamWriter& writer, const View<::test_object::pmr_allocator::WalkerChoice>& view);
+
+    static View<::test_object::pmr_allocator::WalkerChoice> read(BitStreamReader& reader, ::test_object::pmr_allocator::WalkerChoice& data,
+            ::zserio::UInt8 selector_);
+};
 
 template <>
 struct TypeInfo<::test_object::pmr_allocator::WalkerChoice, ::std::pmr::polymorphic_allocator<uint8_t>>
