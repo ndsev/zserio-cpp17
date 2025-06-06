@@ -81,6 +81,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/FileUtil.h
     zserio/FloatUtil.cpp
     zserio/FloatUtil.h
+    zserio/GenericAccessor.h
     zserio/HashCodeUtil.h
     zserio/IIntrospectableData.h
     zserio/IIntrospectableView.h

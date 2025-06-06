@@ -1,0 +1,54 @@
+#ifndef ZSERIO_GENERIC_ACCESSOR_INC_H
+#define ZSERIO_GENERIC_ACCESSOR_INC_H
+
+#include "zserio/Extended.h"
+#include "zserio/Optional.h"
+#include "zserio/Traits.h"
+
+namespace zserio
+{
+
+namespace detail
+{
+
+template <typename T, typename = void>
+struct generic_accessor;
+
+template <typename T>
+struct generic_accessor<T, std::enable_if_t<std::is_enum_v<T>>>
+{
+    using type = T;
+};
+
+template <typename T>
+struct generic_accessor<T, std::enable_if_t<is_bitmask_v<T>>>
+{
+    using type = typename T::Values;
+};
+
+} // namespace detail
+
+template <typename T>
+using generic_accessor_t = typename detail::generic_accessor<T>::type;
+
+template <typename T>
+const T& genericAccessor(const T& value)
+{
+    return value;
+}
+
+template <typename T>
+const auto& genericAccessor(const Optional<T>& optionalValue)
+{
+    return optionalValue.value();
+}
+
+template <typename T>
+const auto& genericAccessor(const Extended<T>& extendedValue)
+{
+    return genericAccessor(extendedValue.value());
+}
+
+} // namespace zserio
+
+#endif // ZSERIO_GENERIC_ACCESSOR_INC_H
