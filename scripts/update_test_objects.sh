@@ -88,7 +88,7 @@ update_cpp_test_objects()
         rm -rf "${CPP17_RUNTIME_TEST_OBJECT_DIR}/std_allocator"
     fi
     local ZSERIO_ARGS_BASE=("-cpp17" "${CPP17_RUNTIME_TEST_DIR}"
-            "-withTypeInfoCode" "-withReflectionCode" "-withoutSourcesAmalgamation" "-withParsingInfoCode")
+            "-withTypeInfoCode")
     local SWITCH_WERROR=1
 
     local ZSERIO_ARGS_STD=(${ZSERIO_ARGS_BASE[@]} "-setCppAllocator" "std"
@@ -278,12 +278,12 @@ main()
     if [ $? -ne 0 ] ; then
         return 1
     fi
-    
+
     set_global_java_variables
     if [ $? -ne 0 ] ; then
         return 1
     fi
-    
+
     set_test_objects_global_variables
     if [ $? -ne 0 ] ; then
         return 1
@@ -320,7 +320,7 @@ main()
     echo "FINISHED - ${MESSAGE}"
     echo
 
-    # commit all updated files 
+    # commit all updated files
     if [[ ${SWITCH_COMMIT} != 0 ]] ; then
         commit_updated_files "${ZSERIO_CPP17_PROJECT_ROOT}"
         if [ $? -ne 0 ] ; then
