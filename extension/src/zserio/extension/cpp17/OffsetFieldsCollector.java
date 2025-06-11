@@ -70,14 +70,6 @@ public class OffsetFieldsCollector extends ZserioAstWalker
     {
         compoundTypeStack.add(compoundType);
 
-        if (!compoundType.getTemplateParameters().isEmpty())
-        {
-            // visit instantiations
-            for (ZserioTemplatableType instantiation : compoundType.getInstantiations())
-                instantiation.accept(this);
-            return;
-        }
-
         for (Field field : compoundType.getFields()) // it's enough to traverse fields
         {
             if (field.getOffsetExpr() != null)
@@ -107,6 +99,13 @@ public class OffsetFieldsCollector extends ZserioAstWalker
         }
 
         compoundTypeStack.remove(compoundTypeStack.size() - 1);
+
+        if (!compoundType.getTemplateParameters().isEmpty())
+        {
+            // visit instantiations
+            for (ZserioTemplatableType instantiation : compoundType.getInstantiations())
+                instantiation.accept(this);
+        }
     }
 
     private final List<CompoundType> compoundTypeStack = new ArrayList<CompoundType>();

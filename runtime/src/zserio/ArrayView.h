@@ -657,121 +657,142 @@ void write(BitStreamWriter& writer, const ArrayView<T, ARRAY_TRAITS>& array)
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
 BitSize bitSizeOfPacked(const ArrayView<T, ARRAY_TRAITS>& array, BitSize bitPosition = 0)
 {
-    using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
-
-    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
-
-    BitSize endBitPosition = bitPosition;
-
-    const size_t arrayLength = array.size();
-    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    if constexpr (is_packable_v<T>)
     {
-        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(arrayLength)));
-    }
+        using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
 
-    if (arrayLength > 0)
-    {
-        detail::packing_context_type_t<ValueType> context;
+        static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
-        for (size_t i = 0; i < arrayLength; ++i)
+        BitSize endBitPosition = bitPosition;
+
+        const size_t arrayLength = array.size();
+        if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
         {
-            initContext(context, array[i]);
+            endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(arrayLength)));
         }
 
-        for (size_t i = 0; i < arrayLength; ++i)
+        if (arrayLength > 0)
         {
-            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+            detail::packing_context_type_t<ValueType> context;
+
+            for (size_t i = 0; i < arrayLength; ++i)
             {
-                endBitPosition = alignTo(8, endBitPosition);
+                initContext(context, array[i]);
             }
 
-            endBitPosition += bitSizeOf(context, array[i], endBitPosition);
-        }
-    }
+            for (size_t i = 0; i < arrayLength; ++i)
+            {
+                if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+                {
+                    endBitPosition = alignTo(8, endBitPosition);
+                }
 
-    return endBitPosition - bitPosition;
+                endBitPosition += bitSizeOf(context, array[i], endBitPosition);
+            }
+        }
+
+        return endBitPosition - bitPosition;
+    }
+    else
+    {
+        return bitSizeOf<ARRAY_TYPE>(array, bitPosition);
+    }
 }
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS, typename OFFSET_SETTER = DummyOffsetSetter>
 BitSize initializeOffsetsPacked(const ArrayView<T, ARRAY_TRAITS>& array, BitSize bitPosition,
-        const OFFSET_SETTER& offsetInitializer = OFFSET_SETTER())
+        const OFFSET_SETTER& offsetSetter = OFFSET_SETTER())
 {
-    using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
-
-    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
-
-    BitSize endBitPosition = bitPosition;
-
-    const size_t arrayLength = array.size();
-    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    if constexpr (is_packable_v<T>)
     {
-        endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(arrayLength)));
-    }
+        using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
 
-    if (arrayLength > 0)
-    {
-        detail::packing_context_type_t<ValueType> context;
+        static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
-        for (size_t i = 0; i < arrayLength; ++i)
+        BitSize endBitPosition = bitPosition;
+
+        const size_t arrayLength = array.size();
+        if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
         {
-            initContext(context, array[i]);
+            endBitPosition += bitSizeOf(fromCheckedValue<VarSize>(convertSizeToUInt32(arrayLength)));
         }
 
-        for (size_t i = 0; i < arrayLength; ++i)
+        if (arrayLength > 0)
         {
-            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+            detail::packing_context_type_t<ValueType> context;
+
+            for (size_t i = 0; i < arrayLength; ++i)
             {
-                endBitPosition = alignTo(8, endBitPosition);
-                offsetInitializer.setOffset(i, endBitPosition / 8);
+                initContext(context, array[i]);
             }
 
-            using AtResult =
-                    decltype(std::declval<const ArrayView<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
-            if constexpr (std::is_same_v<View<ValueType>, AtResult>)
+            for (size_t i = 0; i < arrayLength; ++i)
             {
-                endBitPosition += initializeOffsets(context, array[i], endBitPosition);
-            }
-            else
-            {
-                endBitPosition += bitSizeOf(context, array[i], endBitPosition);
+                if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+                {
+                    endBitPosition = alignTo(8, endBitPosition);
+                    offsetSetter.setOffset(i, endBitPosition / 8);
+                }
+
+                using AtResult =
+                        decltype(std::declval<const ArrayView<T, ARRAY_TRAITS>&>().at(std::declval<size_t>()));
+                if constexpr (std::is_same_v<View<ValueType>, AtResult>)
+                {
+                    endBitPosition += initializeOffsets(context, array[i], endBitPosition);
+                }
+                else
+                {
+                    endBitPosition += bitSizeOf(context, array[i], endBitPosition);
+                }
             }
         }
-    }
 
-    return endBitPosition - bitPosition;
+        return endBitPosition - bitPosition;
+    }
+    else
+    {
+        return initializeOffsets<ARRAY_TYPE>(array, bitPosition, offsetSetter);
+    }
 }
 
 template <ArrayType ARRAY_TYPE, typename T, typename ARRAY_TRAITS>
 void writePacked(BitStreamWriter& writer, const ArrayView<T, ARRAY_TRAITS>& array)
 {
-    using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
-
-    static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
-
-    const size_t arrayLength = array.size();
-    if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+    if constexpr (is_packable_v<T>)
     {
-        write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
-    }
+        using ValueType = typename ArrayView<T, ARRAY_TRAITS>::ValueType;
 
-    if (arrayLength > 0)
-    {
-        detail::packing_context_type_t<ValueType> context;
+        static_assert(ARRAY_TYPE != ArrayType::IMPLICIT, "Implicit array cannot be packed!");
 
-        for (size_t i = 0; i < arrayLength; ++i)
+        const size_t arrayLength = array.size();
+        if constexpr (ARRAY_TYPE == ArrayType::AUTO || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
         {
-            initContext(context, array[i]);
+            write(writer, fromCheckedValue<VarSize>(convertSizeToUInt32(array.size())));
         }
 
-        for (size_t i = 0; i < arrayLength; ++i)
+        if (arrayLength > 0)
         {
-            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+            detail::packing_context_type_t<ValueType> context;
+
+            for (size_t i = 0; i < arrayLength; ++i)
             {
-                writer.alignTo(8);
+                initContext(context, array[i]);
             }
 
-            write(context, writer, array[i]);
+            for (size_t i = 0; i < arrayLength; ++i)
+            {
+                if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+                {
+                    writer.alignTo(8);
+                }
+
+                write(context, writer, array[i]);
+            }
         }
+    }
+    else
+    {
+        write<ARRAY_TYPE>(writer, array);
     }
 }
 
@@ -779,26 +800,33 @@ template <ArrayType ARRAY_TYPE, typename T, typename ALLOC, typename ARRAY_TRAIT
 void readPacked(BitStreamReader& reader, Vector<T, ALLOC>& rawArray,
         detail::array_owner_type_t<ARRAY_TRAITS>& owner, size_t arrayLength = 0)
 {
-    using ValueType = T;
-
-    const size_t readLength = readArrayLength<ARRAY_TYPE, ARRAY_TRAITS>(reader, arrayLength);
-    rawArray.clear();
-
-    if (readLength > 0)
+    if constexpr (is_packable_v<T>)
     {
-        rawArray.reserve(readLength);
+        using ValueType = T;
 
-        detail::packing_context_type_t<ValueType> context;
+        const size_t readLength = readArrayLength<ARRAY_TYPE, ARRAY_TRAITS>(reader, arrayLength);
+        rawArray.clear();
 
-        for (size_t i = 0; i < readLength; ++i)
+        if (readLength > 0)
         {
-            if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+            rawArray.reserve(readLength);
+
+            detail::packing_context_type_t<ValueType> context;
+
+            for (size_t i = 0; i < readLength; ++i)
             {
-                reader.alignTo(8);
+                if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
+                {
+                    reader.alignTo(8);
+                }
+                rawArray.emplace_back();
+                ARRAY_TRAITS::read(context, reader, owner, rawArray.back(), i);
             }
-            rawArray.emplace_back();
-            ARRAY_TRAITS::read(context, reader, owner, rawArray.back(), i);
         }
+    }
+    else
+    {
+        read<ARRAY_TYPE, T, ALLOC, ARRAY_TRAITS>(reader, rawArray, owner, arrayLength);
     }
 }
 

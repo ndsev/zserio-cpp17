@@ -10,6 +10,7 @@
 #include "zserio/Bitmasks.h"
 #include "zserio/DeltaContext.h"
 #include "zserio/Enums.h"
+#include "zserio/Traits.h"
 #include "zserio/Types.h"
 #include "zserio/View.h"
 
@@ -60,13 +61,31 @@ struct packing_context_type
 };
 
 template <typename T>
-struct packing_context_type<T, std::enable_if_t<is_complete_v<typename ObjectTraits<T>::PackingContext>>>
+struct packing_context_type<T,
+        std::enable_if_t<is_complete_v<typename ObjectTraits<std::decay_t<T>>::PackingContext>>>
 {
     using type = typename ObjectTraits<T>::PackingContext;
 };
 
 template <typename T, typename V = void>
 using packing_context_type_t = typename packing_context_type<T, V>::type;
+
+template <typename T, typename = void>
+struct is_packable : std::false_type
+{};
+
+template <typename T>
+struct is_packable<T, std::enable_if_t<is_numeric_wrapper_v<T> || is_bitmask_v<T> || std::is_enum_v<T>>>
+        : std::true_type
+{};
+
+template <typename T>
+struct is_packable<T, std::enable_if_t<is_complete_v<typename ObjectTraits<std::decay_t<T>>::PackingContext>>>
+        : std::true_type
+{};
+
+template <typename T, typename V = void>
+inline constexpr bool is_packable_v = is_packable<T, V>::value;
 
 template <typename T>
 struct is_delta_context : std::is_same<DeltaContext, T>

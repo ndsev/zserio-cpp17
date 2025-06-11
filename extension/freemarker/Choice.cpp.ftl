@@ -1,10 +1,11 @@
 <#include "FileHeader.inc.ftl">
+<#include "Choice.inc.ftl">
 <#include "CompoundField.inc.ftl">
 <#include "CompoundFunction.inc.ftl">
 <#include "CompoundParameter.inc.ftl">
-<#include "TypeInfo.inc.ftl">
-<#include "Reflectable.inc.ftl">
 <#include "Introspectable.inc.ftl">
+<#include "Reflectable.inc.ftl">
+<#include "TypeInfo.inc.ftl">
 <@file_header generatorDescription/>
 
 #include <zserio/ChoiceCaseException.h>
@@ -123,85 +124,6 @@ const ${fullName}& View<${fullName}>::zserioData() const
     return *m_data;
 }
 
-<#macro choice_expression_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if canUseNativeSwitch>
-${I}switch (${switchExpression})
-${I}{
-        <#list caseMemberList as caseMember>
-            <#list caseMember.expressionList as expression>
-${I}case ${expression}:
-            </#list>
-            <#assign caseCode><@.vars[memberActionMacroName] caseMember, indent+1, packed/></#assign>
-        ${caseCode}<#t>
-            <#if !caseCode?contains("return ")>
-${I}    break;
-            </#if>
-        </#list>
-        <#if !isDefaultUnreachable>
-${I}default:
-            <#if defaultMember??>
-                <#assign defaultCode><@.vars[memberActionMacroName] defaultMember, indent+1, packed/></#assign>
-        ${defaultCode}<#t>
-                <#if !defaultCode?contains("return ")>
-${I}    break;
-                </#if>
-            <#else>
-        <@.vars[noMatchMacroName] name, indent+1/>
-            </#if>
-        </#if>
-${I}}
-    <#else>
-        <#list caseMemberList as caseMember>
-            <#if caseMember?has_next || !isDefaultUnreachable>
-${I}<#if caseMember?index != 0>else </#if>if (<#rt>
-                <#list caseMember.expressionList as expression>
-                    <#lt>(${switchExpression}) == (${expression})<#sep> ||</#sep><#rt>
-                </#list>
-                <#lt>)
-            <#else>
-${I}else
-            </#if>
-${I}{
-        <@.vars[memberActionMacroName] caseMember, indent+1, packed/>
-${I}}
-        </#list>
-        <#if !isDefaultUnreachable>
-${I}else
-${I}{
-            <#if defaultMember??>
-        <@.vars[memberActionMacroName] defaultMember, indent+1, packed/>
-            <#else>
-        <@.vars[noMatchMacroName] fullName, indent+1/>
-            </#if>
-${I}}
-        </#if>
-    </#if>
-</#macro>
-<#macro choice_switch memberActionMacroName noMatchMacroName switchExpression indent=1 packed=false>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}switch (${switchExpression})
-${I}{
-    <#list fieldList as field>
-${I}case ${fullName}::Tag::<@choice_tag_name field/>:
-        <#assign caseCode><@.vars[memberActionMacroName] field, indent+1, packed/></#assign>
-        ${caseCode}<#t>
-        <#if !caseCode?contains("return ")>
-${I}    break;
-        </#if>
-    </#list>
-${I}default:
-        <@.vars[noMatchMacroName] fullName, indent+1/>
-${I}}
-</#macro>
-<#macro choice_compare_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}return (lhs.${field.getterName}() == rhs.${field.getterName}());
-</#macro>
-<#macro choice_compare_no_match fullName indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}return true;
-</#macro>
 bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
@@ -224,14 +146,6 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 </#if>
 }
 
-<#macro choice_less_than_no_match fullName indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}return false;
-</#macro>
-<#macro choice_less_than_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}return (lhs.${field.getterName}() < rhs.${field.getterName}());
-</#macro>
 bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
@@ -275,54 +189,17 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 }
 <@namespace_begin ["detail"]/>
 
-<#macro choice_validate_member member indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}// check choice case
-${I}if (view.zserioChoiceTag() != ${fullName}::Tag::<@choice_tag_name member.field/>)
-${I}{
-${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (") << static_cast<size_t>(view.zserioChoiceTag()) <<
-${I}            " != " << static_cast<size_t>(${fullName}::Tag::<@choice_tag_name member.field/>) << ")!";
-${I}}
-    <@field_check_constraint member.field, indent/>
-${I}detail::validate<@array_template_args member.field/>(view.${member.field.getterName}(), "'${name}.${member.field.name}'"<#rt>
-        <#if member.field.array?? && member.field.array.viewIndirectLength??>
-        , static_cast<size_t>(${member.field.array.viewIndirectLength})<#t>
-        </#if>
-        <#lt>);
-    <#else>
-${I}// empty
-${I}if (view.zserioChoiceTag() != ${fullName}::Tag::ZSERIO_UNDEFINED)
-${I}{
-${I}    throw ChoiceCaseException("Wrong case set in choice '${name}' (should be empty)!");
-${I}}
-    </#if>
-</#macro>
-<#macro choice_validate_no_match fullName indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}throw ChoiceCaseException("No match in choice ${fullName}!");
-</#macro>
 void ObjectTraits<${fullName}>::validate(const View<${fullName}>& view, ::std::string_view)
 {
 <#list parameterList as parameter>
     detail::validate(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
 </#list>
 <#if fieldList?has_content>
-    <@choice_expression_switch "choice_validate_member", "choice_validate_no_match",
+    <@choice_expression_switch "choice_validate_member", "choice_no_match_exception",
             viewIndirectSelectorExpression/>
 </#if>
 }
 
-<#macro choice_no_match fullName indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}break;
-</#macro>
-<#macro choice_bitsizeof_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += detail::bitSizeOf<@array_suffix field, packed/><@array_template_args field/>(<#rt>
-        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#lt>view.${field.getterName}(), endBitPosition);
-</#macro>
 BitSize ObjectTraits<${fullName}>::bitSizeOf(const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -336,12 +213,6 @@ BitSize ObjectTraits<${fullName}>::bitSizeOf(const View<${fullName}>&<#if fieldL
 </#if>
 }
 
-<#macro choice_write_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}detail::write<@array_suffix field, packed/><@array_template_args field/>(<#rt>
-        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#lt>writer, view.${field.getterName}());
-</#macro>
 void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
@@ -350,20 +221,6 @@ void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content
 </#if>
 }
 
-<#macro choice_read_member member indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if member.field??>
-${I}data.emplace<${fullName}::Tag::<@choice_tag_name member.field/>>();
-${I}<#if member.field.compound??>(void)</#if>detail::read<@array_read_suffix member.field, packed/><#rt>
-        <@array_read_template_args fullName, member.field/>(<#t>
-        <#if packed && field_needs_packing_context(member.field)><@packing_context member.field/>, </#if><#t>
-        reader, data.get<${fullName}::Tag::<@choice_tag_name member.field/>>()<#t>
-        <#lt><@field_view_view_indirect_parameters member.field/>);
-    <@field_check_constraint member.field, indent/>
-    <#else>
-${I}// empty
-    </#if>
-</#macro>
 View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
         ${fullName}& data<#t>
 <#list parameterList as parameter>
@@ -379,21 +236,15 @@ View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList
 </#list>
             <#lt>);
 <#if fieldList?has_content>
-    <@choice_expression_switch "choice_read_member", "choice_validate_no_match", viewIndirectSelectorExpression/>
+    <@choice_expression_switch "choice_read_member", "choice_no_match_exception", viewIndirectSelectorExpression/>
 </#if>
 
     return view;
 }
 <#if isPackable && usedInPackedArray>
 
-<#macro choice_init_context field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-    <#if field_needs_packing_context(field)>
-${I}detail::initContext(<@packing_context field/>, view.${field.getterName}());
-    </#if>
-</#macro>
 void ObjectTraits<${fullName}>::initContext(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         <#lt>const View<${fullName}>&<#if needs_packing_context(fieldList)> view</#if>)
 {
     <#if fieldList?has_content>
@@ -402,7 +253,7 @@ void ObjectTraits<${fullName}>::initContext(<#rt>
 }
 
 BitSize ObjectTraits<${fullName}>::bitSizeOf(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -417,17 +268,17 @@ BitSize ObjectTraits<${fullName}>::bitSizeOf(<#rt>
 }
 
 void ObjectTraits<${fullName}>::write(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
-<#if fieldList?has_content>
+    <#if fieldList?has_content>
     <@choice_switch "choice_write_field", "choice_no_match", "view.zserioChoiceTag()", 1, true/>
-</#if>
+    </#if>
 }
 
 void ObjectTraits<${fullName}>::read(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
@@ -436,26 +287,19 @@ void ObjectTraits<${fullName}>::read(<#rt>
         <#lt>)
 {
     View<${fullName}> view(data<#rt>
-<#list parameterList as parameter>
+    <#list parameterList as parameter>
             <#lt>,
             <#nt><@parameter_view_arg_name parameter/><#rt>
-</#list>
+    </#list>
             <#lt>);
-<#if fieldList?has_content>
-    <@choice_expression_switch "choice_read_member", "choice_validate_no_match", viewIndirectSelectorExpression, 1, true/>
-</#if>
+    <#if fieldList?has_content>
+    <@choice_expression_switch "choice_read_member", "choice_no_match_exception", viewIndirectSelectorExpression, 1, true/>
+    </#if>
     (void)view;
 }
 </#if>
 <#if containsOffset>
 
-<#macro choice_initialize_offsets_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}endBitPosition += detail::<#if field.compound??>initializeOffsets<#else>bitSizeOf</#if><#rt>
-        <@array_suffix field, packed/><@array_template_args field/>(<#t>
-        <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
-        <#lt>view.${field.getterName}(), endBitPosition);
-</#macro>
 BitSize ObjectTraits<${fullName}>::initializeOffsets(
         const View<${fullName}>&<#if fieldList?has_content> view</#if><#rt>
         <#lt>, BitSize<#if fieldList?has_content> bitPosition</#if>)
@@ -472,7 +316,7 @@ BitSize ObjectTraits<${fullName}>::initializeOffsets(
     <#if isPackable && usedInPackedArray>
 
 BitSize ObjectTraits<${fullName}>::initializeOffsets(
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>,
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>,
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -641,10 +485,6 @@ size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_conten
     return static_cast<size_t>(result);
 }
 
-<#macro choice_hash_field field indent packed>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}result = ::zserio::calcHashCode(result, view.${field.getterName}());
-</#macro>
 size_t hash<::zserio::View<${fullName}>>::operator()(<#rt>
         <#lt>const ::zserio::View<${fullName}>&<#if parameterList?has_content || fieldList?has_content> view</#if>) const
 {

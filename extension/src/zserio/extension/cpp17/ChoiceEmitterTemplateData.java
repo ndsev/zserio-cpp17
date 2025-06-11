@@ -22,29 +22,34 @@ public final class ChoiceEmitterTemplateData extends CompoundTypeTemplateData
     {
         super(context, choiceType);
 
+        final IncludeCollector includeCollector =
+                choiceType.getTemplateParameters().isEmpty() ? this : new HeaderIncludeCollectorAdapter(this);
+
         final Expression expression = choiceType.getSelectorExpression();
-        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(this);
+        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
         selectorExpression = cppExpressionFormatter.formatGetter(expression);
         final ExpressionFormatter cppLhsIndirectExpressionFormatter =
-                context.getIndirectExpressionFormatter(this, "lhs");
+                context.getIndirectExpressionFormatter(includeCollector, "lhs");
         lhsIndirectSelectorExpression = cppLhsIndirectExpressionFormatter.formatGetter(expression);
         final ExpressionFormatter cppViewIndirectExpressionFormatter =
-                context.getIndirectExpressionFormatter(this, "view");
+                context.getIndirectExpressionFormatter(includeCollector, "view");
         viewIndirectSelectorExpression = cppViewIndirectExpressionFormatter.formatGetter(expression);
+        // note that TEMPLATE_PARAMETER_VALUE works since it's always a C++ enum item
         canUseNativeSwitch = expression.getExprType() != Expression.ExpressionType.BOOLEAN &&
-                expression.getExprType() != Expression.ExpressionType.BITMASK;
+                expression.getExprType() != Expression.ExpressionType.BITMASK &&
+                expression.getExprType() != Expression.ExpressionType.TEMPLATE_PARAMETER_TYPE;
 
         caseMemberList = new ArrayList<CaseMember>();
         final Iterable<ChoiceCase> choiceCaseTypes = choiceType.getChoiceCases();
         for (ChoiceCase choiceCaseType : choiceCaseTypes)
         {
-            caseMemberList.add(new CaseMember(context, choiceType, choiceCaseType, this));
+            caseMemberList.add(new CaseMember(context, choiceType, choiceCaseType, includeCollector));
         }
 
         final ChoiceDefault choiceDefaultType = choiceType.getChoiceDefault();
         if (choiceDefaultType != null)
         {
-            defaultMember = new DefaultMember(context, choiceType, choiceDefaultType, this);
+            defaultMember = new DefaultMember(context, choiceType, choiceDefaultType, includeCollector);
         }
         else
         {

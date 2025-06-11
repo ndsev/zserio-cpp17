@@ -186,11 +186,35 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
 <#macro structure_offset_setters_definition compoundFullName fieldList>
     <#list fieldList as field>
         <#if field.offset?? && field.offset.containsIndex>
+
 void View<${compoundFullName}>::<@structure_offset_setter_name field/>::setOffset(<#rt>
         <#lt>size_t index, BitSize byteOffset) const
 {
     ${field.offset.ownerIndirectSetter} = static_cast<${field.offset.typeInfo.typeFullName}::ValueType>(byteOffset);
 }
+        </#if>
+    </#list>
+</#macro>
+
+<#macro structure_offset_setters_template compoundFullName fieldList>
+    <#list fieldList as field>
+        <#if field.offset?? && field.offset.containsIndex>
+    class <@structure_offset_setter_name field/>
+    {
+    public:
+        explicit <@structure_offset_setter_name field/>(const View<${compoundFullName}>& owner) :
+                m_owner(owner)
+        {}
+
+        void setOffset(size_t index, BitSize byteOffset) const
+        {
+            ${field.offset.ownerIndirectSetter} =
+                    static_cast<typename ${field.offset.typeInfo.typeFullName}::ValueType>(byteOffset);
+        }
+
+    private:
+        const View<${compoundFullName}>& m_owner;
+    };
 
         </#if>
     </#list>
@@ -407,7 +431,7 @@ ${I}<#if field.compound??>(void)</#if>detail::read<@array_read_suffix field, pac
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         reader, <#if field.isExtended>*</#if><#if field.optional??>*</#if>data.<@field_data_member_name field/><#t>
         <#lt><@field_view_view_indirect_parameters field/>);
-    <@field_check_constraint field, 1/>
+    <@field_check_constraint field, indent/>
 </#macro>
 
 <#macro structure_initialize_offsets_field_extended field indent>

@@ -169,7 +169,7 @@ struct view_type
 };
 
 template <typename T>
-struct view_type<T, std::enable_if_t<zserio::is_complete_v<View<T>>>>
+struct view_type<T, std::enable_if_t<is_complete_v<View<T>>>>
 {
     using type = View<T>;
 };

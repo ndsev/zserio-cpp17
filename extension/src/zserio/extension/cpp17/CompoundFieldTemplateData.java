@@ -6,14 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import zserio.ast.ArrayInstantiation;
-import zserio.ast.AstNode;
 import zserio.ast.ChoiceType;
 import zserio.ast.CompoundType;
 import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.Expression;
 import zserio.ast.Field;
 import zserio.ast.IntegerType;
-import zserio.ast.Parameter;
 import zserio.ast.ParameterizedTypeInstantiation;
 import zserio.ast.ParameterizedTypeInstantiation.InstantiatedParameter;
 import zserio.ast.TemplateArgument;
@@ -26,7 +24,6 @@ import zserio.extension.common.ZserioExtensionException;
 import zserio.extension.cpp17.types.CppNativeType;
 import zserio.extension.cpp17.types.NativeArrayType;
 import zserio.extension.cpp17.types.NativeIntegralType;
-import zserio.extension.cpp17.types.NativeTemplateArgumentType;
 
 /**
  * FreeMarker template data for compound fields.
@@ -336,14 +333,33 @@ public final class CompoundFieldTemplateData
                 ParameterizedTypeInstantiation parameterizedTypeInstantiation,
                 IncludeCollector includeCollector) throws ZserioExtensionException
         {
+            boolean needsOwner = false;
+            boolean needsIndex = false;
             final ExpressionFormatter expressionFormatter = context.getExpressionFormatter(includeCollector);
+            final ExpressionFormatter ownerIndirectExpressionFormatter =
+                    context.getIndirectExpressionFormatter(includeCollector, "owner");
             final ExpressionFormatter viewIndirectExpressionFormatter =
                     context.getIndirectExpressionFormatter(includeCollector, "view");
             for (Expression argumentExpression : parameterizedTypeInstantiation.getTypeArguments())
             {
+                needsIndex |= argumentExpression.containsIndex();
+                needsOwner |= argumentExpression.requiresOwnerContext();
                 arguments.add(expressionFormatter.formatGetter(argumentExpression));
+                ownerIndirectArguments.add(ownerIndirectExpressionFormatter.formatGetter(argumentExpression));
                 viewIndirectArguments.add(viewIndirectExpressionFormatter.formatGetter(argumentExpression));
             }
+            this.needsIndex = needsIndex;
+            this.needsOwner = needsOwner;
+        }
+
+        public boolean getNeedsIndex()
+        {
+            return needsIndex;
+        }
+
+        public boolean getNeedsOwner()
+        {
+            return needsOwner;
         }
 
         public List<String> getArguments()
@@ -351,12 +367,20 @@ public final class CompoundFieldTemplateData
             return arguments;
         }
 
+        public List<String> getOwnerIndirectArguments()
+        {
+            return ownerIndirectArguments;
+        }
+
         public List<String> getViewIndirectArguments()
         {
             return viewIndirectArguments;
         }
 
+        private final boolean needsIndex;
+        private final boolean needsOwner;
         private final List<String> arguments = new ArrayList<String>();
+        private final List<String> ownerIndirectArguments = new ArrayList<String>();
         private final List<String> viewIndirectArguments = new ArrayList<String>();
     }
 
@@ -574,7 +598,8 @@ public final class CompoundFieldTemplateData
             // TODO[Mi-L@]: Is this right place where to add the element's include?
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType elementNativeType = cppNativeMapper.getCppType(elementTypeInstantiation);
-            includeCollector.addHeaderIncludesForType(elementNativeType);
+            addHeaderIncludes(cppNativeMapper, elementNativeType, elementTypeInstantiation.getTypeReference(),
+                    includeCollector);
             elementUsedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(
                     elementTypeInstantiation.getBaseType());
         }

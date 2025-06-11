@@ -134,7 +134,12 @@
 </#macro>
 
 <#macro field_view_owner_indirect_parameters field>
-    <#if field.compound??>
+    <#if field.parameterized??>
+        <#list field.parameterized.ownerIndirectArguments as argument>
+            , <#t>
+            detail::makeParameter<${argument?index}, ${field.typeInfo.typeFullName}>(${argument})<#t>
+        </#list>
+    <#elseif field.compound??>
         <#list field.compound.instantiatedParameters as instantiatedParameter>
             , <#t>
             <#if instantiatedParameter.typeInfo.isNumeric>
@@ -221,8 +226,8 @@ View<${field.typeInfo.typeFullName}> View<${compoundFullName}>::<@array_traits_n
 }
 
 void View<${compoundFullName}>::<@array_traits_name field/>::read(BitStreamReader& reader, <#rt>
-                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
-                ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
+        ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
 {
     (void)detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
 }
@@ -230,11 +235,49 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(BitStreamReade
 
 void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
         const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
-            <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
 {
     detail::read(packingContext, reader, element<@field_view_owner_indirect_parameters field/>);
 }
             </#if>
+        </#if>
+    </#list>
+</#macro>
+
+<#macro array_traits_template compoundFullName fieldList>
+    <#list fieldList as field>
+        <#if array_needs_custom_traits(field)>
+    struct <@array_traits_name field/>
+    {
+            <#if array_needs_owner(field)>
+        using OwnerType = View<${compoundFullName}>;
+
+            </#if>
+        static View<${field.typeInfo.typeFullName}> at(<#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
+                <#if !field.usedAsOffset>const </#if>${field.typeInfo.typeFullName}& element, <#rt>
+                <#lt>size_t<#if array_needs_index(field)> index</#if>)
+        {
+            return View<${field.typeInfo.typeFullName}>(element<@field_view_owner_indirect_parameters field/>);
+        }
+
+        static void read(BitStreamReader& reader, <#rt>
+                <#lt>const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>,
+                ${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        {
+            (void)detail::read(reader, element<@field_view_owner_indirect_parameters field/>);
+        }
+            <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
+
+        static void read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
+                const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
+                <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
+        {
+            detail::read(packingContext, reader, element<@field_view_owner_indirect_parameters field/>);
+        }
+            </#if>
+    };
+
         </#if>
     </#list>
 </#macro>
@@ -311,8 +354,10 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
 </#macro>
 
 <#macro packing_context_type_name field needsNamespace=false>
-    <#if field.compound??>
-        <#if needsNamespace>detail::</#if>PackingContext<${field.typeInfo.typeFullName}><#t>
+    <#if field.typeInfo.isTemplateParameter>
+        <#if needsNamespace>detail::</#if>packing_context_type_t<${field.typeInfo.typeFullName}><#t>
+    <#elseif field.compound??>
+        <#if needsNamespace>typename detail::ObjectTraits<${field.typeInfo.typeFullName}>::</#if>PackingContext<#t>
     <#else>
         DeltaContext<#t>
     </#if>
@@ -343,13 +388,15 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
 </#function>
 
 <#function array_needs_custom_traits field>
-    <#return field.array?? && ((field.compound?? && field.compound.parameters?has_content) ||
-            field.typeInfo.isDynamicBitField)>
+    <#return field.array?? && (field.parameterized?? ||
+            (field.compound?? && field.compound.parameters?has_content) || field.typeInfo.isDynamicBitField)>
 </#function>
 
 <#function array_needs_owner field>
     <#if field.array??>
-        <#if field.compound??>
+        <#if field.parameterized??>
+            <#return field.parameterized.needsOwner>
+        <#elseif field.compound??>
             <#list field.compound.instantiatedParameters as instantiatedParameter>
                 <#if instantiatedParameter.needsOwner>
                     <#return true>
@@ -364,7 +411,9 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
 
 <#function array_needs_index field>
     <#if field.array??>
-        <#if field.compound??>
+        <#if field.parameterized??>
+            <#return field.parameterized.needsIndex>
+        <#elseif field.compound??>
             <#list field.compound.instantiatedParameters as instantiatedParameter>
                 <#if instantiatedParameter.needsIndex>
                     <#return true>

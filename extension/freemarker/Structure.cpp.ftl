@@ -135,9 +135,9 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 }
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
-
 <@array_traits_definition fullName, fieldList/>
 <@structure_offset_setters_definition fullName, fieldList/>
+
 View<${fullName}>::View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
@@ -317,7 +317,7 @@ View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList
 <#if isPackable && usedInPackedArray>
 
 void ObjectTraits<${fullName}>::initContext(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         <#lt>const View<${fullName}>&<#if needs_packing_context(fieldList)> view</#if>)
 {
     <#list fieldList as field>
@@ -326,17 +326,17 @@ void ObjectTraits<${fullName}>::initContext(<#rt>
     auto <@field_view_local_name field/> = view.${field.getterName}();
     if (<@field_view_local_name field/>.has_value())
     {
-        initContext(<@packing_context field/>, *<@field_view_local_name field/>);
+        detail::initContext(<@packing_context field/>, *<@field_view_local_name field/>);
     }
             <#else>
-    initContext(<@packing_context field/>, view.${field.getterName}());
+    detail::initContext(<@packing_context field/>, view.${field.getterName}());
             </#if>
         </#if>
     </#list>
 }
 
 BitSize ObjectTraits<${fullName}>::bitSizeOf(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#t>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {
@@ -355,18 +355,18 @@ BitSize ObjectTraits<${fullName}>::bitSizeOf(<#rt>
 }
 
 void ObjectTraits<${fullName}>::write(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamWriter&<#if fieldList?has_content> writer</#if>, <#t>
         <#lt>const View<${fullName}>&<#if fieldList?has_content> view</#if>)
 {
-<#list fieldList as field>
+    <#list fieldList as field>
     auto <@field_view_local_name field/> = view.${field.getterName}();
     <@structure_write_field field, 1, true/>
-</#list>
+    </#list>
 }
 
 void ObjectTraits<${fullName}>::read(<#rt>
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
         BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
@@ -375,14 +375,14 @@ void ObjectTraits<${fullName}>::read(<#rt>
         <#lt>)
 {
     View<${fullName}> view(data<#rt>
-<#list parameterList as parameter>
+    <#list parameterList as parameter>
             <#lt>,
             <#nt><@parameter_view_arg_name parameter/><#rt>
-</#list>
+    </#list>
             <#lt>);
-<#list fieldList as field>
+    <#list fieldList as field>
     <@structure_read_field fullName, field, 1, true/>
-</#list>
+    </#list>
     (void)view;
 }
 </#if>
@@ -408,7 +408,7 @@ BitSize ObjectTraits<${fullName}>::initializeOffsets(
     <#if isPackable && usedInPackedArray>
 
 BitSize ObjectTraits<${fullName}>::initializeOffsets(
-        PackingContext<${fullName}>&<#if needs_packing_context(fieldList)> packingContext</#if>,
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>,
         const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
         <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
 {

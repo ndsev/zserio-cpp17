@@ -61,7 +61,7 @@ struct ${name} : <@variant_type_name_begin/>::zserio::detail::ChoiceTag<${name}>
             <#nt><@field_data_type_name field/><#rt>
 </#list>
             <#lt>>;
-    using Base::BasicVariant;
+    using Base::Base;
 };
 
 bool operator==(const ${fullName}& lhs, const ${fullName}& rhs);

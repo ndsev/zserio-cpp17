@@ -206,25 +206,31 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     {
         if (expr.op1().getExprType() == Expression.ExpressionType.ENUM)
         {
-            return new UnaryExpressionFormatting("::zserio::valueOf(", ")");
+            return new UnaryExpressionFormatting("::zserio::builtin::valueOf(", ")");
         }
         else if (expr.op1().getExprZserioType() instanceof BitmaskType)
         {
             if (expr.op1().requiresOwnerContext())
             {
-                return new UnaryExpressionFormatting("::zserio::valueOf(", ")");
+                return new UnaryExpressionFormatting("::zserio::builtin::valueOf(", ")");
             }
             else
             {
                 final BitmaskType bitmaskType = (BitmaskType)expr.op1().getExprZserioType();
                 final CppNativeType bitmaskNativeType = cppNativeMapper.getCppType(bitmaskType);
                 return new UnaryExpressionFormatting(
-                        "::zserio::valueOf<" + bitmaskNativeType.getFullName() + ">(", ")");
+                        "::zserio::builtin::valueOf<" + bitmaskNativeType.getFullName() + ">(", ")");
             }
         }
-        else if (expr.op1().getExprType() == Expression.ExpressionType.TEMPLATE_PARAMETER_VALUE)
+        else if (expr.op1().getExprType() == Expression.ExpressionType.TEMPLATE_PARAMETER_TYPE)
         {
-            return new UnaryExpressionFormatting("::zserio::valueOf<" + expr.op1().getText() + ">(", ")");
+            return new UnaryExpressionFormatting("::zserio::builtin::valueOf(", ")");
+        }
+        else if (expr.op1().getExprType() == Expression.ExpressionType.TEMPLATE_PARAMETER_VALUE &&
+                expr.op1().op1() != null)
+        {
+            return new UnaryExpressionFormatting(
+                    "::zserio::builtin::valueOf<" + expr.op1().op1().getText() + ">(", ")");
         }
         else
         {

@@ -30,7 +30,7 @@ public final class StructureEmitter extends CppDefaultEmitter
         }
     }
 
-    private static final String FTL_SOURCE_NAME = "Structure.cpp.ftl";
     private static final String FTL_HEADER_NAME = "Structure.h.ftl";
+    private static final String FTL_SOURCE_NAME = "Structure.cpp.ftl";
     private static final String FTL_TEMPLATE_HEADER_NAME = "StructureTemplate.h.ftl";
 }

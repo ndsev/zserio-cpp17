@@ -141,7 +141,7 @@ struct VarDynInt16ArrayTraits
     }
 };
 
-TEST(ArrayTest, boolArray)
+TEST(ArrayViewTest, boolArray)
 {
     Vector<Bool> rawArray1{true, false};
     Vector<Bool> rawArray2{true, true};
@@ -168,7 +168,7 @@ TEST(ArrayTest, boolArray)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, boolPackedArray)
+TEST(ArrayViewTest, boolPackedArray)
 {
     Vector<Bool> rawArray{true, false, true, false, true};
     ArrayView<const Bool> array(rawArray);
@@ -186,7 +186,7 @@ TEST(ArrayTest, boolPackedArray)
     ASSERT_EQ(rawArray, readRawArray);
 }
 
-TEST(ArrayTest, int8Array)
+TEST(ArrayViewTest, int8Array)
 {
     Vector<Int8> rawArray1{0, 13};
     Vector<Int8> rawArray2{0, 42};
@@ -213,10 +213,13 @@ TEST(ArrayTest, int8Array)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, int8PackedArray)
+TEST(ArrayViewTest, int8PackedArray)
 {
     Vector<Int8> rawArray = {-4, -3, -1, 0, 2, 4, 6, 8, 10, 10, 11};
     ArrayView<const Int8> array(rawArray);
+
+    static_assert(detail::is_packable_v<Int8>, "shall be packable");
+    static_assert(detail::is_packable_v<const Int8>, "shall be packable");
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 8 + 10 * (maxBitNumber 2 + 1)
@@ -308,7 +311,7 @@ TEST(ArrayTest, int8PackedArray)
     ASSERT_EQ(2, *foundIt);
 }
 
-TEST(ArrayTest, fixedDynInt16Array)
+TEST(ArrayViewTest, fixedDynInt16Array)
 {
     Vector<Int<9>> rawArray1{-2, 13};
     Vector<Int<9>> rawArray2{-2, 42};
@@ -335,7 +338,7 @@ TEST(ArrayTest, fixedDynInt16Array)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, variableDynInt16Array)
+TEST(ArrayViewTest, variableDynInt16Array)
 {
     Vector<DynInt16> rawArray1{-2, 13};
     Vector<DynInt16> rawArray2{-2, 42};
@@ -365,7 +368,7 @@ TEST(ArrayTest, variableDynInt16Array)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, variableDynInt16PackedArray)
+TEST(ArrayViewTest, variableDynInt16PackedArray)
 {
     Vector<DynInt16> rawArray{-2, 0, 2, 4, 6, 8, 10};
 
@@ -390,7 +393,7 @@ TEST(ArrayTest, variableDynInt16PackedArray)
     ASSERT_EQ(rawArray, readRawArray);
 }
 
-TEST(ArrayTest, varUInt16Array)
+TEST(ArrayViewTest, varUInt16Array)
 {
     Vector<VarUInt16> rawArray1{0, 13};
     Vector<VarUInt16> rawArray2{0, 42};
@@ -417,7 +420,7 @@ TEST(ArrayTest, varUInt16Array)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, varUInt16PackedArray)
+TEST(ArrayViewTest, varUInt16PackedArray)
 {
     Vector<VarUInt16> rawArray{0, 2, 4, 6, 8, 10, 12};
     ArrayView<const VarUInt16> array(rawArray);
@@ -435,7 +438,7 @@ TEST(ArrayTest, varUInt16PackedArray)
     ASSERT_EQ(rawArray, readRawArray);
 }
 
-TEST(ArrayTest, float16Array)
+TEST(ArrayViewTest, float16Array)
 {
     Vector<Float16> rawArray1{-9.0F, 0.0F, 10.0F};
     Vector<Float16> rawArray2{-9.0F, 0.0F, 10.1F};
@@ -461,7 +464,7 @@ TEST(ArrayTest, float16Array)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, bytesArray)
+TEST(ArrayViewTest, bytesArray)
 {
     Vector<Bytes> rawArray1{{{{1, 255}}, {{127, 128}}}};
     Vector<Bytes> rawArray2{{{{1, 255}}, {{127, 129}}}};
@@ -496,7 +499,7 @@ TEST(ArrayTest, bytesArray)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, stringArray)
+TEST(ArrayViewTest, stringArray)
 {
     Vector<std::string> rawArray1 = {"String0", "String1", "String2"};
     Vector<std::string> rawArray2 = {"String0", "String1", "String3"};
@@ -527,7 +530,7 @@ TEST(ArrayTest, stringArray)
     ASSERT_EQ(rawArray1, readRawArray);
 }
 
-TEST(ArrayTest, testObjectArray)
+TEST(ArrayViewTest, testObjectArray)
 {
     Vector<TestObject> rawArray1{TestObject{0}, TestObject{13}};
     Vector<TestObject> rawArray2{TestObject{0}, TestObject{42}};
@@ -585,10 +588,13 @@ TEST(ArrayTest, testObjectArray)
     ASSERT_EQ(array1.end(), notFoundIt);
 }
 
-TEST(ArrayTest, testObjectPackedArray)
+TEST(ArrayViewTest, testObjectPackedArray)
 {
     Vector<TestObject> rawArray{TestObject{0}, TestObject{2}, TestObject{4}, TestObject{6}, TestObject{8}};
     ArrayView<const TestObject> array(rawArray);
+
+    static_assert(detail::is_packable_v<TestObject>, "shall be packable");
+    static_assert(detail::is_packable_v<const TestObject>, "shall be packable");
 
     // maxBitNumber == 2
     // packingDescriptor 7 + firstElement 32 + 4 * (maxBitNumber 2 + 1)

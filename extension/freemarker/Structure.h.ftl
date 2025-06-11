@@ -154,14 +154,14 @@ struct ObjectTraits<${fullName}>
 </#list>
     };
 
-    static void initContext(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view);
+    static void initContext(PackingContext& packingContext, const View<${fullName}>& view);
 
-    static BitSize bitSizeOf(PackingContext<${fullName}>& packingContext, const View<${fullName}>& view,
+    static BitSize bitSizeOf(PackingContext& packingContext, const View<${fullName}>& view,
             BitSize bitPosition);
 
-    static void write(PackingContext<${fullName}>& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
+    static void write(PackingContext& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
 
-    static void read(PackingContext<${fullName}>& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
+    static void read(PackingContext& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
     <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -172,7 +172,7 @@ struct ObjectTraits<${fullName}>
 
     static BitSize initializeOffsets(const View<${fullName}>& view, BitSize bitPosition);
     <#if isPackable && usedInPackedArray>
-    static BitSize initializeOffsets(PackingContext<${fullName}>& packingContext,
+    static BitSize initializeOffsets(PackingContext& packingContext,
             const View<${fullName}>& view, BitSize bitPosition);
     </#if>
 </#if>

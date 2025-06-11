@@ -444,6 +444,114 @@ void read(DeltaContext& deltaContext, BitStreamReader& reader, DynIntWrapper<T>&
     deltaContext.read(reader, value, bitSize);
 }
 
+// overloads for unpackable compounds
+
+template <typename T>
+void initContext(DeltaContext&, const View<T>&)
+{}
+
+template <typename T>
+BitSize bitSizeOf(DeltaContext&, const View<T>& value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+template <typename T>
+void write(DeltaContext&, BitStreamWriter& writer, const View<T>& value)
+{
+    write(writer, value);
+}
+
+template <typename T, std::enable_if_t<is_complete_v<View<T>>, int> = 0>
+void read(DeltaContext&, BitStreamReader& reader, T& value)
+{
+    read(reader, value);
+}
+
+// overloads for unpackable types
+
+template <typename VALUE_TYPE, FloatType FLOAT_TYPE>
+void initContext(DeltaContext&, FloatWrapper<VALUE_TYPE, FLOAT_TYPE>)
+{}
+
+template <typename VALUE_TYPE, FloatType FLOAT_TYPE>
+BitSize bitSizeOf(DeltaContext&, FloatWrapper<VALUE_TYPE, FLOAT_TYPE> value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+template <typename VALUE_TYPE, FloatType FLOAT_TYPE>
+void write(DeltaContext&, BitStreamReader& writer, FloatWrapper<VALUE_TYPE, FLOAT_TYPE> value)
+{
+    write(writer, value);
+}
+
+template <typename VALUE_TYPE, FloatType FLOAT_TYPE>
+void read(DeltaContext&, BitStreamReader& reader, FloatWrapper<VALUE_TYPE, FLOAT_TYPE>& value)
+{
+    read(reader, value);
+}
+
+inline void initContext(DeltaContext&, BytesView)
+{}
+
+inline BitSize bitSizeOf(DeltaContext&, BytesView value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+inline void write(DeltaContext&, BitStreamWriter& writer, BytesView value)
+{
+    write(writer, value);
+}
+
+template <typename ALLOC>
+void read(DeltaContext&, BitStreamReader& reader, BasicBytes<ALLOC>& value)
+{
+    read(reader, value);
+}
+
+inline void initContext(DeltaContext&, std::string_view)
+{}
+
+inline BitSize bitSizeOf(DeltaContext&, std::string_view value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+inline void write(DeltaContext&, BitStreamWriter& writer, std::string_view value)
+{
+    write(writer, value);
+}
+
+template <typename ALLOC>
+void read(DeltaContext&, BitStreamReader& reader, zserio::BasicString<ALLOC>& value)
+{
+    read(reader, value);
+}
+
+template <typename ALLOC>
+void initContext(DeltaContext&, const BasicBitBufferView<ALLOC>&)
+{}
+
+template <typename ALLOC>
+BitSize bitSizeOf(DeltaContext&, const BasicBitBufferView<ALLOC>& value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+template <typename ALLOC>
+void write(DeltaContext&, BitStreamWriter& writer, const BasicBitBufferView<ALLOC>& value)
+{
+    write(writer, value);
+}
+
+template <typename ALLOC>
+void read(DeltaContext&, BitStreamReader& reader, BasicBitBuffer<ALLOC>& value)
+{
+    read(reader, value);
+}
+
 } // namespace detail
 
 } // namespace zserio

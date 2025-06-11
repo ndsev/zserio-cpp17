@@ -20,10 +20,18 @@ public final class ChoiceEmitter extends CppDefaultEmitter
     {
         final Object templateData = new ChoiceEmitterTemplateData(getTemplateDataContext(), choiceType);
 
-        processHeaderTemplate(TEMPLATE_HEADER_NAME, templateData, choiceType);
-        processSourceTemplate(TEMPLATE_SOURCE_NAME, templateData, choiceType);
+        if (choiceType.getTemplateParameters().isEmpty())
+        {
+            processHeaderTemplate(FTL_HEADER_NAME, templateData, choiceType);
+            processSourceTemplate(FTL_SOURCE_NAME, templateData, choiceType);
+        }
+        else
+        {
+            processHeaderTemplate(FTL_TEMPLATE_HEADER_NAME, templateData, choiceType);
+        }
     }
 
-    private static final String TEMPLATE_HEADER_NAME = "Choice.h.ftl";
-    private static final String TEMPLATE_SOURCE_NAME = "Choice.cpp.ftl";
+    private static final String FTL_HEADER_NAME = "Choice.h.ftl";
+    private static final String FTL_SOURCE_NAME = "Choice.cpp.ftl";
+    private static final String FTL_TEMPLATE_HEADER_NAME = "ChoiceTemplate.h.ftl";
 }
