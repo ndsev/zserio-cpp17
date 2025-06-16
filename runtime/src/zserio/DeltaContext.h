@@ -309,9 +309,6 @@ namespace detail
 {
 
 template <typename T>
-struct ObjectTraits;
-
-template <typename T>
 void initContext(typename ObjectTraits<T>::PackingContext& packingContext, const View<T>& view)
 {
     ObjectTraits<T>::initContext(packingContext, view);

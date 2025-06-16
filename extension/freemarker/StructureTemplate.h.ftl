@@ -210,7 +210,6 @@ class View<${fullName}>
 {
 public:
     <@array_traits_template fullName, fieldList/>
-    <@structure_offset_setters_template fullName, fieldList/>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
@@ -341,6 +340,7 @@ struct ObjectTraits<${fullName}>
     <@parameter_traits parameterList, 1/>
 
 </#if>
+    <@structure_offset_setters_template fullName, fieldList/>
     static void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, <#rt>
             <#lt>::std::string_view fieldName)
     {

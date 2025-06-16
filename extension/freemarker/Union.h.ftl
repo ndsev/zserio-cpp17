@@ -129,8 +129,8 @@ struct ObjectTraits<${fullName}>
 {
 <#if parameterList?has_content>
     <@parameter_traits parameterList, 1/>
-</#if>
 
+</#if>
     static void validate(const View<${fullName}>& view, ::std::string_view fieldName);
 
     static BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);

@@ -267,8 +267,8 @@ struct ObjectTraits<${fullName}>
 {
 <#if parameterList?has_content>
     <@parameter_traits parameterList, 1/>
-</#if>
 
+</#if>
     static void validate(<#rt>
             <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
     {

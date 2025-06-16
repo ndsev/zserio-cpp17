@@ -187,7 +187,7 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
     <#list fieldList as field>
         <#if field.offset?? && field.offset.containsIndex>
 
-void View<${compoundFullName}>::<@structure_offset_setter_name field/>::setOffset(<#rt>
+void ObjectTraits<${compoundFullName}>::<@structure_offset_setter_name field/>::setOffset(<#rt>
         <#lt>size_t index, BitSize byteOffset) const
 {
     ${field.offset.ownerIndirectSetter} = static_cast<${field.offset.typeInfo.typeFullName}::ValueType>(byteOffset);
@@ -484,7 +484,7 @@ ${I}endBitPosition += <#rt>
         <#if packed && field_needs_packing_context(field)><@packing_context field/>, </#if><#t>
         <#if field.isExtended>*</#if><#if field.optional??>*</#if><@field_view_local_name field/>, endBitPosition<#t>
         <#if field.offset?? && field.offset.containsIndex>
-        , View<${fullName}>::<@structure_offset_setter_name field/>(view)<#t>
+        , ObjectTraits<${fullName}>::<@structure_offset_setter_name field/>(view)<#t>
         </#if>
         <#lt>);
 </#macro>

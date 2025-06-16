@@ -78,7 +78,6 @@ class View<${fullName}>
 {
 public:
     <@array_traits_declaration fullName, fieldList/>
-    <@structure_offset_setters_declaration fullName, fieldList/>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
@@ -131,6 +130,7 @@ struct ObjectTraits<${fullName}>
 <@parameter_traits parameterList, 1/>
 
 </#if>
+    <@structure_offset_setters_declaration fullName, fieldList/>
     static void validate(const View<${fullName}>& view, ::std::string_view fieldName);
 
     static BitSize bitSizeOf(const View<${fullName}>& view, BitSize bitPosition);

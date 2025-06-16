@@ -270,7 +270,6 @@ struct ObjectTraits<${fullName}>
     <@parameter_traits parameterList, 1/>
 
 </#if>
-
     static void validate(const View<${fullName}>& view, ::std::string_view)
     {
 <#list parameterList as parameter>

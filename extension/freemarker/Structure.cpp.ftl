@@ -136,7 +136,6 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
 <@array_traits_definition fullName, fieldList/>
-<@structure_offset_setters_definition fullName, fieldList/>
 
 View<${fullName}>::View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
@@ -253,6 +252,7 @@ bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
     return !(lhs < rhs);
 }
 <@namespace_begin ["detail"]/>
+<@structure_offset_setters_definition fullName, fieldList/>
 
 void ObjectTraits<${fullName}>::validate(<#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, ::std::string_view)
