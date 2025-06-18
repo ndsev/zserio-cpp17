@@ -62,7 +62,7 @@ struct ReflectableUnion : ::zserio::pmr::Variant<::zserio::detail::ChoiceTag<Ref
             ::std::monostate,
             ::zserio::UInt32,
             ::zserio::pmr::String>;
-    using Base::BasicVariant;
+    using Base::Base;
 };
 
 bool operator==(const ::test_object::pmr_allocator::ReflectableUnion& lhs, const ::test_object::pmr_allocator::ReflectableUnion& rhs);
@@ -110,7 +110,6 @@ namespace detail
 template <>
 struct ObjectTraits<::test_object::pmr_allocator::ReflectableUnion>
 {
-
     static void validate(const View<::test_object::pmr_allocator::ReflectableUnion>& view, ::std::string_view fieldName);
 
     static BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableUnion>& view, BitSize bitPosition);
@@ -126,17 +125,24 @@ struct TypeInfo<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::poly
     static const ::zserio::pmr::ITypeInfo& get();
 };
 
+template <>
+struct Reflectable<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>
+{
+    static ::zserio::pmr::IReflectableDataConstPtr create(
+            const ::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+
+    static ::zserio::pmr::IReflectableDataPtr create(
+            ::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+};
+
+template <>
+struct Introspectable<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>
+{
+    static ::zserio::pmr::IIntrospectableViewConstPtr create(
+            const View<::test_object::pmr_allocator::ReflectableUnion>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+};
+
 } // namespace detail
-
-template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
-template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
-template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::pmr_allocator::ReflectableUnion>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
 } // namespace zserio
 
 namespace std

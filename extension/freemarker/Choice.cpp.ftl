@@ -367,30 +367,26 @@ const ${types.typeInfo.name}& TypeInfo<${fullName}, ${types.allocator.default}>:
 
     return typeInfo;
 }
-<@namespace_end ["detail"]/>
 
-template <>
-${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
+${types.reflectableConstPtr.name} Reflectable<${fullName}, ${types.allocator.default}>::create(
+        const ${fullName}& value, const ${types.allocator.default}& allocator)
 {
     <@choice_reflectable true/>
 }
 
-template <>
-${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator)
+${types.reflectablePtr.name} Reflectable<${fullName}, ${types.allocator.default}>::create(
+        ${fullName}& value, const ${types.allocator.default}& allocator)
 {
     <@choice_reflectable false/>
 }
 
-template <>
-${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
-        <#lt>const ${types.allocator.default}& allocator)
+${types.introspectableConstPtr.name} Introspectable<${fullName}, ${types.allocator.default}>::create(
+        const View<${fullName}>& view, const ${types.allocator.default}& allocator)
 {
     <@choice_introspectable/>
 }
-<@namespace_end ["zserio"]/>
-<#else>
-<@namespace_end ["zserio", "detail"]/>
 </#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 size_t hash<${fullName}>::operator()(const ${fullName}&<#if fieldList?has_content> value</#if>) const

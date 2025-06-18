@@ -192,6 +192,14 @@ using IReflectableDataPtr = IBasicReflectableDataPtr<>;
 using IReflectableDataConstPtr = IBasicReflectableDataConstPtr<>;
 /** \} */
 
+namespace detail
+{
+
+template <typename T, typename ALLOC>
+struct Reflectable;
+
+} // namespace detail
+
 /**
  * Gets reflectable for the given object.
  *
@@ -203,15 +211,24 @@ using IReflectableDataConstPtr = IBasicReflectableDataConstPtr<>;
 /** \{ */
 template <typename T, typename ALLOC = typename T::allocator_type,
         std::enable_if_t<is_complete_v<View<T>> && has_allocator_v<std::decay_t<T>>, int> = 0>
-IBasicReflectableDataConstPtr<ALLOC> reflectable(const T& value, const ALLOC& allocator = ALLOC());
+IBasicReflectableDataConstPtr<ALLOC> reflectable(const T& value, const ALLOC& allocator = ALLOC())
+{
+    return detail::Reflectable<T, ALLOC>::create(value, allocator);
+}
 
 template <typename T, typename ALLOC = typename T::allocator_type,
         std::enable_if_t<is_complete_v<View<T>> && has_allocator_v<std::decay_t<T>>, int> = 0>
-IBasicReflectableDataPtr<ALLOC> reflectable(T& value, const ALLOC& allocator = ALLOC());
+IBasicReflectableDataPtr<ALLOC> reflectable(T& value, const ALLOC& allocator = ALLOC())
+{
+    return detail::Reflectable<T, ALLOC>::create(value, allocator);
+}
 
 template <typename T, typename ALLOC = std::allocator<uint8_t>,
         std::enable_if_t<(std::is_enum_v<T> || is_bitmask_v<T>) && !has_allocator_v<std::decay_t<T>>, int> = 0>
-IBasicReflectableDataPtr<ALLOC> reflectable(T value, const ALLOC& allocator = ALLOC());
+IBasicReflectableDataPtr<ALLOC> reflectable(T value, const ALLOC& allocator = ALLOC())
+{
+    return detail::Reflectable<T, ALLOC>::create(value, allocator);
+}
 /** \} */
 
 } // namespace zserio

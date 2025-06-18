@@ -199,87 +199,91 @@ ${I}return "${field.name}";
 ${I}return "";
 </#macro>
 
-<#macro choice_reflectable isConst isTemplate=false>
-    class Reflectable : public ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
-    {
-    public:
-        using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
-        using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
+<#macro choice_reflectable isConst indent=1 isTemplate=false>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}class ReflectableImpl : public ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
+${I}{
+${I}public:
+${I}    using Base = ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>;
+${I}    using Base::getField;
+${I}    using Base::getAnyValue;
 
-        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc = {}) :
-                ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
+${I}    explicit ReflectableImpl(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc = {}) :
+${I}            ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
                         <#lt>typeInfo<${fullName}>(), alloc),
-                m_object(object)
-        {}
+${I}            m_object(object)
+${I}    {}
     <#if fieldList?has_content>
 
-        <@reflectable_variant_get_field name, fieldList, true/>
+        <@reflectable_variant_get_field name, fieldList, true, indent+1/>
         <#if !isConst>
 
-        <@reflectable_variant_get_field name, fieldList, false/>
+        <@reflectable_variant_get_field name, fieldList, false, indent+1/>
 
-        <@reflectable_variant_set_field name, fieldList/>
+        <@reflectable_variant_set_field name, fieldList, indent+1/>
 
-        <@reflectable_variant_create_field name, fieldList, 2, isTemplate/>
+        <@reflectable_variant_create_field name, fieldList, indent+1, isTemplate/>
         </#if>
     </#if>
 
-        ::std::string_view getChoice() const override
-        {
-            <@choice_switch "choice_get_choice_field", "choice_get_choice_no_match", "m_object.index()", 3/>
-        }
+${I}    ::std::string_view getChoice() const override
+${I}    {
+            <@choice_switch "choice_get_choice_field", "choice_get_choice_no_match", "m_object.index()", indent+2/>
+${I}    }
 
-        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
-        {
-            return ${types.any.name}(::std::cref(m_object), alloc);
-        }
+${I}    ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
+${I}    {
+${I}        return ${types.any.name}(::std::cref(m_object), alloc);
+${I}    }
     <#if !isConst>
 
-        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) override
-        {
-            return ${types.any.name}(::std::ref(m_object), alloc);
-        }
+${I}    ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) override
+${I}    {
+${I}        return ${types.any.name}(::std::ref(m_object), alloc);
+${I}    }
     </#if>
 
-    private:
-        <#if isConst>const </#if>${fullName}& m_object;
-    };
+${I}private:
+${I}    <#if isConst>const </#if>${fullName}& m_object;
+${I}};
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+${I}return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 </#macro>
 
-<#macro choice_introspectable isTemplate=false>
-    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
-    {
-    public:
+<#macro choice_introspectable indent=1 isTemplate=false>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}class IntrospectableImpl : public ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+${I}{
+${I}public:
     <#if isTemplate>
-        using ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>::getValue;
-        using ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>::get_allocator;
+${I}    using Base = ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>;
+${I}    using Base::getValue;
+${I}    using Base::get_allocator;
 
     </#if>
-        explicit Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& alloc = {}) :
-                ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
-                        view_, alloc)
-        {}
+${I}    explicit IntrospectableImpl(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& alloc = {}) :
+${I}            ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+${I}                    view_, alloc)
+${I}    {}
     <#if fieldList?has_content>
 
-        <@introspectable_get_field name, fieldList/>
+        <@introspectable_get_field name, fieldList, indent+1/>
     </#if>
     <#if parameterList?has_content>
 
-        <@introspectable_get_parameter name, parameterList/>
+        <@introspectable_get_parameter name, parameterList, indent+1/>
     </#if>
     <#if functionList?has_content>
 
-        <@introspectable_call_function name, functionList/>
+        <@introspectable_call_function name, functionList, indent+1/>
     </#if>
 
-        ::std::string_view getChoice() const override
-        {
+${I}    ::std::string_view getChoice() const override
+${I}    {
             <@choice_switch "choice_get_choice_field", "choice_get_choice_no_match",
-                    "getValue().zserioChoiceTag()", 3/>
-        }
-    };
+                    "getValue().zserioChoiceTag()", indent+2/>
+${I}    }
+${I}};
 
-    return ::std::allocate_shared<Introspectable>(allocator, view);
+${I}return ::std::allocate_shared<IntrospectableImpl>(allocator, view);
 </#macro>

@@ -67,7 +67,7 @@ struct ReflectableUtilUnion : ::zserio::Variant<::zserio::detail::ChoiceTag<Refl
             ::test_object::std_allocator::ReflectableUtilEnum,
             ::test_object::std_allocator::ReflectableUtilBitmask,
             ::test_object::std_allocator::ReflectableUtilObject>;
-    using Base::BasicVariant;
+    using Base::Base;
 };
 
 bool operator==(const ::test_object::std_allocator::ReflectableUtilUnion& lhs, const ::test_object::std_allocator::ReflectableUtilUnion& rhs);
@@ -116,7 +116,6 @@ namespace detail
 template <>
 struct ObjectTraits<::test_object::std_allocator::ReflectableUtilUnion>
 {
-
     static void validate(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, ::std::string_view fieldName);
 
     static BitSize bitSizeOf(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, BitSize bitPosition);
@@ -132,17 +131,24 @@ struct TypeInfo<::test_object::std_allocator::ReflectableUtilUnion, ::std::alloc
     static const ::zserio::ITypeInfo& get();
 };
 
+template <>
+struct Reflectable<::test_object::std_allocator::ReflectableUtilUnion, ::std::allocator<uint8_t>>
+{
+    static ::zserio::IReflectableDataConstPtr create(
+            const ::test_object::std_allocator::ReflectableUtilUnion& value, const ::std::allocator<uint8_t>& allocator);
+
+    static ::zserio::IReflectableDataPtr create(
+            ::test_object::std_allocator::ReflectableUtilUnion& value, const ::std::allocator<uint8_t>& allocator);
+};
+
+template <>
+struct Introspectable<::test_object::std_allocator::ReflectableUtilUnion, ::std::allocator<uint8_t>>
+{
+    static ::zserio::IIntrospectableViewConstPtr create(
+            const View<::test_object::std_allocator::ReflectableUtilUnion>& view, const ::std::allocator<uint8_t>& allocator);
+};
+
 } // namespace detail
-
-template <>
-::zserio::IReflectableDataConstPtr reflectable(const ::test_object::std_allocator::ReflectableUtilUnion& value, const ::std::allocator<uint8_t>& allocator);
-
-template <>
-::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::ReflectableUtilUnion& value, const ::std::allocator<uint8_t>& allocator);
-
-template <>
-::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::ReflectableUtilUnion>& view, const ::std::allocator<uint8_t>& allocator);
-
 } // namespace zserio
 
 namespace std

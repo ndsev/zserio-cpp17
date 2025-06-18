@@ -102,17 +102,24 @@ struct TypeInfo<::test_object::std_allocator::DebugStringObject, ::std::allocato
     static const ::zserio::ITypeInfo& get();
 };
 
+template <>
+struct Reflectable<::test_object::std_allocator::DebugStringObject, ::std::allocator<uint8_t>>
+{
+    static ::zserio::IReflectableDataConstPtr create(const ::test_object::std_allocator::DebugStringObject& value,
+            const ::std::allocator<uint8_t>& allocator);
+
+    static ::zserio::IReflectableDataPtr create(::test_object::std_allocator::DebugStringObject& value,
+            const ::std::allocator<uint8_t>& allocator);
+};
+
+template <>
+struct Introspectable<::test_object::std_allocator::DebugStringObject, ::std::allocator<uint8_t>>
+{
+    static ::zserio::IIntrospectableViewConstPtr create(const View<::test_object::std_allocator::DebugStringObject>& view,
+            const ::std::allocator<uint8_t>& allocator);
+};
+
 } // namespace detail
-
-template <>
-::zserio::IReflectableDataConstPtr reflectable(const ::test_object::std_allocator::DebugStringObject& value, const ::std::allocator<uint8_t>& allocator);
-
-template <>
-::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::DebugStringObject& value, const ::std::allocator<uint8_t>& allocator);
-
-template <>
-::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::DebugStringObject>& view, const ::std::allocator<uint8_t>& allocator);
-
 } // namespace zserio
 
 namespace std

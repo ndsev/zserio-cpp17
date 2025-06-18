@@ -155,18 +155,18 @@ bool operator>=(const ::test_object::ppmr_allocator::CreatorObject& lhs, const :
 namespace zserio
 {
 
-
 View<::test_object::ppmr_allocator::CreatorNested> View<::test_object::ppmr_allocator::CreatorObject>::ZserioNestedArrayArrayTraits::at(const OwnerType& owner,
         const ::test_object::ppmr_allocator::CreatorNested& element, size_t)
 {
-    return View<::test_object::ppmr_allocator::CreatorNested>(element, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(owner.value())));
+    return View<::test_object::ppmr_allocator::CreatorNested>(element, detail::makeParameter<0, ::test_object::ppmr_allocator::CreatorNested>(owner.value()));
 }
 
 void View<::test_object::ppmr_allocator::CreatorObject>::ZserioNestedArrayArrayTraits::read(BitStreamReader& reader, const OwnerType& owner,
-                ::test_object::ppmr_allocator::CreatorNested& element, size_t)
+        ::test_object::ppmr_allocator::CreatorNested& element, size_t)
 {
-    (void)detail::read(reader, element, ::zserio::UInt32(static_cast<::zserio::UInt32::ValueType>(owner.value())));
+    (void)detail::read(reader, element, detail::makeParameter<0, ::test_object::ppmr_allocator::CreatorNested>(owner.value()));
 }
+
 View<::test_object::ppmr_allocator::CreatorObject>::View(const ::test_object::ppmr_allocator::CreatorObject& data) noexcept :
         m_data(&data)
 {}
@@ -656,19 +656,17 @@ const ::zserio::ppmr::ITypeInfo& TypeInfo<::test_object::ppmr_allocator::Creator
     return typeInfo;
 }
 
-} // namespace detail
-
-template <>
-::zserio::ppmr::IReflectableDataConstPtr reflectable(
+::zserio::ppmr::IReflectableDataConstPtr Reflectable<::test_object::ppmr_allocator::CreatorObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>::create(
         const ::test_object::ppmr_allocator::CreatorObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(const ::test_object::ppmr_allocator::CreatorObject& object, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(const ::test_object::ppmr_allocator::CreatorObject& object, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::ppmr_allocator::CreatorObject>(), alloc),
                 m_object(object)
         {}
@@ -743,20 +741,20 @@ template <>
         const ::test_object::ppmr_allocator::CreatorObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::ppmr::IReflectableDataPtr reflectable(
+::zserio::ppmr::IReflectableDataPtr Reflectable<::test_object::ppmr_allocator::CreatorObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>::create(
         ::test_object::ppmr_allocator::CreatorObject& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(::test_object::ppmr_allocator::CreatorObject& object, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(::test_object::ppmr_allocator::CreatorObject& object, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(typeInfo<::test_object::ppmr_allocator::CreatorObject>(), alloc),
                 m_object(object)
         {}
@@ -1021,16 +1019,16 @@ template <>
         ::test_object::ppmr_allocator::CreatorObject& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::ppmr_allocator::CreatorObject>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
+::zserio::ppmr::IIntrospectableViewConstPtr Introspectable<::test_object::ppmr_allocator::CreatorObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>::create(
+        const View<::test_object::ppmr_allocator::CreatorObject>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::ppmr_allocator::CreatorObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
+    class IntrospectableImpl : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::ppmr_allocator::CreatorObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
     {
     public:
-        explicit Introspectable(const ::zserio::View<::test_object::ppmr_allocator::CreatorObject>& view_, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
+        explicit IntrospectableImpl(const ::zserio::View<::test_object::ppmr_allocator::CreatorObject>& view_, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::ppmr_allocator::CreatorObject, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>(
                         view_, alloc)
         {}
@@ -1097,9 +1095,10 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view);
+    return ::std::allocate_shared<IntrospectableImpl>(allocator, view);
 }
 
+} // namespace detail
 } // namespace zserio
 
 namespace std

@@ -60,7 +60,7 @@ struct ReflectableUtilChoice : ::zserio::pmr::Variant<::zserio::detail::ChoiceTa
     using Base = ::zserio::pmr::Variant<Tag,
             ::std::monostate,
             ::zserio::pmr::Vector<::zserio::UInt32>>;
-    using Base::BasicVariant;
+    using Base::Base;
 };
 
 bool operator==(const ::test_object::pmr_allocator::ReflectableUtilChoice& lhs, const ::test_object::pmr_allocator::ReflectableUtilChoice& rhs);
@@ -114,7 +114,6 @@ struct ObjectTraits<::test_object::pmr_allocator::ReflectableUtilChoice>
     using Parameters = std::tuple<
             ::zserio::UInt8>;
 
-
     static void validate(const View<::test_object::pmr_allocator::ReflectableUtilChoice>& view, ::std::string_view fieldName);
 
     static BitSize bitSizeOf(const View<::test_object::pmr_allocator::ReflectableUtilChoice>& view, BitSize bitPosition);
@@ -131,17 +130,24 @@ struct TypeInfo<::test_object::pmr_allocator::ReflectableUtilChoice, ::std::pmr:
     static const ::zserio::pmr::ITypeInfo& get();
 };
 
+template <>
+struct Reflectable<::test_object::pmr_allocator::ReflectableUtilChoice, ::std::pmr::polymorphic_allocator<uint8_t>>
+{
+    static ::zserio::pmr::IReflectableDataConstPtr create(
+            const ::test_object::pmr_allocator::ReflectableUtilChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+
+    static ::zserio::pmr::IReflectableDataPtr create(
+            ::test_object::pmr_allocator::ReflectableUtilChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+};
+
+template <>
+struct Introspectable<::test_object::pmr_allocator::ReflectableUtilChoice, ::std::pmr::polymorphic_allocator<uint8_t>>
+{
+    static ::zserio::pmr::IIntrospectableViewConstPtr create(
+            const View<::test_object::pmr_allocator::ReflectableUtilChoice>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+};
+
 } // namespace detail
-
-template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::pmr_allocator::ReflectableUtilChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
-template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::pmr_allocator::ReflectableUtilChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
-template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::pmr_allocator::ReflectableUtilChoice>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
 } // namespace zserio
 
 namespace std

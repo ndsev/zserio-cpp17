@@ -69,7 +69,7 @@ struct WalkerUnion : ::zserio::pmr::Variant<::zserio::detail::ChoiceTag<WalkerUn
             ::zserio::UInt32,
             ::zserio::pmr::String,
             ::zserio::pmr::Vector<::test_object::pmr_allocator::WalkerNested>>;
-    using Base::BasicVariant;
+    using Base::Base;
 };
 
 bool operator==(const ::test_object::pmr_allocator::WalkerUnion& lhs, const ::test_object::pmr_allocator::WalkerUnion& rhs);
@@ -118,7 +118,6 @@ namespace detail
 template <>
 struct ObjectTraits<::test_object::pmr_allocator::WalkerUnion>
 {
-
     static void validate(const View<::test_object::pmr_allocator::WalkerUnion>& view, ::std::string_view fieldName);
 
     static BitSize bitSizeOf(const View<::test_object::pmr_allocator::WalkerUnion>& view, BitSize bitPosition);
@@ -134,17 +133,24 @@ struct TypeInfo<::test_object::pmr_allocator::WalkerUnion, ::std::pmr::polymorph
     static const ::zserio::pmr::ITypeInfo& get();
 };
 
+template <>
+struct Reflectable<::test_object::pmr_allocator::WalkerUnion, ::std::pmr::polymorphic_allocator<uint8_t>>
+{
+    static ::zserio::pmr::IReflectableDataConstPtr create(
+            const ::test_object::pmr_allocator::WalkerUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+
+    static ::zserio::pmr::IReflectableDataPtr create(
+            ::test_object::pmr_allocator::WalkerUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+};
+
+template <>
+struct Introspectable<::test_object::pmr_allocator::WalkerUnion, ::std::pmr::polymorphic_allocator<uint8_t>>
+{
+    static ::zserio::pmr::IIntrospectableViewConstPtr create(
+            const View<::test_object::pmr_allocator::WalkerUnion>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
+};
+
 } // namespace detail
-
-template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::pmr_allocator::WalkerUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
-template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::pmr_allocator::WalkerUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
-template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::pmr_allocator::WalkerUnion>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator);
-
 } // namespace zserio
 
 namespace std

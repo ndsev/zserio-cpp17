@@ -435,18 +435,17 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::pmr_allocator::WalkerCho
     return typeInfo;
 }
 
-} // namespace detail
-
-template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::pmr_allocator::WalkerChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataConstPtr Reflectable<::test_object::pmr_allocator::WalkerChoice, ::std::pmr::polymorphic_allocator<uint8_t>>::create(
+        const ::test_object::pmr_allocator::WalkerChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(const ::test_object::pmr_allocator::WalkerChoice& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(const ::test_object::pmr_allocator::WalkerChoice& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>(typeInfo<::test_object::pmr_allocator::WalkerChoice>(), alloc),
                 m_object(object)
         {}
@@ -502,19 +501,20 @@ template <>
         const ::test_object::pmr_allocator::WalkerChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::pmr_allocator::WalkerChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataPtr Reflectable<::test_object::pmr_allocator::WalkerChoice, ::std::pmr::polymorphic_allocator<uint8_t>>::create(
+        ::test_object::pmr_allocator::WalkerChoice& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(::test_object::pmr_allocator::WalkerChoice& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(::test_object::pmr_allocator::WalkerChoice& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>(typeInfo<::test_object::pmr_allocator::WalkerChoice>(), alloc),
                 m_object(object)
         {}
@@ -573,25 +573,25 @@ template <>
         {
             if (name == "value8")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value8>(
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value8>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt8>(value));
                 return;
             }
             if (name == "value16")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value16>(
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value16>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt16>(value));
                 return;
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value32>(
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value32>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "value64")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value64>(
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value64>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt64>(value));
                 return;
             }
@@ -602,22 +602,22 @@ template <>
         {
             if (name == "value8")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value8>();
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value8>();
                 return ::zserio::reflectable(get<::test_object::pmr_allocator::WalkerChoice::Tag::value8>(m_object), get_allocator());
             }
             if (name == "value16")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value16>();
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value16>();
                 return ::zserio::reflectable(get<::test_object::pmr_allocator::WalkerChoice::Tag::value16>(m_object), get_allocator());
             }
             if (name == "value32")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value32>();
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value32>();
                 return ::zserio::reflectable(get<::test_object::pmr_allocator::WalkerChoice::Tag::value32>(m_object), get_allocator());
             }
             if (name == "value64")
             {
-                m_object.emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value64>();
+                m_object.template emplace<::test_object::pmr_allocator::WalkerChoice::Tag::value64>();
                 return ::zserio::reflectable(get<::test_object::pmr_allocator::WalkerChoice::Tag::value64>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'WalkerChoice'!";
@@ -654,16 +654,16 @@ template <>
         ::test_object::pmr_allocator::WalkerChoice& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::pmr_allocator::WalkerChoice>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
+::zserio::pmr::IIntrospectableViewConstPtr Introspectable<::test_object::pmr_allocator::WalkerChoice, ::std::pmr::polymorphic_allocator<uint8_t>>::create(
+        const View<::test_object::pmr_allocator::WalkerChoice>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::WalkerChoice, ::std::pmr::polymorphic_allocator<uint8_t>>
+    class IntrospectableImpl : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::WalkerChoice, ::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
-        explicit Introspectable(const ::zserio::View<::test_object::pmr_allocator::WalkerChoice>& view_, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
+        explicit IntrospectableImpl(const ::zserio::View<::test_object::pmr_allocator::WalkerChoice>& view_, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::WalkerChoice, ::std::pmr::polymorphic_allocator<uint8_t>>(
                         view_, alloc)
         {}
@@ -716,9 +716,10 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view);
+    return ::std::allocate_shared<IntrospectableImpl>(allocator, view);
 }
 
+} // namespace detail
 } // namespace zserio
 
 namespace std

@@ -555,30 +555,34 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
         return typeInfo;
     }
 };
-<@namespace_end ["detail"]/>
 
 <@template_definition templateParameters/>
-${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
+struct Reflectable<${fullName}, ${types.allocator.default}>
 {
-    <@structure_reflectable true/>
-}
+    static ${types.reflectableConstPtr.name} create(const ${fullName}& value,
+            const ${types.allocator.default}& allocator)
+    {
+        <@structure_reflectable true, 2, true/>
+    }
+
+    static ${types.reflectablePtr.name} create(${fullName}& value,
+            const ${types.allocator.default}& allocator)
+    {
+        <@structure_reflectable false, 2, true/>
+    }
+};
 
 <@template_definition templateParameters/>
-${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator)
+struct Introspectable<${fullName}, ${types.allocator.default}>
 {
-    <@structure_reflectable false/>
-}
-
-<@template_definition templateParameters/>
-${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
-        <#lt>const ${types.allocator.default}& allocator)
-{
-    <@structure_introspectable true/>
-}
-<@namespace_end ["zserio"]/>
-<#else>
-<@namespace_end ["zserio", "detail"]/>
+    static ${types.introspectableConstPtr.name} create(const View<${fullName}>& view,
+            const ${types.allocator.default}& allocator)
+    {
+        <@structure_introspectable 2, true/>
+    }
+};
 </#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 <@template_definition templateParameters/>

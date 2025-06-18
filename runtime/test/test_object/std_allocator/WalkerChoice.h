@@ -67,7 +67,7 @@ struct WalkerChoice : ::zserio::Variant<::zserio::detail::ChoiceTag<WalkerChoice
             ::zserio::UInt16,
             ::zserio::UInt32,
             ::zserio::UInt64>;
-    using Base::BasicVariant;
+    using Base::Base;
 };
 
 bool operator==(const ::test_object::std_allocator::WalkerChoice& lhs, const ::test_object::std_allocator::WalkerChoice& rhs);
@@ -124,7 +124,6 @@ struct ObjectTraits<::test_object::std_allocator::WalkerChoice>
     using Parameters = std::tuple<
             ::zserio::UInt8>;
 
-
     static void validate(const View<::test_object::std_allocator::WalkerChoice>& view, ::std::string_view fieldName);
 
     static BitSize bitSizeOf(const View<::test_object::std_allocator::WalkerChoice>& view, BitSize bitPosition);
@@ -141,17 +140,24 @@ struct TypeInfo<::test_object::std_allocator::WalkerChoice, ::std::allocator<uin
     static const ::zserio::ITypeInfo& get();
 };
 
+template <>
+struct Reflectable<::test_object::std_allocator::WalkerChoice, ::std::allocator<uint8_t>>
+{
+    static ::zserio::IReflectableDataConstPtr create(
+            const ::test_object::std_allocator::WalkerChoice& value, const ::std::allocator<uint8_t>& allocator);
+
+    static ::zserio::IReflectableDataPtr create(
+            ::test_object::std_allocator::WalkerChoice& value, const ::std::allocator<uint8_t>& allocator);
+};
+
+template <>
+struct Introspectable<::test_object::std_allocator::WalkerChoice, ::std::allocator<uint8_t>>
+{
+    static ::zserio::IIntrospectableViewConstPtr create(
+            const View<::test_object::std_allocator::WalkerChoice>& view, const ::std::allocator<uint8_t>& allocator);
+};
+
 } // namespace detail
-
-template <>
-::zserio::IReflectableDataConstPtr reflectable(const ::test_object::std_allocator::WalkerChoice& value, const ::std::allocator<uint8_t>& allocator);
-
-template <>
-::zserio::IReflectableDataPtr reflectable(::test_object::std_allocator::WalkerChoice& value, const ::std::allocator<uint8_t>& allocator);
-
-template <>
-::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::WalkerChoice>& view, const ::std::allocator<uint8_t>& allocator);
-
 } // namespace zserio
 
 namespace std

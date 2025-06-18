@@ -186,21 +186,25 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
 {
     static const ${types.typeInfo.name}& get();
 };
-<@namespace_end ["detail"]/>
 
 template <>
-${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator);
+struct Reflectable<${fullName}, ${types.allocator.default}>
+{
+    static ${types.reflectableConstPtr.name} create(
+            const ${fullName}& value, const ${types.allocator.default}& allocator);
+
+    static ${types.reflectablePtr.name} create(
+            ${fullName}& value, const ${types.allocator.default}& allocator);
+};
 
 template <>
-${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
-
-template <>
-${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
-        <#lt>const ${types.allocator.default}& allocator);
-<@namespace_end ["zserio"]/>
-<#else>
-<@namespace_end ["zserio", "detail"]/>
+struct Introspectable<${fullName}, ${types.allocator.default}>
+{
+    static ${types.introspectableConstPtr.name} create(
+            const View<${fullName}>& view, const ${types.allocator.default}& allocator);
+};
 </#if>
+<@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
 template <>

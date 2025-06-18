@@ -275,18 +275,17 @@ const ::zserio::pmr::ITypeInfo& TypeInfo<::test_object::pmr_allocator::Reflectab
     return typeInfo;
 }
 
-} // namespace detail
-
-template <>
-::zserio::pmr::IReflectableDataConstPtr reflectable(const ::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataConstPtr Reflectable<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>::create(
+        const ::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(const ::test_object::pmr_allocator::ReflectableUnion& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(const ::test_object::pmr_allocator::ReflectableUnion& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>(typeInfo<::test_object::pmr_allocator::ReflectableUnion>(), alloc),
                 m_object(object)
         {}
@@ -328,19 +327,20 @@ template <>
         const ::test_object::pmr_allocator::ReflectableUnion& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::pmr::IReflectableDataPtr reflectable(::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
+::zserio::pmr::IReflectableDataPtr Reflectable<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>::create(
+        ::test_object::pmr_allocator::ReflectableUnion& value, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(::test_object::pmr_allocator::ReflectableUnion& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(::test_object::pmr_allocator::ReflectableUnion& object, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::pmr::polymorphic_allocator<uint8_t>>(typeInfo<::test_object::pmr_allocator::ReflectableUnion>(), alloc),
                 m_object(object)
         {}
@@ -379,13 +379,13 @@ template <>
         {
             if (name == "value32")
             {
-                m_object.emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::value32>(
+                m_object.template emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::value32>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::UInt32>(value));
                 return;
             }
             if (name == "valueStr")
             {
-                m_object.emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::valueStr>(
+                m_object.template emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::valueStr>(
                         ::zserio::ReflectableUtil::fromAny<::zserio::pmr::String>(value));
                 return;
             }
@@ -396,12 +396,12 @@ template <>
         {
             if (name == "value32")
             {
-                m_object.emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::value32>();
+                m_object.template emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::value32>();
                 return ::zserio::reflectable(get<::test_object::pmr_allocator::ReflectableUnion::Tag::value32>(m_object), get_allocator());
             }
             if (name == "valueStr")
             {
-                m_object.emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::valueStr>();
+                m_object.template emplace<::test_object::pmr_allocator::ReflectableUnion::Tag::valueStr>();
                 return ::zserio::reflectable(get<::test_object::pmr_allocator::ReflectableUnion::Tag::valueStr>(m_object), get_allocator());
             }
             throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exist in 'ReflectableUnion'!";
@@ -434,16 +434,16 @@ template <>
         ::test_object::pmr_allocator::ReflectableUnion& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::pmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::pmr_allocator::ReflectableUnion>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
+::zserio::pmr::IIntrospectableViewConstPtr Introspectable<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>::create(
+        const View<::test_object::pmr_allocator::ReflectableUnion>& view, const ::std::pmr::polymorphic_allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>
+    class IntrospectableImpl : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>
     {
     public:
-        explicit Introspectable(const ::zserio::View<::test_object::pmr_allocator::ReflectableUnion>& view_, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
+        explicit IntrospectableImpl(const ::zserio::View<::test_object::pmr_allocator::ReflectableUnion>& view_, const ::std::pmr::polymorphic_allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::pmr_allocator::ReflectableUnion, ::std::pmr::polymorphic_allocator<uint8_t>>(
                         view_, alloc)
         {}
@@ -475,9 +475,10 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view);
+    return ::std::allocate_shared<IntrospectableImpl>(allocator, view);
 }
 
+} // namespace detail
 } // namespace zserio
 
 namespace std

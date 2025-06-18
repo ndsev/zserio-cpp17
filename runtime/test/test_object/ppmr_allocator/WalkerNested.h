@@ -102,17 +102,24 @@ struct TypeInfo<::test_object::ppmr_allocator::WalkerNested, ::zserio::ppmr::Pro
     static const ::zserio::ppmr::ITypeInfo& get();
 };
 
+template <>
+struct Reflectable<::test_object::ppmr_allocator::WalkerNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
+{
+    static ::zserio::ppmr::IReflectableDataConstPtr create(const ::test_object::ppmr_allocator::WalkerNested& value,
+            const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+
+    static ::zserio::ppmr::IReflectableDataPtr create(::test_object::ppmr_allocator::WalkerNested& value,
+            const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+};
+
+template <>
+struct Introspectable<::test_object::ppmr_allocator::WalkerNested, ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>>
+{
+    static ::zserio::ppmr::IIntrospectableViewConstPtr create(const View<::test_object::ppmr_allocator::WalkerNested>& view,
+            const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
+};
+
 } // namespace detail
-
-template <>
-::zserio::ppmr::IReflectableDataConstPtr reflectable(const ::test_object::ppmr_allocator::WalkerNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
-
-template <>
-::zserio::ppmr::IReflectableDataPtr reflectable(::test_object::ppmr_allocator::WalkerNested& value, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
-
-template <>
-::zserio::ppmr::IIntrospectableViewConstPtr introspectable(const View<::test_object::ppmr_allocator::WalkerNested>& view, const ::zserio::ppmr::PropagatingPolymorphicAllocator<uint8_t>& allocator);
-
 } // namespace zserio
 
 namespace std

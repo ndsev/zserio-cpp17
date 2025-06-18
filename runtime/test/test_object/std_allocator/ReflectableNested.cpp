@@ -262,19 +262,17 @@ const ::zserio::ITypeInfo& TypeInfo<::test_object::std_allocator::ReflectableNes
     return typeInfo;
 }
 
-} // namespace detail
-
-template <>
-::zserio::IReflectableDataConstPtr reflectable(
+::zserio::IReflectableDataConstPtr Reflectable<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>::create(
         const ::test_object::std_allocator::ReflectableNested& value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(const ::test_object::std_allocator::ReflectableNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(const ::test_object::std_allocator::ReflectableNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataConstAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableNested>(), alloc),
                 m_object(object)
         {}
@@ -297,20 +295,20 @@ template <>
         const ::test_object::std_allocator::ReflectableNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::IReflectableDataPtr reflectable(
+::zserio::IReflectableDataPtr Reflectable<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>::create(
         ::test_object::std_allocator::ReflectableNested& value, const ::std::allocator<uint8_t>& allocator)
 {
-    class Reflectable : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>
+    class ReflectableImpl : public ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>
     {
     public:
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getField;
-        using ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>::getAnyValue;
+        using Base = ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>;
+        using Base::getField;
+        using Base::getAnyValue;
 
-        explicit Reflectable(::test_object::std_allocator::ReflectableNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
+        explicit ReflectableImpl(::test_object::std_allocator::ReflectableNested& object, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::ReflectableDataAllocatorHolderBase<::std::allocator<uint8_t>>(typeInfo<::test_object::std_allocator::ReflectableNested>(), alloc),
                 m_object(object)
         {}
@@ -367,16 +365,16 @@ template <>
         ::test_object::std_allocator::ReflectableNested& m_object;
     };
 
-    return ::std::allocate_shared<Reflectable>(allocator, value);
+    return ::std::allocate_shared<ReflectableImpl>(allocator, value);
 }
 
-template <>
-::zserio::IIntrospectableViewConstPtr introspectable(const View<::test_object::std_allocator::ReflectableNested>& view, const ::std::allocator<uint8_t>& allocator)
+::zserio::IIntrospectableViewConstPtr Introspectable<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>::create(
+        const View<::test_object::std_allocator::ReflectableNested>& view, const ::std::allocator<uint8_t>& allocator)
 {
-    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>
+    class IntrospectableImpl : public ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>
     {
     public:
-        explicit Introspectable(const ::zserio::View<::test_object::std_allocator::ReflectableNested>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
+        explicit IntrospectableImpl(const ::zserio::View<::test_object::std_allocator::ReflectableNested>& view_, const ::std::allocator<uint8_t>& alloc = {}) :
                 ::zserio::detail::CompoundIntrospectableViewBase<::test_object::std_allocator::ReflectableNested, ::std::allocator<uint8_t>>(
                         view_, alloc)
         {}
@@ -413,9 +411,10 @@ template <>
         }
     };
 
-    return ::std::allocate_shared<Introspectable>(allocator, view);
+    return ::std::allocate_shared<IntrospectableImpl>(allocator, view);
 }
 
+} // namespace detail
 } // namespace zserio
 
 namespace std

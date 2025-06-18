@@ -82,6 +82,14 @@ using IIntrospectableView = IBasicIntrospectableView<>;
 using IIntrospectableViewConstPtr = IBasicIntrospectableViewConstPtr<>;
 /** \} */
 
+namespace detail
+{
+
+template <typename T, typename ALLOC>
+struct Introspectable;
+
+} // namespace detail
+
 /**
  * Gets reflectable for the given object.
  *
@@ -92,11 +100,17 @@ using IIntrospectableViewConstPtr = IBasicIntrospectableViewConstPtr<>;
  */
 /** \{ */
 template <typename T, typename ALLOC = typename T::allocator_type>
-IBasicIntrospectableViewConstPtr<ALLOC> introspectable(const View<T>& view, const ALLOC& allocator = ALLOC());
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(const View<T>& view, const ALLOC& allocator = ALLOC())
+{
+    return detail::Introspectable<T, ALLOC>::create(view, allocator);
+}
 
 template <typename T, typename ALLOC = std::allocator<uint8_t>,
         std::enable_if_t<std::is_enum_v<T> || is_bitmask_v<T>, int> = 0>
-IBasicIntrospectableViewConstPtr<ALLOC> introspectable(T value, const ALLOC& allocator = ALLOC());
+IBasicIntrospectableViewConstPtr<ALLOC> introspectable(T value, const ALLOC& allocator = ALLOC())
+{
+    return detail::Introspectable<T, ALLOC>::create(value, allocator);
+}
 /** \} */
 
 } // namespace zserio
