@@ -1,7 +1,5 @@
 package zserio.extension.cpp17;
 
-import java.util.StringJoiner;
-
 import zserio.ast.ArrayInstantiation;
 import zserio.ast.AstNode;
 import zserio.ast.BitmaskType;

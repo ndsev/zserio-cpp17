@@ -147,28 +147,30 @@ ${I}}<#if comma>,</#if>
     ${field.name}TypeArguments<#t>
 </#macro>
 
-<#macro field_info_type_arguments_var field>
+<#macro field_info_type_arguments_var field indent=1>
+    <#local I>${""?left_pad(indent * 4)}</#local>
     <#local count=field_info_type_arguments_count(field)>
     <#if count != 0>
-    static const ::std::array<::std::string_view, ${count}> <@field_info_type_arguments_var_name field/> = {
+${I}static const ::std::array<::std::string_view, ${count}> <@field_info_type_arguments_var_name field/> = {
         <#if field.array??>
             <#if field.compound??>
-        <@field_info_compound_type_arguments field.compound.instantiatedParameters/>
+        <@field_info_compound_type_arguments field.compound.instantiatedParameters, indent+1/>
             <#elseif field.typeInfo.isDynamicBitField>
-        "${field.dynamicBitFieldLength.expression?j_string}"
+${I}    "${field.dynamicBitFieldLength.expression?j_string}"
             </#if>
         <#elseif field.compound??>
-        <@field_info_compound_type_arguments field.compound.instantiatedParameters/>
+        <@field_info_compound_type_arguments field.compound.instantiatedParameters, indent+1/>
         <#elseif field.typeInfo.isDynamicBitField>
-        "${field.dynamicBitFieldLength.expression?j_string}"
+${I}    "${field.dynamicBitFieldLength.expression?j_string}"
         </#if>
     };
     </#if>
 </#macro>
 
-<#macro field_info_compound_type_arguments parameters>
+<#macro field_info_compound_type_arguments parameters indent=2>
+    <#local I>${""?left_pad(indent * 4)}</#local>
     <#list parameters as parameter>
-        "${parameter.expression?j_string}"<#if parameter?has_next>,</#if>
+${I}"${parameter.expression?j_string}"<#if parameter?has_next>,</#if>
     </#list>
 </#macro>
 
@@ -297,24 +299,26 @@ ${I}    <@type_info method.requestTypeInfo/>, // requestTypeInfo
 ${I}}<#if comma>,</#if>
 </#macro>
 
-<#macro template_info_template_name_var varName, templateInstantiation>
+<#macro template_info_template_name_var varName, templateInstantiation indent=1>
+    <#local I>${""?left_pad(indent * 4)}</#local>
     <#if templateInstantiation?has_content>
-    static const ::std::string_view ${varName} = "${templateInstantiation.templateName}";
+${I}static const ::std::string_view ${varName} = "${templateInstantiation.templateName}";
     <#else>
-    static const ::std::string_view ${varName};
+${I}static const ::std::string_view ${varName};
     </#if>
 </#macro>
 
-<#macro template_info_template_arguments_var varName, templateInstantiation>
+<#macro template_info_template_arguments_var varName templateInstantiation indent=1>
+    <#local I>${""?left_pad(indent * 4)}</#local>
     <#if templateInstantiation?has_content>
-    static const ::std::array<::zserio::BasicTemplateArgumentInfo<AllocatorType><#rt>
+${I}static const ::std::array<::zserio::BasicTemplateArgumentInfo<AllocatorType><#rt>
             <#lt>, ${templateInstantiation.templateArgumentTypeInfos?size}> ${varName} = {
         <#list templateInstantiation.templateArgumentTypeInfos as typeInfo>
-        ::zserio::BasicTemplateArgumentInfo<AllocatorType>{<@type_info typeInfo/>}<#if typeInfo?has_next>,</#if>
+${I}    ::zserio::BasicTemplateArgumentInfo<AllocatorType>{<@type_info typeInfo/>}<#if typeInfo?has_next>,</#if>
         </#list>
-    };
+${I}};
     <#else>
     <#-- See comment in info_array_type macro.  -->
-    static const ::zserio::Span<::zserio::BasicTemplateArgumentInfo<AllocatorType>> templateArguments;
+${I}static const ::zserio::Span<::zserio::BasicTemplateArgumentInfo<AllocatorType>> templateArguments;
     </#if>
 </#macro>

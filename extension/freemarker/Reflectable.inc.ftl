@@ -53,8 +53,13 @@ ${I}{
     <#list fieldList as field>
 ${I}    if (name == "${field.name}")
 ${I}    {
-${I}        <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <@field_data_type_name field/>(<#rt>
+${I}        <#if field.isExtended>*</#if>m_object.<@field_data_member_name field/> = <#rt>
+                <#if field.typeInfo.isTemplateParameter>
+                    <#lt>::zserio::constructWithAllocator<<@field_data_type_name field/>>(get_allocator());
+                <#else>
+                    <@field_data_type_name field/>(<#t>
                     <#lt><#if field.typeInfo.needsAllocator || field.array??>get_allocator()</#if>);
+                </#if>
 ${I}        return ::zserio::reflectable<#if field.array??>Array</#if>(<#rt>
                     <#if field.isExtended   >*</#if><#if field.optional??>*</#if><#t>
                     <#lt>m_object.<@field_data_member_name field/>, get_allocator());
@@ -64,14 +69,14 @@ ${I}    throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exi
 ${I}}
 </#macro>
 
-<#macro reflectable_variant_create_field compoundName fieldList indent=2>
+<#macro reflectable_variant_create_field compoundName fieldList indent=2 isTemplate=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}${types.reflectablePtr.name} createField(::std::string_view name) override
 ${I}{
     <#list fieldList as field>
 ${I}    if (name == "${field.name}")
 ${I}    {
-${I}        m_object.emplace<${fullName}::Tag::<@choice_tag_name field/>>();
+${I}        m_object.template emplace<${fullName}::Tag::<@choice_tag_name field/>>();
 ${I}        return ::zserio::reflectable<#if field.array??>Array</#if>(<#rt>
                     <#lt>get<${fullName}::Tag::<@choice_tag_name field/>>(m_object), get_allocator());
 ${I}    }
@@ -108,14 +113,14 @@ ${I}    throw ::zserio::CppRuntimeException("Field '") << name << "' doesn't exi
 ${I}}
 </#macro>
 
-<#macro reflectable_variant_set_field compoundName fieldList indent=2>
+<#macro reflectable_variant_set_field compoundName fieldList indent=2 isTemplate=false>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}void setField(::std::string_view name, const ${types.any.name}& value) override
 ${I}{
     <#list fieldList as field>
 ${I}    if (name == "${field.name}")
 ${I}    {
-${I}        m_object.emplace<${fullName}::Tag::<@choice_tag_name field/>>(
+${I}        m_object.template emplace<${fullName}::Tag::<@choice_tag_name field/>>(
 ${I}                ::zserio::ReflectableUtil::fromAny<<@field_data_type_name field/>>(value));
 ${I}        return;
 ${I}    }

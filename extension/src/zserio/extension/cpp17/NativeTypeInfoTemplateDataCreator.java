@@ -5,7 +5,6 @@ import java.util.StringJoiner;
 import zserio.ast.BitmaskType;
 import zserio.ast.BooleanType;
 import zserio.ast.BytesType;
-import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.DynamicBitFieldType;
 import zserio.ast.EnumType;
 import zserio.ast.ExternType;

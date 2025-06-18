@@ -488,3 +488,77 @@ ${I}endBitPosition += <#rt>
         </#if>
         <#lt>);
 </#macro>
+
+<#macro structure_reflectable isConst>
+    class Reflectable : public ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>
+    {
+    public:
+        using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getField;
+        using ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>::getAnyValue;
+
+        explicit Reflectable(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc = {}) :
+                ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(<#rt>
+                        <#lt>typeInfo<${fullName}>(), alloc),
+                m_object(object)
+        {}
+    <#if fieldList?has_content>
+
+        <@reflectable_get_field name, fieldList, true/>
+        <#if !isConst>
+
+        <@reflectable_get_field name, fieldList, false/>
+
+        <@reflectable_set_field name, fieldList/>
+
+        <@reflectable_create_field name, fieldList/>
+        </#if>
+    </#if>
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) const override
+        {
+            return ${types.any.name}(::std::cref(m_object), alloc);
+        }
+    <#if !isConst>
+
+        ${types.any.name} getAnyValue(const ${types.allocator.default}& alloc) override
+        {
+            return ${types.any.name}(::std::ref(m_object), alloc);
+        }
+    </#if>
+
+    private:
+        <#if isConst>const </#if>${fullName}& m_object;
+    };
+
+    return ::std::allocate_shared<Reflectable>(allocator, value);
+</#macro>
+
+<#macro structure_introspectable isTemplate=false>
+    class Introspectable : public ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>
+    {
+    public:
+    <#if isTemplate>
+        using ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>::getValue;
+        using ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>::get_allocator;
+
+    </#if>
+        explicit Introspectable(const ::zserio::View<${fullName}>& view_, const ${types.allocator.default}& alloc = {}) :
+                ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>(
+                        view_, alloc)
+        {}
+    <#if fieldList?has_content>
+
+        <@introspectable_get_field name, fieldList/>
+    </#if>
+    <#if parameterList?has_content>
+
+        <@introspectable_get_parameter name, parameterList/>
+    </#if>
+    <#if functionList?has_content>
+
+        <@introspectable_call_function name, functionList/>
+    </#if>
+    };
+
+    return ::std::allocate_shared<Introspectable>(allocator, view);
+</#macro>

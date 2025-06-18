@@ -526,19 +526,55 @@ struct ObjectTraits<${fullName}>
 <@template_definition templateParameters/>
 struct TypeInfo<${fullName}, ${types.allocator.default}>
 {
-    static const ${types.typeInfo.name}& get();
+    static const ${types.typeInfo.name}& get()
+    {
+        using AllocatorType = ${types.allocator.default};
+
+        <@template_info_template_name_var "templateName", templateInstantiation!, 2/>
+        <@template_info_template_arguments_var "templateArguments", templateInstantiation!, 2/>
+
+    <#list fieldList as field>
+        <@field_info_recursive_type_info_var field/>
+        <@field_info_type_arguments_var field, 2/>
+    </#list>
+        <@field_info_array_var "fields", fieldList, 2/>
+
+        <@parameter_info_array_var "parameters", parameterList, 2/>
+
+        <@function_info_array_var "functions", functionList, 2/>
+
+        static const ::zserio::detail::StructTypeInfo<AllocatorType> typeInfo = {
+            "${schemaTypeName}",
+            [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
+            {
+                return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<${fullName}>>(allocator);
+            },
+            templateName, templateArguments, fields, parameters, functions
+        };
+
+        return typeInfo;
+    }
 };
 <@namespace_end ["detail"]/>
 
 <@template_definition templateParameters/>
-${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator);
+${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@structure_reflectable true/>
+}
 
 <@template_definition templateParameters/>
-${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
+${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@structure_reflectable false/>
+}
 
 <@template_definition templateParameters/>
 ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
-        <#lt>const ${types.allocator.default}& allocator);
+        <#lt>const ${types.allocator.default}& allocator)
+{
+    <@structure_introspectable true/>
+}
 <@namespace_end ["zserio"]/>
 <#else>
 <@namespace_end ["zserio", "detail"]/>

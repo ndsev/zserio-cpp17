@@ -424,22 +424,64 @@ struct ObjectTraits<${fullName}>
 };
 <#if withTypeInfoCode>
 
-template <>
+<@template_definition templateParameters/>
 struct TypeInfo<${fullName}, ${types.allocator.default}>
 {
-    static const ${types.typeInfo.name}& get();
+    static const ${types.typeInfo.name}& get()
+    {
+        using AllocatorType = ${types.allocator.default};
+
+        <@template_info_template_name_var "templateName", templateInstantiation!, 2/>
+        <@template_info_template_arguments_var "templateArguments", templateInstantiation!, 2/>
+
+    <#list fieldList as field>
+        <@field_info_recursive_type_info_var field/>
+        <@field_info_type_arguments_var field, 2/>
+    </#list>
+        <@field_info_array_var "fields", fieldList, 2/>
+
+        <@parameter_info_array_var "parameters", parameterList, 2/>
+
+        <@function_info_array_var "functions", functionList, 2/>
+
+    <#list caseMemberList as caseMember>
+        <@case_info_case_expressions_var caseMember, caseMember?index, 2/>
+    </#list>
+        <@case_info_array_var "cases" caseMemberList, defaultMember!, 2/>
+
+        static const ::zserio::detail::ChoiceTypeInfo<AllocatorType> typeInfo = {
+            "${schemaTypeName}",
+            [](const AllocatorType& allocator) -> ${types.reflectablePtr.name}
+            {
+                return ::std::allocate_shared<::zserio::detail::ReflectableDataOwner<${fullName}>>(allocator);
+            },
+            templateName, templateArguments,
+            fields, parameters, functions, "${selectorExpression?j_string}", cases
+        };
+
+        return typeInfo;
+    }
 };
 <@namespace_end ["detail"]/>
 
-template <>
-${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator);
+<@template_definition templateParameters/>
+${types.reflectableConstPtr.name} reflectable(const ${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@choice_reflectable true, true/>
+}
 
-template <>
-${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator);
+<@template_definition templateParameters/>
+${types.reflectablePtr.name} reflectable(${fullName}& value, const ${types.allocator.default}& allocator)
+{
+    <@choice_reflectable false, true/>
+}
 
-template <>
+<@template_definition templateParameters/>
 ${types.introspectableConstPtr.name} introspectable(const View<${fullName}>& view, <#rt>
-        <#lt>const ${types.allocator.default}& allocator);
+        <#lt>const ${types.allocator.default}& allocator)
+{
+    <@choice_introspectable true/>
+}
 <@namespace_end ["zserio"]/>
 <#else>
 <@namespace_end ["zserio", "detail"]/>
