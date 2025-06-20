@@ -21,8 +21,7 @@ public final class InstantiateTypeEmitterTemplateData extends UserTypeTemplateDa
         final CppNativeType cppNativeType = cppNativeMapper.getCppType(typeReference);
         IncludeCollector.addHeaderIncludes(cppNativeMapper, cppNativeType, typeReference, this);
 
-        targetTypeInfo =
-                NativeTypeInfoTemplateDataCreator.create(context, cppNativeType, typeReference);
+        targetTypeInfo = NativeTypeInfoTemplateDataCreator.create(context, cppNativeType, typeReference);
     }
 
     public NativeTypeInfoTemplateData getTargetTypeInfo()
