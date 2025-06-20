@@ -236,7 +236,7 @@ void ObjectTraits<${compoundFullName}>::<@structure_offset_setter_name field/>::
 <#macro structure_validate_field field numExtendedFields indent>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if field.isExtended>
-        <#if numExtendedFields == 0>
+        <#if numExtendedFields == 1>
 ${I}uint32_t numExtendedFields = 0;
         </#if>
 ${I}if (view.${field.getterName}().isPresent())
