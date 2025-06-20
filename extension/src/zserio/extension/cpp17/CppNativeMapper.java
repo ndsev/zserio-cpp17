@@ -833,7 +833,8 @@ public final class CppNativeMapper
 
         private void mapCompoundType(CompoundType type)
         {
-            final PackageName packageName = type.getPackage().getPackageName();
+            final PackageName packageName = type.getTemplate() != null
+                    ? type.getTemplate().getPackage().getPackageName() : type.getPackage().getPackageName();
             final String name = type.getTemplate() != null ? type.getTemplate().getName() : type.getName();
             final String includeFileName = getIncludePath(packageName, name);
             cppType = new NativeCompoundType(packageName, name, includeFileName);

@@ -204,6 +204,8 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     @Override
     public UnaryExpressionFormatting getValueOf(Expression expr) throws ZserioExtensionException
     {
+        includeCollector.addCppSystemIncludes(BUILT_IN_OPERATORS_INCLUDE);
+
         if (expr.op1().getExprType() == Expression.ExpressionType.ENUM)
         {
             return new UnaryExpressionFormatting("::zserio::builtin::valueOf(", ")");

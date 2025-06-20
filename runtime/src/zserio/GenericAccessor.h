@@ -49,6 +49,24 @@ const auto& genericAccessor(const Extended<T>& extendedValue)
     return genericAccessor(extendedValue.value());
 }
 
+template <typename T>
+T& genericAccessor(T& value)
+{
+    return value;
+}
+
+template <typename T>
+auto& genericAccessor(Optional<T>& optionalValue)
+{
+    return optionalValue.value();
+}
+
+template <typename T>
+auto& genericAccessor(Extended<T>& extendedValue)
+{
+    return genericAccessor(extendedValue.value());
+}
+
 } // namespace zserio
 
 #endif // ZSERIO_GENERIC_ACCESSOR_INC_H

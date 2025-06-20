@@ -36,7 +36,7 @@
             BytesView<#t>
         <#else>
             <#if !field.parmeterized?? && field.typeInfo.isTemplateParameter>
-                view_type_t<${field.typeInfo.typeFullName}><#t>
+                view_type<#if field.usedAsOffset>_used_as_offset</#if>_t<${field.typeInfo.typeFullName}><#t>
             <#else>
                 View<${field.typeInfo.typeFullName}><#t>
             </#if>

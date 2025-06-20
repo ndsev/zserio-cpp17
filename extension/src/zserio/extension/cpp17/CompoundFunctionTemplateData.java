@@ -33,7 +33,8 @@ public final class CompoundFunctionTemplateData
         else
         {
             final CppNativeType returnNativeType = cppNativeMapper.getCppType(returnTypeReference);
-            includeCollector.addHeaderIncludesForType(returnNativeType);
+            IncludeCollector.addHeaderIncludes(
+                    cppNativeMapper, returnNativeType, returnTypeReference, includeCollector);
             returnTypeInfo =
                     NativeTypeInfoTemplateDataCreator.create(context, returnNativeType, returnTypeReference);
         }

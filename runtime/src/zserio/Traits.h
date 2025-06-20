@@ -175,7 +175,22 @@ struct view_type<T, std::enable_if_t<is_complete_v<View<T>>>>
 };
 
 template <typename T, typename V = void>
-using view_type_t = typename view_type<T>::type;
+using view_type_t = typename view_type<T, V>::type;
+
+template <typename T, typename = void>
+struct view_type_used_as_offset
+{
+    using type = T&;
+};
+
+template <typename T>
+struct view_type_used_as_offset<T, std::enable_if_t<is_complete_v<View<T>>>>
+{
+    using type = View<T>;
+};
+
+template <typename T, typename V = void>
+using view_type_used_as_offset_t = typename view_type_used_as_offset<T, V>::type;
 
 template <typename T, typename ALLOC, typename... ARGS>
 T constructWithAllocator(const ALLOC& allocator, ARGS&&... args)

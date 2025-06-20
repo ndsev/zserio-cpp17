@@ -14,7 +14,6 @@ import zserio.ast.Field;
 import zserio.ast.IntegerType;
 import zserio.ast.ParameterizedTypeInstantiation;
 import zserio.ast.ParameterizedTypeInstantiation.InstantiatedParameter;
-import zserio.ast.TemplateArgument;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
 import zserio.ast.UnionType;
@@ -38,7 +37,7 @@ public final class CompoundFieldTemplateData
 
         final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
         final CppNativeType fieldNativeType = cppNativeMapper.getCppType(fieldTypeInstantiation);
-        addHeaderIncludes(
+        IncludeCollector.addHeaderIncludes(
                 cppNativeMapper, fieldNativeType, fieldTypeInstantiation.getTypeReference(), includeCollector);
 
         name = field.getName();
@@ -598,8 +597,8 @@ public final class CompoundFieldTemplateData
             // TODO[Mi-L@]: Is this right place where to add the element's include?
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType elementNativeType = cppNativeMapper.getCppType(elementTypeInstantiation);
-            addHeaderIncludes(cppNativeMapper, elementNativeType, elementTypeInstantiation.getTypeReference(),
-                    includeCollector);
+            IncludeCollector.addHeaderIncludes(cppNativeMapper, elementNativeType,
+                    elementTypeInstantiation.getTypeReference(), includeCollector);
             elementUsedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(
                     elementTypeInstantiation.getBaseType());
         }
@@ -650,18 +649,6 @@ public final class CompoundFieldTemplateData
         private final String viewIndirectLength;
         private final boolean isRecursive;
         private final boolean elementUsedInPackedArray;
-    }
-
-    private static void addHeaderIncludes(CppNativeMapper cppNativeMapper, CppNativeType nativeType,
-            TypeReference typeReference, IncludeCollector includeCollector) throws ZserioExtensionException
-    {
-        includeCollector.addHeaderIncludesForType(nativeType);
-        for (TemplateArgument templateArgument : typeReference.getTemplateArguments())
-        {
-            final TypeReference argumentTypeReference = templateArgument.getTypeReference();
-            final CppNativeType argumentNativeType = cppNativeMapper.getCppType(argumentTypeReference);
-            addHeaderIncludes(cppNativeMapper, argumentNativeType, argumentTypeReference, includeCollector);
-        }
     }
 
     private static String getDynamicBitFieldLength(TypeInstantiation instantiation,

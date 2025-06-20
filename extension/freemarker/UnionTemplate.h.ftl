@@ -177,7 +177,7 @@ public:
     }
 
 protected:
-    View(<#if !usedAsOffset>const </#if>${fullName}& data, const View& other) noexcept :
+    View(<#if !usedAsOffset>const </#if>${fullName}& data, const View&<#if parameterList?has_content> other</#if>) noexcept :
              m_data(&data)<#if parameterList?has_content>,</#if>
 <#list parameterList as parameter>
             <@parameter_view_member_name parameter/>(other.${parameter.getterName}())<#if parameter?has_next>,</#if>

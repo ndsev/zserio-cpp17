@@ -21,7 +21,8 @@ public final class CompoundParameterTemplateData
         final TypeReference parameterTypeReference = parameter.getTypeReference();
         final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
         final CppNativeType cppNativeType = cppNativeMapper.getCppType(parameterTypeReference);
-        includeCollector.addHeaderIncludesForType(cppNativeType);
+        IncludeCollector.addHeaderIncludes(
+                cppNativeMapper, cppNativeType, parameterTypeReference, includeCollector);
 
         name = parameter.getName();
         typeInfo = NativeTypeInfoTemplateDataCreator.create(context, cppNativeType, parameterTypeReference);

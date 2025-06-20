@@ -248,7 +248,7 @@ public:
     const ${fullName}& zserioData() const;
 
 protected:
-    View(const ${fullName}& data, const View& other) noexcept :
+    View(const ${fullName}& data, const View&<#if parameterList?has_content> other</#if>) noexcept :
             m_data(&data)<#if parameterList?has_content>,</#if>
 <#list parameterList as parameter>
             <@parameter_view_member_name parameter/>(other.${parameter.getterName}())<#if parameter?has_next>,</#if>
@@ -342,7 +342,7 @@ struct ObjectTraits<${fullName}>
 </#if>
     <@structure_offset_setters_template fullName, fieldList/>
     static void validate(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> view</#if>, <#rt>
-            <#lt>::std::string_view fieldName)
+            <#lt>::std::string_view)
     {
 <#list parameterList as parameter>
         detail::validate<@array_template_args parameter/>(view.${parameter.getterName}(), "'${name}.${parameter.name}'");
