@@ -7,7 +7,7 @@ namespace templates
 namespace expression_bitmask_template_argument
 {
 
-TEST(ExpressionBitmaskTemplateArgumentTest, readWrite)
+TEST(ExpressionBitmaskTemplateArgumentTest, writeRead)
 {
     const BitmaskTemplateArgument<Permission> bitmaskTemplateArgument_Permission(false, zserio::Int32(10));
     ASSERT_TRUE(zserio::View(bitmaskTemplateArgument_Permission).expressionField());
