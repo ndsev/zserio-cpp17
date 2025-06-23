@@ -24,12 +24,12 @@ bugprone-exception-escape:src/zserio/Variant.h:282
 bugprone-use-after-move:src/zserio/Variant.h:738
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:595
-cert-dcl58-cpp:src/zserio/BitBuffer.h:607
-cert-dcl58-cpp:src/zserio/Extended.h:240
+cert-dcl58-cpp:src/zserio/BitBuffer.h:602
+cert-dcl58-cpp:src/zserio/BitBuffer.h:614
+cert-dcl58-cpp:src/zserio/Extended.h:242
 cert-dcl58-cpp:src/zserio/Optional.h:1186
 cert-dcl58-cpp:src/zserio/Variant.h:907
-cert-dcl58-cpp:src/zserio/View.h:239
+cert-dcl58-cpp:src/zserio/View.h:257
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112
@@ -149,7 +149,7 @@ google-readability-casting:src/zserio/Variant.h:45
 google-readability-casting:src/zserio/Variant.h:79
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
-google-explicit-constructor:src/zserio/View.h:149
+google-explicit-constructor:src/zserio/View.h:167
 
 # This is necessary because of implementation. Zserio naturally supports recursion.
 misc-no-recursion
@@ -175,6 +175,7 @@ cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:46
+google-explicit-constructor:test/zserio/GenericAccessorTest.cpp:30
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:83
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:91
