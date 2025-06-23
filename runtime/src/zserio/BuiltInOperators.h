@@ -58,7 +58,7 @@ uint8_t numBits(uint64_t numValues);
  * \return Underlying numeric value of the given enumeration item.
  */
 template <typename T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
-auto valueOf(T value)
+constexpr auto valueOf(T value)
 {
     return enumToValue(value);
 }
@@ -71,7 +71,7 @@ auto valueOf(T value)
  * \return Underlying numeric value of the given bitmask value.
  */
 template <typename T, std::enable_if_t<zserio::is_bitmask_v<T>, int> = 0>
-auto valueOf(T value)
+constexpr auto valueOf(T value)
 {
     return value.getValue();
 }
