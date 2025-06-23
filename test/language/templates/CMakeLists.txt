@@ -19,6 +19,11 @@ add_custom_test(templates
     DEPENDS
         templates_zs
     SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceTemplatedEnumSelectorTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceTemplatedFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceTemplatedSelectorTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionBitmaskTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionEnumTemplateArgumentConflictTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplatedFieldTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
