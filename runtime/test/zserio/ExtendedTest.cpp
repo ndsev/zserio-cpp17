@@ -144,4 +144,13 @@ TEST(ExtendedTest, stdHash)
     ASSERT_NE(hasher(extended), hasher(extendedMissing));
 }
 
+TEST(ExtendedTest, stdIsConstructible)
+{
+    bool value = std::is_constructible_v<Extended<UInt32>, uint32_t, std::allocator<uint8_t>>;
+    ASSERT_FALSE(value);
+
+    value = std::is_constructible_v<Extended<std::string>, const char*, std::allocator<char>>;
+    ASSERT_TRUE(value);
+}
+
 } // namespace zserio

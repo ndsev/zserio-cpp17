@@ -51,7 +51,9 @@ public:
     /**
      * In-place extended value constructor from T's arguments.
      */
-    template <typename... ARGS, typename = std::enable_if_t<!detail::is_single_type_v<Extended, ARGS...>>>
+    template <typename... ARGS,
+            typename = std::enable_if_t<!detail::is_single_type_v<Extended, ARGS...> &&
+                    std::is_constructible_v<T, ARGS...>>>
     explicit constexpr Extended(ARGS&&... args) :
             m_value(std::forward<ARGS>(args)...)
     {}
