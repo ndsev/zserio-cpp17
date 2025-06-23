@@ -172,8 +172,8 @@ struct ObjectTraits<${fullName}>
 
     static BitSize initializeOffsets(const View<${fullName}>& view, BitSize bitPosition);
     <#if isPackable && usedInPackedArray>
-    static BitSize initializeOffsets(PackingContext& packingContext,
-            const View<${fullName}>& view, BitSize bitPosition);
+    static BitSize initializeOffsets(PackingContext& packingContext, const View<${fullName}>& view,
+            BitSize bitPosition);
     </#if>
 </#if>
 };

@@ -75,22 +75,20 @@ protected:
 
     static void assertPackingInterfaceMethodsPresent(const std::string& typeName)
     {
-        ASSERT_METHOD_PRESENT(
-                PATH, typeName, "void initContext(PackingContext<", "initContext(PackingContext<");
-        ASSERT_METHOD_PRESENT(
-                PATH, typeName, "BitSize bitSizeOf(PackingContext<", "BitSize bitSizeOf(PackingContext<");
-        ASSERT_METHOD_PRESENT(PATH, typeName, "void write(PackingContext<", "void write(PackingContext<");
-        ASSERT_METHOD_PRESENT(PATH, typeName, "void read(PackingContext<", "void read(PackingContext<");
+        ASSERT_METHOD_PRESENT(PATH, typeName, "void initContext(PackingContext", "initContext(PackingContext");
+        ASSERT_METHOD_PRESENT(PATH, typeName, "BitSize bitSizeOf(PackingContext", "bitSizeOf(PackingContext");
+        ASSERT_METHOD_PRESENT(PATH, typeName, "void write(PackingContext", "write(PackingContext");
+        ASSERT_METHOD_PRESENT(PATH, typeName, "void read(PackingContext", "read(PackingContext");
     }
 
     static void assertPackingInterfaceMethodsNotPresent(const std::string& typeName)
     {
         ASSERT_METHOD_NOT_PRESENT(
-                PATH, typeName, "void initContext(PackingContext<", "void initContext(PackingContext<");
+                PATH, typeName, "void initContext(PackingContext", "initContext(PackingContext");
         ASSERT_METHOD_NOT_PRESENT(
-                PATH, typeName, "BitSize bitSizeOf(PackingContext<", "BitSize bitSizeOf(PackingContext<");
-        ASSERT_METHOD_NOT_PRESENT(PATH, typeName, "void write(PackingContext<", "void write(PackingContext<");
-        ASSERT_METHOD_NOT_PRESENT(PATH, typeName, "void read(PackingContext<", "void read(PackingContext<");
+                PATH, typeName, "BitSize bitSizeOf(PackingContext", "bitSizeOf(PackingContext");
+        ASSERT_METHOD_NOT_PRESENT(PATH, typeName, "void write(PackingContext", "write(PackingContext");
+        ASSERT_METHOD_NOT_PRESENT(PATH, typeName, "void read(PackingContext", "read(PackingContext");
     }
 
     static constexpr std::string_view BLOB_NAME = "language/array_types/packing_interface_optimization.blob";
@@ -111,84 +109,84 @@ TEST_F(PackingInterfaceOptimizationTest, packingInterfaceOptimizationMethods)
 {
     assertPackingInterfaceMethodsNotPresent("PackingInterfaceOptimization");
     const std::string path = std::string(PATH) + "PackingInterfaceOptimization.h";
-    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, unpackedColorsHolderMethods)
 {
     assertPackingInterfaceMethodsNotPresent("UnpackedColorsHolder");
     const std::string path = std::string(PATH) + "UnpackedColorsHolder.h";
-    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, packedColorsHolderMethods)
 {
     assertPackingInterfaceMethodsNotPresent("PackedColorsHolder");
     const std::string path = std::string(PATH) + "PackedColorsHolder.h";
-    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, unpackedColorStructMethods)
 {
     assertPackingInterfaceMethodsNotPresent("UnpackedColorStruct");
     const std::string path = std::string(PATH) + "UnpackedColorStruct.h";
-    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, unpackedColorChoiceMethods)
 {
     assertPackingInterfaceMethodsNotPresent("UnpackedColorChoice");
     const std::string path = std::string(PATH) + "UnpackedColorChoice.h";
-    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, unpackedColorUnionMethods)
 {
     assertPackingInterfaceMethodsNotPresent("UnpackedColorUnion");
     const std::string path = std::string(PATH) + "UnpackedColorUnion.h";
-    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_NOT_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, mixedColorStructMethods)
 {
     assertPackingInterfaceMethodsPresent("MixedColorStruct");
     const std::string path = std::string(PATH) + "MixedColorStruct.h";
-    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, mixedColorChoiceMethods)
 {
     assertPackingInterfaceMethodsPresent("MixedColorChoice");
     const std::string path = std::string(PATH) + "MixedColorChoice.h";
-    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, mixedColorUnionMethods)
 {
     assertPackingInterfaceMethodsPresent("MixedColorUnion");
     const std::string path = std::string(PATH) + "MixedColorUnion.h";
-    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, packedColorStructMethods)
 {
     assertPackingInterfaceMethodsPresent("PackedColorStruct");
     const std::string path = std::string(PATH) + "PackedColorStruct.h";
-    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, packedColorChoiceMethods)
 {
     assertPackingInterfaceMethodsPresent("PackedColorChoice");
     const std::string path = std::string(PATH) + "PackedColorChoice.h";
-    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext");
 }
 
 TEST_F(PackingInterfaceOptimizationTest, packedColorUnionMethods)
 {
     assertPackingInterfaceMethodsPresent("PackedColorUnion");
     const std::string path = std::string(PATH) + "PackedColorUnion.h";
-    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext<");
+    ASSERT_STRING_IN_FILE_PRESENT(path, "struct PackingContext");
 }
 
 } // namespace packing_interface_optimization
