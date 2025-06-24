@@ -56,6 +56,9 @@ set(CMAKE_C_FLAGS_INIT "${COMPILER_BIG_OBJ_FLAG}")
 # set CXX flags
 set(CMAKE_CXX_FLAGS_INIT "${COMPILER_BIG_OBJ_FLAG}")
 
+# set size optimization in debug to fix "file is too big" problem for MinGW 11.2.0
+set(COMPILER_SIZE_OPTIMIZATION_FLAG "-Os")
+
 # set C flags for debug
 set(CMAKE_C_FLAGS_DEBUG_INIT "${COMPILER_SIZE_OPTIMIZATION_FLAG}")
 
