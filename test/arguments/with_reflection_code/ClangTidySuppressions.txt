@@ -1,14 +1,5 @@
-bugprone-exception-escape:gen/with_reflection_code/Child.h
 bugprone-exception-escape:gen/with_reflection_code/Struct.h
 bugprone-exception-escape:gen/with_reflection_code/Union.h
-
-misc-unused-parameters:gen/with_reflection_code/Child.cpp
-misc-unused-parameters:gen/with_reflection_code/Choice.cpp
-misc-unused-parameters:gen/with_reflection_code/Extended.cpp
-misc-unused-parameters:gen/with_reflection_code/Original.cpp
-misc-unused-parameters:gen/with_reflection_code/Parameterized.cpp
-misc-unused-parameters:gen/with_reflection_code/Struct.cpp
-misc-unused-parameters:gen/with_reflection_code/Union.cpp
 
 cppcoreguidelines-pro-bounds-pointer-arithmetic:cpp/WithReflectionCodeTest.cpp
 

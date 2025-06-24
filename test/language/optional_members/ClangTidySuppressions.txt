@@ -1,6 +1,3 @@
-bugprone-exception-escape:gen/optional_members/optional_array_recursion/Employee.h
-bugprone-exception-escape:gen/optional_members/optional_expression_with_removed_enum_item/Compound.h
-bugprone-exception-escape:gen/optional_members/optional_expression/Container.h
 bugprone-exception-escape:gen/optional_members/optional_recursion/Block.h
 
 misc-no-recursion # reports also tested_release

@@ -11,3 +11,5 @@ bugprone-exception-escape:gen/union_types/union_with_multiple_parameters/TestUni
 readability-simplify-boolean-expr:gen/union_types/empty_union_with_parameter/EmptyUnionWithParameter.cpp
 
 performance-move-const-arg:cpp/SimpleUnionTest.cpp
+
+cert-dcl58-cpp:gen/union_types/union_compatibility_check/UnionCompatibilityCheck.h
