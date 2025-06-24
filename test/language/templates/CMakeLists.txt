@@ -37,7 +37,30 @@ add_custom_test(templates
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsParameterTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsStructArrayFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsStructFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeOnParameterizedTemplateTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateUnusedTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateViaImportTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateViaSingleImportTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateVsDefaultTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateWithInstantiateTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructFullAndShortTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructFullNameTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructLongTemplateArgumentClashTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructLongTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructRecursiveTemplateTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplateClashAcrossPackagesTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplateClashOtherTemplateTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplateClashOtherTypeTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplateClashTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplatedFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplatedTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplatedTypeArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructTemplateInTemplateTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypeTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypeTemplateWithBuiltinTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypeTemplateWithCompoundTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedStructRecursionTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionTemplatedFieldTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

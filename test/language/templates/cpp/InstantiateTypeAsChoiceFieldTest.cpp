@@ -7,7 +7,7 @@ namespace templates
 namespace instantiate_type_as_choice_field
 {
 
-TEST(InstantiateTypeAsChoiceFieldTest, readWrite)
+TEST(InstantiateTypeAsChoiceFieldTest, writeRead)
 {
     InstantiateTypeAsChoiceField data;
     data.emplace<InstantiateTypeAsChoiceField::Tag::test>(Test32{13});
