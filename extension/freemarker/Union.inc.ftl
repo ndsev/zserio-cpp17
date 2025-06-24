@@ -135,6 +135,9 @@ ${I}public:
 ${I}    using Base = ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>;
 ${I}    using Base::getField;
 ${I}    using Base::getAnyValue;
+    <#if isTemplate>
+${I}    using Base::get_allocator;
+    </#if>
 
 ${I}    explicit ReflectableImpl(<#if isConst>const </#if>${fullName}& object, const ${types.allocator.default}& alloc = {}) :
 ${I}            ::zserio::detail::ReflectableData<#if isConst>Const</#if>AllocatorHolderBase<${types.allocator.default}>(typeInfo<${fullName}>(), alloc),
