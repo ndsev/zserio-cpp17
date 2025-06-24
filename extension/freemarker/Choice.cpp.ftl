@@ -101,8 +101,8 @@ View<${fullName}>::View(<#if !usedAsOffset>const </#if>${fullName}& data,
     return get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data);
     <#else>
     <#-- field which needs View -->
-    return <@field_view_type_name field/>{get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data)<#rt>
-            <#lt><@field_view_parameters field/>};
+    return <@field_view_type_name field/>(get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data)<#rt>
+            <#lt><@field_view_parameters field/>);
     </#if>
 }
 </#list>

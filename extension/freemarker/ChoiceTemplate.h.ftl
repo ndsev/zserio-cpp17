@@ -155,8 +155,8 @@ public:
 
     <@field_view_type_name field/> ${field.getterName}() const
     {
-        return <@field_view_type_name field/>{get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data)<#rt>
-            <#lt><@field_view_parameters field/>};
+        return <@field_view_type_name field/>(get<${fullName}::Tag::<@choice_tag_name field/>>(*m_data)<#rt>
+            <#lt><@field_view_parameters field/>);
     }
 </#list>
 <#list functionList as function>
