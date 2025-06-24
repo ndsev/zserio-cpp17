@@ -7,7 +7,7 @@ namespace subtypes
 namespace subtype_imported
 {
 
-TEST(SubtypeImportedTest, readWrite)
+TEST(SubtypeImportedTest, writeRead)
 {
     SubtypeImported data{pkg::SubTest{42}};
     test_utils::writeReadTest(data);
