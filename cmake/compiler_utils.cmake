@@ -119,6 +119,7 @@ function(compiler_get_warnings_as_errors_setup VARNAME)
             set(WARNINGS_SETUP_LIST
                 "-Wno-reserved-identifier" # identifier is reserved because it starts with '_' ...
                 "-Wno-deprecated-copy-with-dtor" # definition of implicit copy constructor is deprecated
+                "-Wno-unused-local-typedef" # unused type alias (false positive)
             )
             string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP} ${WARNINGS_SETUP_LIST}")
         endif ()
