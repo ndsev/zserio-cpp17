@@ -11,6 +11,7 @@ bugprone-exception-escape:gen/indexed_offsets/indexed_offset_array_in_recursive_
 bugprone-exception-escape:gen/indexed_offsets/indexed_offset_array_in_recursive_union/TestUnion.h
 bugprone-exception-escape:gen/indexed_offsets/indexed_offset_array_in_union/TestStruct.h
 bugprone-exception-escape:gen/indexed_offsets/indexed_offset_array_in_union/TestUnion.h
+bugprone-exception-escape:gen/indexed_offsets/optional_indexed_offset_array/OptionalIndexedOffsetArray.h
 
 misc-no-recursion # reports also tested_release and some system headers
 
