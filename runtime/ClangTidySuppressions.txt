@@ -1,11 +1,11 @@
 # This is necessary for implementation. We intentionally store all possible array element types in 'uint64_t'
 # type to be able to implement delta compression.
-bugprone-signed-char-misuse:src/zserio/DeltaContext.h:92
-bugprone-signed-char-misuse:src/zserio/DeltaContext.h:111
-bugprone-signed-char-misuse:src/zserio/DeltaContext.h:171
-bugprone-signed-char-misuse:src/zserio/DeltaContext.h:207
-bugprone-signed-char-misuse:src/zserio/DeltaContext.h:257
-bugprone-signed-char-misuse:src/zserio/DeltaContext.h:273
+bugprone-signed-char-misuse:src/zserio/DeltaContext.h:90
+bugprone-signed-char-misuse:src/zserio/DeltaContext.h:109
+bugprone-signed-char-misuse:src/zserio/DeltaContext.h:169
+bugprone-signed-char-misuse:src/zserio/DeltaContext.h:205
+bugprone-signed-char-misuse:src/zserio/DeltaContext.h:255
+bugprone-signed-char-misuse:src/zserio/DeltaContext.h:271
 
 # Optional is a generic container and exceptions may be thrown from the value type.
 bugprone-exception-escape:src/zserio/Optional.h:362
