@@ -157,7 +157,7 @@ View<::test_object::ppmr_allocator::WalkerObject>::View(const ::test_object::ppm
 {
     if (m_data->nested.has_value())
     {
-        return ::zserio::ppmr::Optional<View<::test_object::ppmr_allocator::WalkerNested>>{::std::in_place, m_data->nested.get_allocator(), *m_data->nested};
+        return ::zserio::ppmr::Optional<View<::test_object::ppmr_allocator::WalkerNested>>(::std::in_place, m_data->nested.get_allocator(), *m_data->nested);
     }
     else
     {
@@ -167,19 +167,19 @@ View<::test_object::ppmr_allocator::WalkerObject>::View(const ::test_object::ppm
 
 ::std::string_view View<::test_object::ppmr_allocator::WalkerObject>::text() const
 {
-    return ::std::string_view{m_data->text};
+    return ::std::string_view(m_data->text);
 }
 
 ArrayView<const ::test_object::ppmr_allocator::WalkerUnion> View<::test_object::ppmr_allocator::WalkerObject>::unionArray() const
 {
-    return ArrayView<const ::test_object::ppmr_allocator::WalkerUnion>{m_data->unionArray};
+    return ArrayView<const ::test_object::ppmr_allocator::WalkerUnion>(m_data->unionArray);
 }
 
 ::zserio::ppmr::Optional<ArrayView<const ::test_object::ppmr_allocator::WalkerUnion>> View<::test_object::ppmr_allocator::WalkerObject>::optionalUnionArray() const
 {
     if (m_data->optionalUnionArray.has_value())
     {
-        return ::zserio::ppmr::Optional<ArrayView<const ::test_object::ppmr_allocator::WalkerUnion>>{::std::in_place, m_data->optionalUnionArray.get_allocator(), *m_data->optionalUnionArray};
+        return ::zserio::ppmr::Optional<ArrayView<const ::test_object::ppmr_allocator::WalkerUnion>>(::std::in_place, m_data->optionalUnionArray.get_allocator(), *m_data->optionalUnionArray);
     }
     else
     {
@@ -194,7 +194,7 @@ ArrayView<const ::test_object::ppmr_allocator::WalkerUnion> View<::test_object::
 
 View<::test_object::ppmr_allocator::WalkerChoice> View<::test_object::ppmr_allocator::WalkerObject>::choiceField() const
 {
-    return View<::test_object::ppmr_allocator::WalkerChoice>{m_data->choiceField, detail::makeParameter<0, ::test_object::ppmr_allocator::WalkerChoice>(choiceSelector())};
+    return View<::test_object::ppmr_allocator::WalkerChoice>(m_data->choiceField, detail::makeParameter<0, ::test_object::ppmr_allocator::WalkerChoice>(choiceSelector()));
 }
 
 const ::test_object::ppmr_allocator::WalkerObject& View<::test_object::ppmr_allocator::WalkerObject>::zserioData() const

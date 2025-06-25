@@ -152,17 +152,17 @@ View<::test_object::std_allocator::CreatorNested>::View(const ::test_object::std
 
 ::std::string_view View<::test_object::std_allocator::CreatorNested>::text() const
 {
-    return ::std::string_view{m_data->text};
+    return ::std::string_view(m_data->text);
 }
 
 ::zserio::BitBufferView View<::test_object::std_allocator::CreatorNested>::externData() const
 {
-    return ::zserio::BitBufferView{m_data->externData};
+    return ::zserio::BitBufferView(m_data->externData);
 }
 
 BytesView View<::test_object::std_allocator::CreatorNested>::bytesData() const
 {
-    return BytesView{m_data->bytesData};
+    return BytesView(m_data->bytesData);
 }
 
 ::test_object::std_allocator::CreatorEnum View<::test_object::std_allocator::CreatorNested>::creatorEnum() const

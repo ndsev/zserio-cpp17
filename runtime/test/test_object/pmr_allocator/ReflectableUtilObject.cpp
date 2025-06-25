@@ -108,7 +108,7 @@ View<::test_object::pmr_allocator::ReflectableUtilObject>::View(const ::test_obj
 
 View<::test_object::pmr_allocator::ReflectableUtilChoice> View<::test_object::pmr_allocator::ReflectableUtilObject>::reflectableUtilChoice() const
 {
-    return View<::test_object::pmr_allocator::ReflectableUtilChoice>{m_data->reflectableUtilChoice, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableUtilChoice>(choiceParam())};
+    return View<::test_object::pmr_allocator::ReflectableUtilChoice>(m_data->reflectableUtilChoice, detail::makeParameter<0, ::test_object::pmr_allocator::ReflectableUtilChoice>(choiceParam()));
 }
 
 const ::test_object::pmr_allocator::ReflectableUtilObject& View<::test_object::pmr_allocator::ReflectableUtilObject>::zserioData() const

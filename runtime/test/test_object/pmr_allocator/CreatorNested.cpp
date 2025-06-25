@@ -152,17 +152,17 @@ View<::test_object::pmr_allocator::CreatorNested>::View(const ::test_object::pmr
 
 ::std::string_view View<::test_object::pmr_allocator::CreatorNested>::text() const
 {
-    return ::std::string_view{m_data->text};
+    return ::std::string_view(m_data->text);
 }
 
 ::zserio::pmr::BitBufferView View<::test_object::pmr_allocator::CreatorNested>::externData() const
 {
-    return ::zserio::pmr::BitBufferView{m_data->externData};
+    return ::zserio::pmr::BitBufferView(m_data->externData);
 }
 
 BytesView View<::test_object::pmr_allocator::CreatorNested>::bytesData() const
 {
-    return BytesView{m_data->bytesData};
+    return BytesView(m_data->bytesData);
 }
 
 ::test_object::pmr_allocator::CreatorEnum View<::test_object::pmr_allocator::CreatorNested>::creatorEnum() const

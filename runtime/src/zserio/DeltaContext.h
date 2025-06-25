@@ -47,8 +47,6 @@ int64_t calcUncheckedDelta(T lhs, uint64_t rhs)
     return static_cast<int64_t>(static_cast<uint64_t>(lhs) - rhs);
 }
 
-} // namespace detail
-
 /**
  * Context for delta packing created for each packable field.
  *
@@ -304,9 +302,6 @@ private:
     uint32_t m_numElements = 0;
     size_t m_unpackedBitSize = 0;
 };
-
-namespace detail
-{
 
 template <typename T>
 void initContext(typename ObjectTraits<T>::PackingContext& packingContext, const View<T>& view)

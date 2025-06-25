@@ -71,12 +71,12 @@ View<::test_object::ppmr_allocator::WalkerUnion>::View(const ::test_object::ppmr
 
 ::std::string_view View<::test_object::ppmr_allocator::WalkerUnion>::text() const
 {
-    return ::std::string_view{get<::test_object::ppmr_allocator::WalkerUnion::Tag::text>(*m_data)};
+    return ::std::string_view(get<::test_object::ppmr_allocator::WalkerUnion::Tag::text>(*m_data));
 }
 
 ArrayView<const ::test_object::ppmr_allocator::WalkerNested> View<::test_object::ppmr_allocator::WalkerUnion>::nestedArray() const
 {
-    return ArrayView<const ::test_object::ppmr_allocator::WalkerNested>{get<::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray>(*m_data)};
+    return ArrayView<const ::test_object::ppmr_allocator::WalkerNested>(get<::test_object::ppmr_allocator::WalkerUnion::Tag::nestedArray>(*m_data));
 }
 
 ::test_object::ppmr_allocator::WalkerUnion::Tag View<::test_object::ppmr_allocator::WalkerUnion>::zserioChoiceTag() const

@@ -76,7 +76,7 @@ View<::test_object::std_allocator::ReflectableUtilUnion>::View(const ::test_obje
 
 View<::test_object::std_allocator::ReflectableUtilObject> View<::test_object::std_allocator::ReflectableUtilUnion>::reflectableUtilObject() const
 {
-    return View<::test_object::std_allocator::ReflectableUtilObject>{get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>(*m_data)};
+    return View<::test_object::std_allocator::ReflectableUtilObject>(get<::test_object::std_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>(*m_data));
 }
 
 ::test_object::std_allocator::ReflectableUtilUnion::Tag View<::test_object::std_allocator::ReflectableUtilUnion>::zserioChoiceTag() const

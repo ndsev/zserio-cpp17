@@ -73,7 +73,7 @@ View<::test_object::pmr_allocator::ReflectableChoice>::View(const ::test_object:
 
 ::std::string_view View<::test_object::pmr_allocator::ReflectableChoice>::valueStr() const
 {
-    return ::std::string_view{get<::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr>(*m_data)};
+    return ::std::string_view(get<::test_object::pmr_allocator::ReflectableChoice::Tag::valueStr>(*m_data));
 }
 
 ::zserio::UInt32 View<::test_object::pmr_allocator::ReflectableChoice>::value32() const

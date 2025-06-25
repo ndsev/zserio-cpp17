@@ -103,7 +103,7 @@ View<::test_object::ppmr_allocator::DebugStringParamObject>::View(const ::test_o
 
 ::std::string_view View<::test_object::ppmr_allocator::DebugStringParamObject>::text() const
 {
-    return ::std::string_view{m_data->text};
+    return ::std::string_view(m_data->text);
 }
 
 const ::test_object::ppmr_allocator::DebugStringParamObject& View<::test_object::ppmr_allocator::DebugStringParamObject>::zserioData() const

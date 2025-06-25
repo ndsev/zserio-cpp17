@@ -94,7 +94,7 @@ View<::test_object::pmr_allocator::WalkerNested>::View(const ::test_object::pmr_
 
 ::std::string_view View<::test_object::pmr_allocator::WalkerNested>::text() const
 {
-    return ::std::string_view{m_data->text};
+    return ::std::string_view(m_data->text);
 }
 
 const ::test_object::pmr_allocator::WalkerNested& View<::test_object::pmr_allocator::WalkerNested>::zserioData() const

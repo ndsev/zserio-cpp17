@@ -183,29 +183,29 @@ View<::test_object::std_allocator::CreatorObject>::View(const ::test_object::std
 
 View<::test_object::std_allocator::CreatorNested> View<::test_object::std_allocator::CreatorObject>::nested() const
 {
-    return View<::test_object::std_allocator::CreatorNested>{m_data->nested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(value())};
+    return View<::test_object::std_allocator::CreatorNested>(m_data->nested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(value()));
 }
 
 ::std::string_view View<::test_object::std_allocator::CreatorObject>::text() const
 {
-    return ::std::string_view{m_data->text};
+    return ::std::string_view(m_data->text);
 }
 
 ArrayView<const ::test_object::std_allocator::CreatorNested, View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits> View<::test_object::std_allocator::CreatorObject>::nestedArray() const
 {
-    return ArrayView<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits>{m_data->nestedArray, *this};
+    return ArrayView<const ::test_object::std_allocator::CreatorNested, ZserioNestedArrayArrayTraits>(m_data->nestedArray, *this);
 }
 
 ArrayView<const ::zserio::String> View<::test_object::std_allocator::CreatorObject>::textArray() const
 {
-    return ArrayView<const ::zserio::String>{m_data->textArray};
+    return ArrayView<const ::zserio::String>(m_data->textArray);
 }
 
 ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>> View<::test_object::std_allocator::CreatorObject>::externArray() const
 {
     if (m_data->externArray.has_value())
     {
-        return ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>>{::std::in_place, m_data->externArray.get_allocator(), *m_data->externArray};
+        return ::zserio::Optional<ArrayView<const ::zserio::BitBuffer>>(::std::in_place, m_data->externArray.get_allocator(), *m_data->externArray);
     }
     else
     {
@@ -217,7 +217,7 @@ ArrayView<const ::zserio::String> View<::test_object::std_allocator::CreatorObje
 {
     if (m_data->bytesArray.has_value())
     {
-        return ::zserio::Optional<ArrayView<const ::zserio::Bytes>>{::std::in_place, m_data->bytesArray.get_allocator(), *m_data->bytesArray};
+        return ::zserio::Optional<ArrayView<const ::zserio::Bytes>>(::std::in_place, m_data->bytesArray.get_allocator(), *m_data->bytesArray);
     }
     else
     {
@@ -234,7 +234,7 @@ ArrayView<const ::zserio::String> View<::test_object::std_allocator::CreatorObje
 {
     if (m_data->optionalNested.has_value())
     {
-        return ::zserio::Optional<View<::test_object::std_allocator::CreatorNested>>{::std::in_place, m_data->optionalNested.get_allocator(), *m_data->optionalNested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(value())};
+        return ::zserio::Optional<View<::test_object::std_allocator::CreatorNested>>(::std::in_place, m_data->optionalNested.get_allocator(), *m_data->optionalNested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(value()));
     }
     else
     {

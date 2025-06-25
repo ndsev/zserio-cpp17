@@ -242,8 +242,8 @@ struct ArrayTraits<T, std::enable_if_t<std::is_enum_v<T>>>
         detail::read(reader, element);
     }
 
-    static void read(
-            DeltaContext& context, BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    static void read(detail::DeltaContext& context, BitStreamReader& reader, const detail::DummyArrayOwner&,
+            T& element, size_t)
     {
         detail::read(context, reader, element);
     }
@@ -262,8 +262,8 @@ struct ArrayTraits<T, std::enable_if_t<zserio::is_bitmask_v<T>>>
         detail::read(reader, element);
     }
 
-    static void read(
-            DeltaContext& context, BitStreamReader& reader, const detail::DummyArrayOwner&, T& element, size_t)
+    static void read(detail::DeltaContext& context, BitStreamReader& reader, const detail::DummyArrayOwner&,
+            T& element, size_t)
     {
         detail::read(context, reader, element);
     }

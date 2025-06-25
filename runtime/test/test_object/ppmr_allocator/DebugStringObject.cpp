@@ -95,7 +95,7 @@ View<::test_object::ppmr_allocator::DebugStringObject>::View(const ::test_object
 
 ::std::string_view View<::test_object::ppmr_allocator::DebugStringObject>::text() const
 {
-    return ::std::string_view{m_data->text};
+    return ::std::string_view(m_data->text);
 }
 
 const ::test_object::ppmr_allocator::DebugStringObject& View<::test_object::ppmr_allocator::DebugStringObject>::zserioData() const

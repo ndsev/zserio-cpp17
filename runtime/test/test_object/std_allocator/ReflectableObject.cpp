@@ -130,12 +130,12 @@ View<::test_object::std_allocator::ReflectableObject>::View(const ::test_object:
 
 ::std::string_view View<::test_object::std_allocator::ReflectableObject>::stringField() const
 {
-    return ::std::string_view{m_data->stringField};
+    return ::std::string_view(m_data->stringField);
 }
 
 View<::test_object::std_allocator::ReflectableNested> View<::test_object::std_allocator::ReflectableObject>::reflectableNested() const
 {
-    return View<::test_object::std_allocator::ReflectableNested>{m_data->reflectableNested, detail::makeParameter<0, ::test_object::std_allocator::ReflectableNested>(13), detail::makeParameter<1, ::test_object::std_allocator::ReflectableNested>(stringField())};
+    return View<::test_object::std_allocator::ReflectableNested>(m_data->reflectableNested, detail::makeParameter<0, ::test_object::std_allocator::ReflectableNested>(13), detail::makeParameter<1, ::test_object::std_allocator::ReflectableNested>(stringField()));
 }
 
 ::test_object::std_allocator::ReflectableEnum View<::test_object::std_allocator::ReflectableObject>::reflectableEnum() const
@@ -145,12 +145,12 @@ View<::test_object::std_allocator::ReflectableNested> View<::test_object::std_al
 
 View<::test_object::std_allocator::ReflectableChoice> View<::test_object::std_allocator::ReflectableObject>::reflectableChoice() const
 {
-    return View<::test_object::std_allocator::ReflectableChoice>{m_data->reflectableChoice, detail::makeParameter<0, ::test_object::std_allocator::ReflectableChoice>(reflectableEnum())};
+    return View<::test_object::std_allocator::ReflectableChoice>(m_data->reflectableChoice, detail::makeParameter<0, ::test_object::std_allocator::ReflectableChoice>(reflectableEnum()));
 }
 
 View<::test_object::std_allocator::ReflectableUnion> View<::test_object::std_allocator::ReflectableObject>::reflectableUnion() const
 {
-    return View<::test_object::std_allocator::ReflectableUnion>{m_data->reflectableUnion};
+    return View<::test_object::std_allocator::ReflectableUnion>(m_data->reflectableUnion);
 }
 
 const ::test_object::std_allocator::ReflectableObject& View<::test_object::std_allocator::ReflectableObject>::zserioData() const

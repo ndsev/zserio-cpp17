@@ -73,7 +73,7 @@ View<::test_object::pmr_allocator::ReflectableUtilChoice>::View(const ::test_obj
 
 ArrayView<const ::zserio::UInt32> View<::test_object::pmr_allocator::ReflectableUtilChoice>::array() const
 {
-    return ArrayView<const ::zserio::UInt32>{get<::test_object::pmr_allocator::ReflectableUtilChoice::Tag::array>(*m_data)};
+    return ArrayView<const ::zserio::UInt32>(get<::test_object::pmr_allocator::ReflectableUtilChoice::Tag::array>(*m_data));
 }
 
 ::test_object::pmr_allocator::ReflectableUtilChoice::Tag View<::test_object::pmr_allocator::ReflectableUtilChoice>::zserioChoiceTag() const

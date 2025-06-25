@@ -359,7 +359,7 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
     <#elseif field.compound??>
         typename <#if needsNamespace>detail::</#if>ObjectTraits<${field.typeInfo.typeFullName}>::PackingContext<#t>
     <#else>
-        DeltaContext<#t>
+        <#if needsNamespace>detail::</#if>DeltaContext<#t>
     </#if>
 </#macro>
 

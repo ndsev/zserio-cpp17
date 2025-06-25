@@ -76,7 +76,7 @@ View<::test_object::pmr_allocator::ReflectableUtilUnion>::View(const ::test_obje
 
 View<::test_object::pmr_allocator::ReflectableUtilObject> View<::test_object::pmr_allocator::ReflectableUtilUnion>::reflectableUtilObject() const
 {
-    return View<::test_object::pmr_allocator::ReflectableUtilObject>{get<::test_object::pmr_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>(*m_data)};
+    return View<::test_object::pmr_allocator::ReflectableUtilObject>(get<::test_object::pmr_allocator::ReflectableUtilUnion::Tag::reflectableUtilObject>(*m_data));
 }
 
 ::test_object::pmr_allocator::ReflectableUtilUnion::Tag View<::test_object::pmr_allocator::ReflectableUtilUnion>::zserioChoiceTag() const

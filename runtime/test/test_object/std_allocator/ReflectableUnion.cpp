@@ -71,7 +71,7 @@ View<::test_object::std_allocator::ReflectableUnion>::View(const ::test_object::
 
 ::std::string_view View<::test_object::std_allocator::ReflectableUnion>::valueStr() const
 {
-    return ::std::string_view{get<::test_object::std_allocator::ReflectableUnion::Tag::valueStr>(*m_data)};
+    return ::std::string_view(get<::test_object::std_allocator::ReflectableUnion::Tag::valueStr>(*m_data));
 }
 
 ::test_object::std_allocator::ReflectableUnion::Tag View<::test_object::std_allocator::ReflectableUnion>::zserioChoiceTag() const

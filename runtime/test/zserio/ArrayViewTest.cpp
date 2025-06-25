@@ -134,7 +134,7 @@ struct VarDynInt16ArrayTraits
         detail::read(reader, element, owner.numBits);
     }
 
-    static void read(DeltaContext& context, BitStreamReader& reader, const VarDynInt16Owner& owner,
+    static void read(detail::DeltaContext& context, BitStreamReader& reader, const VarDynInt16Owner& owner,
             DynInt16& element, size_t)
     {
         detail::read(context, reader, element, owner.numBits);
