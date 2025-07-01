@@ -113,7 +113,7 @@ protected:
 
     void checkTemplatedSqlTable_uint32(const ITypeInfoType& typeInfo)
     {
-        ASSERT_EQ("with_type_info_code.TemplatedSqlTable_uint32", typeInfo.getSchemaName());
+        ASSERT_EQ("with_type_info_code.TemplatedSqlTable", typeInfo.getSchemaName());
         ASSERT_EQ(zserio::SchemaType::SQL_TABLE, typeInfo.getSchemaType());
         ASSERT_EQ(zserio::CppType::SQL_TABLE, typeInfo.getCppType());
 
@@ -121,14 +121,9 @@ protected:
         ASSERT_EQ("", typeInfo.getVirtualTableUsing());
         ASSERT_EQ(false, typeInfo.isWithoutRowId());
 
-        ASSERT_EQ("with_type_info_code.TemplatedSqlTable", typeInfo.getTemplateName());
+        ASSERT_EQ("", typeInfo.getTemplateName());
         const zserio::Span<const TemplateArgumentInfoType> templateArgs = typeInfo.getTemplateArguments();
-        ASSERT_EQ(1, templateArgs.size());
-        const ITypeInfoType& templateArg0Info = templateArgs[0].typeInfo;
-        ASSERT_EQ("bit:32", templateArg0Info.getSchemaName());
-        ASSERT_EQ(zserio::SchemaType::UINT32, templateArg0Info.getSchemaType());
-        ASSERT_EQ(zserio::CppType::UINT32, templateArg0Info.getCppType());
-        ASSERT_EQ(32, templateArg0Info.getBitSize());
+        ASSERT_EQ(0, templateArgs.size());
 
         const zserio::Span<const ColumnInfoType> columns = typeInfo.getColumns();
         ASSERT_EQ(2, columns.size());
@@ -948,8 +943,8 @@ protected:
         ASSERT_EQ("", bitmaskArrayField.optionalCondition);
         ASSERT_EQ("", bitmaskArrayField.constraint);
         ASSERT_EQ(true, bitmaskArrayField.isArray);
-        ASSERT_EQ(
-                "::zserio::enumToValue(::with_type_info_code::TestEnum::_TWO)", bitmaskArrayField.arrayLength);
+        ASSERT_EQ("::zserio::builtin::valueOf(::with_type_info_code::TestEnum::_TWO)",
+                bitmaskArrayField.arrayLength);
         ASSERT_EQ(false, bitmaskArrayField.isPacked);
         ASSERT_EQ(false, bitmaskArrayField.isImplicit);
     }
@@ -1434,22 +1429,15 @@ protected:
 
     void checkTS32(const ITypeInfoType& typeInfo)
     {
-        ASSERT_EQ("with_type_info_code.TS32", typeInfo.getSchemaName());
+        ASSERT_EQ("with_type_info_code.TemplatedStruct", typeInfo.getSchemaName());
         ASSERT_EQ(zserio::SchemaType::STRUCT, typeInfo.getSchemaType());
         ASSERT_EQ(zserio::CppType::STRUCT, typeInfo.getCppType());
 
         ASSERT_EQ(0, typeInfo.getParameters().size());
         ASSERT_EQ(0, typeInfo.getFunctions().size());
 
-        ASSERT_EQ("with_type_info_code.TemplatedStruct", typeInfo.getTemplateName());
-
-        ASSERT_EQ(1, typeInfo.getTemplateArguments().size());
-
-        const TemplateArgumentInfoType& templateArgument0 = typeInfo.getTemplateArguments()[0];
-        ASSERT_EQ("bit:32", templateArgument0.typeInfo.getSchemaName());
-        ASSERT_EQ(zserio::SchemaType::UINT32, templateArgument0.typeInfo.getSchemaType());
-        ASSERT_EQ(zserio::CppType::UINT32, templateArgument0.typeInfo.getCppType());
-        ASSERT_EQ(32, templateArgument0.typeInfo.getBitSize());
+        ASSERT_EQ("", typeInfo.getTemplateName());
+        ASSERT_EQ(0, typeInfo.getTemplateArguments().size());
 
         const zserio::Span<const FieldInfoType> fields = typeInfo.getFields();
         ASSERT_EQ(1, fields.size());
@@ -1479,7 +1467,7 @@ protected:
 
     void checkTemplatedParameterizedStruct_TS32(const ITypeInfoType& typeInfo)
     {
-        ASSERT_EQ("with_type_info_code.TemplatedParameterizedStruct_TS32", typeInfo.getSchemaName());
+        ASSERT_EQ("with_type_info_code.TemplatedParameterizedStruct", typeInfo.getSchemaName());
         ASSERT_EQ(zserio::SchemaType::STRUCT, typeInfo.getSchemaType());
         ASSERT_EQ(zserio::CppType::STRUCT, typeInfo.getCppType());
 
@@ -1490,12 +1478,9 @@ protected:
 
         ASSERT_EQ(0, typeInfo.getFunctions().size());
 
-        ASSERT_EQ("with_type_info_code.TemplatedParameterizedStruct", typeInfo.getTemplateName());
+        ASSERT_EQ("", typeInfo.getTemplateName());
 
-        ASSERT_EQ(1, typeInfo.getTemplateArguments().size());
-
-        const TemplateArgumentInfoType& templateArgument0 = typeInfo.getTemplateArguments()[0];
-        checkTS32(templateArgument0.typeInfo);
+        ASSERT_EQ(0, typeInfo.getTemplateArguments().size());
 
         const zserio::Span<const FieldInfoType> fields = typeInfo.getFields();
         ASSERT_EQ(1, fields.size());
@@ -1518,14 +1503,14 @@ protected:
         ASSERT_EQ("", arrayField.optionalCondition);
         ASSERT_EQ("", arrayField.constraint);
         ASSERT_EQ(true, arrayField.isArray);
-        ASSERT_EQ("param().field()", arrayField.arrayLength);
+        ASSERT_EQ("::zserio::genericAccessor(param().field())", arrayField.arrayLength);
         ASSERT_EQ(false, arrayField.isPacked);
         ASSERT_EQ(false, arrayField.isImplicit);
     }
 
     void checkTemplatedSqlTableU8(const ITypeInfoType& typeInfo)
     {
-        ASSERT_EQ("with_type_info_code.TemplatedSqlTableU8", typeInfo.getSchemaName());
+        ASSERT_EQ("with_type_info_code.TemplatedSqlTable", typeInfo.getSchemaName());
         ASSERT_EQ(zserio::SchemaType::SQL_TABLE, typeInfo.getSchemaType());
         ASSERT_EQ(zserio::CppType::SQL_TABLE, typeInfo.getCppType());
 
@@ -1533,14 +1518,9 @@ protected:
         ASSERT_EQ("", typeInfo.getVirtualTableUsing());
         ASSERT_EQ(false, typeInfo.isWithoutRowId());
 
-        ASSERT_EQ("with_type_info_code.TemplatedSqlTable", typeInfo.getTemplateName());
+        ASSERT_EQ("", typeInfo.getTemplateName());
         const zserio::Span<const TemplateArgumentInfoType> templateArgs = typeInfo.getTemplateArguments();
-        ASSERT_EQ(1, templateArgs.size());
-        const ITypeInfoType& templateArg0Info = templateArgs[0].typeInfo;
-        ASSERT_EQ("bit:8", templateArg0Info.getSchemaName());
-        ASSERT_EQ(zserio::SchemaType::UINT8, templateArg0Info.getSchemaType());
-        ASSERT_EQ(zserio::CppType::UINT8, templateArg0Info.getCppType());
-        ASSERT_EQ(8, templateArg0Info.getBitSize());
+        ASSERT_EQ(0, templateArgs.size());
 
         const zserio::Span<const ColumnInfoType> columns = typeInfo.getColumns();
         ASSERT_EQ(2, columns.size());

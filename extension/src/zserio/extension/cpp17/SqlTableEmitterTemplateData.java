@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 
 import zserio.ast.BitmaskType;
@@ -17,6 +18,7 @@ import zserio.ast.ParameterizedTypeInstantiation;
 import zserio.ast.ParameterizedTypeInstantiation.InstantiatedParameter;
 import zserio.ast.SqlConstraint;
 import zserio.ast.SqlTableType;
+import zserio.ast.TemplateParameter;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
 import zserio.ast.ZserioType;
@@ -26,6 +28,7 @@ import zserio.extension.common.sql.SqlNativeTypeMapper;
 import zserio.extension.common.sql.types.NativeBlobType;
 import zserio.extension.common.sql.types.NativeIntegerType;
 import zserio.extension.common.sql.types.NativeRealType;
+import zserio.extension.common.sql.types.NativeTemplateType;
 import zserio.extension.common.sql.types.SqlNativeType;
 import zserio.extension.cpp17.SqlTableEmitterTemplateData.FieldTemplateData.DynamicBitLength;
 import zserio.extension.cpp17.SqlTableEmitterTemplateData.FieldTemplateData.SqlRangeCheckData;
@@ -43,7 +46,20 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
     {
         super(context, tableType, tableType);
 
-        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(this);
+        final IncludeCollector includeCollector =
+                tableType.getTemplateParameters().isEmpty() ? this : new HeaderIncludeCollectorAdapter(this);
+
+        final StringJoiner fullNameTemplateParameters = new StringJoiner(", ", "<", ">");
+        fullNameTemplateParameters.setEmptyValue("");
+        for (TemplateParameter templateParameter : tableType.getTemplateParameters())
+        {
+            templateParameters.add(templateParameter.getName());
+            fullNameTemplateParameters.add(templateParameter.getName());
+        }
+
+        fullName = super.getFullName() + fullNameTemplateParameters.toString();
+
+        final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
         sqlConstraint = createSqlConstraint(tableType.getSqlConstraint(), cppExpressionFormatter);
         virtualTableUsing = tableType.getVirtualTableUsingString();
         needsTypesInSchema = tableType.needsTypesInSchema();
@@ -56,7 +72,8 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         boolean requiresOwnerContext = false;
         for (Field tableField : tableFields)
         {
-            final FieldTemplateData field = new FieldTemplateData(context, tableType, tableField, this);
+            final FieldTemplateData field =
+                    new FieldTemplateData(context, tableType, tableField, includeCollector);
             fieldList.add(field);
 
             if (field.getHasImplicitParameters())
@@ -81,7 +98,18 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         this.requiresOwnerContext = requiresOwnerContext;
         this.needsChildrenInitialization = tableType.needsChildrenInitialization();
 
-        templateInstantiation = TemplateInstantiationTemplateData.create(context, tableType, this);
+        templateInstantiation = TemplateInstantiationTemplateData.create(context, tableType, includeCollector);
+    }
+
+    @Override
+    public String getFullName()
+    {
+        return fullName;
+    }
+
+    public List<String> getTemplateParameters()
+    {
+        return templateParameters;
     }
 
     public Iterable<FieldTemplateData> getFieldList()
@@ -439,6 +467,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                 isBlob = sqlNativeType instanceof NativeBlobType;
                 isInteger = sqlNativeType instanceof NativeIntegerType;
                 isReal = sqlNativeType instanceof NativeRealType;
+                isTemplate = sqlNativeType instanceof NativeTemplateType;
             }
 
             public String getName()
@@ -461,10 +490,16 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                 return isReal;
             }
 
+            public boolean getIsTemplate()
+            {
+                return isTemplate;
+            }
+
             private final String name;
             private final boolean isBlob;
             private final boolean isInteger;
             private final boolean isReal;
+            private final boolean isTemplate;
         }
 
         public static final class SqlRangeCheckData
@@ -631,6 +666,9 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
 
         return new SqlRangeCheckData(checkLowerBound, lowerBound, upperBound, typeInfo, dynamicBitFieldLength);
     }
+
+    private final List<String> templateParameters = new ArrayList<String>();
+    private final String fullName;
 
     private final List<FieldTemplateData> fieldList;
     private final SortedSet<ExplicitParameterTemplateData> explicitParameters;

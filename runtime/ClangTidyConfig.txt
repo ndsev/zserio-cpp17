@@ -163,4 +163,3 @@ CheckOptions:
     value: 0
   - key: readability-identifier-length.MinimumExceptionNameLength
     value: 0
- 

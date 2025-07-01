@@ -186,7 +186,7 @@ ${I}class IntrospectableImpl : public ::zserio::detail::CompoundIntrospectableVi
 ${I}{
 ${I}public:
     <#if isTemplate>
-${I}    using Base = ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>; 
+${I}    using Base = ::zserio::detail::CompoundIntrospectableViewBase<${fullName}, ${types.allocator.default}>;
 ${I}    using Base::getValue;
 ${I}    using Base::get_allocator;
 

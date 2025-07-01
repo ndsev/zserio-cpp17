@@ -112,13 +112,7 @@ void appendUpdateParametersToQuery(${types.string.name}& sqlQuery, const ::std::
 } // namespace
 
 <#assign needsParameterProvider=explicitParameters?has_content/>
-<#assign hasPrimaryKeyField=false/>
-<#list fieldList as field>
-    <#if field.isPrimaryKey>
-        <#assign hasPrimaryKeyField=true/>
-        <#break>
-    </#if>
-</#list>
+<#assign hasPrimaryKeyField=sql_table_has_primary_key(fieldList)/>
 ${name}::${name}(::zserio::SqliteConnection& db, ::std::string_view tableName,
         ::std::string_view attachedDbName, const allocator_type& allocator) :
         ::zserio::AllocatorHolder<allocator_type>(allocator),
@@ -215,26 +209,6 @@ bool ${name}::Reader::hasNext() const noexcept
     return m_lastResult == SQLITE_ROW;
 }
 
-<#macro view_parameters field parameterProviderVarName rowVarName="rowView">
-    <#if field.typeParameters?has_content>
-        <#list field.typeParameters as parameter>
-            , <#t>
-            <#if parameter.isExplicit>
-                ${parameterProviderVarName}.<@sql_parameter_provider_getter_name parameter/>(${rowVarName})<#t>
-            <#else>
-                <#if parameter.typeInfo.isNumeric>
-                ${parameter.typeInfo.typeFullName}(static_cast<${parameter.typeInfo.typeFullName}::ValueType>(<#t>
-                </#if>
-                ${parameter.expression}<#t>
-                <#if parameter.typeInfo.isNumeric>
-                ))<#t>
-                </#if>
-            </#if>
-        </#list>
-    <#elseif field.typeInfo.isDynamicBitField>
-        , static_cast<uint8_t>(${field.dynamicBitFieldLength.expression})<#t>
-    </#if>
-</#macro>
 ::zserio::View<${name}::Row> ${name}::Reader::next(${name}::Row& row)
 {
     if (!hasNext())
@@ -258,7 +232,7 @@ bool ${name}::Reader::hasNext() const noexcept
                     static_cast<size_t>(blobDataLength));
             row.<@sql_row_member_name field/>.emplace();
             ::zserio::deserializeFromBytes(blobData, *row.<@sql_row_member_name field/><#rt>
-                    <#lt><@view_parameters field, "m_parameterProvider"/>);
+                    <#lt><@sql_table_view_parameters field, "m_parameterProvider"/>);
     <#elseif field.sqlTypeData.isInteger>
             const int64_t intValue = sqlite3_column_int64(m_stmt.get(), index);
         <#if field.typeInfo.isEnum>
@@ -507,7 +481,7 @@ bool ${name}::validateColumn${field.name?cap_first}(::zserio::IValidationObserve
         return false;
     }
 
-        <#-- SQLite does not maintain column properties for virtual tables columns or for virtual columns -->
+    <#-- SQLite does not maintain column properties for virtual tables columns or for virtual columns -->
     <#if !virtualTableUsing?? && !field.isVirtual>
     const auto column = search->second;<#-- copy the column since it will be erased from schema -->
     (void)tableSchema.erase(search);
@@ -554,17 +528,6 @@ bool ${name}::validateColumn${field.name?cap_first}(::zserio::IValidationObserve
 <#if hasNonVirtualField>
     <#list fieldList as field>
 
-<#macro sqlite_type_field field>
-    <#if field.sqlTypeData.isInteger>
-        SQLITE_INTEGER<#t>
-    <#elseif field.sqlTypeData.isReal>
-        SQLITE_FLOAT<#t>
-    <#elseif field.sqlTypeData.isBlob>
-        SQLITE_BLOB<#t>
-    <#else>
-        SQLITE_TEXT<#t>
-    </#if>
-</#macro>
 bool ${name}::validateType${field.name?cap_first}(::zserio::IValidationObserver& validationObserver,
         sqlite3_stmt* statement, bool& continueValidation)
 {
@@ -613,7 +576,7 @@ bool ${name}::validateBlob${field.name?cap_first}(::zserio::IValidationObserver&
                 static_cast<size_t>(blobDataLength));
         row.<@sql_row_member_name field/>.emplace();
         auto blobView = ::zserio::detail::read(reader, *row.<@sql_row_member_name field/><#rt>
-                <#lt><@view_parameters field, "parameterProvider"/>);
+                <#lt><@sql_table_view_parameters field, "parameterProvider"/>);
         const ::zserio::BitSize blobBitSize = ::zserio::detail::bitSizeOf(blobView);
         ${types.bitBuffer.name} bitBuffer(blobBitSize, get_allocator_ref());
         ::zserio::BitStreamWriter writer(bitBuffer);
@@ -645,23 +608,6 @@ bool ${name}::validateBlob${field.name?cap_first}(::zserio::IValidationObserver&
     return true;
 }
         <#else>
-<#macro range_check_field name field types indent>
-    <#local I>${""?left_pad(indent * 4)}</#local>
-${I}if (<#if field.sqlRangeCheckData.checkLowerBound>rangeCheckValue < lowerBound || </#if>rangeCheckValue > upperBound)
-${I}{
-${I}    const auto rowKeyValuesHolder = getRowKeyValuesHolder(statement);
-${I}    ${types.string.name} errorMessage = ${types.string.name}("Value ", get_allocator_ref());
-${I}    errorMessage += ::zserio::toString(rangeCheckValue, get_allocator_ref());
-${I}    errorMessage += " of ${name}.${field.name} exceeds the range of ";
-${I}    errorMessage += ::zserio::toString(lowerBound, get_allocator_ref());
-${I}    errorMessage += "..";
-${I}    errorMessage += ::zserio::toString(upperBound, get_allocator_ref());
-${I}    continueValidation = validationObserver.reportError(m_name, "${field.name}",
-${I}            getRowKeyValues(rowKeyValuesHolder),
-${I}            ::zserio::IValidationObserver::VALUE_OUT_OF_RANGE, errorMessage);
-${I}    return false;
-${I}}
-</#macro>
 bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver&<#rt>
         <#lt><#if field.sqlRangeCheckData?? || field.typeInfo.isEnum> validationObserver</#if>,
         sqlite3_stmt* statement, Row& row<#if needsParameterProvider>, IParameterProvider&<#rt>
@@ -687,7 +633,7 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
                 ::zserio::NumericLimits<${field.typeInfo.typeFullName}>::min(bitFieldLength));
         const ${field.sqlRangeCheckData.typeInfo.typeFullName} upperBound = static_cast<${field.sqlRangeCheckData.typeInfo.typeFullName}::ValueType>(
                 ::zserio::NumericLimits<${field.typeInfo.typeFullName}>::max(bitFieldLength));
-        <@range_check_field name, field, types, 2/>
+        <@sql_table_range_check_field name, field, types, 2/>
     }
     catch (const ::zserio::CppRuntimeException& exception)
     {
@@ -701,7 +647,7 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
                         <#else>
     const ${field.sqlRangeCheckData.typeInfo.typeFullName} lowerBound = ${field.sqlRangeCheckData.lowerBound};
     const ${field.sqlRangeCheckData.typeInfo.typeFullName} upperBound = ${field.sqlRangeCheckData.upperBound};
-    <@range_check_field name, field, types, 1/>
+    <@sql_table_range_check_field name, field, types, 1/>
                         </#if>
 
                     </#if>
@@ -744,20 +690,7 @@ bool ${name}::validateField${field.name?cap_first}(::zserio::IValidationObserver
         </#if>
     </#list>
 
-    <#assign needsStatementArgument=false/>
-    <#if hasPrimaryKeyField>
-        <#list fieldList as field>
-            <#if field.isPrimaryKey>
-                <#if !field.sqlTypeData.isBlob>
-                    <#assign needsStatementArgument=true/>
-                    <#break>
-                </#if>
-             </#if>
-        </#list>
-    <#else>
-        <#assign needsStatementArgument=true/>
-    </#if>
-<@vector_type_name types.string.name/> ${name}::getRowKeyValuesHolder(sqlite3_stmt*<#if needsStatementArgument> statement</#if>)
+<@vector_type_name types.string.name/> ${name}::getRowKeyValuesHolder(sqlite3_stmt*<#if sql_table_holder_needs_statement(fieldList)> statement</#if>)
 {
     <@vector_type_name types.string.name/> rowKeyValuesHolder{get_allocator_ref()};
 
@@ -907,7 +840,7 @@ View<${fullName}::Row>::View(const ${fullName}::Row& row<#if needsParameterProvi
     View<${fullName}::Row>& rowView = *this;
     </#if>
     return <@sql_row_view_field_type_name field/>(::std::in_place, m_row-><@sql_row_member_name field/>.get_allocator(),
-            *m_row-><@sql_row_member_name field/><@view_parameters field, "m_parameterProvider", "rowView"/>);
+            *m_row-><@sql_row_member_name field/><@sql_table_view_parameters field, "m_parameterProvider", "rowView"/>);
 }
 </#list>
 

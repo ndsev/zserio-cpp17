@@ -158,7 +158,7 @@ public:
      * Creates the table using database connection given by constructor.
      */
     void createTable();
-<#if sql_table_has_non_virtual_field(fieldList) && isWithoutRowId>
+<#if hasNonVirtualField && isWithoutRowId>
 
     /**
      * Creates the table as ordinary row id using database connection given by constructor.

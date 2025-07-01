@@ -44,7 +44,8 @@ public final class SqlDatabaseEmitterTemplateData extends UserTypeTemplateData
 
             final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
             final CppNativeType nativeFieldType = cppNativeMapper.getCppType(fieldTypeInstantiation);
-            includeCollector.addHeaderIncludesForType(nativeFieldType);
+            IncludeCollector.addHeaderIncludes(cppNativeMapper, nativeFieldType,
+                    fieldTypeInstantiation.getTypeReference(), includeCollector);
 
             name = field.getName();
             typeInfo =

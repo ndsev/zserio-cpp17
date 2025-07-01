@@ -120,6 +120,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/SqliteConnection.h
     zserio/SqliteException.h
     zserio/SqliteFinalizer.h
+    zserio/SqliteUtil.h
     zserio/String.cpp
     zserio/String.h
     zserio/StringConvertUtil.h

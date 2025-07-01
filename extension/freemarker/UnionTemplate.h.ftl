@@ -451,7 +451,7 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
         <@template_info_template_arguments_var "templateArguments", templateInstantiation!, 2/>
 
     <#list fieldList as field>
-        <@field_info_recursive_type_info_var field/>
+        <@field_info_recursive_type_info_var field, 2/>
         <@field_info_type_arguments_var field, 2/>
     </#list>
         <@field_info_array_var "fields", fieldList, 2/>

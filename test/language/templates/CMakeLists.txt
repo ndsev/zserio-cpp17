@@ -23,6 +23,7 @@ add_custom_test(templates
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceTemplatedFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceTemplatedSelectorTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionBitmaskTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionEnumTemplateArgumentTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionEnumTemplateArgumentConflictTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionFullTemplateArgumentTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FunctionTemplatedReturnTypeTest.cpp
@@ -32,17 +33,23 @@ add_custom_test(templates
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateNotImportedTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateOnlyNestedTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateSimpleTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateSqlTableTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTemplateArgumentTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsChoiceFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsParameterTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsSqlDatabaseFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsSqlTableFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsStructArrayFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsStructFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeAsTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeImportedAsStructFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateTypeOnParameterizedTemplateTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateUnusedTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateViaImportTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateViaSingleImportTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateVsDefaultTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/InstantiateWithInstantiateTemplateArgumentTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SqlTableTemplatedFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructFullAndShortTemplateArgumentTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructFullNameTemplateArgumentTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructLongTemplateArgumentClashTest.cpp

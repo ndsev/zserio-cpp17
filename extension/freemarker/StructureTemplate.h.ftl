@@ -50,8 +50,8 @@ struct ${name}
     using IS_RECURSIVE = void;
 </#if>
 
-    ${name}() noexcept
-            : ${name}(allocator_type{})
+    ${name}() noexcept :
+            ${name}(allocator_type{})
     {}
 
     explicit ${name}(const allocator_type& allocator) noexcept<#rt>
@@ -500,7 +500,7 @@ struct ObjectTraits<${fullName}>
     </#if>
     }
     <#if isPackable && usedInPackedArray>
-    
+
     static BitSize initializeOffsets(PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>,
             const View<${fullName}>&<#if fieldList?has_content> view</#if>, <#rt>
             <#lt>BitSize<#if fieldList?has_content> bitPosition</#if>)
@@ -534,7 +534,7 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
         <@template_info_template_arguments_var "templateArguments", templateInstantiation!, 2/>
 
     <#list fieldList as field>
-        <@field_info_recursive_type_info_var field/>
+        <@field_info_recursive_type_info_var field, 2/>
         <@field_info_type_arguments_var field, 2/>
     </#list>
         <@field_info_array_var "fields", fieldList, 2/>

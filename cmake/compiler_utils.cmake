@@ -56,7 +56,7 @@ function(compiler_get_test_warnings_setup VARNAME)
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         set(WARNINGS_SETUP_LIST
                 "-Wno-deprecated-declarations" # used by zserio @deprecated feature (DeprecatedAttribute.h)
-                "-Wno-shadow" # templates.zs declares some 'other' fields which clash with ctor argument 
+                "-Wno-shadow" # templates.zs declares some 'other' fields which clash with ctor argument
         )
         string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP} ${WARNINGS_SETUP_LIST}")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -65,7 +65,7 @@ function(compiler_get_test_warnings_setup VARNAME)
                 "-Wno-unused-private-field"
                 "-Wno-reserved-id-macro"
                 "-Wno-deprecated-declarations" # used by zserio @deprecated feature (DeprecatedAttribute.h)
-                "-Wno-shadow-field-in-constructor" # templates.zs declares some 'other' fields which clash with ctor argument 
+                "-Wno-shadow-field-in-constructor" # templates.zs declares some 'other' fields which clash with ctor argument
         )
         string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP} ${WARNINGS_SETUP_LIST}")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

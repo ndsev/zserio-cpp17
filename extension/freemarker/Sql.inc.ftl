@@ -50,6 +50,8 @@
             ${types.bitBufferView.name}<#t>
         <#elseif field.typeInfo.isBytes>
             BytesView<#t>
+        <#elseif field.typeInfo.isTemplateParameter>
+            view_type_t<${field.typeInfo.typeFullName}><#t>
         <#else>
             View<${field.typeInfo.typeFullName}><#t>
         </#if>
@@ -94,4 +96,77 @@
         </#if>
     </#list>
     <#return false>
+</#function>
+
+<#macro sql_table_view_parameters field parameterProviderVarName rowVarName="rowView">
+    <#if field.typeParameters?has_content>
+        <#list field.typeParameters as parameter>
+            , <#t>
+            <#if parameter.isExplicit>
+                ${parameterProviderVarName}.<@sql_parameter_provider_getter_name parameter/>(${rowVarName})<#t>
+            <#else>
+                <#if parameter.typeInfo.isNumeric>
+                ${parameter.typeInfo.typeFullName}(static_cast<${parameter.typeInfo.typeFullName}::ValueType>(<#t>
+                </#if>
+                ${parameter.expression}<#t>
+                <#if parameter.typeInfo.isNumeric>
+                ))<#t>
+                </#if>
+            </#if>
+        </#list>
+    <#elseif field.typeInfo.isDynamicBitField>
+        , static_cast<uint8_t>(${field.dynamicBitFieldLength.expression})<#t>
+    </#if>
+</#macro>
+
+<#macro sql_table_range_check_field name field types indent>
+    <#local I>${""?left_pad(indent * 4)}</#local>
+${I}if (<#if field.sqlRangeCheckData.checkLowerBound>rangeCheckValue < lowerBound || </#if>rangeCheckValue > upperBound)
+${I}{
+${I}    const auto rowKeyValuesHolder = getRowKeyValuesHolder(statement);
+${I}    ${types.string.name} errorMessage = ${types.string.name}("Value ", get_allocator_ref());
+${I}    errorMessage += ::zserio::toString(rangeCheckValue, get_allocator_ref());
+${I}    errorMessage += " of ${name}.${field.name} exceeds the range of ";
+${I}    errorMessage += ::zserio::toString(lowerBound, get_allocator_ref());
+${I}    errorMessage += "..";
+${I}    errorMessage += ::zserio::toString(upperBound, get_allocator_ref());
+${I}    continueValidation = validationObserver.reportError(m_name, "${field.name}",
+${I}            getRowKeyValues(rowKeyValuesHolder),
+${I}            ::zserio::IValidationObserver::VALUE_OUT_OF_RANGE, errorMessage);
+${I}    return false;
+${I}}
+</#macro>
+
+<#macro sqlite_type_field field>
+    <#if field.sqlTypeData.isInteger>
+        SQLITE_INTEGER<#t>
+    <#elseif field.sqlTypeData.isReal>
+        SQLITE_FLOAT<#t>
+    <#elseif field.sqlTypeData.isBlob>
+        SQLITE_BLOB<#t>
+    <#else>
+        SQLITE_TEXT<#t>
+    </#if>
+</#macro>
+
+<#function sql_table_has_primary_key fieldList>
+    <#list fieldList as field>
+        <#if field.isPrimaryKey>
+            <#return true>
+        </#if>
+    </#list>
+    <#return false>
+</#function>
+
+<#function sql_table_holder_needs_statement fieldList>
+    <#local hasPrimaryKeyField=false/>
+    <#list fieldList as field>
+        <#if field.isPrimaryKey>
+            <#local hasPrimaryKeyField=true/>
+            <#if !field.sqlTypeData.isBlob>
+                <#return true>
+            </#if>
+         </#if>
+    </#list>
+    <#return !hasPrimaryKeyField>
 </#function>

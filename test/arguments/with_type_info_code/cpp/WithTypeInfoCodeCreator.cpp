@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "with_type_info_code/TS32.h"
 #include "zserio/RebindAlloc.h"
 
 #include "WithTypeInfoCodeCreator.h"
@@ -148,7 +149,7 @@ static void fillTS32(TS32& ts32)
 }
 
 static void fillTemplatedParameterizedStruct_TS32(
-        TemplatedParameterizedStruct_TS32& templatedParameterizedStruct_TS32, const TS32& ts32)
+        TemplatedParameterizedStruct<TS32>& templatedParameterizedStruct_TS32, const TS32& ts32)
 {
     VectorType<zserio::UInt32> array;
     for (zserio::UInt32 i = ts32.field; i > 0; --i)
