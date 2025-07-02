@@ -3,6 +3,7 @@
 
 #include "zserio/Bitmasks.h"
 #include "zserio/Enums.h"
+#include "zserio/Optional.h"
 #include "zserio/SerializeUtil.h"
 #include "zserio/Span.h"
 #include "zserio/Traits.h"
@@ -61,7 +62,7 @@ struct ColumnTraits<BasicString<ALLOC>>
 
 template <typename ALLOC, typename T, typename... ARGS>
 std::enable_if_t<is_complete_v<View<T>>> readColumn(
-        BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt, int index, const ALLOC&, const ARGS&... args)
+        BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt, int index, const ARGS&... args)
 {
     // blob
     const void* blobDataPtr = sqlite3_column_blob(&stmt, index);
@@ -72,62 +73,60 @@ std::enable_if_t<is_complete_v<View<T>>> readColumn(
 }
 
 template <typename ALLOC, typename T>
-std::enable_if_t<std::is_enum_v<T>> readColumn(
-        BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt, int index, const ALLOC&)
+std::enable_if_t<std::is_enum_v<T>> readColumn(BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt, int index)
 {
     const int64_t intValue = sqlite3_column_int64(&stmt, index);
     column = valueToEnum<T>(static_cast<std::underlying_type_t<T>>(intValue));
 }
 
 template <typename ALLOC, typename T>
-std::enable_if_t<is_bitmask_v<T>> readColumn(
-        BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt, int index, const ALLOC&)
+std::enable_if_t<is_bitmask_v<T>> readColumn(BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt, int index)
 {
     const int64_t intValue = sqlite3_column_int64(&stmt, index);
     column = T(static_cast<typename T::ZserioType::ValueType>(intValue));
 }
 
 template <typename ALLOC>
-void readColumn(BasicOptional<ALLOC, Bool>& column, sqlite3_stmt& stmt, int index, const ALLOC&)
+void readColumn(BasicOptional<ALLOC, Bool>& column, sqlite3_stmt& stmt, int index)
 {
     const int64_t intValue = sqlite3_column_int64(&stmt, index);
     column = intValue != 0;
 }
 
 template <typename ALLOC, BitSize BIT_SIZE, bool IS_SIGNED>
-void readColumn(BasicOptional<ALLOC, FixedIntWrapper<BIT_SIZE, IS_SIGNED>>& column, sqlite3_stmt& stmt,
-        int index, const ALLOC&)
+void readColumn(
+        BasicOptional<ALLOC, FixedIntWrapper<BIT_SIZE, IS_SIGNED>>& column, sqlite3_stmt& stmt, int index)
 {
     const int64_t intValue = sqlite3_column_int64(&stmt, index);
     column = static_cast<typename FixedIntWrapper<BIT_SIZE, IS_SIGNED>::ValueType>(intValue);
 }
 
 template <typename ALLOC, typename T>
-void readColumn(BasicOptional<ALLOC, DynIntWrapper<T>>& column, sqlite3_stmt& stmt, int index, const ALLOC&)
+void readColumn(BasicOptional<ALLOC, DynIntWrapper<T>>& column, sqlite3_stmt& stmt, int index)
 {
     const int64_t intValue = sqlite3_column_int64(&stmt, index);
     column = static_cast<T>(intValue);
 }
 
 template <typename ALLOC, typename VALUE_TYPE, VarIntType VAR_TYPE>
-void readColumn(BasicOptional<ALLOC, VarIntWrapper<VALUE_TYPE, VAR_TYPE>>& column, sqlite3_stmt& stmt,
-        int index, const ALLOC&)
+void readColumn(
+        BasicOptional<ALLOC, VarIntWrapper<VALUE_TYPE, VAR_TYPE>>& column, sqlite3_stmt& stmt, int index)
 {
     const int64_t intValue = sqlite3_column_int64(&stmt, index);
     column = static_cast<VALUE_TYPE>(intValue);
 }
 
 template <typename ALLOC, typename VALUE_TYPE, FloatType FLOAT_TYPE>
-void readColumn(BasicOptional<ALLOC, FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>& column, sqlite3_stmt& stmt,
-        int index, const ALLOC&)
+void readColumn(
+        BasicOptional<ALLOC, FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>& column, sqlite3_stmt& stmt, int index)
 {
     const double doubleValue = sqlite3_column_double(&stmt, index);
     column = static_cast<VALUE_TYPE>(doubleValue);
 }
 
 template <typename ALLOC>
-void readColumn(BasicOptional<ALLOC, BasicString<RebindAlloc<ALLOC, char>>>& column, sqlite3_stmt& stmt,
-        int index, const ALLOC&)
+void readColumn(
+        BasicOptional<ALLOC, BasicString<RebindAlloc<ALLOC, char>>>& column, sqlite3_stmt& stmt, int index)
 {
     const unsigned char* textValue = sqlite3_column_text(&stmt, index);
     column.emplace(reinterpret_cast<const char*>(textValue));

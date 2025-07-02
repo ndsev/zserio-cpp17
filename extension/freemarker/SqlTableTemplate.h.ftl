@@ -173,8 +173,8 @@ public:
                     const double doubleValue = sqlite3_column_double(m_stmt.get(), index);
                     row.<@sql_row_member_name field/> = static_cast<${field.typeInfo.typeFullName}::ValueType>(doubleValue);
     <#elseif field.sqlTypeData.isTemplate>
-                    zserio::detail::readColumn(row.<@sql_row_member_name field/>, *m_stmt, index,
-                            get_allocator_ref()<@sql_table_view_parameters field, "m_parameterProvider"/>);
+                    zserio::detail::readColumn(row.<@sql_row_member_name field/>, *m_stmt, index<#rt>
+                            <#lt><@sql_table_view_parameters field, "m_parameterProvider"/>);
     <#else>
                     const unsigned char* textValue = sqlite3_column_text(m_stmt.get(), index);
                     row.<@sql_row_member_name field/> = ${field.typeInfo.typeFullName}(
