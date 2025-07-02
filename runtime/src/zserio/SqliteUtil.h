@@ -133,21 +133,20 @@ void readColumn(
 }
 
 template <typename T>
-std::enable_if_t<is_complete_v<View<T>>, BitSize> prepareColumn(const T& view)
+BitSize prepareColumn(const View<T>& view)
 {
     validate(view);
     return initializeOffsets(view, 0);
 }
 
 template <typename T>
-std::enable_if_t<!is_complete_v<View<T>>, BitSize> prepareColumn(const T&)
+BitSize prepareColumn(const T&)
 {
     return 0;
 }
 
 template <typename ALLOC, typename T>
-std::enable_if_t<is_complete_v<View<T>>, int> bindColumn(
-        sqlite3_stmt& stmt, int index, const T& view, BitSize bitSize, const ALLOC& allocator)
+int bindColumn(sqlite3_stmt& stmt, int index, const View<T>& view, BitSize bitSize, const ALLOC& allocator)
 {
     BasicBitBuffer<ALLOC> bitBuffer(bitSize, allocator);
     BitStreamWriter writer(bitBuffer);

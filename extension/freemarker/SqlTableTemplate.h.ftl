@@ -1163,7 +1163,7 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
         </#if>
 
         static const bool isWithoutRowId = <#if isWithoutRowId>true<#else>false</#if>;
-    
+
         static const ::zserio::detail::SqlTableTypeInfo<AllocatorType> typeInfo = {
             "${schemaTypeName}", templateName, templateArguments,
             columns, sqlConstraint, virtualTableUsing, isWithoutRowId
