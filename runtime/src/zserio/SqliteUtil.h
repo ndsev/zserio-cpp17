@@ -60,15 +60,14 @@ struct ColumnTraits<BasicString<ALLOC>>
 };
 
 template <typename ALLOC, typename T, typename... ARGS>
-std::enable_if_t<is_complete_v<View<T>>> readColumn(BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt,
-        int index, const ALLOC& allocator, const ARGS&... args)
+std::enable_if_t<is_complete_v<View<T>>> readColumn(
+        BasicOptional<ALLOC, T>& column, sqlite3_stmt& stmt, int index, const ALLOC&, const ARGS&... args)
 {
     // blob
     const void* blobDataPtr = sqlite3_column_blob(&stmt, index);
     const int blobDataLength = sqlite3_column_bytes(&stmt, index);
     Span<const uint8_t> blobData(static_cast<const uint8_t*>(blobDataPtr), static_cast<size_t>(blobDataLength));
-    // TODO[Mi-L@]: Needs the allocator argument again? The Optional should be constructed with an allocator.
-    column.emplace(allocator);
+    column.emplace();
     deserializeFromBytes(blobData, *column, args...);
 }
 
@@ -128,10 +127,10 @@ void readColumn(BasicOptional<ALLOC, FloatWrapper<VALUE_TYPE, FLOAT_TYPE>>& colu
 
 template <typename ALLOC>
 void readColumn(BasicOptional<ALLOC, BasicString<RebindAlloc<ALLOC, char>>>& column, sqlite3_stmt& stmt,
-        int index, const ALLOC& allocator)
+        int index, const ALLOC&)
 {
     const unsigned char* textValue = sqlite3_column_text(&stmt, index);
-    column.emplace(reinterpret_cast<const char*>(textValue), allocator);
+    column.emplace(reinterpret_cast<const char*>(textValue));
 }
 
 template <typename T>

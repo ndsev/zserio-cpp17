@@ -20,12 +20,13 @@
 #include <zserio/AllocatorHolder.h>
 #include <zserio/CppRuntimeException.h>
 #include <zserio/IValidationObserver.h>
-<@type_includes types.optional/>
 #include <zserio/Span.h>
 #include <zserio/SqliteConnection.h>
 #include <zserio/SqliteException.h>
 #include <zserio/SqliteFinalizer.h>
 #include <zserio/SqliteUtil.h>
+<@type_includes types.bitBuffer/>
+<@type_includes types.optional/>
 <@type_includes types.string/>
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
