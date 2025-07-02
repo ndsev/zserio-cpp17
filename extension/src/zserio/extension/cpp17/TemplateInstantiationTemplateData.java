@@ -21,7 +21,7 @@ public final class TemplateInstantiationTemplateData
             IncludeCollector includeCollector) throws ZserioExtensionException
     {
         templateName = ZserioTypeUtil.getFullName(template);
-        this.templateArgumentTypeInfos =templateArgumentTypeInfos;
+        this.templateArgumentTypeInfos = templateArgumentTypeInfos;
         this.templateParameters = templateParameters;
     }
 
@@ -40,8 +40,8 @@ public final class TemplateInstantiationTemplateData
         return templateArgumentTypeInfos;
     }
 
-    static TemplateInstantiationTemplateData create(
-            TemplateDataContext context, ZserioTemplatableType templatable, List<String> templateParameters,
+    static TemplateInstantiationTemplateData create(TemplateDataContext context,
+            ZserioTemplatableType templatable, List<String> templateParameters,
             IncludeCollector includeCollector) throws ZserioExtensionException
     {
         if (!templatable.getTemplateParameters().isEmpty())
@@ -70,8 +70,8 @@ public final class TemplateInstantiationTemplateData
                         context, argumentNativeType, templateArgument.getTypeReference()));
             }
 
-            return new TemplateInstantiationTemplateData(context, templatable.getTemplate(),
-                    null, templateArgumentTypeInfos, includeCollector);
+            return new TemplateInstantiationTemplateData(
+                    context, templatable.getTemplate(), null, templateArgumentTypeInfos, includeCollector);
         }
 
         return null;
