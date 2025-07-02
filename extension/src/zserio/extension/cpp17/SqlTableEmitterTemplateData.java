@@ -98,7 +98,8 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         this.requiresOwnerContext = requiresOwnerContext;
         this.needsChildrenInitialization = tableType.needsChildrenInitialization();
 
-        templateInstantiation = TemplateInstantiationTemplateData.create(context, tableType, includeCollector);
+        templateInstantiation = TemplateInstantiationTemplateData.create(
+                context, tableType, templateParameters, includeCollector);
     }
 
     @Override

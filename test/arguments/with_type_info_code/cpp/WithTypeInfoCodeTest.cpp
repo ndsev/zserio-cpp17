@@ -121,9 +121,14 @@ protected:
         ASSERT_EQ("", typeInfo.getVirtualTableUsing());
         ASSERT_EQ(false, typeInfo.isWithoutRowId());
 
-        ASSERT_EQ("", typeInfo.getTemplateName());
+        ASSERT_EQ("with_type_info_code.TemplatedSqlTable", typeInfo.getTemplateName());
         const zserio::Span<const TemplateArgumentInfoType> templateArgs = typeInfo.getTemplateArguments();
-        ASSERT_EQ(0, templateArgs.size());
+        ASSERT_EQ(1, templateArgs.size());
+        const ITypeInfoType& templateArg0Info = templateArgs[0].typeInfo;
+        ASSERT_EQ("bit:32", templateArg0Info.getSchemaName());
+        ASSERT_EQ(zserio::SchemaType::UINT32, templateArg0Info.getSchemaType());
+        ASSERT_EQ(zserio::CppType::UINT32, templateArg0Info.getCppType());
+        ASSERT_EQ(32, templateArg0Info.getBitSize());
 
         const zserio::Span<const ColumnInfoType> columns = typeInfo.getColumns();
         ASSERT_EQ(2, columns.size());
@@ -1436,8 +1441,13 @@ protected:
         ASSERT_EQ(0, typeInfo.getParameters().size());
         ASSERT_EQ(0, typeInfo.getFunctions().size());
 
-        ASSERT_EQ("", typeInfo.getTemplateName());
-        ASSERT_EQ(0, typeInfo.getTemplateArguments().size());
+        ASSERT_EQ("with_type_info_code.TemplatedStruct", typeInfo.getTemplateName());
+        ASSERT_EQ(1, typeInfo.getTemplateArguments().size());
+        const TemplateArgumentInfoType& templateArgument0 = typeInfo.getTemplateArguments()[0];
+        ASSERT_EQ("bit:32", templateArgument0.typeInfo.getSchemaName());
+        ASSERT_EQ(zserio::SchemaType::UINT32, templateArgument0.typeInfo.getSchemaType());
+        ASSERT_EQ(zserio::CppType::UINT32, templateArgument0.typeInfo.getCppType());
+        ASSERT_EQ(32, templateArgument0.typeInfo.getBitSize());
 
         const zserio::Span<const FieldInfoType> fields = typeInfo.getFields();
         ASSERT_EQ(1, fields.size());
@@ -1478,9 +1488,10 @@ protected:
 
         ASSERT_EQ(0, typeInfo.getFunctions().size());
 
-        ASSERT_EQ("", typeInfo.getTemplateName());
-
-        ASSERT_EQ(0, typeInfo.getTemplateArguments().size());
+        ASSERT_EQ("with_type_info_code.TemplatedParameterizedStruct", typeInfo.getTemplateName());
+        ASSERT_EQ(1, typeInfo.getTemplateArguments().size());
+        const TemplateArgumentInfoType& templateArgument0 = typeInfo.getTemplateArguments()[0];
+        checkTS32(templateArgument0.typeInfo);
 
         const zserio::Span<const FieldInfoType> fields = typeInfo.getFields();
         ASSERT_EQ(1, fields.size());
@@ -1518,9 +1529,14 @@ protected:
         ASSERT_EQ("", typeInfo.getVirtualTableUsing());
         ASSERT_EQ(false, typeInfo.isWithoutRowId());
 
-        ASSERT_EQ("", typeInfo.getTemplateName());
+        ASSERT_EQ("with_type_info_code.TemplatedSqlTable", typeInfo.getTemplateName());
         const zserio::Span<const TemplateArgumentInfoType> templateArgs = typeInfo.getTemplateArguments();
-        ASSERT_EQ(0, templateArgs.size());
+        ASSERT_EQ(1, templateArgs.size());
+        const ITypeInfoType& templateArg0Info = templateArgs[0].typeInfo;
+        ASSERT_EQ("bit:8", templateArg0Info.getSchemaName());
+        ASSERT_EQ(zserio::SchemaType::UINT8, templateArg0Info.getSchemaType());
+        ASSERT_EQ(zserio::CppType::UINT8, templateArg0Info.getCppType());
+        ASSERT_EQ(8, templateArg0Info.getBitSize());
 
         const zserio::Span<const ColumnInfoType> columns = typeInfo.getColumns();
         ASSERT_EQ(2, columns.size());

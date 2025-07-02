@@ -316,11 +316,20 @@ ${I}static const ::std::string_view ${varName};
 <#macro template_info_template_arguments_var varName templateInstantiation indent=1>
     <#local I>${""?left_pad(indent * 4)}</#local>
     <#if templateInstantiation?has_content>
+        <#if templateInstantiation.templateArgumentTypeInfos?has_content>
 ${I}static const ::std::array<::zserio::BasicTemplateArgumentInfo<AllocatorType><#rt>
             <#lt>, ${templateInstantiation.templateArgumentTypeInfos?size}> ${varName} = {
-        <#list templateInstantiation.templateArgumentTypeInfos as typeInfo>
+            <#list templateInstantiation.templateArgumentTypeInfos as typeInfo>
 ${I}    ::zserio::BasicTemplateArgumentInfo<AllocatorType>{<@type_info typeInfo/>}<#if typeInfo?has_next>,</#if>
-        </#list>
+            </#list>
+        <#else>
+${I}static const ::std::array<::zserio::BasicTemplateArgumentInfo<AllocatorType><#rt>
+            <#lt>, ${templateInstantiation.templateParameters?size}> ${varName} = {
+            <#list templateInstantiation.templateParameters as templateParameter>
+${I}    ::zserio::BasicTemplateArgumentInfo<AllocatorType>{<#rt>
+                <#lt>::zserio::typeInfo<${templateParameter}, AllocatorType>()}<#if templateParameter?has_next>,</#if>
+            </#list>
+        </#if>
 ${I}};
     <#else>
     <#-- See comment in info_array_type macro.  -->

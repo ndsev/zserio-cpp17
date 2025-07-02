@@ -56,8 +56,8 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
 
         isPackable = compoundType.isPackable();
 
-        templateInstantiation =
-                TemplateInstantiationTemplateData.create(context, compoundType, includeCollector);
+        templateInstantiation = TemplateInstantiationTemplateData.create(
+                context, compoundType, templateParameters, includeCollector);
     }
 
     @Override
