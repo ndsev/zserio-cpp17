@@ -96,22 +96,27 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                 }
                 ++index;
             }
+        }
 
+        // do in an extra loop to prefer resolved explicit parameters
+        // (the type of explicit parameter can be known from another non-templated field)
+        for (int i = 0; i < fieldList.size(); ++i)
+        {
+            final FieldTemplateData field = fieldList.get(i);
             if (field.getParameterized() != null)
             {
-                index = 0;
                 for (FieldTemplateData.Parameterized.Argument argument :
                         field.getParameterized().getArguments())
                 {
                     if (argument.getIsExplicit())
                     {
                         explicitParameters.add(new ExplicitParameterTemplateData(
-                                argument.getExpression(), null, field, index));
+                                argument.getExpression(), null, field, i));
                     }
-                    ++index;
                 }
             }
         }
+
         this.hasImplicitParameters = hasImplicitParameters;
         this.requiresOwnerContext = requiresOwnerContext;
 
