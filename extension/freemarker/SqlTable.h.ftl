@@ -55,7 +55,7 @@ public:
          *
          * /return The the explicit parameter ${parameter.expression}.
          */
-        virtual <@sql_parameter_provider_return_type parameter/> <@sql_parameter_provider_getter_name parameter/>(<#rt>
+        virtual <@sql_parameter_provider_return_type parameter/> <@sql_parameter_provider_getter_name parameter.expression/>(<#rt>
                 <#lt>const ::zserio::View<Row>& currentRow) = 0;
     </#list>
     };
