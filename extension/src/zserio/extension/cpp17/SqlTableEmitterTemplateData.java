@@ -110,8 +110,8 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
                 {
                     if (argument.getIsExplicit())
                     {
-                        explicitParameters.add(new ExplicitParameterTemplateData(
-                                argument.getExpression(), null, field, i));
+                        explicitParameters.add(
+                                new ExplicitParameterTemplateData(argument.getExpression(), null, field, i));
                     }
                 }
             }
