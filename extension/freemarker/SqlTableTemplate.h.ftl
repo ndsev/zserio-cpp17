@@ -94,7 +94,7 @@ public:
          *
          * /return The the explicit parameter ${parameter.expression}.
          */
-        virtual <@sql_parameter_provider_return_type parameter/> <@sql_parameter_provider_getter_name parameter/>(<#rt>
+        virtual <@sql_parameter_provider_return_type parameter/> <@sql_parameter_provider_getter_name parameter.expression/>(<#rt>
                 <#lt>const ::zserio::View<Row>& currentRow) = 0;
     </#list>
     };
@@ -1089,7 +1089,7 @@ class View<::zserio::detail::SqlRow<${fullName}>>
 {
 public:
     explicit View(const typename ${fullName}::Row& row<#if needsParameterProvider>,
-            ${fullName}::IParameterProvider& parameterProvider</#if>) :
+            typename ${fullName}::IParameterProvider& parameterProvider</#if>) :
             m_row(&row)<#if needsParameterProvider>,
             m_parameterProvider(parameterProvider)</#if>
     {}
@@ -1103,7 +1103,7 @@ public:
         }
 
         <#if field.requiresOwnerContext || field.hasExplicitParameters || field.typeInfo.isDynamicBitField>
-        View<${fullName}::Row>& rowView = *this;
+        View<::zserio::detail::SqlRow<${fullName}>>& rowView = *this;
         </#if>
         return <@sql_row_view_field_type_name field/>(::std::in_place, m_row-><@sql_row_member_name field/>.get_allocator(),
                 *m_row-><@sql_row_member_name field/><@sql_table_view_parameters field, "m_parameterProvider", "rowView"/>);
@@ -1141,7 +1141,7 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
         <#if fieldList?has_content>
             <#lt> = {
             <#list fieldList as field>
-            <@column_info field, field?has_next, 3, true/>
+            <@column_info field, field?has_next, 3/>
             </#list>
         };
         <#else>

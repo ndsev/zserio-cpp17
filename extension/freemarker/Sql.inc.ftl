@@ -59,12 +59,16 @@
     <@optional_type_name fieldViewTypeName/>
 </#macro>
 
-<#macro sql_parameter_provider_getter_name parameter>
-    ${parameter.expression?uncap_first}<#t>
+<#macro sql_parameter_provider_getter_name expression>
+    ${expression?uncap_first}<#t>
 </#macro>
 
 <#macro sql_parameter_provider_return_type parameter>
-    <#if parameter.typeInfo.isSimple && !parameter.typeInfo.isDynamicBitField>
+    <#if !parameter.typeInfo??>
+        ::zserio::view_type_t<<#t>
+                ::std::tuple_element_t<<#t>
+                        ${parameter.index}, typename ::zserio::detail::ObjectTraits<${parameter.field.typeInfo.typeFullName}>::Parameters>><#t>
+    <#elseif parameter.typeInfo.isSimple && !parameter.typeInfo.isDynamicBitField>
         ${parameter.typeInfo.typeFullName}<#t>
     <#elseif parameter.typeInfo.isString>
         ::std::string_view<#t>
@@ -99,11 +103,20 @@
 </#function>
 
 <#macro sql_table_view_parameters field parameterProviderVarName rowVarName="rowView">
-    <#if field.typeParameters?has_content>
+    <#if field.parameterized??>
+        <#list field.parameterized.arguments as argument>
+            , <#t>
+            <#if argument.isExplicit>
+            ${parameterProviderVarName}.<@sql_parameter_provider_getter_name argument.expression/>(${rowVarName})<#t>
+            <#else>
+            ::zserio::detail::makeParameter<${argument?index}, ${field.typeInfo.typeFullName}>(${argument.expression})<#t>
+            </#if>
+        </#list>
+    <#elseif field.typeParameters?has_content>
         <#list field.typeParameters as parameter>
             , <#t>
             <#if parameter.isExplicit>
-                ${parameterProviderVarName}.<@sql_parameter_provider_getter_name parameter/>(${rowVarName})<#t>
+                ${parameterProviderVarName}.<@sql_parameter_provider_getter_name parameter.expression/>(${rowVarName})<#t>
             <#else>
                 <#if parameter.typeInfo.isNumeric>
                 ${parameter.typeInfo.typeFullName}(static_cast<${parameter.typeInfo.typeFullName}::ValueType>(<#t>

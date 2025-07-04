@@ -229,7 +229,7 @@ ${I}::zserio::ItemInfo{ "${name}", <#rt>
         <#lt><#if isRemoved>true<#else>false</#if>}<#if comma>,</#if>
 </#macro>
 
-<#macro column_info field comma indent=2 isTemplate=false>
+<#macro column_info field comma indent=2>
     <#local I>${""?left_pad(indent * 4)}</#local>
 ${I}::zserio::BasicColumnInfo<AllocatorType>{
 ${I}    "${field.name}", // schemaName
@@ -239,7 +239,7 @@ ${I}    <@field_info_type_arguments_var_name field/>, // typeArguments
     <#else>
 ${I}    {}, // typeArguments
     </#if>
-    <#if isTemplate>
+    <#if field.sqlTypeData.isTemplate>
 ${I}    ::zserio::detail::ColumnTraits<${field.typeInfo.typeFullName}>::TYPE_NAME, // sqlTypeName
     <#else>
 ${I}    "${field.sqlTypeData.name}", // sqlTypeName

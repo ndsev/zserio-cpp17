@@ -79,24 +79,41 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             if (field.getHasImplicitParameters())
                 hasImplicitParameters = true;
 
+            int index = 0;
             for (FieldTemplateData.ParameterTemplateData parameterTemplateData : field.getTypeParameters())
             {
                 if (parameterTemplateData.getIsExplicit())
                 {
                     final String expression = parameterTemplateData.getExpression();
                     final NativeTypeInfoTemplateData typeInfo = parameterTemplateData.getTypeInfo();
-                    explicitParameters.add(new ExplicitParameterTemplateData(expression, typeInfo));
+                    explicitParameters.add(
+                            new ExplicitParameterTemplateData(expression, typeInfo, field, index));
                 }
                 else
                 {
                     if (parameterTemplateData.getRequiresOwnerContext())
                         requiresOwnerContext = true;
                 }
+                ++index;
+            }
+
+            if (field.getParameterized() != null)
+            {
+                index = 0;
+                for (FieldTemplateData.Parameterized.Argument argument :
+                        field.getParameterized().getArguments())
+                {
+                    if (argument.getIsExplicit())
+                    {
+                        explicitParameters.add(new ExplicitParameterTemplateData(
+                                argument.getExpression(), null, field, index));
+                    }
+                    ++index;
+                }
             }
         }
         this.hasImplicitParameters = hasImplicitParameters;
         this.requiresOwnerContext = requiresOwnerContext;
-        this.needsChildrenInitialization = tableType.needsChildrenInitialization();
 
         templateInstantiation = TemplateInstantiationTemplateData.create(
                 context, tableType, templateParameters, includeCollector);
@@ -133,11 +150,6 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         return requiresOwnerContext;
     }
 
-    public boolean getNeedsChildrenInitialization()
-    {
-        return needsChildrenInitialization;
-    }
-
     public String getSqlConstraint()
     {
         return sqlConstraint;
@@ -165,10 +177,13 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
 
     public static final class ExplicitParameterTemplateData implements Comparable<ExplicitParameterTemplateData>
     {
-        public ExplicitParameterTemplateData(String expression, NativeTypeInfoTemplateData typeInfo)
+        public ExplicitParameterTemplateData(
+                String expression, NativeTypeInfoTemplateData typeInfo, FieldTemplateData field, int index)
         {
             this.expression = expression;
             this.typeInfo = typeInfo;
+            this.field = field;
+            this.index = index;
         }
 
         public String getExpression()
@@ -181,14 +196,20 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             return typeInfo;
         }
 
+        public FieldTemplateData getField()
+        {
+            return field;
+        }
+
+        public int getIndex()
+        {
+            return index;
+        }
+
         @Override
         public int compareTo(ExplicitParameterTemplateData other)
         {
-            int result = expression.compareTo(other.expression);
-            if (result != 0)
-                return result;
-
-            return typeInfo.getTypeFullName().compareTo(other.typeInfo.getTypeFullName());
+            return expression.compareTo(other.expression);
         }
 
         @Override
@@ -210,12 +231,13 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         {
             int hash = HashUtil.HASH_SEED;
             hash = HashUtil.hash(hash, expression);
-            hash = HashUtil.hash(hash, typeInfo.getTypeFullName());
             return hash;
         }
 
         private final String expression;
         private final NativeTypeInfoTemplateData typeInfo;
+        private final FieldTemplateData field;
+        private final int index;
     }
 
     public static final class FieldTemplateData
@@ -242,10 +264,18 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
 
             getterName = AccessorNameFormatter.getGetterName(field);
 
-            typeParameters = new ArrayList<ParameterTemplateData>();
             boolean hasImplicitParameters = false;
             boolean hasExplicitParameters = false;
             boolean requiresOwnerContext = false;
+            parameterized = createParameterized(context, fieldTypeInstantiation, includeCollector);
+            if (parameterized != null)
+            {
+                hasExplicitParameters = parameterized.getHasExplicitParameter();
+                hasImplicitParameters = parameterized.getHasImplicitParameter();
+                requiresOwnerContext = parameterized.getNeedsOwner();
+            }
+
+            typeParameters = new ArrayList<ParameterTemplateData>();
             final ExpressionFormatter cppRowIndirectExpressionFormatter =
                     context.getSqlIndirectExpressionFormatter(includeCollector, "rowView");
             if (fieldTypeInstantiation instanceof ParameterizedTypeInstantiation)
@@ -318,6 +348,11 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         public String getGetterName()
         {
             return getterName;
+        }
+
+        public Parameterized getParameterized()
+        {
+            return parameterized;
         }
 
         public Iterable<ParameterTemplateData> getTypeParameters()
@@ -549,6 +584,101 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             private final String bitFieldLength;
         }
 
+        public static final class Parameterized
+        {
+            public Parameterized(TemplateDataContext context,
+                    ParameterizedTypeInstantiation parameterizedTypeInstantiation,
+                    IncludeCollector includeCollector) throws ZserioExtensionException
+            {
+                boolean needsOwner = false;
+                boolean needsIndex = false;
+                boolean hasExplicitParameter = false;
+                boolean hasImplicitParameter = true;
+                final ExpressionFormatter rowViewIndirectExpressionFormatter =
+                        context.getSqlIndirectExpressionFormatter(includeCollector, "rowView");
+                for (Expression argumentExpression : parameterizedTypeInstantiation.getTypeArguments())
+                {
+                    final Argument argument = new Argument(argumentExpression,
+                            rowViewIndirectExpressionFormatter.formatGetter(argumentExpression));
+                    needsIndex |= argument.getNeedsIndex();
+                    needsOwner |= argument.getNeedsOwner();
+                    hasExplicitParameter = argument.getIsExplicit();
+                    arguments.add(argument);
+                }
+                this.needsIndex = needsIndex;
+                this.needsOwner = needsOwner;
+                this.hasExplicitParameter = hasExplicitParameter;
+                this.hasImplicitParameter = hasImplicitParameter;
+            }
+
+            public boolean getNeedsIndex()
+            {
+                return needsIndex;
+            }
+
+            public boolean getNeedsOwner()
+            {
+                return needsOwner;
+            }
+
+            public boolean getHasExplicitParameter()
+            {
+                return hasExplicitParameter;
+            }
+
+            public boolean getHasImplicitParameter()
+            {
+                return hasImplicitParameter;
+            }
+
+            public List<Argument> getArguments()
+            {
+                return arguments;
+            }
+
+            public static class Argument
+            {
+                public Argument(Expression argumentExpression, String rowViewIndirectExpression)
+                {
+                    needsIndex = argumentExpression.containsIndex();
+                    needsOwner = argumentExpression.requiresOwnerContext();
+                    isExplicit = argumentExpression.isExplicitVariable();
+                    expression = rowViewIndirectExpression;
+                }
+
+                public boolean getNeedsIndex()
+                {
+                    return needsIndex;
+                }
+
+                public boolean getNeedsOwner()
+                {
+                    return needsOwner;
+                }
+
+                public boolean getIsExplicit()
+                {
+                    return isExplicit;
+                }
+
+                public String getExpression()
+                {
+                    return expression;
+                }
+
+                private final boolean needsIndex;
+                private final boolean needsOwner;
+                private final boolean isExplicit;
+                private final String expression;
+            }
+
+            private final boolean needsIndex;
+            private final boolean needsOwner;
+            private final boolean hasExplicitParameter;
+            private final boolean hasImplicitParameter;
+            private final List<Argument> arguments = new ArrayList<Argument>();
+        }
+
         private static NativeTypeInfoTemplateData createUnderlyingTypeInfo(TemplateDataContext context,
                 CppNativeMapper cppNativeMapper, ZserioType fieldBaseType, IncludeCollector includeCollector)
                 throws ZserioExtensionException
@@ -573,6 +703,21 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             return NativeTypeInfoTemplateDataCreator.create(context, nativeBaseType, baseTypeInstantiation);
         }
 
+        private static Parameterized createParameterized(TemplateDataContext context,
+                TypeInstantiation typeInstantiation, IncludeCollector includeCollector)
+                throws ZserioExtensionException
+        {
+            if (typeInstantiation instanceof ParameterizedTypeInstantiation)
+            {
+                return new Parameterized(
+                        context, (ParameterizedTypeInstantiation)typeInstantiation, includeCollector);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private final String name;
         private final NativeTypeInfoTemplateData typeInfo;
         private final String sqlConstraint;
@@ -580,6 +725,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         private final boolean isPrimaryKey;
         private final boolean isVirtual;
         private final String getterName;
+        private final Parameterized parameterized;
         private final List<ParameterTemplateData> typeParameters;
         private final boolean hasImplicitParameters;
         private final boolean hasExplicitParameters;
@@ -675,7 +821,6 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
     private final SortedSet<ExplicitParameterTemplateData> explicitParameters;
     private final boolean hasImplicitParameters;
     private final boolean requiresOwnerContext;
-    private final boolean needsChildrenInitialization;
     private final String sqlConstraint;
     private final String virtualTableUsing;
     private final boolean needsTypesInSchema;
