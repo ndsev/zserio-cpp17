@@ -10,6 +10,9 @@ cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/subtyped_bitmas
 cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/subtyped_bool_field_table/SubtypedBoolFieldTable.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/subtyped_enum_field_table/SubtypedEnumFieldTable.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/subtyped_table/TestTable.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/templated_sql_table_explicit_param/TestTableWithExplicit.h
+cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/templated_sql_table_param/TestTable.h
+cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/templated_sql_table/TestTable.h
 cppcoreguidelines-pro-bounds-constant-array-index:gen/sql_tables/without_pk_table/WithoutPkTable.cpp
 
 cppcoreguidelines-pro-type-member-init:gen/sql_tables/blob_field_with_children_initialization_table/BlobFieldWithChildrenInitializationTable.cpp
@@ -24,6 +27,9 @@ cppcoreguidelines-pro-type-member-init:gen/sql_tables/subtyped_bitmask_field_tab
 cppcoreguidelines-pro-type-member-init:gen/sql_tables/subtyped_bool_field_table/SubtypedBoolFieldTable.cpp
 cppcoreguidelines-pro-type-member-init:gen/sql_tables/subtyped_enum_field_table/SubtypedEnumFieldTable.cpp
 cppcoreguidelines-pro-type-member-init:gen/sql_tables/subtyped_table/TestTable.cpp
+cppcoreguidelines-pro-type-member-init:gen/sql_tables/templated_sql_table_explicit_param/TestTableWithExplicit.h
+cppcoreguidelines-pro-type-member-init:gen/sql_tables/templated_sql_table_param/TestTable.h
+cppcoreguidelines-pro-type-member-init:gen/sql_tables/templated_sql_table/TestTable.h
 cppcoreguidelines-pro-type-member-init:gen/sql_tables/without_pk_table/WithoutPkTable.cpp
 
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/blob_field_with_children_initialization_table/BlobFieldWithChildrenInitializationTable.cpp
@@ -37,6 +43,10 @@ cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/multiple_pk_table/Mul
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/subtyped_bitmask_field_table/SubtypedBitmaskFieldTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/subtyped_bool_field_table/SubtypedBoolFieldTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/subtyped_enum_field_table/SubtypedEnumFieldTable.cpp
+cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/templated_sql_table_explicit_param/TestTableWithExplicit.h
+cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/templated_sql_table_param/TestTable.h
+cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/templated_sql_table/TestTable.h
 cppcoreguidelines-pro-type-reinterpret-cast:gen/sql_tables/without_pk_table/WithoutPkTable.cpp
 
 google-explicit-constructor:gen/sql_tables/subtyped_bitmask_field_table/TestBitmask.h
+google-explicit-constructor:gen/sql_tables/templated_sql_table/TestBitmask.h
