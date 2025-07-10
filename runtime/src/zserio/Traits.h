@@ -192,8 +192,15 @@ struct view_type_used_as_offset<T, std::enable_if_t<is_complete_v<View<T>>>>
 template <typename T, typename V = void>
 using view_type_used_as_offset_t = typename view_type_used_as_offset<T, V>::type;
 
+/**
+ * Helper function to construct object of generic type T with allocator argument if supported.
+ * When the type T is not constructible with allocator, the allocator argument is ignored.
+ *
+ * \param allocator Allocator to use if constructor with an allocator exists.
+ * \param args Other arguments to constructor.
+ */
 template <typename T, typename ALLOC, typename... ARGS>
-T constructWithAllocator(const ALLOC& allocator, ARGS&&... args)
+constexpr T constructWithAllocator(const ALLOC& allocator, ARGS&&... args)
 {
     if constexpr (std::is_constructible_v<T, ARGS..., ALLOC>)
     {
@@ -203,6 +210,18 @@ T constructWithAllocator(const ALLOC& allocator, ARGS&&... args)
     {
         return T(std::forward<ARGS>(args)...);
     }
+}
+
+/**
+ * Overload needed to suppress conversion warnings when constructing numeric types.
+ *
+ * \param allocator Allocator which is always ignored in this overload.
+ * \param value Value of type U convertible to the ValueType of numeric wrapper T.
+ */
+template <typename T, typename ALLOC, typename U, std::enable_if_t<is_numeric_wrapper_v<T>, int> = 0>
+constexpr T constructWithAllocator(const ALLOC&, U value)
+{
+    return T(static_cast<typename T::ValueType>(value));
 }
 
 } // namespace zserio
