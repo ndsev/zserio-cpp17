@@ -1,3 +1,4 @@
+bugprone-exception-escape::gen/array_types/templated_auto_array/Templated.h
 bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/EmptyChoice.h
 bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/EmptyUnion.h
 bugprone-exception-escape:gen/array_types/packed_auto_array_empty_compounds/Main.h
@@ -14,8 +15,16 @@ bugprone-exception-escape:gen/array_types/packing_interface_optimization/PackedC
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorChoice.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorStruct.h
 bugprone-exception-escape:gen/array_types/packing_interface_optimization/UnpackedColorUnion.h
+bugprone-exception-escape:gen/array_types/templated_auto_array/Templated.h
+bugprone-exception-escape:gen/array_types/templated_auto_array/TemplatedParam.h
+bugprone-exception-escape:gen/array_types/templated_auto_array/TestChoice.h
+bugprone-exception-escape:gen/array_types/templated_auto_array/TestUnion.h
 
-
+cert-dcl58-cpp:gen/array_types/templated_auto_array/Templated.h
+cert-dcl58-cpp:gen/array_types/templated_auto_array/TemplatedParam.h
+cert-dcl58-cpp:gen/array_types/templated_auto_array/TestChoice.h
+cert-dcl58-cpp:gen/array_types/templated_auto_array/TestStruct.h
+cert-dcl58-cpp:gen/array_types/templated_auto_array/TestUnion.h
 cert-err58-cpp:cpp/PackedAutoArrayStructWithBytesTest.cpp
 cert-err58-cpp:cpp/PackedAutoArrayStructWithExternTest.cpp
 
@@ -25,6 +34,7 @@ google-explicit-constructor:gen/array_types/packed_variable_array_struct/TestBit
 google-explicit-constructor:gen/array_types/packing_interface_optimization/MixedColorBitmask.h
 google-explicit-constructor:gen/array_types/packing_interface_optimization/PackedColorBitmask.h
 google-explicit-constructor:gen/array_types/packing_interface_optimization/UnpackedColorBitmask.h
+google-explicit-constructor:gen/array_types/templated_auto_array/TestBitmask.h
 
 misc-no-recursion # reports also runtime
 

@@ -452,7 +452,7 @@ View<::test_object::std_allocator::CreatorObject> ObjectTraits<::test_object::st
     detail::read(reader, data.value);
     (void)detail::read(reader, data.nested, detail::makeParameter<0, ::test_object::std_allocator::CreatorNested>(view.value()));
     detail::read(reader, data.text);
-    (void)detail::readWithTraits<ArrayType::AUTO, View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits>(reader, data.nestedArray, view);
+    (void)detail::readWithTraits<ArrayType::AUTO, typename View<::test_object::std_allocator::CreatorObject>::ZserioNestedArrayArrayTraits>(reader, data.nestedArray, view);
     detail::read<ArrayType::AUTO>(reader, data.textArray);
     if (reader.readBool())
     {

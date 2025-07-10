@@ -269,7 +269,7 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
         }
             <#if field.isPackable && (field.array.isPacked || usedInPackedArray)>
 
-        static void read(<@packing_context_type_name field/>& packingContext, BitStreamReader& reader,
+        static void read(<@packing_context_type_name field, true/>& packingContext, BitStreamReader& reader,
                 const <#if array_needs_owner(field)>OwnerType& owner<#else>detail::DummyArrayOwner&</#if>, <#rt>
                 <#lt>${field.typeInfo.typeFullName}& element, size_t<#if array_needs_index(field)> index</#if>)
         {
@@ -334,7 +334,7 @@ void View<${compoundFullName}>::<@array_traits_name field/>::read(<@packing_cont
         <<#t>
         <@array_type_enum field/><#t>
         <#if array_needs_custom_traits(field)>
-        , View<${compoundName}>::<@array_traits_name field/><#t>
+        , typename View<${compoundName}>::<@array_traits_name field/><#t>
         </#if>
         ><#t>
     </#if>
