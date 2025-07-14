@@ -192,8 +192,8 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
     @Override
     public UnaryExpressionFormatting getFunctionCall(Expression expr)
     {
-        return new UnaryExpressionFormatting(expr.op1().isMostLeftId() ? getAccessPrefix() : "",
-                expr.getExprType() != ExpressionType.TEMPLATE_PARAMETER_TYPE ? "()" : "");
+        // function call operator "()" already applied in formatSymbolIdentifier
+        return new UnaryExpressionFormatting(expr.op1().isMostLeftId() ? getAccessPrefix() : "", "");
     }
 
     @Override
@@ -404,6 +404,7 @@ public class CppExpressionFormattingPolicy extends DefaultExpressionFormattingPo
             // [FunctionCall]()
             final Function function = (Function)resolvedSymbol;
             result.append(AccessorNameFormatter.getFunctionName(function));
+            result.append("()");
         }
         else if (resolvedSymbol instanceof Constant)
         {
