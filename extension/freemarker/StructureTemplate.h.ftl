@@ -13,13 +13,15 @@
 
 #include <memory>
 
+#include <zserio/Bitmasks.h>
 #include <zserio/BitPositionUtil.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
-#include <zserio/HashCodeUtil.h>
 <#if isPackable && usedInPackedArray>
 #include <zserio/DeltaContext.h>
 </#if>
+#include <zserio/Enums.h>
+#include <zserio/HashCodeUtil.h>
 <#if structure_has_optional_field(fieldList)>
 <@type_includes types.optional/>
 </#if>

@@ -16,12 +16,14 @@
 
 #include <memory>
 
+#include <zserio/Bitmasks.h>
 #include <zserio/BitPositionUtil.h>
 #include <zserio/BitStreamReader.h>
 #include <zserio/BitStreamWriter.h>
 <@type_includes types.variant/>
 #include <zserio/ChoiceCaseException.h>
 #include <zserio/ChoiceTag.h>
+#include <zserio/Enums.h>
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
 <@type_includes types.reflectablePtr/>

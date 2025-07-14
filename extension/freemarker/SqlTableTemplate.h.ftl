@@ -18,7 +18,9 @@
 #include <zserio/BitFieldUtil.h>
 </#if>
 #include <zserio/AllocatorHolder.h>
+#include <zserio/Bitmasks.h>
 #include <zserio/CppRuntimeException.h>
+#include <zserio/Enums.h>
 #include <zserio/IValidationObserver.h>
 #include <zserio/Span.h>
 #include <zserio/SqliteConnection.h>
