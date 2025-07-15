@@ -31,6 +31,8 @@ add_custom_test(sql_tables
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedBoolFieldTableTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedEnumFieldTableTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SubtypedTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedTableTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedParamTableTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WithoutPkTableTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}

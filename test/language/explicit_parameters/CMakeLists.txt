@@ -26,6 +26,7 @@ add_custom_test(explicit_parameters
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExplicitSimpleParamTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleExplicitParamsTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleWithSameNameTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedExplicitParamTableTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )
