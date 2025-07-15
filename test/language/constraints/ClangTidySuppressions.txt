@@ -1,6 +1,12 @@
 bugprone-exception-escape:gen/constraints/choice_constraints/ChoiceConstraints.h
 bugprone-exception-escape:gen/constraints/union_constraints/UnionConstraints.h
 
+cert-dcl58-cpp::gen/constraints/constraints_in_templates/TemplatedChoice.h
+cert-dcl58-cpp:gen/constraints/constraints_in_templates/TemplatedChoice.h
+cert-dcl58-cpp:gen/constraints/constraints_in_templates/TemplatedStruct.h
+cert-dcl58-cpp:gen/constraints/constraints_in_templates/TemplatedUnion.h
+
+google-explicit-constructor:gen/constraints/constraints_in_templates/TestBitmask.h
 google-explicit-constructor:gen/constraints/structure_bitmask_constraints/Availability.h
 
 readability-simplify-boolean-expr:gen/constraints/choice_constraints/ChoiceConstraints.cpp

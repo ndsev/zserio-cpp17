@@ -13,6 +13,7 @@ bugprone-exception-escape:gen/choice_types/enum_with_removed_item_param_choice/E
 bugprone-exception-escape:gen/choice_types/full_bitmask_param_choice/FullBitmaskParamChoice.h
 bugprone-exception-escape:gen/choice_types/full_enum_param_choice/FullEnumParamChoice.h
 bugprone-exception-escape:gen/choice_types/multiple_param_choice/TestChoice.h
+bugprone-exception-escape:gen/choice_types/templated_choice/TestUnion.h
 bugprone-exception-escape:gen/choice_types/uint16_param_choice/UInt16ParamChoice.h
 bugprone-exception-escape:gen/choice_types/uint32_param_choice/UInt32ParamChoice.h
 bugprone-exception-escape:gen/choice_types/uint64_param_choice/UInt64ParamChoice.h
@@ -27,9 +28,9 @@ google-explicit-constructor:gen/choice_types/full_bitmask_param_choice/Selector.
 
 cert-dcl58-cpp:gen/choice_types/choice_compatibility_check/ChoiceCompatibilityCheck.h
 cert-dcl58-cpp:gen/choice_types/choice_compatibility_check/Holder.h
+cert-dcl58-cpp:gen/choice_types/templated_choice/TestChoice.h
 
 performance-move-const-arg:cpp/UInt16ParamChoiceTest.cpp
 performance-move-const-arg:cpp/UInt32ParamChoiceTest.cpp
 performance-move-const-arg:cpp/UInt64ParamChoiceTest.cpp
-
-
+performance-move-const-arg:gen/choice_types/templated_choice/TemplatedChoice.cpp

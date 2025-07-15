@@ -3,6 +3,7 @@ package zserio.extension.cpp17;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import zserio.ast.ArrayInstantiation;
@@ -68,43 +69,69 @@ public class OffsetFieldsCollector extends ZserioAstWalker
 
     private void visitCompound(CompoundType compoundType)
     {
-        compoundTypeStack.add(compoundType);
-
-        for (Field field : compoundType.getFields()) // it's enough to traverse fields
-        {
-            if (field.getOffsetExpr() != null)
-            {
-                final Set<Field> referencedFieldObjects =
-                        field.getOffsetExpr().getReferencedSymbolObjects(Field.class);
-                if (!referencedFieldObjects.isEmpty())
-                {
-                    final Field referencedField = referencedFieldObjects.iterator().next();
-                    offsetFields.add(referencedField);
-                }
-
-                compoundsWithOffset.addAll(compoundTypeStack);
-            }
-
-            TypeInstantiation typeInstantiation = field.getTypeInstantiation();
-            if (typeInstantiation instanceof ArrayInstantiation)
-            {
-                final ArrayInstantiation arrayInstantiation = (ArrayInstantiation)typeInstantiation;
-                typeInstantiation = arrayInstantiation.getElementTypeInstantiation();
-            }
-            final ZserioType baseType = typeInstantiation.getBaseType();
-            if (baseType instanceof CompoundType && !compoundType.equals(baseType))
-            {
-                baseType.accept(this);
-            }
-        }
-
-        compoundTypeStack.remove(compoundTypeStack.size() - 1);
-
         if (!compoundType.getTemplateParameters().isEmpty())
         {
             // visit instantiations
             for (ZserioTemplatableType instantiation : compoundType.getInstantiations())
                 instantiation.accept(this);
+        }
+        else
+        {
+            compoundTypeStack.add(compoundType);
+
+            for (Field field : compoundType.getFields()) // it's enough to traverse fields
+            {
+                if (field.getOffsetExpr() != null)
+                {
+                    final Map<Field, CompoundType> referencedFieldObjects =
+                            field.getOffsetExpr().getReferencedFieldsWithOwner();
+                    if (!referencedFieldObjects.isEmpty())
+                    {
+                        final Map.Entry<Field, CompoundType> referencedFieldEntry =
+                                referencedFieldObjects.entrySet().iterator().next();
+                        addOffsetField(referencedFieldEntry.getKey(), referencedFieldEntry.getValue());
+                    }
+
+                    addCompoundsWithOffset(compoundTypeStack);
+                }
+
+                TypeInstantiation typeInstantiation = field.getTypeInstantiation();
+                if (typeInstantiation instanceof ArrayInstantiation)
+                {
+                    final ArrayInstantiation arrayInstantiation = (ArrayInstantiation)typeInstantiation;
+                    typeInstantiation = arrayInstantiation.getElementTypeInstantiation();
+                }
+                final ZserioType baseType = typeInstantiation.getBaseType();
+                if (baseType instanceof CompoundType && !compoundType.equals(baseType))
+                {
+                    baseType.accept(this);
+                }
+            }
+
+            compoundTypeStack.remove(compoundTypeStack.size() - 1);
+        }
+    }
+
+    private void addOffsetField(Field offsetField, CompoundType offsetFieldOwner)
+    {
+        offsetFields.add(offsetField);
+
+        if (offsetFieldOwner.getTemplate() != null)
+        {
+            final CompoundType offsetFieldOwnerTemplate = (CompoundType)offsetFieldOwner.getTemplate();
+            final Field templateOffsetField = offsetFieldOwnerTemplate.getFields().get(
+                    offsetFieldOwner.getFields().indexOf(offsetField));
+            offsetFields.add(templateOffsetField);
+        }
+    }
+
+    private void addCompoundsWithOffset(List<CompoundType> comopundTypeStack)
+    {
+        for (CompoundType compoundType : compoundTypeStack)
+        {
+            compoundsWithOffset.add(compoundType);
+            if (compoundType.getTemplate() != null)
+                compoundsWithOffset.add((CompoundType)compoundType.getTemplate());
         }
     }
 

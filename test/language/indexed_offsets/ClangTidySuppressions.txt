@@ -14,6 +14,9 @@ bugprone-exception-escape:gen/indexed_offsets/indexed_offset_array_in_union/Test
 bugprone-exception-escape:gen/indexed_offsets/optional_indexed_offset_array/OptionalIndexedOffsetArray.h
 bugprone-exception-escape:gen/indexed_offsets/optional_nested_indexed_offset_array/OptionalNestedIndexedOffsetArray.h
 
+cert-dcl58-cpp:gen/indexed_offsets/optional_nested_indexed_offset_array_in_template/Header.h
+cert-dcl58-cpp:gen/indexed_offsets/optional_nested_indexed_offset_array_in_template/OptionalNestedIndexedOffsetArray.h
+
 misc-no-recursion # reports also tested_release and some system headers
 
 readability-simplify-boolean-expr:gen/indexed_offsets/optional_indexed_offset_array/OptionalIndexedOffsetArray.cpp

@@ -3,12 +3,15 @@ bugprone-exception-escape:gen/functions/choice_array/ItemRef.h
 bugprone-exception-escape:gen/functions/union_array/Inner.h
 bugprone-exception-escape:gen/functions/union_array/ItemRef.h
 
+cert-dcl58-cpp:gen/functions/templated_structure_parent_child_value/ChildValue.h
+cert-dcl58-cpp:gen/functions/templated_structure_parent_child_value/ParentValue.h
+cert-err58-cpp:cpp/StructureArrayTest.cpp
 cert-err58-cpp:cpp/StructureBytesTest.cpp
 cert-err58-cpp:cpp/StructureExternTest.cpp
-cert-err58-cpp:cpp/StructureArrayTest.cpp
 cert-err58-cpp:cpp/UnionArrayTest.cpp
 
 performance-move-const-arg:gen/functions/structure_array_param/ParentStructure.cpp
 performance-move-const-arg:gen/functions/structure_optional/ValueConsumerCreator.cpp
 performance-move-const-arg:gen/functions/structure_param/MetresConverterCaller.cpp
 performance-move-const-arg:gen/functions/structure_parent_child_value/ParentValue.cpp
+performance-move-const-arg:gen/functions/templated_structure_parent_child_value/TemplatedStructureParentChildValue.cpp

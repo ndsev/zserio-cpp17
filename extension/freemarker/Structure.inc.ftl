@@ -190,7 +190,11 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
 void ObjectTraits<${compoundFullName}>::<@structure_offset_setter_name field/>::setOffset(<#rt>
         <#lt>size_t index, BitSize byteOffset) const
 {
+            <#if field.offset.typeInfo??>
     ${field.offset.ownerIndirectSetter} = static_cast<${field.offset.typeInfo.typeFullName}::ValueType>(byteOffset);
+            <#else>
+    ::zserio::detail::setGenericOffset(${field.offset.ownerIndirectSetter}, byteOffset);
+            </#if>
 }
         </#if>
     </#list>
@@ -208,8 +212,12 @@ void ObjectTraits<${compoundFullName}>::<@structure_offset_setter_name field/>::
 
         void setOffset(size_t index, BitSize byteOffset) const
         {
+            <#if field.offset.typeInfo??>
             ${field.offset.ownerIndirectSetter} =
                     static_cast<typename ${field.offset.typeInfo.typeFullName}::ValueType>(byteOffset);
+            <#else>
+            ::zserio::detail::setGenericOffset(${field.offset.ownerIndirectSetter}, byteOffset);
+            </#if>
         }
 
     private:
@@ -471,8 +479,12 @@ ${I}endBitPosition = alignTo(static_cast<BitSize>(${field.alignmentValue}), endB
 ${I}endBitPosition = alignTo(8, endBitPosition);
     </#if>
     <#if field.offset?? && !field.offset.containsIndex>
+        <#if field.offset.typeInfo??>
 ${I}${field.offset.viewIndirectSetter} = static_cast<<#if field.offset.typeInfo.isTemplateParameter>typename </#if><#rt>
             <#lt>${field.offset.typeInfo.typeFullName}::ValueType>(endBitPosition / 8);
+        <#else>
+${I}::zserio::detail::setGenericOffset(${field.offset.viewIndirectSetter}, endBitPosition / 8);
+        </#if>
     </#if>
 ${I}endBitPosition += <#rt>
         <#if field.compound?? || field.offset?? && field.offset.containsIndex>

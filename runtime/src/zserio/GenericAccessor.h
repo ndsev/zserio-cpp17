@@ -26,6 +26,12 @@ struct generic_accessor<T, std::enable_if_t<is_bitmask_v<T>>>
     using type = typename T::Values;
 };
 
+template <typename T, typename U>
+void setGenericOffset(T& offsetField, U bytesOffset)
+{
+    offsetField = static_cast<typename T::ValueType>(bytesOffset);
+}
+
 } // namespace detail
 
 template <typename T>

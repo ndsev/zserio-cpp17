@@ -288,9 +288,16 @@ public final class CompoundFieldTemplateData
                     context.getIndirectExpressionFormatter(includeCollector, "m_owner");
             ownerIndirectSetter = cppOwnerIndirectExpressionFormatter.formatSetter(offsetExpression);
             final ZserioType offsetExprZserioType = offsetExpression.getExprZserioType();
-            final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
-            final CppNativeType nativeType = cppNativeMapper.getCppType(offsetExprZserioType);
-            typeInfo = NativeTypeInfoTemplateDataCreator.create(nativeType, offsetExprZserioType);
+            if (offsetExprZserioType != null)
+            {
+                final CppNativeMapper cppNativeMapper = context.getCppNativeMapper();
+                final CppNativeType nativeType = cppNativeMapper.getCppType(offsetExprZserioType);
+                typeInfo = NativeTypeInfoTemplateDataCreator.create(nativeType, offsetExprZserioType);
+            }
+            else
+            {
+                typeInfo = null;
+            }
             containsIndex = offsetExpression.containsIndex();
         }
 

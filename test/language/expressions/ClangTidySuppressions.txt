@@ -1,15 +1,42 @@
 bugprone-exception-escape:gen/expressions/index_operator/Element.h
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.h
 
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ArrayExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/BitmaskExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ConstExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/EnumExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/FieldExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/FloatExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/FunctionExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/Index.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/IndexExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/IsSetExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/IsSetParam.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/LeftShiftExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/LengthOfExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ModuloExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/NegationExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/NumBitsExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ParameterizedArrayElement.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ParameterizedArrayExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ParameterizedArrayHolder.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ParenthesisExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/QuestionMarkExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/StringExpressions.h
+cert-dcl58-cpp:gen/expressions/expressions_in_templates/ValueOfExpressions.h
+
 cppcoreguidelines-pro-bounds-constant-array-index:cpp/IndexOperatorTest.cpp
 
 google-explicit-constructor:gen/expressions/bitmask_type/Colors.h
+google-explicit-constructor:gen/expressions/expressions_in_templates/ColorB.h
 google-explicit-constructor:gen/expressions/isset_operator/TestBitmask.h
 
+performance-move-const-arg:gen/expressions/expressions_in_templates/ExpressionsInTemplates.cpp
 performance-move-const-arg:gen/expressions/field_type/FieldTypeExpression.cpp
 performance-move-const-arg:gen/expressions/field_type_with_clash/FieldTypeExpression.cpp
 performance-move-const-arg:gen/expressions/field_type_with_parent_clash/FieldTypeExpression.cpp
 
+hicpp-signed-bitwise:gen/expressions/expressions_in_templates/LeftShiftExpressions.h
 hicpp-signed-bitwise:gen/expressions/left_shift_operator/LeftShiftOperator.cpp
 
 readability-simplify-boolean-expr:gen/expressions/index_operator/Element.cpp

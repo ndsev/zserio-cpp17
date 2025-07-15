@@ -25,6 +25,23 @@ cert-dcl58-cpp:gen/array_types/templated_auto_array/TemplatedParam.h
 cert-dcl58-cpp:gen/array_types/templated_auto_array/TestChoice.h
 cert-dcl58-cpp:gen/array_types/templated_auto_array/TestStruct.h
 cert-dcl58-cpp:gen/array_types/templated_auto_array/TestUnion.h
+cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/Templated.h
+cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/TemplatedParam.h
+cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/TestChoice.h
+cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/TestStruct.h
+cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/TestUnion.h
+cert-dcl58-cpp:gen/array_types/templated_packed_variable_array/Arrays.h
+cert-dcl58-cpp:gen/array_types/templated_packed_variable_array/Templated.h
+cert-dcl58-cpp:gen/array_types/templated_packed_variable_array/TemplatedParam.h
+cert-dcl58-cpp:gen/array_types/templated_packed_variable_array/TestChoice.h
+cert-dcl58-cpp:gen/array_types/templated_packed_variable_array/TestStruct.h
+cert-dcl58-cpp:gen/array_types/templated_packed_variable_array/TestUnion.h
+cert-dcl58-cpp:gen/array_types/templated_variable_array/Arrays.h
+cert-dcl58-cpp:gen/array_types/templated_variable_array/Templated.h
+cert-dcl58-cpp:gen/array_types/templated_variable_array/TemplatedParam.h
+cert-dcl58-cpp:gen/array_types/templated_variable_array/TestChoice.h
+cert-dcl58-cpp:gen/array_types/templated_variable_array/TestStruct.h
+cert-dcl58-cpp:gen/array_types/templated_variable_array/TestUnion.h
 cert-err58-cpp:cpp/PackedAutoArrayStructWithBytesTest.cpp
 cert-err58-cpp:cpp/PackedAutoArrayStructWithExternTest.cpp
 
@@ -35,6 +52,12 @@ google-explicit-constructor:gen/array_types/packing_interface_optimization/Mixed
 google-explicit-constructor:gen/array_types/packing_interface_optimization/PackedColorBitmask.h
 google-explicit-constructor:gen/array_types/packing_interface_optimization/UnpackedColorBitmask.h
 google-explicit-constructor:gen/array_types/templated_auto_array/TestBitmask.h
+google-explicit-constructor:gen/array_types/templated_packed_auto_array/TestBitmask.h
+google-explicit-constructor:gen/array_types/templated_packed_auto_array/TestBitmask.h
+google-explicit-constructor:gen/array_types/templated_packed_variable_array/TestBitmask.h
+google-explicit-constructor:gen/array_types/templated_packed_variable_array/TestBitmask.h
+google-explicit-constructor:gen/array_types/templated_variable_array/TestBitmask.h
+google-explicit-constructor:gen/array_types/templated_variable_array/TestBitmask.h
 
 misc-no-recursion # reports also runtime
 
