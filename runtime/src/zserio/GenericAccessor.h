@@ -43,8 +43,8 @@ const T& genericAccessor(const T& value)
     return value;
 }
 
-template <typename T>
-const auto& genericAccessor(const Optional<T>& optionalValue)
+template <typename ALLOC, typename T>
+const auto& genericAccessor(const BasicOptional<ALLOC, T>& optionalValue)
 {
     return optionalValue.value();
 }
@@ -61,8 +61,8 @@ T& genericAccessor(T& value)
     return value;
 }
 
-template <typename T>
-auto& genericAccessor(Optional<T>& optionalValue)
+template <typename ALLOC, typename T>
+auto& genericAccessor(BasicOptional<ALLOC, T>& optionalValue)
 {
     return optionalValue.value();
 }
