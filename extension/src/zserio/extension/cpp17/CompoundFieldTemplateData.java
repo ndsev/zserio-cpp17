@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import zserio.ast.ArrayInstantiation;
-import zserio.ast.ChoiceType;
 import zserio.ast.CompoundType;
 import zserio.ast.DynamicBitFieldInstantiation;
 import zserio.ast.Expression;
@@ -16,7 +15,6 @@ import zserio.ast.ParameterizedTypeInstantiation;
 import zserio.ast.ParameterizedTypeInstantiation.InstantiatedParameter;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.TypeReference;
-import zserio.ast.UnionType;
 import zserio.ast.ZserioType;
 import zserio.extension.common.ExpressionFormatter;
 import zserio.extension.common.ZserioExtensionException;
@@ -43,7 +41,7 @@ public final class CompoundFieldTemplateData
         name = field.getName();
         getterName = AccessorNameFormatter.getGetterName(field);
 
-        usedAsOffset = fieldUsedAsOffset(context.getOffsetFieldsCollector(), field);
+        usedAsOffset = context.getOffsetFieldsCollector().isUsedAsOffset(field);
 
         isExtended = field.isExtended();
         if (isExtended)
@@ -66,39 +64,6 @@ public final class CompoundFieldTemplateData
         integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
         array = createArray(context, fieldNativeType, fieldTypeInstantiation, parentType, includeCollector);
         docComments = DocCommentsDataCreator.createData(context, field);
-    }
-
-    private boolean fieldUsedAsOffset(OffsetFieldsCollector offsetFieldsCollector, Field field)
-    {
-        if (offsetFieldsCollector.isUsedAsOffset(field))
-            return true;
-
-        TypeInstantiation typeInstantiation = field.getTypeInstantiation();
-        if (typeInstantiation instanceof ArrayInstantiation)
-            typeInstantiation = ((ArrayInstantiation)typeInstantiation).getElementTypeInstantiation();
-
-        final ZserioType baseType = typeInstantiation.getBaseType();
-        if (baseType instanceof UnionType || baseType instanceof ChoiceType)
-        {
-            final CompoundType compoundType = (CompoundType)baseType;
-            for (Field childField : compoundType.getFields())
-            {
-                TypeInstantiation childTypeInstantiation = childField.getTypeInstantiation();
-                if (childTypeInstantiation instanceof ArrayInstantiation)
-                {
-                    childTypeInstantiation =
-                            ((ArrayInstantiation)childTypeInstantiation).getElementTypeInstantiation();
-                }
-
-                if (childTypeInstantiation.getBaseType() == baseType)
-                    continue; // prevent recursion
-
-                if (fieldUsedAsOffset(offsetFieldsCollector, childField))
-                    return true;
-            }
-        }
-
-        return false;
     }
 
     public DynamicBitLength getDynamicBitFieldLength()

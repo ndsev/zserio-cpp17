@@ -56,7 +56,7 @@ struct ${name}
             ${name}(allocator_type{})
     {}
 
-    explicit ${name}(const allocator_type& allocator) noexcept<#rt>
+    explicit ${name}(const allocator_type&<#if structure_fields_need_allocator(fieldList)>  allocator</#if>) noexcept<#rt>
 <#list fieldList>
             <#lt> :
     <#items as field>

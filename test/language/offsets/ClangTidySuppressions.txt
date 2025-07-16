@@ -3,6 +3,7 @@ bugprone-exception-escape:gen/offsets/nested_offset/NestedOffsetChoice.h
 bugprone-exception-escape:gen/offsets/nested_offset/NestedOffsetUnion.h
 bugprone-exception-escape:gen/offsets/offset_in_choice/TestChoice.h
 bugprone-exception-escape:gen/offsets/offset_in_choice/TestStruct.h
+bugprone-exception-escape:gen/offsets/offset_in_nested_choice_in_template/NestedChoice.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_choice/NestedChoice.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_choice/TestChoice.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_choice/TestStruct.h
@@ -12,6 +13,13 @@ bugprone-exception-escape:gen/offsets/offset_in_nested_union/TestUnion.h
 bugprone-exception-escape:gen/offsets/offset_in_union/TestStruct.h
 bugprone-exception-escape:gen/offsets/offset_in_union/TestUnion.h
 
+cert-dcl58-cpp:gen/offsets/offset_in_nested_choice_in_template/NestedChoice.h
+cert-dcl58-cpp:gen/offsets/offset_in_nested_choice_in_template/TestChoice.h
+cert-dcl58-cpp:gen/offsets/offset_in_nested_choice_in_template/TestStruct.h
+cert-dcl58-cpp:gen/offsets/parameter_offset_in_template/Room.h
+cert-dcl58-cpp:gen/offsets/parameter_offset_in_template/School.h
+
+performance-move-const-arg:gen/offsets/parameter_offset_in_template/ParameterOffsetInTemplate.cpp
 performance-move-const-arg:gen/offsets/parameter_offset/School.cpp
 
 readability-simplify-boolean-expr:gen/offsets/nested_offset/NestedOffsetChoice.cpp

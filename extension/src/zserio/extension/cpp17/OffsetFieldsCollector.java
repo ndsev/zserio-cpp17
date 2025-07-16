@@ -10,6 +10,7 @@ import zserio.ast.ArrayInstantiation;
 import zserio.ast.ChoiceType;
 import zserio.ast.CompoundType;
 import zserio.ast.Field;
+import zserio.ast.Root;
 import zserio.ast.StructureType;
 import zserio.ast.TypeInstantiation;
 import zserio.ast.UnionType;
@@ -25,6 +26,14 @@ import zserio.ast.ZserioType;
  */
 public class OffsetFieldsCollector extends ZserioAstWalker
 {
+    @Override
+    public void visitRoot(Root root)
+    {
+        super.visitRoot(root);
+        firstRun = false;
+        super.visitRoot(root);
+    }
+
     @Override
     public void visitStructureType(StructureType structureType)
     {
@@ -77,38 +86,70 @@ public class OffsetFieldsCollector extends ZserioAstWalker
         }
         else
         {
-            compoundTypeStack.add(compoundType);
-
-            for (Field field : compoundType.getFields()) // it's enough to traverse fields
+            if (firstRun)
             {
-                if (field.getOffsetExpr() != null)
+                compoundTypeStack.add(compoundType);
+
+                for (Field field : compoundType.getFields()) // it's enough to traverse fields
                 {
-                    final Map<Field, CompoundType> referencedFieldObjects =
-                            field.getOffsetExpr().getReferencedFieldsWithOwner();
-                    if (!referencedFieldObjects.isEmpty())
+                    if (field.getOffsetExpr() != null)
                     {
-                        final Map.Entry<Field, CompoundType> referencedFieldEntry =
-                                referencedFieldObjects.entrySet().iterator().next();
-                        addOffsetField(referencedFieldEntry.getKey(), referencedFieldEntry.getValue());
+                        final Map<Field, CompoundType> referencedFieldObjects =
+                                field.getOffsetExpr().getReferencedFieldsWithOwner();
+                        if (!referencedFieldObjects.isEmpty())
+                        {
+                            final Map.Entry<Field, CompoundType> referencedFieldEntry =
+                                    referencedFieldObjects.entrySet().iterator().next();
+                            addOffsetField(referencedFieldEntry.getKey(), referencedFieldEntry.getValue());
+                        }
+
+                        addCompoundsWithOffset(compoundTypeStack);
                     }
 
-                    addCompoundsWithOffset(compoundTypeStack);
+                    TypeInstantiation typeInstantiation = field.getTypeInstantiation();
+                    if (typeInstantiation instanceof ArrayInstantiation)
+                    {
+                        final ArrayInstantiation arrayInstantiation = (ArrayInstantiation)typeInstantiation;
+                        typeInstantiation = arrayInstantiation.getElementTypeInstantiation();
+                    }
+                    final ZserioType baseType = typeInstantiation.getBaseType();
+                    if (baseType instanceof CompoundType && !compoundType.equals(baseType))
+                    {
+                        baseType.accept(this);
+                    }
                 }
 
-                TypeInstantiation typeInstantiation = field.getTypeInstantiation();
-                if (typeInstantiation instanceof ArrayInstantiation)
+                compoundTypeStack.remove(compoundTypeStack.size() - 1);
+            }
+            else
+            {
+                for (Field field : compoundType.getFields())
                 {
-                    final ArrayInstantiation arrayInstantiation = (ArrayInstantiation)typeInstantiation;
-                    typeInstantiation = arrayInstantiation.getElementTypeInstantiation();
-                }
-                final ZserioType baseType = typeInstantiation.getBaseType();
-                if (baseType instanceof CompoundType && !compoundType.equals(baseType))
-                {
-                    baseType.accept(this);
+                    TypeInstantiation typeInstantiation = field.getTypeInstantiation();
+                    if (typeInstantiation instanceof ArrayInstantiation)
+                    {
+                        final ArrayInstantiation arrayInstantiation = (ArrayInstantiation)typeInstantiation;
+                        typeInstantiation = arrayInstantiation.getElementTypeInstantiation();
+                    }
+                    final ZserioType baseType = typeInstantiation.getBaseType();
+                    if (baseType instanceof ChoiceType || baseType instanceof UnionType)
+                    {
+                        if (!compoundType.equals(baseType))
+                        {
+                            baseType.accept(this);
+                        }
+
+                        final CompoundType fieldCompoundType = (CompoundType)baseType;
+                        for (Field childField : fieldCompoundType.getFields())
+                        {
+                            if (offsetFields.contains(childField))
+                            {
+                                addOffsetField(field, compoundType);
+                            }
+                        }
+                    }
                 }
             }
-
-            compoundTypeStack.remove(compoundTypeStack.size() - 1);
         }
     }
 
@@ -135,6 +176,7 @@ public class OffsetFieldsCollector extends ZserioAstWalker
         }
     }
 
+    private boolean firstRun = true;
     private final List<CompoundType> compoundTypeStack = new ArrayList<CompoundType>();
     private final Set<CompoundType> compoundsWithOffset = new HashSet<CompoundType>();
     private final Set<Field> offsetFields = new HashSet<Field>();
