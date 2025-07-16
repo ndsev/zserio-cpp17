@@ -8,8 +8,12 @@ bugprone-exception-escape:gen/union_types/union_with_parameter/TestUnion.h
 bugprone-exception-escape:gen/union_types/union_with_parameterized_field/TestUnion.h
 bugprone-exception-escape:gen/union_types/union_with_multiple_parameters/TestUnion.h
 
+cert-dcl58-cpp:gen/union_types/templated_union/ParameterizedStruct.h
+cert-dcl58-cpp:gen/union_types/templated_union/ParameterizedUnion.h
+cert-dcl58-cpp:gen/union_types/templated_union/TestUnion.h
+cert-dcl58-cpp:gen/union_types/union_compatibility_check/UnionCompatibilityCheck.h
+
 readability-simplify-boolean-expr:gen/union_types/empty_union_with_parameter/EmptyUnionWithParameter.cpp
 
 performance-move-const-arg:cpp/SimpleUnionTest.cpp
 
-cert-dcl58-cpp:gen/union_types/union_compatibility_check/UnionCompatibilityCheck.h

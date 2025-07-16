@@ -1,3 +1,7 @@
+cert-dcl58-cpp:gen/structure_types/templated_structure/TestStructure.h
+
+google-explicit-constructor:gen/structure_types/templated_structure/TestBitmask.h
+
 performance-move-const-arg:gen/structure_types/field_constructor_clashing/CompoundPackingRead.cpp
 performance-move-const-arg:gen/structure_types/field_constructor_clashing/CompoundRead.cpp
 
