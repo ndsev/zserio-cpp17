@@ -22,7 +22,7 @@ class TemplatedExplicitParamTableTest : public ::testing::Test
 public:
     TemplatedExplicitParamTableTest()
     {
-        const StringType dbFileName("language/sql_tables/templated_explicit_table_test.sqlite");
+        const StringType dbFileName("language/explicit_parameters/templated_explicit_param_table_test.sqlite");
         std::remove(dbFileName.c_str());
 
         m_database = new TestDb(dbFileName);
@@ -45,8 +45,7 @@ protected:
     class ParameterProvider : public TestTableWithExplicit<T>::IParameterProvider
     {
     public:
-        virtual ::zserio::view_type_t<
-                ::std::tuple_element_t<0, typename ::zserio::detail::ObjectTraits<T>::Parameters>>
+        ::zserio::view_type_t<::std::tuple_element_t<0, typename ::zserio::detail::ObjectTraits<T>::Parameters>>
         len(const ::zserio::View<typename TestTableWithExplicit<T>::Row>& currentRow) override
         {
             return *currentRow.zserioData().id + 1;

@@ -5,6 +5,7 @@ cppcoreguidelines-pro-bounds-constant-array-index:gen/explicit_parameters/explic
 cppcoreguidelines-pro-bounds-constant-array-index:gen/explicit_parameters/explicit_simple_param/SimpleParamTable.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:gen/explicit_parameters/multiple_explicit_params/MultipleParamsTable.cpp
 cppcoreguidelines-pro-bounds-constant-array-index:gen/explicit_parameters/multiple_with_same_name/MultipleWithSameNameTable.cpp
+cppcoreguidelines-pro-bounds-constant-array-index:gen/explicit_parameters/templated_explicit_param/TestTableWithExplicit.h
 
 cppcoreguidelines-pro-type-member-init:gen/explicit_parameters/explicit_bitmask_param/BitmaskParamTable.cpp
 cppcoreguidelines-pro-type-member-init:gen/explicit_parameters/explicit_blob_param/BlobParamTable.cpp
@@ -13,6 +14,7 @@ cppcoreguidelines-pro-type-member-init:gen/explicit_parameters/explicit_same_as_
 cppcoreguidelines-pro-type-member-init:gen/explicit_parameters/explicit_simple_param/SimpleParamTable.cpp
 cppcoreguidelines-pro-type-member-init:gen/explicit_parameters/multiple_explicit_params/MultipleParamsTable.cpp
 cppcoreguidelines-pro-type-member-init:gen/explicit_parameters/multiple_with_same_name/MultipleWithSameNameTable.cpp
+cppcoreguidelines-pro-type-member-init:gen/explicit_parameters/templated_explicit_param/TestTableWithExplicit.h
 
 cppcoreguidelines-pro-type-reinterpret-cast:gen/explicit_parameters/explicit_bitmask_param/BitmaskParamTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/explicit_parameters/explicit_blob_param/BlobParamTable.cpp
@@ -21,5 +23,6 @@ cppcoreguidelines-pro-type-reinterpret-cast:gen/explicit_parameters/explicit_sam
 cppcoreguidelines-pro-type-reinterpret-cast:gen/explicit_parameters/explicit_simple_param/SimpleParamTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/explicit_parameters/multiple_explicit_params/MultipleParamsTable.cpp
 cppcoreguidelines-pro-type-reinterpret-cast:gen/explicit_parameters/multiple_with_same_name/MultipleWithSameNameTable.cpp
+cppcoreguidelines-pro-type-reinterpret-cast:gen/explicit_parameters/templated_explicit_param/TestTableWithExplicit.h
 
 google-explicit-constructor:gen/explicit_parameters/explicit_bitmask_param/TestBitmask.h
