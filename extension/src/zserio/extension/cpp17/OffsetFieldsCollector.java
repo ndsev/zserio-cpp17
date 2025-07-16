@@ -119,8 +119,8 @@ public class OffsetFieldsCollector extends ZserioAstWalker
         if (offsetFieldOwner.getTemplate() != null)
         {
             final CompoundType offsetFieldOwnerTemplate = (CompoundType)offsetFieldOwner.getTemplate();
-            final Field templateOffsetField = offsetFieldOwnerTemplate.getFields().get(
-                    offsetFieldOwner.getFields().indexOf(offsetField));
+            final Field templateOffsetField =
+                    offsetFieldOwnerTemplate.getFields().get(offsetFieldOwner.getFields().indexOf(offsetField));
             offsetFields.add(templateOffsetField);
         }
     }
