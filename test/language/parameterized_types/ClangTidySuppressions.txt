@@ -5,6 +5,14 @@ bugprone-exception-escape:gen/parameterized_types/param_with_optional/Holder.h
 bugprone-exception-escape:gen/parameterized_types/param_with_optional/Value.h
 bugprone-exception-escape:gen/parameterized_types/array_element_param_with_optional/Value.h
 
+cert-dcl58-cpp:gen/parameterized_types/array_element_param_with_optional_in_template/ExtraValue.h
+cert-dcl58-cpp:gen/parameterized_types/array_element_param_with_optional_in_template/Param.h
+cert-dcl58-cpp:gen/parameterized_types/array_element_param_with_optional_in_template/TemplatedHolder.h
+cert-dcl58-cpp:gen/parameterized_types/array_element_param_with_optional_in_template/Value.h
+cert-dcl58-cpp:gen/parameterized_types/parameterized_nested_in_array_in_template/Element.h
+cert-dcl58-cpp:gen/parameterized_types/parameterized_nested_in_array_in_template/Parameterized.h
+cert-dcl58-cpp:gen/parameterized_types/parameterized_nested_in_array_in_template/TemplatedHolder.h
+
 google-explicit-constructor:gen/parameterized_types/fixed_and_variable_param/Access.h
 
 performance-move-const-arg:gen/parameterized_types/bytes_param/BytesParam.cpp

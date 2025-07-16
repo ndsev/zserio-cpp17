@@ -303,6 +303,23 @@ private:
     size_t m_unpackedBitSize = 0;
 };
 
+// helper trait to choose packing context type for an array from an element type T
+template <typename T, typename = void>
+struct packing_context_type
+{
+    using type = DeltaContext;
+};
+
+template <typename T>
+struct packing_context_type<T,
+        std::enable_if_t<is_complete_v<typename ObjectTraits<std::decay_t<T>>::PackingContext>>>
+{
+    using type = typename ObjectTraits<T>::PackingContext;
+};
+
+template <typename T, typename V = void>
+using packing_context_type_t = typename packing_context_type<T, V>::type;
+
 template <typename T>
 void initContext(typename ObjectTraits<T>::PackingContext& packingContext, const View<T>& view)
 {

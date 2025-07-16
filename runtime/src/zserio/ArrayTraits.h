@@ -53,23 +53,6 @@ struct is_dummy_array_owner : std::is_same<DummyArrayOwner, T>
 template <typename T>
 inline constexpr bool is_dummy_array_owner_v = is_dummy_array_owner<T>::value;
 
-// helper trait to choose packing context type for an array from an element type T
-template <typename T, typename = void>
-struct packing_context_type
-{
-    using type = DeltaContext;
-};
-
-template <typename T>
-struct packing_context_type<T,
-        std::enable_if_t<is_complete_v<typename ObjectTraits<std::decay_t<T>>::PackingContext>>>
-{
-    using type = typename ObjectTraits<T>::PackingContext;
-};
-
-template <typename T, typename V = void>
-using packing_context_type_t = typename packing_context_type<T, V>::type;
-
 template <typename T, typename = void>
 struct is_packable : std::false_type
 {};
