@@ -49,8 +49,10 @@ protected:
         {
             typename TestTable<T>::Row row;
             row.id = static_cast<uint32_t>(i);
-            if (i & 1)
+            if (i & static_cast<size_t>(1))
+            {
                 row.column = T();
+            }
             rows.push_back(std::move(row));
         }
     }

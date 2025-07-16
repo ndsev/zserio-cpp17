@@ -14,8 +14,6 @@ bugprone-exception-escape:gen/templates/templated_struct_recursion/TemplatedStru
 bugprone-exception-escape:gen/templates/union_templated_field/TemplatedUnion.h
 bugprone-exception-escape:gen/templates/union_templated_field/UnionTemplatedField.h
 
-cert-dcl58-cpp::gen/templates/instantiate_type_as_sql_table_field/Test.h
-cert-dcl58-cpp::gen/templates/sql_table_templated_field/Data.h
 cert-dcl58-cpp:gen/templates/choice_templated_enum_selector/TemplatedChoice.h
 cert-dcl58-cpp:gen/templates/choice_templated_field/Compound.h
 cert-dcl58-cpp:gen/templates/choice_templated_field/TemplatedChoice.h
