@@ -101,7 +101,7 @@ jobs:
       run: |
         mkdir -p "${RUNNER_WORKSPACE}/build/download"
         pushd "${RUNNER_WORKSPACE}/build/download"
-        ARTIFACT_ID="3537314864"
+        ARTIFACT_ID="3553606536"
         curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -L -o linux-release-2.16.1.zip "https://api.github.com/repos/ndsev/zserio/actions/artifacts/${ARTIFACT_ID}/zip"
         unzip linux-release-2.16.1.zip
         unzip zserio-2.16.1-bin.zip
