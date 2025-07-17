@@ -38,6 +38,10 @@ add_custom_test(array_types
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PackedVariableArrayStructTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PackedVariableArrayUInt8Test.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/PackingInterfaceOptimizationTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedAutoArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedPackedAutoArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedPackedVariableArrayTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedVariableArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/VariableArrayStructCastInt8Test.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/VariableArrayStructCastVarUIntTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/VariableArraySubtypedStructTest.cpp
