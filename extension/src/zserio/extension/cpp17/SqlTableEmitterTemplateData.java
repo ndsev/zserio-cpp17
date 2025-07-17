@@ -504,13 +504,24 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             public SqlTypeTemplateData(SqlNativeTypeMapper sqlNativeTypeMapper, Field field)
                     throws ZserioExtensionException
             {
-                final SqlNativeType sqlNativeType =
-                        sqlNativeTypeMapper.getSqlType(field.getTypeInstantiation());
-                name = sqlNativeType.getFullName();
-                isBlob = sqlNativeType instanceof NativeBlobType;
-                isInteger = sqlNativeType instanceof NativeIntegerType;
-                isReal = sqlNativeType instanceof NativeRealType;
-                isTemplate = sqlNativeType instanceof NativeTemplateType;
+                if (field.getTypeInstantiation().getBaseType() instanceof TemplateParameter)
+                {
+                    name = field.getTypeInstantiation().getType().getName();
+                    isBlob = false;
+                    isInteger = false;
+                    isReal = false;
+                    isTemplate = true;
+                }
+                else
+                {
+                    final SqlNativeType sqlNativeType =
+                            sqlNativeTypeMapper.getSqlType(field.getTypeInstantiation());
+                    name = sqlNativeType.getFullName();
+                    isBlob = sqlNativeType instanceof NativeBlobType;
+                    isInteger = sqlNativeType instanceof NativeIntegerType;
+                    isReal = sqlNativeType instanceof NativeRealType;
+                    isTemplate = false;
+                }
             }
 
             public String getName()
