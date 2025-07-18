@@ -1,4 +1,7 @@
 bugprone-exception-escape:gen/constraints/choice_constraints/ChoiceConstraints.h
+bugprone-exception-escape:gen/constraints/constraints_in_templates/ConstraintsInTemplates.h
+bugprone-exception-escape:gen/constraints/constraints_in_templates/TemplatedChoice.h
+bugprone-exception-escape:gen/constraints/constraints_in_templates/TemplatedUnion.h
 bugprone-exception-escape:gen/constraints/union_constraints/UnionConstraints.h
 
 cert-dcl58-cpp::gen/constraints/constraints_in_templates/TemplatedChoice.h

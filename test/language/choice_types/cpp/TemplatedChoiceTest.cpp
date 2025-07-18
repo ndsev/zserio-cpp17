@@ -18,13 +18,13 @@ class TemplatedChoiceTypeTest : public ::testing::Test
 protected:
     TemplatedChoice makeData()
     {
-        TemplatedChoice tc;
-        tc.bytesSelector.field = 0;
-        tc.bytesChoice.emplace<TestChoice<BytesType, TestUnion, Selector>::Tag::field>(BytesType{0x10, 0x20});
-        tc.structSelector.field = 1;
-        tc.structChoice.emplace<TestChoice<TestStruct, TestUnion, Selector>::Tag::paramField>(
+        TemplatedChoice data;
+        data.bytesSelector.field = 0;
+        data.bytesChoice.emplace<TestChoice<BytesType, TestUnion, Selector>::Tag::field>(BytesType{0x10, 0x20});
+        data.structSelector.field = 1;
+        data.structChoice.emplace<TestChoice<TestStruct, TestUnion, Selector>::Tag::paramField>(
                 TestUnion(zserio::in_place_index<TestUnion::Tag::strField>, "salvation"));
-        return tc;
+        return data;
     }
 };
 

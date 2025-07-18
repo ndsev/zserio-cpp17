@@ -17,11 +17,11 @@ class DefaultValuesInTemplatesTest : public ::testing::Test
 protected:
     DefaultValuesInTemplate makeData()
     {
-        DefaultValuesInTemplate dv;
-        // #384: Choose round numbers so otherwise float comparison fails
-        dv.f16Default = FloatingDefault<zserio::Float16>(3.125f);
-        dv.f64Default = FloatingDefault<zserio::Float64>(3.125);
-        return dv;
+        DefaultValuesInTemplate data;
+        // #384: Choose round numbers otherwise float comparison fails
+        data.f16Default = FloatingDefault<zserio::Float16>(3.125F);
+        data.f64Default = FloatingDefault<zserio::Float64>(3.125);
+        return data;
     }
 };
 

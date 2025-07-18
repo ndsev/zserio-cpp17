@@ -13,6 +13,8 @@ bugprone-exception-escape:gen/choice_types/enum_with_removed_item_param_choice/E
 bugprone-exception-escape:gen/choice_types/full_bitmask_param_choice/FullBitmaskParamChoice.h
 bugprone-exception-escape:gen/choice_types/full_enum_param_choice/FullEnumParamChoice.h
 bugprone-exception-escape:gen/choice_types/multiple_param_choice/TestChoice.h
+bugprone-exception-escape:gen/choice_types/templated_choice/TemplatedChoice.h
+bugprone-exception-escape:gen/choice_types/templated_choice/TestChoice.h
 bugprone-exception-escape:gen/choice_types/templated_choice/TestUnion.h
 bugprone-exception-escape:gen/choice_types/uint16_param_choice/UInt16ParamChoice.h
 bugprone-exception-escape:gen/choice_types/uint32_param_choice/UInt32ParamChoice.h

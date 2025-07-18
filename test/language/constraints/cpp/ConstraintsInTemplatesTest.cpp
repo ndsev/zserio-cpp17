@@ -19,14 +19,14 @@ class ConstraintsInTemplatesTypeTest : public ::testing::Test
 protected:
     ConstraintsInTemplates makeData()
     {
-        ConstraintsInTemplates tc;
-        tc.structField.tField.child = 1;
-        tc.structField.sField = "parrot";
-        tc.structField.eField = TestEnum::ONE;
-        tc.choiceField.emplace<TemplatedChoice<TStruct, StringType, TestBitmask>::Tag::bField>(
+        ConstraintsInTemplates data;
+        data.structField.tField.child = 1;
+        data.structField.sField = "parrot";
+        data.structField.eField = TestEnum::ONE;
+        data.choiceField.emplace<TemplatedChoice<TStruct, StringType, TestBitmask>::Tag::bField>(
                 TestBitmask::Values::FOUR);
-        tc.unionField.emplace<TemplatedUnion<zserio::VarInt64, BitBufferType, TestBitmask>::Tag::tField>(25);
-        return tc;
+        data.unionField.emplace<TemplatedUnion<zserio::VarInt64, BitBufferType, TestBitmask>::Tag::tField>(25);
+        return data;
     }
 };
 

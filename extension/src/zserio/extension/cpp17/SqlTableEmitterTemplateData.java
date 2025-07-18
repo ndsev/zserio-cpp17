@@ -28,7 +28,6 @@ import zserio.extension.common.sql.SqlNativeTypeMapper;
 import zserio.extension.common.sql.types.NativeBlobType;
 import zserio.extension.common.sql.types.NativeIntegerType;
 import zserio.extension.common.sql.types.NativeRealType;
-import zserio.extension.common.sql.types.NativeTemplateType;
 import zserio.extension.common.sql.types.SqlNativeType;
 import zserio.extension.cpp17.SqlTableEmitterTemplateData.FieldTemplateData.DynamicBitLength;
 import zserio.extension.cpp17.SqlTableEmitterTemplateData.FieldTemplateData.SqlRangeCheckData;
