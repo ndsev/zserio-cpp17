@@ -20,6 +20,7 @@ add_custom_test(constraints
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ArrayLengthofConstraintTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ChoiceConstraintsTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ConstraintsInTemplatesTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/LiteralConstraintTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalConstraintsTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureBitmaskConstraintsTest.cpp

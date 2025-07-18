@@ -35,6 +35,7 @@ add_custom_test(choice_types
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FunctionReturningLiteralSelectorChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FunctionSelectorChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleParamChoiceTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt16ParamChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt32ParamChoiceTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UInt64ParamChoiceTest.cpp
