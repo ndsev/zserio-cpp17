@@ -1,5 +1,9 @@
+bugprone-exception-escape:gen/expressions/expressions_in_templates/Index.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ValueOfExpressions.h
 bugprone-exception-escape:gen/expressions/index_operator/Element.h
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.h
+
+bugprone-signed-char-misuse:gen/expressions/expressions_in_templates/ValueOfExpressions.h
 
 cert-dcl58-cpp:gen/expressions/expressions_in_templates/ArrayExpressions.h
 cert-dcl58-cpp:gen/expressions/expressions_in_templates/BitmaskExpressions.h

@@ -1,3 +1,6 @@
+bugprone-exception-escape:gen/structure_types/templated_structure/TestStructure.h
+bugprone-exception-escape:gen/structure_types/templated_structure/TestUnion.h
+
 cert-dcl58-cpp:gen/structure_types/templated_structure/TestStructure.h
 
 google-explicit-constructor:gen/structure_types/templated_structure/TestBitmask.h
