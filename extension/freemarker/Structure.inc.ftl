@@ -127,35 +127,49 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
 
 <#macro structure_field_view_type_name field>
     <#local fieldViewTypeName>
-        <@field_view_type_name field/><#t>
+        <@field_view_type_name_inner field/><#t>
     </#local>
-    <#if field.isExtended>
-        ::zserio::Extended<<#t>
-    </#if>
-    <#if field.optional??>
-        <@optional_type_name fieldViewTypeName/><#t>
+    <#local fieldViewTypeName>
+        <#if field.isExtended>
+            ::zserio::Extended<<#t>
+        </#if>
+        <#if field.optional??>
+            <@optional_type_name fieldViewTypeName/><#t>
+        <#else>
+            ${fieldViewTypeName}<#t>
+        </#if>
+        <#if field.isExtended>
+            ><#t>
+        </#if>
+    </#local>
+    <#if !field.array?? && field.usedAsOffset>
+        zserio::offset_field_reference_t<${fieldViewTypeName}><#t>
     <#else>
         ${fieldViewTypeName}<#t>
-    </#if>
-    <#if field.isExtended>
-        ><#t>
     </#if>
 </#macro>
 
 <#macro structure_field_view_type_full_name compoundName field>
     <#local fieldViewTypeFullName>
-        <@field_view_type_full_name compoundName, field/><#t>
+        <@field_view_type_full_name_inner compoundName, field/><#t>
     </#local>
-    <#if field.isExtended>
-        ::zserio::Extended<<#t>
-    </#if>
-    <#if field.optional??>
-        <@optional_type_name fieldViewTypeFullName/><#t>
+    <#local fieldViewTypeFullName>
+        <#if field.isExtended>
+            ::zserio::Extended<<#t>
+        </#if>
+        <#if field.optional??>
+            <@optional_type_name fieldViewTypeFullName/><#t>
+        <#else>
+            ${fieldViewTypeFullName}<#t>
+        </#if>
+        <#if field.isExtended>
+            ><#t>
+        </#if>
+    </#local>
+    <#if !field.array?? && field.usedAsOffset>
+        zserio::offset_field_reference_t<${fieldViewTypeFullName}><#t>
     <#else>
         ${fieldViewTypeFullName}<#t>
-    </#if>
-    <#if field.isExtended>
-        ><#t>
     </#if>
 </#macro>
 

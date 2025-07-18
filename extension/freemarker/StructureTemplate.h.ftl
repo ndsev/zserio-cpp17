@@ -234,7 +234,24 @@ public:
 
     <@structure_field_view_type_name field/> ${field.getterName}() const
     {
+    <#if field.array??>
         <@structure_field_view_getter field, 2/>
+    <#else>
+        <#if field.typeInfo.isTemplateParameter>
+        if constexpr (::zserio::detail::is_view_v<<@field_view_type_name_inner field/>>)
+        {
+            <@structure_field_view_getter field, 3/>
+        }
+        else
+        {
+            return m_data-><@field_data_member_name field/>;
+        }
+        <#elseif field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
+        return m_data-><@field_data_member_name field/>;
+        <#else>
+        <@structure_field_view_getter field, 2/>
+        </#if>
+    </#if>
     }
 </#list>
 <#list functionList>

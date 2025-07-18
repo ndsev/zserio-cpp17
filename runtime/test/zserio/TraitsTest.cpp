@@ -3,9 +3,12 @@
 
 #include "gtest/gtest.h"
 #include "zserio/Bytes.h"
+#include "zserio/Extended.h"
+#include "zserio/Optional.h"
 #include "zserio/String.h"
 #include "zserio/Traits.h"
 #include "zserio/Variant.h"
+#include "zserio/View.h"
 
 namespace zserio
 {
@@ -55,6 +58,10 @@ class TmpTest<std::string>
 {};
 
 } // namespace
+
+template <>
+class View<DummyObjectWithAllocatorType>
+{};
 
 TEST(TraitsTest, isAllocator)
 {
@@ -106,6 +113,18 @@ TEST(TraitsTest, viewType)
 {
     assertTrue(std::is_same_v<std::string_view, view_type_t<std::string>>);
     assertTrue(std::is_same_v<BytesView, view_type_t<Bytes>>);
+}
+
+TEST(TraitsTest, needsOffsetReference)
+{
+    assertTrue(detail::needs_offset_reference_v<int>);
+    assertTrue(detail::needs_offset_reference_v<Optional<int>>);
+    assertTrue(detail::needs_offset_reference_v<Extended<int>>);
+    assertTrue(detail::needs_offset_reference_v<Extended<Optional<int>>>);
+    assertFalse(detail::needs_offset_reference_v<View<DummyObjectWithAllocatorType>>);
+    assertFalse(detail::needs_offset_reference_v<Optional<View<DummyObjectWithAllocatorType>>>);
+    assertFalse(detail::needs_offset_reference_v<Extended<View<DummyObjectWithAllocatorType>>>);
+    assertFalse(detail::needs_offset_reference_v<Extended<Optional<View<DummyObjectWithAllocatorType>>>>);
 }
 
 } // namespace zserio

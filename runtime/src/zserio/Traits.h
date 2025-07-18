@@ -14,6 +14,15 @@ class Span;
 template <typename T>
 class View;
 
+template <typename T, typename ARRAY_TRAITS>
+class ArrayView;
+
+template <typename ALLOC, typename T>
+class BasicOptional;
+
+template <typename T>
+class Extended;
+
 namespace detail
 {
 
@@ -33,6 +42,47 @@ struct is_allocator_impl<T,
                 decltype(std::declval<T>().deallocate(std::declval<typename T::value_type*>(), 0))>>
         : std::true_type
 {};
+
+template <typename T>
+struct is_array_view : std::false_type
+{};
+
+template <typename T, typename ARRAY_TRAITS>
+struct is_array_view<ArrayView<T, ARRAY_TRAITS>> : std::true_type
+{};
+
+template <typename T>
+constexpr bool is_array_view_v = is_array_view<T>::value;
+
+template <typename T>
+struct is_view : std::false_type
+{};
+
+template <typename T>
+struct is_view<View<T>> : std::true_type
+{};
+
+template <typename T>
+constexpr bool is_view_v = is_view<T>::value;
+
+template <typename T>
+struct needs_offset_reference : std::negation<is_view<T>>
+{};
+
+template <typename T>
+struct needs_offset_reference<Extended<T>>
+{
+    static constexpr bool value = needs_offset_reference<T>::value;
+};
+
+template <typename ALLOC, typename T>
+struct needs_offset_reference<BasicOptional<ALLOC, T>>
+{
+    static constexpr bool value = needs_offset_reference<T>::value;
+};
+
+template <typename T>
+constexpr bool needs_offset_reference_v = needs_offset_reference<T>::value;
 
 } // namespace detail
 
@@ -151,6 +201,7 @@ inline constexpr bool is_dyn_int_wrapper_v = is_dyn_int_wrapper<T, V>::value;
 /**
  * Trait used to check whether the type T is complete (defined)
  */
+/** \{ */
 template <typename T, typename = void>
 struct is_complete : std::false_type
 {};
@@ -161,7 +212,13 @@ struct is_complete<T, std::void_t<decltype(sizeof(T))>> : std::true_type
 
 template <typename T>
 constexpr bool is_complete_v = is_complete<T>::value;
+/** \} */
 
+/**
+ * Traits used to get proper View type.
+ * Results in View<T> when the View specialization exists, otherwise remains T.
+ */
+/** \{ */
 template <typename T, typename = void>
 struct view_type
 {
@@ -176,21 +233,28 @@ struct view_type<T, std::enable_if_t<is_complete_v<View<T>>>>
 
 template <typename T, typename V = void>
 using view_type_t = typename view_type<T, V>::type;
+/** \} */
 
+/**
+ * Trait used to get reference for fields which are used as offsets when the reference is needed.
+ * When the underlying type is an View, reference is not needed. Otherwise the reference is necessary.
+ */
+/** \{ */
 template <typename T, typename = void>
-struct view_type_used_as_offset
+struct offset_field_reference
+{
+    using type = T;
+};
+
+template <typename T>
+struct offset_field_reference<T, std::enable_if_t<detail::needs_offset_reference_v<T>>>
 {
     using type = T&;
 };
 
-template <typename T>
-struct view_type_used_as_offset<T, std::enable_if_t<is_complete_v<View<T>>>>
-{
-    using type = View<T>;
-};
-
 template <typename T, typename V = void>
-using view_type_used_as_offset_t = typename view_type_used_as_offset<T, V>::type;
+using offset_field_reference_t = typename offset_field_reference<T, V>::type;
+/** \} */
 
 /**
  * Helper function to construct object of generic type T with allocator argument if supported.

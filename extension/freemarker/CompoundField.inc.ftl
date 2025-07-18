@@ -22,12 +22,12 @@
     <@field_name field/>_<#t>
 </#macro>
 
-<#macro field_view_type_name field>
+<#macro field_view_type_name_inner field>
     <#if field.array??>
         <@array_type_name field/><#t>
     <#else>
         <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
-            ${field.typeInfo.typeFullName}<#if field.usedAsOffset>&</#if><#t>
+            ${field.typeInfo.typeFullName}<#t>
         <#elseif field.typeInfo.isString>
             ::std::string_view<#t>
         <#elseif field.typeInfo.isExtern>
@@ -35,8 +35,8 @@
         <#elseif field.typeInfo.isBytes>
             BytesView<#t>
         <#else>
-            <#if !field.parmeterized?? && field.typeInfo.isTemplateParameter>
-                view_type<#if field.usedAsOffset>_used_as_offset</#if>_t<${field.typeInfo.typeFullName}><#t>
+            <#if !field.parameterized?? && field.typeInfo.isTemplateParameter>
+                view_type_t<${field.typeInfo.typeFullName}><#t>
             <#else>
                 View<${field.typeInfo.typeFullName}><#t>
             </#if>
@@ -44,11 +44,33 @@
     </#if>
 </#macro>
 
-<#macro field_view_type_full_name compoundName field>
+<#macro field_view_type_full_name_inner compoundName field>
     <#if field.array??>
         <@array_type_full_name compoundName, field/><#t>
     <#else>
-        <@field_view_type_name field/><#t>
+        <@field_view_type_name_inner field/><#t>
+    </#if>
+</#macro>
+
+<#macro field_view_type_name field>
+    <#local fieldViewTypeName>
+        <@field_view_type_name_inner field/><#t>
+    </#local>
+    <#if !field.array?? && field.usedAsOffset>
+        zserio::offset_field_reference_t<${fieldViewTypeName}><#t>
+    <#else>
+        ${fieldViewTypeName}<#t>
+    </#if>
+</#macro>
+
+<#macro field_view_type_full_name compoundName field>
+    <#local fieldViewTypeFullName>
+        <@field_view_type_full_name_inner compoundName, field/><#t>
+    </#local>
+    <#if !field.array?? && field.usedAsOffset>
+        zserio::offset_field_reference_t<${fieldViewTypeFullName}><#t>
+    <#else>
+        ${fieldViewTypeFullName}<#t>
     </#if>
 </#macro>
 
