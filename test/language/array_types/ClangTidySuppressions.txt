@@ -19,12 +19,22 @@ bugprone-exception-escape:gen/array_types/templated_auto_array/Templated.h
 bugprone-exception-escape:gen/array_types/templated_auto_array/TemplatedParam.h
 bugprone-exception-escape:gen/array_types/templated_auto_array/TestChoice.h
 bugprone-exception-escape:gen/array_types/templated_auto_array/TestUnion.h
+bugprone-exception-escape:gen/array_types/templated_packed_array_of_templates/Element.h
+bugprone-exception-escape:gen/array_types/templated_packed_array_of_templates/TestChoice.h
+bugprone-exception-escape:gen/array_types/templated_packed_auto_array/TestChoice.h
+bugprone-exception-escape:gen/array_types/templated_packed_auto_array/TestUnion.h
+bugprone-exception-escape:gen/array_types/templated_packed_variable_array/TestChoice.h
+bugprone-exception-escape:gen/array_types/templated_packed_variable_array/TestUnion.h
+bugprone-exception-escape:gen/array_types/templated_variable_array/TestChoice.h
+bugprone-exception-escape:gen/array_types/templated_variable_array/TestUnion.h
 
 cert-dcl58-cpp:gen/array_types/templated_auto_array/Templated.h
 cert-dcl58-cpp:gen/array_types/templated_auto_array/TemplatedParam.h
 cert-dcl58-cpp:gen/array_types/templated_auto_array/TestChoice.h
 cert-dcl58-cpp:gen/array_types/templated_auto_array/TestStruct.h
 cert-dcl58-cpp:gen/array_types/templated_auto_array/TestUnion.h
+cert-dcl58-cpp:gen/array_types/templated_packed_array_of_templates/ArrayTemplate.h
+cert-dcl58-cpp:gen/array_types/templated_packed_array_of_templates/Element.h
 cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/Templated.h
 cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/TemplatedParam.h
 cert-dcl58-cpp:gen/array_types/templated_packed_auto_array/TestChoice.h

@@ -471,10 +471,10 @@ void write(DeltaContext&, BitStreamWriter& writer, const View<T>& value)
     write(writer, value);
 }
 
-template <typename T, std::enable_if_t<is_complete_v<View<T>>, int> = 0>
-void read(DeltaContext&, BitStreamReader& reader, T& value)
+template <typename T, typename... ARGS, std::enable_if_t<is_complete_v<View<T>>, int> = 0>
+void read(DeltaContext&, BitStreamReader& reader, T& value, ARGS&&... args)
 {
-    read(reader, value);
+    read(reader, value, std::forward<ARGS>(args)...);
 }
 
 // overloads for unpackable types
