@@ -24,6 +24,7 @@ add_custom_test(expressions
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/CastUInt8ToUInt64Test.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ConstTypeTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/EnumerationTypeTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExpressionsInTemplates.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FieldTypeTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FieldTypeWithClashTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/FieldTypeWithParentClashTest.cpp
