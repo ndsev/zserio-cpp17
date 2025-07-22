@@ -6,6 +6,8 @@ bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_
 bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Extended2.h
 
 cert-dcl58-cpp:gen/extended_members/extended_field_in_template/Extended.h
+cert-dcl58-cpp:gen/extended_members/extended_optional_field_in_template/Compound.h
+cert-dcl58-cpp:gen/extended_members/extended_optional_field_in_template/Extended.h
 
 cert-err58-cpp:cpp/ExtendedChoiceFieldTest.cpp
 cert-err58-cpp:cpp/ExtendedCompoundFieldTest.cpp
