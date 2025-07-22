@@ -28,6 +28,7 @@ add_custom_test(functions
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureParentChildValueTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureStringTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureValueTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedStructureParentChildValueTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/UnionArrayTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
