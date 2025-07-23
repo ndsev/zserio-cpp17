@@ -10,6 +10,7 @@ bugprone-exception-escape:gen/offsets/offset_in_nested_choice_in_template/TestSt
 bugprone-exception-escape:gen/offsets/offset_in_nested_choice/NestedChoice.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_choice/TestChoice.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_choice/TestStruct.h
+bugprone-exception-escape:gen/offsets/offset_in_nested_choice_in_template/OffsetInNestedChoiceInTemplate.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_union_in_template/NestedUnion.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_union_in_template/TestUnion.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_union/NestedUnion.h
