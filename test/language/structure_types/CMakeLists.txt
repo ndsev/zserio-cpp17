@@ -24,6 +24,7 @@ add_custom_test(structure_types
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/SimpleStructureTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureInnerClassesClashingTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/StructureWithRemovedEnumItemFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/TemplatedStructureTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

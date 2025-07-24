@@ -1,3 +1,4 @@
+bugprone-exception-escape:gen/structure_types/templated_structure/TemplatedStructure.h
 bugprone-exception-escape:gen/structure_types/templated_structure/TestStructure.h
 bugprone-exception-escape:gen/structure_types/templated_structure/TestUnion.h
 
