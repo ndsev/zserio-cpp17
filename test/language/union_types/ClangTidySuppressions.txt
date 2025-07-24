@@ -2,6 +2,7 @@ bugprone-exception-escape:gen/union_types/empty_union/EmptyUnion.h
 bugprone-exception-escape:gen/union_types/empty_union_with_parameter/EmptyUnionWithParameter.h
 bugprone-exception-escape:gen/union_types/simple_union/SimpleUnion.h
 bugprone-exception-escape:gen/union_types/templated_union/ParameterizedUnion.h
+bugprone-exception-escape:gen/union_types/templated_union/TemplatedUnion.h
 bugprone-exception-escape:gen/union_types/templated_union/TestUnion.h
 bugprone-exception-escape:gen/union_types/union_compatibility_check/UnionVersion1.h
 bugprone-exception-escape:gen/union_types/union_compatibility_check/UnionVersion2.h
