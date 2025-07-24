@@ -23,7 +23,8 @@ TEST(TemplatedStructureTest, hash)
 {
     TemplatedStructure data;
 
-    ASSERT_EQ(std::hash<TemplatedStructure>()(data), static_cast<size_t>(1190626618ULL));
+    // #21: std::hash<string> is not stable don't compare it here
+    ASSERT_GT(std::hash<TemplatedStructure>()(data), 0);
 }
 
 } // namespace templated_structure
