@@ -99,14 +99,7 @@ jobs:
 
     - name: Build Zserio C++17 runtime
       run: |
-        mkdir -p "${RUNNER_WORKSPACE}/build/download"
-        pushd "${RUNNER_WORKSPACE}/build/download"
-        ARTIFACT_ID="3595905873"
-        curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -L -o linux-release-2.17.0.zip "https://api.github.com/repos/ndsev/zserio/actions/artifacts/${ARTIFACT_ID}/zip"
-        unzip linux-release-2.17.0.zip
-        unzip zserio-2.17.0-bin.zip
-        popd
-        scripts/build.sh cpp_rt-${PACKAGE} -z "${RUNNER_WORKSPACE}/build/download"
+        scripts/build.sh cpp_rt-${PACKAGE}
 
     - name: Upload Zserio C++17 runtime artifacts
       uses: actions/upload-artifact@v4
