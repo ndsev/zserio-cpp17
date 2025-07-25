@@ -3,6 +3,7 @@ bugprone-exception-escape:gen/functions/choice_array/ItemRef.h
 bugprone-exception-escape:gen/functions/templated_choice_array/ItemRef.h
 bugprone-exception-escape:gen/functions/union_array/Inner.h
 bugprone-exception-escape:gen/functions/union_array/ItemRef.h
+bugprone-exception-escape:gen/functions/templated_choice_array/Inner.h
 
 cert-dcl58-cpp:gen/functions/templated_choice_array/ItemRef.h
 cert-dcl58-cpp:gen/functions/templated_choice_array/OuterArray.h
