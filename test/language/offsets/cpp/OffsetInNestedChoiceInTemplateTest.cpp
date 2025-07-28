@@ -32,8 +32,7 @@ TEST_F(OffsetInNestedChoiceInTemplateTest, writeReadTest)
 TEST_F(OffsetInNestedChoiceInTemplateTest, hashTest)
 {
     auto data = makeData();
-    // #21: String hash is not stable - don't compare it here
-    ASSERT_GT(std::hash<OffsetInNestedChoiceInTemplate>()(data), static_cast<size_t>(0));
+    ASSERT_EQ(std::hash<OffsetInNestedChoiceInTemplate>()(data), static_cast<size_t>(3500385));
 }
 
 } // namespace offset_in_nested_choice_in_template

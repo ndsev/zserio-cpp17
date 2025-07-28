@@ -18,8 +18,7 @@ TEST(OffsetInNestedUnionInTemplateTest, writeRead)
 TEST(OffsetInNestedUnionInTemplateTest, hash)
 {
     OffsetInNestedUnionInTemplate data;
-    // #21: std::hash gives different value in clang and msvc
-    ASSERT_GT(std::hash<OffsetInNestedUnionInTemplate>()(data), 0);
+    ASSERT_EQ(std::hash<OffsetInNestedUnionInTemplate>()(data), 34067);
 }
 
 } // namespace offset_in_nested_union_in_template

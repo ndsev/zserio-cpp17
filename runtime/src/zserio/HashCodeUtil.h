@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 #include <type_traits>
+#include <variant>
 #include <vector>
 
 #include "zserio/Bytes.h"
@@ -270,6 +271,19 @@ inline uint32_t calcHashCode(uint32_t seedValue, const Vector<ARRAY_ELEMENT, ALL
     }
 
     return result;
+}
+
+/**
+ * Calculates the hash code of std::monostate which is often used in variants so the hash code is not
+ * implementation defined.
+ *
+ * \param seedValue Seed value (current hash code)
+ *
+ * \return Calculated hash code.
+ */
+inline uint32_t calcHashCode(uint32_t seedValue, std::monostate)
+{
+    return calcHashCode(seedValue, 1729);
 }
 
 } // namespace zserio

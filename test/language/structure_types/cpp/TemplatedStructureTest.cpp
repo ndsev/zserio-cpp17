@@ -11,20 +11,28 @@ namespace templated_structure
 using AllocatorType = TemplatedStructure::allocator_type;
 using BytesType = zserio::BasicBytes<AllocatorType>;
 
-TEST(TemplatedStructureTest, writeRead)
+class TemplatedStructureTest : public ::testing::Test
 {
-    TemplatedStructure data;
-    data.testStruct2.field4.emplace<TestUnion::Tag::bField>(BytesType{0x10, 0x20});
-    data.testStruct3.field1.field4.emplace<TestUnion::Tag::bField>(BytesType{0x30});
+protected:
+    TemplatedStructure makeData()
+    {
+        TemplatedStructure data;
+        data.testStruct2.field4.emplace<TestUnion::Tag::bField>(BytesType{0x10, 0x20});
+        data.testStruct3.field1.field4.emplace<TestUnion::Tag::bField>(BytesType{0x30});
+        return data;
+    }
+};
+
+TEST_F(TemplatedStructureTest, writeRead)
+{
+    auto data = makeData();
     test_utils::writeReadTest(data);
 }
 
-TEST(TemplatedStructureTest, hash)
+TEST_F(TemplatedStructureTest, hash)
 {
-    TemplatedStructure data;
-
-    // #21: std::hash<string> is not stable don't compare it here
-    ASSERT_GT(std::hash<TemplatedStructure>()(data), 0);
+    auto data = makeData();
+    ASSERT_EQ(std::hash<TemplatedStructure>()(data), static_cast<size_t>(1230427740ULL));
 }
 
 } // namespace templated_structure
