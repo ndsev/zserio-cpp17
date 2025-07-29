@@ -16,7 +16,7 @@ TEST(ExtendedOptionalFieldInTemplateTest, writeRead)
     test_utils::writeReadTest(data2);
 }
 
-TEST(ExtendedOptionalFieldInTemplateTest, hash
+TEST(ExtendedOptionalFieldInTemplateTest, hash)
 {
     ExtendedSimple data;
     ASSERT_EQ(std::hash<ExtendedSimple>()(data), static_cast<size_t>(851));

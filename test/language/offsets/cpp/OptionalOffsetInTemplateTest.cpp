@@ -7,10 +7,6 @@ namespace offsets
 namespace optional_offset_in_template
 {
 
-using AllocatorType = OptionalMemberOffset::allocator_type;
-using OptFieldOffset = zserio::BasicOptional<AllocatorType, zserio::UInt32>;
-using OptField = zserio::BasicOptional<AllocatorType, zserio::Int32>;
-
 TEST(OptionalOffsetInTemplateTest, withoutOptional)
 {
     OptionalMemberOffset data({false, {}}, {}, 11);
@@ -19,9 +15,9 @@ TEST(OptionalOffsetInTemplateTest, withoutOptional)
 
 TEST(OptionalOffsetInTemplateTest, withOptional)
 {
-    OptionalMemberOffset data({true, OptFieldOffset(0)}, OptField(10), 11);
+    OptionalMemberOffset data({true, zserio::UInt32(0)}, zserio::Int32(10), 11);
     test_utils::writeReadTest(data);
-    ASSERT_EQ(data.offsetHolder.optionalFieldOffset, 5); // hasOptional + optionalFieldOffset
+    ASSERT_EQ(data.offsetHolder.optionalFieldOffset, 5U); // hasOptional + optionalFieldOffset
 }
 
 TEST(OptionalOffsetInTemplateTest, hash)
