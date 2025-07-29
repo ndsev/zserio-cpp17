@@ -13,7 +13,6 @@ protected:
     static OffsetInNestedChoiceInTemplate makeData()
     {
         OffsetInNestedChoiceInTemplate data;
-        //(data.testStruct.hasOffset, false);
         data.testStruct.hasOffset = true;
         NestedChoice<zserio::UInt32> nested(
                 zserio::in_place_index<NestedChoice<zserio::UInt32>::Tag::offset>, 10);
@@ -23,13 +22,13 @@ protected:
     }
 };
 
-TEST_F(OffsetInNestedChoiceInTemplateTest, writeReadTest)
+TEST_F(OffsetInNestedChoiceInTemplateTest, writeRead)
 {
     auto data = makeData();
     test_utils::writeReadTest(data);
 }
 
-TEST_F(OffsetInNestedChoiceInTemplateTest, hashTest)
+TEST_F(OffsetInNestedChoiceInTemplateTest, hash)
 {
     auto data = makeData();
     ASSERT_EQ(std::hash<OffsetInNestedChoiceInTemplate>()(data), static_cast<size_t>(3500385));

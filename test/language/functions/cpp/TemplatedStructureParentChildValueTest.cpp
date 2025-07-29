@@ -7,13 +7,14 @@ namespace functions
 namespace templated_structure_parent_child_value
 {
 
-TEST(TemplatedStructureParentChildValueTest, writeReadTest)
+TEST(TemplatedStructureParentChildValueTest, writeRead)
 {
     TemplatedStructureParentChildValue data;
+    data.parentValue.childValue.val = 26;
     test_utils::writeReadTest(data);
 }
 
-TEST(TemplatedStructureParentChildValueTest, hashTest)
+TEST(TemplatedStructureParentChildValueTest, hash)
 {
     TemplatedStructureParentChildValue data;
     ASSERT_EQ(std::hash<TemplatedStructureParentChildValue>()(data), static_cast<size_t>(2553));

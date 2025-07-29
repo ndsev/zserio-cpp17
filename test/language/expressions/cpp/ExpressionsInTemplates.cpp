@@ -10,7 +10,7 @@ namespace expressions_in_templates
 using AllocatorType = ExpressionsInTemplates::allocator_type;
 using BytesType = zserio::BasicBytes<AllocatorType>;
 
-TEST(ExpressionsInTemplatesTest, writeReadTest)
+TEST(ExpressionsInTemplatesTest, writeRead)
 {
     ExpressionsInTemplates data;
     data.arrayExpressions.array = {13, 15};
@@ -27,7 +27,7 @@ TEST(ExpressionsInTemplatesTest, writeReadTest)
     test_utils::writeReadTest(data);
 }
 
-TEST(ExpressionsInTemplatesTest, hashTest)
+TEST(ExpressionsInTemplatesTest, hash)
 {
     ExpressionsInTemplates data;
 

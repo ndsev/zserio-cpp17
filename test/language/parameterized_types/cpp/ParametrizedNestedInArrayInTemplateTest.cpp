@@ -18,7 +18,7 @@ TEST(ParameterizedNestedInArrayInTemplateTest, writeRead)
     test_utils::writeReadTest(holder);
 }
 
-TEST(ParameterizedNestedInArrayInTemplateTest, hashTest)
+TEST(ParameterizedNestedInArrayInTemplateTest, hash)
 {
     Holder holder({{ElementType{ParameterizedType{6}}}, {ElementType{ParameterizedType{6}}}});
 

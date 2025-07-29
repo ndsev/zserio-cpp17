@@ -20,13 +20,13 @@ protected:
     }
 };
 
-TEST_F(TemplatedPackedArrayOfTemplatesTest, writeReadTest)
+TEST_F(TemplatedPackedArrayOfTemplatesTest, writeRead)
 {
     auto data = makeData();
     test_utils::writeReadTest(data);
 }
 
-TEST_F(TemplatedPackedArrayOfTemplatesTest, hashTest)
+TEST_F(TemplatedPackedArrayOfTemplatesTest, hash)
 {
     auto data = makeData();
     ASSERT_EQ(std::hash<Holder>()(data), static_cast<size_t>(1612707247ULL));

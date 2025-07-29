@@ -10,10 +10,6 @@ namespace templated_union
 
 using AllocatorType = TemplatedUnion::allocator_type;
 using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>;
-template <typename T>
-using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
-using BytesType = zserio::BasicBytes<AllocatorType>;
-
 using TestUnion1 = TestUnion<zserio::Float32, StringType, Compound, ParameterizedUnion<zserio::VarSize>>;
 
 TEST(TemplatedUnionTest, writeRead)

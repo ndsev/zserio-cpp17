@@ -8,7 +8,7 @@ namespace array_element_param_with_optional_in_template
 {
 
 // note that in the data-view approach we cannot get exception due to inconsistent parameters for this schema
-TEST(ArrayElementParamWithOptionalInTemplateTest, writeReadTest)
+TEST(ArrayElementParamWithOptionalInTemplateTest, writeRead)
 {
     Holder holder;
     holder.holder.param = {true, zserio::UInt7(0)};
@@ -17,7 +17,7 @@ TEST(ArrayElementParamWithOptionalInTemplateTest, writeReadTest)
     test_utils::writeReadTest(holder);
 }
 
-TEST(ArrayElementParamWithOptionalInTemplateTest, hashTest)
+TEST(ArrayElementParamWithOptionalInTemplateTest, hash)
 {
     Holder holder;
     holder.holder.param = {true, zserio::UInt7(0)};

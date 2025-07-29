@@ -17,28 +17,28 @@ using StringType = zserio::BasicString<zserio::RebindAlloc<AllocatorType, char>>
 template <typename T>
 using VectorType = zserio::Vector<T, zserio::RebindAlloc<AllocatorType, T>>;
 
-class TemplatedExplicitParamTableTest : public ::testing::Test
+class TemplatedExplicitParamTest : public ::testing::Test
 {
 public:
-    TemplatedExplicitParamTableTest()
+    TemplatedExplicitParamTest()
     {
-        const StringType dbFileName("language/explicit_parameters/templated_explicit_param_table_test.sqlite");
+        const StringType dbFileName("language/explicit_parameters/templated_explicit_param_test.sqlite");
         std::remove(dbFileName.c_str());
 
         m_database = new TestDb(dbFileName);
         m_database->createSchema();
     }
 
-    ~TemplatedExplicitParamTableTest() override
+    ~TemplatedExplicitParamTest() override
     {
         delete m_database;
     }
 
-    TemplatedExplicitParamTableTest(const TemplatedExplicitParamTableTest&) = delete;
-    TemplatedExplicitParamTableTest& operator=(const TemplatedExplicitParamTableTest&) = delete;
+    TemplatedExplicitParamTest(const TemplatedExplicitParamTest&) = delete;
+    TemplatedExplicitParamTest& operator=(const TemplatedExplicitParamTest&) = delete;
 
-    TemplatedExplicitParamTableTest(TemplatedExplicitParamTableTest&&) = delete;
-    TemplatedExplicitParamTableTest& operator=(TemplatedExplicitParamTableTest&&) = delete;
+    TemplatedExplicitParamTest(TemplatedExplicitParamTest&&) = delete;
+    TemplatedExplicitParamTest& operator=(TemplatedExplicitParamTest&&) = delete;
 
 protected:
     template <typename T>
@@ -80,7 +80,7 @@ protected:
         }
     }
     template <typename T>
-    void readWriteTable(TestTableWithExplicit<T>& table)
+    void writeReadTable(TestTableWithExplicit<T>& table)
     {
         ParameterProvider<T> provider;
 
@@ -102,9 +102,9 @@ protected:
     TestDb* m_database;
 };
 
-TEST_F(TemplatedExplicitParamTableTest, testTables)
+TEST_F(TemplatedExplicitParamTest, writeRead)
 {
-    readWriteTable(m_database->getExplicitParameterizedTable());
+    writeReadTable(m_database->getExplicitParameterizedTable());
 }
 
 } // namespace templated_explicit_param

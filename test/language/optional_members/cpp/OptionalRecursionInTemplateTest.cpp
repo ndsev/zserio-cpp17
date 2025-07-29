@@ -7,7 +7,7 @@ namespace optional_members
 namespace optional_recursion_in_template
 {
 
-TEST(OptionalRecursionInTemplateTest, writeReadTest)
+TEST(OptionalRecursionInTemplateTest, writeRead)
 {
     OptionalRecursionInTemplate data;
     ASSERT_EQ(data.block.blockTerminator, 0);
@@ -18,7 +18,7 @@ TEST(OptionalRecursionInTemplateTest, writeReadTest)
     test_utils::writeReadTest(data);
 }
 
-TEST(OptionalRecursionInTemplateTest, hashTest)
+TEST(OptionalRecursionInTemplateTest, hash)
 {
     OptionalRecursionInTemplate data;
     ASSERT_EQ(std::hash<OptionalRecursionInTemplate>()(data), static_cast<size_t>(1702));

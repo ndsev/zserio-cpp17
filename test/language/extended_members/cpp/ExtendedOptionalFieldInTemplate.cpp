@@ -8,7 +8,7 @@ namespace extended_members
 namespace extended_optional_field_in_template
 {
 
-TEST(ExtendedOptionalFieldInTemplateTest, writeReadTest)
+TEST(ExtendedOptionalFieldInTemplateTest, writeRead)
 {
     ExtendedSimple data;
     test_utils::writeReadTest(data);
@@ -16,7 +16,7 @@ TEST(ExtendedOptionalFieldInTemplateTest, writeReadTest)
     test_utils::writeReadTest(data2);
 }
 
-TEST(ExtendedOptionalFieldInTemplateTest, hashTest)
+TEST(ExtendedOptionalFieldInTemplateTest, hash
 {
     ExtendedSimple data;
     ASSERT_EQ(std::hash<ExtendedSimple>()(data), static_cast<size_t>(851));
