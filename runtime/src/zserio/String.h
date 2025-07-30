@@ -34,6 +34,8 @@ void validate(std::string_view stringValue, std::string_view fieldName);
 
 BitSize bitSizeOf(std::string_view stringValue, BitSize = 0);
 
+BitSize initializeOffsets(std::string_view stringValue, BitSize bitPosition);
+
 } // namespace detail
 
 } // namespace zserio

@@ -21,6 +21,11 @@ BitSize bitSizeOf(std::string_view stringValue, BitSize)
     return bitSizeOf(stringSize) + stringSize * 8;
 }
 
+BitSize initializeOffsets(std::string_view stringValue, BitSize bitPosition)
+{
+    return bitSizeOf(stringValue, bitPosition);
+}
+
 } // namespace detail
 
 } // namespace zserio

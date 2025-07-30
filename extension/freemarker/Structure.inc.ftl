@@ -501,7 +501,7 @@ ${I}::zserio::detail::setGenericOffset(${field.offset.viewIndirectSetter}, endBi
         </#if>
     </#if>
 ${I}endBitPosition += <#rt>
-        <#if field.compound?? || field.offset?? && field.offset.containsIndex>
+        <#if field.compound?? || field.typeInfo.isTemplateParameter || field.offset?? && field.offset.containsIndex>
         detail::initializeOffsets<#t>
         <#else>
         detail::bitSizeOf<#t>

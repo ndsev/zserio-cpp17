@@ -21,6 +21,11 @@ BitSize bitSizeOf(BytesView bytesValue, BitSize)
     return bitSizeOf(bytesSize) + bytesSize * 8;
 }
 
+BitSize initializeOffsets(BytesView bytesValue, BitSize bitPosition)
+{
+    return bitSizeOf(bytesValue, bitPosition);
+}
+
 } // namespace detail
 
 } // namespace zserio

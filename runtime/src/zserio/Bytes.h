@@ -70,6 +70,7 @@ namespace detail
 
 void validate(BytesView stringValue, std::string_view fieldName);
 BitSize bitSizeOf(BytesView bytesValue, BitSize bitPosition = 0);
+BitSize initializeOffsets(BytesView bytesValue, BitSize bitPosition);
 
 } // namespace detail
 

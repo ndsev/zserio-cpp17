@@ -588,6 +588,12 @@ BitSize bitSizeOf(const BasicBitBufferView<ALLOC>& bitBufferView, BitSize = 0)
     return bitSizeOf(bitBufferSize) + bitBufferSize;
 }
 
+template <typename ALLOC>
+BitSize initializeOffsets(const BasicBitBufferView<ALLOC>& bitBufferView, BitSize bitPosition)
+{
+    return bitSizeof(bitBufferView, bitPosition);
+}
+
 } // namespace detail
 
 } // namespace zserio

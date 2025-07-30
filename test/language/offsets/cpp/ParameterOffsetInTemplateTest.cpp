@@ -15,10 +15,8 @@ TEST(ParameterOffsetInTemplateTest, writeReadOffset)
     ParameterOffsetInTemplate data(SchoolType(155, OffsetHolder(), RoomType(11)));
     test_utils::writeReadTest(data);
 
-    /* todo: Fix offsets in templated fields
     constexpr int OFFSET = 2 + 4; // schoolId + roomOffset
     ASSERT_EQ(data.school.offsetHolder.roomOffset, OFFSET);
-    */
 }
 
 TEST(ParameterOffsetInTemplateTest, hash)

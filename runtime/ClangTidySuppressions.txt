@@ -24,8 +24,8 @@ bugprone-exception-escape:src/zserio/Variant.h:282
 bugprone-use-after-move:src/zserio/Variant.h:738
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:602
-cert-dcl58-cpp:src/zserio/BitBuffer.h:614
+cert-dcl58-cpp:src/zserio/BitBuffer.h:608
+cert-dcl58-cpp:src/zserio/BitBuffer.h:620
 cert-dcl58-cpp:src/zserio/Extended.h:242
 cert-dcl58-cpp:src/zserio/Optional.h:1186
 cert-dcl58-cpp:src/zserio/Variant.h:907

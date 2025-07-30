@@ -165,6 +165,51 @@ BitSize bitSizeOf(VarSize value, BitSize)
     return bitSizeOfVarIntImpl(value, VARSIZE_MAX_VALUES, "varsize");
 }
 
+BitSize initializeOffsets(VarInt16 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarInt32 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarInt64 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarUInt16 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarUInt32 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarUInt64 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarInt value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarUInt value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarSize value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
 } // namespace detail
 
 } // namespace zserio

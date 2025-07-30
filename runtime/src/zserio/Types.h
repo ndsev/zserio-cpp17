@@ -972,6 +972,50 @@ inline BitSize bitSizeOf(Float64, BitSize = 0)
     return 64;
 }
 
+inline BitSize initializeOffsets(BoolWrapper value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+template <BitSize BIT_SIZE, bool IS_SIGNED>
+BitSize initializeOffsets(FixedIntWrapper<BIT_SIZE, IS_SIGNED> value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+BitSize initializeOffsets(VarInt16 value, BitSize = 0);
+
+BitSize initializeOffsets(VarInt32 value, BitSize = 0);
+
+BitSize initializeOffsets(VarInt64 value, BitSize = 0);
+
+BitSize initializeOffsets(VarUInt16 value, BitSize = 0);
+
+BitSize initializeOffsets(VarUInt32 value, BitSize = 0);
+
+BitSize initializeOffsets(VarUInt64 value, BitSize = 0);
+
+BitSize initializeOffsets(VarInt value, BitSize = 0);
+
+BitSize initializeOffsets(VarUInt value, BitSize = 0);
+
+BitSize initializeOffsets(VarSize value, BitSize = 0);
+
+inline BitSize initializeOffsets(Float16 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+inline BitSize initializeOffsets(Float32 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
+inline BitSize initializeOffsets(Float64 value, BitSize bitPosition)
+{
+    return bitSizeOf(value, bitPosition);
+}
+
 } // namespace detail
 
 } // namespace zserio
