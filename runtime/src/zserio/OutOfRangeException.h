@@ -13,6 +13,8 @@ class OutOfRangeException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~OutOfRangeException() override;
 };
 
 } // namespace zserio

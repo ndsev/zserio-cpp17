@@ -13,6 +13,8 @@ class PubsubException : public CppRuntimeException
 {
 public:
     using CppRuntimeException::CppRuntimeException;
+
+    ~PubsubException() override;
 };
 
 } // namespace zserio

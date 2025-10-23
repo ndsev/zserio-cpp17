@@ -8,12 +8,12 @@ bugprone-signed-char-misuse:src/zserio/DeltaContext.h:255
 bugprone-signed-char-misuse:src/zserio/DeltaContext.h:271
 
 # Optional is a generic container and exceptions may be thrown from the value type.
-bugprone-exception-escape:src/zserio/Optional.h:362
-bugprone-exception-escape:src/zserio/Optional.h:389
+bugprone-exception-escape:src/zserio/Optional.h:364
+bugprone-exception-escape:src/zserio/Optional.h:391
 
 # False positives - has_value() is checked before value().
-bugprone-exception-escape:src/zserio/Optional.h:223
-bugprone-exception-escape:src/zserio/Optional.h:409
+bugprone-exception-escape:src/zserio/Optional.h:225
+bugprone-exception-escape:src/zserio/Optional.h:411
 
 # To implement swap the variable needs to be moved out and moved in again
 bugprone-use-after-move:src/zserio/Any.h:429
@@ -22,8 +22,8 @@ bugprone-use-after-move:src/zserio/Any.h:429
 cert-dcl58-cpp:src/zserio/BitBuffer.h:608
 cert-dcl58-cpp:src/zserio/BitBuffer.h:620
 cert-dcl58-cpp:src/zserio/Extended.h:242
-cert-dcl58-cpp:src/zserio/Optional.h:1186
-cert-dcl58-cpp:src/zserio/Variant.h:604
+cert-dcl58-cpp:src/zserio/Optional.h:1188
+cert-dcl58-cpp:src/zserio/Variant.h:606
 cert-dcl58-cpp:src/zserio/View.h:257
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
@@ -44,14 +44,14 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeExcepti
 cppcoreguidelines-pro-type-union-access:src/zserio/Any.h
 
 # Optional follows std::optional so passing value by const & is correct.
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:587
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:604
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:815
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:829
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:955
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:969
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1027
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1041
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:589
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:606
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:817
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:831
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:957
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:971
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1029
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1043
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
@@ -76,16 +76,16 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/ZserioTreeCreator
 # would only bring the performance drop.
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:301
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamReader.cpp:315
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:349
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:360
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:371
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:372
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:378
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:383
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:384
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:390
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:587
-cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:655
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:351
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:362
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:373
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:374
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:380
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:385
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:386
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:392
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:589
+cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/BitStreamWriter.cpp:657
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:84
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/Enums.h:97
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/StringConvertUtil.h:43
@@ -115,10 +115,10 @@ fuchsia-multiple-inheritance:src/zserio/IntrospectableView.h:881
 fuchsia-multiple-inheritance:src/zserio/ReflectableData.h:516
 
 # Optional follows std::optional so the ctors should be implicit.
-google-explicit-constructor:src/zserio/Optional.h:125
-google-explicit-constructor:src/zserio/Optional.h:135
-google-explicit-constructor:src/zserio/Optional.h:145
-google-explicit-constructor:src/zserio/Optional.h:246
+google-explicit-constructor:src/zserio/Optional.h:127
+google-explicit-constructor:src/zserio/Optional.h:137
+google-explicit-constructor:src/zserio/Optional.h:147
+google-explicit-constructor:src/zserio/Optional.h:248
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 google-explicit-constructor:src/zserio/Span.h:112
@@ -140,7 +140,7 @@ google-explicit-constructor:src/zserio/Types.h:60
 google-explicit-constructor:src/zserio/Types.h:67
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
-google-readability-casting:src/zserio/Variant.h:87
+google-readability-casting:src/zserio/Variant.h:89
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
 google-explicit-constructor:src/zserio/View.h:167

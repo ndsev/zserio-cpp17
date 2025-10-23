@@ -12,6 +12,8 @@ CppRuntimeException::CppRuntimeException(const char* message) :
     append(message);
 }
 
+CppRuntimeException::~CppRuntimeException() = default;
+
 const char* CppRuntimeException::what() const noexcept
 {
     return m_buffer.data();
