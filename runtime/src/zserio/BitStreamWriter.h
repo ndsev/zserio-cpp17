@@ -27,6 +27,8 @@ public:
     {
     public:
         using CppRuntimeException::CppRuntimeException;
+
+        ~InsufficientCapacityException() override;
     };
 
     /** Type for bit position. */

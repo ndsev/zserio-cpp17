@@ -38,6 +38,8 @@ class JsonParserException : public CppRuntimeException
 {
 public:
     using CppRuntimeException::CppRuntimeException;
+
+    ~JsonParserException() override;
 };
 
 /**

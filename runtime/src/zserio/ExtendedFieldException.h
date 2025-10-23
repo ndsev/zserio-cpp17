@@ -13,6 +13,8 @@ class ExtendedFieldException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~ExtendedFieldException() override;
 };
 
 } // namespace zserio

@@ -13,6 +13,8 @@ class ChoiceCaseException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~ChoiceCaseException() override;
 };
 
 } // namespace zserio

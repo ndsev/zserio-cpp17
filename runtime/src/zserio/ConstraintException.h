@@ -13,6 +13,8 @@ class ConstraintException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~ConstraintException() override;
 };
 
 } // namespace zserio

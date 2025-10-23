@@ -85,6 +85,8 @@ class BadOptionalAccess : public CppRuntimeException
 {
 public:
     using CppRuntimeException::CppRuntimeException;
+
+    ~BadOptionalAccess() override;
 };
 
 /**
