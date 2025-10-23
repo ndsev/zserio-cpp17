@@ -3,6 +3,8 @@
 namespace zserio
 {
 
+JsonParserException::~JsonParserException() = default;
+
 CppRuntimeException& operator<<(CppRuntimeException& exception, JsonToken token)
 {
     switch (token)

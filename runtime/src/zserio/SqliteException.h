@@ -41,6 +41,8 @@ class SqliteException : public CppRuntimeException
 {
 public:
     using CppRuntimeException::CppRuntimeException;
+
+    ~SqliteException() override;
 };
 
 /**

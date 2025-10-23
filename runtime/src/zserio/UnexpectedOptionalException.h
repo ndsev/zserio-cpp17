@@ -15,6 +15,8 @@ class UnexpectedOptionalException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~UnexpectedOptionalException() override;
 };
 
 } // namespace zserio

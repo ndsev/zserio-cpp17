@@ -13,6 +13,8 @@ class UnionCaseException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~UnionCaseException() override;
 };
 
 } // namespace zserio

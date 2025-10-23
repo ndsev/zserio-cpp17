@@ -13,6 +13,8 @@ class ServiceException : public CppRuntimeException
 {
 public:
     using CppRuntimeException::CppRuntimeException;
+
+    ~ServiceException() override;
 };
 
 } // namespace zserio

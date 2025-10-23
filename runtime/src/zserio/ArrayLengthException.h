@@ -13,6 +13,8 @@ class ArrayLengthException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~ArrayLengthException() override;
 };
 
 } // namespace zserio

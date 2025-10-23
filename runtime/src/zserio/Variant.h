@@ -74,6 +74,8 @@ class BadVariantAccess : public CppRuntimeException
 {
 public:
     using CppRuntimeException::CppRuntimeException;
+
+    ~BadVariantAccess() override;
 };
 
 template <auto I>
