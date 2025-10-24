@@ -42,14 +42,19 @@ ${I}{
 ${I}}
         </#list>
         <#if !isDefaultUnreachable>
+            <#local nextIndent=indent + caseMemberList?has_content?then(1, 0)>
+            <#if caseMemberList?has_content>
 ${I}else
 ${I}{
-            <#if defaultMember??>
-        <@.vars[memberActionMacroName] defaultMember, indent+1, packed/>
-            <#else>
-        <@.vars[noMatchMacroName] fullName, indent+1/>
             </#if>
+            <#if defaultMember??>
+        <@.vars[memberActionMacroName] defaultMember, nextIndent, packed/>
+            <#else>
+        <@.vars[noMatchMacroName] fullName, nextIndent/>
+            </#if>
+            <#if caseMemberList?has_content>
 ${I}}
+            </#if>
         </#if>
     </#if>
 </#macro>

@@ -37,7 +37,8 @@ public final class ChoiceEmitterTemplateData extends CompoundTypeTemplateData
         // note that TEMPLATE_PARAMETER_VALUE works since it's always a C++ enum item
         canUseNativeSwitch = expression.getExprType() != Expression.ExpressionType.BOOLEAN &&
                 expression.getExprType() != Expression.ExpressionType.BITMASK &&
-                expression.getExprType() != Expression.ExpressionType.TEMPLATE_PARAMETER_TYPE;
+                expression.getExprType() != Expression.ExpressionType.TEMPLATE_PARAMETER_TYPE &&
+                choiceType.getChoiceCases().size() > 0;
 
         caseMemberList = new ArrayList<CaseMember>();
         final Iterable<ChoiceCase> choiceCaseTypes = choiceType.getChoiceCases();

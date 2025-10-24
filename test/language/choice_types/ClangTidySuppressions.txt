@@ -1,5 +1,6 @@
 bugprone-exception-escape:gen/choice_types/bitmask_param_choice/BitmaskParamChoice.h
 bugprone-exception-escape:gen/choice_types/bool_param_choice/BoolParamChoice.h
+bugprone-exception-escape:gen/choice_types/bool_choice_with_default/BoolChoiceWithDefault.h
 bugprone-exception-escape:gen/choice_types/choice_compatibility_check/ChoiceVersion1.h
 bugprone-exception-escape:gen/choice_types/choice_compatibility_check/ChoiceVersion2.h
 bugprone-exception-escape:gen/choice_types/choice_compatibility_check/Holder.h
