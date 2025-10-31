@@ -428,12 +428,16 @@ ${I}}
     <#if field.optional??>
         <#if field.optional.viewIndirectClause??>
 ${I}if (${field.optional.viewIndirectClause})
-            <#else>
+        <#else>
 ${I}if (reader.readBool())
-            </#if>
+        </#if>
 ${I}{
 ${I}    data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>emplace();
         <@structure_read_field_inner compoundName, field, indent+1, packed/>
+${I}}
+${I}else
+${I}{
+${I}    data.<@field_data_member_name field/><#if field.isExtended>-><#else>.</#if>reset();
 ${I}}
     <#else>
     <@structure_read_field_inner compoundName, field, indent, packed/>

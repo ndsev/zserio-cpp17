@@ -25,6 +25,7 @@ add_custom_test(extended_members
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExtendedIndexedOffsetsTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExtendedOptionalFieldInTemplateTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExtendedOptionalParameterizedFieldTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExtendedOptionalWithDefaultTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExtendedPackedArrayTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/ExtendedSimpleFieldTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/MultipleExtendedFieldsTest.cpp

@@ -27,6 +27,7 @@ add_custom_test(optional_members
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalExpressionWithRemovedEnumItemTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalRecursionTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalRecursionInTemplateTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/OptionalWithDefaultTest.cpp
     GENERATED_SOURCES
         ${GENERATED_SOURCES}
 )

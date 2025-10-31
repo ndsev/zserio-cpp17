@@ -6,7 +6,10 @@ bugprone-exception-escape:gen/optional_members/optional_recursion/Block.h
 bugprone-exception-escape:gen/optional_members/optional_recursion_in_template/OptionalRecursionInTemplate.h
 
 cert-dcl58-cpp:gen/optional_members/optional_recursion_in_template/Block.h
+cert-dcl58-cpp:gen/optional_members/optional_with_default/TemplatedField.h
 
 misc-no-recursion # reports also tested_release
 
 google-explicit-constructor:gen/optional_members/optional_complex_expression/Permission.h
+
+readability-simplify-boolean-expr:gen/optional_members/optional_with_default/Field.cpp
