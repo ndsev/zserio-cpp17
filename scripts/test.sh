@@ -3,9 +3,78 @@
 SCRIPT_DIR=`dirname $0`
 source "${SCRIPT_DIR}/common_tools.sh"
 
+# Compares zs and cpp files and prints missing tests
+print_missing_tests()
+{
+    exit_if_argc_ne $# 2
+    local ZSERIO_CPP17_PROJECT_ROOT="$1"; shift
+    local PLATFORM="$1"; shift
+    local STARTING_POINT="${ZSERIO_CPP17_PROJECT_ROOT}/test"
+    
+    local TEST_SUITES_ARR=(
+        $(${FIND} "${STARTING_POINT}/data/" -mindepth 2 -maxdepth 2 -type d -printf "%P\\n")
+    )
+    local MISSING_TS_ARR=()
+    local MISSING_COUNT=0
+    for TS in ${TEST_SUITES_ARR[@]} ; do
+        local TS1="${TS##*/}" # remove prefix
+        #echo "-> ${TS} (${TS1})" 
+        local TS_STARTING_POINT="${STARTING_POINT}/${TS}/${PLATFORM}"
+        if [ ! -d "${TS_STARTING_POINT}" ] || [ -z "$( ls -A ${TS_STARTING_POINT} )" ] ; then
+            MISSING_TS_ARR+=(${TS})
+        else
+            # we look for zs files in 
+            # 1. data/${TS}/zs/*.zs except ${TS1}.zs
+            local TESTS_ARR=(
+                $(${FIND} "${STARTING_POINT}/data/${TS}/zs" -maxdepth 1 -name "*.zs" ! -name "${TS1}.zs" -printf "%f\\n")
+            )
+            # 2. data/${TS}/zs/${TS1}/*.zs
+            if [ -d "${STARTING_POINT}/data/${TS}/zs/${TS1}" ] ; then
+                TESTS_ARR+=(
+                    $(${FIND} "${STARTING_POINT}/data/${TS}/zs/${TS1}" -maxdepth 1 -name "*.zs" -printf "%f\\n")
+                )
+            fi
+            # Iterate all zs tests
+            local MISSING_ARR=()
+            for ZS_NAME in ${TESTS_ARR[@]} ; do
+                local BASE=${ZS_NAME%.zs} # remove extension
+                local WORDS=(${BASE//_/ }) # split at _
+                local TEST_NAME="${WORDS[@]^}" # capitalize and join
+                TEST_NAME="${TEST_NAME// /}Test.${PLATFORM}" # remove spaces add suffix
+                #echo "${ZS_NAME} -> ${TEST_NAME}" 
+                if [ ! -f "${TS_STARTING_POINT}/${TEST_NAME}" ] ; then
+                    MISSING_ARR+=(${TEST_NAME})  
+                    MISSING_COUNT=$((MISSING_COUNT+1))
+                fi
+            done
+            if [ ${#MISSING_ARR[@]} -gt 0 ] ; then
+                echo
+                echo "Missing tests in ${TS}:"
+                for MISS in ${MISSING_ARR[@]} ; do
+                    echo "  ${MISS}"
+                done
+            fi
+        fi
+    done
+    if [ ${#MISSING_TS_ARR[@]} -gt 0 ] ; then
+        echo
+        echo "Missing test suites:"
+        for MISS in ${MISSING_TS_ARR[@]} ; do
+            echo "  ${MISS}"
+        done
+    fi
+
+    echo ""
+    echo "Summary:"
+    echo "${MISSING_COUNT} tests missing" 
+    echo "${#MISSING_TS_ARR[@]} test suites missing"
+    return 0
+}
+
 # Gets test suites matching the provided patterns.
 get_test_suites()
 {
+    exit_if_argc_ne $# 3
     local ZSERIO_CPP17_PROJECT_ROOT="$1"; shift
     local MSYS_WORKAROUND_TEMP=("${!1}"); shift
     local PATTERNS=("${MSYS_WORKAROUND_TEMP[@]}")
@@ -198,11 +267,12 @@ Description:
     Runs integration tests using C++17 extension from distr directory.
 
 Usage:
-    $0 [-h] [-e] [-c] [-p] [-o <dir>] [-i <pattern>]... [-x <pattern>]... target...
+    $0 [-h] [-e] [-m] [-c] [-p] [-o <dir>] [-i <pattern>]... [-x <pattern>]... target...
 
 Arguments:
     -h, --help           Show this help.
     -e, --help-env       Show help for enviroment variables.
+    -m, --missing        Show missing tests.
     -c, --clean          Clean package instead of build.
     -p, --purge          Purge test build directory.
     -o <dir>, --output-directory <dir>
@@ -243,10 +313,12 @@ parse_arguments()
     local SWITCH_OUT_DIR_OUT="$1"; shift
     local SWITCH_CLEAN_OUT="$1"; shift
     local SWITCH_PURGE_OUT="$1"; shift
+    local SWITCH_MISSING_OUT="$1"; shift
     local SWITCH_TEST_SUITES_ARRAY_OUT="$1"; shift
 
     eval ${SWITCH_CLEAN_OUT}=0
     eval ${SWITCH_PURGE_OUT}=0
+    eval ${SWITCH_MISSING_OUT}=0
 
     local NUM_PARAMS=0
     local NUM_PATTERNS=0
@@ -269,6 +341,11 @@ parse_arguments()
 
             "-p" | "--purge")
                 eval ${SWITCH_PURGE_OUT}=1
+                shift
+                ;;
+
+            "-m" | "--missing")
+                eval ${SWITCH_MISSING_OUT}=1
                 shift
                 ;;
 
@@ -336,7 +413,7 @@ parse_arguments()
     done
 
     if [[ ${NUM_CPP_TARGETS} -eq 0 &&
-          ${!SWITCH_PURGE_OUT} == 0 ]] ; then
+          ${!SWITCH_PURGE_OUT} == 0 && ${!SWITCH_MISSING_OUT} == 0 ]] ; then
         stderr_echo "Package to test is not specified!"
         echo
         return 1
@@ -356,10 +433,11 @@ main()
     local SWITCH_OUT_DIR="${ZSERIO_CPP17_PROJECT_ROOT}"
     local SWITCH_CLEAN
     local SWITCH_PURGE
+    local SWITCH_MISSING
     local SWITCH_TEST_PATTERN_ARRAY=()
     # note that "$@" must have qoutes to prevent expansion of include/exclude patterns
     parse_arguments PARAM_CPP_TARGET_ARRAY SWITCH_OUT_DIR SWITCH_CLEAN SWITCH_PURGE \
-            SWITCH_TEST_PATTERN_ARRAY "$@"
+            SWITCH_MISSING SWITCH_TEST_PATTERN_ARRAY "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
         print_help
@@ -390,6 +468,12 @@ main()
 
     # cmake needs absolute paths
     convert_to_absolute_path "${SWITCH_OUT_DIR}" SWITCH_OUT_DIR
+
+    # print missing tests
+    if [[ ${SWITCH_MISSING} == 1 ]] ; then
+        print_missing_tests "${ZSERIO_CPP17_PROJECT_ROOT}" "cpp"
+        return 0
+    fi
 
     # purge if requested and then create test output directory
     local ZSERIO_CPP17_BUILD_DIR="${SWITCH_OUT_DIR}/build"
