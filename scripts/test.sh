@@ -3,68 +3,131 @@
 SCRIPT_DIR=`dirname $0`
 source "${SCRIPT_DIR}/common_tools.sh"
 
+capitalize_test_name()
+{
+    exit_if_argc_ne $# 2
+    local STR="$1"; shift
+    local OUT_VAR="$1"; shift
+    
+    local WORDS=(${STR//_/ }) # split at _
+    local OUT="${WORDS[@]^}" # capitalize and join
+    OUT="${OUT/Uint/UInt}"
+    OUT="${OUT/Varint/VarInt}"
+    OUT="${OUT/Varuint/VarUInt}"
+    OUT="${OUT// /}" # remove spaces
+    eval "${OUT_VAR}=${OUT}"
+}
+
 # Compares zs and cpp files and prints missing tests
 print_missing_tests()
 {
     exit_if_argc_ne $# 2
-    local ZSERIO_CPP17_PROJECT_ROOT="$1"; shift
+    local ZSERIO_PROJECT_ROOT="$1"; shift
     local PLATFORM="$1"; shift
-    local STARTING_POINT="${ZSERIO_CPP17_PROJECT_ROOT}/test"
-    
+
+    local EXT=".${PLATFORM}"
+    if [[ ${EXT} == ".python" ]] ; then
+        EXT=".py"
+    fi
+    local STARTING_POINT="${ZSERIO_PROJECT_ROOT}/test"    
     local TEST_SUITES_ARR=(
-        $(${FIND} "${STARTING_POINT}/data/" -mindepth 2 -maxdepth 2 -type d -printf "%P\\n")
+        $(${FIND} "${STARTING_POINT}/data/" -mindepth 2 -maxdepth 2 -type d -printf "%P\\n" | sort)
     )
     local MISSING_TS_ARR=()
+    local COMMON_TS_ARR=()
     local MISSING_COUNT=0
     for TS in ${TEST_SUITES_ARR[@]} ; do
         local TS1="${TS##*/}" # remove prefix
-        #echo "-> ${TS} (${TS1})" 
+        #echo "-> ${TS}" # de
+        capitalize_test_name ${TS1} TEST_NAME
+        local TEST_NAME="${TEST_NAME}Test${EXT}"
+        local ZS_STARTING_POINT="${STARTING_POINT}/data/${TS}/zs"
         local TS_STARTING_POINT="${STARTING_POINT}/${TS}/${PLATFORM}"
         if [ ! -d "${TS_STARTING_POINT}" ] || [ -z "$( ls -A ${TS_STARTING_POINT} )" ] ; then
             MISSING_TS_ARR+=(${TS})
+        elif [ -f "${TS_STARTING_POINT}/${TEST_NAME}" ] ||
+             [ -f "${TS_STARTING_POINT}/${TS1}/${TEST_NAME}" ] ; then
+            COMMON_TS_ARR+=(${TS})
         else
-            # we look for zs files in 
-            # 1. data/${TS}/zs/*.zs except ${TS1}.zs
-            local TESTS_ARR=(
-                $(${FIND} "${STARTING_POINT}/data/${TS}/zs" -maxdepth 1 -name "*.zs" ! -name "${TS1}.zs" -printf "%f\\n")
-            )
-            # 2. data/${TS}/zs/${TS1}/*.zs
-            if [ -d "${STARTING_POINT}/data/${TS}/zs/${TS1}" ] ; then
-                TESTS_ARR+=(
-                    $(${FIND} "${STARTING_POINT}/data/${TS}/zs/${TS1}" -maxdepth 1 -name "*.zs" -printf "%f\\n")
-                )
-            fi
-            # Iterate all zs tests
             local MISSING_ARR=()
-            for ZS_NAME in ${TESTS_ARR[@]} ; do
-                local BASE=${ZS_NAME%.zs} # remove extension
-                local WORDS=(${BASE//_/ }) # split at _
-                local TEST_NAME="${WORDS[@]^}" # capitalize and join
-                TEST_NAME="${TEST_NAME// /}Test.${PLATFORM}" # remove spaces add suffix
-                #echo "${ZS_NAME} -> ${TEST_NAME}" 
-                if [ ! -f "${TS_STARTING_POINT}/${TEST_NAME}" ] ; then
+            # iterate subfolders
+            local DIR_NAME_ARR=(
+                $(${FIND} "${ZS_STARTING_POINT}" -mindepth 1 -maxdepth 1 -type d -printf "%f\\n")
+            )
+            for DIR_NAME in ${DIR_NAME_ARR[@]} ; do
+                capitalize_test_name ${DIR_NAME} TEST_NAME
+                TEST_NAME="${TEST_NAME}Test${EXT}"
+                #echo "DIR_NAME ${DIR_NAME}"
+                if [ ! -f "${TS_STARTING_POINT}/${TEST_NAME}" ] &&
+                   [ ! -f "${TS_STARTING_POINT}/${TS1}/${TEST_NAME}" ] &&
+                   [ ! -f "${TS_STARTING_POINT}/${TS1}/${DIR_NAME}/${TEST_NAME}" ] ;
+                then
+                    # iterate zs files
+                    local ZS_NAME_ARR=(
+                        $(${FIND} "${ZS_STARTING_POINT}/${DIR_NAME}" -mindepth 1 -maxdepth 1 -name "*.zs" -printf "%f\\n")
+                    )
+                    #echo " ${TEST_NAME} not found, recurse"
+                    for ZS_NAME in ${ZS_NAME_ARR[@]} ; do
+                        #echo "  ${ZS_NAME}"
+                        local BASE="${ZS_NAME%.zs}"
+                        capitalize_test_name ${BASE} TEST_NAME
+                        TEST_NAME="${TEST_NAME}Test${EXT}"
+                        if [ ! -f "${TS_STARTING_POINT}/${TEST_NAME}" ] &&
+                           [ ! -f "${TS_STARTING_POINT}/${DIR_NAME}/${TEST_NAME}" ] &&
+                           [ ! -f "${TS_STARTING_POINT}/${DIR_NAME}/${BASE}/${TEST_NAME}" ] &&
+                           [ ! -f "${TS_STARTING_POINT}/${TS1}/${DIR_NAME}/${TEST_NAME}" ] ;
+                        then
+                            #echo "   ${TEST_NAME} not found"
+                            MISSING_ARR+=("${TEST_NAME}")  
+                            MISSING_COUNT=$((MISSING_COUNT+1))                            
+                        fi
+                    done
+                fi
+            done
+            # iterate zs files except those having folder
+            ZS_NAME_ARR=(
+                $(${FIND} "${ZS_STARTING_POINT}" -mindepth 1 -maxdepth 1 -name "*.zs" -printf "%f\\n")
+            )
+            for ZS_NAME in ${ZS_NAME_ARR[@]} ; do
+                #echo "FNAME ${ZS_NAME}"
+                local BASE="${ZS_NAME%.zs}"
+                capitalize_test_name ${BASE} TEST_NAME
+                TEST_NAME="${TEST_NAME}Test${EXT}"
+                if [ ! -d "${ZS_STARTING_POINT}/${BASE}" ] &&
+                   [ ! -f "${TS_STARTING_POINT}/${TEST_NAME}" ] &&
+                   [ ! -f "${TS_STARTING_POINT}/${TS1}/${TEST_NAME}" ] &&
+                   [ ! -f "${TS_STARTING_POINT}/${BASE}/${TEST_NAME}" ];
+                then
+                    #echo " ${TEST_NAME} not found"
                     MISSING_ARR+=(${TEST_NAME})  
                     MISSING_COUNT=$((MISSING_COUNT+1))
                 fi
             done
+            # print missing tests
             if [ ${#MISSING_ARR[@]} -gt 0 ] ; then
-                echo
                 echo "Missing tests in ${TS}:"
                 for MISS in ${MISSING_ARR[@]} ; do
                     echo "  ${MISS}"
                 done
+                echo
             fi
         fi
     done
-    if [ ${#MISSING_TS_ARR[@]} -gt 0 ] ; then
+    if [ ${#COMMON_TS_ARR[@]} -gt 0 ] ; then
+        echo "Ignored test suites with shared implementation:"
+        for COM in ${COMMON_TS_ARR[@]} ; do
+            echo "  ${COM}"
+        done
         echo
+    fi
+    if [ ${#MISSING_TS_ARR[@]} -gt 0 ] ; then
         echo "Missing test suites:"
         for MISS in ${MISSING_TS_ARR[@]} ; do
             echo "  ${MISS}"
         done
+        echo
     fi
 
-    echo ""
     echo "Summary:"
     echo "${MISSING_COUNT} tests missing" 
     echo "${#MISSING_TS_ARR[@]} test suites missing"
