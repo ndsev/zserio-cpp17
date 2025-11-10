@@ -1,6 +1,7 @@
 #ifndef ZSERIO_JSON_ENCODER_H_INC
 #define ZSERIO_JSON_ENCODER_H_INC
 
+#include <cstdint>
 #include <string_view>
 #include <type_traits>
 
