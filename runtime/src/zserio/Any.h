@@ -57,6 +57,32 @@ public:
         m_typedHolder = std::forward<U>(value);
     }
 
+    template <typename... ARGS>
+    T& construct(const ALLOC& allocator, ARGS&&... args)
+    {
+        // in case T is allocator-aware (e.g. std::vector) we need to construct
+        // it with parent allocator but because std::optional doesn't support
+        // allocators we emulate uses_allocator construction here
+        if constexpr (!std::uses_allocator_v<T, ALLOC>)
+        {
+            return m_typedHolder.emplace(std::forward<ARGS>(args)...);
+        }
+        else if constexpr (std::is_constructible_v<T, std::allocator_arg_t, const ALLOC&, ARGS...>)
+        {
+            return m_typedHolder.emplace(std::allocator_arg, allocator, std::forward<ARGS>(args)...);
+        }
+        else if constexpr (std::is_constructible_v<T, ARGS..., const ALLOC&>)
+        {
+            return m_typedHolder.emplace(std::forward<ARGS>(args)..., allocator);
+        }
+        else
+        {
+            static_assert(always_false<T>::value,
+                    "if uses_allocator_v<remove_cv_t<T>, ALLOC> is true, "
+                    "T must be constructible with allocator argument");
+        }
+    }
+
     void setHolder(const std::optional<T>& value)
     {
         m_typedHolder = value;
@@ -385,6 +411,32 @@ public:
     }
 
     /**
+     * Swaps the holder with another.
+     *
+     * \param other Other BasicAny to swap content with.
+     */
+    void swap(BasicAny& other)
+    {
+        if (!m_isInPlace && m_untypedHolder.heap != nullptr && !other.m_isInPlace &&
+                other.m_untypedHolder.heap != nullptr && get_allocator_ref() == other.get_allocator_ref())
+        {
+            std::swap(m_untypedHolder.heap, other.m_untypedHolder.heap);
+        }
+        else
+        {
+            BasicAny tmp(std::move(*this), get_allocator_ref());
+            move(std::move(other));
+            other.move(std::move(tmp));
+
+            if constexpr (AllocTraits::propagate_on_container_swap::value)
+            {
+                using std::swap;
+                swap(get_allocator_ref(), other.get_allocator_ref());
+            }
+        }
+    }
+
+    /**
      * Resets the holder.
      */
     void reset()
@@ -404,11 +456,69 @@ public:
     }
 
     /**
+     * Constructs a value of type T with given arguments
+     *
+     * \param args Arguments for value construction
+     */
+    template <typename T, typename... ARGS>
+    T& emplace(ARGS&&... args)
+    {
+        return createHolder<typename std::decay<T>::type>()->construct(
+                get_allocator_ref(), std::forward<ARGS>(args)...);
+    }
+
+    /**
+     * Gets the pointer of the given type or nullptr if such value is not present.
+     *
+     * \return Pointer to the value of the requested type if the type matches the stored value.
+     */
+    template <typename T>
+    T* get_if() noexcept
+    {
+        if (!isType<T>())
+        {
+            return nullptr;
+        }
+        // TODO: remove try-catch as part of issue #46
+        try
+        {
+            return &getHolder<T>(detail::has_non_heap_holder<T, ALLOC>())->get();
+        }
+        catch (const std::exception&)
+        {
+            return nullptr;
+        }
+    }
+
+    /**
+     * Gets the pointer of the given type or nullptr if such value is not present.
+     *
+     * \return Pointer to the value of the requested type if the type matches the stored value.
+     */
+    template <typename T>
+    const T* get_if() const noexcept
+    {
+        if (!isType<T>())
+        {
+            return nullptr;
+        }
+        // TODO: remove try-catch as part of issue #46
+        try
+        {
+            return &getHolder<T>(detail::has_non_heap_holder<T, ALLOC>())->get();
+        }
+        catch (const std::exception&)
+        {
+            return nullptr;
+        }
+    }
+
+    /**
      * Gets value of the given type.
      *
-     * \return Reference to value of the requested type if the type match to the stored value.
+     * \return Value of the requested type if the type matches the stored value.
      *
-     * \throw CppRuntimeException if the requested type doesn't match to the stored value.
+     * \throw CppRuntimeException if the requested type doesn't match the stored value.
      */
     template <typename T>
     T& get()
@@ -420,9 +530,9 @@ public:
     /**
      * Gets value of the given type.
      *
-     * \return Value of the requested type if the type match to the stored value.
+     * \return Value of the requested type if the type matches the stored value.
      *
-     * \throw CppRuntimeException if the requested type doesn't match to the stored value.
+     * \throw CppRuntimeException if the requested type doesn't match the stored value.
      */
     template <typename T>
     const T& get() const
@@ -437,7 +547,7 @@ public:
      * \return True if the stored value is of the given type, false otherwise.
      */
     template <typename T>
-    bool isType() const
+    bool isType() const noexcept
     {
         return hasHolder() && getUntypedHolder()->isType(detail::TypeIdHolder::get<T>());
     }
@@ -447,7 +557,7 @@ public:
      *
      * \return True if the holder has assigned any value, false otherwise.
      */
-    bool hasValue() const
+    bool hasValue() const noexcept
     {
         return hasHolder();
     }
@@ -509,7 +619,7 @@ private:
         }
     }
 
-    bool hasHolder() const
+    bool hasHolder() const noexcept
     {
         return (m_isInPlace || m_untypedHolder.heap != nullptr);
     }
@@ -563,61 +673,61 @@ private:
     }
 
     template <typename T>
-    detail::HeapHolder<T, ALLOC>* getHeapHolder()
+    detail::HeapHolder<T, ALLOC>* getHeapHolder() noexcept
     {
         return static_cast<detail::HeapHolder<T, ALLOC>*>(m_untypedHolder.heap);
     }
 
     template <typename T>
-    const detail::HeapHolder<T, ALLOC>* getHeapHolder() const
+    const detail::HeapHolder<T, ALLOC>* getHeapHolder() const noexcept
     {
         return static_cast<detail::HeapHolder<T, ALLOC>*>(m_untypedHolder.heap);
     }
 
     template <typename T>
-    detail::NonHeapHolder<T, ALLOC>* getInplaceHolder()
+    detail::NonHeapHolder<T, ALLOC>* getInplaceHolder() noexcept
     {
         return reinterpret_cast<detail::NonHeapHolder<T, ALLOC>*>(&m_untypedHolder.inPlace);
     }
 
     template <typename T>
-    const detail::NonHeapHolder<T, ALLOC>* getInplaceHolder() const
+    const detail::NonHeapHolder<T, ALLOC>* getInplaceHolder() const noexcept
     {
         return reinterpret_cast<const detail::NonHeapHolder<T, ALLOC>*>(&m_untypedHolder.inPlace);
     }
 
     template <typename T>
-    detail::HolderBase<T, ALLOC>* getHolder(std::true_type)
+    detail::HolderBase<T, ALLOC>* getHolder(std::true_type) noexcept
     {
         return static_cast<detail::HolderBase<T, ALLOC>*>(getInplaceHolder<T>());
     }
 
     template <typename T>
-    detail::HolderBase<T, ALLOC>* getHolder(std::false_type)
+    detail::HolderBase<T, ALLOC>* getHolder(std::false_type) noexcept
     {
         return static_cast<detail::HolderBase<T, ALLOC>*>(getHeapHolder<T>());
     }
 
     template <typename T>
-    const detail::HolderBase<T, ALLOC>* getHolder(std::true_type) const
+    const detail::HolderBase<T, ALLOC>* getHolder(std::true_type) const noexcept
     {
         return static_cast<const detail::HolderBase<T, ALLOC>*>(getInplaceHolder<T>());
     }
 
     template <typename T>
-    const detail::HolderBase<T, ALLOC>* getHolder(std::false_type) const
+    const detail::HolderBase<T, ALLOC>* getHolder(std::false_type) const noexcept
     {
         return static_cast<const detail::HolderBase<T, ALLOC>*>(getHeapHolder<T>());
     }
 
-    detail::IHolder<ALLOC>* getUntypedHolder()
+    detail::IHolder<ALLOC>* getUntypedHolder() noexcept
     {
         return (m_isInPlace)
                 ? reinterpret_cast<detail::IHolder<ALLOC>*>(&m_untypedHolder.inPlace)
                 : m_untypedHolder.heap;
     }
 
-    const detail::IHolder<ALLOC>* getUntypedHolder() const
+    const detail::IHolder<ALLOC>* getUntypedHolder() const noexcept
     {
         return (m_isInPlace)
                 ? reinterpret_cast<const detail::IHolder<ALLOC>*>(&m_untypedHolder.inPlace)

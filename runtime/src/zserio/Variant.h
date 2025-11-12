@@ -1,9 +1,8 @@
 #ifndef ZSERIO_VARIANT_H_INC
 #define ZSERIO_VARIANT_H_INC
 
-#include <variant>
-
 #include "zserio/AllocatorHolder.h"
+#include "zserio/Any.h"
 #include "zserio/CppRuntimeException.h"
 #include "zserio/HashCodeUtil.h"
 #include "zserio/Traits.h"
@@ -14,20 +13,6 @@ namespace zserio
 namespace detail
 {
 
-template <typename T, bool BIG = (sizeof(T) > 3 * sizeof(void*))>
-struct variant_element
-{
-    using type = T;
-    using is_heap_allocated = std::false_type;
-};
-
-template <typename T>
-struct variant_element<T, true>
-{
-    using type = T*;
-    using is_heap_allocated = std::true_type;
-};
-
 template <size_t I, typename... T>
 struct type_at
 {
@@ -36,26 +21,6 @@ struct type_at
 
 template <auto I, typename... T>
 using type_at_t = typename type_at<static_cast<size_t>(I), T...>::type;
-
-template <auto I, typename... T>
-struct is_variant_heap_allocated : variant_element<type_at_t<I, T...>>::is_heap_allocated
-{};
-
-template <auto I, class... T>
-constexpr bool is_variant_heap_allocated_v = is_variant_heap_allocated<I, T...>::value;
-
-template <typename... T>
-struct any_variant_heap_allocated : std::false_type
-{};
-
-template <typename T, typename... ARGS>
-struct any_variant_heap_allocated<T, ARGS...>
-        : std::bool_constant<variant_element<T>::is_heap_allocated::value ||
-                  any_variant_heap_allocated<ARGS...>::value>
-{};
-
-template <typename... ARGS>
-inline constexpr bool any_variant_heap_allocated_v = any_variant_heap_allocated<ARGS...>::value;
 
 } // namespace detail
 
@@ -79,28 +44,23 @@ template <auto I>
 constexpr in_place_index_t<I> in_place_index{};
 
 /**
- * Implementation of variant type which allocates memory when selected type
- * doesn't fit under 3*sizeof(void*)
+ * Implementation of variant type using BasicAny which allocates memory when selected
+ * type doesn't fit under 3*sizeof(void*)
  *
  * Largely compatible with std::variant with following differences:
- * - access only through index whose type has to be specified
- * - supplied INDEX type needs to be convertible to/from size_t
+ * - access only through index whose type has to be specified (by design)
+ * - supplied INDEX type needs to be convertible to/from size_t and std::variant_npos
  * - holds_alternative() omitted
- * - variant_npos omitted
- * - get/get_if() exists as member functions as well
+ * - get/get_if() exist as member functions as well
  */
 template <typename ALLOC, typename INDEX, typename... T>
-class BasicVariant : public AllocatorHolder<ALLOC>
+class BasicVariant
 {
     using AllocTraits = std::allocator_traits<ALLOC>;
-    using AllocatorHolder<ALLOC>::get_allocator_ref;
-    using AllocatorHolder<ALLOC>::set_allocator;
 
 public:
-    using AllocatorHolder<ALLOC>::get_allocator;
     using allocator_type = ALLOC;
     using IndexType = INDEX;
-    using VariantType = std::variant<typename detail::variant_element<T>::type...>;
 
     /**
      * Empty constructor.
@@ -117,12 +77,9 @@ public:
      * \throw can throw any exception thrown by T[0]
      */
     explicit BasicVariant(const ALLOC& allocator) :
-            AllocatorHolder<ALLOC>(allocator)
+            m_data(allocator)
     {
-        if constexpr (detail::is_variant_heap_allocated_v<0, T...>)
-        {
-            emplace<INDEX{}>(); // enforce no empty state like std::variant
-        }
+        emplace<INDEX{}>(); // enforce no empty state like std::variant
     }
 
     /**
@@ -133,66 +90,26 @@ public:
      *
      * \throw can throw any exception thrown by T[I]
      */
-    template <INDEX I, typename... ARGS,
-            std::enable_if_t<!detail::is_variant_heap_allocated_v<I, T...>>* = nullptr,
-            std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
-    explicit BasicVariant(in_place_index_t<I>, ARGS&&... args) :
-            m_data(std::in_place_index<static_cast<size_t>(I)>, std::forward<ARGS>(args)...)
-    {}
-
-    /**
-     * Constructor with allocator and initial emplacement.
-     *
-     * \param in_place_index Index of the active element.
-     * \param allocator Allocator to be used.
-     * \param args Arguments to be forwarded for element construction.
-     *
-     * \throw can throw any exception thrown by T[I]
-     */
-    template <INDEX I, typename... ARGS,
-            std::enable_if_t<!detail::is_variant_heap_allocated_v<I, T...>>* = nullptr>
-    BasicVariant(in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
-            AllocatorHolder<ALLOC>(allocator),
-            m_data(std::in_place_index<static_cast<size_t>(I)>, std::forward<ARGS>(args)...)
-    {}
-
-    /**
-     * Constructor with allocator and initial emplacement.
-     *
-     * \param in_place_index Index of the active element.
-     * \param allocator Allocator to be used.
-     * \param args Arguments to be forwarded for element construction.
-     *
-     * \throw can throw any exception thrown by T[I]
-     */
-    template <INDEX I, typename... ARGS, typename U = detail::type_at_t<static_cast<size_t>(I), T...>,
-            std::enable_if_t<detail::is_variant_heap_allocated_v<I, T...>>* = nullptr>
-    BasicVariant(in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
-            AllocatorHolder<ALLOC>(allocator),
-            m_data(std::in_place_index<static_cast<size_t>(I)>, allocateValue<U>(std::forward<ARGS>(args)...))
-    {}
-
-    /**
-     * Constructor with initial emplacement.
-     *
-     * \param in_place_index Index of the active element.
-     * \param args Arguments to be forwarded for element construction.
-     *
-     * \throw can throw any exception thrown by T[I]
-     */
-    template <INDEX I, typename... ARGS, typename U = detail::type_at_t<static_cast<size_t>(I), T...>,
-            std::enable_if_t<detail::is_variant_heap_allocated_v<I, T...>>* = nullptr,
-            std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
-    explicit BasicVariant(in_place_index_t<I>, ARGS&&... args) :
-            m_data(std::in_place_index<static_cast<size_t>(I)>, allocateValue<U>(std::forward<ARGS>(args)...))
-    {}
-
-    /**
-     * Destructor.
-     */
-    ~BasicVariant()
+    template <INDEX I, typename... ARGS, std::enable_if_t<!is_first_allocator_v<ARGS...>>* = nullptr>
+    explicit BasicVariant(in_place_index_t<I>, ARGS&&... args)
     {
-        clear();
+        emplace<I>(std::forward<ARGS>(args)...);
+    }
+
+    /**
+     * Constructor with allocator and initial emplacement.
+     *
+     * \param in_place_index Index of the active element.
+     * \param allocator Allocator to be used.
+     * \param args Arguments to be forwarded for element construction.
+     *
+     * \throw can throw any exception thrown by T[I]
+     */
+    template <INDEX I, typename... ARGS>
+    BasicVariant(in_place_index_t<I>, const ALLOC& allocator, ARGS&&... args) :
+            m_data(allocator)
+    {
+        emplace<I>(std::forward<ARGS>(args)...);
     }
 
     /**
@@ -201,11 +118,9 @@ public:
      * \param other Variant to copy.
      */
     BasicVariant(const BasicVariant& other) :
-            AllocatorHolder<ALLOC>(
-                    AllocTraits::select_on_container_copy_construction(other.get_allocator_ref()))
-    {
-        copy(other);
-    }
+            m_data(other.m_data),
+            m_index(other.m_index)
+    {}
 
     /**
      * Allocator-extended copy constructor.
@@ -216,10 +131,9 @@ public:
      * \throw can throw any exception thrown by the active element in other
      */
     BasicVariant(const BasicVariant& other, const ALLOC& allocator) :
-            AllocatorHolder<ALLOC>(allocator)
-    {
-        copy(other);
-    }
+            m_data(other.m_data, allocator),
+            m_index(other.m_index)
+    {}
 
     /**
      * Copy assignment operator.
@@ -232,16 +146,8 @@ public:
      */
     BasicVariant& operator=(const BasicVariant& other)
     {
-        if (this != &other)
-        {
-            clear();
-            if constexpr (AllocTraits::propagate_on_container_copy_assignment::value)
-            {
-                set_allocator(other.get_allocator_ref());
-            }
-            copy(other);
-        }
-
+        m_data = other.m_data;
+        m_index = other.m_index;
         return *this;
     }
 
@@ -253,10 +159,9 @@ public:
      * \throw can throw any exception thrown by the active element in other
      */
     BasicVariant(BasicVariant&& other) :
-            AllocatorHolder<ALLOC>(std::move(other.get_allocator_ref()))
-    {
-        move(std::move(other));
-    }
+            m_data(std::move(other.m_data)),
+            m_index(other.m_index)
+    {}
 
     /**
      * Allocator-extended move constructor.
@@ -267,10 +172,14 @@ public:
      * \throw can throw any exception thrown by the active element in other
      */
     BasicVariant(BasicVariant&& other, const ALLOC& allocator) :
-            AllocatorHolder<ALLOC>(allocator)
-    {
-        move(std::move(other));
-    }
+            m_data(std::move(other.m_data), allocator),
+            m_index(other.m_index)
+    {}
+
+    /**
+     * Desctructor.
+     */
+    ~BasicVariant() = default;
 
     /**
      * Move assignment operator.
@@ -283,12 +192,8 @@ public:
     {
         if (this != &other)
         {
-            clear();
-            if constexpr (AllocTraits::propagate_on_container_move_assignment::value)
-            {
-                set_allocator(std::move(other.get_allocator_ref()));
-            }
-            move(std::move(other));
+            m_data = std::move(other.m_data);
+            m_index = other.m_index;
         }
 
         return *this;
@@ -304,36 +209,21 @@ public:
      */
     bool valueless_by_exception() const noexcept
     {
-        if constexpr (detail::any_variant_heap_allocated_v<T...>)
-        {
-            return m_data.valueless_by_exception() ||
-                    valuelessByMoveSeq(std::make_index_sequence<sizeof...(T)>());
-        }
-        else
-        {
-            return m_data.valueless_by_exception();
-        }
+        return static_cast<size_t>(index()) == std::variant_npos || !m_data.hasValue();
     }
 
     /**
-     * Sets any value to variant.
+     * Constructs a value of type U at index I with given arguments.
      *
      * \param args Arguments to be forwarded for element construction.
      */
     template <INDEX I, typename... ARGS>
     decltype(auto) emplace(ARGS&&... args)
     {
-        clear();
-        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
-        {
-            using U = detail::type_at_t<I, T...>;
-            U* ptr = allocateValue<U>(std::forward<ARGS>(args)...);
-            return *m_data.template emplace<static_cast<size_t>(I)>(ptr);
-        }
-        else
-        {
-            return m_data.template emplace<static_cast<size_t>(I)>(std::forward<ARGS>(args)...);
-        }
+        using U = detail::type_at_t<I, T...>;
+        auto& ret = m_data.template emplace<U>(std::forward<ARGS>(args)...);
+        m_index = I;
+        return ret;
     }
 
     /**
@@ -341,16 +231,7 @@ public:
      */
     INDEX index() const noexcept
     {
-        if constexpr (detail::any_variant_heap_allocated_v<T...>)
-        {
-            return valuelessByMoveSeq(std::make_index_sequence<sizeof...(T)>())
-                    ? static_cast<INDEX>(std::variant_npos)
-                    : static_cast<INDEX>(m_data.index());
-        }
-        else
-        {
-            return static_cast<INDEX>(m_data.index());
-        }
+        return m_data.hasValue() ? m_index : static_cast<INDEX>(std::variant_npos);
     }
 
     /**
@@ -363,14 +244,7 @@ public:
         {
             return nullptr;
         }
-        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
-        {
-            return *std::get_if<static_cast<size_t>(I)>(&m_data);
-        }
-        else
-        {
-            return std::get_if<static_cast<size_t>(I)>(&m_data);
-        }
+        return m_data.template get_if<U>();
     }
 
     /**
@@ -383,14 +257,7 @@ public:
         {
             return nullptr;
         }
-        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
-        {
-            return *std::get_if<static_cast<size_t>(I)>(&m_data);
-        }
-        else
-        {
-            return std::get_if<static_cast<size_t>(I)>(&m_data);
-        }
+        return m_data.template get_if<U>();
     }
 
     /**
@@ -435,11 +302,7 @@ public:
     void swap(BasicVariant& other)
     {
         m_data.swap(other.m_data);
-        if constexpr (AllocTraits::propagate_on_container_swap::value)
-        {
-            using std::swap;
-            swap(get_allocator_ref(), other.get_allocator_ref());
-        }
+        std::swap(m_index, other.m_index);
     }
 
     /**
@@ -567,29 +430,6 @@ public:
     }
 
 private:
-    template <size_t... I>
-    bool valuelessByMoveSeq(std::index_sequence<I...>) const
-    {
-        return (valuelessByMove<I>() || ...);
-    }
-
-    template <size_t I>
-    bool valuelessByMove() const
-    {
-        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
-        {
-            if (I != m_data.index())
-            {
-                return false;
-            }
-            return *std::get_if<I>(&m_data) == nullptr;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     template <size_t... I, typename F, typename R>
     void visitSeq(F&& fun, R& returnValue, std::index_sequence<I...>)
     {
@@ -668,132 +508,8 @@ private:
         return get<static_cast<INDEX>(I)>() < other.get<static_cast<INDEX>(I)>();
     }
 
-    template <typename U, typename... ARGS>
-    U* allocateValue(ARGS&&... args)
-    {
-        using AllocType = RebindAlloc<ALLOC, U>;
-        using ConcreteAllocTraits = std::allocator_traits<AllocType>;
-        AllocType typedAlloc = get_allocator_ref();
-        auto ptr = ConcreteAllocTraits::allocate(typedAlloc, 1);
-        try
-        {
-            ConcreteAllocTraits::construct(typedAlloc, std::addressof(*ptr), std::forward<ARGS>(args)...);
-        }
-        catch (...)
-        {
-            ConcreteAllocTraits::deallocate(typedAlloc, ptr, 1);
-            throw;
-        }
-        return ptr;
-    }
-
-    // same as for std::variant throwing dtors are not supported see
-    // https://stackoverflow.com/questions/78602733/should-stdvariant-be-nothrow-destructible-when-its-alternative-has-potentially
-    template <typename U>
-    void destroyValue(U* ptr)
-    {
-        if (ptr)
-        {
-            using AllocType = RebindAlloc<ALLOC, U>;
-            using ConcreteAllocTraits = std::allocator_traits<AllocType>;
-            AllocType typedAlloc = get_allocator_ref();
-            ConcreteAllocTraits::destroy(typedAlloc, ptr);
-            ConcreteAllocTraits::deallocate(typedAlloc, ptr, 1);
-        }
-    }
-
-    void copy(const BasicVariant& other)
-    {
-        // assumes this holder is cleared
-
-        copySeq(other, std::make_index_sequence<sizeof...(T)>());
-    }
-
-    template <size_t... I>
-    void copySeq(const BasicVariant& other, std::index_sequence<I...>)
-    {
-        (copy<I>(other), ...);
-    }
-
-    template <size_t I>
-    void copy(const BasicVariant& other)
-    {
-        if (I != static_cast<size_t>(other.index()))
-        {
-            return;
-        }
-        emplace<static_cast<INDEX>(I)>(other.get<static_cast<INDEX>(I)>());
-    }
-
-    void move(BasicVariant&& other)
-    {
-        // assumes this holder is cleared
-
-        moveSeq(std::move(other), std::make_index_sequence<sizeof...(T)>());
-    }
-
-    template <size_t... I>
-    void moveSeq(BasicVariant&& other, std::index_sequence<I...>)
-    {
-        (move<I>(std::move(other)), ...);
-    }
-
-    template <size_t I>
-    void move(BasicVariant&& other)
-    {
-        if (I != static_cast<size_t>(other.index()))
-        {
-            return;
-        }
-        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
-        {
-            if (get_allocator_ref() == other.get_allocator_ref())
-            {
-                auto& ptr = *std::get_if<I>(&other.m_data);
-                m_data.template emplace<I>(ptr);
-                ptr = nullptr;
-            }
-            else
-            {
-                using U = detail::type_at_t<I, T...>;
-                U* ptr = allocateValue<U>(std::move(**std::get_if<I>(&other.m_data)));
-                m_data.template emplace<I>(ptr);
-            }
-        }
-        else
-        {
-            auto& value = *std::get_if<I>(&other.m_data);
-            m_data.template emplace<I>(std::move(value));
-        }
-    }
-
-    void clear()
-    {
-        clearSeq(std::make_index_sequence<sizeof...(T)>());
-    }
-
-    template <size_t... I>
-    void clearSeq(std::index_sequence<I...>)
-    {
-        (clear<I>(), ...);
-    }
-
-    template <size_t I>
-    void clear()
-    {
-        if (I != static_cast<size_t>(index()))
-        {
-            return;
-        }
-        if constexpr (detail::is_variant_heap_allocated_v<I, T...>)
-        {
-            auto& ptr = *std::get_if<I>(&m_data);
-            destroyValue(ptr);
-            ptr = nullptr;
-        }
-    }
-
-    VariantType m_data;
+    BasicAny<ALLOC> m_data;
+    INDEX m_index;
 };
 
 // Using declarations

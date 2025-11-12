@@ -15,20 +15,15 @@ bugprone-exception-escape:src/zserio/Optional.h:389
 bugprone-exception-escape:src/zserio/Optional.h:223
 bugprone-exception-escape:src/zserio/Optional.h:409
 
-# Variant is a generic container and exceptions may be thrown from the element types.
-bugprone-exception-escape:src/zserio/Variant.h:255
-bugprone-exception-escape:src/zserio/Variant.h:282
-
-# Iteration through all variant types is needed for folding expression, m_data active element is moved out
-# but index remains so it's safe to access.
-bugprone-use-after-move:src/zserio/Variant.h:738
+# To implement swap the variable needs to be moved out and moved in again
+bugprone-use-after-move:src/zserio/Any.h:429
 
 # Specialization of std::hash is allowed.
 cert-dcl58-cpp:src/zserio/BitBuffer.h:608
 cert-dcl58-cpp:src/zserio/BitBuffer.h:620
 cert-dcl58-cpp:src/zserio/Extended.h:242
 cert-dcl58-cpp:src/zserio/Optional.h:1186
-cert-dcl58-cpp:src/zserio/Variant.h:907
+cert-dcl58-cpp:src/zserio/Variant.h:623
 cert-dcl58-cpp:src/zserio/View.h:257
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
@@ -102,10 +97,10 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:97
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:98
 
 # This is necessary for implementation of low level zserio::Any abstraction.
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:580
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:586
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:616
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:623
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:690
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:696
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:726
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:733
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19
@@ -145,8 +140,7 @@ google-explicit-constructor:src/zserio/Types.h:60
 google-explicit-constructor:src/zserio/Types.h:67
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
-google-readability-casting:src/zserio/Variant.h:45
-google-readability-casting:src/zserio/Variant.h:79
+google-readability-casting:src/zserio/Variant.h:44
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
 google-explicit-constructor:src/zserio/View.h:167
@@ -164,7 +158,7 @@ bugprone-use-after-move:test/zserio/VariantTest.cpp:170
 bugprone-use-after-move:test/zserio/VariantTest.cpp:178
 bugprone-use-after-move:test/zserio/VariantTest.cpp:211
 bugprone-use-after-move:test/zserio/VariantTest.cpp:237
-bugprone-use-after-move:test/zserio/VariantTest.cpp:243
+bugprone-use-after-move:test/zserio/VariantTest.cpp:247
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367

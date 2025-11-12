@@ -69,6 +69,9 @@ protected:
         testSetGet(value, allocator);
         testIsType(value, allocator);
         testHasValue(value, allocator);
+        testSwap(value, allocator);
+        testEmplace(value, allocator);
+        testGetIf(value, allocator);
     }
 
 private:
@@ -370,6 +373,52 @@ private:
 
         any.reset();
         ASSERT_FALSE(any.hasValue());
+    }
+
+    template <typename T, typename ALLOC>
+    void testSwap(const T& value, const ALLOC& allocator)
+    {
+        BasicAny<ALLOC> empty(allocator);
+        ASSERT_TRUE(!empty.hasValue());
+        BasicAny<ALLOC> any(allocator);
+        any.set(value);
+        ASSERT_TRUE(any.template isType<T>());
+        ASSERT_EQ(any.template get<T>(), value);
+
+        any.swap(empty);
+        ASSERT_TRUE(!any.hasValue());
+        ASSERT_TRUE(empty.template isType<T>());
+        ASSERT_EQ(empty.template get<T>(), value);
+
+        any.set(150);
+        any.swap(empty);
+        ASSERT_TRUE(empty.template isType<int>());
+        ASSERT_EQ(empty.template get<int>(), 150);
+        ASSERT_TRUE(any.template isType<T>());
+        ASSERT_EQ(any.template get<T>(), value);
+    }
+
+    template <typename T, typename ALLOC>
+    void testEmplace(const T& value, const ALLOC& allocator)
+    {
+        BasicAny<ALLOC> any(allocator);
+        any.template emplace<T>(value);
+        ASSERT_TRUE(any.template isType<T>());
+        ASSERT_EQ(any.template get<T>(), value);
+    }
+
+    template <typename T, typename ALLOC>
+    void testGetIf(const T& value, const ALLOC& allocator)
+    {
+        BasicAny<ALLOC> any(allocator);
+        ASSERT_TRUE(any.template get_if<T>() == nullptr);
+        any.set(value);
+        ASSERT_TRUE(any.template get_if<T>() != nullptr);
+        ASSERT_EQ(any.template get_if<T>(), &any.template get<T>());
+        ASSERT_TRUE(any.template get_if<std::string>() == nullptr);
+        ASSERT_TRUE(any.template get_if<long>() == nullptr);
+        any.reset();
+        ASSERT_TRUE(any.template get_if<T>() == nullptr);
     }
 };
 

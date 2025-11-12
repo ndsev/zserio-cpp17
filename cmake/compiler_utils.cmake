@@ -12,6 +12,10 @@ function(compiler_get_warnings_setup VARNAME)
                 "-Wno-long-long"
                 "-Wno-maybe-uninitialized") # DataView
 
+        # gcc 11 reports bad free in tests/language/choice_types Release only. gcc 12 and up is okay
+        if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "12.0.0")
+            set(WARNINGS_SETUP_LIST "${WARNINGS_SETUP_LIST} -Wno-free-nonheap-object")
+        endif ()
         # gcc 7.5 reports Wsign-conversion even on static_cast, reportedly fixed in gcc 9.3
         if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.3.0")
             set(WARNINGS_SETUP_LIST "${WARNINGS_SETUP_LIST} -Wsign-conversion")

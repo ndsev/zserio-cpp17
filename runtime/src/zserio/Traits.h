@@ -26,6 +26,12 @@ class Extended;
 namespace detail
 {
 
+// Useful as a false-substitute in static_assert(false) which is buggy in gcc.
+// At the same time it should print the type name if static_assert is triggered.
+template <typename T>
+struct always_false : std::false_type
+{};
+
 template <typename VALUE_TYPE>
 class NumericTypeWrapper;
 
