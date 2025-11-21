@@ -55,14 +55,26 @@ class BasicIntrospectableServiceData : public IBasicServiceData<ALLOC>
 {
 public:
     /**
-     * Constructor from introspectable.
+     * Constructor copying the object.
      *
-     * \param introspectable Constant introspectable created from zserio request object.
+     * \param object The service data object to copy.
      * \param allocator Allocator to use for data allocation.
      */
-    explicit BasicIntrospectableServiceData(ZSERIO_OBJECT&& response, const ALLOC& allocator = ALLOC()) :
-            m_response(std::move(response)),
-            m_introspectable(introspectable(View(m_response), allocator)),
+    explicit BasicIntrospectableServiceData(const ZSERIO_OBJECT& object, const ALLOC& allocator = ALLOC()) :
+            m_object(object),
+            m_introspectable(introspectable(View(m_object), allocator)),
+            m_data(allocator)
+    {}
+
+    /**
+     * Constructor moving the object.
+     *
+     * \param object The service data object to move.
+     * \param allocator Allocator to use for data allocation.
+     */
+    explicit BasicIntrospectableServiceData(ZSERIO_OBJECT&& object, const ALLOC& allocator = ALLOC()) :
+            m_object(std::move(object)),
+            m_introspectable(introspectable(View(m_object), allocator)),
             m_data(allocator)
     {}
 
@@ -87,7 +99,7 @@ public:
     }
 
 private:
-    ZSERIO_OBJECT m_response;
+    ZSERIO_OBJECT m_object;
     IBasicIntrospectableViewConstPtr<ALLOC> m_introspectable;
     mutable BasicBitBuffer<ALLOC> m_data;
 };
