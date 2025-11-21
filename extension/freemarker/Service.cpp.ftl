@@ -87,7 +87,11 @@ ${method.responseTypeInfo.typeFullName} Client::${method.name}Method(<#rt>
     <#if method.requestTypeInfo.isBytes>
     const ${types.rawServiceDataView.name} requestData(request);
     <#else>
+        <#if withTypeInfoCode>
+    const ${types.introspectableServiceData.name}<${method.requestTypeInfo.typeFullName}> requestData(request, get_allocator_ref());
+        <#else>
     const ${types.objectServiceData.name} requestData(request, get_allocator_ref());
+        </#if>
     </#if>
 
     auto responseData = m_service.callMethod("${method.name}", requestData, context);
