@@ -67,10 +67,6 @@ add_subdirectory(test_utils test_utils)
 include(gtest_utils)
 gtest_add_library(${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest)
 
-# add SQLite3 for testing
-include(sqlite_utils)
-sqlite_add_library(${ZSERIO_CPP17_PROJECT_ROOT})
-
 compiler_set_warnings()
 compiler_set_warnings_as_errors()
 
@@ -179,9 +175,7 @@ endif ()
 
 # add_executable requieres at least a single source file
 add_executable(${PROJECT_NAME} ${TEST_SOURCES_LIST})
-target_link_libraries(${PROJECT_NAME} ${TEST_DEPENDENCIES_LIST} gtest_main ZserioCppTestUtils ZserioCpp17Runtime
-        ${SQLITE_LIBRARY})
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SQLITE_INCDIR})
+target_link_libraries(${PROJECT_NAME} ${TEST_DEPENDENCIES_LIST} gtest_main ZserioCppTestUtils ZserioCpp17Runtime)
 
 # add tests - test are labeled by file names (i.e. grouped)
 if (ZSERIO_TEST_EXTERN_SCHEMA_TEST)

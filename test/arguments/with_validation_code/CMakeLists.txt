@@ -9,7 +9,6 @@ zserio_generate_cpp(
     ERROR_VAR ZSERIO_LOG
 )
 target_link_libraries(with_validation_code_zs PUBLIC ZserioCpp17Runtime)
-target_include_directories(with_validation_code_zs SYSTEM PRIVATE ${SQLITE_INCDIR})
 if (ZSERIO_LOG)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/zserio_log.txt "${ZSERIO_LOG}")
     check_zserio_warnings("${ZSERIO_LOG}" 0)

@@ -75,13 +75,6 @@ if (${ZSERIO_CODE_COVERAGE_ENABLE})
     create_coverage_target(${COV_PARAMS})
 endif ()
 
-# install Zserio C++ runtime library (we release sources only)
-install(DIRECTORY src/ DESTINATION .
-        FILES_MATCHING
-        PATTERN "CMakeLists.txt"
-        PATTERN "*.h"
-        PATTERN "*.cpp")
-
 # add clang-tidy custom target
 include(clang_tidy_utils)
 clang_tidy_add_custom_target(ZserioCpp17Runtime-clang-tidy
