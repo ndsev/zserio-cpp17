@@ -9,7 +9,6 @@ zserio_generate_cpp(
     ERROR_VAR ZSERIO_LOG_TYPE_INFO_CODE
 )
 target_link_libraries(with_type_info_code_zs PUBLIC ZserioCpp17Runtime)
-target_include_directories(with_type_info_code_zs SYSTEM PRIVATE ${SQLITE_INCDIR})
 if (ZSERIO_LOG_TYPE_INFO_CODE)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/zserio_log_type_info_code.txt "${ZSERIO_LOG_TYPE_INFO_CODE}")
     check_zserio_warnings("${ZSERIO_LOG_TYPE_INFO_CODE}" 0)

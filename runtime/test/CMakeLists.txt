@@ -5,15 +5,13 @@
 # This CMake file is NOT designed to be included directly without any further dependencies.
 #
 
+cmake_minimum_required(VERSION 3.21.0)
+
 project(ZserioCpp17RuntimeTest)
 
 # add gtest library
 include(gtest_utils)
 gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
-
-# add SQLite3 library
-include(sqlite_utils)
-sqlite_add_library(${ZSERIO_CPP17_PROJECT_ROOT})
 
 compiler_set_warnings()
 compiler_set_warnings_as_errors()
@@ -209,7 +207,6 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/ServiceExceptionTest.cpp
     zserio/SizeConvertUtilTest.cpp
     zserio/SpanTest.cpp
-    zserio/SqliteConnectionTest.cpp
     zserio/StringConvertUtilTest.cpp
     zserio/StringTest.cpp
     zserio/TrackingAllocator.h
@@ -220,20 +217,25 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/UnionCaseExceptionTest.cpp
     zserio/UniquePtrTest.cpp
     zserio/ValidationExceptionTest.cpp
-    zserio/ValidationSqliteUtilTest.cpp
     zserio/VariantTest.cpp
     zserio/WalkerTest.cpp
     zserio/ZserioTreeCreatorTest.cpp
 )
 
-add_executable(${PROJECT_NAME} ${TEST_OBJECT_SRCS} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})
+if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
+    set(ZSERIO_CPP17_RUNTIME_TEST_SQLITE_SRCS
+        zserio/SqliteConnectionTest.cpp
+        zserio/ValidationSqliteUtilTest.cpp
+    )
+endif()
+
+add_executable(${PROJECT_NAME} ${TEST_OBJECT_SRCS} ${ZSERIO_CPP17_RUNTIME_TEST_SRCS} ${ZSERIO_CPP17_RUNTIME_TEST_SQLITE_SRCS})
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/test_object FILES ${TEST_OBJECT_SRCS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE .)
 target_include_directories(${PROJECT_NAME} PRIVATE ../src)
-target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SQLITE_INCDIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17Runtime gtest_main ${SQLITE_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17Runtime gtest_main)
 
-gtest_add_tests(${PROJECT_NAME} "--gtest_output=xml" ${ZSERIO_CPP17_RUNTIME_TEST_SRCS})
+gtest_add_tests(${PROJECT_NAME} "--gtest_output=xml" ${ZSERIO_CPP17_RUNTIME_TEST_SRCS} ${ZSERIO_CPP17_RUNTIME_TEST_SQLITE_SRCS})

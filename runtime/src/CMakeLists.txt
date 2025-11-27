@@ -17,6 +17,15 @@ cmake_minimum_required(VERSION 3.15.0)
 
 project(ZserioCpp17Runtime)
 
+option(ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE "Build zserio runtime with SQLite dependent parts" ON)
+set(ZSERIO_CPP17_RUNTIME_SQLITE_ROOT "${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/sqlite3" CACHE PATH "Path to the custom SQLite distribution. You may have to create sqlite3.h there if not present" )
+
+# add SQLite3 library
+if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
+    include(sqlite_utils)
+    sqlite_add_library(${ZSERIO_CPP17_RUNTIME_SQLITE_ROOT})
+endif()
+
 set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/pmr/Any.h
     zserio/pmr/BitBuffer.h
@@ -91,7 +100,6 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/IPubsub.h
     zserio/IReflectableData.h
     zserio/IService.h
-    zserio/ISqliteDatabase.h
     zserio/ITypeInfo.h
     zserio/IValidationObserver.h
     zserio/IWalkFilter.h
@@ -117,10 +125,6 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/SizeConvertUtil.cpp
     zserio/SizeConvertUtil.h
     zserio/Span.h
-    zserio/SqliteConnection.h
-    zserio/SqliteException.h
-    zserio/SqliteFinalizer.h
-    zserio/SqliteUtil.h
     zserio/String.cpp
     zserio/String.h
     zserio/StringConvertUtil.h
@@ -135,7 +139,6 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/UniquePtr.h
     zserio/ValidationException.h
     zserio/Variant.h
-    zserio/ValidationSqliteUtil.h
     zserio/Vector.h
     zserio/View.h
     zserio/Walker.h
@@ -144,10 +147,40 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/ZserioTreeCreator.h
 )
 
-add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
+if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
+    set(ZSERIO_CPP17_RUNTIME_LIB_SQLITE_SRCS
+        zserio/ISqliteDatabase.h
+        zserio/SqliteConnection.h
+        zserio/SqliteException.h
+        zserio/SqliteFinalizer.h
+        zserio/SqliteUtil.h
+        zserio/ValidationSqliteUtil.h
+    )
+endif()
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/zserio FILES ${ZSERIO_CPP17_RUNTIME_LIB_SRCS})
+add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS} ${ZSERIO_CPP17_RUNTIME_LIB_SQLITE_SRCS})
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/zserio FILES ${ZSERIO_CPP17_RUNTIME_LIB_SRCS} ${ZSERIO_CPP17_RUNTIME_LIB_SQLITE_SRCS})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
+    target_link_libraries(${PROJECT_NAME} PUBLIC SQLite3)
+endif()
+
+# install Zserio C++ runtime library (we release sources only)
+install(DIRECTORY . DESTINATION .
+        FILES_MATCHING
+        PATTERN "CMakeLists.txt"
+        PATTERN "*.h"
+        PATTERN "*.cpp"
+        PATTERN "*Sqlite*" EXCLUDE)
+
+if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
+    install(DIRECTORY . DESTINATION .
+        FILES_MATCHING
+        PATTERN "*Sqlite*.h"
+        PATTERN "*Sqlite*.cpp")
+endif()

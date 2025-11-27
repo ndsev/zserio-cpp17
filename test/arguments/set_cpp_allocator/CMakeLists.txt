@@ -57,7 +57,6 @@ zserio_generate_cpp(
     ERROR_VAR ZSERIO_LOG_SQL_ALLOCATION
 )
 target_link_libraries(sql_allocation_zs PUBLIC ZserioCpp17Runtime)
-target_include_directories(sql_allocation_zs SYSTEM PRIVATE ${SQLITE_INCDIR})
 if (ZSERIO_LOG_SQL_ALLOCATION)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/zserio_log_sql_allocation.txt "${ZSERIO_LOG_SQL_ALLOCATION}")
     check_zserio_warnings("${ZSERIO_LOG_SQL_ALLOCATION}" 0)
