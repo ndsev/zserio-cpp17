@@ -22,6 +22,49 @@ struct type_at
 template <auto I, typename... T>
 using type_at_t = typename type_at<static_cast<size_t>(I), T...>::type;
 
+template <size_t N, typename V, typename F>
+void for_active_item(const V&, F&&, std::false_type)
+{}
+
+template <size_t N, typename V, typename F>
+void for_active_item(const V& var, F&& fun, std::true_type = {})
+{
+    using INDEX = typename V::IndexType;
+    if (static_cast<size_t>(var.index()) == N - 1)
+    {
+        std::forward<F>(fun)(*var.template get_if<static_cast<INDEX>(N - 1)>());
+    }
+    for_active_item<N - 1>(var, std::forward<F>(fun), std::bool_constant<(N - 1 > 0)>());
+}
+
+template <size_t N, typename V, typename F>
+void for_active_item(V& var, F&& fun, std::true_type = {})
+{
+    using INDEX = typename V::IndexType;
+    if (static_cast<size_t>(var.index()) == N - 1)
+    {
+        std::forward<F>(fun)(*var.template get_if<static_cast<INDEX>(N - 1)>());
+    }
+    for_active_item<N - 1>(var, std::forward<F>(fun), std::bool_constant<(N - 1 > 0)>());
+}
+
+template <size_t N, typename V, typename F>
+void for_active_item_2(const V&, const V&, F&&, std::false_type)
+{}
+
+template <size_t N, typename V, typename F>
+void for_active_item_2(const V& var1, const V& var2, F&& fun, std::true_type = {})
+{
+    // assert(var1.index() == var2.index());
+    using INDEX = typename V::IndexType;
+    if (static_cast<size_t>(var1.index()) == N - 1)
+    {
+        std::forward<F>(fun)(*var1.template get_if<static_cast<INDEX>(N - 1)>(),
+                *var2.template get_if<static_cast<INDEX>(N - 1)>());
+    }
+    for_active_item_2<N - 1>(var1, var2, std::forward<F>(fun), std::bool_constant<(N - 1 > 0)>());
+}
+
 } // namespace detail
 
 /**
@@ -322,13 +365,16 @@ public:
         using R = decltype(fun(std::declval<detail::type_at_t<0, T...>>()));
         if constexpr (std::is_same_v<R, void>)
         {
-            std::nullptr_t dummy;
-            visitSeq(std::forward<F>(fun), dummy, std::make_index_sequence<sizeof...(T)>());
+            detail::for_active_item<sizeof...(T)>(*this, [&fun](auto& elem) {
+                std::forward<F>(fun)(elem);
+            });
         }
         else
         {
             R ret;
-            visitSeq(std::forward<F>(fun), ret, std::make_index_sequence<sizeof...(T)>());
+            detail::for_active_item<sizeof...(T)>(*this, [&ret, &fun](auto& elem) {
+                ret = std::forward<F>(fun)(elem);
+            });
             return ret;
         }
     }
@@ -350,13 +396,16 @@ public:
         using R = decltype(fun(std::declval<detail::type_at_t<0, T...>>()));
         if constexpr (std::is_same_v<R, void>)
         {
-            std::nullptr_t dummy;
-            visitSeq(std::forward<F>(fun), dummy, std::make_index_sequence<sizeof...(T)>());
+            detail::for_active_item<sizeof...(T)>(*this, [&fun](auto& elem) {
+                std::forward<F>(fun)(elem);
+            });
         }
         else
         {
             R ret;
-            visitSeq(std::forward<F>(fun), ret, std::make_index_sequence<sizeof...(T)>());
+            detail::for_active_item<sizeof...(T)>(*this, [&ret, &fun](auto& elem) {
+                ret = std::forward<F>(fun)(elem);
+            });
             return ret;
         }
     }
@@ -372,7 +421,12 @@ public:
         {
             return false;
         }
-        return equalSeq(other, std::make_index_sequence<sizeof...(T)>());
+
+        bool ret = false;
+        detail::for_active_item_2<sizeof...(T)>(*this, other, [&ret](auto& elem1, auto& elem2) {
+            ret = elem1 == elem2;
+        });
+        return ret;
     }
 
     /**
@@ -396,7 +450,12 @@ public:
         {
             return index() < other.index();
         }
-        return lessSeq(other, std::make_index_sequence<sizeof...(T)>());
+
+        bool ret = false;
+        detail::for_active_item_2<sizeof...(T)>(*this, other, [&ret](auto& elem1, auto& elem2) {
+            ret = elem1 < elem2;
+        });
+        return ret;
     }
 
     /**
@@ -430,84 +489,6 @@ public:
     }
 
 private:
-    template <size_t... I, typename F, typename R>
-    void visitSeq(F&& fun, R& returnValue, std::index_sequence<I...>)
-    {
-        (visit<I>(fun, returnValue), ...);
-    }
-
-    template <size_t... I, typename F, typename R>
-    void visitSeq(F&& fun, R& returnValue, std::index_sequence<I...>) const
-    {
-        (visit<I>(fun, returnValue), ...);
-    }
-
-    template <size_t I, typename F, typename R>
-    void visit(F&& fun, R& returnValue)
-    {
-        if (I != static_cast<size_t>(index()))
-        {
-            return;
-        }
-        if constexpr (std::is_same_v<R, std::nullptr_t>)
-        {
-            std::forward<F>(fun)(get<static_cast<INDEX>(I)>());
-        }
-        else
-        {
-            returnValue = std::forward<F>(fun)(get<static_cast<INDEX>(I)>());
-        }
-    }
-
-    template <size_t I, typename F, typename R>
-    void visit(F&& fun, R& returnValue) const
-    {
-        if (I != static_cast<size_t>(index()))
-        {
-            return;
-        }
-        if constexpr (std::is_same_v<R, std::nullptr_t>)
-        {
-            std::forward<F>(fun)(get<static_cast<INDEX>(I)>());
-        }
-        else
-        {
-            returnValue = std::forward<F>(fun)(get<static_cast<INDEX>(I)>());
-        }
-    }
-
-    template <size_t... I>
-    bool equalSeq(const BasicVariant& other, std::index_sequence<I...>) const
-    {
-        return (equal<I>(other) && ...);
-    }
-
-    template <size_t I>
-    bool equal(const BasicVariant& other) const
-    {
-        if (I != static_cast<size_t>(index()))
-        {
-            return true;
-        }
-        return get<static_cast<INDEX>(I)>() == other.get<static_cast<INDEX>(I)>();
-    }
-
-    template <size_t... I>
-    bool lessSeq(const BasicVariant& other, std::index_sequence<I...>) const
-    {
-        return (less<I>(other) && ...);
-    }
-
-    template <size_t I>
-    bool less(const BasicVariant& other) const
-    {
-        if (I != static_cast<size_t>(index()))
-        {
-            return true;
-        }
-        return get<static_cast<INDEX>(I)>() < other.get<static_cast<INDEX>(I)>();
-    }
-
     BasicAny<ALLOC> m_data;
     INDEX m_index;
 };

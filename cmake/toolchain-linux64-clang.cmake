@@ -12,11 +12,8 @@ set(CMAKE_LINKER "${COMPILER_PATH_PREFIX}clang++$ENV{CLANG_VERSION_SUFFIX}")
 # set -m64
 set(COMPILER_M64_FLAG "--target=x86_64-linux")
 
-# set bracket depth flag to prevent instantiating fold expression error
-set(COMPILER_BRACKET_DEPTH_FLAG "-fbracket-depth=1024")
-
 # set C flags
-set(CMAKE_C_FLAGS_INIT "${COMPILER_M64_FLAG} ${COMPILER_BRACKET_DEPTH_FLAG}")
+set(CMAKE_C_FLAGS_INIT "${COMPILER_M64_FLAG}")
 
 # set CXX flags
-set(CMAKE_CXX_FLAGS_INIT "${COMPILER_M64_FLAG} ${COMPILER_BRACKET_DEPTH_FLAG}")
+set(CMAKE_CXX_FLAGS_INIT "${COMPILER_M64_FLAG}")

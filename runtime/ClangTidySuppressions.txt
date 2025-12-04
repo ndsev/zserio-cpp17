@@ -23,7 +23,7 @@ cert-dcl58-cpp:src/zserio/BitBuffer.h:608
 cert-dcl58-cpp:src/zserio/BitBuffer.h:620
 cert-dcl58-cpp:src/zserio/Extended.h:242
 cert-dcl58-cpp:src/zserio/Optional.h:1186
-cert-dcl58-cpp:src/zserio/Variant.h:623
+cert-dcl58-cpp:src/zserio/Variant.h:604
 cert-dcl58-cpp:src/zserio/View.h:257
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
@@ -140,7 +140,7 @@ google-explicit-constructor:src/zserio/Types.h:60
 google-explicit-constructor:src/zserio/Types.h:67
 
 # There is no C-style casting. Probably tidy doesn't understand template auto parameter.
-google-readability-casting:src/zserio/Variant.h:44
+google-readability-casting:src/zserio/Variant.h:87
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
 google-explicit-constructor:src/zserio/View.h:167
