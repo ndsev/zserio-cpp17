@@ -48,6 +48,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/AllocatorHolder.h
     zserio/Any.h
     zserio/ArrayView.h
+    zserio/ArrayLengthException.cpp
     zserio/ArrayLengthException.h
     zserio/ArrayTraits.h
     zserio/BitBuffer.h
@@ -65,8 +66,10 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/BuiltInOperators.h
     zserio/Bytes.cpp
     zserio/Bytes.h
+    zserio/ChoiceCaseException.cpp
     zserio/ChoiceCaseException.h
     zserio/ChoiceTag.h
+    zserio/ConstraintException.cpp
     zserio/ConstraintException.h
     zserio/CppRuntimeException.cpp
     zserio/CppRuntimeException.h
@@ -76,6 +79,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/DeltaContext.h
     zserio/Enums.h
     zserio/Extended.h
+    zserio/ExtendedFieldException.cpp
     zserio/ExtendedFieldException.h
     zserio/FileUtil.cpp
     zserio/FileUtil.h
@@ -104,20 +108,26 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/JsonTokenizer.cpp
     zserio/JsonTokenizer.h
     zserio/JsonWriter.h
+    zserio/MissedOptionalException.cpp
     zserio/MissedOptionalException.h
+    zserio/Optional.cpp
     zserio/Optional.h
+    zserio/OutOfRangeException.cpp
     zserio/OutOfRangeException.h
+    zserio/PubsubException.cpp
     zserio/PubsubException.h
     zserio/RebindAlloc.h
     zserio/ReflectableData.h
     zserio/ReflectableUtil.h
     zserio/RuntimeArch.h
     zserio/SerializeUtil.h
+    zserio/ServiceException.cpp
     zserio/ServiceException.h
     zserio/SizeConvertUtil.cpp
     zserio/SizeConvertUtil.h
     zserio/Span.h
     zserio/SqliteConnection.h
+    zserio/SqliteException.cpp
     zserio/SqliteException.h
     zserio/SqliteFinalizer.h
     zserio/SqliteUtil.h
@@ -130,10 +140,14 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/TypeInfoUtil.h
     zserio/Types.cpp
     zserio/Types.h
+    zserio/UnexpectedOptionalException.cpp
     zserio/UnexpectedOptionalException.h
+    zserio/UnionCaseException.cpp
     zserio/UnionCaseException.h
     zserio/UniquePtr.h
+    zserio/ValidationException.cpp
     zserio/ValidationException.h
+    zserio/Variant.cpp
     zserio/Variant.h
     zserio/ValidationSqliteUtil.h
     zserio/Vector.h

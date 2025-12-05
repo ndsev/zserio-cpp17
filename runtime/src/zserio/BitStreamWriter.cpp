@@ -316,6 +316,8 @@ static const std::array<int64_t, 65> MAX_I64_VALUES = {
         0x7fffffffffffffffLL,
 };
 
+BitStreamWriter::InsufficientCapacityException::~InsufficientCapacityException() = default;
+
 BitStreamWriter::BitStreamWriter(uint8_t* buffer, size_t bufferBitSize, BitsTag) :
         m_buffer(buffer, (bufferBitSize + 7) / 8),
         m_bitIndex(0),

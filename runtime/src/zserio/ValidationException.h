@@ -13,6 +13,8 @@ class ValidationException : public CppRuntimeException
 {
 public:
     using CppRuntimeException::CppRuntimeException;
+
+    ~ValidationException() override;
 };
 
 } // namespace zserio

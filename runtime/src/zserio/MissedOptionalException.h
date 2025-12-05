@@ -15,6 +15,8 @@ class MissedOptionalException : public ValidationException
 {
 public:
     using ValidationException::ValidationException;
+
+    ~MissedOptionalException() override;
 };
 
 } // namespace zserio
