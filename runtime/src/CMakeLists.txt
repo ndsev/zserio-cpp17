@@ -20,6 +20,8 @@ project(ZserioCpp17Runtime)
 option(ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE "Build zserio runtime with SQLite dependent parts" ON)
 set(ZSERIO_CPP17_RUNTIME_SQLITE_ROOT "${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/sqlite3" CACHE PATH "Path to the custom SQLite distribution. You may have to create CMakeLists.txt/sqlite3.h if not present" )
 
+option(ZSERIO_CPP17_RUNTIME_BUILD_SHARED_LIBS "Build zserio runtime as a shared library" OFF)
+
 # add SQLite3 library
 if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
     message(STATUS "Zserio runtime will be built with SQLite support")
@@ -161,7 +163,16 @@ if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
     )
 endif()
 
-add_library(${PROJECT_NAME} STATIC ${ZSERIO_CPP17_RUNTIME_LIB_SRCS} ${ZSERIO_CPP17_RUNTIME_LIB_SQLITE_SRCS})
+if (${ZSERIO_CPP17_RUNTIME_BUILD_SHARED_LIBS})
+    message(STATUS "Zserio runtime will be built as a shared library") 
+    set(ZSERIO_CPP17_LIB_TYPE "SHARED")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+else()
+    message(STATUS "Zserio runtime will be built as a static library")
+    set(ZSERIO_CPP17_LIB_TYPE "STATIC")
+endif()
+
+add_library(${PROJECT_NAME} ${ZSERIO_CPP17_LIB_TYPE} ${ZSERIO_CPP17_RUNTIME_LIB_SRCS} ${ZSERIO_CPP17_RUNTIME_LIB_SQLITE_SRCS})
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/zserio FILES ${ZSERIO_CPP17_RUNTIME_LIB_SRCS} ${ZSERIO_CPP17_RUNTIME_LIB_SQLITE_SRCS})
 

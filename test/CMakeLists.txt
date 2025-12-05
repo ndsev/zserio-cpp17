@@ -4,7 +4,7 @@
 #
 # This CMake file is designed to be included directly without any further dependencies.
 #
-cmake_minimum_required(VERSION 3.15.0)
+cmake_minimum_required(VERSION 3.21.0)
 
 project(ZserioCppTest)
 
@@ -176,6 +176,14 @@ endif ()
 # add_executable requieres at least a single source file
 add_executable(${PROJECT_NAME} ${TEST_SOURCES_LIST})
 target_link_libraries(${PROJECT_NAME} ${TEST_DEPENDENCIES_LIST} gtest_main ZserioCppTestUtils ZserioCpp17Runtime)
+
+if (WIN32)
+    # copy dependent DLLs to target's directory
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS
+    )
+endif()
 
 # add tests - test are labeled by file names (i.e. grouped)
 if (ZSERIO_TEST_EXTERN_SCHEMA_TEST)

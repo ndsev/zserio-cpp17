@@ -238,4 +238,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE .)
 target_include_directories(${PROJECT_NAME} PRIVATE ../src)
 target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17Runtime gtest_main)
 
+if (WIN32)
+    # copy dependent DLLs to target's directory
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS
+    )
+endif()
+
 gtest_add_tests(${PROJECT_NAME} "--gtest_output=xml" ${ZSERIO_CPP17_RUNTIME_TEST_SRCS} ${ZSERIO_CPP17_RUNTIME_TEST_SQLITE_SRCS})
