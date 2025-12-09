@@ -101,7 +101,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          "-Dsonar.projectKey="ndsev_zserio-cpp17"
+          "-Dsonar.projectKey=ndsev_zserio-cpp17"
           "-Dsonar.organization=ndsev"
           "-Dsonar.sourceEncoding=UTF-8"
           "-Dsonar.sources=runtime/src"
