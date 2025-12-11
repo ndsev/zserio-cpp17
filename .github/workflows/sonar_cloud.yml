@@ -96,8 +96,10 @@ jobs:
         CMAKE_BUILD_OPTIONS: "-j4"
 
     - name: Run SonarCloud analysis
+      if: github.event.workflow_run.event != 'pull_request'
       uses: SonarSource/sonarqube-scan-action@v6
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
@@ -113,29 +115,26 @@ jobs:
           "-Dsonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
           "-Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}"
           "-Dsonar.branch.name=${{ github.event.workflow_run.head_branch }}"
-          "-Dsonar.pullrequest.key=${{ env.PULL_REQUEST_KEY }}"
-          "-Dsonar.pullrequest.branch=${{ env.PULL_REQUEST_BRANCH }}"
-          "-Dsonar.pullrequest.base=${{ env.PULL_REQUEST_BASE }}"
-
-    - name: Run sonar-scanner
-      if: false
+          
+    - name: Run SonarCloud analysis on PR
+      if: github.event.workflow_run.event == 'pull_request'
+      uses: SonarSource/sonarqube-scan-action@v6
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner \
-            --define sonar.projectKey="ndsev_zserio-cpp17" \
-            --define sonar.organization="ndsev" \
-            --define sonar.sourceEncoding="UTF-8" \
-            --define sonar.sources="runtime/src" \
-            --define sonar.inclusions="**/*.h,**/*.cpp" \
-            --define sonar.exclusions="**/CMakeFiles/**/*" \
-            --define sonar.tests="runtime/test" \
-            --define sonar.test.inclusions="runtime/**/test/**/*.h,runtime/**/test/**/.cpp" \
-            --define sonar.scm.exclusions.disabled="true" \
-            --define sonar.cfamily.compile-commands="${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json" \
-            --define sonar.scm.revision="${{ github.event.workflow_run.head_sha }}" \
-            --define sonar.branch.name="${{ github.event.workflow_run.head_branch }}" \
-            --define sonar.pullrequest.key="${{ env.PULL_REQUEST_KEY }}" \
-            --define sonar.pullrequest.branch="${{ env.PULL_REQUEST_BRANCH }}" \
-            --define sonar.pullrequest.base="${{ env.PULL_REQUEST_BASE }}"
+      with:
+        args: >
+          "-Dsonar.projectKey=ndsev_zserio-cpp17"
+          "-Dsonar.organization=ndsev"
+          "-Dsonar.sourceEncoding=UTF-8"
+          "-Dsonar.sources=runtime/src"
+          "-Dsonar.inclusions=**/*.h,**/*.cpp"
+          "-Dsonar.exclusions=**/CMakeFiles/**/*"
+          "-Dsonar.tests=runtime/test"
+          "-Dsonar.test.inclusions=runtime/**/test/**/*.h,runtime/**/test/**/.cpp"
+          "-Dsonar.scm.exclusions.disabled=true"
+          "-Dsonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
+          "-Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}"
+          "-Dsonar.pullrequest.key=${{ env.PULL_REQUEST_KEY }}"
+          "-Dsonar.pullrequest.branch=${{ env.PULL_REQUEST_BRANCH }}"
+          "-Dsonar.pullrequest.base=${{ env.PULL_REQUEST_BASE }}"
