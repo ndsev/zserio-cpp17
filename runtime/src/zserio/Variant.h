@@ -367,15 +367,15 @@ public:
         using R = decltype(fun(std::declval<detail::type_at_t<0, T...>>()));
         if constexpr (std::is_same_v<R, void>)
         {
-            detail::for_active_item<sizeof...(T)>(*this, [&fun](auto& elem) {
-                std::forward<F>(fun)(elem);
+            detail::for_active_item<sizeof...(T)>(*this, [func = std::forward<F>(fun)](auto& elem) {
+                std::move(func)(elem);
             });
         }
         else
         {
             R ret;
-            detail::for_active_item<sizeof...(T)>(*this, [&ret, &fun](auto& elem) {
-                ret = std::forward<F>(fun)(elem);
+            detail::for_active_item<sizeof...(T)>(*this, [&ret, func = std::forward<F>(fun)](auto& elem) {
+                ret = std::move(func)(elem);
             });
             return ret;
         }
@@ -398,15 +398,15 @@ public:
         using R = decltype(fun(std::declval<detail::type_at_t<0, T...>>()));
         if constexpr (std::is_same_v<R, void>)
         {
-            detail::for_active_item<sizeof...(T)>(*this, [&fun](auto& elem) {
-                std::forward<F>(fun)(elem);
+            detail::for_active_item<sizeof...(T)>(*this, [func = std::forward<F>(fun)](auto& elem) {
+                std::move(func)(elem);
             });
         }
         else
         {
             R ret;
-            detail::for_active_item<sizeof...(T)>(*this, [&ret, &fun](auto& elem) {
-                ret = std::forward<F>(fun)(elem);
+            detail::for_active_item<sizeof...(T)>(*this, [&ret, func = std::forward<F>(fun)](auto& elem) {
+                ret = std::move(func)(elem);
             });
             return ret;
         }
