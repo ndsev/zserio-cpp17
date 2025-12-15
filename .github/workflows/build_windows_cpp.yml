@@ -139,9 +139,15 @@ jobs:
         scripts/test_perf.sh cpp-${PACKAGE} -d test/data/others/gif/zs -s gif.zs -b gif.GifFile \
               -f test/data/others/gif/data/1pix.gif -c READ_WRITE
 
+    - name: Download Zserio bundle artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: zserio-java8
+        path: tmp_shared/distr
+
     - name: Build Zserio shared lib & disabled sqlite test
       shell: bash
       run: |
         export CMAKE_EXTRA_ARGS="-DZSERIO_CPP17_RUNTIME_BUILD_SHARED_LIBS=ON -DZSERIO_CPP17_RUNTIME_SQLITE_ENABLE=OFF ${CMAKE_EXTRA_ARGS}"
-        scripts/build.sh cpp_rt-${PACKAGE}
-        scripts/test.sh -p cpp-${PACKAGE} -i others/gif
+        scripts/build.sh cpp_rt-${PACKAGE} -o tmp_shared
+        scripts/test.sh -p cpp-${PACKAGE} -o tmp_shared -i others/gif
