@@ -264,7 +264,10 @@ public:
     </#items>
 </#list>
 
-    const ${fullName}& zserioData() const;
+    const ${fullName}& zserioData() const
+    {
+        return *m_data;
+    }
 
 protected:
     View(const ${fullName}& data, const View&<#if parameterList?has_content> other</#if>) noexcept :
