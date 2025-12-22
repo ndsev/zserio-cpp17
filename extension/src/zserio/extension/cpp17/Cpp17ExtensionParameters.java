@@ -21,6 +21,7 @@ public final class Cpp17ExtensionParameters
     {
         outputDir = parameters.getCommandLineArg(OptionCpp17);
         withTypeInfoCode = parameters.argumentExists(OptionWithTypeInfoCode);
+        withSourcesAmalgamation = parameters.argumentExists(OptionWithSourcesAmalgamation);
 
         final String cppAllocator = parameters.getCommandLineArg(OptionSetCppAllocator);
         if (cppAllocator == null || cppAllocator.equals(StdAllocator))
@@ -48,6 +49,11 @@ public final class Cpp17ExtensionParameters
     public boolean getWithTypeInfoCode()
     {
         return withTypeInfoCode;
+    }
+
+    public boolean getWithSourcesAmalgamation()
+    {
+        return withSourcesAmalgamation;
     }
 
     public TypesContext.AllocatorDefinition getAllocatorDefinition()
@@ -86,6 +92,16 @@ public final class Cpp17ExtensionParameters
         reflectionGroup.addOption(option);
         reflectionGroup.setRequired(false);
         options.addOptionGroup(reflectionGroup);
+
+        final OptionGroup sourcesAmalgamationGroup = new OptionGroup();
+        option = new Option(
+                OptionWithSourcesAmalgamation, false, "enable amalgamation of generated C++ sources");
+        sourcesAmalgamationGroup.addOption(option);
+        option = new Option(OptionWithoutSourcesAmalgamation, false,
+                "disable amalgamation of generated C++ sources (default)");
+        sourcesAmalgamationGroup.addOption(option);
+        sourcesAmalgamationGroup.setRequired(false);
+        options.addOptionGroup(sourcesAmalgamationGroup);
     }
 
     static boolean hasOptionCpp17(ExtensionParameters parameters)
@@ -130,6 +146,8 @@ public final class Cpp17ExtensionParameters
     private final static String OptionSetCppAllocator = "setCppAllocator";
     private final static String OptionWithoutTypeInfoCode = "withoutTypeInfoCode";
     private static final String OptionWithTypeInfoCode = "withTypeInfoCode";
+    private static final String OptionWithSourcesAmalgamation = "withSourcesAmalgamation";
+    private static final String OptionWithoutSourcesAmalgamation = "withoutSourcesAmalgamation";
 
     private final static String StdAllocator = "std";
     private final static String StdPolymorphicAllocator = "pmr";
@@ -137,6 +155,7 @@ public final class Cpp17ExtensionParameters
 
     private final String outputDir;
     private final boolean withTypeInfoCode;
+    private final boolean withSourcesAmalgamation;
     private final TypesContext.AllocatorDefinition allocatorDefinition;
     private final String parametersDescription;
     private final String zserioVersion;

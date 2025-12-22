@@ -3,7 +3,7 @@ zserio_generate_cpp(
     TARGET set_top_level_package_zs
     SRC_DIR ${TEST_ZS_ROOT}
     GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/gen
-    EXTRA_ARGS -setTopLevelPackage company.appl ${ZSERIO_EXTRA_ARGS}
+    EXTRA_ARGS -withoutSourcesAmalgamation -setTopLevelPackage company.appl ${ZSERIO_EXTRA_ARGS}
     GENERATED_SOURCES_VAR GENERATED_SOURCES
     OUTPUT_VAR ZSERIO_LOG
     ERROR_VAR ZSERIO_LOG

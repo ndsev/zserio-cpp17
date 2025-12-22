@@ -59,8 +59,9 @@ Although newer C++ compilers are not tested, they should work as well as long as
 
 ## Current State
 
-The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator
-design.
+The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator design.
+
+The [Command Line Parameters](#command-line-parameters) section lists command line parameters related to the C++17 generator.
 
 The generator fully supports the Zserio language and Zserio templates are generated as native C++ templates.
 
@@ -81,3 +82,59 @@ Run the Zserio C++17 generator using the following steps:
 
 - Unzip `zserio-java8` to get `zserio.jar` binary
 - Run the command `java -jar zserio.jar schema_name.zs -cpp17 output_directory_name`
+
+### <a name="command-line-parameters">Command line parameters for the C++17 Generator</a>
+
+```
+java -jar zserio.jar
+    [-cpp17 <output directory>]
+    [-setCppAllocator <allocator>]
+    [-setTopLevelPackage <package>]
+    [-src <source directory>]
+    [-withSourcesAmalgamation|-withoutSourcesAmalgamation]
+    [-withTypeInfoCode|-withoutTypeInfoCode]
+    <input file>
+```
+
+**`-cpp17`**
+
+Zserio will generate C++17 API into a given output directory.
+
+**`-setCppAllocator`**
+
+Sets the C++ allocator type to be used in generated code. Possible values: `std` (default), `pmr`, `ppmr`.
+
+`std` stands for `std::allocator` class implemented in standard C++ library.
+
+`pmr` stands for `std::pmr::polymorphic_allocator` class implemented in standard C++ library.
+
+`ppmr` stands for `zserio::pmr::PropagatingPolymorphicAllocator` class implemented in
+Zserio C++ runtime library.
+
+**`-setTopLevelPackage`**
+
+Sets the top level package for generated Java sources and top level namespace for generated C++ sources.
+
+> Parameter `-setTopLevelPackage appl.Zserio` forces all generated Java sources to be in the package
+> `appl.Zserio` and all generated C++ sources to be in the namespace `appl::Zserio`.
+
+**`-src`**
+
+Defines the root directory for the input file and all imported packages. If this option is missing, the default
+value is the current working directory. Currently, only one source directory can be specified. A list of
+directories as in the Java `CLASSPATH` is not supported.
+
+> If the source path is `C:\zserio` and the input file is `com\acme\foo.zs`, Zserio will try parsing
+> `C:\zserio\com\acme\foo.zs`. If `foo.zs` contains the declaration `import com.acme.bar.*`, Zserio will
+> try parsing `C:\zserio\com\acme\bar.zs`.
+
+**`-withSourcesAmalgamation|-withoutSourcesAmalgamation`**
+
+Enables/disables amalgamation of generated C++ sources. By default the code for each zserio object is placed in one header and one source file. When amalgamation is enabled,
+C++ sources will be automatically amalgamated to speed up C++ compilation time. C++ sources generated in
+different subdirectories will be amalgamated separately. Thus, if amalgamation is enabled, each generated
+subdirectory will contain only one C++ source module.
+
+**`-withTypeInfoCode|-withoutTypeInfoCode`**
+
+Enables/disables generation of type information code. By default is disabled.

@@ -45,7 +45,7 @@ abstract class CppDefaultEmitter extends DefaultTreeWalker
             throws ZserioExtensionException
     {
         processTemplate(templateName, templateData, zserioType.getPackage().getPackageName(),
-                zserioType.getName(), CPP_SOURCE_EXTENSION, false);
+                zserioType.getName(), CPP_SOURCE_EXTENSION, true);
     }
 
     protected void processHeaderTemplate(String templateName, Object templateData, ZserioType zserioType)
@@ -67,10 +67,17 @@ abstract class CppDefaultEmitter extends DefaultTreeWalker
         return context;
     }
 
+    protected boolean getWithSourcesAmalgamation()
+    {
+        return cppParameters.getWithSourcesAmalgamation();
+    }
+
     private void processTemplate(String templateName, Object templateData, PackageName packageName,
-            String outFileNameRoot, String outputExtension, boolean amalgamate) throws ZserioExtensionException
+            String outFileNameRoot, String outputExtension, boolean requestAmalgamate)
+            throws ZserioExtensionException
     {
         final File outDir = new File(cppParameters.getOutputDir(), packageName.toFilesystemPath());
+        final boolean amalgamate = (getWithSourcesAmalgamation() && requestAmalgamate);
         final String outFileNameWithoutExtension = (amalgamate) ? getAmalgamFileNameRoot() : outFileNameRoot;
         final File outputFile = new File(outDir, outFileNameWithoutExtension + outputExtension);
 

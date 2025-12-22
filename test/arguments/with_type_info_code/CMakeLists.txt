@@ -3,7 +3,7 @@ zserio_generate_cpp(
     TARGET with_type_info_code_zs
     SRC_DIR ${TEST_ZS_ROOT}
     GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/gen_type_info_code
-    EXTRA_ARGS -allowImplicitArrays -withTypeInfoCode ${ZSERIO_EXTRA_ARGS}
+    EXTRA_ARGS -withoutSourcesAmalgamation -allowImplicitArrays -withTypeInfoCode ${ZSERIO_EXTRA_ARGS}
     GENERATED_SOURCES_VAR GENERATED_SOURCES_TYPE_INFO_CODE
     OUTPUT_VAR ZSERIO_LOG_TYPE_INFO_CODE
     ERROR_VAR ZSERIO_LOG_TYPE_INFO_CODE
@@ -19,7 +19,7 @@ zserio_generate_cpp(
     TARGET type_info_string_expressions_zs
     SRC_DIR ${TEST_ZS_ROOT}
     GEN_DIR ${CMAKE_CURRENT_BINARY_DIR}/gen_string_expressions
-    EXTRA_ARGS -withTypeInfoCode ${ZSERIO_EXTRA_ARGS}
+    EXTRA_ARGS -withoutSourcesAmalgamation -withTypeInfoCode ${ZSERIO_EXTRA_ARGS}
     GENERATED_SOURCES_VAR GENERATED_SOURCES_STRING_EXPRESSIONS
     OUTPUT_VAR ZSERIO_LOG_STRING_EXPRESSIONS
     ERROR_VAR ZSERIO_LOG_STRING_EXPRESSIONS

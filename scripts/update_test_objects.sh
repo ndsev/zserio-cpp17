@@ -88,7 +88,7 @@ update_cpp_test_objects()
         rm -rf "${CPP17_RUNTIME_TEST_OBJECT_DIR}/std_allocator"
     fi
     local ZSERIO_ARGS_BASE=("-cpp17" "${CPP17_RUNTIME_TEST_DIR}"
-            "-withTypeInfoCode")
+            "-withTypeInfoCode -withoutSourcesAmalgamation")
     local SWITCH_WERROR=1
 
     local ZSERIO_ARGS_STD=(${ZSERIO_ARGS_BASE[@]} "-setCppAllocator" "std"
