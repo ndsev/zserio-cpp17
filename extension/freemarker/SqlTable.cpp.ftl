@@ -21,96 +21,6 @@
 <@user_includes cppUserIncludes, false/>
 <@namespace_begin package.path/>
 
-namespace
-{
-
-::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ${types.string.name}> columns)
-{
-    if (columns.empty())
-    {
-        static constexpr ::std::array<bool, ${fieldList?size}> allColumns = {<#rt>
-                <#lt><#list fieldList as field>true<#sep>, </#sep></#list>};
-        return allColumns;
-    }
-
-    ::std::array<bool, ${fieldList?size}> columnsMapping = {};
-    for (const auto& columnName : columns)
-    {
-        const auto it = ::std::find(${name}::columnNames.begin(), ${name}::columnNames.end(), columnName);
-        if (it == ${name}::columnNames.end())
-        {
-            throw ::zserio::SqliteException("Column name '") << columnName
-                    << "' doesn't exist in '${name}'!";
-        }
-        columnsMapping.at(static_cast<size_t>(it - ${name}::columnNames.begin())) = true;
-    }
-
-    return columnsMapping;
-}
-
-void appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping)
-{
-    bool isFirst = true;
-    for (size_t i = 0; i < columnsMapping.size(); ++i)
-    {
-        if (columnsMapping[i])
-        {
-            if (isFirst)
-            {
-                isFirst = false;
-            }
-            else
-            {
-                sqlQuery += ", ";
-            }
-            sqlQuery += ${name}::columnNames[i];
-        }
-    }
-}
-
-void appendWriteParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping)
-{
-    bool isFirst = true;
-    for (bool columnUsed : columnsMapping)
-    {
-        if (columnUsed)
-        {
-            if (isFirst)
-            {
-                isFirst = false;
-            }
-            else
-            {
-                sqlQuery += ", ";
-            }
-            sqlQuery += "?";
-        }
-    }
-}
-
-void appendUpdateParametersToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping)
-{
-    bool isFirst = true;
-    for (size_t i = 0; i < columnsMapping.size(); ++i)
-    {
-        if (columnsMapping[i])
-        {
-            if (isFirst)
-            {
-                isFirst = false;
-            }
-            else
-            {
-                sqlQuery += ", ";
-            }
-            sqlQuery += ${name}::columnNames[i];
-            sqlQuery += "=?";
-        }
-    }
-}
-
-} // namespace
-
 <#assign needsParameterProvider=explicitParameters?has_content/>
 <#assign hasPrimaryKeyField=sql_table_has_primary_key(fieldList)/>
 ${name}::${name}(::zserio::SqliteConnection& db, ::std::string_view tableName,
@@ -177,7 +87,7 @@ ${name}::Reader ${name}::createReader(<#if needsParameterProvider>IParameterProv
 
     ${types.string.name} sqlQuery(get_allocator_ref());
     sqlQuery += "SELECT ";
-    appendColumnsToQuery(sqlQuery, columnsMapping);
+    appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::NAME);
     sqlQuery += " FROM ";
     appendTableNameToQuery(sqlQuery);
     if (!condition.empty())
@@ -284,9 +194,9 @@ void ${name}::write(<#if needsParameterProvider>IParameterProvider& parameterPro
     sqlQuery += "INSERT INTO ";
     appendTableNameToQuery(sqlQuery);
     sqlQuery += "(";
-    appendColumnsToQuery(sqlQuery, columnsMapping);
+    appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::NAME);
     sqlQuery += ") VALUES (";
-    appendWriteParametersToQuery(sqlQuery, columnsMapping);
+    appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::SQL_PARAMETER);
     sqlQuery += ");";
 
     // write rows
@@ -336,7 +246,7 @@ void ${name}::update(<#if needsParameterProvider>IParameterProvider& parameterPr
     sqlQuery += "UPDATE ";
     appendTableNameToQuery(sqlQuery);
     sqlQuery += " SET ";
-    appendUpdateParametersToQuery(sqlQuery, columnsMapping);
+    appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::SQL_UPDATE);
     sqlQuery += " WHERE ";
     sqlQuery += whereCondition;
 
@@ -819,6 +729,63 @@ void ${name}::appendTableNameToQuery(${types.string.name}& sqlQuery) const
         sqlQuery += '.';
     }
     sqlQuery += m_name;
+}
+
+::std::array<bool, ${fieldList?size}> ${name}::createColumnsMapping(::zserio::Span<const ${types.string.name}> columns)
+{
+    if (columns.empty())
+    {
+        static constexpr ::std::array<bool, ${fieldList?size}> allColumns = {<#rt>
+                <#lt><#list fieldList as field>true<#sep>, </#sep></#list>};
+        return allColumns;
+    }
+
+    ::std::array<bool, ${fieldList?size}> columnsMapping = {};
+    for (const auto& columnName : columns)
+    {
+        const auto it = ::std::find(${name}::columnNames.begin(), ${name}::columnNames.end(), ::std::string_view(columnName));
+        if (it == ${name}::columnNames.end())
+        {
+            throw ::zserio::SqliteException("Column name '") << columnName
+                    << "' doesn't exist in '${name}'!";
+        }
+        columnsMapping.at(static_cast<size_t>(it - ${name}::columnNames.begin())) = true;
+    }
+
+    return columnsMapping;
+}
+
+void ${name}::appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping,
+        ColumnFormat format)
+{
+    bool isFirst = true;
+    for (size_t i = 0; i < columnsMapping.size(); ++i)
+    {
+        if (columnsMapping[i])
+        {
+            if (isFirst)
+            {
+                isFirst = false;
+            }
+            else
+            {
+                sqlQuery += ", ";
+            }
+            switch (format)
+            {
+                default:
+                    sqlQuery += ${name}::columnNames[i];
+                    break;
+                case ColumnFormat::SQL_PARAMETER:
+                    sqlQuery += "?";
+                    break;
+                case ColumnFormat::SQL_UPDATE:
+                    sqlQuery += ${name}::columnNames[i];
+                    sqlQuery += "=?";
+                    break;
+            }
+        }
+    }
 }
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>

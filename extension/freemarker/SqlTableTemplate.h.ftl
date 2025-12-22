@@ -236,7 +236,7 @@ public:
      * \param allocator Allocator to construct from.
      */
     ${name}(::zserio::SqliteConnection& db, ::std::string_view tableName,
-            ::std::string_view attachedDbName = ::std::string_view(),
+            ::std::string_view attachedDbName = {},
             const allocator_type& allocator = {}) :
             ::zserio::AllocatorHolder<allocator_type>(allocator),
             m_db(db),
@@ -319,20 +319,20 @@ public:
      */
     /** \{ */
     Reader createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-            <#lt>::std::string_view condition = ::std::string_view()) const
+            <#lt>::std::string_view condition = {}) const
     {
         return createReader(<#if needsParameterProvider>parameterProvider, </#if>{}, condition);
     }
 
     Reader createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
             <#lt>::zserio::Span<const ${types.string.name}> columns,
-            ::std::string_view condition = ::std::string_view()) const
+            ::std::string_view condition = {}) const
     {
         const ::std::array<bool, ${fieldList?size}> columnsMapping = createColumnsMapping(columns);
 
         ${types.string.name} sqlQuery(get_allocator_ref());
         sqlQuery += "SELECT ";
-        appendColumnsToQuery(sqlQuery, columnsMapping);
+        appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::NAME);
         sqlQuery += " FROM ";
         appendTableNameToQuery(sqlQuery);
         if (!condition.empty())
@@ -364,9 +364,9 @@ public:
         sqlQuery += "INSERT INTO ";
         appendTableNameToQuery(sqlQuery);
         sqlQuery += "(";
-        appendColumnsToQuery(sqlQuery, columnsMapping);
+        appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::NAME);
         sqlQuery += ") VALUES (";
-        appendWriteParametersToQuery(sqlQuery, columnsMapping);
+        appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::SQL_PARAMETER);
         sqlQuery += ");";
 
         // write rows
@@ -427,7 +427,7 @@ public:
         sqlQuery += "UPDATE ";
         appendTableNameToQuery(sqlQuery);
         sqlQuery += " SET ";
-        appendUpdateParametersToQuery(sqlQuery, columnsMapping);
+        appendColumnsToQuery(sqlQuery, columnsMapping, ColumnFormat::SQL_UPDATE);
         sqlQuery += " WHERE ";
         sqlQuery += whereCondition;
 
@@ -1015,8 +1015,15 @@ private:
         return columnsMapping;
     }
 
-    static void appendColumnsToQuery(${types.string.name}& sqlQuery,
-            const ::std::array<bool, ${fieldList?size}>& columnsMapping)
+    enum class ColumnFormat
+    {
+        NAME,
+        SQL_PARAMETER,
+        SQL_UPDATE
+    };
+
+    static void appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping,
+        ColumnFormat format)
     {
         bool isFirst = true;
         for (size_t i = 0; i < columnsMapping.size(); ++i)
@@ -1031,50 +1038,19 @@ private:
                 {
                     sqlQuery += ", ";
                 }
-                sqlQuery += ${name}::columnNames[i];
-            }
-        }
-    }
-
-    static void appendWriteParametersToQuery(${types.string.name}& sqlQuery,
-            const ::std::array<bool, ${fieldList?size}>& columnsMapping)
-    {
-        bool isFirst = true;
-        for (bool columnUsed : columnsMapping)
-        {
-            if (columnUsed)
-            {
-                if (isFirst)
+                switch (format)
                 {
-                    isFirst = false;
+                    default:
+                        sqlQuery += ${name}::columnNames[i];
+                        break;
+                    case ColumnFormat::SQL_PARAMETER:
+                        sqlQuery += "?";
+                        break;
+                    case ColumnFormat::SQL_UPDATE:
+                        sqlQuery += ${name}::columnNames[i];
+                        sqlQuery += "=?";
+                        break;
                 }
-                else
-                {
-                    sqlQuery += ", ";
-                }
-                sqlQuery += "?";
-            }
-        }
-    }
-
-    static void appendUpdateParametersToQuery(${types.string.name}& sqlQuery,
-            const ::std::array<bool, ${fieldList?size}>& columnsMapping)
-    {
-        bool isFirst = true;
-        for (size_t i = 0; i < columnsMapping.size(); ++i)
-        {
-            if (columnsMapping[i])
-            {
-                if (isFirst)
-                {
-                    isFirst = false;
-                }
-                else
-                {
-                    sqlQuery += ", ";
-                }
-                sqlQuery += ${name}::columnNames[i];
-                sqlQuery += "=?";
             }
         }
     }

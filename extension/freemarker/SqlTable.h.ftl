@@ -129,7 +129,7 @@ public:
      * \param allocator Allocator to construct from.
      */
     ${name}(::zserio::SqliteConnection& db, ::std::string_view tableName,
-            ::std::string_view attachedDbName = ::std::string_view(),
+            ::std::string_view attachedDbName = {},
             const allocator_type& allocator = {});
 
     /**
@@ -186,11 +186,11 @@ public:
      */
     /** \{ */
     Reader createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
-            <#lt>::std::string_view condition = ::std::string_view()) const;
+            <#lt>::std::string_view condition = {}) const;
 
     Reader createReader(<#if needsParameterProvider>IParameterProvider& parameterProvider, </#if><#rt>
             <#lt>::zserio::Span<const ${types.string.name}> columns,
-            ::std::string_view condition = ::std::string_view()) const;
+            ::std::string_view condition = {}) const;
     /** \} */
 
     /**
@@ -292,6 +292,17 @@ private:
 
     void appendCreateTableToQuery(${types.string.name}& sqlQuery) const;
     void appendTableNameToQuery(${types.string.name}& sqlQuery) const;
+
+    static ::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ${types.string.name}> columns);
+    
+    enum class ColumnFormat
+    {
+        NAME,
+        SQL_PARAMETER,
+        SQL_UPDATE
+    };
+    static void appendColumnsToQuery(${types.string.name}& sqlQuery, const ::std::array<bool, ${fieldList?size}>& columnsMapping,
+            ColumnFormat format);
 
     ::zserio::SqliteConnection& m_db;
     ::std::string_view m_name;
