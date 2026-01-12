@@ -70,6 +70,7 @@ function(compiler_get_test_warnings_setup VARNAME)
                 "-Wno-reserved-id-macro"
                 "-Wno-deprecated-declarations" # used by zserio @deprecated feature (DeprecatedAttribute.h)
                 "-Wno-shadow-field-in-constructor" # templates.zs declares some 'other' fields which clash with ctor argument
+                "-Wno-comment" # '/*' within block comment
         )
         string(REPLACE ";" " " WARNINGS_SETUP "${WARNINGS_SETUP} ${WARNINGS_SETUP_LIST}")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
