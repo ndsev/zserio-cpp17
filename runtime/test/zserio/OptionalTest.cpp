@@ -441,4 +441,30 @@ TEST(OptionalTest, compareSizeToStd)
     ASSERT_EQ(sizeof(Optional<int>), sizeof(std::optional<int>));
 }
 
+TEST(OptionalTest, rvalueAccess)
+{
+    struct Object
+    {
+        bool wasMoved = false;
+
+        Object() = default;
+        Object(const Object&) = delete;
+        Object(Object&&) :
+                wasMoved(true)
+        {}
+    };
+
+    // R-Value operator* overload
+    ASSERT_TRUE((*Optional<Object>(Object{})).wasMoved);
+
+    // R-Value value() overload
+    ASSERT_TRUE(Optional<Object>(Object{}).value().wasMoved);
+
+    // L-Values should not move
+    Optional<Object> nonTemporary(Object{});
+    nonTemporary->wasMoved = false;
+    ASSERT_FALSE((*nonTemporary).wasMoved);
+    ASSERT_FALSE(nonTemporary.value().wasMoved);
+}
+
 } // namespace zserio

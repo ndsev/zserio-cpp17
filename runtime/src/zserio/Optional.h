@@ -487,7 +487,7 @@ public:
      *
      * \throws BadOptionalAccess if optional is empty.
      */
-    constexpr T& value()
+    constexpr T& value() &
     {
         if (!has_value())
         {
@@ -504,13 +504,25 @@ public:
     }
 
     /**
+     * Returns contained value (overload when called on temporary values).
+     *
+     * \return The stored value.
+     *
+     * \throws BadOptionalAccess if optional is empty.
+     */
+    constexpr T&& value() &&
+    {
+        return std::move(value());
+    }
+
+    /**
      * Returns contained value.
      *
      * \return Reference to stored value.
      *
      * \throws BadOptionalAccess if optional is empty.
      */
-    constexpr const T& value() const
+    constexpr const T& value() const&
     {
         if (!has_value())
         {
@@ -527,15 +539,15 @@ public:
     }
 
     /**
-     * Returns contained value.
+     * Returns contained value (overload when called on temporary values).
      *
-     * \return Reference to stored value.
+     * \return The stored value.
      *
      * \throws BadOptionalAccess if optional is empty.
      */
-    T& operator*()
+    constexpr const T&& value() const&&
     {
-        return value();
+        return std::move(value());
     }
 
     /**
@@ -545,9 +557,45 @@ public:
      *
      * \throws BadOptionalAccess if optional is empty.
      */
-    const T& operator*() const
+    T& operator*() &
     {
         return value();
+    }
+
+    /**
+     * Returns contained value (overload when called on temporary values).
+     *
+     * \return The stored value.
+     *
+     * \throws BadOptionalAccess if optional is empty.
+     */
+    T&& operator*() &&
+    {
+        return std::move(value());
+    }
+
+    /**
+     * Returns contained value.
+     *
+     * \return Reference to stored value.
+     *
+     * \throws BadOptionalAccess if optional is empty.
+     */
+    const T& operator*() const&
+    {
+        return value();
+    }
+
+    /**
+     * Returns contained value (overload when called on temporary values).
+     *
+     * \return The stored value.
+     *
+     * \throws BadOptionalAccess if optional is empty.
+     */
+    const T&& operator*() const&&
+    {
+        return std::move(value());
     }
 
     /**

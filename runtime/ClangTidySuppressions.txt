@@ -22,7 +22,7 @@ bugprone-use-after-move:src/zserio/Any.h:429
 cert-dcl58-cpp:src/zserio/BitBuffer.h:608
 cert-dcl58-cpp:src/zserio/BitBuffer.h:620
 cert-dcl58-cpp:src/zserio/Extended.h:242
-cert-dcl58-cpp:src/zserio/Optional.h:1188
+cert-dcl58-cpp:src/zserio/Optional.h:1236
 cert-dcl58-cpp:src/zserio/Variant.h:606
 cert-dcl58-cpp:src/zserio/View.h:257
 
@@ -44,14 +44,14 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeExcepti
 cppcoreguidelines-pro-type-union-access:src/zserio/Any.h
 
 # Optional follows std::optional so passing value by const & is correct.
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:589
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:606
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:817
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:831
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:957
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:971
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1029
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1043
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:637
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:654
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:865
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:879
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1005
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1019
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1077
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1091
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
@@ -165,6 +165,7 @@ cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:36
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
 cppcoreguidelines-pro-type-reinterpret-cast:test/zserio/SqliteConnectionTest.cpp:321
+cppcoreguidelines-special-member-functions:test/zserio/OptionalTest.cpp:446
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
