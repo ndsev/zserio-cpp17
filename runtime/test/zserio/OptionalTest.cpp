@@ -95,6 +95,21 @@ private:
     const Recursive& m_data;
 };
 
+struct ConvertedObject
+{
+    bool wasConverted = false;
+    std::string str;
+    ConvertedObject() = default;
+    ConvertedObject(const std::string& source) :
+            str(source)
+    {}
+    ConvertedObject(std::string&& source) :
+            str(std::move(source))
+    {
+        wasConverted = true;
+    }
+};
+
 template <class ALLOC>
 class OptionalTest : public testing::Test
 {
@@ -300,6 +315,21 @@ TYPED_TEST(OptionalTest, moveAssignmentOperator)
             ASSERT_EQ(1, alloc2.numAllocs());
         }
     }
+}
+
+TYPED_TEST(OptionalTest, conversionConstructor)
+{
+    BasicOptional<typename TestFixture::AllocatorType, std::string> source("hello");
+    BasicOptional<typename TestFixture::AllocatorType, ConvertedObject> opt(std::move(source));
+    ASSERT_TRUE(opt.value().wasConverted);
+}
+
+TYPED_TEST(OptionalTest, conversionAssignmentOperator)
+{
+    BasicOptional<typename TestFixture::AllocatorType, std::string> source("hello");
+    BasicOptional<typename TestFixture::AllocatorType, ConvertedObject> opt;
+    opt = std::move(source);
+    ASSERT_TRUE(opt.value().wasConverted);
 }
 
 TYPED_TEST(OptionalTest, optComparison)

@@ -1,9 +1,15 @@
 bugprone-exception-escape:gen/functions/choice_array/Inner.h
 bugprone-exception-escape:gen/functions/choice_array/ItemRef.h
+bugprone-exception-escape:gen/functions/choice_array/OuterArray.h
+bugprone-exception-escape:gen/functions/structure_optional/ValueCalculator.h
+bugprone-exception-escape:gen/functions/structure_optional/ValueConsumerCreator.h
+bugprone-exception-escape:gen/functions/structure_value/CustomVarInt.h
+bugprone-exception-escape:gen/functions/templated_choice_array/Inner.h
 bugprone-exception-escape:gen/functions/templated_choice_array/ItemRef.h
+bugprone-exception-escape:gen/functions/templated_choice_array/OuterArray.h
 bugprone-exception-escape:gen/functions/union_array/Inner.h
 bugprone-exception-escape:gen/functions/union_array/ItemRef.h
-bugprone-exception-escape:gen/functions/templated_choice_array/Inner.h
+bugprone-exception-escape:gen/functions/union_array/OuterArray.h
 
 cert-dcl58-cpp:gen/functions/templated_choice_array/ItemRef.h
 cert-dcl58-cpp:gen/functions/templated_choice_array/OuterArray.h

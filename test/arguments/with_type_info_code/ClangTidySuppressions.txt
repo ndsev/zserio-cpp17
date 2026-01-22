@@ -6,6 +6,7 @@ bugprone-exception-escape:gen_type_info_code/with_type_info_code/SimpleChoice.h
 bugprone-exception-escape:gen_type_info_code/with_type_info_code/SimpleUnion.h
 bugprone-exception-escape:gen_type_info_code/with_type_info_code/WithTypeInfoCode.h
 bugprone-exception-escape:gen_string_expressions/type_info_string_expressions/TestChoice.h
+bugprone-exception-escape:gen_string_expressions/type_info_string_expressions/TestStruct.h
 bugprone-exception-escape:gen_string_expressions/type_info_string_expressions/TypeInfoStringExpressions.h
 
 bugprone-reserved-identifier:gen_type_info_code/with_type_info_code/TestBitmask.h

@@ -275,7 +275,7 @@ public:
      * \throw can throw any exception thrown by the active element in other.
      */
     template <typename A, typename U>
-    BasicOptional(const BasicOptional<A, U>& other, const ALLOC& allocator) :
+    constexpr BasicOptional(const BasicOptional<A, U>& other, const ALLOC& allocator) :
             AllocatorHolder<ALLOC>(allocator)
     {
         copy(other);
@@ -400,6 +400,52 @@ public:
             move(std::move(other));
         }
 
+        return *this;
+    }
+
+    /**
+     * Conversion move constructor.
+     *
+     * \param other Optional to move.
+     */
+    template <typename U>
+    constexpr BasicOptional(BasicOptional<ALLOC, U>&& other) :
+            AllocatorHolder<ALLOC>(std::move(other.get_allocator_ref()))
+    {
+        move(std::move(other));
+    }
+
+    /**
+     * Allocator-extended conversion move constructor.
+     *
+     * \param other Optional to move.
+     * \param allocator Allocator to be used for dynamic memory allocations.
+     */
+    template <typename U>
+    constexpr BasicOptional(BasicOptional<ALLOC, U>&& other, const ALLOC& allocator) :
+            AllocatorHolder<ALLOC>(allocator)
+    {
+        move(std::move(other));
+    }
+
+    /**
+     * Conversion assignment operator.
+     *
+     * \param other Optional to move from.
+     *
+     * \return Reference to this.
+     */
+    template <typename U>
+    BasicOptional& operator=(BasicOptional<ALLOC, U>&& other)
+    {
+        static_assert(!std::is_same_v<T, U>);
+
+        clear();
+        if constexpr (AllocTraits::propagate_on_container_move_assignment::value)
+        {
+            set_allocator(std::move(other.get_allocator_ref()));
+        }
+        move(std::move(other));
         return *this;
     }
 
@@ -657,6 +703,10 @@ public:
     }
 
 private:
+    // enables move(BasicOptional<ALLOC, U>&&) implementation to access m_data
+    template <typename A, typename U>
+    friend class BasicOptional;
+
     template <typename... ARGS>
     T* allocateValue(ARGS&&... args)
     {
@@ -732,9 +782,46 @@ private:
                     m_data.emplace(ptr);
                 }
             }
-            else
+            else // not on heap
             {
-                auto& value = *other.m_data;
+                auto& value = other.m_data.value();
+                m_data.emplace(std::move(value));
+            }
+        }
+    }
+
+    template <typename U>
+    void move(BasicOptional<ALLOC, U>&& other)
+    {
+        // assumes this holder is cleared
+        static_assert(!std::is_same_v<T, U>);
+
+        if (!other.has_value())
+        {
+            reset();
+        }
+        else
+        {
+            if constexpr (detail::is_optional_heap_allocated_v<T> && detail::is_optional_heap_allocated_v<U>)
+            {
+                auto& value = *other.m_data.value();
+                T* ptr = allocateValue(std::move(value));
+                m_data.emplace(ptr);
+            }
+            else if constexpr (detail::is_optional_heap_allocated_v<T>) // only T on heap
+            {
+                auto& value = other.m_data.value();
+                T* ptr = allocateValue(std::move(value));
+                m_data.emplace(ptr);
+            }
+            else if constexpr (detail::is_optional_heap_allocated_v<U>) // only U is on heap
+            {
+                auto& value = *other.m_data.value();
+                m_data.emplace(std::move(value));
+            }
+            else // both not on heap
+            {
+                auto& value = other.m_data.value();
                 m_data.emplace(std::move(value));
             }
         }

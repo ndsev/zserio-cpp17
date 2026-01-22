@@ -1,8 +1,11 @@
 bugprone-exception-escape:gen/extended_members/extended_choice_field/Choice.h
 bugprone-exception-escape:gen/extended_members/extended_choice_field/Extended.h
+bugprone-exception-escape:gen/extended_members/extended_optional_field_in_template/Extended.h
 bugprone-exception-escape:gen/extended_members/extended_optional_parameterized_field/Extended.h
+bugprone-exception-escape:gen/extended_members/extended_optional_with_default/Extended.h
 bugprone-exception-escape:gen/extended_members/extended_packed_array/Extended2.h
 bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Union.h
+bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Extended1.h
 bugprone-exception-escape:gen/extended_members/multiple_extended_fields_various_types/Extended2.h
 
 cert-dcl58-cpp:gen/extended_members/extended_field_in_template/Extended.h

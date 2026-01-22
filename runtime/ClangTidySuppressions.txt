@@ -10,10 +10,10 @@ bugprone-signed-char-misuse:src/zserio/DeltaContext.h:271
 # Optional is a generic container and exceptions may be thrown from the value type.
 bugprone-exception-escape:src/zserio/Optional.h:364
 bugprone-exception-escape:src/zserio/Optional.h:391
+bugprone-exception-escape:src/zserio/Optional.h:457
 
 # False positives - has_value() is checked before value().
 bugprone-exception-escape:src/zserio/Optional.h:225
-bugprone-exception-escape:src/zserio/Optional.h:411
 
 # To implement swap the variable needs to be moved out and moved in again
 bugprone-use-after-move:src/zserio/Any.h:429
@@ -22,7 +22,7 @@ bugprone-use-after-move:src/zserio/Any.h:429
 cert-dcl58-cpp:src/zserio/BitBuffer.h:608
 cert-dcl58-cpp:src/zserio/BitBuffer.h:620
 cert-dcl58-cpp:src/zserio/Extended.h:242
-cert-dcl58-cpp:src/zserio/Optional.h:1236
+cert-dcl58-cpp:src/zserio/Optional.h:1323
 cert-dcl58-cpp:src/zserio/Variant.h:606
 cert-dcl58-cpp:src/zserio/View.h:257
 
@@ -44,14 +44,14 @@ cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/CppRuntimeExcepti
 cppcoreguidelines-pro-type-union-access:src/zserio/Any.h
 
 # Optional follows std::optional so passing value by const & is correct.
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:637
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:654
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:865
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:879
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1005
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1019
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1077
-cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1091
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:683
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:700
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:952
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:966
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1092
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1106
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1164
+cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Optional.h:1178
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-pro-bounds-array-to-pointer-decay:src/zserio/Span.h:113
@@ -119,6 +119,7 @@ google-explicit-constructor:src/zserio/Optional.h:127
 google-explicit-constructor:src/zserio/Optional.h:137
 google-explicit-constructor:src/zserio/Optional.h:147
 google-explicit-constructor:src/zserio/Optional.h:248
+google-explicit-constructor:src/zserio/Optional.h:412
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 google-explicit-constructor:src/zserio/Span.h:112
@@ -165,12 +166,14 @@ cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:36
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
 cppcoreguidelines-pro-type-reinterpret-cast:test/zserio/SqliteConnectionTest.cpp:321
-cppcoreguidelines-special-member-functions:test/zserio/OptionalTest.cpp:446
+cppcoreguidelines-special-member-functions:test/zserio/OptionalTest.cpp:472
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22
 google-explicit-constructor:test/zserio/BuiltInOperatorsTest.cpp:46
 google-explicit-constructor:test/zserio/GenericAccessorTest.cpp:30
+google-explicit-constructor:test/zserio/OptionalTest.cpp:312
+google-explicit-constructor:test/zserio/OptionalTest.cpp:315
 google-explicit-constructor:test/zserio/TrackingAllocator.h:86
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:83
 performance-move-const-arg:test/zserio/ExtendedTest.cpp:91

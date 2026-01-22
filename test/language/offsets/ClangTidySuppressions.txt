@@ -19,6 +19,10 @@ bugprone-exception-escape:gen/offsets/offset_in_nested_union/TestStruct.h
 bugprone-exception-escape:gen/offsets/offset_in_nested_union/TestUnion.h
 bugprone-exception-escape:gen/offsets/offset_in_union/TestStruct.h
 bugprone-exception-escape:gen/offsets/offset_in_union/TestUnion.h
+bugprone-exception-escape:gen/offsets/optional_member_offset/OptionalMemberOffset.h
+bugprone-exception-escape:gen/offsets/optional_member_optional_offset/OptionalMemberOffset.h
+bugprone-exception-escape:gen/offsets/optional_offset_in_template/OffsetHolder.h
+bugprone-exception-escape:gen/offsets/optional_offset_in_template/OptionalMemberOffset.h
 
 cert-dcl58-cpp:gen/offsets/offset_in_nested_choice_in_template/NestedChoice.h
 cert-dcl58-cpp:gen/offsets/offset_in_nested_choice_in_template/TestChoice.h

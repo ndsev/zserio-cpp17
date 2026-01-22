@@ -1,1 +1,4 @@
- readability-simplify-boolean-expr:gen/alignment/optional_member_alignment/OptionalMemberAlignment.cpp
+bugprone-exception-escape:gen/alignment/auto_optional_member_alignment/AutoOptionalMemberAlignment.h
+bugprone-exception-escape:gen/alignment/optional_member_alignment/OptionalMemberAlignment.h
+
+readability-simplify-boolean-expr:gen/alignment/optional_member_alignment/OptionalMemberAlignment.cpp

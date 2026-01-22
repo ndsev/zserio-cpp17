@@ -1,4 +1,14 @@
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ArrayExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/BitmaskExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/EnumExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ExpressionsInTemplates.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/FieldExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/FloatExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/FunctionExpressions.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/Index.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/IsSetExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/IsSetParam.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ParameterizedArrayExpressions.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/ValueOfExpressions.h
 bugprone-exception-escape:gen/expressions/index_operator/Element.h
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.h

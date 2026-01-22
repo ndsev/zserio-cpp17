@@ -1,5 +1,6 @@
 bugprone-exception-escape:gen/company/appl/SimpleChoice.h
 bugprone-exception-escape:gen/company/appl/SimpleStructure.h
+bugprone-exception-escape:gen/company/appl/SimpleTemplate.h
 
 readability-simplify-boolean-expr:gen/company/appl/SimpleStructure.cpp
 
