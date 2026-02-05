@@ -7,6 +7,7 @@
 
 #include "zserio/AllocatorHolder.h"
 #include "zserio/CppRuntimeException.h"
+#include "zserio/HashCodeUtil.h"
 #include "zserio/Optional.h"
 #include "zserio/RebindAlloc.h"
 #include "zserio/Traits.h"
@@ -21,15 +22,36 @@ namespace detail
 class TypeIdHolder
 {
 public:
-    using type_id = const int*;
+#ifdef _MSC_VER
+    using type_id = const std::type_info&;
 
     template <typename T>
     static type_id get()
     {
-        static int currentTypeId;
-
-        return &currentTypeId;
+        return typeid(T);
     }
+
+#else
+    using type_id = uintptr_t;
+
+    // returns uintptr_t instead of type_id to keep PRETTY_FUNCTION shorter
+    template <typename T>
+    static uintptr_t get()
+    {
+    #if defined(__clang__) || defined(__GNUC__)
+        // PRETTY_FUNCTION gives a string like:
+        // static uintptr_t zserio::detail::TypeIdHolder::get() [T = int]
+        // static uintptr_t zserio::detail::TypeIdHolder::get() [with T = int; uintptr_t = xyz]
+        static const auto id = calcHashCode(zserio::HASH_SEED, std::string_view(__PRETTY_FUNCTION__));
+        return static_cast<uintptr_t>(id);
+    #else
+        #warning "Unsupported compiler, type identification in zserio::Any runs in a fallback mode"
+        static const int id = 0;
+        return &id;
+    #endif
+    }
+
+#endif
 };
 
 // Interface for object holders

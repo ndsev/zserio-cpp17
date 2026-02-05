@@ -16,7 +16,7 @@ bugprone-exception-escape:src/zserio/Optional.h:457
 bugprone-exception-escape:src/zserio/Optional.h:225
 
 # To implement swap the variable needs to be moved out and moved in again
-bugprone-use-after-move:src/zserio/Any.h:429
+bugprone-use-after-move:src/zserio/Any.h:451
 
 # Specialization of std::hash is allowed.
 cert-dcl58-cpp:src/zserio/BitBuffer.h:608
@@ -97,10 +97,10 @@ cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:97
 cppcoreguidelines-pro-bounds-constant-array-index:src/zserio/JsonEncoder.cpp:98
 
 # This is necessary for implementation of low level zserio::Any abstraction.
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:690
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:696
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:726
-cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:733
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:712
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:718
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:748
+cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/Any.h:755
 
 # This is necessary for implementation of reading and writing to the file.
 cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/FileUtil.cpp:19

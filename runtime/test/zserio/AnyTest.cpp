@@ -2,6 +2,7 @@
 #include <tuple>
 #include <vector>
 
+#include "any_test/AnyTest.h"
 #include "gtest/gtest.h"
 #include "zserio/Any.h"
 #include "zserio/ppmr/PropagatingPolymorphicAllocator.h"
@@ -498,6 +499,19 @@ TEST_F(AnyTest, unexceptedCallsNonHeapHolder)
     ASSERT_THROW(holder->clone(allocator), CppRuntimeException);
     ASSERT_THROW(holder->move(allocator), CppRuntimeException);
     holder->destroy(allocator);
+}
+
+TEST_F(AnyTest, sharedLib)
+{
+    auto any1 = AnyTestLib::createAnyStdInt();
+    ASSERT_TRUE(any1.isType<int>());
+    ASSERT_FALSE(any1.isType<float>());
+    auto any2 = AnyTestLib::createAnyInt32();
+    ASSERT_TRUE(any2.isType<zserio::Int32>());
+    ASSERT_FALSE(any2.isType<zserio::Int64>());
+    auto any3 = AnyTestLib::createAnyString();
+    ASSERT_TRUE(any3.isType<zserio::String>());
+    ASSERT_FALSE(any3.isType<zserio::Int32>());
 }
 
 } // namespace zserio

@@ -9,6 +9,35 @@ cmake_minimum_required(VERSION 3.21.0)
 
 project(ZserioCpp17RuntimeTest)
 
+# separate shared library for AnyTest
+
+set(ANY_TEST_LIB ZserioCpp17RuntimeAnyTestLib)
+
+add_library(ZserioCpp17RuntimeAnyTestLib SHARED
+    any_test/AnyTest.cpp
+    any_test/AnyTest.h
+)
+
+#if (MSVC)
+#    target_compile_options(ZserioCpp17RuntimeAnyTestLib PRIVATE "/GR-")
+#else()
+#    target_compile_options(ZserioCpp17RuntimeAnyTestLib PRIVATE "-fno-rtti")
+#endif()
+
+target_link_libraries(ZserioCpp17RuntimeAnyTestLib PUBLIC ZserioCpp17Runtime)
+
+set_target_properties(ZserioCpp17RuntimeAnyTestLib PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    C_VISIBILITY_PRESET hidden
+)
+
+include(GenerateExportHeader)
+generate_export_header(ZserioCpp17RuntimeAnyTestLib)
+
+target_include_directories(ZserioCpp17RuntimeAnyTestLib PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR}  # For the generated export header
+)
+
 # add gtest library
 include(gtest_utils)
 gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
@@ -236,7 +265,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TEST_OBJECT_SRCS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE .)
 target_include_directories(${PROJECT_NAME} PRIVATE ../src)
-target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17Runtime gtest_main)
+target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17RuntimeAnyTestLib ZserioCpp17Runtime gtest_main)
 
 if (WIN32)
     # copy dependent DLLs to target's directory
@@ -247,3 +276,4 @@ if (WIN32)
 endif()
 
 gtest_add_tests(${PROJECT_NAME} "--gtest_output=xml" ${ZSERIO_CPP17_RUNTIME_TEST_SRCS} ${ZSERIO_CPP17_RUNTIME_TEST_SQLITE_SRCS})
+

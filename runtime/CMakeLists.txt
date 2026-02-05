@@ -27,6 +27,8 @@ set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use.")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Whether C++ standard is required.")
 set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "Whether compiler specific C++ standard extensions are allowed.")
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON) # to enable AnyTest.so link ZserioCpp17Runtime.a
+
 # cmake helpers
 include(cmake_utils)
 
@@ -60,6 +62,7 @@ if (${ZSERIO_CODE_COVERAGE_ENABLE})
     include(coverage_utils)
     enable_coverage_for_target(ZserioCpp17Runtime)
     enable_coverage_for_target(ZserioCpp17RuntimeTest)
+    enable_coverage_for_target(ZserioCpp17RuntimeAnyTestLib)
 
     set(COV_PARAMS)
     if (${ZSERIO_CODE_COVERAGE_FAIL_ON_INCOMPLETE})
