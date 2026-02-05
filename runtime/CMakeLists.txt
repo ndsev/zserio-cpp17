@@ -13,6 +13,7 @@ project(ZserioCpp17RuntimeAll)
 enable_testing()
 
 set(SANITIZERS_ENABLED OFF CACHE BOOL "Whether the compiler sanitizers are enabled.")
+set(RTTI_ENABLED ON CACHE BOOL "Build with RTTI enabled (default). Some tests such as AnyTest can run without RTTI.")
 set(CLANG_TIDY_BIN "" CACHE STRING "Name of clang-tidy binary. If empty, clang-tidy tool is not called.")
 set(CLANG_FORMAT_BIN "" CACHE STRING "Name of clang-format binary. If empty, clang-format tool is not called.")
 
@@ -27,6 +28,8 @@ set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ standard to use.")
 set(CMAKE_CXX_STANDARD_REQUIRED ON CACHE BOOL "Whether C++ standard is required.")
 set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "Whether compiler specific C++ standard extensions are allowed.")
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON) # to enable AnyTest.so link ZserioCpp17Runtime.a
+
 # cmake helpers
 include(cmake_utils)
 
@@ -36,6 +39,10 @@ compiler_set_static_clibs()
 compiler_reset_debug_iterators()
 if (SANITIZERS_ENABLED)
     compiler_set_address_sanitizer()
+endif ()
+if (NOT RTTI_ENABLED)
+    message(STATUS "RTTI_ENABLED=${RTTI_ENABLED}")
+    compiler_set_no_rtti()
 endif ()
 
 # warnings and sanitizers only for src
@@ -60,6 +67,7 @@ if (${ZSERIO_CODE_COVERAGE_ENABLE})
     include(coverage_utils)
     enable_coverage_for_target(ZserioCpp17Runtime)
     enable_coverage_for_target(ZserioCpp17RuntimeTest)
+    enable_coverage_for_target(ZserioCpp17RuntimeAnyTestLib)
 
     set(COV_PARAMS)
     if (${ZSERIO_CODE_COVERAGE_FAIL_ON_INCOMPLETE})

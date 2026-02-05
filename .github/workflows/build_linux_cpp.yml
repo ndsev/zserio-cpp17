@@ -161,3 +161,8 @@ jobs:
         export CMAKE_EXTRA_ARGS="-DZSERIO_CPP17_RUNTIME_BUILD_SHARED_LIBS=ON -DZSERIO_CPP17_RUNTIME_SQLITE_ENABLE=OFF ${CMAKE_EXTRA_ARGS}"
         scripts/build.sh cpp_rt-${PACKAGE} -o tmp_shared
         scripts/test.sh -p cpp-${PACKAGE} -o tmp_shared -i others/gif
+
+    - name: Build Zserio without RTTI
+      run: |
+        export CMAKE_EXTRA_ARGS="-DRTTI_ENABLED=OFF"
+        scripts/build.sh cpp_rt-${PACKAGE} -o tmp_no_rtti

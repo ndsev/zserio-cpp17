@@ -7,6 +7,7 @@
 
 #include "zserio/AllocatorHolder.h"
 #include "zserio/CppRuntimeException.h"
+#include "zserio/HashCodeUtil.h"
 #include "zserio/Optional.h"
 #include "zserio/RebindAlloc.h"
 #include "zserio/Traits.h"
@@ -18,18 +19,51 @@ namespace zserio
 namespace detail
 {
 
+#if !defined(ZSERIO_TYPEID_STATIC_ONLY)
+    #if !defined(_MSC_VER) && !defined(__GNUC__)
+        #warning "Unsupported compiler, type identification in zserio::Any runs in fallback mode"
+        #define ZSERIO_TYPEID_STATIC_ONLY
+    #endif
+#endif
+
 class TypeIdHolder
 {
 public:
-    using type_id = const int*;
+#if defined(ZSERIO_TYPEID_STATIC_ONLY)
+    using type_id = uintptr_t;
+
+    template <typename T>
+    static uintptr_t get()
+    {
+        static const id = 0;
+        return &id;
+    }
+
+// in MSVC typeid works even when RTTI is disabled
+#elif defined(_MSC_VER) || defined(__GXX_RTTI)
+    using type_id = const std::type_info&;
 
     template <typename T>
     static type_id get()
     {
-        static int currentTypeId;
-
-        return &currentTypeId;
+        return typeid(T);
     }
+
+#else
+    using type_id = uintptr_t;
+
+    // returns uintptr_t instead of type_id to keep PRETTY_FUNCTION shorter
+    template <typename T>
+    static uintptr_t get()
+    {
+        // PRETTY_FUNCTION gives a string like:
+        // static uintptr_t zserio::detail::TypeIdHolder::get() [T = int]
+        // static uintptr_t zserio::detail::TypeIdHolder::get() [with T = int; uintptr_t = xyz]
+        static const auto id = calcHashCode(zserio::HASH_SEED, std::string_view(__PRETTY_FUNCTION__));
+        return static_cast<uintptr_t>(id);
+    }
+
+#endif
 };
 
 // Interface for object holders
