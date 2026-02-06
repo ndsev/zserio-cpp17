@@ -18,14 +18,19 @@ cmake_minimum_required(VERSION 3.15.0)
 project(ZserioCpp17Runtime)
 
 option(ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE "Build zserio runtime with SQLite dependent parts" ON)
+option(ZSERIO_CPP17_RUNTIME_SQLITE_USE_EXTERNAL "Use an external Sqlite3 cmake target" OFF)
 set(ZSERIO_CPP17_RUNTIME_SQLITE_ROOT "../../3rdparty/cpp/sqlite3" CACHE PATH "Path to the custom SQLite distribution. You may have to create CMakeLists.txt/sqlite3.h if not present" )
 
 option(ZSERIO_CPP17_RUNTIME_BUILD_SHARED_LIBS "Build zserio runtime as a shared library" OFF)
 
 # add SQLite3 library
 if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
-    message(STATUS "Zserio runtime will be built with SQLite support")
-    add_subdirectory(${ZSERIO_CPP17_RUNTIME_SQLITE_ROOT} sqlite3) # binary directory is required 
+    if (NOT ZSERIO_CPP17_RUNTIME_SQLITE_USE_EXTERNAL)
+        message(STATUS "Zserio runtime will be built with SQLite (packaged) support")
+        add_subdirectory(${ZSERIO_CPP17_RUNTIME_SQLITE_ROOT} sqlite3) # binary directory is required
+    else()
+        message(STATUS "Zserio runtime will be built with SQLite (external) support")
+    endif()
 else()
     message(STATUS "Zserio runtime will be built without SQLite support")
 endif()
