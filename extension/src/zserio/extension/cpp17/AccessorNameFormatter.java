@@ -34,6 +34,11 @@ public final class AccessorNameFormatter
         return enumItem.isRemoved() ? REMOVED_ENUMERATOR_PREFIX + enumItem.getName() : enumItem.getName();
     }
 
+    public static String getTypeAliasName(Field field)
+    {
+        return capFirst(field.getName()) + "Type";
+    }
+
     private static String uncapFirst(String name)
     {
         final StringBuilder nameFirstUncap = new StringBuilder();
@@ -41,6 +46,15 @@ public final class AccessorNameFormatter
         nameFirstUncap.append(name.substring(1));
 
         return nameFirstUncap.toString();
+    }
+
+    private static String capFirst(String name)
+    {
+        final StringBuilder sbu = new StringBuilder();
+        sbu.append(String.valueOf(name.charAt(0)).toUpperCase(Locale.ENGLISH));
+        sbu.append(name.substring(1));
+
+        return sbu.toString();
     }
 
     private final static String REMOVED_ENUMERATOR_PREFIX = "ZSERIO_REMOVED_";

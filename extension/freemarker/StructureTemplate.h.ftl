@@ -212,6 +212,16 @@ class View<${fullName}>
 {
 public:
     <@array_traits_template fullName, fieldList/>
+    <#assign hasTypeAlias = false>
+    <#list fieldList as field>
+        <#if field.typeAliasName?has_content>
+            <#assign hasTypeAlias = true>
+    using ${field.typeAliasName} = <@field_view_type_name_inner field/>;
+        </#if>
+    </#list>
+    <#if hasTypeAlias>
+
+    </#if>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
