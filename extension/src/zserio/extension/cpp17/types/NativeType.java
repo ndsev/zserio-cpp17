@@ -50,19 +50,19 @@ public class NativeType implements CppNativeType
         return Collections.unmodifiableSortedSet(userIncludeFiles);
     }
 
-    protected void addSystemIncludeFile(String include)
+    protected final void addSystemIncludeFile(String include)
     {
         if (include != null)
             systemIncludeFiles.add(include);
     }
 
-    protected void addUserIncludeFile(String include)
+    protected final void addUserIncludeFile(String include)
     {
         if (include != null)
             userIncludeFiles.add(include);
     }
 
-    protected void addIncludeFiles(CppNativeType other)
+    protected final void addIncludeFiles(CppNativeType other)
     {
         for (String systemInclude : other.getSystemIncludeFiles())
         {
