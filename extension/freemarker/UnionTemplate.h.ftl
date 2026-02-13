@@ -135,6 +135,16 @@ class View<${fullName}>
 {
 public:
     <@array_traits_template fullName, fieldList/>
+<#assign hasTypeAlias = false>
+<#list fieldList as field>
+    <#if field.typeAliasName?has_content>
+        <#assign hasTypeAlias = true>
+    using ${field.typeAliasName} = <@field_view_type_name_inner field/>;
+    </#if>
+</#list>
+<#if hasTypeAlias>
+
+</#if>
     explicit View(<#if !usedAsOffset>const </#if>${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
@@ -145,7 +155,7 @@ public:
 <#list parameterList as parameter>
             <@parameter_view_member_name parameter/>(<@parameter_view_arg_name parameter/>)<#if parameter?has_next>,</#if>
 </#list>
-{}
+    {}
 <#list parameterList as parameter>
 
     <@parameter_view_type_name parameter/> ${parameter.getterName}() const

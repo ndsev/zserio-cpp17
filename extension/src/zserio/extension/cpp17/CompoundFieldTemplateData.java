@@ -64,6 +64,8 @@ public final class CompoundFieldTemplateData
         integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
         array = createArray(context, fieldNativeType, fieldTypeInstantiation, parentType, includeCollector);
         docComments = DocCommentsDataCreator.createData(context, field);
+
+        typeAliasName = array != null ? AccessorNameFormatter.getTypeAliasName(field) : "";
     }
 
     public DynamicBitLength getDynamicBitFieldLength()
@@ -74,6 +76,11 @@ public final class CompoundFieldTemplateData
     public String getName()
     {
         return name;
+    }
+
+    public String getTypeAliasName()
+    {
+        return typeAliasName;
     }
 
     public String getGetterName()
@@ -872,6 +879,7 @@ public final class CompoundFieldTemplateData
     }
 
     private final String name;
+    private final String typeAliasName;
     private final String getterName;
     private final boolean usedAsOffset;
     private final boolean isExtended;

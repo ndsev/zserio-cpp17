@@ -40,10 +40,9 @@ TEST(ParamStructureSubtypeTest, testSubtype)
     ASSERT_STRING_IN_FILE_PRESENT(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
             "View<::subtypes::param_structure_subtype::ParameterizedSubtype> parameterizedSubtype() const");
-    ASSERT_REGEX_MATCH_IN_FILE(
+    ASSERT_STRING_IN_FILE_PRESENT(
             "language/subtypes/gen/subtypes/param_structure_subtype/ParameterizedSubtypeStruct.h",
-            "ArrayView<const ::subtypes::param_structure_subtype::AnotherParameterizedSubtype, "
-            "ZserioAnotherParameterizedSubtypeArrayArrayTraits> anotherParameterizedSubtypeArray");
+            "AnotherParameterizedSubtypeArrayType anotherParameterizedSubtypeArray() const");
 }
 
 } // namespace param_structure_subtype

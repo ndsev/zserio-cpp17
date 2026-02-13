@@ -54,7 +54,11 @@
 
 <#macro field_view_type_name field>
     <#local fieldViewTypeName>
-        <@field_view_type_name_inner field/><#t>
+        <#if field.typeAliasName?has_content>
+            ${field.typeAliasName}<#t>
+        <#else>
+            <@field_view_type_name_inner field/><#t>
+        </#if>
     </#local>
     <#if !field.array?? && field.usedAsOffset>
         zserio::offset_field_reference_t<${fieldViewTypeName}><#t>
@@ -65,7 +69,11 @@
 
 <#macro field_view_type_full_name compoundName field>
     <#local fieldViewTypeFullName>
-        <@field_view_type_full_name_inner compoundName, field/><#t>
+        <#if field.typeAliasName?has_content>
+            View<${compoundName}>::${field.typeAliasName}<#t>
+        <#else>
+            <@field_view_type_full_name_inner compoundName, field/><#t>
+        </#if>
     </#local>
     <#if !field.array?? && field.usedAsOffset>
         zserio::offset_field_reference_t<${fieldViewTypeFullName}><#t>

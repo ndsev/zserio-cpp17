@@ -127,7 +127,11 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
 
 <#macro structure_field_view_type_name field>
     <#local fieldViewTypeName>
-        <@field_view_type_name_inner field/><#t>
+        <#if field.typeAliasName?has_content>
+            ${field.typeAliasName}<#t>
+        <#else>
+            <@field_view_type_name_inner field/><#t>
+        </#if>
     </#local>
     <#local fieldViewTypeName>
         <#if field.isExtended>
@@ -151,7 +155,11 @@ ${I}return <@structure_field_view_getter_inner field, indent/>;
 
 <#macro structure_field_view_type_full_name compoundName field>
     <#local fieldViewTypeFullName>
-        <@field_view_type_full_name_inner compoundName, field/><#t>
+        <#if field.typeAliasName?has_content>
+            View<${compoundName}>::${field.typeAliasName}<#t>
+        <#else>
+            <@field_view_type_full_name_inner compoundName, field/><#t>
+        </#if>
     </#local>
     <#local fieldViewTypeFullName>
         <#if field.isExtended>
