@@ -17,6 +17,7 @@ import zserio.extension.common.ZserioExtensionException;
  */
 public class CompoundTypeTemplateData extends UserTypeTemplateData
 {
+    @SuppressWarnings("this-escape")
     public CompoundTypeTemplateData(TemplateDataContext context, CompoundType compoundType)
             throws ZserioExtensionException
     {

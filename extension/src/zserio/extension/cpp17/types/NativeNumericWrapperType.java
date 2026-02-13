@@ -1,5 +1,7 @@
 package zserio.extension.cpp17.types;
 
+import java.util.Collections;
+
 /**
  * Native C++ runtime type mapping.
  */
@@ -7,9 +9,8 @@ public class NativeNumericWrapperType extends NativeZserioType
 {
     public NativeNumericWrapperType(String name, String nativeTypeName)
     {
-        super(name);
+        super(name, Collections.singleton("zserio/Types.h"), null);
         this.nativeTypeName = nativeTypeName;
-        addSystemIncludeFile("zserio/Types.h");
     }
 
     String getNativeTypeName()
