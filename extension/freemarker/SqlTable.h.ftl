@@ -294,7 +294,7 @@ private:
     void appendTableNameToQuery(${types.string.name}& sqlQuery) const;
 
     static ::std::array<bool, ${fieldList?size}> createColumnsMapping(::zserio::Span<const ${types.string.name}> columns);
-    
+
     enum class ColumnFormat
     {
         NAME,

@@ -49,20 +49,51 @@ final class CppTemplateParameterClashChecker extends DefaultTreeWalker
 
     private void checkCompound(CompoundType compoundType) throws ZserioExtensionException
     {
-        for (zserio.ast.Field field : compoundType.getFields())
+        for (TemplateParameter param : compoundType.getTemplateParameters())
         {
-            final TypeInstantiation typeInst = field.getTypeInstantiation();
-            if (typeInst instanceof ArrayInstantiation)
+            // check for a clash with its alias - impossible when getTypeAliasName adds Type suffix
+            String paramAlias = AccessorNameFormatter.getTypeAliasName(param);
+            if (paramAlias.equals(param.getName()))
             {
-                String usingName = AccessorNameFormatter.getTypeAliasName(field);
-                for (TemplateParameter tmpParam : compoundType.getTemplateParameters())
+                ZserioToolPrinter.printError(param.getLocation(),
+                        "Type alias for a template parameter '" + param.getName() +
+                                "' clashes with itself. Use uppercase convention or longer parameter names.");
+                throw new ZserioExtensionException("Template parameter clash detected!");
+            }
+            // check for a clash with compound name
+            if (paramAlias.equals(compoundType.getName()))
+            {
+                ZserioToolPrinter.printError(param.getLocation(),
+                        "Type alias for a template parameter '" + param.getName() +
+                                "' clashes with the compound name '" + compoundType.getName() + "'.");
+                throw new ZserioExtensionException("Template parameter clash detected!");
+            }
+            // check for a clash with other template parameters
+            for (TemplateParameter otherParam : compoundType.getTemplateParameters())
+            {
+                if (otherParam == param)
+                    continue;
+                if (AccessorNameFormatter.getTypeAliasName(otherParam).equals(paramAlias))
                 {
-                    if (tmpParam.getName().equals(usingName))
+                    ZserioToolPrinter.printError(param.getLocation(),
+                            "Type alias for a template parameter '" + param.getName() +
+                                    "' clashes with type alias for another template parameter '" +
+                                    otherParam.getName() + "'.");
+                    throw new ZserioExtensionException("Template parameter clash detected!");
+                }
+            }
+            // check for a clash with field type aliases
+            for (zserio.ast.Field field : compoundType.getFields())
+            {
+                final TypeInstantiation typeInst = field.getTypeInstantiation();
+                if (typeInst instanceof ArrayInstantiation)
+                {
+                    String aliasName = AccessorNameFormatter.getTypeAliasName(field);
+                    if (param.getName().equals(aliasName))
                     {
-                        ZserioToolPrinter.printError(tmpParam.getLocation(),
-                                "Template parameter '" + tmpParam.getName() +
-                                        "' clashes with generated type alias for field '" + field.getName() +
-                                        "'.");
+                        ZserioToolPrinter.printError(param.getLocation(),
+                                "Template parameter '" + param.getName() +
+                                        "' clashes with type alias for field '" + field.getName() + "'.");
                         throw new ZserioExtensionException("Template parameter clash detected!");
                     }
                 }

@@ -27,6 +27,7 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
 
         final StringJoiner fullNameTemplateParameters = new StringJoiner(", ", "<", ">");
         fullNameTemplateParameters.setEmptyValue("");
+        List<String> templateParameters = new ArrayList<String>();
         for (TemplateParameter templateParameter : compoundType.getTemplateParameters())
         {
             templateParameters.add(templateParameter.getName());
@@ -53,6 +54,7 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
 
         parameterList = createParameterList(context, compoundType, includeCollector);
         functionList = createFunctionList(context, compoundType, includeCollector);
+        templateParameterList = createTemplateParameterList(context, compoundType);
 
         isPackable = compoundType.isPackable();
 
@@ -64,11 +66,6 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
     public String getFullName()
     {
         return fullName;
-    }
-
-    public List<String> getTemplateParameters()
-    {
-        return templateParameters;
     }
 
     public boolean getUsedInPackedArray()
@@ -99,6 +96,11 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
     public Iterable<CompoundFunctionTemplateData> getFunctionList()
     {
         return functionList;
+    }
+
+    public List<CompoundTemplateParameterTemplateData> getTemplateParameterList()
+    {
+        return templateParameterList;
     }
 
     public boolean getIsPackable()
@@ -156,7 +158,19 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         return functionList;
     }
 
-    private final List<String> templateParameters = new ArrayList<String>();
+    private static List<CompoundTemplateParameterTemplateData> createTemplateParameterList(
+            TemplateDataContext context, CompoundType compoundType) throws ZserioExtensionException
+    {
+        final List<CompoundTemplateParameterTemplateData> parameterList =
+                new ArrayList<CompoundTemplateParameterTemplateData>();
+        for (TemplateParameter templateParameter : compoundType.getTemplateParameters())
+        {
+            parameterList.add(new CompoundTemplateParameterTemplateData(context, templateParameter));
+        }
+
+        return parameterList;
+    }
+
     private final String fullName;
 
     private final boolean usedInPackedArray;
@@ -166,6 +180,7 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
     private final List<CompoundFieldTemplateData> fieldList;
     private final List<CompoundParameterTemplateData> parameterList;
     private final List<CompoundFunctionTemplateData> functionList;
+    private final List<CompoundTemplateParameterTemplateData> templateParameterList;
 
     private final boolean isPackable;
 
