@@ -40,12 +40,12 @@
 <@namespace_begin package.path/>
 
 // forward declaration
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct ${name};
 <@namespace_end package.path/>
 <@namespace_begin ["zserio", "detail"]/>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct ChoiceTag<${fullName}>
 {
     enum Tag : size_t
@@ -62,7 +62,7 @@ struct ChoiceTag<${fullName}>
 <#if docComments??>
 <@doc_comments docComments/>
 </#if>
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct ${name} : <@variant_type_name_begin/>typename ::zserio::detail::ChoiceTag<${fullName}>::Tag,
         ::std::monostate<#rt>
 <#list fieldList as field>
@@ -79,10 +79,11 @@ struct ${name} : <@variant_type_name_begin/>typename ::zserio::detail::ChoiceTag
             <#nt><@field_data_type_name field/><#rt>
 </#list>
             <#lt>>;
+    <@template_parameter_aliases templateParameterList/>
     using Base::Base;
 };
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator==(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
         <#lt>const ${fullName}&<#if fieldList?has_content> rhs</#if>)
 {
@@ -93,7 +94,7 @@ bool operator==(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
 </#if>
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator<(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
         <#lt>const ${fullName}&<#if fieldList?has_content>  rhs</#if>)
 {
@@ -104,25 +105,25 @@ bool operator<(const ${fullName}&<#if fieldList?has_content> lhs</#if>, <#rt>
 </#if>
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator!=(const ${fullName}& lhs, const ${fullName}& rhs)
 {
     return !(lhs == rhs);
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator>(const ${fullName}& lhs, const ${fullName}& rhs)
 {
     return rhs < lhs;
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator<=(const ${fullName}& lhs, const ${fullName}& rhs)
 {
     return !(rhs < lhs);
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 {
     return !(lhs < rhs);
@@ -130,11 +131,12 @@ bool operator>=(const ${fullName}& lhs, const ${fullName}& rhs)
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 class View<${fullName}>
 {
 public:
     <@array_traits_template fullName, fieldList/>
+    <@template_parameter_aliases templateParameterList/>
     <@field_type_aliases fieldList/>
     explicit View(<#if !usedAsOffset>const </#if>${fullName}& data<#rt>
 <#list parameterList as parameter>
@@ -195,7 +197,7 @@ private:
 </#list>
 };
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
@@ -218,7 +220,7 @@ bool operator==(const View<${fullName}>&<#if fieldList?has_content || parameterL
 </#if>
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> lhs</#if>, <#rt>
         <#lt>const View<${fullName}>&<#if fieldList?has_content || parameterList?has_content> rhs</#if>)
 {
@@ -241,32 +243,32 @@ bool operator<(const View<${fullName}>&<#if fieldList?has_content || parameterLi
 </#if>
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator!=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 {
     return !(lhs == rhs);
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator>(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 {
     return rhs < lhs;
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator<=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 {
     return !(rhs < lhs);
 }
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 bool operator>=(const View<${fullName}>& lhs, const View<${fullName}>& rhs)
 {
     return !(lhs < rhs);
 }
 <@namespace_begin ["detail"]/>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct ObjectTraits<${fullName}>
 {
 <#if parameterList?has_content>
@@ -427,7 +429,7 @@ struct ObjectTraits<${fullName}>
 };
 <#if withTypeInfoCode>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct TypeInfo<${fullName}, ${types.allocator.default}>
 {
     static const ${types.typeInfo.name}& get()
@@ -466,7 +468,7 @@ struct TypeInfo<${fullName}, ${types.allocator.default}>
     }
 };
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct Reflectable<${fullName}, ${types.allocator.default}>
 {
     static ${types.reflectableConstPtr.name} create(
@@ -482,7 +484,7 @@ struct Reflectable<${fullName}, ${types.allocator.default}>
     }
 };
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct Introspectable<${fullName}, ${types.allocator.default}>
 {
     static ${types.introspectableConstPtr.name} create(
@@ -495,7 +497,7 @@ struct Introspectable<${fullName}, ${types.allocator.default}>
 <@namespace_end ["zserio", "detail"]/>
 <@namespace_begin ["std"]/>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct hash<${fullName}>
 {
     size_t operator()(const ${fullName}&<#if fieldList?has_content> value</#if>) const
@@ -508,7 +510,7 @@ struct hash<${fullName}>
     }
 };
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct hash<::zserio::View<${fullName}>>
 {
     size_t operator()(<#rt>

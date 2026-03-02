@@ -41,14 +41,15 @@
 <@namespace_begin package.path/>
 
 // forward declaration
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 class ${name};
 <@namespace_end package.path/>
 <@namespace_begin ["zserio", "detail"]/>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct SqlRow<${fullName}>
 {
+    <@template_parameter_aliases templateParameterList/>
     SqlRow() :
             SqlRow(${types.allocator.default}())
     {}
@@ -71,7 +72,7 @@ struct SqlRow<${fullName}>
 <#if docComments??>
 <@doc_comments docComments/>
 </#if>
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 class ${name} : public ::zserio::AllocatorHolder<${types.allocator.default}>
 {
 public:
@@ -1062,7 +1063,7 @@ private:
 <@namespace_end package.path/>
 <@namespace_begin ["zserio"]/>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 class View<::zserio::detail::SqlRow<${fullName}>>
 {
 public:
@@ -1102,7 +1103,7 @@ private:
 <#if withTypeInfoCode>
 <@namespace_begin ["detail"]/>
 
-<@template_definition templateParameters/>
+<@template_definition templateParameterList/>
 struct TypeInfo<${fullName}, ${types.allocator.default}>
 {
     static const ${types.typeInfo.name}& get()

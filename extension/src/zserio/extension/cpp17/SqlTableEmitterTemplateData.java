@@ -48,6 +48,7 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         final IncludeCollector includeCollector =
                 tableType.getTemplateParameters().isEmpty() ? this : new HeaderIncludeCollectorAdapter(this);
 
+        List<String> templateParameters = new ArrayList<String>();
         final StringJoiner fullNameTemplateParameters = new StringJoiner(", ", "<", ">");
         fullNameTemplateParameters.setEmptyValue("");
         for (TemplateParameter templateParameter : tableType.getTemplateParameters())
@@ -118,6 +119,13 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
             }
         }
 
+        templateParameterList =
+                new ArrayList<CompoundTemplateParameterTemplateData>(tableType.getTemplateParameters().size());
+        for (TemplateParameter param : tableType.getTemplateParameters())
+        {
+            templateParameterList.add(new CompoundTemplateParameterTemplateData(context, param));
+        }
+
         this.hasImplicitParameters = hasImplicitParameters;
         this.requiresOwnerContext = requiresOwnerContext;
 
@@ -131,9 +139,9 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         return fullName;
     }
 
-    public List<String> getTemplateParameters()
+    public List<CompoundTemplateParameterTemplateData> getTemplateParameterList()
     {
-        return templateParameters;
+        return templateParameterList;
     }
 
     public Iterable<FieldTemplateData> getFieldList()
@@ -831,10 +839,10 @@ public final class SqlTableEmitterTemplateData extends UserTypeTemplateData
         return new SqlRangeCheckData(checkLowerBound, lowerBound, upperBound, typeInfo, dynamicBitFieldLength);
     }
 
-    private final List<String> templateParameters = new ArrayList<String>();
     private final String fullName;
 
     private final List<FieldTemplateData> fieldList;
+    private final List<CompoundTemplateParameterTemplateData> templateParameterList;
     private final SortedSet<ExplicitParameterTemplateData> explicitParameters;
     private final boolean hasImplicitParameters;
     private final boolean requiresOwnerContext;

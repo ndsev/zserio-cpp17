@@ -102,8 +102,9 @@ function(add_custom_test TEST_NAME)
 
     # test sources are added in add_executable to simplify dependencies handling
     add_library(${TEST_NAME} INTERFACE)
-    add_dependencies(${TEST_NAME} ${TEST_ARG_DEPENDS})
-
+    if (TEST_ARG_DEPENDS)
+        add_dependencies(${TEST_NAME} ${TEST_ARG_DEPENDS})
+    endif()
     if ("${TEST_NAME}" STREQUAL "external")
         set(CLANG_TIDY_WERROR OFF)
         set(CLANG_FORMAT OFF)

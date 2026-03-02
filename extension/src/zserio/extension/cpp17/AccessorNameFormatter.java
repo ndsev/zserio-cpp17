@@ -6,6 +6,7 @@ import zserio.ast.EnumItem;
 import zserio.ast.Field;
 import zserio.ast.Function;
 import zserio.ast.Parameter;
+import zserio.ast.TemplateParameter;
 
 /**
  * Accessor name formatter.
@@ -37,6 +38,11 @@ public final class AccessorNameFormatter
     public static String getTypeAliasName(Field field)
     {
         return pascalCase(field.getName()) + TYPE_ALIAS_SUFFIX;
+    }
+
+    public static String getTypeAliasName(TemplateParameter param)
+    {
+        return pascalCase(param.getName()) + TYPE_ALIAS_SUFFIX;
     }
 
     private static String uncapFirst(String name)
