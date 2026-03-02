@@ -34,6 +34,11 @@ public final class AccessorNameFormatter
         return enumItem.isRemoved() ? REMOVED_ENUMERATOR_PREFIX + enumItem.getName() : enumItem.getName();
     }
 
+    public static String getTypeAliasName(Field field)
+    {
+        return pascalCase(field.getName()) + TYPE_ALIAS_SUFFIX;
+    }
+
     private static String uncapFirst(String name)
     {
         final StringBuilder nameFirstUncap = new StringBuilder();
@@ -43,5 +48,37 @@ public final class AccessorNameFormatter
         return nameFirstUncap.toString();
     }
 
+    // myField1A -> MyField1A
+    // GEOMETRY_T -> GeometryT
+    private static String pascalCase(String name)
+    {
+        final StringBuilder sbu = new StringBuilder();
+        boolean makeUpper = true;
+        for (int i = 0; i < name.length(); ++i)
+        {
+            final char c = name.charAt(i);
+            if (c == '_')
+            {
+                makeUpper = true;
+            }
+            else if (Character.isDigit(c))
+            {
+                sbu.append(c);
+                makeUpper = true;
+            }
+            else
+            {
+                final String chr = makeUpper
+                        ? String.valueOf(c).toUpperCase(Locale.ENGLISH)
+                        : String.valueOf(c).toLowerCase(Locale.ENGLISH);
+                sbu.append(chr);
+                makeUpper = Character.isLowerCase(c) && i + 1 < name.length() &&
+                        Character.isUpperCase(name.charAt(i + 1));
+            }
+        }
+        return sbu.toString();
+    }
+
     private final static String REMOVED_ENUMERATOR_PREFIX = "ZSERIO_REMOVED_";
+    private final static String TYPE_ALIAS_SUFFIX = "Type";
 }

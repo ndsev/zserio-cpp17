@@ -78,6 +78,7 @@ class View<${fullName}>
 {
 public:
     <@array_traits_declaration fullName, fieldList/>
+    <@field_type_aliases fieldList/>
     explicit View(<#if !usedAsOffset>const </#if>${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,

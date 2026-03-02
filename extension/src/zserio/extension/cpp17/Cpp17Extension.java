@@ -65,6 +65,9 @@ public final class Cpp17Extension implements Extension
 
         final CppInnerClassesClashChecker innerClassesClashChecker = new CppInnerClassesClashChecker();
         rootNode.walk(innerClassesClashChecker);
+
+        final CppTypeAliasClashChecker typeAliasClashChecker = new CppTypeAliasClashChecker();
+        rootNode.walk(typeAliasClashChecker);
     }
 
     @Override

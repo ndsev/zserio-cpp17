@@ -24,7 +24,11 @@
 
 <#macro field_view_type_name_inner field>
     <#if field.array??>
+        <#if field.array.typeAliasName?has_content>
+        ${field.array.typeAliasName}<#t>
+        <#else>
         <@array_type_name field/><#t>
+        </#if>
     <#else>
         <#if field.typeInfo.isSimple && !field.typeInfo.isDynamicBitField>
             ${field.typeInfo.typeFullName}<#t>
@@ -46,7 +50,11 @@
 
 <#macro field_view_type_full_name_inner compoundName field>
     <#if field.array??>
+        <#if field.array.typeAliasName?has_content>
+        View<${compoundName}>::${field.array.typeAliasName}<#t>
+        <#else>
         <@array_type_full_name compoundName, field/><#t>
+        </#if>
     <#else>
         <@field_view_type_name_inner field/><#t>
     </#if>
@@ -201,6 +209,19 @@ ${I}}
 
 <#macro choice_tag_name field>
     <@field_name field/><#t>
+</#macro>
+
+<#macro field_type_aliases fieldList>
+    <#assign hasTypeAlias = false>
+    <#list fieldList as field>
+        <#if field.array??>
+            <#assign hasTypeAlias = true>
+    using ${field.array.typeAliasName} = <@array_type_name field/>;
+        </#if>
+    </#list>
+    <#if hasTypeAlias>
+
+    </#if>
 </#macro>
 
 <#macro array_traits_name field>

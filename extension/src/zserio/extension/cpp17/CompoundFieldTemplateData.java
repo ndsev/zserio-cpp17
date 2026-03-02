@@ -30,6 +30,7 @@ public final class CompoundFieldTemplateData
     public CompoundFieldTemplateData(TemplateDataContext context, CompoundType parentType, Field field,
             IncludeCollector includeCollector) throws ZserioExtensionException
     {
+        final String typeAliasName = AccessorNameFormatter.getTypeAliasName(field);
         final TypeInstantiation fieldTypeInstantiation = field.getTypeInstantiation();
         final ZserioType fieldBaseType = fieldTypeInstantiation.getBaseType();
 
@@ -62,7 +63,8 @@ public final class CompoundFieldTemplateData
         compound = createCompound(context, fieldTypeInstantiation, includeCollector);
         dynamicBitFieldLength = createDynamicBitFieldLength(context, fieldTypeInstantiation, includeCollector);
         integerRange = createIntegerRange(context, fieldTypeInstantiation, includeCollector);
-        array = createArray(context, fieldNativeType, fieldTypeInstantiation, parentType, includeCollector);
+        array = createArray(
+                context, fieldNativeType, fieldTypeInstantiation, parentType, includeCollector, typeAliasName);
         docComments = DocCommentsDataCreator.createData(context, field);
     }
 
@@ -554,7 +556,7 @@ public final class CompoundFieldTemplateData
     {
         public Array(TemplateDataContext context, NativeArrayType nativeType,
                 ArrayInstantiation arrayInstantiation, CompoundType parentType,
-                IncludeCollector includeCollector) throws ZserioExtensionException
+                IncludeCollector includeCollector, String typeAliasName) throws ZserioExtensionException
         {
             final TypeInstantiation elementTypeInstantiation = arrayInstantiation.getElementTypeInstantiation();
 
@@ -573,6 +575,7 @@ public final class CompoundFieldTemplateData
                     elementTypeInstantiation.getTypeReference(), includeCollector);
             elementUsedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(
                     elementTypeInstantiation.getBaseType());
+            this.typeAliasName = typeAliasName;
         }
 
         public boolean getIsImplicit()
@@ -605,6 +608,11 @@ public final class CompoundFieldTemplateData
             return elementUsedInPackedArray;
         }
 
+        public String getTypeAliasName()
+        {
+            return typeAliasName;
+        }
+
         private static String createLength(ArrayInstantiation arrayInstantiation,
                 ExpressionFormatter cppExpressionFormatter) throws ZserioExtensionException
         {
@@ -621,6 +629,7 @@ public final class CompoundFieldTemplateData
         private final String viewIndirectLength;
         private final boolean isRecursive;
         private final boolean elementUsedInPackedArray;
+        private final String typeAliasName;
     }
 
     private static String getDynamicBitFieldLength(TypeInstantiation instantiation,
@@ -811,8 +820,8 @@ public final class CompoundFieldTemplateData
     }
 
     private static Array createArray(TemplateDataContext context, CppNativeType cppNativeType,
-            TypeInstantiation typeInstantiation, CompoundType parentType, IncludeCollector includeCollector)
-            throws ZserioExtensionException
+            TypeInstantiation typeInstantiation, CompoundType parentType, IncludeCollector includeCollector,
+            String typeAliasName) throws ZserioExtensionException
     {
         if (!(typeInstantiation instanceof ArrayInstantiation))
             return null;
@@ -825,7 +834,7 @@ public final class CompoundFieldTemplateData
         }
 
         return new Array(context, (NativeArrayType)cppNativeType, (ArrayInstantiation)typeInstantiation,
-                parentType, includeCollector);
+                parentType, includeCollector, typeAliasName);
     }
 
     private static IntegerRange createIntegerRange(

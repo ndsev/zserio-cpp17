@@ -212,6 +212,7 @@ class View<${fullName}>
 {
 public:
     <@array_traits_template fullName, fieldList/>
+    <@field_type_aliases fieldList/>
     explicit View(const ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
