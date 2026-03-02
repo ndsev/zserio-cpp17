@@ -71,6 +71,7 @@ struct ${name} : <@variant_type_name_begin/>typename ::zserio::detail::ChoiceTag
 </#list>
         <#lt>>
 {
+    using View = ::zserio::View<${name}>;
     using Tag = typename ::zserio::detail::ChoiceTag<${fullName}>::Tag;
     using Base = <@variant_type_name_begin/>Tag,
             ::std::monostate<#rt>

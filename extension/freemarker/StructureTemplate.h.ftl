@@ -47,6 +47,7 @@
 <@template_definition templateParameterList/>
 struct ${name}
 {
+    using View = ::zserio::View<${name}>;
     using allocator_type = ${types.allocator.default};
 <#if structure_has_recursive_optional_field(fieldList)>
     using IS_RECURSIVE = void;

@@ -49,6 +49,8 @@ class ${name};
 <@template_definition templateParameterList/>
 struct SqlRow<${fullName}>
 {
+    using View = ::zserio::View<SqlRow>;
+
     <@template_parameter_aliases templateParameterList/>
     SqlRow() :
             SqlRow(${types.allocator.default}())

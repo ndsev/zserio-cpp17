@@ -64,6 +64,8 @@ public:
     /** Class which describes one row in the table. Contains only data. See View<Row> for View. */
     struct Row
     {
+        using View = ::zserio::View<Row>;
+
         Row();
         explicit Row(const allocator_type& allocator);
 

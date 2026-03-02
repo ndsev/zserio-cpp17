@@ -21,6 +21,12 @@ protected:
                     "errors/cpp17_generator_error", "zserio_log_type_alias_table_tmpl_param_clash_error.txt"),
             unionTmplParamFieldClashOutput("errors/cpp17_generator_error",
                     "zserio_log_type_alias_union_tmpl_param_field_clash_error.txt"),
+            structNameViewClashOutput(
+                    "errors/cpp17_generator_error", "zserio_log_view_alias_struct_name_view_clash_error.txt"),
+            structTmplParamViewClashOutput("errors/cpp17_generator_error",
+                    "zserio_log_view_alias_struct_tmpl_param_view_clash_error.txt"),
+            tableTmplParamViewClashOutput("errors/cpp17_generator_error",
+                    "zserio_log_view_alias_table_tmpl_param_view_clash_error.txt")
     {}
 
     const test_utils::ZserioErrorOutput choiceTmplParamFieldClashOutput;
@@ -31,6 +37,9 @@ protected:
     const test_utils::ZserioErrorOutput structTmplParamFieldClashOutput;
     const test_utils::ZserioErrorOutput tableTmplParamClashOutput;
     const test_utils::ZserioErrorOutput unionTmplParamFieldClashOutput;
+    const test_utils::ZserioErrorOutput structNameViewClashOutput;
+    const test_utils::ZserioErrorOutput structTmplParamViewClashOutput;
+    const test_utils::ZserioErrorOutput tableTmplParamViewClashOutput;
 };
 
 TEST_F(Cpp17GeneratorErrorTest, typeAliasClash)
@@ -61,4 +70,17 @@ TEST_F(Cpp17GeneratorErrorTest, typeAliasClash)
     ASSERT_TRUE(unionTmplParamFieldClashOutput.isPresent(
             "union_tmpl_param_field_clash_error.zs:3:14: Template parameter 'Uint8ArrayType' clashes with type "
             "alias for field 'uint8Array'."));
+}
+
+TEST_F(Cpp17GeneratorErrorTest, viewAliasClash)
+{
+    ASSERT_TRUE(structNameViewClashOutput.isPresent(
+            "struct_name_view_clash_error.zs:3:8: Structure 'View' clashes "
+            "with alias 'View' and may not be used as an identifier!"));
+    ASSERT_TRUE(structTmplParamViewClashOutput.isPresent(
+            "struct_tmpl_param_view_clash_error.zs:3:18: Template "
+            "parameter 'View' clashes with the View alias."));
+    ASSERT_TRUE(tableTmplParamViewClashOutput.isPresent(
+            "table_tmpl_param_view_clash_error.zs:3:26: Template "
+            "parameter 'View' clashes with the View alias."));
 }

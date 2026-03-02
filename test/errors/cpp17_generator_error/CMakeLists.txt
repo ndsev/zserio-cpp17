@@ -35,3 +35,30 @@ foreach (TEST IN LISTS TYPE_ALIAS_CLASH_TESTS)
     endif ()
     add_dependencies(cpp17_generator_error ${TEST}_zs)
 endforeach()
+
+set(VIEW_ALIAS_CLASH_TESTS
+    struct_name_view_clash_error
+    struct_tmpl_param_view_clash_error
+    table_tmpl_param_view_clash_error
+)
+foreach (TEST IN LISTS VIEW_ALIAS_CLASH_TESTS)
+    add_library(${TEST}_zs INTERFACE
+        ${TEST_ZS_ROOT}/view_alias_clashing/${TEST}.zs
+    )
+    zserio_generate_cpp(
+        TARGET ${TEST}_zs
+        SRC_DIR ${TEST_ZS_ROOT}/view_alias_clashing
+        GEN_DIR ${ZSERIO_GEN_DIR}/view_alias_clashing
+        EXTRA_ARGS -withoutCrossExtensionCheck ${ZSERIO_EXTRA_ARGS} # only interested in cpp17 errors here
+        OUTPUT_VAR ZSERIO_LOG_VIEW_ALIAS_CLASH
+        ERROR_VAR ZSERIO_LOG_VIEW_ALIAS_CLASH
+        RESULT_VAR ZSERIO_RESULT
+    )
+    if (ZSERIO_LOG_VIEW_ALIAS_CLASH)
+        file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/zserio_log_view_alias_${TEST}.txt "${ZSERIO_LOG_VIEW_ALIAS_CLASH}")
+        if (${ZSERIO_RESULT} EQUAL 0)
+            message(FATAL_ERROR "Zserio tool is expected to fail!")
+        endif ()
+    endif ()
+    add_dependencies(cpp17_generator_error ${TEST}_zs)
+endforeach()
