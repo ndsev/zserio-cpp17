@@ -61,6 +61,8 @@ Although newer C++ compilers are not tested, they should work as well as long as
 
 The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator design.
 
+The [Generated Code](#generated-code) outlines differences from the original zserio generator.
+
 The [Command Line Parameters](#command-line-parameters) section lists command line parameters related to the C++17 generator.
 
 The generator fully supports the Zserio language and Zserio templates are generated as native C++ templates.
@@ -138,3 +140,41 @@ subdirectory will contain only one C++ source module.
 **`-withTypeInfoCode|-withoutTypeInfoCode`**
 
 Enables/disables generation of type information code. By default is disabled.
+
+### Generated Code
+
+C++17 generator generates code which is different from the original zserio generator. Specifically it separates generated classes into `Data` and `View` parts. The I/O methods are put in the `ObjectTraits` specialization.
+
+#### Data class
+ * only contains fields
+ * not lightweight, passed by reference
+ * named after the zserio entity
+
+#### View class
+ * read-only, lightweight, can be passed by value
+ * stores a const reference to the Data class, accessible through `zserioData()`
+ * contains getters, inner helper classes and convenient type aliases
+ * it is actually a specialization of `zserio::View<T>` class. For convenience one can also refer to it through `Data::View` alias.
+
+ Both classes implement comparison / relational operators and specialize `std::hash`.
+
+In most cases accessing the View through `zserio::View<Data>` or `Data::View` is equivalent. But in case you write a generic code with Data class template deduction prefer to use `zserio::View` specialization.
+
+Example:
+
+```c++
+template <typename Data>
+void printName(zserio::View<Data> view) { // preferred way
+    std::cout << view.name() << std::endl;
+}
+
+template <typename Data>
+void printName2(typename Data::View view) { // alternate way
+    std::cout << view.name() << std::endl;
+}
+
+// now according to C++ rules one can call printName as below
+MyGeneratedStruct data;
+MyGeneratedStruct::View view(data);
+printName(view);
+printName2<MyGeneratedStruct>(view); // needs to spell the type to work
