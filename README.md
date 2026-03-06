@@ -27,7 +27,7 @@ The following two main features of a C++17 generator offer significant advantage
 - Implementation of the Parameterized Types
 
   New C++17 generator implements Zserio Structures, Choices, and Unions using a new Data View abstraction.
-  This new abstraction naturally solves tge implementation of Parameterized Types without the need for
+  This new abstraction naturally solves the implementation of Parameterized Types without the need for
   two-phase initialization or custom copy and move constructors.
 
 - Implementation of the Templates
@@ -57,35 +57,19 @@ Zserio C++17 generator supports the following C++ compilers:
 
 Although newer C++ compilers are not tested, they should work as well as long as they are backward compatible.
 
-## Current State
+## Documentation
 
 The [Design Document](doc/Cpp17Design.md) acts as the primary source of information about the C++17 generator design.
 
-The [Generated Code](#generated-code) outlines differences from the original zserio generator.
-
 The [Command Line Parameters](#command-line-parameters) section lists command line parameters related to the C++17 generator.
 
-The generator fully supports the Zserio language and Zserio templates are generated as native C++ templates.
+The [Generated Code Gotchas](#generated-code-gotchas) section outlines the counter-intuitive behaviors in the
+generated code that might frequently trick people into making mistakes.
 
-### How to Get the latest C++17 Generator
+The [How to Use the Development Build](#how-to-use-the-development-build) section outlines the procedure for
+using the latest C++17 generator via the current development build.
 
-Download the latest Zserio bundle jar (together with Zserio runtime library) from the GitHub action artifacts
-using the following steps:
-
-- Go to the [Actions](https://github.com/ndsev/zserio-cpp17/actions) page
-- Click on the latest Linux workflow
-- Scroll down to the Artifacts
-- Download `zserio-java8` artifact for Zserio bundle jar
-- Alternatively, download `zserio-runtime-cpp` artifact for Zserio runtime library
-
-### How to Run the latest C++17 Generator
-
-Run the Zserio C++17 generator using the following steps:
-
-- Unzip `zserio-java8` to get `zserio.jar` binary
-- Run the command `java -jar zserio.jar schema_name.zs -cpp17 output_directory_name`
-
-### <a name="command-line-parameters">Command line parameters for the C++17 Generator</a>
+### Command Line Parameters
 
 ```
 java -jar zserio.jar
@@ -141,40 +125,70 @@ subdirectory will contain only one C++ source module.
 
 Enables/disables generation of type information code. By default is disabled.
 
-### Generated Code
+### Generated Code Gotchas
 
-C++17 generator generates code which is different from the original zserio generator. Specifically it separates generated classes into `Data` and `View` parts. The I/O methods are put in the `ObjectTraits` specialization.
+#### View Class Declaration
 
-#### Data class
- * only contains fields
- * not lightweight, passed by reference
- * named after the zserio entity
+As written in the [Design Document](doc/Cpp17Design.md), C++17 separates generated classes into `Data` and
+`View` parts.
 
-#### View class
- * read-only, lightweight, can be passed by value
- * stores a const reference to the Data class, accessible through `zserioData()`
- * contains getters, inner helper classes and convenient type aliases
- * it is actually a specialization of `zserio::View<T>` class. For convenience one can also refer to it through `Data::View` alias.
+Data Class:
 
- Both classes implement comparison / relational operators and specialize `std::hash`.
+* Contains only fields (the raw data).
+* Not lightweight (owns the data); typically passed by reference.
+* Named directly after the Zserio entity.
 
-In most cases accessing the View through `zserio::View<Data>` or `Data::View` is equivalent. But in case you write a generic code with Data class template deduction prefer to use `zserio::View` specialization.
+View Class:
+
+* Read-only and lightweight; designed to be passed by value.
+* Stores a const reference to the `Data` class, accessible via zserioData().
+* Contains getters, inner helper classes, and convenient type aliases.
+* Acts as a specialization of the `zserio::View<T>` class; for convenience, it can also be accessed
+  via the `Data::View` alias.
+
+The I/O methods are put in the `ObjectTraits` specialization. Both classes implement comparison / relational
+operators and specialize `std::hash`.
+
+In most cases accessing the View through `zserio::View<Data>` or `Data::View` is equivalent. But in case
+you write a generic code with `Data` class template deduction prefer to use `zserio::View` specialization.
 
 Example:
 
 ```c++
+// preferred way
 template <typename Data>
-void printName(zserio::View<Data> view) { // preferred way
+void printNameWithDeduction(zserio::View<Data> view)
+{
     std::cout << view.name() << std::endl;
 }
 
+// alternate way
 template <typename Data>
-void printName2(typename Data::View view) { // alternate way
+void printNameWithoutDeduction(typename Data::View view)
+{
     std::cout << view.name() << std::endl;
 }
 
 // now according to C++ rules one can call printName as below
 MyGeneratedStruct data;
 MyGeneratedStruct::View view(data);
-printName(view);
-printName2<MyGeneratedStruct>(view); // needs to spell the type to work
+
+printNameWithDeduction(view); // template parameter deduction works
+printNameWithoutDeduction<MyGeneratedStruct>(view); // needs to spell the type to work
+```
+
+### How to Use the Development Build
+
+Download the latest Zserio bundle jar (together with Zserio runtime library) from the GitHub action artifacts
+using the following steps:
+
+- Go to the [Actions](https://github.com/ndsev/zserio-cpp17/actions) page
+- Click on the latest Linux workflow
+- Scroll down to the Artifacts
+- Download `zserio-java8` artifact for Zserio bundle jar
+- Alternatively, download `zserio-runtime-cpp` artifact for Zserio runtime library
+
+Run the Zserio C++17 generator using the following steps:
+
+- Unzip `zserio-java8` to get `zserio.jar` binary
+- Run the command `java -jar zserio.jar schema_name.zs -cpp17 output_directory_name`
