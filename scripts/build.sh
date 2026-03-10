@@ -25,6 +25,7 @@ Arguments:
     package                  Specify the package to build or clean.
 
 Package can be the combination of:
+    core                     Only download Zserio core.
     cpp                      Zserio C++ extension.
     cpp_rt-linux32-gcc       Zserio C++ extension runtime library for native linux32 (gcc).
     cpp_rt-linux64-gcc       Zserio C++ extension runtime library for native linux64 (gcc).
@@ -52,6 +53,7 @@ parse_arguments()
 {
     local NUM_OF_ARGS=7
     exit_if_argc_lt $# ${NUM_OF_ARGS}
+    local PARAM_CORE_OUT="$1"; shift
     local PARAM_CPP_OUT="$1"; shift
     local PARAM_CPP_TARGET_ARRAY_OUT="$1"; shift
     local PARAM_ZSERIO_OUT="$1"; shift
@@ -127,6 +129,10 @@ parse_arguments()
     local PARAM
     for PARAM in "${PARAM_ARRAY[@]}" ; do
         case "${PARAM}" in
+            "core")
+                eval ${PARAM_CORE_OUT}=1
+                ;;
+
             "cpp")
                 eval ${PARAM_CPP_OUT}=1
                 ;;
@@ -147,7 +153,8 @@ parse_arguments()
         esac
     done
 
-    if [[ ${!PARAM_CPP_OUT} == 0 &&
+    if [[ ${!PARAM_CORE_OUT} == 0 &&
+          ${!PARAM_CPP_OUT} == 0 &&
           ${NUM_CPP_TARGETS} == 0 &&
           ${PARAM_ZSERIO_OUT} == 0 &&
           ${!SWITCH_PURGE_OUT} == 0 ]] ; then
@@ -166,6 +173,7 @@ main()
     convert_to_absolute_path "${SCRIPT_DIR}/.." ZSERIO_CPP17_PROJECT_ROOT
 
     # parse command line arguments
+    local PARAM_CORE
     local PARAM_CPP
     local PARAM_CPP_TARGET_ARRAY=()
     local PARAM_ZSERIO
@@ -173,7 +181,7 @@ main()
     local PARAM_ZSERIO_DISTR_DIR=""
     local SWITCH_CLEAN
     local SWITCH_PURGE
-    parse_arguments PARAM_CPP PARAM_CPP_TARGET_ARRAY PARAM_ZSERIO \
+    parse_arguments PARAM_CORE PARAM_CPP PARAM_CPP_TARGET_ARRAY PARAM_ZSERIO \
                     PARAM_OUT_DIR PARAM_ZSERIO_DISTR_DIR SWITCH_CLEAN SWITCH_PURGE "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
@@ -192,7 +200,8 @@ main()
         return 1
     fi
 
-    if [[ ${PARAM_CPP} == 1 ||
+    if [[ ${PARAM_CORE} == 1 ||
+          ${PARAM_CPP} == 1 ||
           ${PARAM_ZSERIO} == 1 ]] ; then
         set_global_java_variables
         if [ $? -ne 0 ] ; then
@@ -241,6 +250,17 @@ main()
     )
     if [ ! -z "${PARAM_ZSERIO_DISTR_DIR}" ] ; then
         local ZSERIO_CPP17_ANT_PROPS+=(-Dzserio.distr_dir="${PARAM_ZSERIO_DISTR_DIR}")
+    fi
+
+    # Download Zserio core
+    if [[ ${PARAM_CORE} == 1 ]] ; then
+        echo "${ACTION_DESCRIPTION} Download Zserio core."
+        echo
+        compile_java "${ZSERIO_CPP17_PROJECT_ROOT}/extension/build.xml" ZSERIO_CPP17_ANT_PROPS[@] zserio_download
+        if [ $? -ne 0 ] ; then
+            return 1
+        fi
+        echo
     fi
 
     # build Zserio C++ extension
