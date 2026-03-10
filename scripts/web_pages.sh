@@ -14,11 +14,33 @@ set_web_pages_global_variables()
     fi
 }
 
-# Print help on the environment variables used for this post release script.
-print_release_help_env()
+# Print help message.
+print_help()
 {
     cat << EOF
-Uses the following environment variables for update after release:
+Description:
+    Update web pages after new Zserio C++17 extension release.
+
+Usage:
+    $0 [-h] [-e] [-o <dir>]
+
+Arguments:
+    -h, --help               Show this help.
+    -e, --help-env           Show help for enviroment variables.
+    -o <dir>, --output-directory <dir>
+                             Output directory where build and distr will be located.
+
+Examples:
+    $0
+
+EOF
+}
+
+# Print help on the environment variables.
+print_help_env()
+{
+    cat << EOF
+Uses the following environment variables:
     GIT      Git executable to use. Default is "git".
 
     Either set these directly, or create 'scripts/build-env.sh' that sets these.
@@ -50,6 +72,7 @@ parse_arguments()
             "-e" | "--help-env")
                 return 3
                 ;;
+
             "-o" | "--output-directory")
                 if [ $# -eq 1 ] ; then
                     stderr_echo "Missing output directory!"
@@ -117,14 +140,14 @@ main()
     local ZSERIO_CPP17_PROJECT_ROOT="${SCRIPT_DIR}/.."
 
     # parse command line arguments
-    local PARAM_OUT_DIR="${ZSERIO_PROJECT_ROOT}"
-    parse_arguments PARAM_OUT_DIR
+    local PARAM_OUT_DIR="${ZSERIO_CPP17_PROJECT_ROOT}"
+    parse_arguments PARAM_OUT_DIR "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
         print_help
         return 0
     elif [ ${PARSE_RESULT} -eq 3 ] ; then
-        print_release_help_env
+        print_help_env
         return 0
     elif [ ${PARSE_RESULT} -ne 0 ] ; then
         return 1
@@ -134,11 +157,14 @@ main()
     convert_to_absolute_path "${PARAM_OUT_DIR}" PARAM_OUT_DIR
 
     set_web_pages_global_variables
+    if [ ${GIT_RESULT} -ne 0 ] ; then
+        return 1
+    fi
 
     local ZSERIO_BUILD_DIR="${PARAM_OUT_DIR}/build"
     local ZSERIO_DISTR_DIR="${PARAM_OUT_DIR}/distr"
 
-    echo "Rebasing Zserio Web Pages branch onto the master tag."
+    echo "Rebasing Zserio C++17 Extension Web Pages branch onto the master tag."
     local GIT_MESSAGE="Add generated runtime documentation"
 
     "${GIT}" checkout web-pages 2>&1 > /dev/null
@@ -166,12 +192,12 @@ main()
 
     local DEST_RUNTIME_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/doc/runtime"
 
-    echo -ne "Removing Zserio runtime libraries latest version..."
+    echo -ne "Removing Zserio C++17 extension runtime libraries latest version..."
     local DEST_LATEST_DIR="${DEST_RUNTIME_DIR}/latest"
     rm -rf "${DEST_LATEST_DIR}"
     echo "Done"
 
-    echo -ne "Copying Zserio runtime library latest version..."
+    echo -ne "Copying Zserio C++17 extension runtime library latest version..."
     mkdir -p "${DEST_LATEST_DIR}"
     cp -r ${ZSERIO_DISTR_DIR}/runtime_lib/zserio_doc/* ${DEST_LATEST_DIR}
     if [ $? -ne 0 ] ; then
@@ -179,7 +205,7 @@ main()
     fi
     echo "Done"
 
-    echo -ne "Creating Zserio runtime library GitHub badges..."
+    echo -ne "Creating Zserio C++17 extension runtime library GitHub badges..."
     create_github_badge_jsons "${DEST_RUNTIME_DIR}" "latest"
     if [ $? -ne 0 ] ; then
         return 1
@@ -187,9 +213,9 @@ main()
     echo "Done"
 
     echo
-    echo "Committing changes to Zserio Web Pages branch."
-    "${GIT}" -C "${ZSERIO_PROJECT_ROOT}" add -A
-    "${GIT}" -C "${ZSERIO_PROJECT_ROOT}" commit -a -m "${GIT_MESSAGE}"
+    echo "Committing changes to Zserio C++17 extension Web Pages branch."
+    "${GIT}" -C "${ZSERIO_CPP17_PROJECT_ROOT}" add -A
+    "${GIT}" -C "${ZSERIO_CPP17_PROJECT_ROOT}" commit -a -m "${GIT_MESSAGE}"
     local GIT_RESULT=$?
     if [ ${GIT_RESULT} -ne 0 ] ; then
         stderr_echo "Git failed with return code ${GIT_RESULT}!"
@@ -200,14 +226,14 @@ main()
     read -n 1 -s -r -p "Press any key to PUSH the 'web-pages' branch..."
     echo
 
-    "${GIT}" -C "${ZSERIO_PROJECT_ROOT}" push --force --set-upstream origin web-pages
+    "${GIT}" -C "${ZSERIO_CPP17_PROJECT_ROOT}" push --force --set-upstream origin web-pages
     local GIT_RESULT=$?
     if [ ${GIT_RESULT} -ne 0 ] ; then
         stderr_echo "Git failed with return code ${GIT_RESULT}!"
         return 1
     fi
 
-    "${GIT}" -C "${ZSERIO_PROJECT_ROOT}" checkout master
+    "${GIT}" -C "${ZSERIO_CPP17_PROJECT_ROOT}" checkout master
     local GIT_RESULT=$?
     if [ ${GIT_RESULT} -ne 0 ] ; then
         stderr_echo "Git failed with return code ${GIT_RESULT}!"
