@@ -4,7 +4,6 @@ var hierarchy =
       [ "zserio::BasicAny< ALLOC >", "classzserio_1_1BasicAny.html", null ],
       [ "zserio::BasicOptional< BasicString< RebindAlloc< std::allocator< uint8_t >, char > > >", "classzserio_1_1BasicOptional.html", null ],
       [ "zserio::BasicOptional< ALLOC, T >", "classzserio_1_1BasicOptional.html", null ],
-      [ "zserio::BasicVariant< ALLOC, INDEX, T >", "classzserio_1_1BasicVariant.html", null ],
       [ "zserio::BasicZserioTreeCreator< ALLOC >", "classzserio_1_1BasicZserioTreeCreator.html", null ]
     ] ],
     [ "zserio::AllocatorHolder< ALLOC, true >", "classzserio_1_1AllocatorHolder_3_01ALLOC_00_01true_01_4.html", null ],
@@ -41,6 +40,7 @@ var hierarchy =
     [ "zserio::BasicParameterInfo< ALLOC >", "structzserio_1_1BasicParameterInfo.html", null ],
     [ "zserio::BasicTableInfo< ALLOC >", "structzserio_1_1BasicTableInfo.html", null ],
     [ "zserio::BasicTemplateArgumentInfo< ALLOC >", "structzserio_1_1BasicTemplateArgumentInfo.html", null ],
+    [ "zserio::BasicVariant< ALLOC, INDEX, T >", "classzserio_1_1BasicVariant.html", null ],
     [ "zserio::BasicWalker< ALLOC >", "classzserio_1_1BasicWalker.html", null ],
     [ "zserio::BitsTag", "structzserio_1_1BitsTag.html", null ],
     [ "zserio::BitStreamReader", "classzserio_1_1BitStreamReader.html", null ],

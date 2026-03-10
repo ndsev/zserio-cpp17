@@ -7,8 +7,9 @@ var dir_6b642103880cae3b669c9373a28100e9 =
       [ "AllocatorHolder< ALLOC, true >", "classzserio_1_1AllocatorHolder_3_01ALLOC_00_01true_01_4.html", "classzserio_1_1AllocatorHolder_3_01ALLOC_00_01true_01_4" ]
     ] ],
     [ "Any.h", "Any_8h.html", "Any_8h" ],
+    [ "ArrayLengthException.cpp", "ArrayLengthException_8cpp.html", null ],
     [ "ArrayLengthException.h", "ArrayLengthException_8h.html", [
-      [ "ArrayLengthException", "classzserio_1_1ArrayLengthException.html", null ]
+      [ "ArrayLengthException", "classzserio_1_1ArrayLengthException.html", "classzserio_1_1ArrayLengthException" ]
     ] ],
     [ "ArrayTraits.h", "ArrayTraits_8h.html", [
       [ "ArrayTraits", "structzserio_1_1ArrayTraits.html", null ],
@@ -39,12 +40,14 @@ var dir_6b642103880cae3b669c9373a28100e9 =
     [ "BuiltInOperators.h", "BuiltInOperators_8h.html", "BuiltInOperators_8h" ],
     [ "Bytes.cpp", "Bytes_8cpp.html", null ],
     [ "Bytes.h", "Bytes_8h.html", "Bytes_8h" ],
+    [ "ChoiceCaseException.cpp", "ChoiceCaseException_8cpp.html", null ],
     [ "ChoiceCaseException.h", "ChoiceCaseException_8h.html", [
-      [ "ChoiceCaseException", "classzserio_1_1ChoiceCaseException.html", null ]
+      [ "ChoiceCaseException", "classzserio_1_1ChoiceCaseException.html", "classzserio_1_1ChoiceCaseException" ]
     ] ],
     [ "ChoiceTag.h", "ChoiceTag_8h.html", null ],
+    [ "ConstraintException.cpp", "ConstraintException_8cpp.html", null ],
     [ "ConstraintException.h", "ConstraintException_8h.html", [
-      [ "ConstraintException", "classzserio_1_1ConstraintException.html", null ]
+      [ "ConstraintException", "classzserio_1_1ConstraintException.html", "classzserio_1_1ConstraintException" ]
     ] ],
     [ "CppRuntimeException.cpp", "CppRuntimeException_8cpp.html", "CppRuntimeException_8cpp" ],
     [ "CppRuntimeException.h", "CppRuntimeException_8h.html", "CppRuntimeException_8h" ],
@@ -54,8 +57,9 @@ var dir_6b642103880cae3b669c9373a28100e9 =
     [ "DeltaContext.h", "DeltaContext_8h.html", null ],
     [ "Enums.h", "Enums_8h.html", "Enums_8h" ],
     [ "Extended.h", "Extended_8h.html", "Extended_8h" ],
+    [ "ExtendedFieldException.cpp", "ExtendedFieldException_8cpp.html", null ],
     [ "ExtendedFieldException.h", "ExtendedFieldException_8h.html", [
-      [ "ExtendedFieldException", "classzserio_1_1ExtendedFieldException.html", null ]
+      [ "ExtendedFieldException", "classzserio_1_1ExtendedFieldException.html", "classzserio_1_1ExtendedFieldException" ]
     ] ],
     [ "FileUtil.cpp", "FileUtil_8cpp.html", "FileUtil_8cpp" ],
     [ "FileUtil.h", "FileUtil_8h.html", "FileUtil_8h" ],
@@ -101,13 +105,17 @@ var dir_6b642103880cae3b669c9373a28100e9 =
     [ "JsonTokenizer.cpp", "JsonTokenizer_8cpp.html", "JsonTokenizer_8cpp" ],
     [ "JsonTokenizer.h", "JsonTokenizer_8h.html", "JsonTokenizer_8h" ],
     [ "JsonWriter.h", "JsonWriter_8h.html", "JsonWriter_8h" ],
+    [ "MissedOptionalException.cpp", "MissedOptionalException_8cpp.html", null ],
     [ "MissedOptionalException.h", "MissedOptionalException_8h.html", [
-      [ "MissedOptionalException", "classzserio_1_1MissedOptionalException.html", null ]
+      [ "MissedOptionalException", "classzserio_1_1MissedOptionalException.html", "classzserio_1_1MissedOptionalException" ]
     ] ],
+    [ "Optional.cpp", "Optional_8cpp.html", null ],
     [ "Optional.h", "Optional_8h.html", "Optional_8h" ],
+    [ "OutOfRangeException.cpp", "OutOfRangeException_8cpp.html", null ],
     [ "OutOfRangeException.h", "OutOfRangeException_8h.html", [
-      [ "OutOfRangeException", "classzserio_1_1OutOfRangeException.html", null ]
+      [ "OutOfRangeException", "classzserio_1_1OutOfRangeException.html", "classzserio_1_1OutOfRangeException" ]
     ] ],
+    [ "PubsubException.cpp", "PubsubException_8cpp.html", null ],
     [ "PubsubException.h", "PubsubException_8h.html", [
       [ "PubsubException", "classzserio_1_1PubsubException.html", "classzserio_1_1PubsubException" ]
     ] ],
@@ -118,6 +126,7 @@ var dir_6b642103880cae3b669c9373a28100e9 =
     ] ],
     [ "RuntimeArch.h", "RuntimeArch_8h.html", "RuntimeArch_8h" ],
     [ "SerializeUtil.h", "SerializeUtil_8h.html", "SerializeUtil_8h" ],
+    [ "ServiceException.cpp", "ServiceException_8cpp.html", null ],
     [ "ServiceException.h", "ServiceException_8h.html", [
       [ "ServiceException", "classzserio_1_1ServiceException.html", "classzserio_1_1ServiceException" ]
     ] ],
@@ -127,6 +136,7 @@ var dir_6b642103880cae3b669c9373a28100e9 =
     [ "SqliteConnection.h", "SqliteConnection_8h.html", [
       [ "SqliteConnection", "classzserio_1_1SqliteConnection.html", "classzserio_1_1SqliteConnection" ]
     ] ],
+    [ "SqliteException.cpp", "SqliteException_8cpp.html", null ],
     [ "SqliteException.h", "SqliteException_8h.html", "SqliteException_8h" ],
     [ "SqliteFinalizer.h", "SqliteFinalizer_8h.html", [
       [ "SqliteFinalizer", "structzserio_1_1SqliteFinalizer.html", "structzserio_1_1SqliteFinalizer" ]
@@ -143,13 +153,16 @@ var dir_6b642103880cae3b669c9373a28100e9 =
     ] ],
     [ "Types.cpp", "Types_8cpp.html", null ],
     [ "Types.h", "Types_8h.html", "Types_8h" ],
+    [ "UnexpectedOptionalException.cpp", "UnexpectedOptionalException_8cpp.html", null ],
     [ "UnexpectedOptionalException.h", "UnexpectedOptionalException_8h.html", [
-      [ "UnexpectedOptionalException", "classzserio_1_1UnexpectedOptionalException.html", null ]
+      [ "UnexpectedOptionalException", "classzserio_1_1UnexpectedOptionalException.html", "classzserio_1_1UnexpectedOptionalException" ]
     ] ],
+    [ "UnionCaseException.cpp", "UnionCaseException_8cpp.html", null ],
     [ "UnionCaseException.h", "UnionCaseException_8h.html", [
-      [ "UnionCaseException", "classzserio_1_1UnionCaseException.html", null ]
+      [ "UnionCaseException", "classzserio_1_1UnionCaseException.html", "classzserio_1_1UnionCaseException" ]
     ] ],
     [ "UniquePtr.h", "UniquePtr_8h.html", "UniquePtr_8h" ],
+    [ "ValidationException.cpp", "ValidationException_8cpp.html", null ],
     [ "ValidationException.h", "ValidationException_8h.html", [
       [ "ValidationException", "classzserio_1_1ValidationException.html", "classzserio_1_1ValidationException" ]
     ] ],
@@ -157,6 +170,7 @@ var dir_6b642103880cae3b669c9373a28100e9 =
       [ "ValidationSqliteUtil", "structzserio_1_1ValidationSqliteUtil.html", "structzserio_1_1ValidationSqliteUtil" ],
       [ "ColumnDescription", "structzserio_1_1ValidationSqliteUtil_1_1ColumnDescription.html", "structzserio_1_1ValidationSqliteUtil_1_1ColumnDescription" ]
     ] ],
+    [ "Variant.cpp", "Variant_8cpp.html", null ],
     [ "Variant.h", "Variant_8h.html", "Variant_8h" ],
     [ "Vector.h", "Vector_8h.html", "Vector_8h" ],
     [ "View.h", "View_8h.html", "View_8h" ],

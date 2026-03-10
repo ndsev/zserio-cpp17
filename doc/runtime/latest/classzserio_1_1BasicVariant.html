@@ -26,9 +26,9 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Zserio C++17 runtime library
-   &#160;<span id="projectnumber">0.5.0</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
-   <div id="projectbrief">Built for Zserio 2.17.0</div>
+   <div id="projectbrief">Built for Zserio 2.18.0</div>
   </td>
  </tr>
  </tbody>
@@ -93,24 +93,6 @@ $(document).ready(function(){initNavTree('classzserio_1_1BasicVariant.html','');
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="Variant_8h_source.html">Variant.h</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for zserio::BasicVariant&lt; ALLOC, INDEX, T &gt;:</div>
-<div class="dyncontent">
-<div class="center"><img src="classzserio_1_1BasicVariant__inherit__graph.png" border="0" usemap="#azserio_1_1BasicVariant_3_01ALLOC_00_01INDEX_00_01T_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="azserio_1_1BasicVariant_3_01ALLOC_00_01INDEX_00_01T_01_4_inherit__map" id="azserio_1_1BasicVariant_3_01ALLOC_00_01INDEX_00_01T_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="11,95,170,136"/>
-<area shape="rect" href="classzserio_1_1AllocatorHolder.html" title=" " alt="" coords="5,5,176,47"/>
-</map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
-<div class="dynheader">
-Collaboration diagram for zserio::BasicVariant&lt; ALLOC, INDEX, T &gt;:</div>
-<div class="dyncontent">
-<div class="center"><img src="classzserio_1_1BasicVariant__coll__graph.png" border="0" usemap="#azserio_1_1BasicVariant_3_01ALLOC_00_01INDEX_00_01T_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="azserio_1_1BasicVariant_3_01ALLOC_00_01INDEX_00_01T_01_4_coll__map" id="azserio_1_1BasicVariant_3_01ALLOC_00_01INDEX_00_01T_01_4_coll__map">
-<area shape="rect" title=" " alt="" coords="11,95,170,136"/>
-<area shape="rect" href="classzserio_1_1AllocatorHolder.html" title=" " alt="" coords="5,5,176,47"/>
-</map>
-<center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -118,11 +100,6 @@ Public Types</h2></td></tr>
 <tr class="separator:a783ba8a408380d4523a79e2898ee11fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab044a3a4e2c284b3251f0ab86db26207"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#ab044a3a4e2c284b3251f0ab86db26207">IndexType</a> = INDEX</td></tr>
 <tr class="separator:ab044a3a4e2c284b3251f0ab86db26207"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a768cb1aacce8a885a617def36cab1fb9"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a768cb1aacce8a885a617def36cab1fb9">VariantType</a> = std::variant&lt; typename detail::variant_element&lt; T &gt;::type... &gt;</td></tr>
-<tr class="separator:a768cb1aacce8a885a617def36cab1fb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_types_classzserio_1_1AllocatorHolder"><td colspan="2" onclick="javascript:toggleInherit('pub_types_classzserio_1_1AllocatorHolder')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="classzserio_1_1AllocatorHolder.html">zserio::AllocatorHolder&lt; ALLOC, EMPTY &gt;</a></td></tr>
-<tr class="memitem:abb11cfd07a7d4da6fce52297e93aec04 inherit pub_types_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> = ALLOC</td></tr>
-<tr class="separator:abb11cfd07a7d4da6fce52297e93aec04 inherit pub_types_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -130,20 +107,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2aeae59950cae0167414fee98ff18cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30ffd5fbd9d46f7dafb5997a3835c5f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a30ffd5fbd9d46f7dafb5997a3835c5f1">BasicVariant</a> (const ALLOC &amp;allocator)</td></tr>
 <tr class="separator:a30ffd5fbd9d46f7dafb5997a3835c5f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa55d8830d72828647d3b72ecfd1ca03"><td class="memTemplParams" colspan="2">template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr, std::enable_if_t&lt;!is_first_allocator_v&lt; ARGS... &gt;&gt; *  = nullptr&gt; </td></tr>
-<tr class="memitem:aaa55d8830d72828647d3b72ecfd1ca03"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#aaa55d8830d72828647d3b72ecfd1ca03">BasicVariant</a> (<a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;, ARGS &amp;&amp;... args)</td></tr>
-<tr class="separator:aaa55d8830d72828647d3b72ecfd1ca03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88523f979036121ad17eeebe69157ce8"><td class="memTemplParams" colspan="2">template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr&gt; </td></tr>
-<tr class="memitem:a88523f979036121ad17eeebe69157ce8"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a88523f979036121ad17eeebe69157ce8">BasicVariant</a> (<a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;, const ALLOC &amp;allocator, ARGS &amp;&amp;... args)</td></tr>
-<tr class="separator:a88523f979036121ad17eeebe69157ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a933ee4100104eeaba92ce0759d7749fb"><td class="memTemplParams" colspan="2">template&lt;INDEX I, typename... ARGS, typename U  = detail::type_at_t&lt;static_cast&lt;size_t&gt;(I), T...&gt;, std::enable_if_t&lt; detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr&gt; </td></tr>
-<tr class="memitem:a933ee4100104eeaba92ce0759d7749fb"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a933ee4100104eeaba92ce0759d7749fb">BasicVariant</a> (<a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;, const ALLOC &amp;allocator, ARGS &amp;&amp;... args)</td></tr>
-<tr class="separator:a933ee4100104eeaba92ce0759d7749fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71c77b2ccde27bcbc124c25e93fc948a"><td class="memTemplParams" colspan="2">template&lt;INDEX I, typename... ARGS, typename U  = detail::type_at_t&lt;static_cast&lt;size_t&gt;(I), T...&gt;, std::enable_if_t&lt; detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr, std::enable_if_t&lt;!is_first_allocator_v&lt; ARGS... &gt;&gt; *  = nullptr&gt; </td></tr>
-<tr class="memitem:a71c77b2ccde27bcbc124c25e93fc948a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a71c77b2ccde27bcbc124c25e93fc948a">BasicVariant</a> (<a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;, ARGS &amp;&amp;... args)</td></tr>
-<tr class="separator:a71c77b2ccde27bcbc124c25e93fc948a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a595588493f75e9c0df43a34b0076260b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a595588493f75e9c0df43a34b0076260b">~BasicVariant</a> ()</td></tr>
-<tr class="separator:a595588493f75e9c0df43a34b0076260b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ed466be4a903ca88e4d5d0058bac4b1"><td class="memTemplParams" colspan="2">template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!is_first_allocator_v&lt; ARGS... &gt;&gt; *  = nullptr&gt; </td></tr>
+<tr class="memitem:a5ed466be4a903ca88e4d5d0058bac4b1"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a5ed466be4a903ca88e4d5d0058bac4b1">BasicVariant</a> (<a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;, ARGS &amp;&amp;... args)</td></tr>
+<tr class="separator:a5ed466be4a903ca88e4d5d0058bac4b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81df07b9e024cf86403ade8f27a68045"><td class="memTemplParams" colspan="2">template&lt;INDEX I, typename... ARGS&gt; </td></tr>
+<tr class="memitem:a81df07b9e024cf86403ade8f27a68045"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a81df07b9e024cf86403ade8f27a68045">BasicVariant</a> (<a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;, const ALLOC &amp;allocator, ARGS &amp;&amp;... args)</td></tr>
+<tr class="separator:a81df07b9e024cf86403ade8f27a68045"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcb7609458050804248d810066d71b99"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#adcb7609458050804248d810066d71b99">BasicVariant</a> (const <a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> &amp;other)</td></tr>
 <tr class="separator:adcb7609458050804248d810066d71b99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e8efe9d5c4552cf60d8af3cfd3bc244"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a0e8efe9d5c4552cf60d8af3cfd3bc244">BasicVariant</a> (const <a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> &amp;other, const ALLOC &amp;allocator)</td></tr>
@@ -154,6 +123,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:add6c3015a897f54ccb4c67d738c92a66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2dc1d6126df73dea21043567ab221de6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a2dc1d6126df73dea21043567ab221de6">BasicVariant</a> (<a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> &amp;&amp;other, const ALLOC &amp;allocator)</td></tr>
 <tr class="separator:a2dc1d6126df73dea21043567ab221de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa91d612a1706cf599f5ec5f6ba7cf069"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#aa91d612a1706cf599f5ec5f6ba7cf069">~BasicVariant</a> ()=default</td></tr>
+<tr class="separator:aa91d612a1706cf599f5ec5f6ba7cf069"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3db160bf4f7cfaf9c84ee43393e29180"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a3db160bf4f7cfaf9c84ee43393e29180">operator=</a> (<a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> &amp;&amp;other)</td></tr>
 <tr class="separator:a3db160bf4f7cfaf9c84ee43393e29180"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a635dc59589a83bc730f8d06d488e50e2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#a635dc59589a83bc730f8d06d488e50e2">valueless_by_exception</a> () const noexcept</td></tr>
@@ -195,52 +166,20 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a345aefc0ff9924a643ed5ff24c846b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa12feec3f0a07a5de82da97dad356f8c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicVariant.html#aa12feec3f0a07a5de82da97dad356f8c">operator&gt;=</a> (const <a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> &amp;other) const</td></tr>
 <tr class="separator:aa12feec3f0a07a5de82da97dad356f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classzserio_1_1AllocatorHolder"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classzserio_1_1AllocatorHolder')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classzserio_1_1AllocatorHolder.html">zserio::AllocatorHolder&lt; ALLOC, EMPTY &gt;</a></td></tr>
-<tr class="memitem:aa68c47071ea92246473b257e52ffcff4 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#aa68c47071ea92246473b257e52ffcff4">AllocatorHolder</a> ()</td></tr>
-<tr class="separator:aa68c47071ea92246473b257e52ffcff4 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7857c90bd3c853ef1bd782c9695a713 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#ac7857c90bd3c853ef1bd782c9695a713">AllocatorHolder</a> (const <a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> &amp;allocator)</td></tr>
-<tr class="separator:ac7857c90bd3c853ef1bd782c9695a713 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36ec81239073b470495ffb29ccb4a22c inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a36ec81239073b470495ffb29ccb4a22c">AllocatorHolder</a> (<a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> &amp;&amp;allocator)</td></tr>
-<tr class="separator:a36ec81239073b470495ffb29ccb4a22c inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13f1b68878421a39f348d0254bb3263f inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a13f1b68878421a39f348d0254bb3263f">get_allocator</a> () const</td></tr>
-<tr class="separator:a13f1b68878421a39f348d0254bb3263f inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a871c7cb0f058fcdc4d66813b357b2113 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a871c7cb0f058fcdc4d66813b357b2113">~AllocatorHolder</a> ()=default</td></tr>
-<tr class="separator:a871c7cb0f058fcdc4d66813b357b2113 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb9f0956b3aa34d306307874e9825043 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#adb9f0956b3aa34d306307874e9825043">AllocatorHolder</a> (const <a class="el" href="classzserio_1_1AllocatorHolder.html">AllocatorHolder</a> &amp;other)=default</td></tr>
-<tr class="separator:adb9f0956b3aa34d306307874e9825043 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa84ac66ae952e5b154fe4f0b68e924f4 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classzserio_1_1AllocatorHolder.html">AllocatorHolder</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#aa84ac66ae952e5b154fe4f0b68e924f4">operator=</a> (const <a class="el" href="classzserio_1_1AllocatorHolder.html">AllocatorHolder</a> &amp;other)=default</td></tr>
-<tr class="separator:aa84ac66ae952e5b154fe4f0b68e924f4 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14166c71c50beb9cb5e1edaf30adeda6 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a14166c71c50beb9cb5e1edaf30adeda6">AllocatorHolder</a> (<a class="el" href="classzserio_1_1AllocatorHolder.html">AllocatorHolder</a> &amp;&amp;other)=default</td></tr>
-<tr class="separator:a14166c71c50beb9cb5e1edaf30adeda6 inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9319a5ab5ebc023b41f67644d8dea52e inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classzserio_1_1AllocatorHolder.html">AllocatorHolder</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a9319a5ab5ebc023b41f67644d8dea52e">operator=</a> (<a class="el" href="classzserio_1_1AllocatorHolder.html">AllocatorHolder</a> &amp;&amp;other)=default</td></tr>
-<tr class="separator:a9319a5ab5ebc023b41f67644d8dea52e inherit pub_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_methods_classzserio_1_1AllocatorHolder"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classzserio_1_1AllocatorHolder')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classzserio_1_1AllocatorHolder.html">zserio::AllocatorHolder&lt; ALLOC, EMPTY &gt;</a></td></tr>
-<tr class="memitem:a8f2e530a677a2b47291466b4c6ed921e inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a8f2e530a677a2b47291466b4c6ed921e">set_allocator</a> (const <a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> &amp;allocator)</td></tr>
-<tr class="separator:a8f2e530a677a2b47291466b4c6ed921e inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2672e1ccb7d28262d06524486cc27cb inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#ab2672e1ccb7d28262d06524486cc27cb">set_allocator</a> (<a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> &amp;&amp;allocator)</td></tr>
-<tr class="separator:ab2672e1ccb7d28262d06524486cc27cb inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b4bdcb6f85f411787f23af139fed61d inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a5b4bdcb6f85f411787f23af139fed61d">get_allocator_ref</a> ()</td></tr>
-<tr class="separator:a5b4bdcb6f85f411787f23af139fed61d inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a545017bd5e119fe271dd904c1e2d63ed inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1AllocatorHolder.html#a545017bd5e119fe271dd904c1e2d63ed">get_allocator_ref</a> () const</td></tr>
-<tr class="separator:a545017bd5e119fe271dd904c1e2d63ed inherit pro_methods_classzserio_1_1AllocatorHolder"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename ALLOC, typename INDEX, typename... T&gt;<br />
 class zserio::BasicVariant&lt; ALLOC, INDEX, T &gt;</h3>
 
-<p>Implementation of variant type which allocates memory when selected type doesn't fit under 3*sizeof(void*)</p>
+<p>Implementation of variant type using <a class="el" href="classzserio_1_1BasicAny.html">BasicAny</a> which allocates memory when selected type doesn't fit under 3*sizeof(void*)</p>
 <p>Largely compatible with std::variant with following differences:</p><ul>
-<li>access only through index whose type has to be specified</li>
-<li>supplied INDEX type needs to be convertible to/from size_t</li>
+<li>access only through index whose type has to be specified (by design)</li>
+<li>supplied INDEX type needs to be convertible to/from size_t and std::variant_npos</li>
 <li>holds_alternative() omitted</li>
-<li>variant_npos omitted</li>
-<li>get/get_if() exists as member functions as well </li>
+<li>get/get_if() exist as member functions as well </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00093">93</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00102">102</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a783ba8a408380d4523a79e2898ee11fd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a783ba8a408380d4523a79e2898ee11fd">&#9670;&nbsp;</a></span>allocator_type</h2>
@@ -251,12 +190,12 @@ class zserio::BasicVariant&lt; ALLOC, INDEX, T &gt;</h3>
 template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classzserio_1_1BasicVariant.html">zserio::BasicVariant</a>&lt; ALLOC, INDEX, T &gt;::<a class="el" href="classzserio_1_1AllocatorHolder.html#abb11cfd07a7d4da6fce52297e93aec04">allocator_type</a> =  ALLOC</td>
+          <td class="memname">using <a class="el" href="classzserio_1_1BasicVariant.html">zserio::BasicVariant</a>&lt; ALLOC, INDEX, T &gt;::<a class="el" href="classzserio_1_1BasicVariant.html#a783ba8a408380d4523a79e2898ee11fd">allocator_type</a> =  ALLOC</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00101">101</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00107">107</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -274,31 +213,13 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00102">102</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
-
-</div>
-</div>
-<a id="a768cb1aacce8a885a617def36cab1fb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a768cb1aacce8a885a617def36cab1fb9">&#9670;&nbsp;</a></span>VariantType</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classzserio_1_1BasicVariant.html">zserio::BasicVariant</a>&lt; ALLOC, INDEX, T &gt;::<a class="el" href="classzserio_1_1BasicVariant.html#a768cb1aacce8a885a617def36cab1fb9">VariantType</a> =  std::variant&lt;typename detail::variant_element&lt;T&gt;::type...&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00103">103</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00108">108</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2aeae59950cae0167414fee98ff18cc9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2aeae59950cae0167414fee98ff18cc9">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[1/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2aeae59950cae0167414fee98ff18cc9">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[1/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -323,12 +244,12 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
 </div><div class="memdoc">
 <p>Empty constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00108">108</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00113">113</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
 <a id="a30ffd5fbd9d46f7dafb5997a3835c5f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30ffd5fbd9d46f7dafb5997a3835c5f1">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[2/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a30ffd5fbd9d46f7dafb5997a3835c5f1">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[2/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -366,19 +287,19 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00119">119</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00124">124</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
-<a id="aaa55d8830d72828647d3b72ecfd1ca03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa55d8830d72828647d3b72ecfd1ca03">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[3/10]</span></h2>
+<a id="a5ed466be4a903ca88e4d5d0058bac4b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ed466be4a903ca88e4d5d0058bac4b1">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[3/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
 <div class="memtemplate">
-template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr, std::enable_if_t&lt;!is_first_allocator_v&lt; ARGS... &gt;&gt; *  = nullptr&gt; </div>
+template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!is_first_allocator_v&lt; ARGS... &gt;&gt; *  = nullptr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -426,15 +347,15 @@ template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!detail::is_variant_h
 
 </div>
 </div>
-<a id="a88523f979036121ad17eeebe69157ce8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88523f979036121ad17eeebe69157ce8">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[4/10]</span></h2>
+<a id="a81df07b9e024cf86403ade8f27a68045"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81df07b9e024cf86403ade8f27a68045">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
 <div class="memtemplate">
-template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr&gt; </div>
+template&lt;INDEX I, typename... ARGS&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -489,157 +410,8 @@ template&lt;INDEX I, typename... ARGS, std::enable_if_t&lt;!detail::is_variant_h
 
 </div>
 </div>
-<a id="a933ee4100104eeaba92ce0759d7749fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a933ee4100104eeaba92ce0759d7749fb">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[5/10]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
-<div class="memtemplate">
-template&lt;INDEX I, typename... ARGS, typename U  = detail::type_at_t&lt;static_cast&lt;size_t&gt;(I), T...&gt;, std::enable_if_t&lt; detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classzserio_1_1BasicVariant.html">zserio::BasicVariant</a>&lt; ALLOC, INDEX, T &gt;::<a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const ALLOC &amp;&#160;</td>
-          <td class="paramname"><em>allocator</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ARGS &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Constructor with allocator and initial emplacement.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in_place_index</td><td>Index of the active element. </td></tr>
-    <tr><td class="paramname">allocator</td><td>Allocator to be used. </td></tr>
-    <tr><td class="paramname">args</td><td>Arguments to be forwarded for element construction.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">can</td><td>throw any exception thrown by T[I] </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00170">170</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
-
-</div>
-</div>
-<a id="a71c77b2ccde27bcbc124c25e93fc948a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71c77b2ccde27bcbc124c25e93fc948a">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[6/10]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
-<div class="memtemplate">
-template&lt;INDEX I, typename... ARGS, typename U  = detail::type_at_t&lt;static_cast&lt;size_t&gt;(I), T...&gt;, std::enable_if_t&lt; detail::is_variant_heap_allocated_v&lt; I, T... &gt;&gt; *  = nullptr, std::enable_if_t&lt;!is_first_allocator_v&lt; ARGS... &gt;&gt; *  = nullptr&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classzserio_1_1BasicVariant.html">zserio::BasicVariant</a>&lt; ALLOC, INDEX, T &gt;::<a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structzserio_1_1in__place__index__t.html">in_place_index_t</a>&lt; I &gt;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ARGS &amp;&amp;...&#160;</td>
-          <td class="paramname"><em>args</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Constructor with initial emplacement.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">in_place_index</td><td>Index of the active element. </td></tr>
-    <tr><td class="paramname">args</td><td>Arguments to be forwarded for element construction.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">can</td><td>throw any exception thrown by T[I] </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00186">186</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
-
-</div>
-</div>
-<a id="a595588493f75e9c0df43a34b0076260b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a595588493f75e9c0df43a34b0076260b">&#9670;&nbsp;</a></span>~BasicVariant()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classzserio_1_1BasicVariant.html">zserio::BasicVariant</a>&lt; ALLOC, INDEX, T &gt;::~<a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Destructor. </p>
-
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00193">193</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
-
-</div>
-</div>
 <a id="adcb7609458050804248d810066d71b99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adcb7609458050804248d810066d71b99">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[7/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#adcb7609458050804248d810066d71b99">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -671,12 +443,12 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00203">203</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00165">165</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
 <a id="a0e8efe9d5c4552cf60d8af3cfd3bc244"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e8efe9d5c4552cf60d8af3cfd3bc244">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[8/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e8efe9d5c4552cf60d8af3cfd3bc244">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[6/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -725,12 +497,12 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00218">218</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00178">178</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
 <a id="add6c3015a897f54ccb4c67d738c92a66"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add6c3015a897f54ccb4c67d738c92a66">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[9/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#add6c3015a897f54ccb4c67d738c92a66">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[7/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -768,12 +540,12 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00255">255</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00206">206</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
 <a id="a2dc1d6126df73dea21043567ab221de6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dc1d6126df73dea21043567ab221de6">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[10/10]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dc1d6126df73dea21043567ab221de6">&#9670;&nbsp;</a></span>BasicVariant() <span class="overload">[8/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -822,7 +594,35 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00269">269</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00219">219</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+
+</div>
+</div>
+<a id="aa91d612a1706cf599f5ec5f6ba7cf069"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa91d612a1706cf599f5ec5f6ba7cf069">&#9670;&nbsp;</a></span>~BasicVariant()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classzserio_1_1BasicVariant.html">zserio::BasicVariant</a>&lt; ALLOC, INDEX, T &gt;::~<a class="el" href="classzserio_1_1BasicVariant.html">BasicVariant</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Desctructor. </p>
 
 </div>
 </div>
@@ -854,7 +654,7 @@ template&lt;INDEX I, typename... ARGS&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Sets any value to variant.</p>
+<p>Constructs a value of type U at index I with given arguments.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">args</td><td>Arguments to be forwarded for element construction. </td></tr>
@@ -862,7 +662,7 @@ template&lt;INDEX I, typename... ARGS&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00324">324</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00266">266</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -900,7 +700,7 @@ template&lt;INDEX I, typename U  = detail::type_at_t&lt;I, T...&gt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00402">402</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00314">314</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -938,7 +738,7 @@ template&lt;INDEX I, typename U  = detail::type_at_t&lt;I, T...&gt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00419">419</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00331">331</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -970,7 +770,7 @@ template&lt;INDEX I, typename U  = detail::type_at_t&lt;I, T...&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Returns a pointer to an element at index I or nullptr if index doesn't match. </p>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00380">380</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00299">299</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1002,7 +802,7 @@ template&lt;INDEX I, typename U  = detail::type_at_t&lt;I, T...&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Returns a pointer to an element at index I or nullptr if index doesn't match. </p>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00360">360</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00286">286</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1032,7 +832,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
 </div><div class="memdoc">
 <p>Returns an index of active element. </p>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00342">342</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00277">277</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1069,7 +869,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00520">520</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00439">439</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1106,7 +906,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00530">530</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00449">449</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1143,7 +943,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00554">554</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00478">478</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1181,7 +981,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to this. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00282">282</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00236">236</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1225,7 +1025,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00233">233</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00192">192</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1262,7 +1062,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00506">506</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00420">420</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1299,7 +1099,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00544">544</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00468">468</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1336,7 +1136,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00564">564</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00488">488</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1373,7 +1173,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00435">435</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00347">347</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1404,7 +1204,7 @@ template&lt;typename ALLOC , typename INDEX , typename... T&gt; </div>
 <p>Reports if variant is in nonstandard empty state. Note: which operations lead to an empty state is not specified by ISO C++</p>
 <p>As an zserio extension, the valueless state can arise after move. This happens only When the held alternative is stored on the heap, and the used allocator is the same in both variants. In that case, the underlying pointer is stolen and the moved-out variant remains in the valueless state. </p>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00305">305</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00255">255</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1450,7 +1250,7 @@ template&lt;typename F &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00453">453</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00361">361</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>
@@ -1496,7 +1296,7 @@ template&lt;typename F &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00481">481</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="Variant_8h_source.html#l00392">392</a> of file <a class="el" href="Variant_8h_source.html">Variant.h</a>.</p>
 
 </div>
 </div>

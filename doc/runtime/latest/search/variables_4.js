@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['extent_1689',['extent',['../classzserio_1_1Span.html#a497961f825c64c58fa63ba3b13ba482d',1,'zserio::Span']]]
+  ['extent_1747',['extent',['../classzserio_1_1Span.html#a497961f825c64c58fa63ba3b13ba482d',1,'zserio::Span']]]
 ];

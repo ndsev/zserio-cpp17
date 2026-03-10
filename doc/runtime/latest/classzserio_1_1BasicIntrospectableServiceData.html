@@ -26,9 +26,9 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Zserio C++17 runtime library
-   &#160;<span id="projectnumber">0.5.0</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
-   <div id="projectbrief">Built for Zserio 2.17.0</div>
+   <div id="projectbrief">Built for Zserio 2.18.0</div>
   </td>
  </tr>
  </tbody>
@@ -113,8 +113,10 @@ Collaboration diagram for zserio::BasicIntrospectableServiceData&lt; ZSERIO_OBJE
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abdcb894bf017df592871e405ac0ae05c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html#abdcb894bf017df592871e405ac0ae05c">BasicIntrospectableServiceData</a> (ZSERIO_OBJECT &amp;&amp;response, const ALLOC &amp;allocator=ALLOC())</td></tr>
-<tr class="separator:abdcb894bf017df592871e405ac0ae05c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a062dbf31752ba8d4e45dfa9721109ce9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html#a062dbf31752ba8d4e45dfa9721109ce9">BasicIntrospectableServiceData</a> (const ZSERIO_OBJECT &amp;object, const ALLOC &amp;allocator=ALLOC())</td></tr>
+<tr class="separator:a062dbf31752ba8d4e45dfa9721109ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13a7297064b7c505817988c317d807d5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html#a13a7297064b7c505817988c317d807d5">BasicIntrospectableServiceData</a> (ZSERIO_OBJECT &amp;&amp;object, const ALLOC &amp;allocator=ALLOC())</td></tr>
+<tr class="separator:a13a7297064b7c505817988c317d807d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad2c1b9912655b14e05adffaf044b0fc2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacezserio.html#aa92a74cc60d598e41ce99e2dc831d83c">IBasicIntrospectableViewConstPtr</a>&lt; ALLOC &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html#ad2c1b9912655b14e05adffaf044b0fc2">getIntrospectable</a> () const override</td></tr>
 <tr class="separator:ad2c1b9912655b14e05adffaf044b0fc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accb776752c9a71b73aa174fecb2c8e8f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classzserio_1_1Span.html">Span</a>&lt; const uint8_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html#accb776752c9a71b73aa174fecb2c8e8f">getData</a> () const override</td></tr>
@@ -132,8 +134,8 @@ class zserio::BasicIntrospectableServiceData&lt; ZSERIO_OBJECT, ALLOC &gt;</h3>
 
 <p class="definition">Definition at line <a class="el" href="IService_8h_source.html#l00054">54</a> of file <a class="el" href="IService_8h_source.html">IService.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="abdcb894bf017df592871e405ac0ae05c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdcb894bf017df592871e405ac0ae05c">&#9670;&nbsp;</a></span>BasicIntrospectableServiceData()</h2>
+<a id="a062dbf31752ba8d4e45dfa9721109ce9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a062dbf31752ba8d4e45dfa9721109ce9">&#9670;&nbsp;</a></span>BasicIntrospectableServiceData() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,8 +148,8 @@ template&lt;typename ZSERIO_OBJECT , typename ALLOC  = std::allocator&lt;uint8_t
         <tr>
           <td class="memname"><a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html">zserio::BasicIntrospectableServiceData</a>&lt; ZSERIO_OBJECT, ALLOC &gt;::<a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html">BasicIntrospectableServiceData</a> </td>
           <td>(</td>
-          <td class="paramtype">ZSERIO_OBJECT &amp;&amp;&#160;</td>
-          <td class="paramname"><em>response</em>, </td>
+          <td class="paramtype">const ZSERIO_OBJECT &amp;&#160;</td>
+          <td class="paramname"><em>object</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -167,16 +169,64 @@ template&lt;typename ZSERIO_OBJECT , typename ALLOC  = std::allocator&lt;uint8_t
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructor from introspectable.</p>
+<p>Constructor copying the object.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">introspectable</td><td>Constant introspectable created from zserio request object. </td></tr>
+    <tr><td class="paramname">object</td><td>The service data object to copy. </td></tr>
     <tr><td class="paramname">allocator</td><td>Allocator to use for data allocation. </td></tr>
   </table>
   </dd>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="IService_8h_source.html#l00063">63</a> of file <a class="el" href="IService_8h_source.html">IService.h</a>.</p>
+
+</div>
+</div>
+<a id="a13a7297064b7c505817988c317d807d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13a7297064b7c505817988c317d807d5">&#9670;&nbsp;</a></span>BasicIntrospectableServiceData() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ZSERIO_OBJECT , typename ALLOC  = std::allocator&lt;uint8_t&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html">zserio::BasicIntrospectableServiceData</a>&lt; ZSERIO_OBJECT, ALLOC &gt;::<a class="el" href="classzserio_1_1BasicIntrospectableServiceData.html">BasicIntrospectableServiceData</a> </td>
+          <td>(</td>
+          <td class="paramtype">ZSERIO_OBJECT &amp;&amp;&#160;</td>
+          <td class="paramname"><em>object</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ALLOC &amp;&#160;</td>
+          <td class="paramname"><em>allocator</em> = <code>ALLOC()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Constructor moving the object.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">object</td><td>The service data object to move. </td></tr>
+    <tr><td class="paramname">allocator</td><td>Allocator to use for data allocation. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="IService_8h_source.html#l00075">75</a> of file <a class="el" href="IService_8h_source.html">IService.h</a>.</p>
 
 </div>
 </div>
@@ -213,7 +263,7 @@ template&lt;typename ZSERIO_OBJECT , typename ALLOC  = std::allocator&lt;uint8_t
 
 <p>Implements <a class="el" href="classzserio_1_1IBasicServiceData.html#ab77e0a485eedcef3d2e682d3293b65de">zserio::IBasicServiceData&lt; std::allocator&lt; uint8_t &gt; &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="IService_8h_source.html#l00079">79</a> of file <a class="el" href="IService_8h_source.html">IService.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="IService_8h_source.html#l00091">91</a> of file <a class="el" href="IService_8h_source.html">IService.h</a>.</p>
 
 </div>
 </div>
@@ -246,7 +296,7 @@ template&lt;typename ZSERIO_OBJECT , typename ALLOC  = std::allocator&lt;uint8_t
 
 <p>Implements <a class="el" href="classzserio_1_1IBasicServiceData.html#a655966e12aad265bece2cfe50c426be4">zserio::IBasicServiceData&lt; std::allocator&lt; uint8_t &gt; &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="IService_8h_source.html#l00069">69</a> of file <a class="el" href="IService_8h_source.html">IService.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="IService_8h_source.html#l00081">81</a> of file <a class="el" href="IService_8h_source.html">IService.h</a>.</p>
 
 </div>
 </div>

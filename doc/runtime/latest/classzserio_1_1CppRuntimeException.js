@@ -1,7 +1,7 @@
 var classzserio_1_1CppRuntimeException =
 [
     [ "CppRuntimeException", "classzserio_1_1CppRuntimeException.html#ac5d450feffd46dff4d4896173bc2c9cd", null ],
-    [ "~CppRuntimeException", "classzserio_1_1CppRuntimeException.html#ab4abaa202b84629c26e94461f5c1ed2a", null ],
+    [ "~CppRuntimeException", "classzserio_1_1CppRuntimeException.html#a07e21a2ba0896ea6a4857704190ab3b6", null ],
     [ "CppRuntimeException", "classzserio_1_1CppRuntimeException.html#a8f55877c603ac6c6fd78e490caf1af62", null ],
     [ "CppRuntimeException", "classzserio_1_1CppRuntimeException.html#a878158ca023407ed6252ffb50c563c78", null ],
     [ "append", "classzserio_1_1CppRuntimeException.html#af1f05b4fc6b6bb44bafabddc1981fbf3", null ],

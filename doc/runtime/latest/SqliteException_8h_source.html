@@ -26,9 +26,9 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Zserio C++17 runtime library
-   &#160;<span id="projectnumber">0.5.0</span>
+   &#160;<span id="projectnumber">1.0.0</span>
    </div>
-   <div id="projectbrief">Built for Zserio 2.17.0</div>
+   <div id="projectbrief">Built for Zserio 2.18.0</div>
   </td>
  </tr>
  </tbody>
@@ -117,16 +117,18 @@ $(document).ready(function(){initNavTree('SqliteException_8h_source.html',''); i
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">using</span> <a class="code" href="classzserio_1_1CppRuntimeException.html#ac5d450feffd46dff4d4896173bc2c9cd">CppRuntimeException::CppRuntimeException</a>;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;};</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="namespacezserio.html#a8fd178caaf0de0cf37cfe45b651c77f8">   52</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classzserio_1_1CppRuntimeException.html">CppRuntimeException</a>&amp; <a class="code" href="namespacezserio.html#aa4228fe525a7933e4d0b4407e797eb10">operator&lt;&lt;</a>(<a class="code" href="classzserio_1_1CppRuntimeException.html">CppRuntimeException</a>&amp; exception, <a class="code" href="classzserio_1_1SqliteErrorCode.html">SqliteErrorCode</a> code)</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">return</span> exception &lt;&lt; code.<a class="code" href="classzserio_1_1SqliteErrorCode.html#a9ab869865c4b45e09807ea369ac1b470">getErrorString</a>();</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;} <span class="comment">// namespace zserio</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classzserio_1_1SqliteException.html#a614baa0f52ed6f61fd0582c50ceb1a96">   45</a></span>&#160;    <a class="code" href="classzserio_1_1SqliteException.html#a614baa0f52ed6f61fd0582c50ceb1a96">~SqliteException</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="namespacezserio.html#a8fd178caaf0de0cf37cfe45b651c77f8">   54</a></span>&#160;<span class="keyword">inline</span> <a class="code" href="classzserio_1_1CppRuntimeException.html">CppRuntimeException</a>&amp; <a class="code" href="namespacezserio.html#aa4228fe525a7933e4d0b4407e797eb10">operator&lt;&lt;</a>(<a class="code" href="classzserio_1_1CppRuntimeException.html">CppRuntimeException</a>&amp; exception, <a class="code" href="classzserio_1_1SqliteErrorCode.html">SqliteErrorCode</a> code)</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordflow">return</span> exception &lt;&lt; code.<a class="code" href="classzserio_1_1SqliteErrorCode.html#a9ab869865c4b45e09807ea369ac1b470">getErrorString</a>();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// ifndef ZSERIO_SQLITE_EXCEPTION_H_INC</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;} <span class="comment">// namespace zserio</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// ifndef ZSERIO_SQLITE_EXCEPTION_H_INC</span></div>
 <div class="ttc" id="aCppRuntimeException_8h_html"><div class="ttname"><a href="CppRuntimeException_8h.html">CppRuntimeException.h</a></div></div>
 <div class="ttc" id="aclasszserio_1_1CppRuntimeException_html"><div class="ttname"><a href="classzserio_1_1CppRuntimeException.html">zserio::CppRuntimeException</a></div><div class="ttdef"><b>Definition:</b> <a href="CppRuntimeException_8h_source.html#l00019">CppRuntimeException.h:20</a></div></div>
 <div class="ttc" id="aclasszserio_1_1CppRuntimeException_html_ac5d450feffd46dff4d4896173bc2c9cd"><div class="ttname"><a href="classzserio_1_1CppRuntimeException.html#ac5d450feffd46dff4d4896173bc2c9cd">zserio::CppRuntimeException::CppRuntimeException</a></div><div class="ttdeci">CppRuntimeException(const char *message=&quot;&quot;)</div><div class="ttdef"><b>Definition:</b> <a href="CppRuntimeException_8cpp_source.html#l00009">CppRuntimeException.cpp:9</a></div></div>
@@ -134,6 +136,7 @@ $(document).ready(function(){initNavTree('SqliteException_8h_source.html',''); i
 <div class="ttc" id="aclasszserio_1_1SqliteErrorCode_html_a7fead8699c350ba0c340b7830c59d907"><div class="ttname"><a href="classzserio_1_1SqliteErrorCode.html#a7fead8699c350ba0c340b7830c59d907">zserio::SqliteErrorCode::SqliteErrorCode</a></div><div class="ttdeci">SqliteErrorCode(int sqliteCode)</div><div class="ttdef"><b>Definition:</b> <a href="SqliteException_8h_source.html#l00020">SqliteException.h:20</a></div></div>
 <div class="ttc" id="aclasszserio_1_1SqliteErrorCode_html_a9ab869865c4b45e09807ea369ac1b470"><div class="ttname"><a href="classzserio_1_1SqliteErrorCode.html#a9ab869865c4b45e09807ea369ac1b470">zserio::SqliteErrorCode::getErrorString</a></div><div class="ttdeci">const char * getErrorString() const</div><div class="ttdef"><b>Definition:</b> <a href="SqliteException_8h_source.html#l00030">SqliteException.h:30</a></div></div>
 <div class="ttc" id="aclasszserio_1_1SqliteException_html"><div class="ttname"><a href="classzserio_1_1SqliteException.html">zserio::SqliteException</a></div><div class="ttdef"><b>Definition:</b> <a href="SqliteException_8h_source.html#l00040">SqliteException.h:41</a></div></div>
+<div class="ttc" id="aclasszserio_1_1SqliteException_html_a614baa0f52ed6f61fd0582c50ceb1a96"><div class="ttname"><a href="classzserio_1_1SqliteException.html#a614baa0f52ed6f61fd0582c50ceb1a96">zserio::SqliteException::~SqliteException</a></div><div class="ttdeci">~SqliteException() override</div></div>
 <div class="ttc" id="anamespacezserio_html"><div class="ttname"><a href="namespacezserio.html">zserio</a></div><div class="ttdef"><b>Definition:</b> <a href="AllocatorHolder_8h_source.html#l00007">AllocatorHolder.h:8</a></div></div>
 <div class="ttc" id="anamespacezserio_html_aa4228fe525a7933e4d0b4407e797eb10"><div class="ttname"><a href="namespacezserio.html#aa4228fe525a7933e4d0b4407e797eb10">zserio::operator&lt;&lt;</a></div><div class="ttdeci">CppRuntimeException &amp; operator&lt;&lt;(CppRuntimeException &amp;exception, const BasicBitBuffer&lt; ALLOC &gt; &amp;bitBuffer)</div><div class="ttdef"><b>Definition:</b> <a href="BitBuffer_8h_source.html#l00553">BitBuffer.h:553</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
