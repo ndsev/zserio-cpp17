@@ -1,5 +1,7 @@
 package zserio.extension.cpp17.types;
 
+import java.util.Collections;
+
 import zserio.ast.PackageName;
 
 /**
@@ -19,9 +21,8 @@ public class NativeStdType extends NativeType
 
     public NativeStdType(PackageName packageName, String name, String systemIncludeFile)
     {
-        super(packageName, name);
-
-        addSystemIncludeFile(systemIncludeFile);
+        super(packageName, name, systemIncludeFile != null ? Collections.singleton(systemIncludeFile) : null,
+                null);
     }
 
     private static final PackageName STD_PACKAGE_NAME = new PackageName.Builder().addId("std").get();

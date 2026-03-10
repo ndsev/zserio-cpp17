@@ -1,5 +1,8 @@
 package zserio.extension.cpp17.types;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import zserio.ast.PackageName;
 import zserio.extension.cpp17.TypesContext;
 
@@ -64,12 +67,26 @@ public class NativeAllocType extends NativeType
     private NativeAllocType(TypesContext.NativeTypeDefinition nativeTypeDefinition,
             TypesContext.AllocatorDefinition allocatorDefinition, PackageName packageName, String name)
     {
-        super(packageName, name);
+        super(packageName, name, makeSystemIncludes(nativeTypeDefinition, allocatorDefinition), null);
 
         needsAllocatorArgument = nativeTypeDefinition.needsAllocatorArgument();
-        if (needsAllocatorArgument)
-            addSystemIncludeFile(allocatorDefinition.getAllocatorSystemInclude());
-        addSystemIncludeFile(nativeTypeDefinition.getSystemInclude());
+    }
+
+    private static Collection<String> makeSystemIncludes(TypesContext.NativeTypeDefinition nativeTypeDefinition,
+            TypesContext.AllocatorDefinition allocatorDefinition)
+    {
+        Collection<String> systemIncludes = new ArrayList<String>();
+
+        final boolean needsAllocatorArgument = nativeTypeDefinition.needsAllocatorArgument();
+        final String allocatorSystemInclude = allocatorDefinition.getAllocatorSystemInclude();
+        if (needsAllocatorArgument && allocatorSystemInclude != null)
+            systemIncludes.add(allocatorDefinition.getAllocatorSystemInclude());
+
+        final String systemInclude = nativeTypeDefinition.getSystemInclude();
+        if (systemInclude != null)
+            systemIncludes.add(systemInclude);
+
+        return systemIncludes;
     }
 
     private final boolean needsAllocatorArgument;

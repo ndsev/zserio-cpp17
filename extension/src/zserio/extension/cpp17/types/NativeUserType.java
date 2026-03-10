@@ -1,5 +1,7 @@
 package zserio.extension.cpp17.types;
 
+import java.util.Collections;
+
 import zserio.ast.PackageName;
 
 /**
@@ -9,7 +11,6 @@ public class NativeUserType extends NativeType
 {
     public NativeUserType(PackageName packageName, String name, String includeFileName)
     {
-        super(packageName, name);
-        addUserIncludeFile(includeFileName);
+        super(packageName, name, null, includeFileName != null ? Collections.singleton(includeFileName) : null);
     }
 }
