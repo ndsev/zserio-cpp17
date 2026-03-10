@@ -1,0 +1,4 @@
+var structzserio_1_1ItemsAccessor_3_01T_00_01std_1_1enable__if__t_3_01zserio_1_1is__bitmask__v_3_01T_01_4_01_4_01_4 =
+[
+    [ "Items", "structzserio_1_1ItemsAccessor_3_01T_00_01std_1_1enable__if__t_3_01zserio_1_1is__bitmask__v_3_01T_01_4_01_4_01_4.html#a97e260d38d282d4bf96f0f6c2b6c8ed9", null ]
+];
