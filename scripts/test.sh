@@ -3,12 +3,13 @@
 SCRIPT_DIR=`dirname $0`
 source "${SCRIPT_DIR}/common_tools.sh"
 
+# Capitalizes string.
 capitalize_test_name()
 {
     exit_if_argc_ne $# 2
     local STR="$1"; shift
     local OUT_VAR="$1"; shift
-    
+
     local WORDS=(${STR//_/ }) # split at _
     local OUT="${WORDS[@]^}" # capitalize and join
     OUT="${OUT/Uint/UInt}"
@@ -78,8 +79,8 @@ print_missing_tests()
                            [ ! -f "${TS_STARTING_POINT}/${TS1}/${DIR_NAME}/${TEST_NAME}" ] ;
                         then
                             #echo "   ${TEST_NAME} not found"
-                            MISSING_ARR+=("${TEST_NAME}")  
-                            MISSING_COUNT=$((MISSING_COUNT+1))                            
+                            MISSING_ARR+=("${TEST_NAME}")
+                            MISSING_COUNT=$((MISSING_COUNT+1))
                         fi
                     done
                 fi
@@ -99,7 +100,7 @@ print_missing_tests()
                    [ ! -f "${TS_STARTING_POINT}/${BASE}/${TEST_NAME}" ];
                 then
                     #echo " ${TEST_NAME} not found"
-                    MISSING_ARR+=(${TEST_NAME})  
+                    MISSING_ARR+=(${TEST_NAME})
                     MISSING_COUNT=$((MISSING_COUNT+1))
                 fi
             done
