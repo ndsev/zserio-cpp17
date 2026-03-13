@@ -93,6 +93,7 @@ set_global_cpp_variables()
     fi
 
     MAKE_CMAKE_GENERATOR="${MAKE_CMAKE_GENERATOR:-Unix Makefiles}"
+    MINGW_CMAKE_GENERATOR="${MINGW_CMAKE_GENERATOR:-Unix Makefiles}"
     MSVC_CMAKE_GENERATOR="${MSVC_CMAKE_GENERATOR:-Visual Studio 17 2022}"
     MSVC_CMAKE_TOOLSET="${MSVC_CMAKE_TOOLSET:-v143}"
 
@@ -168,6 +169,8 @@ Uses the following environment variables for building:
     LLVM_COV_BIN           llvm-cov  binary to use for coverage report generation (clang).
                            Default is empty string.
     MAKE_CMAKE_GENERATOR   CMake generator to use for build using Makefiles. Default is
+                           "Unix Makefiles".
+    MINGW_CMAKE_GENERATOR  CMake generator to use with MinGW compiler. Default is
                            "Unix Makefiles".
     MSVC_CMAKE_GENERATOR   CMake generator to use with MSVC compiler. Default is
                            "Visual Studio 17 2022". Note that CMake option "-A x64"
@@ -405,6 +408,9 @@ compile_cpp_for_target()
         fi
         local CMAKE_GENERATOR="${MSVC_CMAKE_GENERATOR}";
         CMAKE_ARGS=("${CMAKE_ARGS[@]}" "-A x64" "-T ${MSVC_CMAKE_TOOLSET}")
+    elif [[ ${TARGET} == *"-mingw" ]] ; then
+        local CMAKE_GENERATOR="${MINGW_CMAKE_GENERATOR}"
+        local CMAKE_BUILD_CONFIG=""
     else
         local CMAKE_GENERATOR="${MAKE_CMAKE_GENERATOR}"
         local CMAKE_BUILD_CONFIG=""
