@@ -17,47 +17,56 @@ import zserio.extension.common.ZserioExtensionException;
  */
 public final class ChoiceEmitterTemplateData extends CompoundTypeTemplateData
 {
-    public ChoiceEmitterTemplateData(TemplateDataContext context, ChoiceType choiceType)
+    private ChoiceEmitterTemplateData(TemplateDataContext context, ChoiceType choiceType)
             throws ZserioExtensionException
     {
         super(context, choiceType);
+    }
+
+    static public ChoiceEmitterTemplateData create(TemplateDataContext context, ChoiceType choiceType)
+            throws ZserioExtensionException
+    {
+        final ChoiceEmitterTemplateData self = new ChoiceEmitterTemplateData(context, choiceType);
+        self.init(context, choiceType);
 
         final IncludeCollector includeCollector =
-                choiceType.getTemplateParameters().isEmpty() ? this : new HeaderIncludeCollectorAdapter(this);
+                choiceType.getTemplateParameters().isEmpty() ? self : new HeaderIncludeCollectorAdapter(self);
 
         final Expression expression = choiceType.getSelectorExpression();
         final ExpressionFormatter cppExpressionFormatter = context.getExpressionFormatter(includeCollector);
-        selectorExpression = cppExpressionFormatter.formatGetter(expression);
+        self.selectorExpression = cppExpressionFormatter.formatGetter(expression);
         final ExpressionFormatter cppLhsIndirectExpressionFormatter =
                 context.getIndirectExpressionFormatter(includeCollector, "lhs");
-        lhsIndirectSelectorExpression = cppLhsIndirectExpressionFormatter.formatGetter(expression);
+        self.lhsIndirectSelectorExpression = cppLhsIndirectExpressionFormatter.formatGetter(expression);
         final ExpressionFormatter cppViewIndirectExpressionFormatter =
                 context.getIndirectExpressionFormatter(includeCollector, "view");
-        viewIndirectSelectorExpression = cppViewIndirectExpressionFormatter.formatGetter(expression);
+        self.viewIndirectSelectorExpression = cppViewIndirectExpressionFormatter.formatGetter(expression);
         // note that TEMPLATE_PARAMETER_VALUE works since it's always a C++ enum item
-        canUseNativeSwitch = expression.getExprType() != Expression.ExpressionType.BOOLEAN &&
+        self.canUseNativeSwitch = expression.getExprType() != Expression.ExpressionType.BOOLEAN &&
                 expression.getExprType() != Expression.ExpressionType.BITMASK &&
                 expression.getExprType() != Expression.ExpressionType.TEMPLATE_PARAMETER_TYPE &&
                 choiceType.getChoiceCases().size() > 0;
 
-        caseMemberList = new ArrayList<CaseMember>();
+        self.caseMemberList = new ArrayList<CaseMember>();
         final Iterable<ChoiceCase> choiceCaseTypes = choiceType.getChoiceCases();
         for (ChoiceCase choiceCaseType : choiceCaseTypes)
         {
-            caseMemberList.add(new CaseMember(context, choiceType, choiceCaseType, includeCollector));
+            self.caseMemberList.add(new CaseMember(context, choiceType, choiceCaseType, includeCollector));
         }
 
         final ChoiceDefault choiceDefaultType = choiceType.getChoiceDefault();
         if (choiceDefaultType != null)
         {
-            defaultMember = new DefaultMember(context, choiceType, choiceDefaultType, includeCollector);
+            self.defaultMember = new DefaultMember(context, choiceType, choiceDefaultType, includeCollector);
         }
         else
         {
-            defaultMember = null;
+            self.defaultMember = null;
         }
 
-        isDefaultUnreachable = choiceType.isChoiceDefaultUnreachable();
+        self.isDefaultUnreachable = choiceType.isChoiceDefaultUnreachable();
+
+        return self;
     }
 
     public String getSelectorExpression()
@@ -147,11 +156,11 @@ public final class ChoiceEmitterTemplateData extends CompoundTypeTemplateData
         private final CompoundFieldTemplateData field;
     }
 
-    private final String selectorExpression;
-    private final String lhsIndirectSelectorExpression;
-    private final String viewIndirectSelectorExpression;
-    private final boolean canUseNativeSwitch;
-    private final List<CaseMember> caseMemberList;
-    private final DefaultMember defaultMember;
-    private final boolean isDefaultUnreachable;
+    private String selectorExpression;
+    private String lhsIndirectSelectorExpression;
+    private String viewIndirectSelectorExpression;
+    private boolean canUseNativeSwitch;
+    private List<CaseMember> caseMemberList;
+    private DefaultMember defaultMember;
+    private boolean isDefaultUnreachable;
 }

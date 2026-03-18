@@ -18,7 +18,7 @@ public final class ChoiceEmitter extends CppDefaultEmitter
     @Override
     public void beginChoice(ChoiceType choiceType) throws ZserioExtensionException
     {
-        final Object templateData = new ChoiceEmitterTemplateData(getTemplateDataContext(), choiceType);
+        final Object templateData = ChoiceEmitterTemplateData.create(getTemplateDataContext(), choiceType);
 
         if (choiceType.getTemplateParameters().isEmpty())
         {

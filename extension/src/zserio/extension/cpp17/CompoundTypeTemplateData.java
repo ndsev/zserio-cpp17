@@ -15,13 +15,16 @@ import zserio.extension.common.ZserioExtensionException;
 /**
  * FreeMarker template data for compound types.
  */
-public class CompoundTypeTemplateData extends UserTypeTemplateData
+public abstract class CompoundTypeTemplateData extends UserTypeTemplateData
 {
-    public CompoundTypeTemplateData(TemplateDataContext context, CompoundType compoundType)
+    protected CompoundTypeTemplateData(TemplateDataContext context, CompoundType compoundType)
             throws ZserioExtensionException
     {
         super(context, compoundType, compoundType);
+    }
 
+    public void init(TemplateDataContext context, CompoundType compoundType) throws ZserioExtensionException
+    {
         final IncludeCollector includeCollector =
                 compoundType.getTemplateParameters().isEmpty() ? this : new HeaderIncludeCollectorAdapter(this);
 
@@ -34,15 +37,15 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
             fullNameTemplateParameters.add(templateParameter.getName());
         }
 
-        fullName = super.getFullName() + fullNameTemplateParameters.toString();
+        this.fullName = super.getFullName() + fullNameTemplateParameters.toString();
 
-        usedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(compoundType);
-        containsOffset = context.getOffsetFieldsCollector().containsOffset(compoundType);
+        this.usedInPackedArray = context.getPackedTypesCollector().isUsedInPackedArray(compoundType);
+        this.containsOffset = context.getOffsetFieldsCollector().containsOffset(compoundType);
 
-        fieldList = createFieldList(context, compoundType, includeCollector);
+        this.fieldList = createFieldList(context, compoundType, includeCollector);
 
         boolean usedAsOffset = false;
-        for (CompoundFieldTemplateData field : fieldList)
+        for (CompoundFieldTemplateData field : this.fieldList)
         {
             if (field.getUsedAsOffset())
             {
@@ -52,13 +55,13 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         }
         this.usedAsOffset = usedAsOffset;
 
-        parameterList = createParameterList(context, compoundType, includeCollector);
-        functionList = createFunctionList(context, compoundType, includeCollector);
-        templateParameterList = createTemplateParameterList(context, compoundType);
+        this.parameterList = createParameterList(context, compoundType, includeCollector);
+        this.functionList = createFunctionList(context, compoundType, includeCollector);
+        this.templateParameterList = createTemplateParameterList(context, compoundType);
 
-        isPackable = compoundType.isPackable();
+        this.isPackable = compoundType.isPackable();
 
-        templateInstantiation = TemplateInstantiationTemplateData.create(
+        this.templateInstantiation = TemplateInstantiationTemplateData.create(
                 context, compoundType, templateParameters, includeCollector);
     }
 
@@ -171,18 +174,18 @@ public class CompoundTypeTemplateData extends UserTypeTemplateData
         return parameterList;
     }
 
-    private final String fullName;
+    private String fullName;
 
-    private final boolean usedInPackedArray;
-    private final boolean containsOffset;
-    private final boolean usedAsOffset;
+    private boolean usedInPackedArray;
+    private boolean containsOffset;
+    private boolean usedAsOffset;
 
-    private final List<CompoundFieldTemplateData> fieldList;
-    private final List<CompoundParameterTemplateData> parameterList;
-    private final List<CompoundFunctionTemplateData> functionList;
-    private final List<CompoundTemplateParameterTemplateData> templateParameterList;
+    private List<CompoundFieldTemplateData> fieldList;
+    private List<CompoundParameterTemplateData> parameterList;
+    private List<CompoundFunctionTemplateData> functionList;
+    private List<CompoundTemplateParameterTemplateData> templateParameterList;
 
-    private final boolean isPackable;
+    private boolean isPackable;
 
-    private final TemplateInstantiationTemplateData templateInstantiation;
+    private TemplateInstantiationTemplateData templateInstantiation;
 }

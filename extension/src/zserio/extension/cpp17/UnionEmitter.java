@@ -18,7 +18,7 @@ public final class UnionEmitter extends CppDefaultEmitter
     @Override
     public void beginUnion(UnionType unionType) throws ZserioExtensionException
     {
-        final Object templateData = new UnionEmitterTemplateData(getTemplateDataContext(), unionType);
+        final Object templateData = UnionEmitterTemplateData.create(getTemplateDataContext(), unionType);
         if (unionType.getTemplateParameters().isEmpty())
         {
             processHeaderTemplate(FTL_HEADER_NAME, templateData, unionType);

@@ -8,9 +8,17 @@ import zserio.extension.common.ZserioExtensionException;
  */
 public final class UnionEmitterTemplateData extends CompoundTypeTemplateData
 {
-    public UnionEmitterTemplateData(TemplateDataContext context, UnionType unionType)
+    private UnionEmitterTemplateData(TemplateDataContext context, UnionType unionType)
             throws ZserioExtensionException
     {
         super(context, unionType);
+    }
+
+    public static UnionEmitterTemplateData create(TemplateDataContext context, UnionType unionType)
+            throws ZserioExtensionException
+    {
+        final UnionEmitterTemplateData self = new UnionEmitterTemplateData(context, unionType);
+        self.init(context, unionType);
+        return self;
     }
 }
