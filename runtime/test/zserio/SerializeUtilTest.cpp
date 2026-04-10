@@ -100,6 +100,11 @@ private:
     const SimpleStructure& m_data;
 };
 
+bool operator==(const View<SimpleStructure>& ss1, const View<SimpleStructure>& ss2)
+{
+    return ss1.numberA() == ss2.numberA() && ss1.numberB() == ss2.numberB() && ss1.numberC() == ss2.numberC();
+}
+
 namespace detail
 {
 
@@ -184,6 +189,13 @@ private:
     const SimpleParameterizedStructure& m_data;
     zserio::UInt6 m_upperLimitD;
 };
+
+bool operator==(const View<SimpleParameterizedStructure>& ss1, const View<SimpleParameterizedStructure>& ss2)
+{
+    return ss1.numberA() == ss2.numberA() && ss1.numberB() == ss2.numberB() && ss1.numberC() == ss2.numberC() &&
+            ss1.numberD() == ss2.numberD() && ss1.offsetB() == ss2.offsetB() &&
+            ss1.upperLimitD() == ss2.upperLimitD();
+}
 
 namespace detail
 {
@@ -423,6 +435,10 @@ TEST(SerializeUtilTest, deserializeData)
     ASSERT_EQ(simpleStructure.numberA, view.numberA());
     ASSERT_EQ(simpleStructure.numberB, view.numberB());
     ASSERT_EQ(simpleStructure.numberC, view.numberC());
+
+    SimpleStructure simpleStructure2;
+    const View<SimpleStructure> view2 = deserialize(bitBuffer, ArrayPreallocation(1024), simpleStructure2);
+    ASSERT_EQ(view2, view);
 }
 
 TEST(SerializeUtilTest, deserializeDataFromBytes)
@@ -437,6 +453,11 @@ TEST(SerializeUtilTest, deserializeDataFromBytes)
     ASSERT_EQ(simpleStructure.numberA, view.numberA());
     ASSERT_EQ(simpleStructure.numberB, view.numberB());
     ASSERT_EQ(simpleStructure.numberC, view.numberC());
+
+    SimpleStructure simpleStructure2;
+    const View<SimpleStructure> view2 =
+            deserializeFromBytes(byteBuffer, ArrayPreallocation(1024), simpleStructure2);
+    ASSERT_EQ(view2, view);
 }
 
 TEST(SerializeUtilTest, deserializeDataView)
@@ -447,6 +468,10 @@ TEST(SerializeUtilTest, deserializeDataView)
     ASSERT_EQ(0x07, dataView.numberA());
     ASSERT_EQ(0x07, dataView.numberB());
     ASSERT_EQ(0x7F, dataView.numberC());
+
+    const DataView<SimpleStructure> dataView2 =
+            deserialize<SimpleStructure>(bitBuffer, ArrayPreallocation(1024));
+    ASSERT_EQ(dataView2, dataView);
 }
 
 TEST(SerializeUtilTest, deserializeDataViewFromBytes)
@@ -457,6 +482,10 @@ TEST(SerializeUtilTest, deserializeDataViewFromBytes)
     ASSERT_EQ(0x07, dataView.numberA());
     ASSERT_EQ(0x07, dataView.numberB());
     ASSERT_EQ(0x7F, dataView.numberC());
+
+    const DataView<SimpleStructure> dataView2 =
+            deserializeFromBytes<SimpleStructure>(byteBuffer, ArrayPreallocation(1024));
+    ASSERT_EQ(dataView2, dataView);
 }
 
 TEST(SerializeUtilTest, serializeDataToFile)
@@ -525,6 +554,11 @@ TEST(SerializeUtilTest, deserializeDataFromFile)
     ASSERT_EQ(simpleStructure.numberA, view.numberA());
     ASSERT_EQ(simpleStructure.numberB, view.numberB());
     ASSERT_EQ(simpleStructure.numberC, view.numberC());
+
+    SimpleStructure simpleStructure2;
+    const View<SimpleStructure> view2 =
+            deserializeFromFile(fileName, ArrayPreallocation(1024), simpleStructure2);
+    ASSERT_EQ(view2, view);
 }
 
 TEST(SerializeUtilTest, deserializeDataViewFromFile)
@@ -540,6 +574,10 @@ TEST(SerializeUtilTest, deserializeDataViewFromFile)
     ASSERT_EQ(0x07, dataView.numberA());
     ASSERT_EQ(0x07, dataView.numberB());
     ASSERT_EQ(0x7F, dataView.numberC());
+
+    const DataView<SimpleStructure> dataView2 =
+            deserializeFromFile<SimpleStructure>(fileName, ArrayPreallocation(1024));
+    ASSERT_EQ(dataView2, dataView);
 }
 
 TEST(SerializeUtilTest, serializeParameterizedData)
@@ -577,6 +615,11 @@ TEST(SerializeUtilTest, deserializeParameterizedData)
     ASSERT_EQ(simpleParameterizedStructure.numberB, view.numberB());
     ASSERT_EQ(simpleParameterizedStructure.numberC, view.numberC());
     ASSERT_EQ(simpleParameterizedStructure.numberD, view.numberD());
+
+    SimpleParameterizedStructure simpleParameterizedStructure2;
+    const View<SimpleParameterizedStructure> view2 = deserialize<SimpleParameterizedStructure>(
+            bitBuffer, ArrayPreallocation(1024), simpleParameterizedStructure2, upperLimitD);
+    ASSERT_EQ(view2, view);
 }
 
 } // namespace zserio

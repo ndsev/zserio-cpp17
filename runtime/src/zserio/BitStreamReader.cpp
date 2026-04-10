@@ -12,8 +12,8 @@ namespace zserio
 namespace
 {
 
-// max size calculated to prevent overflows in internal comparisons
-const size_t MAX_BUFFER_SIZE = std::numeric_limits<size_t>::max() / 8 - 4;
+// max size calculated to prevent "bitIndex + numBits" overflows
+const size_t MAX_BUFFER_SIZE = std::numeric_limits<size_t>::max() / 8 - sizeof(size_t);
 
 using BitPosType = BitStreamReader::BitPosType;
 using ReaderContext = BitStreamReader::ReaderContext;
@@ -355,11 +355,13 @@ inline uint64_t readUnsignedBits64Impl(ReaderContext& ctx, uint8_t numBits)
 
 } // namespace
 
-BitStreamReader::ReaderContext::ReaderContext(Span<const uint8_t> readBuffer, size_t readBufferBitSize) :
+BitStreamReader::ReaderContext::ReaderContext(
+        Span<const uint8_t> readBuffer, size_t readBufferBitSize, size_t maxArrayPrealloc) :
         buffer(readBuffer),
         bufferBitSize(readBufferBitSize),
         cache(0),
         cacheNumBits(0),
+        maxArrayPreallocation(maxArrayPrealloc),
         bitIndex(0)
 {
     if (buffer.size() > MAX_BUFFER_SIZE)
@@ -369,16 +371,18 @@ BitStreamReader::ReaderContext::ReaderContext(Span<const uint8_t> readBuffer, si
     }
 }
 
-BitStreamReader::BitStreamReader(const uint8_t* buffer, size_t bufferByteSize) :
-        BitStreamReader(Span<const uint8_t>(buffer, bufferByteSize))
+BitStreamReader::BitStreamReader(
+        const uint8_t* buffer, size_t bufferByteSize, ArrayPreallocation maxArrayPrealloc) :
+        BitStreamReader(Span<const uint8_t>(buffer, bufferByteSize), maxArrayPrealloc)
 {}
 
-BitStreamReader::BitStreamReader(Span<const uint8_t> buffer) :
-        m_context(buffer, buffer.size() * 8)
+BitStreamReader::BitStreamReader(Span<const uint8_t> buffer, ArrayPreallocation maxArrayPrealloc) :
+        m_context(buffer, buffer.size() * 8, maxArrayPrealloc)
 {}
 
-BitStreamReader::BitStreamReader(Span<const uint8_t> buffer, size_t bufferBitSize) :
-        m_context(buffer, bufferBitSize)
+BitStreamReader::BitStreamReader(
+        Span<const uint8_t> buffer, size_t bufferBitSize, ArrayPreallocation maxArrayPrealloc) :
+        m_context(buffer, bufferBitSize, maxArrayPrealloc)
 {
     if (buffer.size() < (bufferBitSize + 7) / 8)
     {
@@ -387,8 +391,9 @@ BitStreamReader::BitStreamReader(Span<const uint8_t> buffer, size_t bufferBitSiz
     }
 }
 
-BitStreamReader::BitStreamReader(const uint8_t* buffer, size_t bufferBitSize, BitsTag) :
-        m_context(Span<const uint8_t>(buffer, (bufferBitSize + 7) / 8), bufferBitSize)
+BitStreamReader::BitStreamReader(
+        const uint8_t* buffer, size_t bufferBitSize, BitsTag, ArrayPreallocation maxArrayPrealloc) :
+        m_context(Span<const uint8_t>(buffer, (bufferBitSize + 7) / 8), bufferBitSize, maxArrayPrealloc)
 {}
 
 uint32_t BitStreamReader::readUnsignedBits32(uint8_t numBits)

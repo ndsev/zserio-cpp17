@@ -599,8 +599,24 @@ void read(BitStreamReader& reader, Vector<T, ALLOC>& rawArray, detail::array_own
         size_t arrayLength = 0)
 {
     const size_t readLength = readArrayLength<ARRAY_TYPE, ARRAY_TRAITS>(reader, arrayLength);
+
+    if constexpr (std::is_base_of_v<NumericArrayTraits<T>, ARRAY_TRAITS>)
+    {
+        const size_t elementSize = ARRAY_TRAITS::bitSizeOf();
+        if (reader.getBitPosition() + readLength * static_cast<uint64_t>(elementSize) >
+                reader.getBufferBitSize())
+        {
+            throw CppRuntimeException("ArrayView: Array size exceeds available buffer!");
+        }
+    }
+
+    size_t reserve = readLength;
+    if (reserve * static_cast<uint64_t>(sizeof(T)) > reader.getMaxArrayPreallocation())
+    {
+        reserve = reader.getMaxArrayPreallocation() / sizeof(T);
+    }
     rawArray.clear();
-    rawArray.reserve(readLength);
+    rawArray.reserve(reserve);
     for (size_t i = 0; i < readLength; ++i)
     {
         if constexpr (ARRAY_TYPE == ArrayType::ALIGNED || ARRAY_TYPE == ArrayType::ALIGNED_AUTO)
@@ -807,9 +823,15 @@ void readPacked(BitStreamReader& reader, Vector<T, ALLOC>& rawArray,
         const size_t readLength = readArrayLength<ARRAY_TYPE, ARRAY_TRAITS>(reader, arrayLength);
         rawArray.clear();
 
+        size_t reserve = readLength;
+        if (reserve * static_cast<uint64_t>(sizeof(T)) > reader.getMaxArrayPreallocation())
+        {
+            reserve = reader.getMaxArrayPreallocation() / sizeof(T);
+        }
+
         if (readLength > 0)
         {
-            rawArray.reserve(readLength);
+            rawArray.reserve(reserve);
 
             detail::packing_context_type_t<ValueType> context;
 

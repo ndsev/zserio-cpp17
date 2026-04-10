@@ -114,7 +114,9 @@ Vector<uint8_t, ALLOC> serializeToBytes(const T& data, const ALLOC& allocator, A
  *
  * \throw CppRuntimeException When serialization fails.
  */
-template <typename T, typename... ARGS, typename std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
+template <typename T, typename... ARGS,
+        typename std::enable_if_t<!is_first_allocator_v<ARGS...> && !is_first_array_preallocation_v<ARGS...>,
+                int> = 0>
 BasicBitBuffer<typename T::allocator_type> serialize(const T& data, ARGS&&... arguments)
 {
     return serialize(data, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
@@ -145,10 +147,43 @@ BasicBitBuffer<typename T::allocator_type> serialize(const T& data, ARGS&&... ar
  *
  * \throw CppRuntimeException When serialization fails.
  */
-template <typename T, typename... ARGS, typename std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
+template <typename T, typename... ARGS,
+        typename std::enable_if_t<!is_first_allocator_v<ARGS...> && !is_first_array_preallocation_v<ARGS...>,
+                int> = 0>
 Vector<uint8_t, typename T::allocator_type> serializeToBytes(const T& data, ARGS&&... arguments)
 {
     return serializeToBytes(data, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
+}
+
+/**
+ * Deserializes bit buffer to instance of generated object.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     SomeZserioObject objectData;
+ *     const zserio::BitBuffer bitBuffer = zserio::serialize(objectData);
+ *     zserio::View<SomeZserioObject> objectView = zserio::deserialize(bitBuffer,
+ *             zserio::ArrayPreallocation(1024), objectData);
+ * \endcode
+ *
+ * \param buffer Bit buffer to use.
+ * \param maxArrayPrealloc Maximum initial array allocation.
+ * \param data Data of Zserio object to fill.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return View of Zserio object created from the given bit buffer.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename ALLOC, typename... ARGS>
+View<T> deserialize(
+        const BasicBitBuffer<ALLOC>& buffer, ArrayPreallocation maxArrayPrealloc, T& data, ARGS&&... arguments)
+{
+    BitStreamReader reader(buffer, maxArrayPrealloc);
+
+    return detail::read(reader, data, std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -174,7 +209,36 @@ Vector<uint8_t, typename T::allocator_type> serializeToBytes(const T& data, ARGS
 template <typename T, typename ALLOC, typename... ARGS>
 View<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, T& data, ARGS&&... arguments)
 {
-    BitStreamReader reader(buffer);
+    return deserialize<T>(buffer, ArrayPreallocation(), data, std::forward<ARGS>(arguments)...);
+}
+
+/**
+ * Deserializes byte buffer to instance of generated object.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     SomeZserioObject objectData;
+ *     const auto buffer = zserio::serializeToBytes(objectData);
+ *     zserio::View<SomeZserioObject> objectView = zserio::deserializeFromBytes(buffer,
+ *             zserio::ArrayPreallocation(1024*1024), objectData);
+ * \endcode
+ *
+ * \param buffer Byte buffer to use.
+ * \param maxArrayPrealloc Maximum initial array allocation.
+ * \param data Data of Zserio object to fill.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return View of Zserio object created from the given bit buffer.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename... ARGS>
+View<T> deserializeFromBytes(
+        Span<const uint8_t> buffer, ArrayPreallocation maxArrayPrealloc, T& data, ARGS&&... arguments)
+{
+    BitStreamReader reader(buffer, maxArrayPrealloc);
 
     return detail::read(reader, data, std::forward<ARGS>(arguments)...);
 }
@@ -202,9 +266,7 @@ View<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, T& data, ARGS&&... argu
 template <typename T, typename... ARGS>
 View<T> deserializeFromBytes(Span<const uint8_t> buffer, T& data, ARGS&&... arguments)
 {
-    BitStreamReader reader(buffer);
-
-    return detail::read(reader, data, std::forward<ARGS>(arguments)...);
+    return deserializeFromBytes(buffer, ArrayPreallocation(), data, std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -474,6 +536,39 @@ Vector<uint8_t, typename T::allocator_type> serializeToBytes(const DataView<T>& 
  *
  *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
  *     const auto bitBuffer = zserio::serialize(objectData, allocator);
+ *     zserio::DataView<SomeZserioObject> objectView = zserio::deserialize(bitBuffer,
+ *             zserio::ArrayPreallocation(1024*1024), allocator);
+ * \endcode
+ *
+ * \param buffer Bit buffer to use.
+ * \param maxArrayPreallocation Maximum initial array allocation.
+ * \param allocator Allocator to use to allocate data for DataView.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return DataView of Zserio object created from the given bit buffer.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename ALLOC, typename... ARGS>
+DataView<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, ArrayPreallocation maxArrayPreallocation,
+        const typename T::allocator_type& allocator, ARGS&&... arguments)
+{
+    BitStreamReader reader(buffer, maxArrayPreallocation);
+    T data{allocator};
+
+    return DataView<T>(reader, std::move(data), std::forward<ARGS>(arguments)...);
+}
+
+/**
+ * Deserializes bit buffer to DataView using given allocator.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
+ *     const auto bitBuffer = zserio::serialize(objectData, allocator);
  *     zserio::DataView<SomeZserioObject> objectView = zserio::deserialize(bitBuffer, allocator);
  * \endcode
  *
@@ -489,7 +584,36 @@ template <typename T, typename ALLOC, typename... ARGS>
 DataView<T> deserialize(
         const BasicBitBuffer<ALLOC>& buffer, const typename T::allocator_type& allocator, ARGS&&... arguments)
 {
-    BitStreamReader reader(buffer);
+    return deserialize<T>(buffer, ArrayPreallocation(), allocator, std::forward<ARGS>(arguments)...);
+}
+
+/**
+ * Deserializes byte buffer to DataView using given allocator.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/pmr/PropagatingPolymorphicAllocator.h>
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     const zserio::pmr::PropagatingPolymorphicAllocator<> allocator;
+ *     const auto buffer = zserio::serializeToBytes(objectData, allocator);
+ *     zserio::DataView<SomeZserioObject> objectView = zserio::deserializeFromBytes(buffer,
+ *             zserio::ArrayPreallocation(1024*1024), allocator);
+ * \endcode
+ *
+ * \param buffer Byte buffer to use.
+ * \param allocator Allocator to use to allocate data for DataView.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return DataView of Zserio object created from the given bit buffer.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename... ARGS>
+DataView<T> deserializeFromBytes(Span<const uint8_t> buffer, ArrayPreallocation maxArrayPreallocation,
+        const typename T::allocator_type& allocator, ARGS&&... arguments)
+{
+    BitStreamReader reader(buffer, maxArrayPreallocation);
     T data{allocator};
 
     return DataView<T>(reader, std::move(data), std::forward<ARGS>(arguments)...);
@@ -520,10 +644,37 @@ template <typename T, typename... ARGS>
 DataView<T> deserializeFromBytes(
         Span<const uint8_t> buffer, const typename T::allocator_type& allocator, ARGS&&... arguments)
 {
-    BitStreamReader reader(buffer);
-    T data{allocator};
+    return deserializeFromBytes<T>(buffer, ArrayPreallocation(), allocator, std::forward<ARGS>(arguments)...);
+}
 
-    return DataView<T>(reader, std::move(data), std::forward<ARGS>(arguments)...);
+/**
+ * Deserializes bit buffer to DataView.
+ *
+ * The memory for deserialization is allocated using new allocator of the type defined by the Zserio object.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     const zserio::BitBuffer bitBuffer = zserio::serialize(objectData);
+ *     zserio::DataView<SomeZserioObject> objectView = zserio::deserialize(bitBuffer, allocator);
+ * \endcode
+ *
+ * \param buffer Bit buffer to use.
+ * \param maxArrayPreallocation Maximum initial array allocation.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return DataView of Zserio object created from the given bit buffer.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename ALLOC, typename... ARGS,
+        std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
+DataView<T> deserialize(
+        const BasicBitBuffer<ALLOC>& buffer, ArrayPreallocation maxArrayAlloc, ARGS&&... arguments)
+{
+    return deserialize<T>(
+            buffer, maxArrayAlloc, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -547,10 +698,37 @@ DataView<T> deserializeFromBytes(
  * \throw CppRuntimeException When deserialization fails.
  */
 template <typename T, typename ALLOC, typename... ARGS,
-        std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
+        std::enable_if_t<!is_first_allocator_v<ARGS...> && !is_first_array_preallocation_v<ARGS...>, int> = 0>
 DataView<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, ARGS&&... arguments)
 {
-    return deserialize<T>(buffer, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
+    return deserialize<T>(buffer, ArrayPreallocation(), std::forward<ARGS>(arguments)...);
+}
+
+/**
+ * Deserializes byte buffer to DataView.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     const auto buffer = zserio::serializeToBytes(objectData);
+ *     zserio::DataView<SomeZserioObject> objectView = zserio::deserializeFromBytes(buffer);
+ * \endcode
+ *
+ * \param buffer Byte buffer to use.
+ * \param maxArrayPrealloc Maximum initial array allocation.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return DataView of Zserio object created from the given bit buffer.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename... ARGS, std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
+DataView<T> deserializeFromBytes(
+        Span<const uint8_t> buffer, ArrayPreallocation maxArrayPrealloc, ARGS&&... arguments)
+{
+    return deserializeFromBytes<T>(
+            buffer, maxArrayPrealloc, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -571,10 +749,11 @@ DataView<T> deserialize(const BasicBitBuffer<ALLOC>& buffer, ARGS&&... arguments
  *
  * \throw CppRuntimeException When deserialization fails.
  */
-template <typename T, typename... ARGS, std::enable_if_t<!is_first_allocator_v<ARGS...>, int> = 0>
+template <typename T, typename... ARGS,
+        std::enable_if_t<!is_first_allocator_v<ARGS...> && !is_first_array_preallocation_v<ARGS...>, int> = 0>
 DataView<T> deserializeFromBytes(Span<const uint8_t> buffer, ARGS&&... arguments)
 {
-    return deserializeFromBytes<T>(buffer, typename T::allocator_type(), std::forward<ARGS>(arguments)...);
+    return deserializeFromBytes<T>(buffer, ArrayPreallocation(), std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -659,6 +838,38 @@ void serializeToFile(const T& data, std::string_view fileName, ARGS&&... argumen
  *     std::string_view fileName("FileName.bin");
  *     SomeZserioObject objectData;
  *     zserio::serializeToFile(objectData, fileName);
+ *     zserio::View<SomeZserioObject> objectView = zserio::deserializeFromFile(fileName,
+ *             zserio::ArrayPreallocation(1024*1024), objectData);
+ * \endcode
+ *
+ * \note Please note that BitBuffer is always allocated using 'std::allocator<uint8_t>'.
+ *
+ * \param fileName File to use.
+ * \param maxArrayPrealloc Maximum initial array allocation.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return View of Zserio object created from the given file.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename... ARGS>
+View<T> deserializeFromFile(
+        std::string_view fileName, ArrayPreallocation maxArrayPrealloc, T& data, ARGS&&... arguments)
+{
+    const BitBuffer bitBuffer = readBufferFromFile(fileName);
+    return deserialize(bitBuffer, maxArrayPrealloc, data, std::forward<ARGS>(arguments)...);
+}
+
+/**
+ * Deserializes given file contents to instance of Zserio object.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     std::string_view fileName("FileName.bin");
+ *     SomeZserioObject objectData;
+ *     zserio::serializeToFile(objectData, fileName);
  *     zserio::View<SomeZserioObject> objectView = zserio::deserializeFromFile(fileName, objectData);
  * \endcode
  *
@@ -674,8 +885,39 @@ void serializeToFile(const T& data, std::string_view fileName, ARGS&&... argumen
 template <typename T, typename... ARGS>
 View<T> deserializeFromFile(std::string_view fileName, T& data, ARGS&&... arguments)
 {
+    return deserializeFromFile(fileName, ArrayPreallocation(), data, std::forward<ARGS>(arguments)...);
+}
+
+/**
+ * Deserializes given file contents to DataView with Zserio object.
+ *
+ * Example:
+ * \code{.cpp}
+ *     #include <zserio/SerializeUtil.h>
+ *
+ *     std::string_view fileName("FileName.bin");
+ *     SomeZserioObject objectData;
+ *     zserio::serializeToFile(objectData, fileName);
+ *     zserio::DataView<SomeZserioObject> objectDataView = zserio::deserializeFromFile(fileName,
+ *             zserio::ArrayPreallocation(1024*1024));
+ * \endcode
+ *
+ * \note Please note that BitBuffer is always allocated using 'std::allocator<uint8_t>'.
+ *
+ * \param fileName File to use.
+ * \param maxArrayPrealloc Maximum initial array allocation.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return View of Zserio object created from the given file.
+ *
+ * \throw CppRuntimeException When deserialization fails.
+ */
+template <typename T, typename... ARGS>
+DataView<T> deserializeFromFile(
+        std::string_view fileName, ArrayPreallocation maxArrayPrealloc, ARGS&&... arguments)
+{
     const BitBuffer bitBuffer = readBufferFromFile(fileName);
-    return deserialize(bitBuffer, data, std::forward<ARGS>(arguments)...);
+    return deserialize<T>(bitBuffer, maxArrayPrealloc, std::forward<ARGS>(arguments)...);
 }
 
 /**
@@ -703,8 +945,7 @@ View<T> deserializeFromFile(std::string_view fileName, T& data, ARGS&&... argume
 template <typename T, typename... ARGS>
 DataView<T> deserializeFromFile(std::string_view fileName, ARGS&&... arguments)
 {
-    const BitBuffer bitBuffer = readBufferFromFile(fileName);
-    return deserialize<T>(bitBuffer, std::forward<ARGS>(arguments)...);
+    return deserializeFromFile<T>(fileName, ArrayPreallocation(), std::forward<ARGS>(arguments)...);
 }
 
 } // namespace zserio

@@ -203,7 +203,7 @@ TEST_F(SimpleTableValidationTest, validateBlobFailure)
     ASSERT_EQ("fieldBlob", error.fieldName);
     ASSERT_EQ(std::vector<std::string>{"0"}, error.primaryKeyValues);
     ASSERT_EQ(zserio::IValidationObserver::BLOB_PARSE_FAILED, error.errorType);
-    ASSERT_EQ("BitStreamReader: Reached eof(), reading from stream failed!", error.message);
+    ASSERT_EQ("ArrayView: Array size exceeds available buffer!", error.message);
 }
 
 TEST_F(SimpleTableValidationTest, validateSingleTable)

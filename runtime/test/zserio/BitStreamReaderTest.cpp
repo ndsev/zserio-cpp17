@@ -2,8 +2,10 @@
 #include <cstring>
 
 #include "gtest/gtest.h"
+#include "zserio/ArrayView.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/CppRuntimeException.h"
+#include "zserio/View.h"
 
 namespace zserio
 {
@@ -171,6 +173,19 @@ TEST_F(BitStreamReaderTest, getBitPosition)
 TEST_F(BitStreamReaderTest, getBufferBitSize)
 {
     ASSERT_EQ(m_byteBuffer.size() * 8, m_reader.getBufferBitSize());
+}
+
+TEST_F(BitStreamReaderTest, invalidVarSize)
+{
+    const std::array<uint8_t, 5> buffer{
+            127, // varSize bigger than buffer size
+    };
+    BitStreamReader reader(buffer.data(), buffer.size());
+    ASSERT_THROW(reader.readBytes(), CppRuntimeException);
+    reader.setBitPosition(0);
+    ASSERT_THROW(reader.readString(), CppRuntimeException);
+    reader.setBitPosition(0);
+    ASSERT_THROW(reader.readBitBuffer(), CppRuntimeException);
 }
 
 } // namespace zserio

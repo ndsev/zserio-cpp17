@@ -166,6 +166,12 @@ TEST(ArrayViewTest, boolArray)
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray);
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW(detail::read<detail::ArrayType::AUTO>(reader2, readRawArray), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, boolPackedArray)
@@ -184,6 +190,12 @@ TEST(ArrayViewTest, boolPackedArray)
     detail::readPacked<detail::ArrayType::AUTO>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW(detail::readPacked<detail::ArrayType::AUTO>(reader2, readRawArray), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, int8Array)
@@ -211,6 +223,12 @@ TEST(ArrayViewTest, int8Array)
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray);
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW(detail::read<detail::ArrayType::AUTO>(reader2, readRawArray), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, int8PackedArray)
@@ -233,6 +251,11 @@ TEST(ArrayViewTest, int8PackedArray)
 
     BitStreamReader reader(buffer);
     Vector<Int8> readRawArray;
+
+    ASSERT_THROW(
+            detail::readPacked<detail::ArrayType::NORMAL>(reader, readRawArray, 9999), CppRuntimeException);
+
+    reader.setBitPosition(0);
     detail::readPacked<detail::ArrayType::NORMAL>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(rawArray, readRawArray);
 
@@ -336,6 +359,12 @@ TEST(ArrayViewTest, fixedDynInt16Array)
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW(detail::read<detail::ArrayType::AUTO>(reader2, readRawArray), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, variableDynInt16Array)
@@ -366,6 +395,14 @@ TEST(ArrayViewTest, variableDynInt16Array)
             reader, readRawArray, owner, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW((detail::readWithTraits<detail::ArrayType::AUTO, VarDynInt16ArrayTraits>(
+                         reader2, readRawArray, owner)),
+            CppRuntimeException);
 }
 
 TEST(ArrayViewTest, variableDynInt16PackedArray)
@@ -391,6 +428,11 @@ TEST(ArrayViewTest, variableDynInt16PackedArray)
             reader, readRawArray, owner, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
+
+    reader.setBitPosition(0);
+    ASSERT_THROW((detail::readWithTraits<detail::ArrayType::NORMAL, VarDynInt16ArrayTraits>(
+                         reader, readRawArray, owner, 9999)),
+            CppRuntimeException);
 }
 
 TEST(ArrayViewTest, varUInt16Array)
@@ -418,6 +460,12 @@ TEST(ArrayViewTest, varUInt16Array)
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW((detail::read<detail::ArrayType::AUTO>(reader2, readRawArray)), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, varUInt16PackedArray)
@@ -436,6 +484,12 @@ TEST(ArrayViewTest, varUInt16PackedArray)
     detail::readPacked<detail::ArrayType::AUTO>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW((detail::readPacked<detail::ArrayType::AUTO>(reader2, readRawArray)), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, float16Array)
@@ -462,6 +516,12 @@ TEST(ArrayViewTest, float16Array)
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW((detail::read<detail::ArrayType::AUTO>(reader2, readRawArray)), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, bytesArray)
@@ -497,6 +557,12 @@ TEST(ArrayViewTest, bytesArray)
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW((detail::read<detail::ArrayType::AUTO>(reader2, readRawArray)), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, stringArray)
@@ -528,6 +594,12 @@ TEST(ArrayViewTest, stringArray)
     detail::read<detail::ArrayType::AUTO>(reader, readRawArray, rawArray1.size());
     ASSERT_EQ(bitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray1, readRawArray);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW((detail::read<detail::ArrayType::AUTO>(reader2, readRawArray)), CppRuntimeException);
 }
 
 TEST(ArrayViewTest, testObjectArray)
@@ -544,6 +616,13 @@ TEST(ArrayViewTest, testObjectArray)
     ASSERT_FALSE(array1 == array2);
     ASSERT_TRUE(array1 != array2);
     ASSERT_LT(array1, array2);
+
+    const std::array<uint8_t, 10> buffer2{
+            0xFF, 0xFF, 0xFF, 0x3F, // big array size
+    };
+    Vector<TestObject> readRawArray2;
+    BitStreamReader reader2(buffer2.data(), buffer2.size());
+    ASSERT_THROW((detail::read<detail::ArrayType::AUTO>(reader2, readRawArray2)), CppRuntimeException);
 
     const BitSize bitSize = detail::bitSizeOf<detail::ArrayType::AUTO>(array1);
     BitBuffer buffer(bitSize);
@@ -611,6 +690,10 @@ TEST(ArrayViewTest, testObjectPackedArray)
     detail::readPacked<detail::ArrayType::NORMAL>(reader, readRawArray, rawArray.size());
     ASSERT_EQ(packedBitSize, reader.getBitPosition());
     ASSERT_EQ(rawArray, readRawArray);
+
+    reader.setBitPosition(0);
+    ASSERT_THROW(
+            (detail::readPacked<detail::ArrayType::NORMAL>(reader, readRawArray, 9999)), CppRuntimeException);
 }
 
 } // namespace zserio

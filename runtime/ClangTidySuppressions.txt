@@ -114,6 +114,9 @@ cppcoreguidelines-pro-type-reinterpret-cast:src/zserio/ValidationSqliteUtil.h:10
 fuchsia-multiple-inheritance:src/zserio/IntrospectableView.h:881
 fuchsia-multiple-inheritance:src/zserio/ReflectableData.h:516
 
+# Strong type class wrapper should use implicit conversion.
+google-explicit-constructor:src/zserio/BitStreamReader.h:42
+
 # Optional follows std::optional so the ctors should be implicit.
 google-explicit-constructor:src/zserio/Optional.h:127
 google-explicit-constructor:src/zserio/Optional.h:137

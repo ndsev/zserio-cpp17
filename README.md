@@ -66,6 +66,9 @@ The [Command Line Parameters](#command-line-parameters) section lists command li
 The [Generated Code Gotchas](#generated-code-gotchas) section outlines the counter-intuitive behaviors in the
 generated code that might frequently trick people into making mistakes.
 
+The [Out of Memory Allocation Errors](#out-of-memory-allocation-errors) section talks about checks for invalid
+array size values.
+
 The [How to Use the Development Build](#how-to-use-the-development-build) section outlines the procedure for
 using the latest C++17 generator via the current development build.
 
@@ -176,6 +179,25 @@ MyGeneratedStruct::View view(data);
 printNameWithDeduction(view); // template parameter deduction works
 printNameWithoutDeduction<MyGeneratedStruct>(view); // needs to spell the type to work
 ```
+
+### Out of Memory Allocation Errors
+
+Zserio tries to prevent out of memory allocation errors which could happen when stored array sizes contain
+invalid values. For array elements with fixed bitsize the array size is compared against remaining buffer
+bit size. Then for all kinds of arrays the initial array allocations is checked against maximum allowed value
+`maxArrayPrealloc`. This value can be configured in the
+[`zserio::BitStreamReader`](https://zserio.org/doc/runtime/latest/cpp/classzserio_1_1BitStreamReader.html)
+constructor or passed directly to the
+[`zserio::deserialize()`](https://zserio.org/doc/runtime/latest/cpp/SerializeUtil_8h.html) methods.
+
+Please note that even with this check, Zserio cannot always guarantee data validity if the incoming stream is
+corrupted. We recommend using checksums at the application level to defend against such corruption.
+
+> [!CAUTION]
+Earlier Zserio versions (up to and including version 2.18.0) did not include this check. However now, it is
+set to 128KB by default to ensure protection in all cases. If stored array elements exceed this limit the array
+will be reallocated but this can have an effect on the overall performance, so please don't forget to choose
+a suitable limit for your application!
 
 ### How to Use the Development Build
 

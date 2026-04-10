@@ -15,6 +15,40 @@ namespace zserio
 {
 
 /**
+ * Wrapper class to specify maximum initial array allocation.
+ */
+class ArrayPreallocation
+{
+public:
+    static constexpr size_t MAX_INITIAL_ARRAY_ALLOCATION = 128 * 1024;
+
+    /**
+     * Default constructor sets default array preallocation.
+     */
+    ArrayPreallocation() :
+            allocation(MAX_INITIAL_ARRAY_ALLOCATION)
+    {}
+    /**
+     * Constructor.
+     *
+     * \param alloc Sets custom maximum preallocation for arrays.
+     */
+    explicit ArrayPreallocation(size_t alloc) :
+            allocation(alloc)
+    {}
+    /**
+     * Gets the value for maximum array preallocation.
+     */
+    operator size_t() const
+    {
+        return allocation;
+    }
+
+private:
+    size_t allocation;
+};
+
+/**
  * Reader class which allows to read various data from the bit stream.
  */
 class BitStreamReader
@@ -34,7 +68,8 @@ public:
          * \param readBuffer Span to the buffer to read.
          * \param readBufferBitSize Size of the buffer in bits.
          */
-        explicit ReaderContext(Span<const uint8_t> readBuffer, size_t readBufferBitSize);
+        explicit ReaderContext(
+                Span<const uint8_t> readBuffer, size_t readBufferBitSize, size_t maxArrayPrealloc);
 
         /**
          * Destructor.
@@ -59,6 +94,7 @@ public:
 
         uintptr_t cache; /**< Bit cache to optimize bit reading. */
         uint8_t cacheNumBits; /**< Num bits available in the bit cache. */
+        const size_t maxArrayPreallocation; /**< Maximum initial array allocation. */
 
         BitPosType bitIndex; /**< Current bit index. */
     };
@@ -68,40 +104,48 @@ public:
      *
      * \param buffer Pointer to the buffer to read.
      * \param bufferByteSize Size of the buffer in bytes.
+     * \param maxArrayPrealloc Maximum preallocation for arrays.
      */
-    explicit BitStreamReader(const uint8_t* buffer, size_t bufferByteSize);
+    explicit BitStreamReader(
+            const uint8_t* buffer, size_t bufferByteSize, ArrayPreallocation maxArrayPrealloc = {});
 
     /**
      * Constructor from buffer passed as a Span.
      *
      * \param buffer Buffer to read.
+     * \param maxArrayPrealloc Maximum preallocation for arrays.
      */
-    explicit BitStreamReader(Span<const uint8_t> buffer);
+    explicit BitStreamReader(Span<const uint8_t> buffer, ArrayPreallocation maxArrayPrealloc = {});
 
     /**
      * Constructor from buffer passed as a Span with exact bit size.
      *
      * \param buffer Buffer to read.
      * \param bufferBitSize Size of the buffer in bits.
+     * \param maxArrayPrealloc Maximum preallocation for arrays.
      */
-    explicit BitStreamReader(Span<const uint8_t> buffer, size_t bufferBitSize);
+    explicit BitStreamReader(
+            Span<const uint8_t> buffer, size_t bufferBitSize, ArrayPreallocation maxArrayPrealloc = {});
 
     /**
      * Constructor from raw buffer with exact bit size.
      *
      * \param buffer Pointer to buffer to read.
      * \param bufferBitSize Size of the buffer in bits.
+     * \param maxArrayPrealloc Maximum preallocation for arrays.
      */
-    explicit BitStreamReader(const uint8_t* buffer, size_t bufferBitSize, BitsTag);
+    explicit BitStreamReader(
+            const uint8_t* buffer, size_t bufferBitSize, BitsTag, ArrayPreallocation maxArrayPrealloc = {});
 
     /**
      * Constructor from bit buffer.
      *
      * \param bitBuffer Bit buffer to read from.
+     * \param maxArrayPrealloc Maximum preallocation for arrays.
      */
     template <typename ALLOC>
-    explicit BitStreamReader(const BasicBitBuffer<ALLOC>& bitBuffer) :
-            BitStreamReader(bitBuffer.getData(), bitBuffer.getBitSize())
+    explicit BitStreamReader(const BasicBitBuffer<ALLOC>& bitBuffer, ArrayPreallocation maxArrayPrealloc = {}) :
+            BitStreamReader(bitBuffer.getData(), bitBuffer.getBitSize(), maxArrayPrealloc)
     {}
 
     /**
@@ -248,6 +292,10 @@ public:
     {
         const size_t len = static_cast<size_t>(readVarSize());
         const BitPosType beginBitPosition = getBitPosition();
+        if (beginBitPosition + 8ULL * len > getBufferBitSize())
+        {
+            throw CppRuntimeException("BitStreamReader: Byte array size exceeds available buffer!");
+        }
         if ((beginBitPosition & 0x07U) != 0)
         {
             // we are not aligned to byte
@@ -280,6 +328,10 @@ public:
     {
         const size_t len = static_cast<size_t>(readVarSize());
         const BitPosType beginBitPosition = getBitPosition();
+        if (beginBitPosition + 8ULL * len > getBufferBitSize())
+        {
+            throw CppRuntimeException("BitStreamReader: Byte array size exceeds available buffer!");
+        }
         if ((beginBitPosition & 0x07U) != 0)
         {
             // we are not aligned to byte
@@ -313,11 +365,15 @@ public:
     BasicBitBuffer<RebindAlloc<ALLOC, uint8_t>> readBitBuffer(const ALLOC& allocator = ALLOC())
     {
         const size_t bitSize = static_cast<size_t>(readVarSize());
+        const BitPosType beginBitPosition = getBitPosition();
+        if (beginBitPosition + static_cast<uint64_t>(bitSize) > getBufferBitSize())
+        {
+            throw CppRuntimeException("BitStreamReader: Byte array size exceeds available buffer!");
+        }
         const size_t numBytesToRead = bitSize / 8;
         const uint8_t numRestBits = static_cast<uint8_t>(bitSize - numBytesToRead * 8);
         BasicBitBuffer<RebindAlloc<ALLOC, uint8_t>> bitBuffer(bitSize, allocator);
         Span<uint8_t> buffer = bitBuffer.getData();
-        const BitPosType beginBitPosition = getBitPosition();
         const Span<uint8_t>::iterator itEnd = buffer.begin() + numBytesToRead;
         if ((beginBitPosition & 0x07U) != 0)
         {
@@ -375,6 +431,16 @@ public:
     size_t getBufferBitSize() const
     {
         return m_context.bufferBitSize;
+    }
+
+    /**
+     * Gets the maximum initial array allocation in bytes.
+     *
+     * \return Maximum initial array allocation.
+     */
+    size_t getMaxArrayPreallocation() const
+    {
+        return m_context.maxArrayPreallocation;
     }
 
 private:

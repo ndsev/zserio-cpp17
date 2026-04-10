@@ -23,6 +23,8 @@ class BasicOptional;
 template <typename T>
 class Extended;
 
+class ArrayPreallocation;
+
 namespace detail
 {
 
@@ -134,6 +136,22 @@ struct has_allocator<T, std::void_t<typename T::allocator_type>> : std::true_typ
 
 template <typename T, typename V = void>
 inline constexpr bool has_allocator_v = has_allocator<T, V>::value;
+/** \} */
+
+/**
+ * Trait used to check whether the first type of ARGS is an ArrayAllocation.
+ * \{
+ */
+template <typename... ARGS>
+struct is_first_array_preallocation : std::false_type
+{};
+
+template <typename T, typename... ARGS>
+struct is_first_array_preallocation<T, ARGS...> : std::is_same<std::decay_t<T>, ArrayPreallocation>
+{};
+
+template <typename... ARGS>
+inline constexpr bool is_first_array_preallocation_v = is_first_array_preallocation<ARGS...>::value;
 /** \} */
 
 /**
