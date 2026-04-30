@@ -186,18 +186,17 @@ Zserio tries to prevent out of memory allocation errors which could happen when 
 invalid values. For array elements with fixed bitsize the array size is compared against remaining buffer
 bit size. Then for all kinds of arrays the initial array allocations is checked against maximum allowed value
 `maxArrayPrealloc`. This value can be configured in the
-[`zserio::BitStreamReader`](https://zserio.org/doc/runtime/latest/cpp/classzserio_1_1BitStreamReader.html)
-constructor or passed directly to the
-[`zserio::deserialize()`](https://zserio.org/doc/runtime/latest/cpp/SerializeUtil_8h.html) methods.
+[`zserio::BitStreamReader`](https://ndsev.github.io/zserio-cpp17/doc/runtime/latest/classzserio_1_1BitStreamReader.html)
+constructor or passed directly to
+[`zserio::deserialize()`](https://ndsev.github.io/zserio-cpp17/doc/runtime/latest/SerializeUtil_8h.html) functions.
 
-Please note that even with this check, Zserio cannot always guarantee data validity if the incoming stream is
-corrupted. We recommend using checksums at the application level to defend against such corruption.
+Please note that even with this check C++17 Extension cannot always guarantee data validity if the incoming stream is
+corrupted. We recommend using checksums at the application level to defend against invalid data input.
 
 > [!CAUTION]
-Earlier Zserio versions (up to and including version 2.18.0) did not include this check. However now, it is
-set to 128KB by default to ensure protection in all cases. If stored array elements exceed this limit the array
-will be reallocated but this can have an effect on the overall performance, so please don't forget to choose
-a suitable limit for your application!
+The `maxArrayPrealloc` is set to 128KB by default to ensure protection in all cases. If stored array elements exceed
+this limit the array will be reallocated but this can have an effect on the overall performance, so please don't forget
+to choose a suitable limit for your application!
 
 ### How to Use the Development Build
 
