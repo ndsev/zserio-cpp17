@@ -1,0 +1,23 @@
+var NAVTREEINDEX11 =
+{
+"structzserio_1_1is__dyn__int__wrapper.html":[2,0,1,88],
+"structzserio_1_1is__first__allocator.html":[2,0,1,77],
+"structzserio_1_1is__first__allocator_3_01T_00_01ARGS_8_8_8_01_4.html":[2,0,1,78],
+"structzserio_1_1is__first__array__preallocation.html":[2,0,1,81],
+"structzserio_1_1is__first__array__preallocation_3_01T_00_01ARGS_8_8_8_01_4.html":[2,0,1,82],
+"structzserio_1_1is__numeric__wrapper.html":[2,0,1,87],
+"structzserio_1_1is__span.html":[2,0,1,85],
+"structzserio_1_1is__span_3_01Span_3_01T_00_01Extent_01_4_01_4.html":[2,0,1,86],
+"structzserio_1_1offset__field__reference.html":[2,0,1,93],
+"structzserio_1_1offset__field__reference.html#adb3b6bfad031107e4fac64b009d1f44c":[2,0,1,93,0],
+"structzserio_1_1view__type.html":[2,0,1,91],
+"structzserio_1_1view__type.html#ac80fe3908af712eced5ff8596b6a5192":[2,0,1,91,0],
+"structzserio_1_1view__type_3_01BasicBitBuffer_3_01ALLOC_01_4_01_4.html":[2,0,1,14],
+"structzserio_1_1view__type_3_01BasicBitBuffer_3_01ALLOC_01_4_01_4.html#ac2b2174300cf0581ec6c1d4bcf92f88c":[2,0,1,14,0],
+"structzserio_1_1view__type_3_01BasicBytes_3_01ALLOC_01_4_01_4.html":[2,0,1,18],
+"structzserio_1_1view__type_3_01BasicBytes_3_01ALLOC_01_4_01_4.html#a6f03e31f47b37021b84d63d3c4a1839e":[2,0,1,18,0],
+"structzserio_1_1view__type_3_01BasicString_3_01ALLOC_01_4_01_4.html":[2,0,1,74],
+"structzserio_1_1view__type_3_01BasicString_3_01ALLOC_01_4_01_4.html#ad8f17d4a3026172dd9dc9bc338384a8a":[2,0,1,74,0],
+"structzserio_1_1view__type_3_01T_00_01std_1_1enable__if__t_3_01is__complete__v_3_01View_3_01T_01_4_01_4_01_4_01_4.html":[2,0,1,92],
+"structzserio_1_1view__type_3_01T_00_01std_1_1enable__if__t_3_01is__complete__v_3_01View_3_01T_01_4_01_4_01_4_01_4.html#a3cf7f7322456346f65afc5aacfdfa107":[2,0,1,92,0]
+};
