@@ -1,0 +1,27 @@
+var classzserio_1_1IBasicTypeInfo =
+[
+    [ "~IBasicTypeInfo", "classzserio_1_1IBasicTypeInfo.html#a3896a35491104c8de3c61c1437a32668", null ],
+    [ "createInstance", "classzserio_1_1IBasicTypeInfo.html#ac56d7d32e672f6a1d3695eb5a06060ae", null ],
+    [ "createInstance", "classzserio_1_1IBasicTypeInfo.html#a5fec08abbce83f56d767ded6241b3bab", null ],
+    [ "getBitmaskValues", "classzserio_1_1IBasicTypeInfo.html#aee452c26fb0d5368fe124761a066abff", null ],
+    [ "getBitSize", "classzserio_1_1IBasicTypeInfo.html#a4ac6a2dc026c9979d464df693affa6ca", null ],
+    [ "getCases", "classzserio_1_1IBasicTypeInfo.html#a2f375a2cb42af257e5b7207981e98a5e", null ],
+    [ "getColumns", "classzserio_1_1IBasicTypeInfo.html#ac7c57f67a1992b4fd6d9bce4b1505806", null ],
+    [ "getCppType", "classzserio_1_1IBasicTypeInfo.html#acf107e8c1b10b5b0d2364b64915be3af", null ],
+    [ "getEnumItems", "classzserio_1_1IBasicTypeInfo.html#ad5b5b3bd93a172d2bdc1331793b8cc62", null ],
+    [ "getFields", "classzserio_1_1IBasicTypeInfo.html#a3bccedbaf1e5f7563a226d587ab4debc", null ],
+    [ "getFunctions", "classzserio_1_1IBasicTypeInfo.html#abfa6c2bb5290d6b8e7d5faa27c2a148d", null ],
+    [ "getMessages", "classzserio_1_1IBasicTypeInfo.html#a7c2ba07719fdb7ee92e050c7877ed4fb", null ],
+    [ "getMethods", "classzserio_1_1IBasicTypeInfo.html#a034e70af259e40026e5050538cc332ac", null ],
+    [ "getParameters", "classzserio_1_1IBasicTypeInfo.html#a54be4b1304bf04c120cb1aa51463e558", null ],
+    [ "getSchemaName", "classzserio_1_1IBasicTypeInfo.html#af9394157fd510e3517aacc602e072ecb", null ],
+    [ "getSchemaType", "classzserio_1_1IBasicTypeInfo.html#ae278cce356bc59e5abddf4b5d84650ff", null ],
+    [ "getSelector", "classzserio_1_1IBasicTypeInfo.html#ae8d15a676a64504e80cbb39ab71a1f8a", null ],
+    [ "getSqlConstraint", "classzserio_1_1IBasicTypeInfo.html#a751f052860b56fd4a24d3c3d6922266d", null ],
+    [ "getTables", "classzserio_1_1IBasicTypeInfo.html#ab5a7361eb43d98c4b29341aee71654c8", null ],
+    [ "getTemplateArguments", "classzserio_1_1IBasicTypeInfo.html#a1937c7ac7a9d5284cb169eca7c59dd4d", null ],
+    [ "getTemplateName", "classzserio_1_1IBasicTypeInfo.html#abc6038e0d38714d016900a39d16c640f", null ],
+    [ "getUnderlyingType", "classzserio_1_1IBasicTypeInfo.html#a6804acb98098ad206ef0c5aa5b13d785", null ],
+    [ "getVirtualTableUsing", "classzserio_1_1IBasicTypeInfo.html#a464088065c49831b061ea2ce73650c2b", null ],
+    [ "isWithoutRowId", "classzserio_1_1IBasicTypeInfo.html#a5400e82bcc867dc20b84c2b7dad3ebd8", null ]
+];
