@@ -20,6 +20,7 @@
 <@type_includes types.introspectableConstPtr/>
 </#if>
 #include <zserio/View.h>
+#include <zserio/ParsingInfo.h>
 <@type_includes types.allocator/>
 <@system_includes headerSystemIncludes/>
 <@user_includes headerUserIncludes/>
@@ -139,12 +140,19 @@ struct ObjectTraits<${fullName}>
 
     static void write(BitStreamWriter& writer, const View<${fullName}>& view);
 
-    static View<${fullName}> read(BitStreamReader& reader, ${fullName}& data<#rt>
+    static auto read(BitStreamReader& reader, ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
 </#list>
-            <#lt>);
+            <#lt>) -> View<${fullName}>;
+
+    static auto read(BitStreamReader& reader, ParsingInfoMap& pinfo, ${fullName}& data<#rt>
+<#list parameterList as parameter>
+            <#lt>,
+            <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+</#list>
+            <#lt>) -> View<${fullName}>;
     <#if isPackable && usedInPackedArray>
 
     struct PackingContext
@@ -164,6 +172,13 @@ struct ObjectTraits<${fullName}>
     static void write(PackingContext& packingContext, BitStreamWriter& writer, const View<${fullName}>& view);
 
     static void read(PackingContext& packingContext, BitStreamReader& reader, ${fullName}& data<#rt>
+    <#list parameterList as parameter>
+            <#lt>,
+            <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+    </#list>
+            <#lt>);
+
+    static void read(PackingContext& packingContext, BitStreamReader& reader, ParsingInfoMap& pinfo, ${fullName}& data<#rt>
     <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>

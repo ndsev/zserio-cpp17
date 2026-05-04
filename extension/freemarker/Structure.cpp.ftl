@@ -314,6 +314,25 @@ View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList
 </#list>
     return view;
 }
+
+View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader& reader, <#rt>
+        ParsingInfoMap& pimap, ${fullName}& data<#t>
+<#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+</#list>
+        <#lt>)
+{
+    ParsingInfo& pinfo = pimap[&data];
+    pinfo.setBitPosition(reader.getBitPosition());
+    auto view = read(reader, data<#rt>
+<#list parameterList as parameter>
+        <#lt>, <@parameter_view_arg_name parameter/><#rt>
+</#list>
+    <#lt>);
+    pinfo.setEndBitPosition(reader.getBitPosition());
+    return view;
+}
 <#if isPackable && usedInPackedArray>
 
 void ObjectTraits<${fullName}>::initContext(<#rt>
@@ -384,6 +403,26 @@ void ObjectTraits<${fullName}>::read(<#rt>
     <@structure_read_field fullName, field, 1, true/>
     </#list>
     (void)view;
+}
+
+void ObjectTraits<${fullName}>::read(<#rt>
+        PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
+        BitStreamReader& reader, <#rt>
+        ParsingInfoMap& pimap, ${fullName}& data<#t>
+<#list parameterList as parameter>
+        <#lt>,
+        <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
+</#list>
+        <#lt>)
+{
+    ParsingInfo& pinfo = pimap[&data];
+    pinfo.setBitPosition(reader.getBitPosition());
+    read(packingContext, reader, data<#rt>
+<#list parameterList as parameter>
+        <#lt>, <@parameter_view_arg_name parameter/><#rt>
+</#list>
+    <#lt>);
+    pinfo.setEndBitPosition(reader.getBitPosition());
 }
 </#if>
 <#if containsOffset>

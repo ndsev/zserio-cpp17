@@ -249,6 +249,27 @@ TEST_F(SimpleStructureTest, read)
     test_utils::readTest(writeData, data);
 }
 
+TEST_F(SimpleStructureTest, readWithParsingInfo)
+{
+    const uint8_t numberA = 0x04;
+    const uint8_t numberB = 0xCD;
+    const uint8_t numberC = 0x57;
+    SimpleStructure data(numberA, numberB, numberC);
+
+    const zserio::View view(data);
+    const zserio::BitSize bitSize = zserio::detail::bitSizeOf(view);
+    zserio::BitBuffer bitBuffer(bitSize);
+    zserio::BitStreamWriter writer(bitBuffer);
+    writeData(writer);
+
+    zserio::BitStreamReader reader(writer.getWriteBuffer(), writer.getBitPosition(), zserio::BitsTag());
+    SimpleStructure readData;
+    zserio::ParsingInfoMap pinfo;
+    zserio::View readView = zserio::detail::read(reader, pinfo, readData);
+    ASSERT_EQ(pinfo[&readData].getBitPosition(), 0);
+    ASSERT_EQ(pinfo[&readData].getBitSize(), bitSize);
+}
+
 TEST_F(SimpleStructureTest, writeRead)
 {
     const uint8_t numberA = 0x04;

@@ -7,6 +7,7 @@
 #include "zserio/BitSize.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/ParsingInfo.h"
 #include "zserio/Traits.h"
 
 namespace zserio
@@ -139,6 +140,24 @@ template <typename T, typename... ARGS>
 View<T> read(BitStreamReader& reader, T& data, ARGS&&... args)
 {
     return ObjectTraits<T>::read(reader, data, std::forward<ARGS>(args)...);
+}
+
+/**
+ * Global function for reading provided via specialization.
+ *
+ * \param read Bit stream reader to read from.
+ * \param pinfo Map for storing parsing information.
+ * \param data Zserio Data to fill with read data.
+ * \param arguments All parameters in case of Zserio parameterized type.
+ *
+ * \return View with read data.
+ *
+ * \throw CppRuntimeException In case of any read error.
+ */
+template <typename T, typename... ARGS>
+View<T> read(BitStreamReader& reader, ParsingInfoMap& pinfo, T& data, ARGS&&... args)
+{
+    return ObjectTraits<T>::read(reader, pinfo, data, std::forward<ARGS>(args)...);
 }
 
 } // namespace detail
