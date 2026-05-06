@@ -226,7 +226,7 @@ void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content
 }
 
 View<${fullName}> ObjectTraits<${fullName}>::read(<#rt>
-        <#lt>BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+        <#lt>BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -239,11 +239,17 @@ View<${fullName}> ObjectTraits<${fullName}>::read(<#rt>
             <#nt><@parameter_view_arg_name parameter/><#rt>
 </#list>
             <#lt>);
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
 <#if fieldList?has_content>
 
     VarSize choiceTag;
     detail::read(reader, choiceTag);
     <@union_switch "union_read_field", "union_read_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)"/>
+</#if>
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
 </#if>
 
     return view;
@@ -286,7 +292,7 @@ void ObjectTraits<${fullName}>::write(PackingContext&<#if fieldList?has_content>
     </#if>
 }
 
-void ObjectTraits<${fullName}>::read(PackingContext&<#if fieldList?has_content> packingContext</#if>, <#rt>
+void ObjectTraits<${fullName}>::read(PackingContext&<#if fieldList?has_content || withParsingInfoCode> packingContext</#if>, <#rt>
         BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
@@ -300,12 +306,18 @@ void ObjectTraits<${fullName}>::read(PackingContext&<#if fieldList?has_content> 
             <#nt><@parameter_view_arg_name parameter/><#rt>
     </#list>
             <#lt>);
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
     <#if fieldList?has_content>
 
     VarSize choiceTag;
     detail::read(packingContext.zserioChoiceTag, reader, choiceTag);
     <@union_switch "union_read_field", "union_read_no_match", "static_cast<${fullName}::Tag>(choiceTag + 1)", 1, true/>
     </#if>
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
+</#if>
     (void)view;
 }
 </#if>

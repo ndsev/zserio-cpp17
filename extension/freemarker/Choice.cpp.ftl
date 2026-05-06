@@ -221,7 +221,7 @@ void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content
 </#if>
 }
 
-View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
+View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, <#rt>
         ${fullName}& data<#t>
 <#list parameterList as parameter>
         <#lt>,
@@ -235,8 +235,14 @@ View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList
             <#nt><@parameter_view_arg_name parameter/><#rt>
 </#list>
             <#lt>);
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
 <#if fieldList?has_content>
     <@choice_expression_switch "choice_read_member", "choice_no_match_exception", viewIndirectSelectorExpression/>
+</#if>
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
 </#if>
 
     return view;
@@ -279,7 +285,7 @@ void ObjectTraits<${fullName}>::write(<#rt>
 
 void ObjectTraits<${fullName}>::read(<#rt>
         PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
-        BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+        BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -292,8 +298,14 @@ void ObjectTraits<${fullName}>::read(<#rt>
             <#nt><@parameter_view_arg_name parameter/><#rt>
     </#list>
             <#lt>);
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+    </#if>
     <#if fieldList?has_content>
     <@choice_expression_switch "choice_read_member", "choice_no_match_exception", viewIndirectSelectorExpression, 1, true/>
+    </#if>
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
     </#if>
     (void)view;
 }

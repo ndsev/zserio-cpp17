@@ -7,6 +7,7 @@
 #include "zserio/BitSize.h"
 #include "zserio/BitStreamReader.h"
 #include "zserio/BitStreamWriter.h"
+#include "zserio/ParsingInfo.h"
 #include "zserio/Traits.h"
 
 namespace zserio
@@ -28,6 +29,17 @@ class View;
 // template argument deduction guide for View constructor
 template <typename T, typename... ARGS>
 View(T, ARGS&&...) -> View<T>;
+
+/*
+ * Gets parsing information from a view
+ *
+ * \param view Zserio View to extract the parsing info from.
+ */
+template <typename T>
+const ParsingInfo& parsingInfo(const View<T>& view)
+{
+    return view.zserioData().m_parsingInfo;
+}
 
 namespace detail
 {

@@ -71,6 +71,9 @@ public final class Cpp17Extension implements Extension
 
         final CppTypeAliasClashChecker typeAliasClashChecker = new CppTypeAliasClashChecker();
         rootNode.walk(typeAliasClashChecker);
+
+        final CppParsingInfoClashChecker parsingInfoClashChecker = new CppParsingInfoClashChecker();
+        rootNode.walk(parsingInfoClashChecker);
     }
 
     @Override

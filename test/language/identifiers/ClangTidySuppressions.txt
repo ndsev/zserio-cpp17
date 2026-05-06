@@ -1,3 +1,10 @@
 google-explicit-constructor:gen/identifiers/bitmask_name_clashing_with_java/String.h
 
 bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/String.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/BigInteger.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/Byte.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/Double.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/Float.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/Integer.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/Long.h
+bugprone-exception-escape:gen/identifiers/structure_name_clashing_with_java/Short.h

@@ -82,6 +82,14 @@ struct ${name} : <@variant_type_name_begin/>typename ::zserio::detail::ChoiceTag
             <#lt>>;
     <@template_parameter_aliases templateParameterList/>
     using Base::Base;
+<#if withParsingInfoCode>
+
+private:
+    friend struct ::zserio::detail::ObjectTraits<${fullName}>;
+    template <typename ZSERIO_DATA_TYPE>
+    friend const ::zserio::ParsingInfo& ::zserio::parsingInfo(const ::zserio::View<ZSERIO_DATA_TYPE>&);
+    ::zserio::ParsingInfo m_parsingInfo;
+</#if>
 };
 
 <@template_definition templateParameterList/>
@@ -308,7 +316,7 @@ struct ObjectTraits<${fullName}>
 </#if>
     }
 
-    static View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
+    static View<${fullName}> read(BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, <#rt>
             ${fullName}& data<#t>
 <#list parameterList as parameter>
             <#lt>,
@@ -322,8 +330,14 @@ struct ObjectTraits<${fullName}>
                 <#nt><@parameter_view_arg_name parameter/><#rt>
 </#list>
                 <#lt>);
+<#if withParsingInfoCode>
+        data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
 <#if fieldList?has_content>
         <@choice_expression_switch "choice_template_read_member", "choice_no_match_exception", viewIndirectSelectorExpression, 2/>
+</#if>
+<#if withParsingInfoCode>
+        data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
 </#if>
 
         return view;
@@ -375,7 +389,7 @@ struct ObjectTraits<${fullName}>
 
     static void read(<#rt>
             PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
-            BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+            BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -388,8 +402,14 @@ struct ObjectTraits<${fullName}>
                 <#nt><@parameter_view_arg_name parameter/><#rt>
     </#list>
                 <#lt>);
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+    </#if>
     <#if fieldList?has_content>
         <@choice_expression_switch "choice_template_read_member", "choice_no_match_exception", viewIndirectSelectorExpression, 2, true/>
+    </#if>
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
     </#if>
         (void)view;
     }

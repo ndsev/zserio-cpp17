@@ -25,6 +25,9 @@
 <#if structure_has_optional_field(fieldList)>
 <@type_includes types.optional/>
 </#if>
+<#if withParsingInfoCode>
+#include <zserio/ParsingInfo.h>
+</#if>
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
 <@type_includes types.reflectablePtr/>
@@ -58,7 +61,7 @@ struct ${name}
             ${name}(allocator_type{})
     {}
 
-    explicit ${name}(const allocator_type&<#if structure_fields_need_allocator(fieldList)>  allocator</#if>) noexcept<#rt>
+    explicit ${name}(const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>) noexcept<#rt>
 <#list fieldList>
             <#lt> :
     <#items as field>
@@ -71,10 +74,10 @@ struct ${name}
 
     ${name}(${name}&&) = default;
 
-    ${name}(${name}&&<#if fieldList?has_content> other</#if>, <#rt>
+    ${name}(${name}&&<#if withParsingInfoCode || fieldList?has_content> other</#if>, <#rt>
             const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#t>
+<#if withParsingInfoCode || fieldList?has_content><#lt> :</#if>
 <#list fieldList>
-    <#lt> :
     <#items as field>
             <@field_data_member_name field/>(<#rt>
         <#if field.typeInfo.isTemplateParameter>
@@ -85,19 +88,20 @@ struct ${name}
         <#else>
                     other.<@field_data_member_name field/><#t>
         </#if>
-            <#lt>)<#sep>,</#sep>
+            <#lt>)<#if withParsingInfoCode || field?has_next>,</#if>
     </#items>
-<#else>
-
 </#list>
+<#if withParsingInfoCode>
+            m_parsingInfo(other.m_parsingInfo)
+</#if>
     {}
 
     ${name}(const ${name}&) = default;
 
-    ${name}(const ${name}&<#if fieldList?has_content> other</#if>, <#rt>
+    ${name}(const ${name}&<#if withParsingInfoCode || fieldList?has_content> other</#if>, <#rt>
             const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#t>
+<#if withParsingInfoCode || fieldList?has_content><#lt> :</#if>
 <#list fieldList>
-    <#lt> :
     <#items as field>
             <@field_data_member_name field/>(<#rt>
         <#if field.typeInfo.isTemplateParameter>
@@ -107,11 +111,12 @@ struct ${name}
                     other.<@field_data_member_name field/><#t>
                     <#if structure_field_needs_allocator(field)>, allocator</#if><#t>
         </#if>
-            <#lt>)<#sep>,</#sep>
+            <#lt>)<#if withParsingInfoCode || field?has_next>,</#if>
     </#items>
-<#else>
-
 </#list>
+<#if withParsingInfoCode>
+            m_parsingInfo(other.m_parsingInfo)
+</#if>
     {}
 
     ${name}& operator=(${name}&&) = default;
@@ -145,6 +150,14 @@ struct ${name}
     <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
     </#items>
 </#list>
+<#if withParsingInfoCode>
+
+private:
+    friend struct ::zserio::detail::ObjectTraits<${fullName}>;
+    template <typename ZSERIO_DATA_TYPE>
+    friend const ::zserio::ParsingInfo& ::zserio::parsingInfo(const ::zserio::View<ZSERIO_DATA_TYPE>&);
+    ::zserio::ParsingInfo m_parsingInfo;
+</#if>
 };
 
 <@template_definition templateParameterList/>
@@ -408,7 +421,7 @@ struct ObjectTraits<${fullName}>
 </#list>
     }
 
-    static View<${fullName}> read(BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+    static View<${fullName}> read(BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -421,9 +434,15 @@ struct ObjectTraits<${fullName}>
                 <#nt><@parameter_view_arg_name parameter/><#rt>
 </#list>
                 <#lt>);
+<#if withParsingInfoCode>
+        data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
 <#list fieldList as field>
         <@structure_read_field_extended fullName, field, 2/>
 </#list>
+<#if withParsingInfoCode>
+        data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
+</#if>
         return view;
     }
 <#if isPackable && usedInPackedArray>
@@ -488,7 +507,7 @@ struct ObjectTraits<${fullName}>
 
     static void read(<#rt>
             PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
-            BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+            BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -501,9 +520,15 @@ struct ObjectTraits<${fullName}>
                 <#nt><@parameter_view_arg_name parameter/><#rt>
     </#list>
                 <#lt>);
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+    </#if>
     <#list fieldList as field>
         <@structure_read_field fullName, field, 2, true/>
     </#list>
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
+    </#if>
         (void)view;
     }
 </#if>

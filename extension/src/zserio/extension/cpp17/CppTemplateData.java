@@ -21,6 +21,7 @@ public abstract class CppTemplateData implements IncludeCollector
                 context.getGeneratorVersionString(), context.getGeneratorVersionNumber());
 
         withTypeInfoCode = context.getWithTypeInfoCode();
+        withParsingInfoCode = context.getWithParsinInfoCode();
 
         headerSystemIncludes = new TreeSet<String>();
         headerUserIncludes = new TreeSet<String>();
@@ -43,6 +44,11 @@ public abstract class CppTemplateData implements IncludeCollector
     public boolean getWithTypeInfoCode()
     {
         return withTypeInfoCode;
+    }
+
+    public boolean getWithParsingInfoCode()
+    {
+        return withParsingInfoCode;
     }
 
     public Iterable<String> getHeaderSystemIncludes()
@@ -425,6 +431,7 @@ public abstract class CppTemplateData implements IncludeCollector
     private final GeneratorVersionTemplateData generatorVersion;
 
     private final boolean withTypeInfoCode;
+    private final boolean withParsingInfoCode;
 
     private final TreeSet<String> headerSystemIncludes;
     private final TreeSet<String> headerUserIncludes;

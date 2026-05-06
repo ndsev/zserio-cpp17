@@ -26,7 +26,11 @@ protected:
             structTmplParamViewClashOutput("errors/cpp17_generator_error",
                     "zserio_log_view_alias_struct_tmpl_param_view_clash_error.txt"),
             tableTmplParamViewClashOutput("errors/cpp17_generator_error",
-                    "zserio_log_view_alias_table_tmpl_param_view_clash_error.txt")
+                    "zserio_log_view_alias_table_tmpl_param_view_clash_error.txt"),
+            structFieldParsingInfoClashOutput("errors/cpp17_generator_error",
+                    "zserio_log_parsing_info_struct_field_parsing_info_clash_error.txt"),
+            structTmplParamParsingInfoClashOutput("errors/cpp17_generator_error",
+                    "zserio_log_parsing_info_struct_tmpl_param_parsing_info_clash_error.txt")
     {}
 
     const test_utils::ZserioErrorOutput choiceTmplParamFieldClashOutput;
@@ -40,6 +44,8 @@ protected:
     const test_utils::ZserioErrorOutput structNameViewClashOutput;
     const test_utils::ZserioErrorOutput structTmplParamViewClashOutput;
     const test_utils::ZserioErrorOutput tableTmplParamViewClashOutput;
+    const test_utils::ZserioErrorOutput structFieldParsingInfoClashOutput;
+    const test_utils::ZserioErrorOutput structTmplParamParsingInfoClashOutput;
 };
 
 TEST_F(Cpp17GeneratorErrorTest, typeAliasClash)
@@ -83,4 +89,14 @@ TEST_F(Cpp17GeneratorErrorTest, viewAliasClash)
     ASSERT_TRUE(tableTmplParamViewClashOutput.isPresent(
             "table_tmpl_param_view_clash_error.zs:3:26: Template "
             "parameter 'View' clashes with the View alias."));
+}
+
+TEST_F(Cpp17GeneratorErrorTest, parsingInfoClash)
+{
+    ASSERT_TRUE(structFieldParsingInfoClashOutput.isPresent(
+            "struct_field_parsing_info_clash_error.zs:5:11: Field 'm_parsingInfo' clashes with generated "
+            "m_parsingInfo field"));
+    ASSERT_TRUE(structTmplParamParsingInfoClashOutput.isPresent(
+            "struct_tmpl_param_parsing_info_clash_error.zs:3:13: ZSERIO (case insensitive) is a reserved "
+            "prefix and cannot be used in identifiers!"));
 }

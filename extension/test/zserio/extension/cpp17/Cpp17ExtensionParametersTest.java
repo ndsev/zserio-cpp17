@@ -64,6 +64,16 @@ public class Cpp17ExtensionParametersTest
         assertDoesNotThrow(() -> Cpp17ExtensionParameters.check(extensionParameters));
     }
 
+    @Test
+    public void checkWithParsingInfoCode()
+    {
+        final String setCppAllocator = "std";
+        final boolean withParsingInfoCode = true;
+        final TestExtensionParameters extensionParameters =
+                new TestExtensionParameters(setCppAllocator, withParsingInfoCode);
+        assertDoesNotThrow(() -> Cpp17ExtensionParameters.check(extensionParameters));
+    }
+
     private static class TestExtensionParameters implements ExtensionParameters
     {
         public TestExtensionParameters(String setCppAllocator, boolean withTypeInfoCode)

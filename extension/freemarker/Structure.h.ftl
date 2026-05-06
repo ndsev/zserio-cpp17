@@ -14,6 +14,9 @@
 <#if structure_has_optional_field(fieldList)>
 <@type_includes types.optional/>
 </#if>
+<#if withParsingInfoCode>
+#include <zserio/ParsingInfo.h>
+</#if>
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
 <@type_includes types.reflectablePtr/>
@@ -63,6 +66,14 @@ struct ${name}
     <#if field.usedAsOffset>mutable </#if><@structure_field_data_type_name field/> <@field_data_member_name field/>;
     </#items>
 </#list>
+<#if withParsingInfoCode>
+
+private:
+    friend struct ::zserio::detail::ObjectTraits<${fullName}>;
+    template <typename ZSERIO_DATA_TYPE>
+    friend const ::zserio::ParsingInfo& ::zserio::parsingInfo(const ::zserio::View<ZSERIO_DATA_TYPE>&);
+    ::zserio::ParsingInfo m_parsingInfo;
+</#if>
 };
 
 bool operator==(const ${fullName}& lhs, const ${fullName}& rhs);

@@ -82,6 +82,14 @@ struct ${name} : <@variant_type_name_begin/>typename ::zserio::detail::ChoiceTag
             <#lt>>;
     <@template_parameter_aliases templateParameterList/>
     using Base::Base;
+<#if withParsingInfoCode>
+
+private:
+    friend struct ::zserio::detail::ObjectTraits<${fullName}>;
+    template <typename ZSERIO_DATA_TYPE>
+    friend const ::zserio::ParsingInfo& ::zserio::parsingInfo(const ::zserio::View<ZSERIO_DATA_TYPE>&);
+    ::zserio::ParsingInfo m_parsingInfo;
+</#if>
 };
 
 <@template_definition templateParameterList/>
@@ -311,7 +319,7 @@ struct ObjectTraits<${fullName}>
     }
 
     static View<${fullName}> read(<#rt>
-            <#lt>BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#rt>
+            <#lt>BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#rt>
 <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -324,12 +332,18 @@ struct ObjectTraits<${fullName}>
                 <#nt><@parameter_view_arg_name parameter/><#rt>
 </#list>
                 <#lt>);
+<#if withParsingInfoCode>
+        data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
 <#if fieldList?has_content>
 
         VarSize choiceTag;
         detail::read(reader, choiceTag);
         <@union_switch "union_template_read_field", "union_read_no_match",
                 "static_cast<typename ${fullName}::Tag>(choiceTag + 1)", 2/>
+</#if>
+<#if withParsingInfoCode>
+        data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
 </#if>
 
         return view;
@@ -384,7 +398,7 @@ struct ObjectTraits<${fullName}>
     }
 
     static void read(PackingContext&<#if fieldList?has_content> packingContext</#if>, <#rt>
-            BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+            BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
             <#lt>,
             <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -397,12 +411,17 @@ struct ObjectTraits<${fullName}>
                 <#nt><@parameter_view_arg_name parameter/><#rt>
     </#list>
                 <#lt>);
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+    </#if>
     <#if fieldList?has_content>
-
         VarSize choiceTag;
         detail::read(packingContext.zserioChoiceTag, reader, choiceTag);
         <@union_switch "union_template_read_field", "union_read_no_match",
                 "static_cast<typename ${fullName}::Tag>(choiceTag + 1)", 2, true/>
+    </#if>
+    <#if withParsingInfoCode>
+        data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
     </#if>
         (void)view;
     }

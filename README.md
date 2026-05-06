@@ -80,6 +80,7 @@ java -jar zserio.jar
     [-setCppAllocator <allocator>]
     [-setTopLevelPackage <package>]
     [-src <source directory>]
+    [-withParsingInfoCode|-withoutParsingInfoCode]
     [-withSourcesAmalgamation|-withoutSourcesAmalgamation]
     [-withTypeInfoCode|-withoutTypeInfoCode]
     <input file>
@@ -116,6 +117,17 @@ directories as in the Java `CLASSPATH` is not supported.
 > If the source path is `C:\zserio` and the input file is `com\acme\foo.zs`, Zserio will try parsing
 > `C:\zserio\com\acme\foo.zs`. If `foo.zs` contains the declaration `import com.acme.bar.*`, Zserio will
 > try parsing `C:\zserio\com\acme\bar.zs`.
+
+**`-withParsingInfoCode|-withoutParsingInfoCode`**
+
+Enables/disables generation of parsing information code. The parsing information contains the bit position in the
+parsed blob and the bit size of the Zserio data object. Once enabled you can query parsing information for a view
+by calling `zserio::parsingInfo(View)`. By default it is disabled.
+
+> [!WARNING]
+> Note the returned parsing information object is valid only after the read operation! If the Zserio object
+> has not been read the parsing info accessors will throw an exception. If the zserio object has been changed
+> after reading the parsing information will not be updated!
 
 **`-withSourcesAmalgamation|-withoutSourcesAmalgamation`**
 

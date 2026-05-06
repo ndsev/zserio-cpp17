@@ -24,7 +24,7 @@ cert-dcl58-cpp:src/zserio/BitBuffer.h:620
 cert-dcl58-cpp:src/zserio/Extended.h:242
 cert-dcl58-cpp:src/zserio/Optional.h:1323
 cert-dcl58-cpp:src/zserio/Variant.h:606
-cert-dcl58-cpp:src/zserio/View.h:257
+cert-dcl58-cpp:src/zserio/View.h:269
 
 # This is necessary for low level implementation of Span to mimic standard C++20 'std::span' abstraction.
 cppcoreguidelines-avoid-c-arrays:src/zserio/Span.h:112
@@ -147,7 +147,7 @@ google-explicit-constructor:src/zserio/Types.h:67
 google-readability-casting:src/zserio/Variant.h:89
 
 # Needed to allow seamless conversion View<DynIntWrapper<T, 0>> to the value type T.
-google-explicit-constructor:src/zserio/View.h:167
+google-explicit-constructor:src/zserio/View.h:179
 
 # This is necessary because of implementation. Zserio naturally supports recursion.
 misc-no-recursion

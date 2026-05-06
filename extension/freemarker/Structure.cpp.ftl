@@ -36,9 +36,10 @@ ${name}::${name}(const allocator_type&<#if structure_fields_need_allocator(field
 </#list>
 {}
 
-${name}::${name}(${name}&&<#if fieldList?has_content> other</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
+${name}::${name}(${name}&&<#if withParsingInfoCode || fieldList?has_content> other</#if>, <#rt>
+<#lt>const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
+<#if withParsingInfoCode || fieldList?has_content><#lt> :</#if>
 <#list fieldList>
-    <#lt> :
     <#items as field>
         <@field_data_member_name field/>(<#rt>
         <#if structure_field_needs_allocator(field)>
@@ -46,25 +47,27 @@ ${name}::${name}(${name}&&<#if fieldList?has_content> other</#if>, const allocat
         <#else>
                 other.<@field_data_member_name field/><#t>
         </#if>
-        <#lt>)<#sep>,</#sep>
+        <#lt>)<#if withParsingInfoCode || field?has_next>,</#if>
     </#items>
-<#else>
-
 </#list>
+<#if withParsingInfoCode>
+        m_parsingInfo(other.m_parsingInfo)
+</#if>
 {}
 
-${name}::${name}(const ${name}&<#if fieldList?has_content> other</#if>, const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
+${name}::${name}(const ${name}&<#if withParsingInfoCode || fieldList?has_content> other</#if>, <#rt>
+<#lt>const allocator_type&<#if structure_fields_need_allocator(fieldList)> allocator</#if>)<#rt>
+<#if withParsingInfoCode || fieldList?has_content><#lt> :</#if>
 <#list fieldList>
-    <#lt> :
     <#items as field>
         <@field_data_member_name field/>(other.<@field_data_member_name field/><#rt>
         <#if structure_field_needs_allocator(field)>, allocator</#if><#t>
-        <#lt>)<#sep>,</#sep>
+        <#lt>)<#if withParsingInfoCode || field?has_next>,</#if>
     </#items>
-<#else>
-
 </#list>
-{}
+<#if withParsingInfoCode>
+        m_parsingInfo(other.m_parsingInfo)
+</#if>{}
 <#if fieldList?has_content>
 
 ${name}::${name}(
@@ -295,7 +298,7 @@ void ObjectTraits<${fullName}>::write(BitStreamWriter&<#if fieldList?has_content
 </#list>
 }
 
-View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList?has_content> reader</#if>, <#rt>
+View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, <#rt>
         ${fullName}& data<#t>
 <#list parameterList as parameter>
         <#lt>,
@@ -309,9 +312,15 @@ View<${fullName}> ObjectTraits<${fullName}>::read(BitStreamReader&<#if fieldList
             <#nt><@parameter_view_arg_name parameter/><#rt>
 </#list>
             <#lt>);
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
 <#list fieldList as field>
     <@structure_read_field_extended fullName, field, 1/>
 </#list>
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
+</#if>
     return view;
 }
 <#if isPackable && usedInPackedArray>
@@ -367,7 +376,7 @@ void ObjectTraits<${fullName}>::write(<#rt>
 
 void ObjectTraits<${fullName}>::read(<#rt>
         PackingContext&<#if needs_packing_context(fieldList)> packingContext</#if>, <#t>
-        BitStreamReader&<#if fieldList?has_content> reader</#if>, ${fullName}& data<#t>
+        BitStreamReader&<#if fieldList?has_content || withParsingInfoCode> reader</#if>, ${fullName}& data<#t>
     <#list parameterList as parameter>
         <#lt>,
         <@parameter_view_type_name parameter/> <@parameter_view_arg_name parameter/><#rt>
@@ -380,9 +389,15 @@ void ObjectTraits<${fullName}>::read(<#rt>
             <#nt><@parameter_view_arg_name parameter/><#rt>
     </#list>
             <#lt>);
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setBitPosition(reader.getBitPosition());
+</#if>
     <#list fieldList as field>
     <@structure_read_field fullName, field, 1, true/>
     </#list>
+<#if withParsingInfoCode>
+    data.m_parsingInfo.setEndBitPosition(reader.getBitPosition());
+</#if>
     (void)view;
 }
 </#if>

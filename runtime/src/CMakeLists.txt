@@ -132,6 +132,7 @@ set(ZSERIO_CPP17_RUNTIME_LIB_SRCS
     zserio/Optional.h
     zserio/OutOfRangeException.cpp
     zserio/OutOfRangeException.h
+    zserio/ParsingInfo.h
     zserio/PubsubException.cpp
     zserio/PubsubException.h
     zserio/RebindAlloc.h
@@ -183,7 +184,7 @@ if (ZSERIO_CPP17_RUNTIME_SQLITE_ENABLE)
 endif()
 
 if (${ZSERIO_CPP17_RUNTIME_BUILD_SHARED_LIBS})
-    message(STATUS "Zserio runtime will be built as a shared library") 
+    message(STATUS "Zserio runtime will be built as a shared library")
     set(ZSERIO_CPP17_LIB_TYPE "SHARED")
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 else()

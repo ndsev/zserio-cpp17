@@ -22,6 +22,7 @@ public final class Cpp17ExtensionParameters
         outputDir = parameters.getCommandLineArg(OptionCpp17);
         withTypeInfoCode = parameters.argumentExists(OptionWithTypeInfoCode);
         withSourcesAmalgamation = parameters.argumentExists(OptionWithSourcesAmalgamation);
+        withParsingInfoCode = parameters.argumentExists(OptionWithParsingInfoCode);
 
         final String cppAllocator = parameters.getCommandLineArg(OptionSetCppAllocator);
         if (cppAllocator == null || cppAllocator.equals(StdAllocator))
@@ -54,6 +55,11 @@ public final class Cpp17ExtensionParameters
     public boolean getWithSourcesAmalgamation()
     {
         return withSourcesAmalgamation;
+    }
+
+    public boolean getWithParsingInfoCode()
+    {
+        return withParsingInfoCode;
     }
 
     public TypesContext.AllocatorDefinition getAllocatorDefinition()
@@ -102,6 +108,14 @@ public final class Cpp17ExtensionParameters
         sourcesAmalgamationGroup.addOption(option);
         sourcesAmalgamationGroup.setRequired(false);
         options.addOptionGroup(sourcesAmalgamationGroup);
+
+        final OptionGroup parsingInfoGroup = new OptionGroup();
+        option = new Option(OptionWithParsingInfoCode, false, "enable parsing info code");
+        parsingInfoGroup.addOption(option);
+        option = new Option(OptionWithoutParsingInfoCode, false, "disable parsing info code (default)");
+        parsingInfoGroup.addOption(option);
+        parsingInfoGroup.setRequired(false);
+        options.addOptionGroup(parsingInfoGroup);
     }
 
     static boolean hasOptionCpp17(ExtensionParameters parameters)
@@ -148,6 +162,8 @@ public final class Cpp17ExtensionParameters
     private static final String OptionWithTypeInfoCode = "withTypeInfoCode";
     private static final String OptionWithSourcesAmalgamation = "withSourcesAmalgamation";
     private static final String OptionWithoutSourcesAmalgamation = "withoutSourcesAmalgamation";
+    private final static String OptionWithoutParsingInfoCode = "withoutParsingInfoCode";
+    private static final String OptionWithParsingInfoCode = "withParsingInfoCode";
 
     private final static String StdAllocator = "std";
     private final static String StdPolymorphicAllocator = "pmr";
@@ -156,6 +172,7 @@ public final class Cpp17ExtensionParameters
     private final String outputDir;
     private final boolean withTypeInfoCode;
     private final boolean withSourcesAmalgamation;
+    private final boolean withParsingInfoCode;
     private final TypesContext.AllocatorDefinition allocatorDefinition;
     private final String parametersDescription;
     private final String zserioVersion;

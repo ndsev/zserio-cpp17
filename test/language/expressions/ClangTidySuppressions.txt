@@ -1,5 +1,6 @@
 bugprone-exception-escape:gen/expressions/expressions_in_templates/ArrayExpressions.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/BitmaskExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ConstExpressions.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/EnumExpressions.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/ExpressionsInTemplates.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/FieldExpressions.h
@@ -8,10 +9,23 @@ bugprone-exception-escape:gen/expressions/expressions_in_templates/FunctionExpre
 bugprone-exception-escape:gen/expressions/expressions_in_templates/Index.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/IsSetExpressions.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/IsSetParam.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/LeftShiftExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/LengthOfExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ModuloExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/NegationExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/NumBitsExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ParameterizedArrayElement.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/ParameterizedArrayExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ParameterizedArrayHolder.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/ParenthesisExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/QuestionMarkExpressions.h
+bugprone-exception-escape:gen/expressions/expressions_in_templates/StringExpressions.h
 bugprone-exception-escape:gen/expressions/expressions_in_templates/ValueOfExpressions.h
 bugprone-exception-escape:gen/expressions/index_operator/Element.h
 bugprone-exception-escape:gen/expressions/isset_operator/Parameterized.h
+bugprone-exception-escape:gen/expressions/parameterized_array_type/ParameterizedArrayElement.h
+bugprone-exception-escape:gen/expressions/parameterized_array_type/ParameterizedArrayHolder.h
+bugprone-exception-escape:gen/expressions/parameterized_array_type/ParameterizedArrayTypeExpression.h
 
 bugprone-signed-char-misuse:gen/expressions/expressions_in_templates/ValueOfExpressions.h
 

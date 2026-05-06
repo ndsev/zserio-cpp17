@@ -223,6 +223,7 @@ set(ZSERIO_CPP17_RUNTIME_TEST_SRCS
     zserio/MissedOptionalExceptionTest.cpp
     zserio/OptionalTest.cpp
     zserio/OutOfRangeExceptionTest.cpp
+    zserio/ParsingInfoTest.cpp
     zserio/PubsubExceptionTest.cpp
     zserio/ReflectableDataTest.cpp
     zserio/ReflectableUtilTest.cpp

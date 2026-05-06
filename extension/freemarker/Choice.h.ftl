@@ -13,6 +13,9 @@
 
 <@type_includes types.variant/>
 #include <zserio/ChoiceTag.h>
+<#if withParsingInfoCode>
+#include <zserio/ParsingInfo.h>
+</#if>
 <#if withTypeInfoCode>
 <@type_includes types.typeInfo/>
 <@type_includes types.reflectablePtr/>
@@ -63,6 +66,14 @@ struct ${name} : <@variant_type_name_begin/>::zserio::detail::ChoiceTag<${name}>
 </#list>
             <#lt>>;
     using Base::Base;
+<#if withParsingInfoCode>
+
+private:
+    friend struct ::zserio::detail::ObjectTraits<${fullName}>;
+    template <typename ZSERIO_DATA_TYPE>
+    friend const ::zserio::ParsingInfo& ::zserio::parsingInfo(const ::zserio::View<ZSERIO_DATA_TYPE>&);
+    ::zserio::ParsingInfo m_parsingInfo;
+</#if>
 };
 
 bool operator==(const ${fullName}& lhs, const ${fullName}& rhs);

@@ -189,6 +189,10 @@ function(zserio_generate_cpp)
         endif ()
 
         message(STATUS ${TOOL_COMMENT})
+        string(REPLACE ";" " " PRETTY_ZSERIO_COMMAND "${ZSERIO_COMMAND}")
+        string(ASCII 27 ESC)
+        set(GREY_OUTPUT "${ESC}[90m")
+        message("${GREY_OUTPUT}   ${JAVA} -cp ${ZSERIO_CLASSPATH} ${PRETTY_ZSERIO_COMMAND}")
 
         # run the generator during configure phase for the first time
         execute_process(
