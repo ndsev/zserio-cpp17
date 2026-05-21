@@ -135,6 +135,42 @@ EOF
     return 0
 }
 
+# Patch new runtime documentations - add cross references between runtime versions
+patch_new_runtime_doc()
+{
+    exit_if_argc_ne $# 3
+    local ZSERIO_DOC_RUNTIME_DIR="$1"; shift
+    local ZSERIO_PATCH_DOC_DIR="$1"; shift
+    local ZSERIO_VERSION="$1"; shift
+
+    local ZSERIO_VERSION_SELECT="\n\
+<select id=\"zserio-version-select\" style=\"font-size: 100%; margin-bottom: 1px; padding: 2px;\"\
+ onChange=\"(function(value){ var url = top.document.URL.split('\/'); url[url.length-3] = \`\${value}\`;\
+ top.location.href=url.join('\/'); \
+})(value)\">\n\
+<option value=\"${ZSERIO_VERSION}\" selected>${ZSERIO_VERSION}<\/option>\n\
+"
+    local OLD_VERSIONS=($(ls -1 "${ZSERIO_DOC_RUNTIME_DIR}" | sort -rV))
+    for OLD_VERSION in ${OLD_VERSIONS[@]}; do
+        if [ ${OLD_VERSION} != ${ZSERIO_VERSION} -a ${OLD_VERSION} != "latest" ] ; then
+            ZSERIO_VERSION_SELECT+="<option value=\"${OLD_VERSION}\">${OLD_VERSION}<\/option>\n"
+        fi
+    done
+    ZSERIO_VERSION_SELECT+="<\/select>\n"
+
+    local GREP_INCLUDE=(--include "index.html" --include "zserio.html" --include "overview-summary.html")
+    local HTML_FILES=($(grep "Built for Zserio" "${ZSERIO_PATCH_DOC_DIR}" -R -l ${GREP_INCLUDE[@]}))
+    for HTML_FILE  in "${HTML_FILES[@]}" ; do
+        sed -i 's/\(Built for Zserio\)\s*[a-zA-Z0-9.-]*/\1'"${ZSERIO_VERSION_SELECT}"'/' "${HTML_FILE}"
+        if [ $? -ne 0 ] ; then
+            stderr_echo "Failed to apply zserio-version-select!"
+            return 1
+        fi
+    done
+
+    return 0
+}
+
 main()
 {
     local ZSERIO_CPP17_PROJECT_ROOT="${SCRIPT_DIR}/.."
@@ -157,15 +193,19 @@ main()
     convert_to_absolute_path "${PARAM_OUT_DIR}" PARAM_OUT_DIR
 
     set_web_pages_global_variables
-    if [ ${GIT_RESULT} -ne 0 ] ; then
+
+    # get latest zserio version
+    local ZSERIO_VERSION
+    get_latest_zserio_version ZSERIO_VERSION
+    if [ $? -ne 0 ] ; then
         return 1
     fi
 
     local ZSERIO_BUILD_DIR="${PARAM_OUT_DIR}/build"
     local ZSERIO_DISTR_DIR="${PARAM_OUT_DIR}/distr"
+    local GIT_MESSAGE="Add generated runtime documentation ${ZSERIO_VERSION}"
 
     echo "Rebasing Zserio C++17 Extension Web Pages branch onto the master tag."
-    local GIT_MESSAGE="Add generated runtime documentation"
 
     "${GIT}" checkout web-pages 2>&1 > /dev/null
     if [ $? -ne 0 ] ; then
@@ -192,6 +232,33 @@ main()
 
     local DEST_RUNTIME_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/doc/runtime"
 
+    echo -ne "Removing Zserio C++17 extension runtime libraries version ${ZSERIO_VERSION}..."
+    local DEST_VERSION_DIR="${DEST_RUNTIME_DIR}/${ZSERIO_VERSION}"
+    rm -rf "${DEST_VERSION_DIR}"
+    echo "Done"
+
+    echo -ne "Copying Zserio C++17 extension runtime library version ${ZSERIO_VERSION}..."
+    mkdir -p "${DEST_VERSION_DIR}"
+    cp -r ${ZSERIO_DISTR_DIR}/runtime_lib/zserio_doc/* ${DEST_VERSION_DIR}
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
+    echo "Done"
+
+    echo -ne "Adding cross references between runtime libraries versions in version ${ZSERIO_VERSION}..."
+    patch_new_runtime_doc "${DEST_RUNTIME_DIR}" "${DEST_VERSION_DIR}" "${ZSERIO_VERSION}"
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
+    echo "Done"
+
+    echo -ne "Creating Zserio C++17 extension runtime library version ${ZSERIO_VERSION} GitHub badges..."
+    create_github_badge_jsons "${DEST_RUNTIME_DIR}" "${ZSERIO_VERSION}"
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
+    echo "Done"
+
     echo -ne "Removing Zserio C++17 extension runtime libraries latest version..."
     local DEST_LATEST_DIR="${DEST_RUNTIME_DIR}/latest"
     rm -rf "${DEST_LATEST_DIR}"
@@ -205,7 +272,14 @@ main()
     fi
     echo "Done"
 
-    echo -ne "Creating Zserio C++17 extension runtime library GitHub badges..."
+    echo -ne "Adding cross references between runtime libraries versions in latest version..."
+    patch_new_runtime_doc "${DEST_RUNTIME_DIR}" "${DEST_LATEST_DIR}" "${ZSERIO_VERSION}"
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
+    echo "Done"
+
+    echo -ne "Creating Zserio C++17 extension runtime library latest version GitHub badges..."
     create_github_badge_jsons "${DEST_RUNTIME_DIR}" "latest"
     if [ $? -ne 0 ] ; then
         return 1
