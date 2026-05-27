@@ -94,14 +94,14 @@ create_github_badge_jsons()
 {
     exit_if_argc_ne $# 2
     local DEST_RUNTIME_DIR="$1"; shift
-    local ZSERIO_VERSION="$1"; shift
+    local ZSERIO_CPP17_VERSION="$1"; shift
 
-    local CLANG_ROOT="${DEST_RUNTIME_DIR}/${ZSERIO_VERSION}/coverage/"
+    local CLANG_ROOT="${DEST_RUNTIME_DIR}/${ZSERIO_CPP17_VERSION}/coverage/"
     local CLANG_COVERAGE_DIR=`find ${CLANG_ROOT} -maxdepth 1 -name "clang*" | head -1`
     local CLANG_LINES_COVERAGE=`cat "${CLANG_COVERAGE_DIR}"/coverage_report.txt | grep TOTAL | \
             tr -s ' ' | cut -d' ' -f 10`
     create_github_badge_json "${CLANG_COVERAGE_DIR}"/coverage_github_badge.json \
-            "C++ clang runtime ${ZSERIO_VERSION} coverage" "${CLANG_LINES_COVERAGE}"
+            "C++ clang runtime ${ZSERIO_CPP17_VERSION} coverage" "${CLANG_LINES_COVERAGE}"
     if [ $? -ne 0 ] ; then
         return 1
     fi
@@ -139,29 +139,29 @@ EOF
 patch_new_runtime_doc()
 {
     exit_if_argc_ne $# 3
-    local ZSERIO_DOC_RUNTIME_DIR="$1"; shift
+    local ZSERIO_CPP17_DOC_RUNTIME_DIR="$1"; shift
     local ZSERIO_PATCH_DOC_DIR="$1"; shift
-    local ZSERIO_VERSION="$1"; shift
+    local ZSERIO_CPP17_VERSION="$1"; shift
 
-    local ZSERIO_VERSION_SELECT="\n\
+    local ZSERIO_CPP17_VERSION_SELECT="\n\
 <select id=\"zserio-version-select\" style=\"font-size: 100%; margin-bottom: 1px; padding: 2px;\"\
- onChange=\"(function(value){ var url = top.document.URL.split('\/'); url[url.length-3] = \`\${value}\`;\
+ onChange=\"(function(value){ var url = top.document.URL.split('\/'); url[url.length-2] = \`\${value}\`;\
  top.location.href=url.join('\/'); \
 })(value)\">\n\
-<option value=\"${ZSERIO_VERSION}\" selected>${ZSERIO_VERSION}<\/option>\n\
+<option value=\"${ZSERIO_CPP17_VERSION}\" selected>${ZSERIO_CPP17_VERSION}<\/option>\n\
 "
-    local OLD_VERSIONS=($(ls -1 "${ZSERIO_DOC_RUNTIME_DIR}" | sort -rV))
+    local OLD_VERSIONS=($(ls -1 "${ZSERIO_CPP17_DOC_RUNTIME_DIR}" | sort -rV))
     for OLD_VERSION in ${OLD_VERSIONS[@]}; do
-        if [ ${OLD_VERSION} != ${ZSERIO_VERSION} -a ${OLD_VERSION} != "latest" ] ; then
-            ZSERIO_VERSION_SELECT+="<option value=\"${OLD_VERSION}\">${OLD_VERSION}<\/option>\n"
+        if [ ${OLD_VERSION} != ${ZSERIO_CPP17_VERSION} -a ${OLD_VERSION} != "latest" ] ; then
+            ZSERIO_CPP17_VERSION_SELECT+="<option value=\"${OLD_VERSION}\">${OLD_VERSION}<\/option>\n"
         fi
     done
-    ZSERIO_VERSION_SELECT+="<\/select>\n"
+    ZSERIO_CPP17_VERSION_SELECT+="<\/select>\n"
 
     local GREP_INCLUDE=(--include "index.html" --include "zserio.html" --include "overview-summary.html")
     local HTML_FILES=($(grep "Built for Zserio" "${ZSERIO_PATCH_DOC_DIR}" -R -l ${GREP_INCLUDE[@]}))
     for HTML_FILE  in "${HTML_FILES[@]}" ; do
-        sed -i 's/\(Built for Zserio\)\s*[a-zA-Z0-9.-]*/\1'"${ZSERIO_VERSION_SELECT}"'/' "${HTML_FILE}"
+        sed -i 's/\(Built for Zserio\)\s*[a-zA-Z0-9.-]*/\1'"${ZSERIO_CPP17_VERSION_SELECT}"'/' "${HTML_FILE}"
         if [ $? -ne 0 ] ; then
             stderr_echo "Failed to apply zserio-version-select!"
             return 1
@@ -194,16 +194,16 @@ main()
 
     set_web_pages_global_variables
 
-    # get latest zserio version
-    local ZSERIO_VERSION
-    get_latest_zserio_version ZSERIO_VERSION
+    # get latest Zserio C++17 version
+    local ZSERIO_CPP17_VERSION
+    get_latest_zserio_cpp17_version ZSERIO_CPP17_VERSION
     if [ $? -ne 0 ] ; then
         return 1
     fi
 
     local ZSERIO_BUILD_DIR="${PARAM_OUT_DIR}/build"
     local ZSERIO_DISTR_DIR="${PARAM_OUT_DIR}/distr"
-    local GIT_MESSAGE="Add generated runtime documentation ${ZSERIO_VERSION}"
+    local GIT_MESSAGE="Add generated runtime documentation v${ZSERIO_CPP17_VERSION}"
 
     echo "Rebasing Zserio C++17 Extension Web Pages branch onto the master tag."
 
@@ -232,12 +232,12 @@ main()
 
     local DEST_RUNTIME_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/doc/runtime"
 
-    echo -ne "Removing Zserio C++17 extension runtime libraries version ${ZSERIO_VERSION}..."
-    local DEST_VERSION_DIR="${DEST_RUNTIME_DIR}/${ZSERIO_VERSION}"
+    echo -ne "Removing Zserio C++17 extension runtime libraries version ${ZSERIO_CPP17_VERSION}..."
+    local DEST_VERSION_DIR="${DEST_RUNTIME_DIR}/${ZSERIO_CPP17_VERSION}"
     rm -rf "${DEST_VERSION_DIR}"
     echo "Done"
 
-    echo -ne "Copying Zserio C++17 extension runtime library version ${ZSERIO_VERSION}..."
+    echo -ne "Copying Zserio C++17 extension runtime library version ${ZSERIO_CPP17_VERSION}..."
     mkdir -p "${DEST_VERSION_DIR}"
     cp -r ${ZSERIO_DISTR_DIR}/runtime_lib/zserio_doc/* ${DEST_VERSION_DIR}
     if [ $? -ne 0 ] ; then
@@ -245,15 +245,15 @@ main()
     fi
     echo "Done"
 
-    echo -ne "Adding cross references between runtime libraries versions in version ${ZSERIO_VERSION}..."
-    patch_new_runtime_doc "${DEST_RUNTIME_DIR}" "${DEST_VERSION_DIR}" "${ZSERIO_VERSION}"
+    echo -ne "Adding cross references between runtime libraries versions in version ${ZSERIO_CPP17_VERSION}..."
+    patch_new_runtime_doc "${DEST_RUNTIME_DIR}" "${DEST_VERSION_DIR}" "${ZSERIO_CPP17_VERSION}"
     if [ $? -ne 0 ] ; then
         return 1
     fi
     echo "Done"
 
-    echo -ne "Creating Zserio C++17 extension runtime library version ${ZSERIO_VERSION} GitHub badges..."
-    create_github_badge_jsons "${DEST_RUNTIME_DIR}" "${ZSERIO_VERSION}"
+    echo -ne "Creating Zserio C++17 extension runtime library version ${ZSERIO_CPP17_VERSION} GitHub badges..."
+    create_github_badge_jsons "${DEST_RUNTIME_DIR}" "${ZSERIO_CPP17_VERSION}"
     if [ $? -ne 0 ] ; then
         return 1
     fi
@@ -273,7 +273,7 @@ main()
     echo "Done"
 
     echo -ne "Adding cross references between runtime libraries versions in latest version..."
-    patch_new_runtime_doc "${DEST_RUNTIME_DIR}" "${DEST_LATEST_DIR}" "${ZSERIO_VERSION}"
+    patch_new_runtime_doc "${DEST_RUNTIME_DIR}" "${DEST_LATEST_DIR}" "${ZSERIO_CPP17_VERSION}"
     if [ $? -ne 0 ] ; then
         return 1
     fi
