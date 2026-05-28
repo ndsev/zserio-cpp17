@@ -135,6 +135,27 @@ EOF
     return 0
 }
 
+# Patch old runtime documentations - add the new release option
+patch_old_runtime_doc()
+{
+    exit_if_argc_ne $# 2
+    local ZSERIO_DOC_DIR="$1"; shift
+    local ZSERIO_CPP17_VERSION="$1"; shift
+
+    local PATTERN="<select id=\"zserio-version-select\""
+
+    local HTML_FILES=($(grep "${PATTERN}" "${ZSERIO_DOC_DIR}" -R -l))
+    for HTML_FILE  in "${HTML_FILES[@]}" ; do
+        sed -i '/'"${PATTERN}"'/a <option value="'"${ZSERIO_CPP17_VERSION}"'">'"${ZSERIO_CPP17_VERSION}"'</option>' ${HTML_FILE}
+        if [ $? -ne 0 ] ; then
+            stderr_echo "Failed to append the new version <option>!"
+            return 1
+        fi
+    done
+
+    return 0
+}
+
 # Patch new runtime documentations - add cross references between runtime versions
 patch_new_runtime_doc()
 {
@@ -143,7 +164,8 @@ patch_new_runtime_doc()
     local ZSERIO_PATCH_DOC_DIR="$1"; shift
     local ZSERIO_CPP17_VERSION="$1"; shift
 
-    local ZSERIO_CPP17_VERSION_SELECT="\n\
+    local ZSERIO_CPP17_VERSION_SELECT="<\/div>\n\
+<div id=\"projectbrief\">C++17 Extension version \
 <select id=\"zserio-version-select\" style=\"font-size: 100%; margin-bottom: 1px; padding: 2px;\"\
  onChange=\"(function(value){ var url = top.document.URL.split('\/'); url[url.length-2] = \`\${value}\`;\
  top.location.href=url.join('\/'); \
@@ -159,9 +181,9 @@ patch_new_runtime_doc()
     ZSERIO_CPP17_VERSION_SELECT+="<\/select>\n"
 
     local GREP_INCLUDE=(--include "index.html" --include "zserio.html" --include "overview-summary.html")
-    local HTML_FILES=($(grep "Built for Zserio" "${ZSERIO_PATCH_DOC_DIR}" -R -l ${GREP_INCLUDE[@]}))
+    local HTML_FILES=($(grep "Zserio C++17 runtime library" "${ZSERIO_PATCH_DOC_DIR}" -R -l ${GREP_INCLUDE[@]}))
     for HTML_FILE  in "${HTML_FILES[@]}" ; do
-        sed -i 's/\(Built for Zserio\)\s*[a-zA-Z0-9.-]*/\1'"${ZSERIO_CPP17_VERSION_SELECT}"'/' "${HTML_FILE}"
+        sed -i 's/<span id="projectnumber">.*<\/span>/'"${ZSERIO_CPP17_VERSION_SELECT}"'/' "${HTML_FILE}"
         if [ $? -ne 0 ] ; then
             stderr_echo "Failed to apply zserio-version-select!"
             return 1
@@ -231,6 +253,13 @@ main()
     echo
 
     local DEST_RUNTIME_DIR="${ZSERIO_CPP17_PROJECT_ROOT}/doc/runtime"
+
+    echo -ne "Adding cross references between runtime libraries versions to old documentations..."
+    patch_old_runtime_doc "${DEST_RUNTIME_DIR}" "${ZSERIO_CPP17_VERSION}"
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
+    echo "Done"
 
     echo -ne "Removing Zserio C++17 extension runtime libraries version ${ZSERIO_CPP17_VERSION}..."
     local DEST_VERSION_DIR="${DEST_RUNTIME_DIR}/${ZSERIO_CPP17_VERSION}"
