@@ -1,0 +1,13 @@
+<map id="zserio::ValidationException" name="zserio::ValidationException">
+<area shape="rect" id="node1" title=" " alt="" coords="429,183,628,209"/>
+<area shape="rect" id="node4" href="$classzserio_1_1ArrayLengthException.html" title=" " alt="" coords="687,5,899,32"/>
+<area shape="rect" id="node5" href="$classzserio_1_1ChoiceCaseException.html" title=" " alt="" coords="689,56,898,83"/>
+<area shape="rect" id="node6" href="$classzserio_1_1ConstraintException.html" title=" " alt="" coords="693,107,893,133"/>
+<area shape="rect" id="node7" href="$classzserio_1_1ExtendedFieldException.html" title=" " alt="" coords="681,157,906,184"/>
+<area shape="rect" id="node8" href="$classzserio_1_1MissedOptionalException.html" title=" " alt="" coords="676,208,911,235"/>
+<area shape="rect" id="node9" href="$classzserio_1_1OutOfRangeException.html" title=" " alt="" coords="687,259,899,285"/>
+<area shape="rect" id="node10" href="$classzserio_1_1UnexpectedOptionalException.html" title=" " alt="" coords="692,310,895,351"/>
+<area shape="rect" id="node11" href="$classzserio_1_1UnionCaseException.html" title=" " alt="" coords="692,376,895,403"/>
+<area shape="rect" id="node2" href="$classzserio_1_1CppRuntimeException.html" title=" " alt="" coords="168,183,381,209"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,183,120,209"/>
+</map>

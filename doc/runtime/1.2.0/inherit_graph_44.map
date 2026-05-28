@@ -1,0 +1,20 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,199,120,225"/>
+<area shape="rect" id="node2" href="$classzserio_1_1CppRuntimeException.html" title=" " alt="" coords="168,199,381,225"/>
+<area shape="rect" id="node3" href="$classzserio_1_1BadOptionalAccess.html" title=" " alt="" coords="443,5,638,32"/>
+<area shape="rect" id="node4" href="$classzserio_1_1BadVariantAccess.html" title=" " alt="" coords="448,56,633,83"/>
+<area shape="rect" id="node5" href="$classzserio_1_1BitStreamWriter_1_1InsufficientCapacityException.html" title=" " alt="" coords="429,107,652,149"/>
+<area shape="rect" id="node6" href="$classzserio_1_1JsonParserException.html" title=" " alt="" coords="441,173,641,200"/>
+<area shape="rect" id="node7" href="$classzserio_1_1PubsubException.html" title=" " alt="" coords="451,224,631,251"/>
+<area shape="rect" id="node8" href="$classzserio_1_1ServiceException.html" title=" " alt="" coords="450,275,631,301"/>
+<area shape="rect" id="node9" href="$classzserio_1_1SqliteException.html" title=" " alt="" coords="455,325,626,352"/>
+<area shape="rect" id="node10" href="$classzserio_1_1ValidationException.html" title=" " alt="" coords="441,376,640,403"/>
+<area shape="rect" id="node11" href="$classzserio_1_1ArrayLengthException.html" title=" " alt="" coords="711,199,923,225"/>
+<area shape="rect" id="node12" href="$classzserio_1_1ChoiceCaseException.html" title=" " alt="" coords="713,249,922,276"/>
+<area shape="rect" id="node13" href="$classzserio_1_1ConstraintException.html" title=" " alt="" coords="717,300,917,327"/>
+<area shape="rect" id="node14" href="$classzserio_1_1ExtendedFieldException.html" title=" " alt="" coords="705,351,930,377"/>
+<area shape="rect" id="node15" href="$classzserio_1_1MissedOptionalException.html" title=" " alt="" coords="700,401,935,428"/>
+<area shape="rect" id="node16" href="$classzserio_1_1OutOfRangeException.html" title=" " alt="" coords="711,452,923,479"/>
+<area shape="rect" id="node17" href="$classzserio_1_1UnexpectedOptionalException.html" title=" " alt="" coords="716,503,919,545"/>
+<area shape="rect" id="node18" href="$classzserio_1_1UnionCaseException.html" title=" " alt="" coords="716,569,919,596"/>
+</map>
