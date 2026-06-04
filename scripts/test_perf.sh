@@ -221,7 +221,7 @@ if [[ "${ZSERIO_EXTRA_ARGS}" == *"polymorphic"* ]]; then
     // calculate blob memory size
     TrackerMemoryResource memoryResource;
     const AllocatorType allocator(&memoryResource);
-    zserio::BitStreamReader blobReader(bitBuffer);
+    zserio::BitStreamReader blobReader(bitBuffer, zserio::ArrayPreallocation(1024*1024*1024));
     std::unique_ptr<${BLOB_CLASS_FULL_NAME}> memoryBlob(new ${BLOB_CLASS_FULL_NAME}>(blobReader, allocator));
     const size_t blobMemorySize = memoryResource.getAllocatedSize();
     const size_t blobDeallocMemorySize = memoryResource.getDeallocatedSize();
@@ -269,13 +269,13 @@ EOF
     case "${TEST_CONFIG}" in
         "READ")
             cat >> "${SRC_FILE}" << EOF
-        zserio::BitStreamReader reader(bitBuffer);
+        zserio::BitStreamReader reader(bitBuffer, zserio::ArrayPreallocation(1024*1024*1024));
         zserio::detail::read(reader, readData[i]);
 EOF
             ;;
         "READ_WRITE")
             cat >> "${SRC_FILE}" << EOF
-        zserio::BitStreamReader reader(bitBuffer);
+        zserio::BitStreamReader reader(bitBuffer, zserio::ArrayPreallocation(1024*1024*1024));
         auto readView = zserio::detail::read(reader, readData[i]);
         zserio::BitStreamWriter writer(bitBuffer);
         zserio::detail::write(writer, readView);
