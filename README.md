@@ -94,25 +94,22 @@ Zserio will generate C++17 API into a given output directory.
 
 Sets the C++ allocator type to be used in generated code. Possible values: `std` (default), `pmr`, `ppmr`.
 
-`std` stands for `std::allocator` class implemented in standard C++ library.
-
-`pmr` stands for `std::pmr::polymorphic_allocator` class implemented in standard C++ library.
-
-`ppmr` stands for `zserio::pmr::PropagatingPolymorphicAllocator` class implemented in
+- `std` stands for `std::allocator` class implemented in standard C++ library.
+- `pmr` stands for `std::pmr::polymorphic_allocator` class implemented in standard C++ library.
+- `ppmr` stands for `zserio::pmr::PropagatingPolymorphicAllocator` class implemented in
 Zserio C++ runtime library.
 
 **`-setTopLevelPackage`**
 
-Sets the top level package for generated Java sources and top level namespace for generated C++ sources.
+Sets the top level namespace for generated C++ sources.
 
-> Parameter `-setTopLevelPackage appl.Zserio` forces all generated Java sources to be in the package
-> `appl.Zserio` and all generated C++ sources to be in the namespace `appl::Zserio`.
+> Parameter `-setTopLevelPackage appl.Zserio` forces all generated C++ sources to be
+> in the namespace `appl::Zserio`.
 
 **`-src`**
 
 Defines the root directory for the input file and all imported packages. If this option is missing, the default
-value is the current working directory. Currently, only one source directory can be specified. A list of
-directories as in the Java `CLASSPATH` is not supported.
+value is the current working directory.
 
 > If the source path is `C:\zserio` and the input file is `com\acme\foo.zs`, Zserio will try parsing
 > `C:\zserio\com\acme\foo.zs`. If `foo.zs` contains the declaration `import com.acme.bar.*`, Zserio will
@@ -126,19 +123,19 @@ by calling `zserio::parsingInfo(View)`. By default it is disabled.
 
 > [!WARNING]
 > Note the returned parsing information object is valid only after the read operation! If the Zserio object
-> has not been read the parsing info accessors will throw an exception. If the zserio object has been changed
+> has not been read the parsing info accessors will throw an exception. If the Zserio object has been changed
 > after reading the parsing information will not be updated!
 
 **`-withSourcesAmalgamation|-withoutSourcesAmalgamation`**
 
-Enables/disables amalgamation of generated C++ sources. By default the code for each zserio object is placed in one header and one source file. When amalgamation is enabled,
-C++ sources will be automatically amalgamated to speed up C++ compilation time. C++ sources generated in
-different subdirectories will be amalgamated separately. Thus, if amalgamation is enabled, each generated
-subdirectory will contain only one C++ source module.
+Enables/disables amalgamation of generated C++ sources. By default the code for each zserio object is placed in
+one header and one source file. When amalgamation is enabled, C++ sources will be automatically amalgamated to
+speed up C++ compilation time. C++ sources generated in different subdirectories will be amalgamated separately.
+Thus, if amalgamation is enabled, each generated subdirectory will contain only one C++ source module.
 
 **`-withTypeInfoCode|-withoutTypeInfoCode`**
 
-Enables/disables generation of type information code. By default is disabled.
+Enables/disables generation of type information code together with reflection code. By default is disabled.
 
 ### Generated Code Gotchas
 
