@@ -36,6 +36,10 @@ public final class Cpp17ExtensionParameters
 
         if (withTypeInfoCode)
             description.add("typeInfoCode");
+        if (withSourcesAmalgamation)
+            description.add("sourcesAmalgamation");
+        if (withParsingInfoCode)
+            description.add("parsingInfoCode");
         addAllocatorDescription(description);
         parametersDescription = description.toString();
 
