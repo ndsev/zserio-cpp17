@@ -115,7 +115,7 @@ jobs:
           "-Dsonar.cfamily.compile-commands=${{ env.BUILD_WRAPPER_OUT_DIR }}/compile_commands.json"
           "-Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }}"
           "-Dsonar.branch.name=${{ github.event.workflow_run.head_branch }}"
-          
+
     - name: Run SonarCloud analysis on PR
       if: github.event.workflow_run.event == 'pull_request'
       uses: SonarSource/sonarqube-scan-action@v7
