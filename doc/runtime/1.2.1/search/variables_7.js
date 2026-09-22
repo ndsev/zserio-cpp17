@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['in_5fplace_5findex_1774',['in_place_index',['../namespacezserio.html#a2b34510e1f0dabbe9221d4941c6fc41b',1,'zserio']]],
+  ['initializer_1775',['initializer',['../structzserio_1_1BasicFieldInfo.html#a9d3b1db6648dc7cb450aca99ba3ffbcd',1,'zserio::BasicFieldInfo']]],
+  ['integeroverflow_1776',['integerOverflow',['../structzserio_1_1BasicJsonDecoder_1_1DecoderResult.html#a998028f768036686f5ae66a181675a98',1,'zserio::BasicJsonDecoder::DecoderResult']]],
+  ['is_5fallocator_5fv_1777',['is_allocator_v',['../namespacezserio.html#a24289a5e21d784cb3af5dd20d58fecd5',1,'zserio']]],
+  ['is_5fbitmask_5fv_1778',['is_bitmask_v',['../namespacezserio.html#a82b0bc06ecebee835a48c12d12f3ddd9',1,'zserio']]],
+  ['is_5fcomplete_5fv_1779',['is_complete_v',['../namespacezserio.html#a1810237f07a0a5792ae5406b13c9d8c3',1,'zserio']]],
+  ['is_5fdyn_5fint_5fwrapper_5fv_1780',['is_dyn_int_wrapper_v',['../namespacezserio.html#a3b2c0d3ccf4c698abf99e7e0246a2620',1,'zserio']]],
+  ['is_5ffirst_5fallocator_5fv_1781',['is_first_allocator_v',['../namespacezserio.html#af208a08591525e4891f4f9883bc2a6d9',1,'zserio']]],
+  ['is_5ffirst_5farray_5fpreallocation_5fv_1782',['is_first_array_preallocation_v',['../namespacezserio.html#aff56daf18ef8004a4b4b43aab5139d6f',1,'zserio']]],
+  ['is_5fnumeric_5fwrapper_5fv_1783',['is_numeric_wrapper_v',['../namespacezserio.html#a688298ae16608dd161997b0ff99268cc',1,'zserio']]],
+  ['is_5fspan_5fv_1784',['is_span_v',['../namespacezserio.html#a3c3af11b933a6ea34538c157a9e3a3a6',1,'zserio']]],
+  ['isarray_1785',['isArray',['../structzserio_1_1BasicFieldInfo.html#aaa9510cea8013b5fc115375ee213b089',1,'zserio::BasicFieldInfo']]],
+  ['isdeprecated_1786',['isDeprecated',['../structzserio_1_1ItemInfo.html#afb28f49ae37c4d63a4eeb497cd725ae6',1,'zserio::ItemInfo']]],
+  ['isextended_1787',['isExtended',['../structzserio_1_1BasicFieldInfo.html#a7465ea11480deed3ba5033d59d274a1d',1,'zserio::BasicFieldInfo']]],
+  ['isimplicit_1788',['isImplicit',['../structzserio_1_1BasicFieldInfo.html#a35fd58f7eca70bb27651aaa4773f7dbd',1,'zserio::BasicFieldInfo']]],
+  ['isnotnull_1789',['isNotNull',['../structzserio_1_1ValidationSqliteUtil_1_1ColumnDescription.html#a002e30d4ee9dc8582adea7dd332204a3',1,'zserio::ValidationSqliteUtil::ColumnDescription']]],
+  ['isoptional_1790',['isOptional',['../structzserio_1_1BasicFieldInfo.html#a97142692404345338b29ff7bb2bf2d63',1,'zserio::BasicFieldInfo']]],
+  ['ispacked_1791',['isPacked',['../structzserio_1_1BasicFieldInfo.html#a3826684149f524d279adf52965139e9d',1,'zserio::BasicFieldInfo']]],
+  ['isprimarykey_1792',['isPrimaryKey',['../structzserio_1_1ValidationSqliteUtil_1_1ColumnDescription.html#ad55618c8710cd0bbc23dcc6c657e23b4',1,'zserio::ValidationSqliteUtil::ColumnDescription']]],
+  ['ispublished_1793',['isPublished',['../structzserio_1_1BasicMessageInfo.html#ada9a8842c655c6ea3b80d4dd3289d537',1,'zserio::BasicMessageInfo']]],
+  ['isremoved_1794',['isRemoved',['../structzserio_1_1ItemInfo.html#a40f0e23b9137df29bad9a1bb8f60f9f3',1,'zserio::ItemInfo']]],
+  ['issubscribed_1795',['isSubscribed',['../structzserio_1_1BasicMessageInfo.html#a84f387df1079f1856202821b6f23d48c',1,'zserio::BasicMessageInfo']]],
+  ['isvirtual_1796',['isVirtual',['../structzserio_1_1BasicColumnInfo.html#a1f858c29e0b0157983579ddc2a50c938',1,'zserio::BasicColumnInfo']]]
+];
