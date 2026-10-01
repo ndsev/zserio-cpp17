@@ -50,6 +50,25 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Use the newest Zserio core release
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        CORE_VERSION=$(gh release view -R ndsev/zserio --json tagName --jq .tagName)
+        CORE_VERSION="${CORE_VERSION#v}"
+        EXPECTED_VERSION=$(sed -nE 's/.*EXPECTED_ZSERIO_VERSION_STRING = "([^"]+)".*/\1/p' \
+            extension/src/zserio/extension/cpp17/Cpp17ExtensionVersion.java)
+        echo "Newest Zserio core release is ${CORE_VERSION}, the extension expects ${EXPECTED_VERSION}."
+        # Zserio core loads only extensions which expect the same major.minor and not a newer patch version
+        if [[ "${CORE_VERSION%.*}" != "${EXPECTED_VERSION%.*}" ||
+                "${CORE_VERSION##*.}" -lt "${EXPECTED_VERSION##*.}" ]] ; then
+          echo "::error::Zserio core ${CORE_VERSION} would not load the C++17 extension which expects" \
+               "Zserio core ${EXPECTED_VERSION}."
+          exit 1
+        fi
+        echo "ZSERIO_CORE_VERSION=${CORE_VERSION}" >> "${GITHUB_ENV}"
+
     - name: Build Zserio C++17 extension and Zserio bundle
       run: |
         scripts/build.sh cpp zserio
