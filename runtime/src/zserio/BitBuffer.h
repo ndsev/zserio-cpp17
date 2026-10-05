@@ -407,7 +407,7 @@ bool BasicBitBuffer<ALLOC>::operator<(const BasicBitBuffer& other) const
         return false;
     }
 
-    return (first1 == last1) && (first2 != last2);
+    return m_bitSize < other.m_bitSize;
 }
 
 template <typename ALLOC>
