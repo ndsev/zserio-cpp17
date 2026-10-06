@@ -68,6 +68,7 @@ if (${ZSERIO_CODE_COVERAGE_ENABLE})
     enable_coverage_for_target(ZserioCpp17Runtime)
     enable_coverage_for_target(ZserioCpp17RuntimeTest)
     enable_coverage_for_target(ZserioCpp17RuntimeAnyTestLib)
+    enable_coverage_for_target(ZserioCpp17RuntimeAnyTestHiddenLib)
 
     set(COV_PARAMS)
     if (${ZSERIO_CODE_COVERAGE_FAIL_ON_INCOMPLETE})
