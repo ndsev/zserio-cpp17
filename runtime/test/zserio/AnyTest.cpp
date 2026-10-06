@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "any_test/AnyTest.h"
+#include "any_test/AnyTestHidden.h"
 #include "gtest/gtest.h"
 #include "zserio/Any.h"
 #include "zserio/ppmr/PropagatingPolymorphicAllocator.h"
@@ -512,6 +513,23 @@ TEST_F(AnyTest, sharedLib)
     auto any3 = AnyTestLib::createAnyString();
     ASSERT_TRUE(any3.isType<zserio::String>());
     ASSERT_FALSE(any3.isType<zserio::Int32>());
+}
+
+TEST_F(AnyTest, staticLibHiddenVisibility)
+{
+    // AnyTestHiddenLib is a static library compiled with hidden visibility, while this test is compiled with
+    // default visibility. Both are linked into a single executable, so there is only one RTTI object
+    // for EmptyStruct. However on arm64 Apple platforms, clang marks hidden RTTI as non-unique (top bit of
+    // the type name pointer) and libc++ type_info::operator== compares the name pointers including this bit.
+    auto any1 = AnyTestHiddenLib::createAnyEmptyStruct();
+    ASSERT_TRUE(any1.isType<AnyTestHiddenLib::EmptyStruct>());
+    ASSERT_TRUE(AnyTestHiddenLib::isEmptyStruct(any1));
+    ASSERT_NE(nullptr, any1.get_if<AnyTestHiddenLib::EmptyStruct>());
+
+    Any any2;
+    any2.set(AnyTestHiddenLib::EmptyStruct());
+    ASSERT_TRUE(any2.isType<AnyTestHiddenLib::EmptyStruct>());
+    ASSERT_TRUE(AnyTestHiddenLib::isEmptyStruct(any2));
 }
 
 TEST_F(AnyTest, prettyFunction)

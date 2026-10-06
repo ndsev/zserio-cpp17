@@ -39,6 +39,11 @@ public:
         return &id;
     }
 
+    static bool equals(type_id lhs, type_id rhs)
+    {
+        return lhs == rhs;
+    }
+
 // in MSVC typeid works even when RTTI is disabled
 #elif defined(_MSC_VER) || defined(__GXX_RTTI)
     using type_id = const std::type_info&;
@@ -47,6 +52,17 @@ public:
     static type_id get()
     {
         return typeid(T);
+    }
+
+    // Deliberately not just `lhs == rhs`: on some ABIs (e.g. arm64 macOS/iOS, see libc++'s
+    // __non_unique_arm_rtti_bit_impl), a type's RTTI can be emitted non-uniquely when it is
+    // referenced from many translation units/static libraries (as generated zserio types
+    // commonly are). In that case std::type_info::operator== can report two type_info objects
+    // for the very same type as unequal. Falling back to comparing the (mangled) type names gives
+    // the correct answer regardless of whether the RTTI objects were merged.
+    static bool equals(type_id lhs, type_id rhs)
+    {
+        return lhs == rhs || std::strcmp(lhs.name(), rhs.name()) == 0;
     }
 
 #else
@@ -61,6 +77,11 @@ public:
         // static uintptr_t zserio::detail::TypeIdHolder::get() [with T = int; uintptr_t = xyz]
         static const auto id = calcHashCode(zserio::HASH_SEED, std::string_view(__PRETTY_FUNCTION__));
         return static_cast<uintptr_t>(id);
+    }
+
+    static bool equals(type_id lhs, type_id rhs)
+    {
+        return lhs == rhs;
     }
 
 #endif
@@ -139,7 +160,7 @@ public:
 
     bool isType(detail::TypeIdHolder::type_id typeId) const override
     {
-        return detail::TypeIdHolder::get<T>() == typeId;
+        return detail::TypeIdHolder::equals(detail::TypeIdHolder::get<T>(), typeId);
     }
 
 protected:
