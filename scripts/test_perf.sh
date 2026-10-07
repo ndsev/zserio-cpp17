@@ -592,8 +592,8 @@ Description:
     Runs performance tests on given zserio sources using C++17 extension from distr directory.
 
 Usage:
-    $0 [-h] [-e] [-p] [-r] [-l] [-o <dir>] [-d <dir>] [-t <name>] -[n <num>] [-c <config>]
-        target... -s <source> -b <blobname> [-f <blobfile> | -j <jsonfile>]
+    $0 [-h] [-e] [-p] [-r] [-l] [-o <dir>] [-d <dir>] [-t <name>] -[n <num>] [-c <config>]...
+        target... -s <source> (-b <blobname> (-f <blobfile> | -j <jsonfile>))...
 
 Arguments:
     -h, --help              Show this help.
@@ -610,7 +610,7 @@ Arguments:
     -n <num>, --num-iterations <num>
                             Number of iterations. Optional, default is 100.
     -c <config>, --test-config <config>
-                            Test configuration: READ (default), WRITE, READ_WRITE.
+                            Test configuration: READ (default), WRITE, READ_WRITE. Can be repeated.
     -s <source>, --source <source>
                             Main zserio source.
     -b <blobname>, --blob-name <blobname>
@@ -619,6 +619,10 @@ Arguments:
                             Path to the blob file.
     -j <jsonfile>, --json-file <jsonfile>
                             Path to the JSON file.
+                            Blob name and blob or JSON file can be repeated, the n-th blob name pairs
+                            with the n-th blob or JSON file. The sources are generated and compiled once,
+                            the test runs each test configuration on each pair and writes
+                            PerformanceTest_<n>.log, a single run writes PerformanceTest.log.
     target                  Specify the target to test.
 
 Generator can be:
@@ -631,6 +635,8 @@ Generator can be:
 
 Examples:
     $0 cpp-linux64-gcc -d /tmp/zs -s test.zs -b test.Blob -f blob.bin
+    $0 cpp-linux64-gcc -d /tmp/zs -s test.zs -b test.Blob -f blob1.bin -b test.Blob -f blob2.bin \
+        -c READ -c WRITE
 
 EOF
 }
@@ -663,17 +669,20 @@ parse_arguments()
     eval ${SWITCH_DIRECTORY_OUT}="."
     eval ${SWITCH_SOURCE_OUT}=""
     eval ${SWITCH_TEST_NAME_OUT}=""
-    eval ${SWITCH_BLOB_NAME_OUT}=""
-    eval ${SWITCH_JSON_FILE_OUT}=""
-    eval ${SWITCH_BLOB_FILE_OUT}=""
+    eval ${SWITCH_BLOB_NAME_OUT}="()"
+    eval ${SWITCH_JSON_FILE_OUT}="()"
+    eval ${SWITCH_BLOB_FILE_OUT}="()"
     eval ${SWITCH_NUM_ITERATIONS_OUT}=100 # default
-    eval ${SWITCH_TEST_CONFIG_OUT}="READ" # default
+    eval ${SWITCH_TEST_CONFIG_OUT}="()"
     eval ${SWITCH_PURGE_OUT}=0
     eval ${SWITCH_RUN_ONLY_OUT}=0
     eval ${SWITCH_PROFILE_OUT}=0
 
     local NUM_PARAMS=0
     local PARAM_ARRAY=()
+    local NUM_BLOB_NAMES=0
+    local NUM_INPUT_FILES=0
+    local NUM_TEST_CONFIGS=0
     local ARG="$1"
     while [ $# -ne 0 ] ; do
         case "${ARG}" in
@@ -736,7 +745,8 @@ parse_arguments()
                     echo
                     return 1
                 fi
-                eval ${SWITCH_BLOB_NAME_OUT}="$2"
+                eval ${SWITCH_BLOB_NAME_OUT}[${NUM_BLOB_NAMES}]='"$2"'
+                NUM_BLOB_NAMES=$((NUM_BLOB_NAMES + 1))
                 shift 2
                 ;;
 
@@ -746,7 +756,9 @@ parse_arguments()
                     echo
                     return 1
                 fi
-                eval ${SWITCH_JSON_FILE_OUT}="$2"
+                eval ${SWITCH_JSON_FILE_OUT}[${NUM_INPUT_FILES}]='"$2"'
+                eval ${SWITCH_BLOB_FILE_OUT}[${NUM_INPUT_FILES}]=""
+                NUM_INPUT_FILES=$((NUM_INPUT_FILES + 1))
                 shift 2
                 ;;
 
@@ -756,7 +768,9 @@ parse_arguments()
                     echo
                     return 1
                 fi
-                eval ${SWITCH_BLOB_FILE_OUT}="$2"
+                eval ${SWITCH_BLOB_FILE_OUT}[${NUM_INPUT_FILES}]='"$2"'
+                eval ${SWITCH_JSON_FILE_OUT}[${NUM_INPUT_FILES}]=""
+                NUM_INPUT_FILES=$((NUM_INPUT_FILES + 1))
                 shift 2
                 ;;
 
@@ -776,7 +790,8 @@ parse_arguments()
                     echo
                     return 1
                 fi
-                eval ${SWITCH_TEST_CONFIG_OUT}="$2"
+                eval ${SWITCH_TEST_CONFIG_OUT}[${NUM_TEST_CONFIGS}]='"$2"'
+                NUM_TEST_CONFIGS=$((NUM_TEST_CONFIGS + 1))
                 shift 2
                 ;;
 
@@ -821,15 +836,23 @@ parse_arguments()
         esac
     done
 
-    # validate test configuration
-    case "${!SWITCH_TEST_CONFIG_OUT}" in
-        "READ" | "WRITE" | "READ_WRITE")
-            ;;
-        *)
-            stderr_echo "Invalid test configuration, use one of READ, WRITE, READ_WRITE"
-            return 1
-            ;;
-    esac
+    # validate test configurations
+    if [[ ${NUM_TEST_CONFIGS} -eq 0 ]] ; then
+        eval ${SWITCH_TEST_CONFIG_OUT}[0]="READ" # default
+        NUM_TEST_CONFIGS=1
+    fi
+    local TEST_CONFIG_INDEX
+    for (( TEST_CONFIG_INDEX=0; TEST_CONFIG_INDEX < NUM_TEST_CONFIGS; TEST_CONFIG_INDEX++ )) ; do
+        local TEST_CONFIG_VAR="${SWITCH_TEST_CONFIG_OUT}[${TEST_CONFIG_INDEX}]"
+        case "${!TEST_CONFIG_VAR}" in
+            "READ" | "WRITE" | "READ_WRITE")
+                ;;
+            *)
+                stderr_echo "Invalid test configuration, use one of READ, WRITE, READ_WRITE"
+                return 1
+                ;;
+        esac
+    done
 
     if [[ ${!SWITCH_PURGE_OUT} == 0 ]] ; then
         if [[ ${NUM_CPP_TARGETS} == 0 ]] ; then
@@ -844,20 +867,21 @@ parse_arguments()
             return 1
         fi
 
-        if [[ "${!SWITCH_BLOB_NAME_OUT}" == "" ]] ; then
+        if [[ ${NUM_BLOB_NAMES} -eq 0 ]] ; then
             stderr_echo "Blob name is not set!"
             echo
             return 1
         fi
 
-        if [[ "${!SWITCH_BLOB_FILE_OUT}" == "" && "${!SWITCH_JSON_FILE_OUT}" == "" ]] ; then
+        if [[ ${NUM_INPUT_FILES} -eq 0 ]] ; then
             stderr_echo "Neither blob nor JSON filename is set!"
             echo
             return 1
         fi
 
-        if [[ "${!SWITCH_BLOB_FILE_OUT}" != "" && "${!SWITCH_JSON_FILE_OUT}" != "" ]] ; then
-            stderr_echo "Set either blob or JSON filename, not both!"
+        if [[ ${NUM_BLOB_NAMES} -ne ${NUM_INPUT_FILES} ]] ; then
+            stderr_echo "Each blob name needs exactly one blob or JSON filename!" \
+                    "(${NUM_BLOB_NAMES} blob names, ${NUM_INPUT_FILES} filenames)"
             echo
             return 1
         fi
@@ -891,16 +915,16 @@ main()
     local SWITCH_DIRECTORY
     local SWITCH_SOURCE
     local SWITCH_TEST_NAME
-    local SWITCH_BLOB_NAME
-    local SWITCH_JSON_FILE
-    local SWITCH_BLOB_FILE
+    local SWITCH_BLOB_NAMES=()
+    local SWITCH_JSON_FILES=()
+    local SWITCH_BLOB_FILES=()
     local SWITCH_NUM_ITERATIONS
-    local SWITCH_TEST_CONFIG
+    local SWITCH_TEST_CONFIGS=()
     local SWITCH_PURGE
     local SWITCH_RUN_ONLY
     local SWITCH_PROFILE
     parse_arguments PARAM_CPP_TARGET_ARRAY SWITCH_OUT_DIR SWITCH_DIRECTORY SWITCH_SOURCE SWITCH_TEST_NAME \
-            SWITCH_BLOB_NAME SWITCH_JSON_FILE SWITCH_BLOB_FILE SWITCH_NUM_ITERATIONS SWITCH_TEST_CONFIG \
+            SWITCH_BLOB_NAMES SWITCH_JSON_FILES SWITCH_BLOB_FILES SWITCH_NUM_ITERATIONS SWITCH_TEST_CONFIGS \
             SWITCH_PURGE SWITCH_RUN_ONLY SWITCH_PROFILE "$@"
     local PARSE_RESULT=$?
     if [ ${PARSE_RESULT} -eq 2 ] ; then
@@ -933,12 +957,15 @@ main()
     if [[ "${SWITCH_DIRECTORY}" != "" ]] ; then
         convert_to_absolute_path "${SWITCH_DIRECTORY}" SWITCH_DIRECTORY
     fi
-    if [[ "${SWITCH_JSON_FILE}" != "" ]] ; then
-        convert_to_absolute_path "${SWITCH_JSON_FILE}" SWITCH_JSON_FILE
-    fi
-    if [[ "${SWITCH_BLOB_FILE}" != "" ]] ; then
-        convert_to_absolute_path "${SWITCH_BLOB_FILE}" SWITCH_BLOB_FILE
-    fi
+    local BLOB_INDEX
+    for (( BLOB_INDEX=0; BLOB_INDEX < ${#SWITCH_BLOB_NAMES[@]}; BLOB_INDEX++ )) ; do
+        if [[ "${SWITCH_JSON_FILES[${BLOB_INDEX}]}" != "" ]] ; then
+            convert_to_absolute_path "${SWITCH_JSON_FILES[${BLOB_INDEX}]}" "SWITCH_JSON_FILES[${BLOB_INDEX}]"
+        fi
+        if [[ "${SWITCH_BLOB_FILES[${BLOB_INDEX}]}" != "" ]] ; then
+            convert_to_absolute_path "${SWITCH_BLOB_FILES[${BLOB_INDEX}]}" "SWITCH_BLOB_FILES[${BLOB_INDEX}]"
+        fi
+    done
 
     # purge if requested and then create test output directory
     local ZSERIO_CPP17_BUILD_DIR="${SWITCH_OUT_DIR}/build"
@@ -956,19 +983,15 @@ main()
 
     # print information
     echo "Test output directory: ${TEST_OUT_DIR}"
-    echo "Test config: ${SWITCH_TEST_CONFIG}"
+    echo "Test config: ${SWITCH_TEST_CONFIGS[*]}"
     echo
 
     # run test
     local ZSERIO_CPP17_DISTR_DIR="${SWITCH_OUT_DIR}/distr"
-    local BLOB_NAMES=("${SWITCH_BLOB_NAME}")
-    local JSON_FILES=("${SWITCH_JSON_FILE}")
-    local BLOB_FILES=("${SWITCH_BLOB_FILE}")
-    local TEST_CONFIGS=("${SWITCH_TEST_CONFIG}")
     test_perf "${ZSERIO_CPP17_DISTR_DIR}" "${ZSERIO_CPP17_PROJECT_ROOT}" "${ZSERIO_CPP17_BUILD_DIR}" \
             "${TEST_OUT_DIR}" PARAM_CPP_TARGET_ARRAY[@] "${SWITCH_DIRECTORY}" "${SWITCH_SOURCE}" \
-            "${SWITCH_TEST_NAME}" BLOB_NAMES[@] JSON_FILES[@] BLOB_FILES[@] \
-             ${SWITCH_NUM_ITERATIONS} TEST_CONFIGS[@] ${SWITCH_RUN_ONLY} ${SWITCH_PROFILE}
+            "${SWITCH_TEST_NAME}" SWITCH_BLOB_NAMES[@] SWITCH_JSON_FILES[@] SWITCH_BLOB_FILES[@] \
+             ${SWITCH_NUM_ITERATIONS} SWITCH_TEST_CONFIGS[@] ${SWITCH_RUN_ONLY} ${SWITCH_PROFILE}
     if [ $? -ne 0 ] ; then
         return 1
     fi
