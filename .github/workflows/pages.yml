@@ -1,0 +1,151 @@
+name: Pages
+
+# Builds the Zserio C++17 extension web pages by Jekyll and deploys them by actions/deploy-pages, the repository
+# Pages source is GitHub Actions. The site consists of the sources of 'source_ref' with submodules, the Jekyll
+# configuration .github/pages/_config.yml, the archived runtime docs of all versions up to 1.2.1 and the runtime
+# docs of all published releases newer than the archive, see scripts/build_web_pages.sh.
+#
+# A published release deploys the site from its tag, a pre-release only builds it.
+# A manual run deploys only if 'deploy' is checked, e.g. the site of the latest release from its tag.
+# A push to the branch 'pages-dry-run/<source_ref>' builds the site of that ref and uploads the Pages artifact,
+# it deploys nothing.
+
+run-name: "${{github.event_name == 'push' && format('Pages dry run of {0} - no deployment', github.ref_name) ||
+    format('Pages from {0}', inputs.source_ref || github.event.release.tag_name)}}"
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "Branch, tag or commit of the sources to publish, e.g. the latest release tag v1.2.1"
+        required: true
+        type: string
+      deploy:
+        description: "Deploy the site to GitHub Pages"
+        required: false
+        default: false
+        type: boolean
+  push:
+    branches: [ 'pages-dry-run/**' ]
+
+permissions:
+  contents: read
+
+env:
+  # doc/runtime of this commit holds the runtime docs of all versions up to 1.2.1 as published from the former
+  # 'web-pages' branch, the tag 'web-pages-archive' keeps it reachable
+  WEB_PAGES_ARCHIVE_SHA: b00020e3b1414ebf8d305a647f8f0d51b6f7f1f7
+
+jobs:
+  build:
+    runs-on: "ubuntu-24.04"
+    steps:
+    - name: "Select the sources to publish"
+      env:
+        INPUT_SOURCE_REF: ${{inputs.source_ref || github.event.release.tag_name}}
+        REF_NAME: ${{github.ref_name}}
+      run: |
+        SOURCE_REF="${INPUT_SOURCE_REF:-${REF_NAME#pages-dry-run/}}"
+        if [[ -z "${SOURCE_REF}" ]] ; then
+            echo "::error::No sources to publish"
+            exit 1
+        fi
+        echo "Publishing the sources of ${SOURCE_REF}"
+        echo "SOURCE_REF=${SOURCE_REF}" >> "${GITHUB_ENV}"
+
+    - name: "Checkout the site scripts"
+      uses: actions/checkout@v4
+      with:
+        path: tools
+        sparse-checkout: |
+          scripts
+          .github/pages
+
+    - name: "Checkout the sources to publish"
+      uses: actions/checkout@v4
+      with:
+        ref: ${{env.SOURCE_REF}}
+        path: source
+        submodules: recursive
+
+    - name: "Checkout the runtime docs archive"
+      uses: actions/checkout@v4
+      with:
+        ref: ${{env.WEB_PAGES_ARCHIVE_SHA}}
+        path: archive
+        sparse-checkout: doc/runtime
+
+    - name: "Download the runtime libs newer than the archive"
+      env:
+        GH_TOKEN: ${{github.token}}
+        GH_REPO: ${{github.repository}}
+      run: |
+        shopt -s nullglob
+        mkdir -p runtime_libs
+        ARCHIVED_DIRS=(archive/doc/runtime/[0-9]*)
+        ARCHIVED_VERSION="$(printf "%s\n" "${ARCHIVED_DIRS[@]##*/}" | sort -V | tail -n 1)"
+        echo "Newest archived version: ${ARCHIVED_VERSION}"
+
+        is_newer()
+        {
+            [[ "$1" != "$2" && "$(printf "%s\n%s\n" "$1" "$2" | sort -V | tail -n 1)" == "$1" ]]
+        }
+
+        # a failed gh in a process substitution would go unnoticed, -e fails the step on this assignment
+        RELEASE_TAGS="$(gh release list --exclude-drafts --exclude-pre-releases --limit 200 \
+                --json tagName --jq '.[].tagName')"
+        mapfile -t PUBLISHED_VERSIONS < <(grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' <<< "${RELEASE_TAGS}" | sed 's/^v//' | \
+                sort -V)
+        for VERSION in "${PUBLISHED_VERSIONS[@]}" ; do
+            if is_newer "${VERSION}" "${ARCHIVED_VERSION}" ; then
+                echo "Downloading the runtime lib of the published release v${VERSION}"
+                gh release download "v${VERSION}" --pattern "zserio-cpp17-${VERSION}-runtime-lib.zip" \
+                        --dir runtime_libs
+            fi
+        done
+
+        ZIPS=(runtime_libs/*.zip)
+        if [[ ${#ZIPS[@]} -gt 0 ]] ; then
+            mapfile -t ZIPS < <(printf "%s\n" "${ZIPS[@]}" | sort -V)
+        fi
+        echo "Runtime libs to add: ${ZIPS[*]:-none}"
+        echo "RUNTIME_LIB_ZIPS=${ZIPS[*]}" >> "${GITHUB_ENV}"
+
+    - name: "Assemble the site"
+      run: |
+        read -r -a ZIPS <<< "${RUNTIME_LIB_ZIPS}"
+        tools/scripts/build_web_pages.sh -s source -a archive/doc/runtime -o site "${ZIPS[@]}"
+        du -sh site
+        find site -type f | wc -l
+
+    - name: "Build the site by Jekyll"
+      uses: actions/jekyll-build-pages@v1
+      with:
+        source: ./site
+        destination: ./_site
+        verbose: false
+
+    - name: "Upload the Pages artifact"
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./_site
+
+  deploy:
+    name: "Deploy to GitHub Pages"
+    if: inputs.deploy || (github.event_name == 'release' && !github.event.release.prerelease)
+    needs: [build]
+    runs-on: "ubuntu-24.04"
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{steps.deployment.outputs.page_url}}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+    - name: "Deploy to GitHub Pages"
+      id: deployment
+      uses: actions/deploy-pages@v4

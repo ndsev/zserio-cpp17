@@ -72,6 +72,9 @@ array size values.
 The [How to Use the Development Build](#how-to-use-the-development-build) section outlines the procedure for
 using the latest C++17 generator via the current development build.
 
+The [Compatibility with Zserio Core](#compatibility-with-zserio-core) section explains which Zserio core release
+loads which C++17 generator release.
+
 ### Command Line Parameters
 
 ```
@@ -222,3 +225,13 @@ Run the Zserio C++17 generator using the following steps:
 
 - Unzip `zserio-java8` to get `zserio.jar` binary
 - Run the command `java -jar zserio.jar schema_name.zs -cpp17 output_directory_name`
+
+### Compatibility with Zserio Core
+
+Zserio core loads the C++17 generator only if both have the same major and minor version and Zserio core is not
+older than the version the generator expects. Otherwise the generator is skipped with a warning and the `-cpp17` option is not available. Therefore,
+each Zserio core release which changes the major or minor version needs a matching C++17 generator release.
+
+The CI builds and tests the C++17 generator against the newest Zserio core release and fails if this release
+would not load the generator. To build against a different Zserio core release locally, set the
+`ZSERIO_CORE_VERSION` environment variable, e.g. `ZSERIO_CORE_VERSION=2.19.0 scripts/build.sh cpp zserio`.
