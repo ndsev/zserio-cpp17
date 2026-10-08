@@ -69,6 +69,8 @@ jobs:
       if: ${{ matrix.mingw-version != '' }}
       run: |
         choco install mingw --version ${{matrix.mingw-version}}
+        echo "libstdc++-6.dll candidates in PATH order:"
+        where.exe libstdc++-6.dll libgcc_s_seh-1.dll || true
 
     - name: Install clang format
       shell: bash
@@ -144,6 +146,10 @@ jobs:
     - name: Build Zserio shared lib & disabled sqlite test
       shell: bash
       run: |
+        if [[ "${{matrix.mingw-version}}" != "" ]] ; then
+          echo "libstdc++-6.dll candidates in PATH order:"
+          where.exe libstdc++-6.dll libgcc_s_seh-1.dll || true
+        fi
         export CMAKE_EXTRA_ARGS="-DZSERIO_CPP17_RUNTIME_BUILD_SHARED_LIBS=ON -DZSERIO_CPP17_RUNTIME_SQLITE_ENABLE=OFF ${CMAKE_EXTRA_ARGS}"
         scripts/build.sh cpp_rt-${PACKAGE} -o tmp_shared
         scripts/test.sh -p cpp-${PACKAGE} -o tmp_shared -i others/gif
