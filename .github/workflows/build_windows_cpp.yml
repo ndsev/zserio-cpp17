@@ -71,8 +71,6 @@ jobs:
         choco install mingw --version ${{matrix.mingw-version}}
         echo "libstdc++-6.dll candidates in PATH order:"
         where.exe libstdc++-6.dll libgcc_s_seh-1.dll || true
-        # shared runtime and test executables load libstdc++/libgcc DLLs via PATH, MinGW's own must come first
-        cygpath -w "${MINGW64_TOOLCHAIN_ROOT}/bin" >> ${GITHUB_PATH}
 
     - name: Install clang format
       shell: bash
@@ -149,6 +147,8 @@ jobs:
       shell: bash
       run: |
         if [[ "${{matrix.mingw-version}}" != "" ]] ; then
+          # shared runtime loads libstdc++/libgcc DLLs via PATH, Git Bash puts its own ucrt64 ones first
+          export PATH="${MINGW64_TOOLCHAIN_ROOT}/bin:${PATH}"
           echo "libstdc++-6.dll candidates in PATH order:"
           where.exe libstdc++-6.dll libgcc_s_seh-1.dll || true
         fi
