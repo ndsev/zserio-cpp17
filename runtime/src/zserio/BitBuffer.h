@@ -159,7 +159,8 @@ public:
      *
      * \param other The another instance of bit buffer to which compare this bit buffer.
      *
-     * \return True when this bit buffer is less than the other (using lexicographical compare).
+     * \return True when this bit buffer is less than the other (using lexicographical compare),
+     *         bit buffers with equal contents are ordered by their bit size.
      */
     bool operator<(const BasicBitBuffer& other) const;
 
