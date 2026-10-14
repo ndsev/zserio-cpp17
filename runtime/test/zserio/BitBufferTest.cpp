@@ -322,6 +322,13 @@ TEST(BitBufferTest, operatorLessThan)
     ASSERT_NE(bitBuffer6, bitBuffer7);
     ASSERT_TRUE(bitBuffer6 < bitBuffer7);
     ASSERT_FALSE(bitBuffer7 < bitBuffer6);
+    ASSERT_TRUE(bitBuffer6 <= bitBuffer7);
+    ASSERT_FALSE(bitBuffer6 >= bitBuffer7);
+    const BitBufferView bitBufferView6 = bitBuffer6;
+    const BitBufferView bitBufferView7 = bitBuffer7;
+    ASSERT_TRUE(bitBufferView6 != bitBufferView7);
+    ASSERT_TRUE(bitBufferView6 < bitBufferView7);
+    ASSERT_FALSE(bitBufferView6 >= bitBufferView7);
 }
 
 TEST(BitBufferTest, hashCode)
