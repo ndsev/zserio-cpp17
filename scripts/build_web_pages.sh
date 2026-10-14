@@ -291,7 +291,7 @@ redirect_dropped_runtime_doc()
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
-<meta http-equiv="refresh" content="3; url=%s">
+<noscript><meta http-equiv="refresh" content="1.5; url=%s"></noscript>
 <title>Zserio C++17 extension runtime '"${KEPT_VERSION}"'</title>
 <style>
 body { margin: 0; font-family: sans-serif; background: #f0f0f0; }
