@@ -19,8 +19,8 @@ bugprone-exception-escape:src/zserio/Optional.h:225
 bugprone-use-after-move:src/zserio/Any.h:463
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:608
-cert-dcl58-cpp:src/zserio/BitBuffer.h:620
+cert-dcl58-cpp:src/zserio/BitBuffer.h:609
+cert-dcl58-cpp:src/zserio/BitBuffer.h:621
 cert-dcl58-cpp:src/zserio/Extended.h:242
 cert-dcl58-cpp:src/zserio/Optional.h:1323
 cert-dcl58-cpp:src/zserio/Variant.h:606
@@ -164,8 +164,8 @@ bugprone-use-after-move:test/zserio/VariantTest.cpp:211
 bugprone-use-after-move:test/zserio/VariantTest.cpp:237
 bugprone-use-after-move:test/zserio/VariantTest.cpp:247
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:381
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
 cppcoreguidelines-pro-type-reinterpret-cast:test/zserio/SqliteConnectionTest.cpp:321
