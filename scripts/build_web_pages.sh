@@ -60,6 +60,32 @@ patch_old_runtime_doc()
     return 0
 }
 
+# Remove the version <option> of the given versions from the version select of all runtime documentations.
+remove_versions_from_select()
+{
+    exit_if_argc_lt $# 2
+    local ZSERIO_DOC_DIR="$1"; shift
+    local ZSERIO_CPP17_VERSIONS=("$@")
+
+    local SED_ARGS=()
+    local ZSERIO_CPP17_VERSION
+    for ZSERIO_CPP17_VERSION in "${ZSERIO_CPP17_VERSIONS[@]}" ; do
+        local VERSION_PATTERN="${ZSERIO_CPP17_VERSION//./\\.}"
+        SED_ARGS+=(-e '/^<option value="'"${VERSION_PATTERN}"'">'"${VERSION_PATTERN}"'<\/option>$/d')
+    done
+
+    local HTML_FILES=($(grep "<select id=\"zserio-version-select\"" "${ZSERIO_DOC_DIR}" -R -l))
+    for HTML_FILE in "${HTML_FILES[@]}" ; do
+        "${SED}" -i "${SED_ARGS[@]}" "${HTML_FILE}"
+        if [ $? -ne 0 ] ; then
+            stderr_echo "Failed to remove the version <option>!"
+            return 1
+        fi
+    done
+
+    return 0
+}
+
 # Replace the version in the new runtime documentation by the select of all published versions.
 patch_new_runtime_doc()
 {
@@ -236,6 +262,123 @@ add_runtime_doc()
     return 0
 }
 
+# Replace the runtime documentation of a dropped version by static redirect pages to the kept patch version.
+#
+# Each HTML page redirects to the same page of the kept version, or to the nearest index.html above it if the kept
+# version does not have this page. All other files of the dropped version are removed.
+redirect_dropped_runtime_doc()
+{
+    exit_if_argc_ne $# 4
+    local RUNTIME_DOC_DIR="$1"; shift
+    local WORK_DIR="$1"; shift
+    local DROPPED_VERSION="$1"; shift
+    local KEPT_VERSION="$1"; shift
+
+    local DROPPED_DIR="${RUNTIME_DOC_DIR}/${DROPPED_VERSION}"
+    local KEPT_DIR="${RUNTIME_DOC_DIR}/${KEPT_VERSION}"
+    local ORIGINAL_DIR="${WORK_DIR}/dropped/${DROPPED_VERSION}"
+    rm -rf "${ORIGINAL_DIR}"
+    mkdir -p "${WORK_DIR}/dropped"
+    mv "${DROPPED_DIR}" "${ORIGINAL_DIR}"
+    if [ $? -ne 0 ] ; then
+        stderr_echo "Cannot move runtime library documentation ${DROPPED_VERSION} to ${ORIGINAL_DIR}!"
+        return 1
+    fi
+
+    # printf format, each %s is the URL of the kept page
+    local REDIRECT_PAGE_FORMAT='<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="3; url=%s">
+<title>Zserio C++17 extension runtime '"${KEPT_VERSION}"'</title>
+<style>
+body { margin: 0; font-family: sans-serif; background: #f0f0f0; }
+#zserio-redirect-overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, 0.5); }
+#zserio-redirect-overlay p { margin: 16px; padding: 16px 24px; border-radius: 4px; background: #ffffff;
+    color: #222222; font-size: 18px; }
+</style>
+</head>
+<body>
+<div id="zserio-redirect-overlay">
+<p>Redirected to <a href="%s">'"${KEPT_VERSION}"'</a> (latest patch version) from '"${DROPPED_VERSION}"'.</p>
+</div>
+<script>setTimeout(function() { location.replace("%s" + location.hash); }, 1500);</script>
+</body>
+</html>
+'
+
+    local PAGE
+    while IFS= read -r PAGE ; do
+        local TARGET_PAGE="${PAGE}"
+        local TARGET_DIR="${PAGE}"
+        while [ ! -f "${KEPT_DIR}/${TARGET_PAGE}" ] ; do
+            if [[ "${TARGET_DIR}" != */* ]] ; then
+                TARGET_PAGE="index.html"
+                break
+            fi
+            TARGET_DIR="${TARGET_DIR%/*}"
+            TARGET_PAGE="${TARGET_DIR}/index.html"
+        done
+        local URL="../${KEPT_VERSION}/${TARGET_PAGE}"
+        local PAGE_SLASHES="${PAGE//[^\/]/}"
+        local I
+        for (( I = 0; I < ${#PAGE_SLASHES}; I++ )) ; do
+            URL="../${URL}"
+        done
+
+        mkdir -p "$(dirname "${DROPPED_DIR}/${PAGE}")"
+        printf "${REDIRECT_PAGE_FORMAT}" "${URL}" "${URL}" "${URL}" > "${DROPPED_DIR}/${PAGE}"
+        if [ $? -ne 0 ] ; then
+            stderr_echo "Cannot write redirect page ${DROPPED_DIR}/${PAGE}!"
+            return 1
+        fi
+    done < <(cd "${ORIGINAL_DIR}" && find . -type f -name "*.html" | sed 's|^\./||' | sort)
+    rm -rf "${ORIGINAL_DIR}"
+
+    return 0
+}
+
+# Publish only the highest patch version of each minor line, the other versions redirect to it.
+drop_old_patch_versions()
+{
+    exit_if_argc_ne $# 2
+    local RUNTIME_DOC_DIR="$1"; shift
+    local WORK_DIR="$1"; shift
+
+    local VERSIONS=($(ls -1 "${RUNTIME_DOC_DIR}" | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" | sort -rV))
+    local KEPT_VERSION=""
+    local DROPPED_VERSIONS=()
+    local VERSION
+    for VERSION in "${VERSIONS[@]}" ; do
+        if [[ -n "${KEPT_VERSION}" && "${VERSION%.*}" == "${KEPT_VERSION%.*}" ]] ; then
+            echo -ne "Redirecting Zserio C++17 extension runtime library version ${VERSION} to ${KEPT_VERSION}..."
+            redirect_dropped_runtime_doc "${RUNTIME_DOC_DIR}" "${WORK_DIR}" "${VERSION}" "${KEPT_VERSION}"
+            if [ $? -ne 0 ] ; then
+                return 1
+            fi
+            echo "Done"
+            DROPPED_VERSIONS+=("${VERSION}")
+        else
+            KEPT_VERSION="${VERSION}"
+        fi
+    done
+
+    if [ ${#DROPPED_VERSIONS[@]} -gt 0 ] ; then
+        echo -ne "Removing the redirected versions from the version select..."
+        remove_versions_from_select "${RUNTIME_DOC_DIR}" "${DROPPED_VERSIONS[@]}"
+        if [ $? -ne 0 ] ; then
+            return 1
+        fi
+        echo "Done"
+    fi
+    echo
+
+    return 0
+}
+
 # Assemble the Zserio C++17 extension Web Pages sources which are built by Jekyll.
 build_web_pages()
 {
@@ -297,6 +440,11 @@ build_web_pages()
             return 1
         fi
     done
+
+    drop_old_patch_versions "${DEST_RUNTIME_DIR}" "${WORK_DIR}"
+    if [ $? -ne 0 ] ; then
+        return 1
+    fi
     rm -rf "${WORK_DIR}"
 
     echo "Zserio C++17 extension Web Pages sources are in ${SITE_DIR}."
@@ -314,6 +462,10 @@ Description:
     The site consists of the Zserio C++17 extension sources, the Jekyll configuration
     .github/pages/_config.yml, the archived runtime library documentation of all already published
     versions and the runtime library documentation of the given new versions.
+
+    Of each minor line only the highest patch version is published, e.g. 1.2.1 of 1.2.0 and 1.2.1.
+    Each page of an older patch version is a static redirect page to the same page of the highest patch version,
+    which lists only the published versions in its version select.
 
 Usage:
     $0 [-h] [-e] -s <dir> -a <dir> -o <dir> [runtime_lib_zip...]
