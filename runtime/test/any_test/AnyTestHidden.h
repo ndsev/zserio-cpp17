@@ -1,5 +1,6 @@
 #pragma once
 
+#include <typeinfo>
 #include <zserio/Any.h>
 
 namespace AnyTestHiddenLib
@@ -16,5 +17,10 @@ bool isEmptyStruct(const zserio::Any& any);
 
 // Holds a structure named AnonymousStruct from an anonymous namespace in this library.
 zserio::Any createAnyAnonymousStruct();
+
+#if defined(_MSC_VER) || defined(__GXX_RTTI)
+// The type_info of the structure held by createAnyAnonymousStruct().
+const std::type_info& getAnonymousStructTypeInfo();
+#endif
 
 } // namespace AnyTestHiddenLib

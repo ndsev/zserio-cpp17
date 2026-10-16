@@ -552,12 +552,17 @@ TEST_F(AnyTest, sameNamedAnonymousTypes)
 {
 #if defined(_LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION) && _LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION == 3
     GTEST_SKIP() << "Any compares type names on arm64 Apple platforms, see TypeIdHolder::equals.";
-#elif !defined(_MSC_VER) && !defined(__GXX_RTTI)
+#elif defined(_MSC_VER) || defined(__GXX_RTTI)
+    // Any tells the types apart exactly as std::type_info does, which differs between standard libraries:
+    // e.g. libstdc++ compares the names of types with internal linkage unless GCC has marked them as unique
+    const bool isSameType =
+            typeid(AnyTestHiddenLib::AnonymousStruct) == AnyTestHiddenLib::getAnonymousStructTypeInfo();
+    auto any = AnyTestHiddenLib::createAnyAnonymousStruct();
+    ASSERT_EQ(isSameType, any.isType<AnyTestHiddenLib::AnonymousStruct>());
+    ASSERT_EQ(isSameType, any.get_if<AnyTestHiddenLib::AnonymousStruct>() != nullptr);
+#else
     GTEST_SKIP() << "Without RTTI, Any identifies types by their names, see TypeIdHolder::get.";
 #endif
-    auto any = AnyTestHiddenLib::createAnyAnonymousStruct();
-    ASSERT_FALSE(any.isType<AnyTestHiddenLib::AnonymousStruct>());
-    ASSERT_EQ(nullptr, any.get_if<AnyTestHiddenLib::AnonymousStruct>());
 }
 
 TEST_F(AnyTest, prettyFunction)

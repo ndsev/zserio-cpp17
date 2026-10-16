@@ -32,4 +32,11 @@ zserio::Any createAnyAnonymousStruct()
     return any;
 }
 
+#if defined(_MSC_VER) || defined(__GXX_RTTI)
+const std::type_info& getAnonymousStructTypeInfo()
+{
+    return typeid(AnonymousStruct);
+}
+#endif
+
 } // namespace AnyTestHiddenLib
