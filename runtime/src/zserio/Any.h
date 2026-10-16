@@ -2,8 +2,10 @@
 #define ZSERIO_ANY_H_INC
 
 #include <cstddef>
+#include <cstring>
 #include <optional>
 #include <type_traits>
+#include <typeinfo>
 
 #include "zserio/AllocatorHolder.h"
 #include "zserio/CppRuntimeException.h"
@@ -54,15 +56,19 @@ public:
         return typeid(T);
     }
 
-    // Deliberately not just `lhs == rhs`: on some ABIs (e.g. arm64 macOS/iOS, see libc++'s
-    // __non_unique_arm_rtti_bit_impl), a type's RTTI can be emitted non-uniquely when it is
-    // referenced from many translation units/static libraries (as generated zserio types
-    // commonly are). In that case std::type_info::operator== can report two type_info objects
-    // for the very same type as unequal. Falling back to comparing the (mangled) type names gives
-    // the correct answer regardless of whether the RTTI objects were merged.
     static bool equals(type_id lhs, type_id rhs)
     {
+    #if defined(_LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION) && _LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION == 3
+        // libc++ on arm64 Apple platforms (see __non_unique_arm_rtti_bit_impl) marks RTTI with hidden
+        // visibility as non-unique and type_info::operator== can then report a type as unequal to itself,
+        // e.g. when a hidden visibility translation unit and a default visibility one use the same type.
+        // Falling back to the type names gives the right answer for such types. The price is that types
+        // with the same name and internal linkage, like types in anonymous namespaces in different
+        // translation units, compare equal there.
         return lhs == rhs || std::strcmp(lhs.name(), rhs.name()) == 0;
+    #else
+        return lhs == rhs;
+    #endif
     }
 
 #else

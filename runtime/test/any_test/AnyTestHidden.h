@@ -14,4 +14,7 @@ zserio::Any createAnyEmptyStruct();
 
 bool isEmptyStruct(const zserio::Any& any);
 
+// Holds a structure named AnonymousStruct from an anonymous namespace in this library.
+zserio::Any createAnyAnonymousStruct();
+
 } // namespace AnyTestHiddenLib

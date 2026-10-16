@@ -10,6 +10,22 @@
 
 #include "TrackingAllocator.h"
 
+namespace AnyTestHiddenLib
+{
+
+namespace
+{
+
+// same name as the structure in the anonymous namespace of AnyTestHidden.cpp, but a different type
+struct AnonymousStruct
+{
+    float value = 1.5F;
+};
+
+} // namespace
+
+} // namespace AnyTestHiddenLib
+
 namespace zserio
 {
 
@@ -530,6 +546,16 @@ TEST_F(AnyTest, staticLibHiddenVisibility)
     any2.set(AnyTestHiddenLib::EmptyStruct());
     ASSERT_TRUE(any2.isType<AnyTestHiddenLib::EmptyStruct>());
     ASSERT_TRUE(AnyTestHiddenLib::isEmptyStruct(any2));
+}
+
+TEST_F(AnyTest, sameNamedAnonymousTypes)
+{
+#if defined(_LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION) && _LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION == 3
+    GTEST_SKIP() << "Any compares type names on arm64 Apple platforms, see TypeIdHolder::equals.";
+#endif
+    auto any = AnyTestHiddenLib::createAnyAnonymousStruct();
+    ASSERT_FALSE(any.isType<AnyTestHiddenLib::AnonymousStruct>());
+    ASSERT_EQ(nullptr, any.get_if<AnyTestHiddenLib::AnonymousStruct>());
 }
 
 TEST_F(AnyTest, prettyFunction)
