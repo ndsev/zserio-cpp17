@@ -19,8 +19,8 @@ bugprone-exception-escape:src/zserio/Optional.h:225
 bugprone-use-after-move:src/zserio/Any.h:463
 
 # Specialization of std::hash is allowed.
-cert-dcl58-cpp:src/zserio/BitBuffer.h:608
-cert-dcl58-cpp:src/zserio/BitBuffer.h:620
+cert-dcl58-cpp:src/zserio/BitBuffer.h:609
+cert-dcl58-cpp:src/zserio/BitBuffer.h:621
 cert-dcl58-cpp:src/zserio/Extended.h:242
 cert-dcl58-cpp:src/zserio/Optional.h:1323
 cert-dcl58-cpp:src/zserio/Variant.h:606
@@ -156,20 +156,21 @@ misc-no-recursion
 bugprone-exception-escape:test/zserio/OptionalTest.cpp:75
 bugprone-exception-escape:test/zserio/VariantTest.cpp:35
 google-build-using-namespace:test/zserio/IntrospectableViewTest.cpp:14
-bugprone-use-after-move:test/zserio/OptionalTest.cpp:304
-bugprone-use-after-move:test/zserio/OptionalTest.cpp:312
+bugprone-use-after-move:test/zserio/OptionalTest.cpp:269
+bugprone-use-after-move:test/zserio/OptionalTest.cpp:306
+bugprone-use-after-move:test/zserio/OptionalTest.cpp:314
 bugprone-use-after-move:test/zserio/VariantTest.cpp:170
 bugprone-use-after-move:test/zserio/VariantTest.cpp:178
 bugprone-use-after-move:test/zserio/VariantTest.cpp:211
 bugprone-use-after-move:test/zserio/VariantTest.cpp:237
 bugprone-use-after-move:test/zserio/VariantTest.cpp:247
 cppcoreguidelines-avoid-c-arrays:test/zserio/SpanTest.cpp:45
-cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:353
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:367
+cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/BitBufferTest.cpp:381
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:34
 cppcoreguidelines-pro-bounds-pointer-arithmetic:test/zserio/SpanTest.cpp:38
 cppcoreguidelines-pro-type-reinterpret-cast:test/zserio/SqliteConnectionTest.cpp:321
-cppcoreguidelines-special-member-functions:test/zserio/OptionalTest.cpp:476
+cppcoreguidelines-special-member-functions:test/zserio/OptionalTest.cpp:478
 cppcoreguidelines-special-member-functions:test/zserio/VariantTest.cpp:32
 fuchsia-multiple-inheritance:test/zserio/VariantTest.cpp:13
 google-explicit-constructor:test/zserio/BitmasksTest.cpp:22

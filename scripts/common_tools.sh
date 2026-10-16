@@ -63,6 +63,9 @@ set_global_java_variables()
 
     # spotbugs home directory is empty by default
     SPOTBUGS_HOME="${SPOTBUGS_HOME:-""}"
+
+    # Zserio core version is taken from the extension sources by default
+    ZSERIO_CORE_VERSION="${ZSERIO_CORE_VERSION:-""}"
 }
 
 # Set and check global variables for C++ projects.
@@ -179,6 +182,8 @@ Uses the following environment variables for building:
                            Default is "v141". Note that "v141" is for VS 2017,
                            "v142" is for VS 2019.
     SANITIZERS_ENABLED     Defines whether to use sanitizers. Default is 0 (disabled).
+    ZSERIO_CORE_VERSION    Zserio core version to download from GitHub, e.g. "2.19.0". Default is
+                           the version expected by the extension (EXPECTED_ZSERIO_VERSION_STRING).
 
     Either set these directly, or create 'scripts/build-env.sh' that sets
     these. It's sourced automatically if it exists.
@@ -296,6 +301,10 @@ compile_java()
 
     if [ -n "${SPOTBUGS_HOME}" ] ; then
         ANT_PROPS+=("-Dspotbugs.home_dir=${SPOTBUGS_HOME}")
+    fi
+
+    if [ -n "${ZSERIO_CORE_VERSION}" ] ; then
+        ANT_PROPS+=("-Dzserio_core.version=${ZSERIO_CORE_VERSION}")
     fi
 
     "${ANT}" ${ANT_EXTRA_ARGS} -f "${ANT_BUILD_FILE}" "${ANT_PROPS[@]}" ${ANT_TARGET}
