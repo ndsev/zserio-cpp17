@@ -552,6 +552,8 @@ TEST_F(AnyTest, sameNamedAnonymousTypes)
 {
 #if defined(_LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION) && _LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION == 3
     GTEST_SKIP() << "Any compares type names on arm64 Apple platforms, see TypeIdHolder::equals.";
+#elif !defined(_MSC_VER) && !defined(__GXX_RTTI)
+    GTEST_SKIP() << "Without RTTI, Any identifies types by their names, see TypeIdHolder::get.";
 #endif
     auto any = AnyTestHiddenLib::createAnyAnonymousStruct();
     ASSERT_FALSE(any.isType<AnyTestHiddenLib::AnonymousStruct>());
