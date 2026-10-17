@@ -239,19 +239,20 @@ TYPED_TEST(OptionalTest, valueAssignment)
 
 TYPED_TEST(OptionalTest, moveConstructor)
 {
+    constexpr size_t expectedStringAllocs = sizeof(std::string) > 3 * sizeof(void*) ? 1 : 0;
     {
         typename TestFixture::StringOptional opt1(this->allocator);
         opt1.emplace("yes");
         ASSERT_EQ(opt1.value(), "yes");
-        ASSERT_EQ(1, this->allocator.numAllocs());
+        ASSERT_EQ(expectedStringAllocs, this->allocator.numAllocs());
 
         typename TestFixture::StringOptional opt2 = std::move(opt1);
         ASSERT_EQ(opt2.value(), "yes");
-        ASSERT_EQ(1, this->allocator.numAllocs());
+        ASSERT_EQ(expectedStringAllocs, this->allocator.numAllocs());
 
         typename TestFixture::StringOptional opt3(std::move(opt2), this->allocator);
         ASSERT_EQ(opt3.value(), "yes");
-        ASSERT_EQ(1, this->allocator.numAllocs());
+        ASSERT_EQ(expectedStringAllocs, this->allocator.numAllocs());
     }
 
     auto alloc1 = typename TestFixture::AllocatorType{};
@@ -263,7 +264,7 @@ TYPED_TEST(OptionalTest, moveConstructor)
         ASSERT_EQ(1, alloc1.numAllocs());
 
         // move ctor with allocator
-        typename TestFixture::BigOptional opt2(opt1, alloc2);
+        typename TestFixture::BigOptional opt2(std::move(opt1), alloc2);
         ASSERT_EQ(1, alloc2.numAllocs());
         ASSERT_TRUE(opt1.has_value());
         ASSERT_TRUE(opt2.has_value());
@@ -272,16 +273,17 @@ TYPED_TEST(OptionalTest, moveConstructor)
 
 TYPED_TEST(OptionalTest, moveAssignmentOperator)
 {
+    constexpr size_t expectedStringAllocs = sizeof(std::string) > 3 * sizeof(void*) ? 1 : 0;
     {
         typename TestFixture::StringOptional opt1(this->allocator);
         opt1.emplace("yes");
         ASSERT_TRUE(opt1.value() == "yes");
-        ASSERT_EQ(1, this->allocator.numAllocs());
+        ASSERT_EQ(expectedStringAllocs, this->allocator.numAllocs());
 
         typename TestFixture::StringOptional opt2(this->allocator);
         opt2 = std::move(opt1);
         ASSERT_EQ(opt2.value(), "yes");
-        ASSERT_EQ(1, this->allocator.numAllocs());
+        ASSERT_EQ(expectedStringAllocs, this->allocator.numAllocs());
     }
 
     auto alloc1 = typename TestFixture::AllocatorType{};

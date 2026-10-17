@@ -2,8 +2,10 @@
 #define ZSERIO_ANY_H_INC
 
 #include <cstddef>
+#include <cstring>
 #include <optional>
 #include <type_traits>
+#include <typeinfo>
 
 #include "zserio/AllocatorHolder.h"
 #include "zserio/CppRuntimeException.h"
@@ -39,6 +41,11 @@ public:
         return &id;
     }
 
+    static bool equals(type_id lhs, type_id rhs)
+    {
+        return lhs == rhs;
+    }
+
 // in MSVC typeid works even when RTTI is disabled
 #elif defined(_MSC_VER) || defined(__GXX_RTTI)
     using type_id = const std::type_info&;
@@ -47,6 +54,21 @@ public:
     static type_id get()
     {
         return typeid(T);
+    }
+
+    static bool equals(type_id lhs, type_id rhs)
+    {
+    #if defined(_LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION) && _LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION == 3
+        // libc++ on arm64 Apple platforms (see __non_unique_arm_rtti_bit_impl) marks RTTI with hidden
+        // visibility as non-unique and type_info::operator== can then report a type as unequal to itself,
+        // e.g. when a hidden visibility translation unit and a default visibility one use the same type.
+        // Falling back to the type names gives the right answer for such types. The price is that types
+        // with the same name and internal linkage, like types in anonymous namespaces in different
+        // translation units, compare equal there.
+        return lhs == rhs || std::strcmp(lhs.name(), rhs.name()) == 0;
+    #else
+        return lhs == rhs;
+    #endif
     }
 
 #else
@@ -61,6 +83,11 @@ public:
         // static uintptr_t zserio::detail::TypeIdHolder::get() [with T = int; uintptr_t = xyz]
         static const auto id = calcHashCode(zserio::HASH_SEED, std::string_view(__PRETTY_FUNCTION__));
         return static_cast<uintptr_t>(id);
+    }
+
+    static bool equals(type_id lhs, type_id rhs)
+    {
+        return lhs == rhs;
     }
 
 #endif
@@ -139,7 +166,7 @@ public:
 
     bool isType(detail::TypeIdHolder::type_id typeId) const override
     {
-        return detail::TypeIdHolder::get<T>() == typeId;
+        return detail::TypeIdHolder::equals(detail::TypeIdHolder::get<T>(), typeId);
     }
 
 protected:

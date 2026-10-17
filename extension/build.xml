@@ -11,6 +11,8 @@ zserio_cpp17.build_dir   - Directory where to put generated files. Default is "b
 zserio_cpp17.install_dir - Directory where to install Zserio C++17 Extension jar file. Default is "distr".
 zserio.distr_dir         - Zserio distr directory to use. If not set, zserio binaries will be automatically
                            downloaded from GitHub.
+zserio_core.version      - Zserio core version to download from GitHub. Default is the version expected
+                           by the extension (EXPECTED_ZSERIO_VERSION_STRING in Cpp17ExtensionVersion.java).
 clang_format.exec_file   - Clang-format executable file. If not set, clang-format is not run.
 clang_format.force       - Whether the automatic formatting is enabled. If not set, only dry run will be used.
 spotbugs.home_dir        - Location of the spotbugs tool. If not set, spotbugs is not run.

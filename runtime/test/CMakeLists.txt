@@ -32,6 +32,20 @@ target_include_directories(ZserioCpp17RuntimeAnyTestLib PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}  # For the generated export header
 )
 
+# separate static library with hidden visibility for AnyTest
+
+add_library(ZserioCpp17RuntimeAnyTestHiddenLib STATIC
+    any_test/AnyTestHidden.cpp
+    any_test/AnyTestHidden.h
+)
+
+target_link_libraries(ZserioCpp17RuntimeAnyTestHiddenLib PUBLIC ZserioCpp17Runtime)
+
+set_target_properties(ZserioCpp17RuntimeAnyTestHiddenLib PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    C_VISIBILITY_PRESET hidden
+)
+
 # add gtest library
 include(gtest_utils)
 gtest_add_library("${ZSERIO_CPP17_PROJECT_ROOT}/3rdparty/cpp/googletest")
@@ -260,7 +274,8 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${TEST_OBJECT_SRCS})
 
 target_include_directories(${PROJECT_NAME} PRIVATE .)
 target_include_directories(${PROJECT_NAME} PRIVATE ../src)
-target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17RuntimeAnyTestLib ZserioCpp17Runtime gtest_main)
+target_link_libraries(${PROJECT_NAME} PRIVATE ZserioCpp17RuntimeAnyTestLib ZserioCpp17RuntimeAnyTestHiddenLib
+    ZserioCpp17Runtime gtest_main)
 
 if (WIN32)
     # copy dependent DLLs to target's directory
