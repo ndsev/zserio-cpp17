@@ -3,11 +3,28 @@
 #include <vector>
 
 #include "any_test/AnyTest.h"
+#include "any_test/AnyTestHidden.h"
 #include "gtest/gtest.h"
 #include "zserio/Any.h"
 #include "zserio/ppmr/PropagatingPolymorphicAllocator.h"
 
 #include "TrackingAllocator.h"
+
+namespace AnyTestHiddenLib
+{
+
+namespace
+{
+
+// same name as the structure in the anonymous namespace of AnyTestHidden.cpp, but a different type
+struct AnonymousStruct
+{
+    float value = 1.5F;
+};
+
+} // namespace
+
+} // namespace AnyTestHiddenLib
 
 namespace zserio
 {
@@ -512,6 +529,40 @@ TEST_F(AnyTest, sharedLib)
     auto any3 = AnyTestLib::createAnyString();
     ASSERT_TRUE(any3.isType<zserio::String>());
     ASSERT_FALSE(any3.isType<zserio::Int32>());
+}
+
+TEST_F(AnyTest, staticLibHiddenVisibility)
+{
+    // AnyTestHiddenLib is a static library compiled with hidden visibility, while this test is compiled with
+    // default visibility. Both are linked into a single executable, so there is only one RTTI object
+    // for EmptyStruct. However on arm64 Apple platforms, clang marks hidden RTTI as non-unique (top bit of
+    // the type name pointer) and libc++ type_info::operator== compares the name pointers including this bit.
+    auto any1 = AnyTestHiddenLib::createAnyEmptyStruct();
+    ASSERT_TRUE(any1.isType<AnyTestHiddenLib::EmptyStruct>());
+    ASSERT_TRUE(AnyTestHiddenLib::isEmptyStruct(any1));
+    ASSERT_NE(nullptr, any1.get_if<AnyTestHiddenLib::EmptyStruct>());
+
+    Any any2;
+    any2.set(AnyTestHiddenLib::EmptyStruct());
+    ASSERT_TRUE(any2.isType<AnyTestHiddenLib::EmptyStruct>());
+    ASSERT_TRUE(AnyTestHiddenLib::isEmptyStruct(any2));
+}
+
+TEST_F(AnyTest, sameNamedAnonymousTypes)
+{
+#if defined(_LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION) && _LIBCPP_TYPEINFO_COMPARISON_IMPLEMENTATION == 3
+    GTEST_SKIP() << "Any compares type names on arm64 Apple platforms, see TypeIdHolder::equals.";
+#elif defined(_MSC_VER) || defined(__GXX_RTTI)
+    // Any tells the types apart exactly as std::type_info does, which differs between standard libraries:
+    // e.g. libstdc++ compares the names of types with internal linkage unless GCC has marked them as unique
+    const bool isSameType =
+            typeid(AnyTestHiddenLib::AnonymousStruct) == AnyTestHiddenLib::getAnonymousStructTypeInfo();
+    auto any = AnyTestHiddenLib::createAnyAnonymousStruct();
+    ASSERT_EQ(isSameType, any.isType<AnyTestHiddenLib::AnonymousStruct>());
+    ASSERT_EQ(isSameType, any.get_if<AnyTestHiddenLib::AnonymousStruct>() != nullptr);
+#else
+    GTEST_SKIP() << "Without RTTI, Any identifies types by their names, see TypeIdHolder::get.";
+#endif
 }
 
 TEST_F(AnyTest, prettyFunction)
