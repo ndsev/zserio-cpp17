@@ -1,0 +1,42 @@
+#include "AnyTestHidden.h"
+
+namespace AnyTestHiddenLib
+{
+
+namespace
+{
+
+struct AnonymousStruct
+{
+    int value = 42;
+};
+
+} // namespace
+
+zserio::Any createAnyEmptyStruct()
+{
+    zserio::Any any;
+    any.set(EmptyStruct());
+    return any;
+}
+
+bool isEmptyStruct(const zserio::Any& any)
+{
+    return any.isType<EmptyStruct>();
+}
+
+zserio::Any createAnyAnonymousStruct()
+{
+    zserio::Any any;
+    any.set(AnonymousStruct());
+    return any;
+}
+
+#if defined(_MSC_VER) || defined(__GXX_RTTI)
+const std::type_info& getAnonymousStructTypeInfo()
+{
+    return typeid(AnonymousStruct);
+}
+#endif
+
+} // namespace AnyTestHiddenLib
